@@ -118,17 +118,20 @@ The complete pre-finalization `brief.md`, `tasks.md`, and `roadmap.md` remain av
 
 ## Release finalization contract
 
-The portable release contract is a gated state transition, independent of any repository's packaging or publishing mechanism:
+The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
 
 1. Resolve the active milestone and participating specs.
 2. Require a concrete target release version; stop before release operations when it is unset.
 3. Verify zero incomplete or blocked current tasks and clean completion evidence.
-4. Produce and verify an immutable release reference that still contains the active working documents.
-5. Append one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
-6. Remove each participating spec's `brief.md` and `tasks.md`.
-7. Transition each `spec.json` to released / no-active-change state.
-8. Remove `roadmap.md` only when it contains no scope for another milestone.
-9. Persist finalization as one coherent state change and verify the resulting idle state.
+4. Load `{{SPEC_DIR}}/settings/release.md` and validate required adapter phases.
+5. Run project Prepare, Publish, and Verify instructions in order.
+6. Independently confirm an immutable release reference that still contains the active working documents.
+7. Append one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
+8. Remove each participating spec's `brief.md` and `tasks.md`.
+9. Transition each `spec.json` to released / no-active-change state.
+10. Remove `roadmap.md` only when it contains no scope for another milestone.
+11. Persist finalization as one coherent state change and verify the resulting idle state.
+12. Run optional project After finalize instructions and report their result separately.
 
 If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate changelog entries or remove unrelated work.
 
@@ -172,7 +175,7 @@ Issue #50 comes from a repository with local skill overrides. These details are 
 | `kiro-spec-update-batch` as a separate skill | Existing-spec batch orchestration is required; whether it is a separate skill remains open. |
 | `kiro-record-validation` and a roadmap validation table | Stable completion evidence is required; its storage location and skill boundary remain open. |
 | `kiro-impl-direct` and structured direct candidates | Direct-work support is a separate workflow decision, not required by the active-spec lifecycle itself. |
-| GitHub Issues, GitHub milestones, Actions, ZIP packaging, and project version scripts | Repository-specific release adapter or guidance, not the portable release contract. |
+| GitHub Issues, GitHub milestones, Actions, ZIP packaging, and project version scripts | Repository-specific instructions in the release adapter, not hard-coded core behavior. |
 | Direct commits to `main` and exact commit messages | Repository policy, not a universal SpecBind requirement. |
 | v0.5.1 cutover sequence | Concrete example of the general one-time migration pattern. |
 

@@ -60,7 +60,18 @@ No active milestone
 
 `roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins in discovery and remains present for the lifetime of that milestone. Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. The release skill owns roadmap removal, and only removes it after a successful release.
 
-The portable release contract owns gated and idempotent spec finalization. Packaging, versioning, publishing, and repository-hosting operations may require repository-specific adapters or guidance.
+The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
+
+```text
+core preflight and readiness gates
+  -> adapter: Prepare
+  -> adapter: Publish
+  -> adapter: Verify
+  -> core: verify immutable reference and finalize active spec artifacts
+  -> adapter: After finalize (optional)
+```
+
+An adapter phase cannot waive a core gate. If Publish or Verify instructions are missing, release stops before publication rather than inferring commands from unrelated project files.
 
 ## New work
 
@@ -117,7 +128,8 @@ The target contract should state when project guidance and gap analysis are opti
 | Review | Independent task-level conformance review | Feature-level integration acceptance |
 | Integration validation | Cross-task behavior, full verification, spec coverage | Replacing missing task-level review |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
-| Release | Release completion and closing the active milestone | Deleting or freezing active specs |
+| Release core | Readiness gates, verified publication boundary, and active-spec finalization | Project-specific build or publication commands |
+| Release adapter | Project-specific Prepare, Publish, Verify, and optional After finalize instructions | Weakening core gates or directly defining spec lifecycle semantics |
 
 ## Approval and automation model
 

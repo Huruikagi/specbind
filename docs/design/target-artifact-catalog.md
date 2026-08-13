@@ -12,6 +12,7 @@ Related documents:
 - [Target skill catalog](./target-skill-catalog.md)
 - [Target workflows](./target-workflows.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
+- [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 
 Status: Draft
 
@@ -32,6 +33,12 @@ Status: Draft
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | Holds a machine-generated milestone ID and an initially optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
 
+## Settings artifacts
+
+| Target path | Lifecycle | Owner | Status | Notes |
+| --- | --- | --- | --- | --- |
+| `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Draft | Defines Prepare, Publish, Verify, and After finalize instructions without overriding core release gates. |
+
 ## Spec artifacts
 
 | Target path | Lifecycle | Owner | Status | Notes |
@@ -47,6 +54,7 @@ Status: Draft
 ## Open questions
 
 - What exact schema and ID format identify the active milestone, release binding, active change, and active requirement set?
+- What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - How are cancelled changes finalized and indexed?

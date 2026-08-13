@@ -13,6 +13,7 @@ Related documents:
 - [Target artifact catalog](./target-artifact-catalog.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
+- [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 
 ## Status and change types
 
@@ -100,17 +101,21 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Intended behavior
 
 - Confirm that the active milestone is ready to close.
+- Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
+- Run the adapter's Prepare, Publish, and Verify phases around the non-overridable core gates.
 - Verify an immutable release reference that preserves the active working documents.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.md` after successful release.
 - Transition their metadata to released / no-active-change state.
 - Remove `{{SPEC_DIR}}/steering/roadmap.md` when it contains no later milestone scope.
+- Run optional After finalize project instructions only after core finalization succeeds.
 - Preserve the active specs updated during the milestone.
 
 ### Inputs
 
 - The active `roadmap.md`
 - A concrete target release version
+- `{{SPEC_DIR}}/settings/release.md`
 - Release-readiness state and evidence, to be defined
 
 ### Writes
@@ -124,12 +129,14 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - Must not delete specs merely because the milestone is complete.
 - Must stop before release operations when the target release version is unset.
+- Must stop when the adapter lacks safe Publish or Verify instructions.
+- Must not let adapter instructions weaken core readiness or finalization gates.
 - Must not remove active documents before the release succeeds and an immutable reference is verified.
 - Must be idempotent when finalization is retried.
 
 ### Open questions
 
-- Which publishing operations belong to core SpecBind and which are repository-specific adapters?
+- What exact adapter schema and validation rules should be used?
 - What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
 

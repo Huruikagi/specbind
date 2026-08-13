@@ -18,6 +18,7 @@
 - [`docs/design/target-artifact-catalog.md`](docs/design/target-artifact-catalog.md) — proposed artifact ownership and lifecycle
 - [`docs/design/target-workflows.md`](docs/design/target-workflows.md) — proposed user journeys and responsibility boundaries
 - [`docs/design/active-spec-lifecycle.md`](docs/design/active-spec-lifecycle.md) — detailed draft for active specs and milestone finalization
+- [`docs/design/decisions/0002-project-release-adapter.md`](docs/design/decisions/0002-project-release-adapter.md) — accepted core-plus-project-adapter release direction
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
