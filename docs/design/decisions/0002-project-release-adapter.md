@@ -38,7 +38,7 @@ The adapter cannot weaken or replace these rules:
 - Current milestone scope, tasks, approvals, and completion evidence must pass core readiness gates.
 - Publication must have fresh success evidence before active spec documents are finalized.
 - The immutable release reference must retain the pre-finalization `brief.md`, `tasks.md`, and `roadmap.md`.
-- Finalization must be idempotent and must not remove unrelated or later-milestone work.
+- Finalization must be idempotent, archive the active roadmap without overwriting history, and must not remove unrelated work.
 - Failure before verified publication preserves all active documents.
 
 ## Missing or incomplete adapter

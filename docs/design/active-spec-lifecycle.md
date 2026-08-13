@@ -24,9 +24,9 @@ Long-lived specs need to remain the current description of the product, but mile
 | `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
 | `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
 | `tasks.md` | Executable plan for the current milestone's change. | Contains only current tasks and numbers them from the start. | Removed. |
-| `changelog.md` | Index of released or cancelled changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
+| `changelog.md` | Per-spec index of released or cancelled changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
 | `spec.json` | Current lifecycle, active-change metadata, and approvals. | Represents an active change. | Represents released state with no active change. |
-| `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists and is maintained. | Removed by successful release finalization. |
+| `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>/roadmap.md`. |
 
 Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec. Placeholder working documents should not be required.
 
@@ -114,7 +114,7 @@ Within `spec.json`, `active_change.requirement_ids: null` means the set has not 
 - relevant implementation, version, and finalization commits
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization `brief.md`, `tasks.md`, and `roadmap.md` remain available from the immutable release reference. Git history is not the only index: `changelog.md` points to the relevant references.
+The complete pre-finalization `brief.md` and `tasks.md` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>/roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
 
 ## Release finalization contract
 
@@ -129,7 +129,7 @@ The portable release contract is a gated state transition. Project publication i
 7. Append one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
 8. Remove each participating spec's `brief.md` and `tasks.md`.
 9. Transition each `spec.json` to released / no-active-change state.
-10. Remove `roadmap.md` only when it contains no scope for another milestone.
+10. Move `steering/roadmap.md` to `releases/<version>/roadmap.md`, refusing conflicting archive content.
 11. Persist finalization as one coherent state change and verify the resulting idle state.
 12. Run optional project After finalize instructions and report their result separately.
 
@@ -202,5 +202,4 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - The exact `changelog.md` schema and evidence granularity.
 - Which workflow finalizes cancelled changes.
 - The target `spec.json` state model and migration compatibility.
-- How partial finalization works when a roadmap contains more than one intended release.
 - Whether immutable history may use something other than a Git release tag.

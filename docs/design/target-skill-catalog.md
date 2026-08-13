@@ -15,6 +15,7 @@ Related documents:
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
+- [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 
 ## Status and change types
 
@@ -108,7 +109,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.md` after successful release.
 - Transition their metadata to released / no-active-change state.
-- Remove `{{SPEC_DIR}}/steering/roadmap.md` when it contains no later milestone scope.
+- Archive `{{SPEC_DIR}}/steering/roadmap.md` as `{{SPEC_DIR}}/releases/<version>/roadmap.md`.
 - Run optional After finalize project instructions only after core finalization succeeds.
 - Preserve the active specs updated during the milestone.
 
@@ -124,7 +125,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Per-spec `changelog.md` entries
 - Per-spec released / no-active-change metadata
 - Removal of finalized `brief.md` and `tasks.md`
-- Removal of the active `roadmap.md` after successful release completion
+- Archived milestone roadmap under `{{SPEC_DIR}}/releases/<version>/`
 
 ### Boundaries
 
@@ -133,6 +134,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must stop when the adapter lacks safe Publish or Verify instructions.
 - Must not let adapter instructions weaken core readiness or finalization gates.
 - Must not remove active documents before the release succeeds and an immutable reference is verified.
+- Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.
 
 ### Open questions

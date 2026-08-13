@@ -14,6 +14,7 @@ Related documents:
 - [Active spec lifecycle](./active-spec-lifecycle.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
+- [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 
 Status: Draft
 
@@ -32,7 +33,8 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | Holds a machine-generated milestone ID and an initially optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; archived by `specbind-release`. | Draft | Holds a machine-generated milestone ID and an initially optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
+| `{{SPEC_DIR}}/releases/<version>/roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Moved from `steering/roadmap.md` after verified publication; archive collisions must not overwrite history. |
 
 ## Settings artifacts
 
@@ -49,7 +51,7 @@ Status: Draft
 | `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
 | `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
 | `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
-| `changelog.md` | Persists as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Draft | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata; cancelled-entry naming remains open. |
+| `changelog.md` | Persists per spec as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata; cancelled-entry naming remains open. |
 | `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; must also represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
 
 ## Open questions
