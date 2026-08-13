@@ -115,10 +115,10 @@ npx specbind@latest --kiro-dir docs
 
 ## Customization
 
-Edit templates and rules in `{{KIRO_DIR}}/settings/` to match your team's workflow.
+Edit the installed templates and skill-local rules to match your team's workflow.
 
-- `templates/`: document structure for requirements, design, tasks.
-- `rules/`: AI generation principles and judgment criteria.
+- `{{KIRO_DIR}}/settings/templates/`: document structure for requirements, design, tasks, and steering.
+- `.claude/skills/kiro-*/rules/` or `.agents/skills/kiro-*/rules/`: AI generation principles and judgment criteria used by each skill.
 
 Common use cases: PRD-style requirements, API and database schemas, approval gates, JIRA integration, domain-specific standards.
 
@@ -129,11 +129,10 @@ After installation, your project gets:
 ```
 project/
 # One of the following is installed
-├── .claude/skills/           # 17 skills (Claude Code Skills, default)
-├── .agents/skills/           # 17 skills (Codex Skills)
+├── .claude/skills/           # 17 skills and referenced rules (Claude Code Skills, default)
+├── .agents/skills/           # 17 skills and referenced rules (Codex Skills)
 # Shared project memory and spec state
 ├── .kiro/settings/templates/ # Shared templates (variables resolved with {{KIRO_DIR}})
-├── .kiro/settings/rules/     # Shared rules
 ├── .kiro/specs/              # Feature specifications
 ├── .kiro/steering/           # AI guidance documents
 └── CLAUDE.md / AGENTS.md     # Project configuration (per agent)

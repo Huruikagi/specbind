@@ -115,10 +115,10 @@ npx specbind@latest --kiro-dir docs
 
 ## カスタマイズ
 
-`{{KIRO_DIR}}/settings/` 以下のテンプレートとルールを編集して、チームのワークフローに合わせる。
+インストールされたテンプレートとスキルごとのルールを編集して、チームのワークフローに合わせる。
 
-- `templates/`: requirements, design, tasks のドキュメント構造。
-- `rules/`: AI の生成原則と判断基準。
+- `{{KIRO_DIR}}/settings/templates/`: requirements, design, tasks, steering のドキュメント構造。
+- `.claude/skills/kiro-*/rules/` または `.agents/skills/kiro-*/rules/`: 各スキルが使う AI の生成原則と判断基準。
 
 よくあるユースケース: PRD スタイルの要件、API とデータベーススキーマ、承認ゲート、JIRA 連携、ドメイン固有のスタンダード。
 
@@ -129,11 +129,10 @@ npx specbind@latest --kiro-dir docs
 ```
 project/
 # いずれか1つがインストールされる
-├── .claude/skills/           # 17 skills（Claude Code Skills、デフォルト）
-├── .agents/skills/           # 17 skills（Codex Skills）
+├── .claude/skills/           # 17 skills と参照ルール（Claude Code Skills、デフォルト）
+├── .agents/skills/           # 17 skills と参照ルール（Codex Skills）
 # プロジェクトメモリと spec 状態（共通）
 ├── .kiro/settings/templates/ # 共通テンプレート（{{KIRO_DIR}} を展開）
-├── .kiro/settings/rules/     # 共通ルール
 ├── .kiro/specs/              # 機能仕様書
 ├── .kiro/steering/           # AI 指導ドキュメント
 └── CLAUDE.md / AGENTS.md     # プロジェクト設定（エージェントごと）
