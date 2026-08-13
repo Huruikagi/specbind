@@ -3,6 +3,7 @@
 This page is a lightweight index of the files installed or maintained by the current SpecBind CLI and skill set. It records the inherited file surface before SpecBind-specific commands and workflows are redesigned; it is not a commitment to preserve these paths or formats.
 
 `{{KIRO_DIR}}` defaults to `.kiro`. For the commands that manage these files, see the [current generated skill index](./current-skill-index.md).
+For proposed artifact lifecycles, see the [target artifact catalog](./design/target-artifact-catalog.md).
 
 ## Settings templates
 

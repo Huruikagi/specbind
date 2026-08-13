@@ -10,6 +10,7 @@ The catalog is intentionally separate from the [current generated skill index](.
 Related documents:
 
 - [Target workflows](./target-workflows.md)
+- [Target artifact catalog](./target-artifact-catalog.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 
 ## Status and change types
@@ -44,6 +45,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
 | `kiro-validate-impl` | `specbind-validate-impl` | Rename | Idea | Validate feature-level integration and spec coverage. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Rename | Idea | Verify completion claims with fresh evidence. |
+| None | `specbind-release` | New | Draft | Complete a release and close its active milestone. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
 
@@ -83,6 +85,45 @@ One responsibility stated from the user's perspective.
 ```
 
 For a new skill, add a `New` row to the working catalog and set `Current equivalent` to `None`. For a merge or split, name every affected current skill so migration work remains visible.
+
+## `specbind-release`
+
+Status: Draft
+
+Current equivalent: None
+
+### Purpose
+
+Complete a release and close the active milestone represented by `roadmap.md`.
+
+### Intended behavior
+
+- Confirm that the active milestone is ready to close.
+- Perform the release workflow; its concrete release operations are not yet defined.
+- Remove `{{SPEC_DIR}}/steering/roadmap.md` after the release completes successfully.
+- Preserve the active specs updated during the milestone.
+
+### Inputs
+
+- The active `roadmap.md`
+- Release-readiness state and evidence, to be defined
+
+### Writes
+
+- Release state or history, if one is introduced
+- Removal of the active `roadmap.md` after successful release completion
+
+### Boundaries
+
+- Must not delete specs merely because the milestone is complete.
+- Must not remove `roadmap.md` before the release succeeds.
+
+### Open questions
+
+- What operations constitute a release?
+- What release-readiness checks are mandatory?
+- Where, if anywhere, is the completed milestone recorded before deleting `roadmap.md`?
+- What happens when release succeeds only partially?
 
 ## Cross-cutting questions
 

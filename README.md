@@ -10,7 +10,7 @@ The plan is to detach this repository from the GitHub fork network and evolve it
 
 Until that transition is complete, do not assume that the existing commands or documentation represent the final SpecBind interface.
 
-For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md) and [target workflows](./docs/design/target-workflows.md).
+For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md), [target artifact catalog](./docs/design/target-artifact-catalog.md), and [target workflows](./docs/design/target-workflows.md).
 
 ## Direction
 
