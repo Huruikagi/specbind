@@ -25,7 +25,7 @@ Requirements recorded so far:
 
 - Existing specs remain available across releases.
 - Every change-bearing milestone starts with a `roadmap.md`, even when only one spec participates.
-- A milestone has a stable identity independent of an initially unknown release version.
+- A milestone has a machine-generated stable identity independent of an initially unknown release version.
 - Requirements and design are maintained when represented behavior changes.
 - Each spec has at most one active milestone change at a time.
 - Requirements freezes an explicit active requirement set for downstream design and task coverage.
@@ -51,13 +51,14 @@ No active milestone
        -> discovery maintains scope and ordering
        -> new and existing specs are created or updated
        -> implementation and validation
+       -> target release version is required
        -> release readiness
   -> release succeeds
        -> release skill removes roadmap.md
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins in discovery and remains present for the lifetime of that milestone. Its stable milestone identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. The new `specbind-release` skill owns roadmap removal, and only removes it after a successful release.
+`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins in discovery and remains present for the lifetime of that milestone. Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. The release skill owns roadmap removal, and only removes it after a successful release.
 
 The portable release contract owns gated and idempotent spec finalization. Packaging, versioning, publishing, and repository-hosting operations may require repository-specific adapters or guidance.
 
@@ -130,6 +131,7 @@ The future workflow needs an explicit answer for each transition:
 | Tasks -> implementation | Are task boundaries and dependencies approved? |
 | Implementation -> completion | Which reviews and fresh verification evidence are required? |
 | Milestone -> release | What proves every required milestone item is ready? |
+| Release version assignment | Is a concrete target version bound to the active milestone? |
 | Release -> milestone closed | Did the release succeed before `roadmap.md` is removed? |
 
 Accelerated and batch workflows may automate transitions, but they should reuse the same phase contracts rather than define competing document formats or success criteria.

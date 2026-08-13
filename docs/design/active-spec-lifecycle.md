@@ -34,29 +34,29 @@ Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec
 
 Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery creates the roadmap before it hands work to later phases. A missing roadmap means there is no active milestone.
 
-The milestone's stable identity should not depend on knowing the final release version. The working model separates:
+The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
-- `milestone_id`: stable identity assigned when discovery starts the milestone
-- `target_release`: optional release version or release identifier, initially unset when necessary
+- `milestone_id`: opaque, machine-generated stable identity assigned when discovery starts the milestone
+- `target_release`: concrete release version, initially unset when necessary
 - `change_id`: stable per-spec change identity associated with `milestone_id`, not derived from `target_release`
 
 Conceptual roadmap metadata:
 
 ```yaml
-milestone_id: ms-<stable-id>
+milestone_id: <generated-id>
 target_release: null
 ```
 
 When the release version becomes known, the workflow binds it to the active milestone:
 
 ```yaml
-milestone_id: ms-<stable-id>
+milestone_id: <generated-id>
 target_release: v1.4.0
 ```
 
-This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and Change IDs continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts.
+This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and Change IDs continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
 
-The final metadata format and milestone ID generation scheme remain open. Release finalization must refuse an unresolved `target_release` when the selected release adapter requires a concrete version.
+The exact generated-ID format remains an implementation choice. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
 ## Active change
 
@@ -101,9 +101,10 @@ The machine-readable storage location for this set remains undecided.
 
 ## Released history
 
-`changelog.md` is a navigable index, not a snapshot of the entire spec. A release or cancellation entry should include enough information to locate and understand the historical change:
+`changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:
 
-- milestone and change ID
+- release version
+- milestone ID and change ID
 - status such as released or cancelled
 - problem and delivered-scope summary
 - preserved contracts or explicitly unchanged behavior
@@ -120,13 +121,14 @@ The complete pre-finalization `brief.md`, `tasks.md`, and `roadmap.md` remain av
 The portable release contract is a gated state transition, independent of any repository's packaging or publishing mechanism:
 
 1. Resolve the active milestone and participating specs.
-2. Verify zero incomplete or blocked current tasks and clean completion evidence.
-3. Produce and verify an immutable release reference that still contains the active working documents.
-4. Append one idempotent release entry to each participating spec's `changelog.md`.
-5. Remove each participating spec's `brief.md` and `tasks.md`.
-6. Transition each `spec.json` to released / no-active-change state.
-7. Remove `roadmap.md` only when it contains no scope for another milestone.
-8. Persist finalization as one coherent state change and verify the resulting idle state.
+2. Require a concrete target release version; stop before release operations when it is unset.
+3. Verify zero incomplete or blocked current tasks and clean completion evidence.
+4. Produce and verify an immutable release reference that still contains the active working documents.
+5. Append one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
+6. Remove each participating spec's `brief.md` and `tasks.md`.
+7. Transition each `spec.json` to released / no-active-change state.
+8. Remove `roadmap.md` only when it contains no scope for another milestone.
+9. Persist finalization as one coherent state change and verify the resulting idle state.
 
 If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate changelog entries or remove unrelated work.
 
@@ -192,7 +194,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 ## Open questions
 
 - Where the active requirement set is stored and how its schema is validated.
-- The milestone ID format and the authoritative location of the release-version binding.
+- The generated milestone ID format and the authoritative location of the release-version binding.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.

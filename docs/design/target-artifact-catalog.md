@@ -22,14 +22,15 @@ Status: Draft
 - A milestone groups the work intended for an active release cycle.
 - Every milestone has a `roadmap.md`, including a milestone containing only one spec change.
 - At most one active milestone is represented by `roadmap.md`.
-- Stable milestone identity is separate from its optional, later-bound release version.
+- Machine-generated milestone identity is separate from its optional, later-bound release version.
+- A concrete release version is mandatory before release execution begins.
 - Release completion ends the active milestone but does not retire the specs it changed.
 
 ## Project-level artifacts
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | Holds a stable milestone ID and an optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | Holds a machine-generated milestone ID and an initially optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
 
 ## Spec artifacts
 
@@ -40,7 +41,7 @@ Status: Draft
 | `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
 | `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
 | `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
-| `changelog.md` | Persists as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Draft | Points to immutable history without duplicating complete working documents. |
+| `changelog.md` | Persists as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Draft | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata; cancelled-entry naming remains open. |
 | `spec.json` | Represents lifecycle, active-change metadata, and current approvals. | Spec lifecycle workflows. | Draft | Must represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
 
 ## Open questions

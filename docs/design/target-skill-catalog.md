@@ -110,7 +110,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Inputs
 
 - The active `roadmap.md`
-- A resolved target release when required by the selected release adapter
+- A concrete target release version
 - Release-readiness state and evidence, to be defined
 
 ### Writes
@@ -123,6 +123,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Boundaries
 
 - Must not delete specs merely because the milestone is complete.
+- Must stop before release operations when the target release version is unset.
 - Must not remove active documents before the release succeeds and an immutable reference is verified.
 - Must be idempotent when finalization is retried.
 
