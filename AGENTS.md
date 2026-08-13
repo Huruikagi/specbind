@@ -1,68 +1,45 @@
-# Agentic SDLC and Spec-Driven Development
+# SpecBind Repository Guidelines
 
-Kiro-style Spec-Driven Development on an agentic SDLC
+## Repository Purpose
 
-## Repository Status
+- This repository develops SpecBind itself. It is not a consumer project using SpecBind to deliver an application.
+- SpecBind was bootstrapped from `gotalab/cc-sdd` and has been detached from the GitHub fork network.
+- Treat inherited cc-sdd code and documentation as migration inputs, not as the final SpecBind interface.
+- Prefer SpecBind-specific commands, workflows, terminology, and compatibility decisions over drop-in cc-sdd compatibility unless compatibility is explicitly required.
 
-- SpecBind was bootstrapped from `gotalab/cc-sdd` and has since been detached from the GitHub fork network.
-- This project is currently unreleased and is transitioning to its own command names, workflows, terminology, and compatibility policy.
-- Much of the repository is still inherited from cc-sdd. Do not treat inherited commands, documentation, package versions, or compatibility behavior as the final SpecBind interface.
-- Prefer SpecBind-specific direction over preserving drop-in compatibility with cc-sdd unless explicitly required.
+## Source Layout
 
-## Project Context
+- `tools/specbind/src/` — CLI implementation
+- `tools/specbind/test/` — automated tests
+- `tools/specbind/templates/` — files installed into consumer projects
+- `docs/guides/` — current and historical user-facing guides
+- `docs/specbind/plans/` — repository migration and implementation plans
+- `.kiro/settings/` and `.kiro/specs/` — inherited fixtures and test data unless a task explicitly establishes otherwise
 
-### Paths
-- Steering: `.kiro/steering/`
-- Specs: `.kiro/specs/`
+Do not treat this repository's `.kiro/` contents as project steering or as active specifications for developing SpecBind itself. In particular, do not require `/kiro-*` or `$kiro-*` workflows merely because those files exist.
 
-### Steering vs Specification
+## Development Workflow
 
-**Steering** (`.kiro/steering/`) - Guide AI with project-wide rules and context
-**Specs** (`.kiro/specs/`) - Formalize development process for individual features
+- Follow the user's requested scope and make changes directly unless they explicitly request a SpecBind specification workflow.
+- Keep changes narrow and preserve unrelated work in the worktree.
+- When changing installed behavior, update the relevant source, templates, tests, and documentation together.
+- Keep Claude Code and Codex templates aligned where they implement the same contract, while preserving platform-specific invocation syntax and capabilities.
+- For adding or extending coding-agent support, Codex agents must use `.agents/skills/specbind-new-agent/SKILL.md`.
 
-### Active Specifications
-- Check `.kiro/specs/` for active specifications
-- Use `/kiro-spec-status [feature-name]` to check progress
+## Validation
 
-## Development Guidelines
-- Think in English, generate responses in Japanese. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
+Run commands from `tools/specbind/`:
 
-## Minimal Workflow
-- Phase 0 (optional): `/kiro-steering`, `/kiro-steering-custom`
-- Discovery: `/kiro-discovery "idea"` — determines action path, writes brief.md + roadmap.md for multi-spec projects
-- Phase 1 (Specification):
-  - Single spec: `/kiro-spec-quick {feature} [--auto]` or step by step:
-    - `/kiro-spec-init "description"`
-    - `/kiro-spec-requirements {feature}`
-    - `/kiro-validate-gap {feature}` (optional: for existing codebase)
-    - `/kiro-spec-design {feature} [-y]`
-    - `/kiro-validate-design {feature}` (optional: design review)
-    - `/kiro-spec-tasks {feature} [-y]`
-  - Multi-spec: `/kiro-spec-batch` — creates all specs from roadmap.md in parallel by dependency wave
-- Phase 2 (Implementation): `/kiro-impl {feature} [tasks]`
-  - Without task numbers: autonomous mode (subagent per task + independent review + final validation)
-  - With task numbers: manual mode (selected tasks only in main context)
-  - `/kiro-validate-impl {feature}` (standalone re-validation)
-- Progress check: `/kiro-spec-status {feature}` (use anytime)
+```sh
+npm test
+npm run build
+```
 
-## Skills Structure
-Skills are located under the supported agent-specific skills directory: `.claude/skills/kiro-*/SKILL.md` for Claude Code and `.agents/skills/kiro-*/SKILL.md` for Codex.
-- Each skill is a directory with a `SKILL.md` file
-- Skills run inline with access to conversation context
-- Skills may delegate parallel research to subagents for efficiency
-- Additional files (templates, examples) can be added to skill directories
-- `kiro-review` — task-local adversarial review protocol used by reviewer subagents
-- `kiro-debug` — root-cause-first debug protocol used by debugger subagents
-- `kiro-verify-completion` — fresh-evidence gate before success or completion claims
-- **If there is even a 1% chance a skill applies to the current task, invoke it.** Do not skip skills because the task seems simple.
+- Add or update focused tests for behavior changes.
+- Before reporting completion, inspect the final diff and confirm generated or installed templates still match their intended consumer environment.
 
-## Development Rules
-- 3-phase approval workflow: Requirements → Design → Tasks → Implementation
-- Human review required each phase; use `-y` only for intentional fast-track
-- Keep steering current and verify alignment with `/kiro-spec-status`
-- Follow the user's instructions precisely, and within that scope act autonomously: gather the necessary context and complete the requested work end-to-end in this run, asking questions only when essential information is missing or the instructions are critically ambiguous.
+## Language
 
-## Steering Configuration
-- Load entire `.kiro/steering/` as project memory
-- Default files: `product.md`, `tech.md`, `structure.md`
-- Custom files are supported (managed via `/kiro-steering-custom`)
+- Respond to the user in Japanese unless they request another language.
+- Preserve the language of an existing document unless the task requires translation.
+- English and Japanese are the only officially supported product languages during the current stabilization phase.
