@@ -22,14 +22,14 @@ describe('config store', () => {
   it('saves and loads config round-trip', async () => {
     const dir = await mkTmp();
     const input: UserConfig = {
-      agent: 'gemini-cli',
+      agent: 'codex-skills',
       lang: 'en',
       os: 'linux',
       kiroDir: '.work/kiro',
       overwrite: 'skip',
       backupDir: 'bk',
       agentLayouts: {
-        'gemini-cli': { commandsDir: '.gemini/commands/custom' },
+        'codex-skills': { commandsDir: '.agents/skills/custom' },
       },
     };
     await saveUserConfig(dir, input);

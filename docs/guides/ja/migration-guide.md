@@ -11,7 +11,7 @@ v1系（特に1.1.5）とv2.0.0は、**コマンドや agentic SDLC の基本思
 | 目的 | 推奨アクション |
 | --- | --- |
 | 既存の1.x系ワークフローを維持したい | `npx specbind@1.1.5` を明示的に指定し、旧バージョンのCLIを継続利用する。エージェント固有のプロンプトを直接編集する従来のスタイルを維持できるが、利用可能なコマンドは旧来の8つに限られる。 |
-| 8種類のエージェントで共通のテンプレートや、調査（Research）と設計（Design）の分離といった新機能を利用したい | `npx specbind@latest`（v2.0.0相当）を再インストールし、`.kiro/settings/templates/*` と `rules/` のみをカスタマイズする。これにより、`validate-*` コマンド群を含む全11コマンドが利用可能になる。 |
+| 過去のv2ワークフローを再現したい | `npx specbind@2.0.0` とバージョンを固定する。対応エージェントとCLIが変わっているため `@latest` は使用しない。 |
 
 > ⚠️ 1.x系と2.x系の `.kiro` ディレクトリ構成の混在は推奨されない。リポジトリやブランチ単位で、使用するバージョンをどちらか一方に固定すること。
 
@@ -61,9 +61,9 @@ npx specbind@1.1.5 --lang ja      # 旧来の言語オプション
 
 2. **v2 をクリーンインストール（対話的オプションを活用）**
    ```bash
-   npx specbind@latest                 # デフォルト (Claude Code)
-   npx specbind@latest --cursor        # その他エージェント
-   npx specbind@latest --claude-agent  # Subagents モード
+   npx specbind@2.0.0                 # 過去のデフォルト (Claude Code)
+   npx specbind@2.0.0 --cursor        # 過去のCursor向けインストール
+   npx specbind@2.0.0 --claude-agent  # 過去のSubagentsモード
    ```
    - インストーラがファイル群ごとに「上書き(overwrite)」「追記(append)」「保持(keep)」のいずれかを選択するよう尋ねる。既存のステアリング情報や仕様書を維持したい場合は “keep” を、差分を追加したい場合は “append” を選択できる。
 
@@ -98,7 +98,7 @@ npx specbind@1.1.5 --lang ja      # 旧来の言語オプション
 
 ## 5. v2.x → v3.0
 
-> v3.0 は全 `--*-skills` インストールに適用。Skills モードは8プラットフォームで利用可能: Claude Code, Codex, Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity。コマンドベースのエージェント（`--claude`, `--cursor` 等）は引き続き動作するが非推奨、将来削除予定。
+> 現行v3のインストール先はClaude Code SkillsとCodex Skillsの2つ。公開前のv3スナップショットに含まれていた未検証の他プラットフォーム用テンプレートと旧commandsモードは削除された。
 
 | 領域 | v2.x | v3.0 |
 | --- | --- | --- |
@@ -108,24 +108,18 @@ npx specbind@1.1.5 --lang ja      # 旧来の言語オプション
 | `/kiro-impl` | `kiro-spec-impl`（単一パス） | 統合スキル（implementer + reviewer + debugger） |
 | 失敗時デバッグ | なし | **Debug subagent** — フレッシュコンテキストで根本原因調査（最大2ラウンド） |
 | 知見引き継ぎ | なし | **Implementation Notes** がタスク間で次の implementer に注入される |
-| Skills 対応 | Claude Code, Codex | **8プラットフォーム**: Claude, Codex, Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity |
+| Skills 対応 | Claude Code, Codex | **Claude CodeとCodex**（両方を実機検証） |
 | TDD | 基本 TDD | **Feature Flag TDD**: RED → GREEN プロトコル |
 | セッション永続化 | なし | **`brief.md`** がセッション間で永続化 |
 
 ### 主な移行手順
 
-1. **再インストール**（お使いのプラットフォームの Skills モードで）:
+1. **再インストール**（対応する2環境のいずれかを選択）:
    ```bash
    npx specbind@latest --claude-skills     # Claude Code（デフォルト）
    npx specbind@latest --codex-skills      # Codex
-   npx specbind@latest --cursor-skills     # Cursor IDE
-   npx specbind@latest --copilot-skills    # GitHub Copilot
-   npx specbind@latest --windsurf-skills   # Windsurf IDE
-   npx specbind@latest --opencode-skills   # OpenCode
-   npx specbind@latest --gemini-skills     # Gemini CLI
-   npx specbind@latest --antigravity       # Antigravity
    ```
-2. **レガシーモードから移行** — `--claude`, `--cursor`, `--copilot`, `--windsurf`, `--opencode`, `--gemini` は非推奨。`--codex` はブロック済み。対応する `--*-skills` フラグを使用。
+2. **旧インストールフラグをスクリプトから削除** — 現行版はcommandsモードと非対応エージェントを拒否する。`--claude-skills` または `--codex-skills` を使用する。
 3. **`/kiro-discovery`** をエントリポイントとして使用 — `brief.md` + `roadmap.md` が下流スキルに引き継がれる。
 4. **`/kiro-spec-batch`** をマルチフィーチャー作業に使用。
 

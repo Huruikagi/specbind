@@ -6,7 +6,7 @@
 <a href="./README.md">English</a> | 日本語 | <a href="./README_zh-TW.md">繁體中文</a>
 </sub></div>
 
-**承認済みの仕様を、長時間でも壊れない自律実装ワークフローに変える。** ワンコマンドで agentic SDLC ワークフローを Agent Skills として導入する: discovery, requirements, design, tasks, そしてタスクごとの independent review 付きの自律実装。8 つの AI coding agent に対応、同じ 17-skill セットで動作する。
+**承認済みの仕様を、長時間でも壊れない自律実装ワークフローに変える。** ワンコマンドで agentic SDLC ワークフローを Agent Skills として導入する: discovery, requirements, design, tasks, そしてタスクごとの independent review 付きの自律実装。Claude Code と Codex に同じ 17-skill セットを提供する。
 
 👻 **Kiro スタイル。** Kiro IDE の spec-driven / agentic SDLC スタイル。既存の Kiro 仕様書もそのまま使える。
 
@@ -18,7 +18,7 @@ specbind v3.0 は Agent Skills と長時間自律実装を軸にした再構築�
 - **`/kiro-impl` による長時間自律実装。** 各タスクに対し fresh implementer が feature flag 越しに TDD (RED → GREEN) で実装、独立した reviewer が機械的検証、失敗時は auto-debug pass が新しいコンテキストで根本原因を調査する。タスク間の知見は `tasks.md` の `## Implementation Notes` で次の implementer に引き継がれる。1 iteration = 1 task、中断後の再実行も安全。
 - **境界中心の spec discipline。** `design.md` に File Structure Plan が入り、タスク境界の根拠になる。タスクには `_Boundary:_` / `_Depends:_` アノテーションが付く。review と validation はスタイルではなく境界違反を見る。
 - **`/kiro-spec-batch` で複数 spec の並列作成。** roadmap から複数 spec を並列生成し、cross-spec review で矛盾・責務重複・インターフェースミスマッチを検出する。
-- **8 つの AI coding agent で Agent Skills を展開。** 17 skills × 8 プラットフォーム、on-demand ロード (progressive disclosure)。Claude Code と Codex は stable、Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity は beta。外部依存なし、subagent は各プラットフォーム標準の spawn で立ち上がる。
+- **Claude Code と Codex 向けの Agent Skills。** 17 skills を on-demand ロード (progressive disclosure)。両方の統合を実機で保守・検証する。外部依存なし、subagent は各プラットフォーム標準の spawn で立ち上がる。
 
 Skills モードのワークフローと `/kiro-impl` 内部の詳細は [スキルリファレンス](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/skill-reference.md) を参照。
 
@@ -41,14 +41,14 @@ cd your-project
 npx specbind@latest
 ```
 
-デフォルトでは **Claude Code Skills** と英語ドキュメントがインストールされる。他のエージェントや言語を指定する場合:
+デフォルトでは **Claude Code Skills** と英語ドキュメントがインストールされる。Codexまたは他の言語を指定する場合:
 
 ```bash
 npx specbind@latest --codex-skills --lang ja      # Codex、日本語
-npx specbind@latest --cursor-skills --lang zh-TW  # Cursor IDE、繁体字中国語
+npx specbind@latest --claude-skills --lang zh-TW  # Claude Code、繁体字中国語
 ```
 
-8 つの AI coding agent（Claude Code と Codex は stable、Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity は beta）と 13 言語に対応。全リストは [対応エージェント](#対応エージェント) を参照。
+Claude Code、Codex、13言語に対応。詳細は [対応エージェント](#対応エージェント) を参照。
 
 その後、エージェント上で:
 
@@ -66,8 +66,6 @@ npx specbind@latest --cursor-skills --lang zh-TW  # Cursor IDE、繁体字中国
 | 既存のシステムを拡張する | `kiro-steering` → `kiro-discovery` または `kiro-spec-init` → 任意で `kiro-validate-gap` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl` |
 | 大きい initiative を分解する | `kiro-discovery` → `kiro-spec-batch` |
 | spec 不要の小変更を入れる | `kiro-discovery` → 直接実装 |
-
-レガシーの `/kiro:*` コマンドモード (`--claude`, `--cursor` など) も引き続き利用可能だが、非推奨である。アップグレード手順は [Migration Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/migration-guide.md) を参照。
 
 規模の大きい承認済み task set に対しては、`kiro-impl` を走らせるとタスクごとの subagent spawn、independent review、失敗時の auto-debug 付きで自律実装が始まる。
 
@@ -96,21 +94,12 @@ spec フェーズの典型的な出力（10 分以内）:
 
 ## 対応エージェント
 
-全 8 種類の skills variant は同じ 17-skill セットを配信する。違いは各プラットフォーム統合が実運用でどれだけ検証されているか、である。
+対応する2環境には同じ17-skillセットを配信し、両方を実機で検証する。
 
-| エージェント | Skills モード | 安定度 | レガシーモード |
-|---|---|---|---|
-| **Claude Code** | `--claude-skills` | Stable | `--claude` / `--claude-agent`（非推奨） |
-| **Codex** | `--codex-skills` | Stable | `--codex`（ブロック済み） |
-| **Cursor IDE** | `--cursor-skills` | Beta | `--cursor`（非推奨） |
-| **GitHub Copilot** | `--copilot-skills` | Beta | `--copilot`（非推奨） |
-| **Windsurf IDE** | `--windsurf-skills` | Beta | `--windsurf`（非推奨） |
-| **OpenCode** | `--opencode-skills` | Beta | `--opencode` / `--opencode-agent`（非推奨） |
-| **Gemini CLI** | `--gemini-skills` | Beta | `--gemini`（非推奨） |
-| **Antigravity** | `--antigravity` | Beta (experimental) | — |
-| **Qwen Code** | — | — | `--qwen` |
-
-ここでの "Beta" は「機能が不足している」という意味ではない。17 skills とテンプレートは全 8 プラットフォームで同一である。プラットフォーム統合（subagent spawn 挙動、操作感、`SKILL.md` ロード）が Claude Code と Codex に比べて実運用実績が少なく、エッジケースが残っている可能性があるという意味である。問題に遭遇した場合は [Issues](https://github.com/Huruikagi/specbind/issues) まで報告いただけると助かる。
+| エージェント | Skills モード | 状態 |
+|---|---|---|
+| **Claude Code** | `--claude-skills` | 対応 |
+| **Codex** | `--codex-skills` | 対応 |
 
 ## インストール詳細
 
@@ -121,19 +110,6 @@ npx specbind@latest --lang ja    # 日本語
 npx specbind@latest --lang zh-TW # 繁体字中国語
 npx specbind@latest --lang es    # スペイン語
 # 対応言語: en, ja, zh-TW, zh, es, pt, de, fr, ru, it, ko, ar, el
-```
-
-### レガシーモード（非推奨）
-
-```bash
-npx specbind@latest --claude        # Claude Code コマンド（--claude-skills を使用）
-npx specbind@latest --claude-agent  # Claude Code subagent（--claude-skills を使用）
-npx specbind@latest --cursor        # Cursor IDE コマンド（--cursor-skills を使用）
-npx specbind@latest --copilot       # GitHub Copilot プロンプト（--copilot-skills を使用）
-npx specbind@latest --windsurf      # Windsurf IDE ワークフロー（--windsurf-skills を使用）
-npx specbind@latest --opencode      # OpenCode コマンド（--opencode-skills を使用）
-npx specbind@latest --gemini        # Gemini CLI コマンド（--gemini-skills を使用）
-npx specbind@latest --qwen          # Qwen Code
 ```
 
 ### 高度なオプション
@@ -163,28 +139,18 @@ npx specbind@latest --kiro-dir docs
 
 ```
 project/
-# Skills モード（推奨）: いずれか 1 つがインストールされる
+# いずれか1つがインストールされる
 ├── .claude/skills/           # 17 skills（Claude Code Skills、デフォルト）
 ├── .agents/skills/           # 17 skills（Codex Skills）
-├── .cursor/skills/           # 17 skills（Cursor Skills）
-├── .github/skills/           # 17 skills（GitHub Copilot Skills）
-├── .windsurf/skills/         # 17 skills（Windsurf Skills）
-├── .opencode/skills/         # 17 skills（OpenCode Skills）
-├── .gemini/skills/           # 17 skills（Gemini CLI Skills）
-├── .agent/skills/            # 17 skills（Antigravity Skills）
-# レガシーコマンドモード（非推奨）
-├── .claude/commands/kiro/    # 11 スラッシュコマンド（--claude）
-├── .github/prompts/          # 11 プロンプトコマンド（--copilot）
-├── .windsurf/workflows/      # 11 ワークフローファイル（--windsurf）
 # プロジェクトメモリと spec 状態（共通）
 ├── .kiro/settings/templates/ # 共通テンプレート（{{KIRO_DIR}} を展開）
-├── .kiro/settings/rules/     # 共通ルール（非 skills エージェントが使用）
+├── .kiro/settings/rules/     # 共通ルール
 ├── .kiro/specs/              # 機能仕様書
 ├── .kiro/steering/           # AI 指導ドキュメント
 └── CLAUDE.md / AGENTS.md     # プロジェクト設定（エージェントごと）
 ```
 
-実際に作成されるのはインストールしたエージェントに対応するディレクトリのみ。上記のツリーは全エージェント分を示している。
+実際に作成されるのは、選択したエージェントに対応するディレクトリのみ。
 
 ## ドキュメント
 

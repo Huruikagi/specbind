@@ -5,13 +5,7 @@
   "description": "An independent command system for spec-driven development with AI coding agents.",
   "keywords": [
     "claude-code",
-    "cursor",
-    "windsurf",
-    "gemini-cli",
     "codex",
-    "github-copilot",
-    "qwen-code",
-    "opencode",
     "sdd",
     "spec-driven-development",
     "kiro",

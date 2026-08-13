@@ -5,7 +5,7 @@ import type { OSType } from '../src/resolvers/os';
 import { buildTemplateContext } from '../src/template/context';
 
 describe('OS filtering in processManifest', () => {
-  const agent: AgentType = 'claude-code';
+  const agent: AgentType = 'claude-code-skills';
   const ctx = buildTemplateContext({ agent, lang: 'en' });
 
   it('includes artifacts with no OS condition', () => {
@@ -85,35 +85,35 @@ describe('OS filtering in processManifest', () => {
       version: 1,
       artifacts: [
         {
-          id: 'claude_mac_commands',
+          id: 'claude_mac_skills',
           source: {
             type: 'templateDir' as const,
             fromDir: 'templates/agents/{{AGENT}}/commands/os-mac',
             toDir: '{{AGENT_COMMANDS_DIR}}',
           },
-          when: { agent: 'claude-code' as AgentType, os: 'mac' as OSType },
+          when: { agent: 'claude-code-skills' as AgentType, os: 'mac' as OSType },
         },
         {
-          id: 'gemini_mac_commands',
+          id: 'codex_mac_skills',
           source: {
             type: 'templateDir' as const,
             fromDir: 'templates/agents/{{AGENT}}/commands/os-mac',
             toDir: '{{AGENT_COMMANDS_DIR}}',
           },
-          when: { agent: 'gemini-cli' as AgentType, os: 'mac' as OSType },
+          when: { agent: 'codex-skills' as AgentType, os: 'mac' as OSType },
         },
       ],
     };
 
-    const claudeMacResult = processManifest(manifest, 'claude-code', ctx, 'mac');
-    const claudeWindowsResult = processManifest(manifest, 'claude-code', ctx, 'windows');
-    const geminiMacResult = processManifest(manifest, 'gemini-cli', buildTemplateContext({ agent: 'gemini-cli', lang: 'en' }), 'mac');
+    const claudeMacResult = processManifest(manifest, 'claude-code-skills', ctx, 'mac');
+    const claudeWindowsResult = processManifest(manifest, 'claude-code-skills', ctx, 'windows');
+    const codexMacResult = processManifest(manifest, 'codex-skills', buildTemplateContext({ agent: 'codex-skills', lang: 'en' }), 'mac');
 
     expect(claudeMacResult).toHaveLength(1);
-    expect(claudeMacResult[0].id).toBe('claude_mac_commands');
+    expect(claudeMacResult[0].id).toBe('claude_mac_skills');
     expect(claudeWindowsResult).toHaveLength(0);
-    expect(geminiMacResult).toHaveLength(1);
-    expect(geminiMacResult[0].id).toBe('gemini_mac_commands');
+    expect(codexMacResult).toHaveLength(1);
+    expect(codexMacResult[0].id).toBe('codex_mac_skills');
   });
 
   it('excludes artifacts when OS does not match', () => {

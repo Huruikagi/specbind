@@ -6,7 +6,7 @@
 <a href="./README.md">English</a> | <a href="./README_ja.md">日本語</a> | 繁體中文
 </sub></div>
 
-**把已核准規格轉成長時間自律實作工作流。** 單一指令將 agentic SDLC 工作流安裝為 Agent Skills: discovery, requirements, design, tasks 以及帶有任務級別 independent review 的自律實作。支援 8 個 AI coding agent，每個平台使用相同的 17-skill 套件。
+**把已核准規格轉成長時間自律實作工作流。** 單一指令將 agentic SDLC 工作流安裝為 Agent Skills: discovery, requirements, design, tasks 以及帶有任務級別 independent review 的自律實作。為 Claude Code 與 Codex 提供相同的 17-skill 套件。
 
 👻 **Kiro 風格。** Kiro IDE 的 spec-driven / agentic SDLC 風格。既有 Kiro 規格可直接使用。
 
@@ -18,7 +18,7 @@ specbind v3.0 是圍繞 Agent Skills 與長時間自律實作的重寫。
 - **`/kiro-impl` 執行長時間自律實作。** 每個任務由 fresh implementer 在 feature flag 後執行 TDD (RED → GREEN)，獨立的 reviewer 做機械驗證，失敗時由 auto-debug pass 在乾淨 context 中調查根本原因。任務間的知見透過 `tasks.md` 的 `## Implementation Notes` 傳給下一個 implementer。每次迭代處理 1 個任務，中斷後再執行也安全。
 - **邊界優先的 spec discipline。** `design.md` 新增 File Structure Plan，成為任務邊界的依據。任務帶有 `_Boundary:_` / `_Depends:_` 標註。review 與 validation 尋找邊界違規而非僅看風格。
 - **`/kiro-spec-batch` 支援多 spec initiative。** 從 roadmap 並行產生多個 spec，並執行 cross-spec review 以捕捉 spec 間矛盾、責務重複與介面不一致。
-- **Agent Skills 橫跨 8 個 AI coding agent。** 每次安裝 17 個 skills、按需載入（progressive disclosure）。Claude Code 與 Codex 為 stable；Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity 為 beta。零外部依賴，subagent 透過各平台原生 spawn 啟動。
+- **Claude Code 與 Codex 的 Agent Skills。** 每次安裝 17 個 skills、按需載入（progressive disclosure）。兩個整合都由實機持續維護與驗證。零外部依賴，subagent 透過各平台原生 spawn 啟動。
 
 Skills 模式完整工作流與 `/kiro-impl` 內部細節請參考 [Skill Reference](https://github.com/Huruikagi/specbind/blob/main/docs/guides/skill-reference.md)。
 
@@ -41,14 +41,14 @@ cd your-project
 npx specbind@latest
 ```
 
-預設會安裝 **Claude Code Skills** 與英文文件。若要指定其他代理或語言:
+預設會安裝 **Claude Code Skills** 與英文文件。若要指定 Codex 或其他語言:
 
 ```bash
 npx specbind@latest --codex-skills --lang ja      # Codex, 日語
-npx specbind@latest --cursor-skills --lang zh-TW  # Cursor IDE, 繁體中文
+npx specbind@latest --claude-skills --lang zh-TW  # Claude Code, 繁體中文
 ```
 
-支援 8 個 AI coding agent（Claude Code 與 Codex 為 stable；Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity 為 beta）和 13 種語言。完整列表請參考 [支援的代理](#支援的代理)。
+支援 Claude Code、Codex 和13種語言。詳情請參考 [支援的代理](#支援的代理)。
 
 然後在你的代理裡執行:
 
@@ -66,8 +66,6 @@ npx specbind@latest --cursor-skills --lang zh-TW  # Cursor IDE, 繁體中文
 | 擴充既有系統 | `kiro-steering` → `kiro-discovery` 或 `kiro-spec-init` → 可選 `kiro-validate-gap` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl` |
 | 分解大型 initiative | `kiro-discovery` → `kiro-spec-batch` |
 | 不需要 spec 的小改動 | `kiro-discovery` → 直接實作 |
-
-舊版 `/kiro:*` 指令模式（`--claude`, `--cursor` 等）仍然可用但已棄用。升級方式請參考 [Migration Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/migration-guide.md)。
 
 對較大規模的已核准任務集合，執行 `kiro-impl` 會以任務級別的 subagent spawn、independent review、失敗時 auto-debug 開始自律實作。
 
@@ -96,21 +94,12 @@ spec 階段的典型產出（10 分鐘以內）:
 
 ## 支援的代理
 
-全部 8 個 skills variant 提供相同的 17-skill 套件。差異在於各平台整合累積了多少實戰驗證。
+兩個受支援的整合提供相同的17-skill套件，並以實機直接驗證。
 
-| 代理 | Skills 模式 | 穩定度 | 舊版模式 |
-|---|---|---|---|
-| **Claude Code** | `--claude-skills` | Stable | `--claude` / `--claude-agent`（已棄用） |
-| **Codex** | `--codex-skills` | Stable | `--codex`（已封鎖） |
-| **Cursor IDE** | `--cursor-skills` | Beta | `--cursor`（已棄用） |
-| **GitHub Copilot** | `--copilot-skills` | Beta | `--copilot`（已棄用） |
-| **Windsurf IDE** | `--windsurf-skills` | Beta | `--windsurf`（已棄用） |
-| **OpenCode** | `--opencode-skills` | Beta | `--opencode` / `--opencode-agent`（已棄用） |
-| **Gemini CLI** | `--gemini-skills` | Beta | `--gemini`（已棄用） |
-| **Antigravity** | `--antigravity` | Beta (experimental) | — |
-| **Qwen Code** | — | — | `--qwen` |
-
-這裡的 "Beta" 不代表「功能不完整」。所有 8 個平台共用相同的 17 skills 與模板。Beta 指的是平台整合（subagent spawn 行為、操作感、`SKILL.md` 載入）相較於 Claude Code 與 Codex 的實戰驗證較少，可能仍有邊界狀況。若遇到問題請至 [Issues](https://github.com/Huruikagi/specbind/issues) 回報。
+| 代理 | Skills 模式 | 狀態 |
+|---|---|---|
+| **Claude Code** | `--claude-skills` | 支援 |
+| **Codex** | `--codex-skills` | 支援 |
 
 ## 安裝詳情
 
@@ -121,19 +110,6 @@ npx specbind@latest --lang zh-TW # 繁體中文
 npx specbind@latest --lang ja    # 日語
 npx specbind@latest --lang es    # 西班牙語
 # 支援語言: en, ja, zh-TW, zh, es, pt, de, fr, ru, it, ko, ar, el
-```
-
-### 舊版模式（已棄用）
-
-```bash
-npx specbind@latest --claude        # Claude Code 指令（請改用 --claude-skills）
-npx specbind@latest --claude-agent  # Claude Code subagent（請改用 --claude-skills）
-npx specbind@latest --cursor        # Cursor IDE 指令（請改用 --cursor-skills）
-npx specbind@latest --copilot       # GitHub Copilot 提示（請改用 --copilot-skills）
-npx specbind@latest --windsurf      # Windsurf IDE 工作流程（請改用 --windsurf-skills）
-npx specbind@latest --opencode      # OpenCode 指令（請改用 --opencode-skills）
-npx specbind@latest --gemini        # Gemini CLI 指令（請改用 --gemini-skills）
-npx specbind@latest --qwen          # Qwen Code
 ```
 
 ### 進階選項
@@ -163,28 +139,18 @@ npx specbind@latest --kiro-dir docs
 
 ```
 project/
-# Skills 模式（建議）: 僅會安裝其中之一
+# 僅會安裝其中之一
 ├── .claude/skills/           # 17 skills（Claude Code Skills，預設）
 ├── .agents/skills/           # 17 skills（Codex Skills）
-├── .cursor/skills/           # 17 skills（Cursor Skills）
-├── .github/skills/           # 17 skills（GitHub Copilot Skills）
-├── .windsurf/skills/         # 17 skills（Windsurf Skills）
-├── .opencode/skills/         # 17 skills（OpenCode Skills）
-├── .gemini/skills/           # 17 skills（Gemini CLI Skills）
-├── .agent/skills/            # 17 skills（Antigravity Skills）
-# 舊版指令模式（已棄用）
-├── .claude/commands/kiro/    # 11 斜線指令（--claude）
-├── .github/prompts/          # 11 提示指令（--copilot）
-├── .windsurf/workflows/      # 11 工作流程檔案（--windsurf）
 # 共用的專案記憶與 spec 狀態
 ├── .kiro/settings/templates/ # 共用模板（以 {{KIRO_DIR}} 展開）
-├── .kiro/settings/rules/     # 共用規則（非 skills 代理使用）
+├── .kiro/settings/rules/     # 共用規則
 ├── .kiro/specs/              # 功能規格文件
 ├── .kiro/steering/           # AI 指導文件
 └── CLAUDE.md / AGENTS.md     # 專案設定（依代理而異）
 ```
 
-實際只會建立所選代理需要的目錄，上方樹狀圖僅示範整個超集合。
+實際只會建立所選代理需要的目錄。
 
 ## 文件
 

@@ -11,24 +11,24 @@ const manifest = {
       id: 'commands_static_all',
       source: {
         type: 'staticDir' as const,
-        from: 'templates/agents/{{AGENT}}/commands',
+        from: 'templates/agents/{{AGENT}}/skills',
         toDir: '{{AGENT_COMMANDS_DIR}}',
       },
-      when: { agent: ['claude-code', 'qwen-code'] as AgentType[] },
+      when: { agent: ['claude-code-skills'] as AgentType[] },
     },
   ],
 };
 
 describe('processManifest', () => {
   it('filters by when.agent and resolves placeholders in from/toDir', () => {
-    const agent: AgentType = 'claude-code';
+    const agent: AgentType = 'claude-code-skills';
     const ctx = buildTemplateContext({ agent, lang: 'en' });
     const result = processManifest(manifest, agent, ctx, 'mac' as OSType);
     expect(result).toHaveLength(1);
     const art = result[0] as any;
     expect(art.id).toBe('commands_static_all');
-    expect(art.source.from).toBe('templates/agents/claude-code/commands');
-    expect(art.source.toDir).toBe('.claude/commands/kiro');
+    expect(art.source.from).toBe('templates/agents/claude-code-skills/skills');
+    expect(art.source.toDir).toBe('.claude/skills');
   });
 
   it('supports templateDir planning with placeholders', () => {
@@ -45,18 +45,18 @@ describe('processManifest', () => {
         },
       ],
     };
-    const agent: AgentType = 'claude-code';
+    const agent: AgentType = 'claude-code-skills';
     const ctx = buildTemplateContext({ agent, lang: 'en' });
     const result = processManifest(m, agent, ctx, 'mac' as OSType);
     expect(result).toHaveLength(1);
     const dir = result[0] as any;
     expect(dir.source.type).toBe('templateDir');
-    expect(dir.source.fromDir).toBe('templates/agents/claude-code/docs');
+    expect(dir.source.fromDir).toBe('templates/agents/claude-code-skills/docs');
     expect(dir.source.toDir).toBe('.claude');
   });
 
   it('excludes artifacts when agent does not match', () => {
-    const agent: AgentType = 'gemini-cli';
+    const agent: AgentType = 'codex-skills';
     const ctx = buildTemplateContext({ agent, lang: 'en' });
     const result = processManifest(manifest, agent, ctx, 'mac' as OSType);
     expect(result).toHaveLength(0);
@@ -74,11 +74,11 @@ describe('processManifest', () => {
             toDir: '{{AGENT_DIR}}',
             rename: '{{AGENT_DOC}}',
           },
-          when: { agent: 'claude-code' as AgentType },
+          when: { agent: 'claude-code-skills' as AgentType },
         },
       ],
     };
-    const agent: AgentType = 'claude-code';
+    const agent: AgentType = 'claude-code-skills';
     const ctx = buildTemplateContext({ agent, lang: 'en' });
     const result = processManifest(m, agent, ctx, 'mac' as OSType);
     expect(result).toHaveLength(1);
@@ -111,7 +111,7 @@ describe('processManifest', () => {
         },
       ],
     };
-    const agent: AgentType = 'claude-code';
+    const agent: AgentType = 'claude-code-skills';
     const ctx = buildTemplateContext({ agent, lang: 'en' });
     const result = processManifest(m, agent, ctx, 'mac' as OSType);
     expect(result).toHaveLength(2);

@@ -81,7 +81,7 @@ specbind における長時間自律は抽象的な約束ではない。`tasks.m
 
 skill 名を覚えることより、どの workstream に入るかを先に決める方が重要である。
 
-| やりたいこと | Skills モード | レガシーモード |
+| やりたいこと | 現行Skillsワークフロー | 旧commandsワークフロー（削除済み） |
 | --- | --- | --- |
 | 新しい仕事を始める（機能から大きな構想まで） | `/kiro-discovery` → `/kiro-spec-init` → `/kiro-spec-requirements` → `/kiro-spec-design` → `/kiro-spec-tasks` → `/kiro-impl` | `/kiro:spec-init` → `/kiro:spec-requirements` → `/kiro:spec-design` → `/kiro:spec-tasks` → `/kiro:spec-impl` |
 | 既存システムを拡張する | `/kiro:steering` → `/kiro-discovery` または `/kiro:spec-init` → 任意で `/kiro:validate-gap` → `/kiro-spec-design` → `/kiro-spec-tasks` → `/kiro-impl` | `/kiro:steering` → `/kiro:spec-init` → 任意で `/kiro:validate-gap` → `/kiro:spec-design` → `/kiro:spec-tasks` → `/kiro:spec-impl` |
@@ -122,7 +122,7 @@ skill 名を覚えることより、どの workstream に入るかを先に決�
 
 ## Skills ワークフロー（v3.0.0）
 
-`--claude-skills`、`--codex-skills`、`--cursor-skills`、`--copilot-skills`、`--windsurf-skills`、`--opencode-skills`、`--gemini-skills`、`--antigravity` でインストールした場合、コマンド（`/kiro:*`）の代わりに **Skills**（`/kiro-*`）を使用する。Skills モードでは、外部プラグインに依存せず、各プラットフォーム標準の subagent primitive のみで動作する。Skills モードの完全なリファレンス（`/kiro-impl` の subagent flow、カスタマイズ方法を含む）は [スキルリファレンス](skill-reference.md) を参照。
+`--claude-skills` または `--codex-skills` でインストールし、現行のSkillベースワークフローを使用する。後述の比較にある `/kiro:*` commandsフローは履歴上の参考であり、現在はインストールできない。`/kiro-impl` のsubagent flowやカスタマイズ方法を含む完全なリファレンスは [スキルリファレンス](skill-reference.md) を参照。
 
 ### コマンドモードと Skills モードの対応
 

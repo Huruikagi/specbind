@@ -11,7 +11,7 @@ specbind 1.x (especially 1.1.5) and 2.0.0 share the same agentic SDLC philosophy
 | Goal | Recommended action |
 | --- | --- |
 | Keep the legacy 1.x workflow untouched | Run `npx specbind@1.1.5` whenever you install/refresh files. Continue editing agent-specific prompt folders (only the original 8 spec/steering commands exist). |
-| Adopt unified templates, research/design split, and consistent behavior across all 8 supported agents | Reinstall with `npx specbind@latest` (=2.0.0) and customize only `.kiro/settings/templates/*` plus `.kiro/settings/rules/` (full 11-command set, including validate-*). |
+| Reproduce the historical v2 workflow | Install the pinned `npx specbind@2.0.0`; do not use `@latest`, whose supported agents and interface have changed. |
 
 > ⚠️ Mixing 1.x and 2.x layouts in the same `.kiro` tree is not supported. Pick one path per repo/branch.
 
@@ -61,9 +61,9 @@ npx specbind@1.1.5 --lang ja       # legacy i18n flags still work
 
 2. **Install v2 cleanly (reuse interactive choices)**
    ```bash
-   npx specbind@latest                 # default (Claude Code)
-   npx specbind@latest --cursor        # other agents
-   npx specbind@latest --claude-agent  # Subagents mode
+   npx specbind@2.0.0                 # historical default (Claude Code)
+   npx specbind@2.0.0 --cursor        # historical Cursor target
+   npx specbind@2.0.0 --claude-agent  # historical Subagents mode
    ```
    - The installer now prompts per file group (overwrite / append / keep). You can choose “append” for steering/specs to merge existing documents, or “keep” to skip untouched assets.
 
@@ -98,7 +98,7 @@ npx specbind@1.1.5 --lang ja       # legacy i18n flags still work
 
 ## 5. v2.x to v3.0
 
-> v3.0 applies to all `--*-skills` install targets. Skills modes are now available for 8 platforms: Claude Code, Codex, Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity. Commands-based agents (`--claude-code`, `--cursor`, etc.) still work but are deprecated and will be removed in a future release.
+> Current v3 builds support two install targets: Claude Code Skills and Codex Skills. Earlier pre-release v3 snapshots also contained unverified platform templates and legacy commands modes; those targets were removed before publication.
 
 ### TL;DR
 
@@ -108,26 +108,20 @@ npx specbind@1.1.5 --lang ja       # legacy i18n flags still work
 | Discovery | Basic idea refinement | **Routing/scoping entry point**; writes `brief.md` and, when needed, `roadmap.md` |
 | Spec batch | N/A | **`/kiro-spec-batch`** -- parallel multi-spec creation with cross-spec review |
 | Implementation | `kiro-spec-impl` (single-pass) | **`/kiro-impl`** -- unified skill with native subagent dispatch (implementer + reviewer + debugger) |
-| `--codex prompts` mode | Supported | **Blocked** (use `--codex-skills` instead) |
+| Install targets | Commands and early Skills variants | **`--claude-skills` and `--codex-skills` only** |
 | Session persistence | None | **`brief.md`** persists across sessions; downstream skills read it automatically |
 | TDD protocol | Basic TDD | **Feature Flag TDD**: RED then GREEN protocol for safe incremental delivery |
 | Codex cross-spec review | N/A | **`.codex/agents/spec-reviewer.toml`** for Codex installs |
 | Debug on failure | N/A | **Debug subagent** -- fresh context investigation with web search (max 2 rounds) |
 | Learnings propagation | N/A | **Implementation Notes** in tasks.md injected into subsequent implementer prompts |
-| Skills platforms | Claude Code, Codex | **8 platforms**: Claude, Codex, Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity |
+| Skills platforms | Claude Code, Codex | **Claude Code and Codex**, both directly tested |
 
 ### Key migration steps
 
-1. **Reinstall** with the latest version (skills mode for your platform):
+1. **Reinstall** with the latest version for one of the two supported agents:
    ```bash
    npx specbind@latest --claude-skills     # Claude Code (default)
    npx specbind@latest --codex-skills      # Codex
-   npx specbind@latest --cursor-skills     # Cursor IDE
-   npx specbind@latest --copilot-skills    # GitHub Copilot
-   npx specbind@latest --windsurf-skills   # Windsurf IDE
-   npx specbind@latest --opencode-skills   # OpenCode
-   npx specbind@latest --gemini-skills     # Gemini CLI
-   npx specbind@latest --antigravity       # Antigravity
    ```
 
 2. **Remove legacy skill references** -- if you have custom scripts or documentation referencing `kiro-spec-impl`, update them to `/kiro-impl`.
@@ -136,7 +130,7 @@ npx specbind@1.1.5 --lang ja       # legacy i18n flags still work
 
 4. **Use `/kiro-spec-batch`** for multi-feature work -- when your roadmap contains multiple specs, `/kiro-spec-batch` creates them in parallel and runs a cross-spec review to catch contradictions.
 
-5. **Migrate from legacy modes** -- all non-skills modes (`--claude`, `--cursor`, `--copilot`, `--windsurf`, `--opencode`, `--gemini`) are deprecated and will be removed. `--codex` is already blocked. Use the corresponding `--*-skills` flag.
+5. **Remove legacy install flags from scripts** -- current releases reject commands modes and unsupported agents. Use `--claude-skills` or `--codex-skills`.
 
 6. **Leverage `brief.md` for session continuity** -- after discovery, you can close the session and resume later. The brief file preserves the feature context so you do not need to re-explain scope.
 

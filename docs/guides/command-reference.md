@@ -35,7 +35,7 @@ If you are using skills mode, start with the [Skill Reference](skill-reference.m
 
 ## Skills Mode Note
 
-> **Applies to**: commands-based installs. Skills-mode installs (`--claude-skills`, `--codex-skills`, `--cursor-skills`, `--copilot-skills`, `--windsurf-skills`, `--opencode-skills`, `--gemini-skills`, `--antigravity`) should use the [Skill Reference](skill-reference.md).
+> **Archived:** commands-based installs have been removed from current releases. This page documents older pinned versions only. Current `--claude-skills` and `--codex-skills` installs should use the [Skill Reference](skill-reference.md).
 
 ---
 

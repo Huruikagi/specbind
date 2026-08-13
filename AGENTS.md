@@ -18,7 +18,7 @@ Kiro-style Spec-Driven Development on an agentic SDLC
 - Use `/kiro-spec-status [feature-name]` to check progress
 
 ## Development Guidelines
-- Think in English, generate responses in English. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
+- Think in English, generate responses in Japanese. All Markdown content written to project files (e.g., requirements.md, design.md, tasks.md, research.md, validation reports) MUST be written in the target language configured for this specification (see spec.json.language).
 
 ## Minimal Workflow
 - Phase 0 (optional): `/kiro-steering`, `/kiro-steering-custom`
@@ -39,7 +39,7 @@ Kiro-style Spec-Driven Development on an agentic SDLC
 - Progress check: `/kiro-spec-status {feature}` (use anytime)
 
 ## Skills Structure
-Skills are located under the agent-specific skills directory (e.g., `.claude/skills/kiro-*/SKILL.md`, `.agents/skills/kiro-*/SKILL.md` for Codex, `.cursor/skills/kiro-*/SKILL.md`, etc.).
+Skills are located under the supported agent-specific skills directory: `.claude/skills/kiro-*/SKILL.md` for Claude Code and `.agents/skills/kiro-*/SKILL.md` for Codex.
 - Each skill is a directory with a `SKILL.md` file
 - Skills run inline with access to conversation context
 - Skills may delegate parallel research to subagents for efficiency

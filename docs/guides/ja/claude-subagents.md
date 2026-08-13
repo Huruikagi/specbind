@@ -2,7 +2,7 @@
 
 > 📖 **English guide:** [Claude Code Subagents Workflow](../claude-subagents.md)
 
-> **対象**: このページはレガシーの **`--claude-agent` / `--claude-code-agent`** インストール先について解説する。`.claude/agents/kiro/*.md` の静的 Subagent ファイルで `spec-quick` を加速する仕組み。`--claude-skills`（あるいは他の `--*-skills` フラグ）でインストールして Skills モードの implementer / reviewer / debugger の dispatch 詳細を知りたい場合は、[スキルリファレンス](skill-reference.md) の「`/kiro-impl` の内部」「Skills モードと `--claude-agent` の比較」節を参照すること。
+> **アーカイブ:** `--claude-agent` / `--claude-code-agent` は現行リリースから削除済み。このページは固定した旧バージョン向けの資料である。現行のClaude Code Skillsについては [スキルリファレンス](skill-reference.md) を参照。
 
 このガイドでは、`npx specbind@latest --claude-agent`（または `--claude-code-agent`）で提供される **Claude Code Subagents** の中で、独自の制御ロジックを持つ `spec-quick` コマンドに焦点を当てて解説する。その他の `/kiro:*` コマンドも同じ Subagent を再利用するが、動作は標準版と変わらないため、ここでの説明は省略する。
 

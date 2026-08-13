@@ -4,7 +4,7 @@ import { buildTemplateContext } from '../src/template/context';
 import type { AgentType } from '../src/resolvers/agentLayout';
 
 describe('template renderer edge cases', () => {
-  const agent: AgentType = 'claude-code';
+  const agent: AgentType = 'claude-code-skills';
   const ctx = buildTemplateContext({ agent, lang: 'en' });
 
   describe('renderTemplateString', () => {
@@ -22,13 +22,13 @@ describe('template renderer edge cases', () => {
     it('handles multiple instances of same placeholder', () => {
       const input = '{{AGENT}} loves {{AGENT}} and {{AGENT}} again';
       const result = renderTemplateString(input, agent, ctx);
-      expect(result).toBe('claude-code loves claude-code and claude-code again');
+      expect(result).toBe('claude-code-skills loves claude-code-skills and claude-code-skills again');
     });
 
     it('handles adjacent placeholders', () => {
       const input = '{{AGENT}}{{AGENT_DIR}}{{LANG_CODE}}';
       const result = renderTemplateString(input, agent, ctx);
-      expect(result).toBe('claude-code.claudeen');
+      expect(result).toBe('claude-code-skills.claudeen');
     });
 
     it('replaces development guidelines', () => {
@@ -40,19 +40,19 @@ describe('template renderer edge cases', () => {
     it('preserves whitespace around placeholders', () => {
       const input = '  {{AGENT}}  \n  {{AGENT_DIR}}  ';
       const result = renderTemplateString(input, agent, ctx);
-      expect(result).toBe('  claude-code  \n  .claude  ');
+      expect(result).toBe('  claude-code-skills  \n  .claude  ');
     });
 
     it('handles malformed placeholder syntax gracefully', () => {
       const input = '{AGENT} {{AGENT} {{AGENT}} {{{AGENT}}}';
       const result = renderTemplateString(input, agent, ctx);
-      expect(result).toBe('{AGENT} {{AGENT} claude-code {claude-code}');
+      expect(result).toBe('{AGENT} {{AGENT} claude-code-skills {claude-code-skills}');
     });
 
     it('handles nested braces', () => {
       const input = '{{{AGENT}}} should become {{AGENT}}';
       const result = renderTemplateString(input, agent, ctx);
-      expect(result).toBe('{claude-code} should become claude-code');
+      expect(result).toBe('{claude-code-skills} should become claude-code-skills');
     });
 
     it('handles unknown placeholder', () => {
@@ -86,7 +86,7 @@ describe('template renderer edge cases', () => {
       });
 
       const result = renderJsonTemplate(input, agent, ctx) as any;
-      expect(result.config.agent).toBe('claude-code');
+      expect(result.config.agent).toBe('claude-code-skills');
       expect(result.config.nested.dir).toBe('.claude');
       expect(result.config.nested.file).toBe('CLAUDE.md');
       expect(result.array).toEqual(['en', '.kiro', ctx.DEV_GUIDELINES]);
@@ -95,7 +95,7 @@ describe('template renderer edge cases', () => {
     it('handles JSON with numbers and booleans', () => {
       const input = '{"agent":"{{AGENT}}","version":1,"enabled":true,"ratio":3.14}';
       const result = renderJsonTemplate(input, agent, ctx) as any;
-      expect(result.agent).toBe('claude-code');
+      expect(result.agent).toBe('claude-code-skills');
       expect(result.version).toBe(1);
       expect(result.enabled).toBe(true);
       expect(result.ratio).toBe(3.14);
@@ -109,19 +109,19 @@ describe('template renderer edge cases', () => {
     it('handles JSON string with escaped quotes', () => {
       const input = '{"message": "Agent \\"{{AGENT}}\\" is ready"}';
       const result = renderJsonTemplate(input, agent, ctx) as any;
-      expect(result.message).toBe('Agent "claude-code" is ready');
+      expect(result.message).toBe('Agent "claude-code-skills" is ready');
     });
 
     it('handles JSON with null values', () => {
       const input = '{"agent":"{{AGENT}}","optional":null}';
       const result = renderJsonTemplate(input, agent, ctx) as any;
-      expect(result.agent).toBe('claude-code');
+      expect(result.agent).toBe('claude-code-skills');
       expect(result.optional).toBe(null);
     });
 
     it('preserves exact JSON formatting for complex structures', () => {
       const complexCtx = buildTemplateContext({ 
-        agent: 'gemini-cli', 
+        agent: 'codex-skills',
         lang: 'ja',
         kiroDir: { flag: 'custom-kiro' }
       });
@@ -141,13 +141,13 @@ describe('template renderer edge cases', () => {
         }
       });
       
-      const result = renderJsonTemplate(input, 'gemini-cli', complexCtx) as any;
+      const result = renderJsonTemplate(input, 'codex-skills', complexCtx) as any;
       expect(result.manifest.version).toBe(2);
-      expect(result.manifest.agent).toBe('gemini-cli');
+      expect(result.manifest.agent).toBe('codex-skills');
       expect(result.manifest.config.lang).toBe('ja');
       expect(result.manifest.config.paths.kiro).toBe('custom-kiro');
-      expect(result.manifest.config.paths.agent).toBe('.gemini');
-      expect(result.manifest.config.paths.commands).toBe('.gemini/commands/kiro');
+      expect(result.manifest.config.paths.agent).toBe('.agents');
+      expect(result.manifest.config.paths.commands).toBe('.agents/skills');
     });
   });
 });

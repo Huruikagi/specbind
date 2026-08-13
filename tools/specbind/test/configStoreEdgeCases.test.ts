@@ -23,7 +23,7 @@ describe('config store edge cases', () => {
   it('resolveConfigPath returns correct path', () => {
     const cwd = '/some/path';
     const configPath = resolveConfigPath(cwd);
-    expect(configPath).toBe('/some/path/.specbind.json');
+    expect(configPath).toBe(join(cwd, '.specbind.json'));
   });
 
   it('handles null config object in JSON', async () => {
@@ -38,10 +38,10 @@ describe('config store edge cases', () => {
   it('saves config with proper formatting', async () => {
     const dir = await mkTmp();
     const config: UserConfig = {
-      agent: 'claude-code',
+      agent: 'claude-code-skills',
       lang: 'ja',
       agentLayouts: {
-        'claude-code': {
+        'claude-code-skills': {
           commandsDir: '.custom'
         }
       }
@@ -55,7 +55,7 @@ describe('config store edge cases', () => {
     
     expect(raw).toMatch(/^{\s*\n/); // Starts with formatted JSON
     expect(raw).toMatch(/}\n$/); // Ends with closing brace followed by newline
-    expect(raw).toContain('  "agent": "claude-code"'); // Proper indentation
+    expect(raw).toContain('  "agent": "claude-code-skills"'); // Proper indentation
     
     // Verify it can be loaded back
     const loaded = await loadUserConfig(dir);
@@ -65,20 +65,20 @@ describe('config store edge cases', () => {
   it('handles complex nested config structures', async () => {
     const dir = await mkTmp();
     const complexConfig: UserConfig = {
-      agent: 'gemini-cli',
+      agent: 'codex-skills',
       lang: 'zh-TW',
       os: 'linux',
       kiroDir: 'docs/kiro',
       overwrite: 'force',
       backupDir: 'backups',
       agentLayouts: {
-        'claude-code': {
+        'claude-code-skills': {
           commandsDir: '.claude/custom',
           agentDir: '.claude-custom',
           docFile: 'CLAUDE_CUSTOM.md'
         },
-        'gemini-cli': {
-          commandsDir: '.gemini/custom'
+        'codex-skills': {
+          commandsDir: '.agents/skills/custom'
         }
       }
     };
@@ -102,10 +102,10 @@ describe('config store edge cases', () => {
     const nestedDir = join(dir, 'nested', 'path');
     
     try {
-      await saveUserConfig(nestedDir, { agent: 'claude-code' });
+      await saveUserConfig(nestedDir, { agent: 'claude-code-skills' });
       // If this doesn't throw, the directory was created automatically
       const loaded = await loadUserConfig(nestedDir);
-      expect(loaded.agent).toBe('claude-code');
+      expect(loaded.agent).toBe('claude-code-skills');
     } catch (error) {
       // Expected behavior: should throw when trying to write to non-existent directory
       expect(error).toBeDefined();

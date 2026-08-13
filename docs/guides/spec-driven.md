@@ -81,7 +81,7 @@ Autonomy is therefore not a replacement for specs. It depends on a strong spec h
 
 Use this table when you are deciding how to enter the workflow, not which skill name to memorize.
 
-| You want to... | Skills mode | Legacy mode |
+| You want to... | Current Skills workflow | Historical commands workflow (removed) |
 | --- | --- | --- |
 | Start new work (feature to initiative) | `/kiro-discovery` → `/kiro-spec-init` → `/kiro-spec-requirements` → `/kiro-spec-design` → `/kiro-spec-tasks` → `/kiro-impl` | `/kiro:spec-init` → `/kiro:spec-requirements` → `/kiro:spec-design` → `/kiro:spec-tasks` → `/kiro:spec-impl` |
 | Extend an existing system | `/kiro:steering` → `/kiro-discovery` or `/kiro:spec-init` → optional `/kiro:validate-gap` → `/kiro-spec-design` → `/kiro-spec-tasks` → `/kiro-impl` | `/kiro:steering` → `/kiro:spec-init` → optional `/kiro:validate-gap` → `/kiro:spec-design` → `/kiro:spec-tasks` → `/kiro:spec-impl` |
@@ -133,7 +133,7 @@ Each phase pauses for human review unless you explicitly bypass it (for example 
 
 ## Skills Workflow (3.0)
 
-Skills mode (`--claude-skills`, `--codex-skills`, `--cursor-skills`, `--copilot-skills`, `--windsurf-skills`, `--opencode-skills`, `--gemini-skills`, `--antigravity`) provides an alternative workflow that uses skill-based commands instead of `/kiro:*` slash commands. The spec phases are the same, but implementation and validation work differently. For the complete skills-mode surface, including `/kiro-impl` subagent flow and customization, see the [Skill Reference](skill-reference.md).
+Install with `--claude-skills` or `--codex-skills` to use the current Skill-based workflow. The `/kiro:*` slash-command flow shown in historical comparisons below is no longer an installable target. For the complete Skill surface, including `/kiro-impl` subagent flow and customization, see the [Skill Reference](skill-reference.md).
 
 ### Commands vs Skills Equivalents
 

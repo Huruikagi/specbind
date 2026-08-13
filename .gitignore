@@ -74,7 +74,10 @@ coverage/
 
 # Project specific
 BLOG.md
-docs/specbind/
+docs/specbind/*
+!docs/specbind/plans/
+docs/specbind/plans/*
+!docs/specbind/plans/agent-plan-two-agent-scope.md
 docs/kiro/prompt/
 docs/kiro/
 # .kiro/

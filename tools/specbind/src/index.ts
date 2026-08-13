@@ -227,17 +227,6 @@ export const runCli = async (
 
   parsedArgs.agent = await ensureAgentSelection(parsedArgs.agent ?? loadedConfig.agent, io);
 
-  if (parsedArgs.agent === 'codex') {
-    io.log('');
-    io.log(formatError('  --codex (prompts mode) is no longer supported.'));
-    io.log('');
-    io.log(`  Codex no longer loads ${colors.dim('.codex/prompts/')}. Use Skills instead:`);
-    io.log('');
-    io.log(`  ${colors.bold('npx specbind@latest --codex-skills')}`);
-    io.log('');
-    return 1;
-  }
-
   const resolved = mergeConfigAndArgs(parsedArgs, loadedConfig, runtime);
 
   const templatesBase = execOpts?.templatesRoot ? path.join(execOpts.templatesRoot, 'templates') : 'templates';

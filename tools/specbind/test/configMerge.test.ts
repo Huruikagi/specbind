@@ -27,7 +27,7 @@ describe('mergeConfigAndArgs', () => {
 
   it('respects precedence: CLI > config > defaults', () => {
     const args = parseArgs([
-      '--agent', 'qwen-code',
+      '--agent', 'codex-skills',
       '--lang', 'zh-TW',
       '--os', 'mac',
       '--kiro-dir', '.work/kiro',
@@ -38,7 +38,7 @@ describe('mergeConfigAndArgs', () => {
     ]);
 
     const cfg: UserConfig = {
-      agent: 'gemini-cli',
+      agent: 'claude-code-skills',
       os: 'linux',
       lang: 'en',
       kiroDir: 'docs/kiro',
@@ -47,7 +47,7 @@ describe('mergeConfigAndArgs', () => {
     };
 
     const out = mergeConfigAndArgs(args, cfg, runtimeDarwin);
-    expect(out.agent).toBe('qwen-code');
+    expect(out.agent).toBe('codex-skills');
     expect(out.lang).toBe('zh-TW');
     expect(out.os).toBe('mac');
     expect(out.resolvedOs).toBe('mac');

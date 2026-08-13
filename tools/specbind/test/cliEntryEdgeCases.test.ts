@@ -166,24 +166,24 @@ describe('CLI entry edge cases', () => {
         { id: 'claude-only', source: { type: 'templateFile' as const, from: 'claude.tpl.md', toDir: 'out' } },
       ],
     };
-    const cursorManifest = {
+    const codexManifest = {
       version: 1,
       artifacts: [
-        { id: 'cursor-only', source: { type: 'templateFile' as const, from: 'cursor.tpl.md', toDir: 'out' } },
+        { id: 'codex-only', source: { type: 'templateFile' as const, from: 'codex.tpl.md', toDir: 'out' } },
       ],
     };
 
     await writeFile(join(manifestsDir, 'claude-code-skills.json'), JSON.stringify(claudeManifest), 'utf8');
-    await writeFile(join(manifestsDir, 'cursor.json'), JSON.stringify(cursorManifest), 'utf8');
+    await writeFile(join(manifestsDir, 'codex-skills.json'), JSON.stringify(codexManifest), 'utf8');
     await writeFile(join(templatesRoot, 'claude.tpl.md'), '# Claude {{AGENT}}', 'utf8');
-    await writeFile(join(templatesRoot, 'cursor.tpl.md'), '# Cursor {{AGENT}}', 'utf8');
+    await writeFile(join(templatesRoot, 'codex.tpl.md'), '# Codex {{AGENT}}', 'utf8');
 
     const ctx = makeIO();
-    const code = await runCli(['--dry-run'], runtime, ctx.io, { agent: 'cursor' }, { templatesRoot });
+    const code = await runCli(['--dry-run'], runtime, ctx.io, { agent: 'codex-skills' }, { templatesRoot });
     expect(code).toBe(0);
 
     const output = ctx.logs.join('\n');
-    expect(output).toMatch(/cursor-only/);
+    expect(output).toMatch(/codex-only/);
     expect(output).not.toMatch(/claude-only/);
   });
 

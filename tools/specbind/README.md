@@ -6,7 +6,7 @@
 English | <a href="./README_ja.md">日本語</a> | <a href="./README_zh-TW.md">繁體中文</a>
 </sub></div>
 
-**Turn approved specs into long-running autonomous implementation.** One command installs an agentic SDLC workflow as Agent Skills: discovery, requirements, design, tasks, and autonomous implementation with per-task independent review. Works across 8 AI coding agents, with the same 17-skill set on each.
+**Turn approved specs into long-running autonomous implementation.** One command installs an agentic SDLC workflow as Agent Skills: discovery, requirements, design, tasks, and autonomous implementation with per-task independent review. Supports Claude Code and Codex with the same 17-skill set.
 
 👻 **Kiro-inspired.** Similar spec-driven, agentic SDLC style as Kiro IDE. Existing Kiro specs remain compatible and portable.
 
@@ -18,7 +18,7 @@ specbind v3.0 is a rework around Agent Skills and long-running autonomous implem
 - **`/kiro-impl` for long-running autonomous implementation.** Each task gets a fresh implementer running TDD (RED → GREEN) behind a feature flag, an independent reviewer, and an auto-debug pass that investigates root causes in a clean context when the implementer is blocked or the reviewer rejects twice. Learnings from earlier tasks propagate forward via `## Implementation Notes` in `tasks.md`. 1 task per iteration, safe to re-run after interruption.
 - **Boundary-first spec discipline.** `design.md` now includes a File Structure Plan that drives task boundaries. Tasks carry `_Boundary:_` and `_Depends:_` annotations. Review and validation look for boundary violations, not just style issues.
 - **`/kiro-spec-batch` for multi-spec initiatives.** Turn a roadmap into multiple specs in parallel, with cross-spec review to catch contradictions, duplicated responsibilities, and interface mismatches.
-- **Agent Skills across 8 coding agents.** 17 skills per install, loaded on demand (progressive disclosure). Claude Code and Codex are stable; Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity are in beta. No external dependencies; subagents are spawned through each platform's native primitive.
+- **Agent Skills for Claude Code and Codex.** 17 skills per install, loaded on demand (progressive disclosure). Both integrations are maintained and tested directly. No external dependencies; subagents are spawned through each platform's native primitive.
 
 Full skills-mode workflow and `/kiro-impl` internals: [Skill Reference](https://github.com/Huruikagi/specbind/blob/main/docs/guides/skill-reference.md).
 
@@ -41,14 +41,14 @@ cd your-project
 npx specbind@latest
 ```
 
-The default installs **Claude Code Skills** with English docs. To pick another agent or language:
+The default installs **Claude Code Skills** with English docs. To select Codex or another language:
 
 ```bash
 npx specbind@latest --codex-skills --lang ja      # Codex, Japanese
-npx specbind@latest --cursor-skills --lang zh-TW  # Cursor IDE, Traditional Chinese
+npx specbind@latest --claude-skills --lang zh-TW  # Claude Code, Traditional Chinese
 ```
 
-Supports 8 AI coding agents (Claude Code and Codex stable; Cursor, Copilot, Windsurf, OpenCode, Gemini CLI, and Antigravity in beta) and 13 languages. See [Supported Agents](#supported-agents) for the full list.
+Supports Claude Code, Codex, and 13 languages. See [Supported Agents](#supported-agents) for details.
 
 Then, in your agent:
 
@@ -66,8 +66,6 @@ Not sure where to start? Start with `kiro-discovery`. It routes your request and
 | Extend an existing system | `kiro-steering` → `kiro-discovery` or `kiro-spec-init` → optional `kiro-validate-gap` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl` |
 | Break down a large initiative | `kiro-discovery` → `kiro-spec-batch` |
 | Implement a small change with no spec | `kiro-discovery` → direct implementation |
-
-Legacy `/kiro:*` command modes are still available (`--claude`, `--cursor`, etc.) but are deprecated. See the [Migration Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/migration-guide.md) for the upgrade path.
 
 For larger approved task sets, run `kiro-impl` to start autonomous implementation with per-task subagent spawn, independent review, and auto-debug on failure.
 
@@ -96,21 +94,12 @@ Then `/kiro-impl` runs the tasks autonomously with TDD (RED → GREEN) behind fe
 
 ## Supported Agents
 
-All 8 skills variants ship the same 17-skill set. The difference is how much real-world usage each platform integration has seen.
+Both supported integrations ship the same 17-skill set and are tested directly.
 
-| Agent | Skills mode | Stability | Legacy mode |
-|---|---|---|---|
-| **Claude Code** | `--claude-skills` | Stable | `--claude` / `--claude-agent` (deprecated) |
-| **Codex** | `--codex-skills` | Stable | `--codex` (blocked) |
-| **Cursor IDE** | `--cursor-skills` | Beta | `--cursor` (deprecated) |
-| **GitHub Copilot** | `--copilot-skills` | Beta | `--copilot` (deprecated) |
-| **Windsurf IDE** | `--windsurf-skills` | Beta | `--windsurf` (deprecated) |
-| **OpenCode** | `--opencode-skills` | Beta | `--opencode` / `--opencode-agent` (deprecated) |
-| **Gemini CLI** | `--gemini-skills` | Beta | `--gemini` (deprecated) |
-| **Antigravity** | `--antigravity` | Beta (experimental) | — |
-| **Qwen Code** | — | — | `--qwen` |
-
-"Beta" does not mean "missing features", the 17 skills and templates are identical across all 8 platforms. It means the platform integration (subagent spawn behavior, ergonomics, `SKILL.md` loading) has had less real-world usage than Claude Code and Codex, and edge cases may still surface. Please [report issues](https://github.com/Huruikagi/specbind/issues) if you hit any.
+| Agent | Skills mode | Status |
+|---|---|---|
+| **Claude Code** | `--claude-skills` | Supported |
+| **Codex** | `--codex-skills` | Supported |
 
 ## Installation details
 
@@ -121,19 +110,6 @@ npx specbind@latest --lang ja    # Japanese
 npx specbind@latest --lang zh-TW # Traditional Chinese
 npx specbind@latest --lang es    # Spanish
 # Supports: en, ja, zh-TW, zh, es, pt, de, fr, ru, it, ko, ar, el
-```
-
-### Legacy modes (deprecated)
-
-```bash
-npx specbind@latest --claude        # Claude Code commands (use --claude-skills)
-npx specbind@latest --claude-agent  # Claude Code subagents (use --claude-skills)
-npx specbind@latest --cursor        # Cursor IDE commands (use --cursor-skills)
-npx specbind@latest --copilot       # GitHub Copilot prompts (use --copilot-skills)
-npx specbind@latest --windsurf      # Windsurf IDE workflows (use --windsurf-skills)
-npx specbind@latest --opencode      # OpenCode commands (use --opencode-skills)
-npx specbind@latest --gemini        # Gemini CLI commands (use --gemini-skills)
-npx specbind@latest --qwen          # Qwen Code
 ```
 
 ### Advanced options
@@ -163,28 +139,18 @@ After installation, your project gets:
 
 ```
 project/
-# Skills mode (recommended): one of the following is installed
+# One of the following is installed
 ├── .claude/skills/           # 17 skills (Claude Code Skills, default)
 ├── .agents/skills/           # 17 skills (Codex Skills)
-├── .cursor/skills/           # 17 skills (Cursor Skills)
-├── .github/skills/           # 17 skills (GitHub Copilot Skills)
-├── .windsurf/skills/         # 17 skills (Windsurf Skills)
-├── .opencode/skills/         # 17 skills (OpenCode Skills)
-├── .gemini/skills/           # 17 skills (Gemini CLI Skills)
-├── .agent/skills/            # 17 skills (Antigravity Skills)
-# Legacy command modes (deprecated)
-├── .claude/commands/kiro/    # 11 slash commands (--claude)
-├── .github/prompts/          # 11 prompt commands (--copilot)
-├── .windsurf/workflows/      # 11 workflow files (--windsurf)
 # Shared project memory and spec state
 ├── .kiro/settings/templates/ # Shared templates (variables resolved with {{KIRO_DIR}})
-├── .kiro/settings/rules/     # Shared rules (used by non-skills agents)
+├── .kiro/settings/rules/     # Shared rules
 ├── .kiro/specs/              # Feature specifications
 ├── .kiro/steering/           # AI guidance documents
 └── CLAUDE.md / AGENTS.md     # Project configuration (per agent)
 ```
 
-Only the directories for the agent(s) you install are created. The tree above shows the full superset for reference.
+Only the directory for the agent you install is created.
 
 ## Documentation
 

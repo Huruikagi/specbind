@@ -133,7 +133,7 @@ Skills モードを使っている場合は、先に [スキルリファレン�
 
 ## Skills モード（v3.0.0）
 
-`--claude-skills`、`--codex-skills`、`--cursor-skills`、`--copilot-skills`、`--windsurf-skills`、`--opencode-skills`、`--gemini-skills`、`--antigravity` でインストールした場合、一部のコマンドが Skills（`/kiro-*`）として提供される。Skills モードでは外部プラグインに依存せず、各プラットフォーム標準の subagent primitive のみで動作する。
+> **アーカイブ:** 現行リリースからcommandsベースのインストールは削除済み。このページは固定した旧バージョン向けの資料である。現行の `--claude-skills` と `--codex-skills` は [スキルリファレンス](skill-reference.md) を参照。
 
 ### `/kiro-discovery`
 - **目的**: 曖昧なアイデアや漠然とした要望を、`/kiro:spec-init` に渡せる具体的な機能提案に整理する。

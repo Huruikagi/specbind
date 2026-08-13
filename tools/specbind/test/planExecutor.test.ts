@@ -172,7 +172,7 @@ describe('plan executor', () => {
       };
 
       const res = await executeProcessedArtifacts(items, resolved, { cwd, templatesRoot, onConflict });
-      expect(conflictPath).toBe('out/file.txt');
+      expect(conflictPath).toBe(join('out', 'file.txt'));
       expect(res.written).toBeGreaterThan(0);
       expect(await fileContent(out)).toBe('NEW');
     });
@@ -296,12 +296,20 @@ describe('plan executor', () => {
     await expect(executeProcessedArtifacts(items, resolved, { cwd, templatesRoot })).rejects.toThrow(/source path/i);
   });
 
-  it('rejects writes through symlinked destinations', async () => {
+  it('rejects writes through symlinked destinations', async ({ skip }) => {
     const templatesRoot = await mkTmp();
     const cwd = await mkTmp();
     const external = await mkTmp();
     await writeFile(join(templatesRoot, 'doc.tpl.md'), 'symlink target', 'utf8');
-    await symlink(external, join(cwd, 'out'));
+    try {
+      await symlink(external, join(cwd, 'out'), 'junction');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'EPERM') {
+        skip();
+        return;
+      }
+      throw error;
+    }
 
     const items: ProcessedArtifact[] = [
       { id: 'doc', source: { type: 'templateFile', from: 'doc.tpl.md', toDir: 'out', outFile: 'README.md' } },

@@ -8,6 +8,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Limit the supported and directly tested Agent Skills integrations to Claude Code and Codex.
+- Align the CLI, package metadata, tests, and current documentation with the two supported install targets.
+
+### Removed
+- Remove unverified Cursor, GitHub Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity, and Qwen Code install targets.
+- Remove the deprecated Claude Code commands/agents modes and blocked Codex prompts mode.
+
 ## [3.0.2] - 2026-04-14
 
 ### Changed
