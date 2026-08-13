@@ -30,11 +30,40 @@ Long-lived specs need to remain the current description of the product, but mile
 
 Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec. Placeholder working documents should not be required.
 
+## Milestone identity and release binding
+
+Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery creates the roadmap before it hands work to later phases. A missing roadmap means there is no active milestone.
+
+The milestone's stable identity should not depend on knowing the final release version. The working model separates:
+
+- `milestone_id`: stable identity assigned when discovery starts the milestone
+- `target_release`: optional release version or release identifier, initially unset when necessary
+- `change_id`: stable per-spec change identity associated with `milestone_id`, not derived from `target_release`
+
+Conceptual roadmap metadata:
+
+```yaml
+milestone_id: ms-<stable-id>
+target_release: null
+```
+
+When the release version becomes known, the workflow binds it to the active milestone:
+
+```yaml
+milestone_id: ms-<stable-id>
+target_release: v1.4.0
+```
+
+This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and Change IDs continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts.
+
+The final metadata format and milestone ID generation scheme remain open. Release finalization must refuse an unresolved `target_release` when the selected release adapter requires a concrete version.
+
 ## Active change
 
 Each spec has at most one active change at a time. The active brief should identify at least:
 
-- milestone
+- stable milestone ID
+- target release when assigned
 - stable change ID
 - problem and desired outcome
 - in-scope and out-of-scope behavior
@@ -163,6 +192,8 @@ Batch update and evidence-recording responsibilities are required, but their fin
 ## Open questions
 
 - Where the active requirement set is stored and how its schema is validated.
+- The milestone ID format and the authoritative location of the release-version binding.
+- Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
 - Which workflow finalizes cancelled changes.

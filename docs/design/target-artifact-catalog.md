@@ -20,14 +20,16 @@ Status: Draft
 - Specs are active specifications of the product, not disposable delivery plans.
 - Existing specs should be maintained as the represented behavior changes.
 - A milestone groups the work intended for an active release cycle.
+- Every milestone has a `roadmap.md`, including a milestone containing only one spec change.
 - At most one active milestone is represented by `roadmap.md`.
+- Stable milestone identity is separate from its optional, later-bound release version.
 - Release completion ends the active milestone but does not retire the specs it changed.
 
 ## Project-level artifacts
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Exists only while a milestone is active. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | `{{SPEC_DIR}}` is a placeholder until the root directory decision is made. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Created and maintained by `specbind-discovery`; removed by `specbind-release`. | Draft | Holds a stable milestone ID and an optional release-version binding. `{{SPEC_DIR}}` remains a placeholder until the root directory decision is made. |
 
 ## Spec artifacts
 
@@ -43,8 +45,7 @@ Status: Draft
 
 ## Open questions
 
-- What metadata identifies the active milestone, active change, and active requirement set?
-- Does discovery create `roadmap.md` for every milestone, including a single-spec milestone?
+- What exact schema and ID format identify the active milestone, release binding, active change, and active requirement set?
 - What exact evidence schema must the release skill require before finalization?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - How are cancelled changes finalized and indexed?

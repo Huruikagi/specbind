@@ -30,7 +30,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
 | `kiro-debug` | `specbind-debug` | Rename | Idea | Investigate implementation and verification failures. |
-| `kiro-discovery` | `specbind-discovery` | Change | Draft | Classify work, create one active change, and route existing-spec maintenance. |
+| `kiro-discovery` | `specbind-discovery` | Change | Draft | Create the milestone roadmap, classify work, and route active spec maintenance. |
 | `kiro-impl` | `specbind-impl` | Change | Draft | Implement only the active milestone's approved tasks. |
 | `kiro-review` | `specbind-review` | Rename | Idea | Review one task implementation. |
 | `kiro-spec-batch` | `specbind-spec-batch` | Rename | Idea | Generate several specs from a roadmap. |
@@ -110,6 +110,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Inputs
 
 - The active `roadmap.md`
+- A resolved target release when required by the selected release adapter
 - Release-readiness state and evidence, to be defined
 
 ### Writes
