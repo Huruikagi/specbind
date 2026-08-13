@@ -1,13 +1,17 @@
+# Disabled while SpecBind establishes its own package and release policy.
+# Rename this file back to publish.yml only after the package identity,
+# npm ownership, versioning, and release process have been reviewed.
+
 name: Publish Package
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # Trigger on version tags like v1.0.0
+      - 'v*.*.*'
   workflow_dispatch:
 
 permissions:
-  id-token: write  # Required for OIDC
+  id-token: write
   contents: read
 
 jobs:
@@ -22,10 +26,9 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest
-      
+
       - name: Install
         working-directory: tools/cc-sdd
         run: npm ci
