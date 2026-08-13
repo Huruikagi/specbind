@@ -22,6 +22,7 @@ The root `.kiro/` directory is not used to develop SpecBind and is intentionally
 ## Development Workflow
 
 - Follow the user's requested scope and make changes directly unless they explicitly request a SpecBind specification workflow.
+- This repository currently uses a direct-to-`main` personal-development workflow. Unless the user explicitly asks to stop before committing or pushing, commit each completed unit of work to `main` and push it to `origin/main` before reporting completion.
 - Keep changes narrow and preserve unrelated work in the worktree.
 - When changing installed behavior, update the relevant source, templates, tests, and documentation together.
 - Keep Claude Code and Codex templates aligned where they implement the same contract, while preserving platform-specific invocation syntax and capabilities.
