@@ -109,7 +109,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.md` after successful release.
 - Transition their metadata to released / no-active-change state.
-- Archive `{{SPEC_DIR}}/steering/roadmap.md` as `{{SPEC_DIR}}/releases/<version>/roadmap.md`.
+- Archive `{{SPEC_DIR}}/steering/roadmap.md` as `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
 - Run optional After finalize project instructions only after core finalization succeeds.
 - Preserve the active specs updated during the milestone.
 
@@ -125,7 +125,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Per-spec `changelog.md` entries
 - Per-spec released / no-active-change metadata
 - Removal of finalized `brief.md` and `tasks.md`
-- Archived milestone roadmap under `{{SPEC_DIR}}/releases/<version>/`
+- Version-prefixed milestone roadmap under `{{SPEC_DIR}}/releases/`
 
 ### Boundaries
 
