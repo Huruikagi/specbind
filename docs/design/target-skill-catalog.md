@@ -23,27 +23,27 @@ Related documents:
 
 ## Working catalog
 
-The inherited `kiro-` prefix will be replaced. The new prefix is deliberately shown as `<prefix>` until the naming decision is accepted.
+The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix decision is accepted, while each skill's final responsibility and suffix remain subject to review.
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
-| `kiro-debug` | `<prefix>-debug` | Rename | Idea | Investigate implementation and verification failures. |
-| `kiro-discovery` | `<prefix>-discovery` | Rename | Idea | Classify and decompose new work. |
-| `kiro-impl` | `<prefix>-impl` | Rename | Idea | Implement approved tasks with TDD and subagents. |
-| `kiro-review` | `<prefix>-review` | Rename | Idea | Review one task implementation. |
-| `kiro-spec-batch` | `<prefix>-spec-batch` | Rename | Idea | Generate several specs from a roadmap. |
-| `kiro-spec-design` | `<prefix>-spec-design` | Rename | Idea | Create a technical design. |
-| `kiro-spec-init` | `<prefix>-spec-init` | Rename | Idea | Initialize a spec. |
-| `kiro-spec-quick` | `<prefix>-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
-| `kiro-spec-requirements` | `<prefix>-spec-requirements` | Rename | Idea | Create requirements. |
-| `kiro-spec-status` | `<prefix>-spec-status` | Rename | Idea | Report spec status and progress. |
-| `kiro-spec-tasks` | `<prefix>-spec-tasks` | Rename | Idea | Create implementation tasks. |
-| `kiro-steering` | `<prefix>-steering` | Rename | Idea | Maintain core project guidance. |
-| `kiro-steering-custom` | `<prefix>-steering-custom` | Rename | Idea | Create specialized project guidance. |
-| `kiro-validate-design` | `<prefix>-validate-design` | Rename | Idea | Review technical design quality. |
-| `kiro-validate-gap` | `<prefix>-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
-| `kiro-validate-impl` | `<prefix>-validate-impl` | Rename | Idea | Validate feature-level integration and spec coverage. |
-| `kiro-verify-completion` | `<prefix>-verify-completion` | Rename | Idea | Verify completion claims with fresh evidence. |
+| `kiro-debug` | `specbind-debug` | Rename | Idea | Investigate implementation and verification failures. |
+| `kiro-discovery` | `specbind-discovery` | Rename | Idea | Classify and decompose new work. |
+| `kiro-impl` | `specbind-impl` | Rename | Idea | Implement approved tasks with TDD and subagents. |
+| `kiro-review` | `specbind-review` | Rename | Idea | Review one task implementation. |
+| `kiro-spec-batch` | `specbind-spec-batch` | Rename | Idea | Generate several specs from a roadmap. |
+| `kiro-spec-design` | `specbind-spec-design` | Rename | Idea | Create a technical design. |
+| `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
+| `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
+| `kiro-spec-requirements` | `specbind-spec-requirements` | Rename | Idea | Create requirements. |
+| `kiro-spec-status` | `specbind-spec-status` | Rename | Idea | Report spec status and progress. |
+| `kiro-spec-tasks` | `specbind-spec-tasks` | Rename | Idea | Create implementation tasks. |
+| `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |
+| `kiro-steering-custom` | `specbind-steering-custom` | Rename | Idea | Create specialized project guidance. |
+| `kiro-validate-design` | `specbind-validate-design` | Rename | Idea | Review technical design quality. |
+| `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
+| `kiro-validate-impl` | `specbind-validate-impl` | Rename | Idea | Validate feature-level integration and spec coverage. |
+| `kiro-verify-completion` | `specbind-verify-completion` | Rename | Idea | Verify completion claims with fresh evidence. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
 
@@ -86,7 +86,6 @@ For a new skill, add a `New` row to the working catalog and set `Current equival
 
 ## Cross-cutting questions
 
-- What prefix should replace `kiro-`?
 - Are `spec-*` names useful to users, or should names describe workflow outcomes more directly?
 - Which validation and verification responsibilities should remain separate?
 - Should the quick and batch workflows remain skills, or become orchestration modes of a smaller command set?

@@ -1,6 +1,6 @@
 # 0001: Replace inherited skill naming
 
-Status: Draft
+Status: Accepted
 
 ## Context
 
@@ -17,23 +17,22 @@ The naming decision therefore needs an explicit migration policy, not only a dir
 
 ## Direction
 
-Replace the `kiro-` prefix across the generated skill set. The exact replacement prefix and final suffix vocabulary remain undecided.
+Replace the `kiro-` prefix with `specbind-` across the generated skill set. Final suffix vocabulary remains subject to the individual skill design review.
 
-Until this decision is accepted, target names use the placeholder `<prefix>-...` in the [target skill catalog](../target-skill-catalog.md).
+The [target skill catalog](../target-skill-catalog.md) uses `specbind-` for all working target names.
 
 ## Before and after pattern
 
-| Current | Target placeholder |
+| Current | Target working name |
 | --- | --- |
-| `kiro-discovery` | `<prefix>-discovery` |
-| `kiro-spec-init` | `<prefix>-spec-init` |
-| `kiro-impl` | `<prefix>-impl` |
+| `kiro-discovery` | `specbind-discovery` |
+| `kiro-spec-init` | `specbind-spec-init` |
+| `kiro-impl` | `specbind-impl` |
 
 The final mapping will be recorded in the catalog rather than duplicated here.
 
 ## Questions to decide
 
-- Should the prefix be `specbind-`, a shorter product prefix, or no prefix?
 - Should the internal `spec-` grouping remain in user-facing names?
 - Should Claude Code slash invocation and Codex skill invocation expose exactly the same base names?
 - Are old names removed in one release, retained as aliases for a transition, or handled by a migration command?
