@@ -2,6 +2,13 @@
 
 Kiro-style Spec-Driven Development on an agentic SDLC
 
+## Repository Status
+
+- SpecBind was bootstrapped from `gotalab/cc-sdd` and has since been detached from the GitHub fork network.
+- This project is currently unreleased and is transitioning to its own command names, workflows, terminology, and compatibility policy.
+- Much of the repository is still inherited from cc-sdd. Do not treat inherited commands, documentation, package versions, or compatibility behavior as the final SpecBind interface.
+- Prefer SpecBind-specific direction over preserving drop-in compatibility with cc-sdd unless explicitly required.
+
 ## Project Context
 
 ### Paths
