@@ -80,7 +80,7 @@ docs/specbind/plans/*
 !docs/specbind/plans/agent-plan-two-agent-scope.md
 docs/kiro/prompt/
 docs/kiro/
-# .kiro/
+.kiro/
 # Agent configurations
 .claude/agents/
 .claude/hooks/
