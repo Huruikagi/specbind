@@ -20,10 +20,6 @@ specbind v3.0 は Agent Skills と長時間自律実装を軸にした再構築�
 - **`/kiro-spec-batch` で複数 spec の並列作成。** roadmap から複数 spec を並列生成し、cross-spec review で矛盾・責務重複・インターフェースミスマッチを検出する。
 - **Claude Code と Codex 向けの Agent Skills。** 17 skills を on-demand ロード (progressive disclosure)。両方の統合を実機で保守・検証する。外部依存なし、subagent は各プラットフォーム標準の spawn で立ち上がる。
 
-Skills モードのワークフローと `/kiro-impl` 内部の詳細は [スキルリファレンス](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/skill-reference.md) を参照。
-
-v1.x / v2.x からの移行は [Migration Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/migration-guide.md#5-v2x--v30) を参照。
-
 ## なぜ specbind なのか
 
 specbind は spec を、システムの各部分の間の契約として扱う。エージェントに手渡す「命令書」ではない。コードは依然として source of truth であり、spec はコード各部分の間の契約を明示化するために使う。そうすることで、人間とエージェントが常に同期を取らなくても並列に動けるようになる。
@@ -31,8 +27,6 @@ specbind は spec を、システムの各部分の間の契約として扱う�
 賭けはこうだ。適切な粒度で明示化された契約は、チーム規模の AI 駆動開発を速くする。遅くしない。エージェントが spec を書き、人間は phase gate で契約を承認し、出荷されるのはコードだ。
 
 境界はオーバーヘッドではない。境界があるから自由に動ける。
-
-設計の根拠、トレードオフ、向いている場面と向いていない場面の詳細は [specbind という賭け (philosophy note)](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/why-specbind.md)。
 
 ## クイックスタート
 
@@ -128,8 +122,6 @@ npx specbind@latest --kiro-dir docs
 
 よくあるユースケース: PRD スタイルの要件、API とデータベーススキーマ、承認ゲート、JIRA 連携、ドメイン固有のスタンダード。
 
-実践例とコピペ可能なスニペットは [カスタマイズガイド](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/customization-guide.md)。
-
 ## プロジェクト構造
 
 インストール後、プロジェクトに以下が追加される:
@@ -149,15 +141,8 @@ project/
 
 実際に作成されるのは、選択したエージェントに対応するディレクトリのみ。
 
-## ドキュメント
+## サポート
 
-- スキルリファレンス: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/skill-reference.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/skill-reference.md)
-- コマンドリファレンス: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/command-reference.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/command-reference.md)
-- カスタマイズガイド: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/customization-guide.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/customization-guide.md)
-- 仕様駆動開発ガイド: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/spec-driven.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/spec-driven.md)
-- specbind という賭け: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/why-specbind.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/why-specbind.md)
-- Claude Subagents ガイド: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/claude-subagents.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/claude-subagents.md)
-- マイグレーションガイド: [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/migration-guide.md) | [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/migration-guide.md)
 - [Issues & サポート](https://github.com/Huruikagi/specbind/issues) - バグ報告と質問
 - [Kiro IDE](https://kiro.dev)
 

@@ -12,8 +12,6 @@
 - `tools/specbind/src/` — CLI implementation
 - `tools/specbind/test/` — automated tests
 - `tools/specbind/templates/` — files installed into consumer projects
-- `docs/guides/` — current and historical user-facing guides
-- `docs/specbind/plans/` — repository migration and implementation plans
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

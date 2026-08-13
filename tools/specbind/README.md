@@ -20,10 +20,6 @@ specbind v3.0 is a rework around Agent Skills and long-running autonomous implem
 - **`/kiro-spec-batch` for multi-spec initiatives.** Turn a roadmap into multiple specs in parallel, with cross-spec review to catch contradictions, duplicated responsibilities, and interface mismatches.
 - **Agent Skills for Claude Code and Codex.** 17 skills per install, loaded on demand (progressive disclosure). Both integrations are maintained and tested directly. No external dependencies; subagents are spawned through each platform's native primitive.
 
-Full skills-mode workflow and `/kiro-impl` internals: [Skill Reference](https://github.com/Huruikagi/specbind/blob/main/docs/guides/skill-reference.md).
-
-Upgrading from v1.x or v2.x? See the [Migration Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/migration-guide.md#5-v2x-to-v30).
-
 ## Why specbind?
 
 specbind treats the spec as a contract between parts of the system, not a master command document handed to the agent. Code remains the source of truth. Specs make the boundaries between parts of the code explicit so humans and agents can work in parallel without constant synchronization.
@@ -31,8 +27,6 @@ specbind treats the spec as a contract between parts of the system, not a master
 The bet: explicit contracts at the right granularity let AI-driven development at team scale move faster, not slower. Agents write the spec, humans approve the contract at phase gates, code is what ships.
 
 Boundaries are not overhead. They are what lets you move freely inside while protecting the outside.
-
-Full rationale, trade-offs, and when-to-use / when-not-to-use: [Why specbind? A philosophy note](https://github.com/Huruikagi/specbind/blob/main/docs/guides/why-specbind.md).
 
 ## Quick Start
 
@@ -128,8 +122,6 @@ Edit templates and rules in `{{KIRO_DIR}}/settings/` to match your team's workfl
 
 Common use cases: PRD-style requirements, API and database schemas, approval gates, JIRA integration, domain-specific standards.
 
-[Customization Guide](https://github.com/Huruikagi/specbind/blob/main/docs/guides/customization-guide.md) has practical examples with copy-paste snippets.
-
 ## Project structure
 
 After installation, your project gets:
@@ -149,15 +141,8 @@ project/
 
 Only the directory for the agent you install is created.
 
-## Documentation
+## Support
 
-- Skill Reference: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/skill-reference.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/skill-reference.md)
-- Command Reference: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/command-reference.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/command-reference.md)
-- Customization Guide: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/customization-guide.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/customization-guide.md)
-- Spec-Driven Guide: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/spec-driven.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/spec-driven.md)
-- Why specbind?: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/why-specbind.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/why-specbind.md)
-- Claude Subagents Guide: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/claude-subagents.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/claude-subagents.md)
-- Migration Guide: [English](https://github.com/Huruikagi/specbind/blob/main/docs/guides/migration-guide.md) | [日本語](https://github.com/Huruikagi/specbind/blob/main/docs/guides/ja/migration-guide.md)
 - [Issues & Support](https://github.com/Huruikagi/specbind/issues) for bug reports and questions
 - [Kiro IDE](https://kiro.dev)
 

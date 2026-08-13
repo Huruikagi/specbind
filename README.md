@@ -15,7 +15,7 @@ Until that transition is complete, do not assume that the existing commands or d
 - Define a command system with its own naming and workflow conventions.
 - Keep spec-driven development practical for agentic software delivery.
 - Rework inherited components deliberately instead of maintaining drop-in compatibility with cc-sdd.
-- Document migration and compatibility decisions as the project takes shape.
+- Stabilize migration and compatibility behavior before creating maintained documentation.
 
 ## Language support
 
