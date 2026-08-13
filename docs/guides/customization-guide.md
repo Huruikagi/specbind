@@ -2,11 +2,11 @@
 
 > 📖 日本語版はこちら: [カスタマイゼーションガイド](ja/customization-guide.md)
 
-This guide explains how to edit cc-sdd's templates and rules to adapt to your team's specific workflow.
+This guide explains how to edit specbind's templates and rules to adapt to your team's specific workflow.
 
 ## Introduction
 
-cc-sdd provides two customization points:
+specbind provides two customization points:
 
 - **templates/** - Define the **structure and format** of AI-generated documents
 - **rules/** - Define the **judgment criteria and generation principles** for AI
@@ -57,7 +57,7 @@ Both are located under `{{KIRO_DIR}}/settings/` and are shared across the entire
 
 ## 🚨 Structure That Must Be Maintained
 
-cc-sdd commands read and understand documents through AI agents. The following elements **must be maintained**:
+specbind commands read and understand documents through AI agents. The following elements **must be maintained**:
 
 | File | Required Elements | Reason |
 |------|-------------------|--------|
@@ -2033,7 +2033,7 @@ diff \
 
 **Solution**: Return to defaults and gradually re-customize
 ```bash
-npx cc-sdd@latest --overwrite=force
+npx specbind@latest --overwrite=force
 ```
 
 ### Generated Content Differs from Expectations

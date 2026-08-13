@@ -1,0 +1,53 @@
+{
+  "name": "specbind",
+  "version": "3.0.2",
+  "private": true,
+  "description": "An independent command system for spec-driven development with AI coding agents.",
+  "keywords": [
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "gemini-cli",
+    "codex",
+    "github-copilot",
+    "qwen-code",
+    "opencode",
+    "sdd",
+    "spec-driven-development",
+    "kiro",
+    "steering",
+    "ai-development",
+    "tdd",
+    "ai-dlc",
+    "agentic-sdlc",
+    "subagents",
+    "parallel-tasks"
+  ],
+  "author": "Huruikagi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Huruikagi/specbind.git",
+    "directory": "tools/specbind"
+  },
+  "type": "module",
+  "bin": {
+    "specbind": "./dist/cli.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest -w",
+    "build": "tsc -p .",
+    "postbuild": "node ./scripts/add-shebang.mjs",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

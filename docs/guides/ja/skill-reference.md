@@ -2,7 +2,7 @@
 
 > 📖 **English guide:** [Skill Reference](../skill-reference.md)
 
-cc-sdd の Skills モード向けリファレンスである。`--claude-skills`、`--codex-skills`、`--cursor-skills`、`--copilot-skills`、`--windsurf-skills`、`--opencode-skills`、`--gemini-skills`、`--antigravity` を使っている場合は、このページを参照する。
+specbind の Skills モード向けリファレンスである。`--claude-skills`、`--codex-skills`、`--cursor-skills`、`--copilot-skills`、`--windsurf-skills`、`--opencode-skills`、`--gemini-skills`、`--antigravity` を使っている場合は、このページを参照する。
 
 レガシーの `/kiro:*` コマンドを使っている場合は、[コマンドリファレンス](command-reference.md) を参照すること。
 

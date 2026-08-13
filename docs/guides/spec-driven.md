@@ -2,15 +2,15 @@
 
 > 📖 **日本語ガイドはこちら:** [仕様駆動開発ガイド (日本語)](ja/spec-driven.md)
 
-This document explains how cc-sdd implements Spec-Driven Development (SDD) inside an agentic SDLC workflow. Use it as a reference when deciding which slash command to run, what artifact to review, and how to adapt the workflow to your team.
+This document explains how specbind implements Spec-Driven Development (SDD) inside an agentic SDLC workflow. Use it as a reference when deciding which slash command to run, what artifact to review, and how to adapt the workflow to your team.
 
 ## Core Ideas
 
-cc-sdd treats Spec-Driven Development as a practical way to make intent, boundaries, and validation legible to both humans and agents. The goal is not to produce larger documents. The goal is to create specs that let work move independently without losing architectural coherence.
+specbind treats Spec-Driven Development as a practical way to make intent, boundaries, and validation legible to both humans and agents. The goal is not to produce larger documents. The goal is to create specs that let work move independently without losing architectural coherence.
 
 ### Boundary-First by Default
 
-In cc-sdd, the primary value of a spec is that it makes responsibility boundaries and contracts explicit.
+In specbind, the primary value of a spec is that it makes responsibility boundaries and contracts explicit.
 
 A good spec should make it clear:
 
@@ -19,7 +19,7 @@ A good spec should make it clear:
 - which dependencies are allowed
 - what downstream work may need revalidation if this spec changes
 
-This is why cc-sdd carries boundary thinking across the workflow:
+This is why specbind carries boundary thinking across the workflow:
 
 - discovery surfaces **Boundary Candidates**
 - requirements clarify boundary context where needed
@@ -29,7 +29,7 @@ This is why cc-sdd carries boundary thinking across the workflow:
 
 ### Specs as Units of Independent Delivery
 
-cc-sdd treats a spec as more than a planning artifact. A spec is also a delivery and revalidation unit.
+specbind treats a spec as more than a planning artifact. A spec is also a delivery and revalidation unit.
 
 The practical goal is to let work progress asynchronously:
 
@@ -45,33 +45,33 @@ Boundary-first Spec-Driven Development only works when the underlying architectu
 
 If a system has vague ownership, shared responsibilities, circular dependencies, or poorly defined seams, writing more specs will not create independence. It will only document confusion.
 
-cc-sdd therefore treats architecture as a prerequisite, not an afterthought. Specs do not replace architecture. They make architecture operational by turning boundaries, dependencies, and invariants into everyday working artifacts.
+specbind therefore treats architecture as a prerequisite, not an afterthought. Specs do not replace architecture. They make architecture operational by turning boundaries, dependencies, and invariants into everyday working artifacts.
 
 ### Spec-Centered, Mechanically Grounded
 
-cc-sdd is intentionally spec-centered. Markdown specs are the primary working artifact for intent, scope, boundaries, exclusions, and revalidation conditions.
+specbind is intentionally spec-centered. Markdown specs are the primary working artifact for intent, scope, boundaries, exclusions, and revalidation conditions.
 
 That does not reduce the importance of mechanical validation. Tests, builds, linting, type checks, and runtime smoke checks remain essential. They provide the grounding that keeps specs honest in practice.
 
-In cc-sdd, these two layers are complementary:
+In specbind, these two layers are complementary:
 
 - specs express intent and boundaries
 - mechanical checks provide execution-level grounding
 
 ### Change-Friendly by Design
 
-cc-sdd is designed to stay simple enough to change.
+specbind is designed to stay simple enough to change.
 
 This applies at two levels:
 
 - specs should be easy to revise as understanding improves
-- cc-sdd itself should be easy for teams to adapt
+- specbind itself should be easy for teams to adapt
 
 Templates, rules, and skill workflows are meant to be customized. The goal is not to force one canonical workflow on every team. The goal is to preserve clear boundaries and validation loops while allowing teams to evolve the process around their own structure and delivery model.
 
 ### Long-Running Autonomy Depends on the Spec Harness
 
-Long-running autonomy in cc-sdd is grounded in the workflow around `tasks.md`.
+Long-running autonomy in specbind is grounded in the workflow around `tasks.md`.
 
 `/kiro-impl` can execute tasks one by one through TDD, task-local review, and bounded remediation until the final task is complete. It keeps moving when the spec, task boundary, and validation expectations are clear. It stops when human clarification, approval, or judgment is genuinely required.
 
@@ -122,7 +122,7 @@ Each phase pauses for human review unless you explicitly bypass it (for example 
 
 ## Customising the Workflow
 
-- **Templates** – adjust `{{KIRO_DIR}}/settings/templates/{requirements,design,tasks}.md` to mirror your review process. cc-sdd copies these into every spec.
+- **Templates** – adjust `{{KIRO_DIR}}/settings/templates/{requirements,design,tasks}.md` to mirror your review process. specbind copies these into every spec.
 - **Approvals** – embed checklists or required sign-offs in template headers. Agents will surface them during each phase.
 - **Artifacts** – extend templates with additional sections (risk logs, test plans, etc.) to make the generated documents match company standards.
 
@@ -173,7 +173,7 @@ Both modes enforce **1-task-per-iteration** discipline for context hygiene durin
 | Multi-spec | The work should be decomposed into multiple specs | `/kiro-spec-batch` | `/kiro-spec-init <first-feature>` if you want to validate the first slice before batching the rest |
 | Mixed decomposition | The request spans existing-spec updates, new specs, and/or direct implementation | Discovery writes the split into `brief.md` / `roadmap.md` before you continue | Start with the next step suggested for the new-spec portion, then come back to the remaining items |
 
-This split keeps discovery lightweight and preserves the phase gates that make cc-sdd reliable. Discovery is there to choose the right workflow, not to replace it.
+This split keeps discovery lightweight and preserves the phase gates that make specbind reliable. Discovery is there to choose the right workflow, not to replace it.
 
 ### `/kiro-validate-impl` in Skills Mode
 

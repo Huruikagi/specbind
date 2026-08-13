@@ -8,7 +8,7 @@ This guide explains how the **Claude Code Subagents** install target (`--claude-
 
 ## Installation Recap
 
-- Install with `npx cc-sdd@latest --claude-agent --lang <code>`.
+- Install with `npx specbind@latest --claude-agent --lang <code>`.
 - Files are placed under:
   - `.claude/commands/kiro/` – 12 high-level commands (spec, steering, validation).
   - `.claude/agents/kiro/` – 9 Subagent definitions used for deeper analysis, file expansion, and reporting.
@@ -16,7 +16,7 @@ This guide explains how the **Claude Code Subagents** install target (`--claude-
 
 ## How `spec-quick` Orchestrates Subagents
 
-`spec-quick` is a macro-command that calls four Subagents in sequence—`spec-init` (inline), `spec-requirements`, `spec-design`, and `spec-tasks`—to generate a brand-new spec in one run. Internally、the command follows the same instructions defined in `tools/cc-sdd/templates/agents/claude-code-agent/commands/spec-quick.md`.
+`spec-quick` is a macro-command that calls four Subagents in sequence—`spec-init` (inline), `spec-requirements`, `spec-design`, and `spec-tasks`—to generate a brand-new spec in one run. Internally、the command follows the same instructions defined in `tools/specbind/templates/agents/claude-code-agent/commands/spec-quick.md`.
 
 ### Modes
 
@@ -58,7 +58,7 @@ Need to re-run just one phase? Mention `@agents-spec-design`, `@agents-spec-task
 
 ## Recommended Usage Pattern
 
-1. Run `npx cc-sdd@latest --claude-agent --lang <code>` to ensure Subagent assets exist.
+1. Run `npx specbind@latest --claude-agent --lang <code>` to ensure Subagent assets exist.
 2. Prepare Project Memory via `/kiro:steering` (and optionally `/kiro:steering-custom`) so Subagents inherit accurate architecture/product rules.
 3. Use `spec-quick <feature> [--auto]` for rapid drafts, then review `requirements.md`, `design.md`, `tasks.md` just like the manual flow.
 4. Run validation commands manually if the feature touches existing systems or critical boundaries.

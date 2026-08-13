@@ -4,11 +4,11 @@
 
 > **対象**: このページはレガシーの **`--claude-agent` / `--claude-code-agent`** インストール先について解説する。`.claude/agents/kiro/*.md` の静的 Subagent ファイルで `spec-quick` を加速する仕組み。`--claude-skills`（あるいは他の `--*-skills` フラグ）でインストールして Skills モードの implementer / reviewer / debugger の dispatch 詳細を知りたい場合は、[スキルリファレンス](skill-reference.md) の「`/kiro-impl` の内部」「Skills モードと `--claude-agent` の比較」節を参照すること。
 
-このガイドでは、`npx cc-sdd@latest --claude-agent`（または `--claude-code-agent`）で提供される **Claude Code Subagents** の中で、独自の制御ロジックを持つ `spec-quick` コマンドに焦点を当てて解説する。その他の `/kiro:*` コマンドも同じ Subagent を再利用するが、動作は標準版と変わらないため、ここでの説明は省略する。
+このガイドでは、`npx specbind@latest --claude-agent`（または `--claude-code-agent`）で提供される **Claude Code Subagents** の中で、独自の制御ロジックを持つ `spec-quick` コマンドに焦点を当てて解説する。その他の `/kiro:*` コマンドも同じ Subagent を再利用するが、動作は標準版と変わらないため、ここでの説明は省略する。
 
 ## インストールの確認
 
-- `npx cc-sdd@latest --claude-agent --lang <言語コード>` を実行する。
+- `npx specbind@latest --claude-agent --lang <言語コード>` を実行する。
 - 展開されるファイルは以下の通りである。
   - `.claude/commands/kiro/`: Spec/Steering/Validation 関連のコマンド（12個）
   - `.claude/agents/kiro/`: 詳細分析用の Subagent 定義ファイル（9個）
@@ -16,7 +16,7 @@
 
 ## spec-quick による Subagent の連携フロー
 
-`spec-quick` は、`spec-init`（インライン実装）、`spec-requirements`、`spec-design`、`spec-tasks` の4つのフェーズを自動で連続実行するマクロコマンドである。この機能の実装は `tools/cc-sdd/templates/agents/claude-code-agent/commands/spec-quick.md` に定義されている。
+`spec-quick` は、`spec-init`（インライン実装）、`spec-requirements`、`spec-design`、`spec-tasks` の4つのフェーズを自動で連続実行するマクロコマンドである。この機能の実装は `tools/specbind/templates/agents/claude-code-agent/commands/spec-quick.md` に定義されている。
 
 ### モード
 
@@ -55,7 +55,7 @@
 
 ## 推奨ユースケース
 
-1. `npx cc-sdd@latest --claude-agent --lang <code>` を実行して、Subagent をワークスペースに展開する。
+1. `npx specbind@latest --claude-agent --lang <code>` を実行して、Subagent をワークスペースに展開する。
 2. `/kiro:steering`（または必要に応じて `/kiro:steering-custom`）を実行し、プロジェクトの記憶（Project Memory）を最新の状態にしてから作業を開始する。
 3. `spec-quick <feature> [--auto]` を使って仕様のドラフトを生成し、`requirements.md`、`design.md`、`tasks.md` の内容を確認する。
 4. 変更が既存システムに影響を与える可能性がある場合は、`/kiro:validate-gap` と `/kiro:validate-design` を必ず追加で実行すること。
@@ -72,7 +72,7 @@
 
 | 症状 | 原因 | 解決策 |
 | --- | --- | --- |
-| Subagent が呼び出されない | `--claude-agent` を使ってインストールしていない、または `.claude/agents/kiro/` ディレクトリが存在しない。 | `npx cc-sdd@latest --claude-agent` で再インストールし、ディレクトリ構成を確認すること。 |
+| Subagent が呼び出されない | `--claude-agent` を使ってインストールしていない、または `.claude/agents/kiro/` ディレクトリが存在しない。 | `npx specbind@latest --claude-agent` で再インストールし、ディレクトリ構成を確認すること。 |
 | 解析範囲が広すぎる | ファイル検索パターンが広すぎる（例: `*.*`）。 | 該当する Subagent のプロンプトを編集し、検索パターンをより具体的に絞り込むこと。 |
 | 出力がテンプレートと一致しない | Subagent が古いテンプレートを参照している。 | `{{KIRO_DIR}}/settings/templates` を最新の内容に更新し、Subagent がそれを正しく参照しているか確認すること。 |
 

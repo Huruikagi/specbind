@@ -30,17 +30,17 @@ jobs:
         run: npm install -g npm@latest
 
       - name: Install
-        working-directory: tools/cc-sdd
+        working-directory: tools/specbind
         run: npm ci
 
       - name: Build
-        working-directory: tools/cc-sdd
+        working-directory: tools/specbind
         run: npm run build --if-present
 
       - name: Test
-        working-directory: tools/cc-sdd
+        working-directory: tools/specbind
         run: npm test --if-present
 
       - name: Publish
-        working-directory: tools/cc-sdd
+        working-directory: tools/specbind
         run: npm publish

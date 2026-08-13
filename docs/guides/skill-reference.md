@@ -2,7 +2,7 @@
 
 > 📖 **日本語ガイドはこちら:** [スキルリファレンス (日本語)](ja/skill-reference.md)
 
-Reference for the skills-mode workflow in cc-sdd. Use this guide when you installed a skills-mode agent such as `--claude-skills`, `--codex-skills`, `--cursor-skills`, `--copilot-skills`, `--windsurf-skills`, `--opencode-skills`, `--gemini-skills`, or `--antigravity`.
+Reference for the skills-mode workflow in specbind. Use this guide when you installed a skills-mode agent such as `--claude-skills`, `--codex-skills`, `--cursor-skills`, `--copilot-skills`, `--windsurf-skills`, `--opencode-skills`, `--gemini-skills`, or `--antigravity`.
 
 If you are using legacy `/kiro:*` commands, use the [Command Reference](command-reference.md) instead.
 

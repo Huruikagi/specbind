@@ -1,4 +1,4 @@
-# cc-sdd マイグレーションガイド
+# SpecBind マイグレーションガイド
 
 > 📖 **English guide:** [Migration Guide](../migration-guide.md)
 
@@ -10,8 +10,8 @@ v1系（特に1.1.5）とv2.0.0は、**コマンドや agentic SDLC の基本思
 
 | 目的 | 推奨アクション |
 | --- | --- |
-| 既存の1.x系ワークフローを維持したい | `npx cc-sdd@1.1.5` を明示的に指定し、旧バージョンのCLIを継続利用する。エージェント固有のプロンプトを直接編集する従来のスタイルを維持できるが、利用可能なコマンドは旧来の8つに限られる。 |
-| 8種類のエージェントで共通のテンプレートや、調査（Research）と設計（Design）の分離といった新機能を利用したい | `npx cc-sdd@latest`（v2.0.0相当）を再インストールし、`.kiro/settings/templates/*` と `rules/` のみをカスタマイズする。これにより、`validate-*` コマンド群を含む全11コマンドが利用可能になる。 |
+| 既存の1.x系ワークフローを維持したい | `npx specbind@1.1.5` を明示的に指定し、旧バージョンのCLIを継続利用する。エージェント固有のプロンプトを直接編集する従来のスタイルを維持できるが、利用可能なコマンドは旧来の8つに限られる。 |
+| 8種類のエージェントで共通のテンプレートや、調査（Research）と設計（Design）の分離といった新機能を利用したい | `npx specbind@latest`（v2.0.0相当）を再インストールし、`.kiro/settings/templates/*` と `rules/` のみをカスタマイズする。これにより、`validate-*` コマンド群を含む全11コマンドが利用可能になる。 |
 
 > ⚠️ 1.x系と2.x系の `.kiro` ディレクトリ構成の混在は推奨されない。リポジトリやブランチ単位で、使用するバージョンをどちらか一方に固定すること。
 
@@ -23,13 +23,13 @@ v1系（特に1.1.5）とv2.0.0は、**コマンドや agentic SDLC の基本思
 
 ---
 
-## 1. cc-sdd 1.1.5 を使い続ける (フォールバック)
+## 1. specbind 1.1.5 を使い続ける (フォールバック)
 
 1.1.5は `@latest` タグの対象外だが、バージョンを直接指定することで呼び出し可能である。
 
 ```bash
-npx cc-sdd@1.1.5 --claude-code  # 例: Claude Code (旧フラグ名)
-npx cc-sdd@1.1.5 --lang ja      # 旧来の言語オプション
+npx specbind@1.1.5 --claude-code  # 例: Claude Code (旧フラグ名)
+npx specbind@1.1.5 --lang ja      # 旧来の言語オプション
 ```
 
 - `.claude/commands/*` や `.cursor/prompts/*` といったエージェント固有のディレクトリを直接編集する、従来の運用を継続できる。
@@ -61,9 +61,9 @@ npx cc-sdd@1.1.5 --lang ja      # 旧来の言語オプション
 
 2. **v2 をクリーンインストール（対話的オプションを活用）**
    ```bash
-   npx cc-sdd@latest                 # デフォルト (Claude Code)
-   npx cc-sdd@latest --cursor        # その他エージェント
-   npx cc-sdd@latest --claude-agent  # Subagents モード
+   npx specbind@latest                 # デフォルト (Claude Code)
+   npx specbind@latest --cursor        # その他エージェント
+   npx specbind@latest --claude-agent  # Subagents モード
    ```
    - インストーラがファイル群ごとに「上書き(overwrite)」「追記(append)」「保持(keep)」のいずれかを選択するよう尋ねる。既存のステアリング情報や仕様書を維持したい場合は “keep” を、差分を追加したい場合は “append” を選択できる。
 
@@ -80,7 +80,7 @@ npx cc-sdd@1.1.5 --lang ja      # 旧来の言語オプション
    - 調査・設計フェーズのテンプレートもステアリング情報を参照するため、既存のメモや覚書はここへ移行することが望ましい。
 
 6. **自動化スクリプトを更新**
-   - CI/CDスクリプトなどは、すべて `npx cc-sdd@latest` を基準とするように統一し、旧式の `@next` 指定は削除する。
+   - CI/CDスクリプトなどは、すべて `npx specbind@latest` を基準とするように統一し、旧式の `@next` 指定は削除する。
    - 旧バージョンのCLIを直接実行していた箇所は、v2で提供される11個のコマンド (`spec-*`, `validate-*`, `steering*`) を使用するように置き換える。
 
 ---
@@ -116,14 +116,14 @@ npx cc-sdd@1.1.5 --lang ja      # 旧来の言語オプション
 
 1. **再インストール**（お使いのプラットフォームの Skills モードで）:
    ```bash
-   npx cc-sdd@latest --claude-skills     # Claude Code（デフォルト）
-   npx cc-sdd@latest --codex-skills      # Codex
-   npx cc-sdd@latest --cursor-skills     # Cursor IDE
-   npx cc-sdd@latest --copilot-skills    # GitHub Copilot
-   npx cc-sdd@latest --windsurf-skills   # Windsurf IDE
-   npx cc-sdd@latest --opencode-skills   # OpenCode
-   npx cc-sdd@latest --gemini-skills     # Gemini CLI
-   npx cc-sdd@latest --antigravity       # Antigravity
+   npx specbind@latest --claude-skills     # Claude Code（デフォルト）
+   npx specbind@latest --codex-skills      # Codex
+   npx specbind@latest --cursor-skills     # Cursor IDE
+   npx specbind@latest --copilot-skills    # GitHub Copilot
+   npx specbind@latest --windsurf-skills   # Windsurf IDE
+   npx specbind@latest --opencode-skills   # OpenCode
+   npx specbind@latest --gemini-skills     # Gemini CLI
+   npx specbind@latest --antigravity       # Antigravity
    ```
 2. **レガシーモードから移行** — `--claude`, `--cursor`, `--copilot`, `--windsurf`, `--opencode`, `--gemini` は非推奨。`--codex` はブロック済み。対応する `--*-skills` フラグを使用。
 3. **`/kiro-discovery`** をエントリポイントとして使用 — `brief.md` + `roadmap.md` が下流スキルに引き継がれる。
@@ -146,6 +146,6 @@ npx cc-sdd@1.1.5 --lang ja      # 旧来の言語オプション
 
 ## 7. まとめ
 
-- **v1.1.5の継続利用者**: `npx cc-sdd@1.1.5` のようにバージョンを固定し、従来通りテンプレートやコマンドプロンプトを直接編集する。
+- **v1.1.5の継続利用者**: `npx specbind@1.1.5` のようにバージョンを固定し、従来通りテンプレートやコマンドプロンプトを直接編集する。
 - **v2.xの利用者**: Skills モード（`--*-skills`）への移行を推奨。レガシーコマンドモードは将来削除予定。
 - **v3.0への移行者**: Skills モードで再インストールし、`/kiro-discovery` → `/kiro-spec-batch` → `/kiro-impl` のワークフローを活用する。8プラットフォーム対応、デバッグ自動化、タスク間知見引き継ぎが利用可能。

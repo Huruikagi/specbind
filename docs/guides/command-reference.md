@@ -2,7 +2,7 @@
 
 > 📖 **日本語ガイドはこちら:** [コマンドリファレンス (日本語)](ja/command-reference.md)
 
-Complete reference for the legacy `/kiro:*` commands in cc-sdd with detailed usage, examples, and troubleshooting.
+Complete reference for the legacy `/kiro:*` commands in specbind with detailed usage, examples, and troubleshooting.
 
 If you are using skills mode, start with the [Skill Reference](skill-reference.md) instead.
 
@@ -297,7 +297,7 @@ proper separation of concerns and allow for focused, high-quality requirement an
 |-------|-------|----------|
 | ❌ "Ambiguous feature name" | Vague description | Provide more specific description or choose from AI's suggestions |
 | ❌ "Feature already exists" | Name conflict | AI auto-appends number (e.g., `-2`), or choose different name |
-| ❌ "Template missing" | Corrupted installation | Reinstall cc-sdd: `npx cc-sdd@latest` |
+| ❌ "Template missing" | Corrupted installation | Reinstall specbind: `npx specbind@latest` |
 | ⚠️ Generated name unclear | Short description | Provide longer, more detailed feature description |
 
 **Pro Tips**:
@@ -1693,7 +1693,7 @@ Or implement all remaining tasks:
 
 ### "Template missing"
 **Cause**: Corrupted or incomplete installation  
-**Solution**: Reinstall cc-sdd: `npx cc-sdd@latest`
+**Solution**: Reinstall specbind: `npx specbind@latest`
 
 ### Tasks not completing
 **Cause**: Checkbox format incorrect in tasks.md  
@@ -1717,7 +1717,7 @@ Or implement all remaining tasks:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ cc-sdd Command Quick Reference                              │
+│ specbind Command Quick Reference                              │
 ├─────────────────────────────────────────────────────────────┤
 │ STEERING                                                    │
 │  /kiro:steering              Create/update project memory   │

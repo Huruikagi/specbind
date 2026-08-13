@@ -46,7 +46,7 @@ package-lock.json
 yarn.lock
 
 # Exceptions for CI reproducibility
-!tools/cc-sdd/package-lock.json
+!tools/specbind/package-lock.json
 
 # Environment variables
 .env
@@ -74,7 +74,7 @@ coverage/
 
 # Project specific
 BLOG.md
-docs/cc-sdd/
+docs/specbind/
 docs/kiro/prompt/
 docs/kiro/
 # .kiro/

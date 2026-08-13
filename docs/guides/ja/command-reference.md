@@ -2,7 +2,7 @@
 
 > 📖 **English guide:** [Command Reference](../command-reference.md)
 
-cc-sdd のレガシー `/kiro:*` コマンド向けリファレンスである。各フェーズで確認すべき成果物と次のアクションをすぐに把握できるよう、英語版の `docs/guides/command-reference.md` を基に日本語で要約している。
+specbind のレガシー `/kiro:*` コマンド向けリファレンスである。各フェーズで確認すべき成果物と次のアクションをすぐに把握できるよう、英語版の `docs/guides/command-reference.md` を基に日本語で要約している。
 
 Skills モードを使っている場合は、先に [スキルリファレンス](skill-reference.md) を参照すること。
 

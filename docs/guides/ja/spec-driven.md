@@ -2,15 +2,15 @@
 
 > 📖 **English guide:** [Spec-Driven Development Workflow](../spec-driven.md)
 
-このドキュメントは、cc-sdd が agentic SDLC ワークフローのなかで、仕様駆動開発（Spec-Driven Development, SDD）をどのように実践しているかを日本語で解説するものである。どのスラッシュコマンド（またはSkill）を実行し、どの成果物をレビューし、開発者による確認（ゲート）をどの段階に設けるべきかを迅速に判断するためのリファレンスとして利用できる。
+このドキュメントは、specbind が agentic SDLC ワークフローのなかで、仕様駆動開発（Spec-Driven Development, SDD）をどのように実践しているかを日本語で解説するものである。どのスラッシュコマンド（またはSkill）を実行し、どの成果物をレビューし、開発者による確認（ゲート）をどの段階に設けるべきかを迅速に判断するためのリファレンスとして利用できる。
 
 ## Core Ideas
 
-cc-sdd は、Spec-Driven Development を「人間と agent の両方にとって、意図・境界・検証条件を読み取りやすくする実践」として扱う。目的はドキュメントを増やすことではない。アーキテクチャの一貫性を失わずに、仕事を独立して進められる spec を作ることである。
+specbind は、Spec-Driven Development を「人間と agent の両方にとって、意図・境界・検証条件を読み取りやすくする実践」として扱う。目的はドキュメントを増やすことではない。アーキテクチャの一貫性を失わずに、仕事を独立して進められる spec を作ることである。
 
 ### 境界中心
 
-cc-sdd では、spec の一番重要な価値は責務境界と契約を明確にすることにある。
+specbind では、spec の一番重要な価値は責務境界と契約を明確にすることにある。
 
 良い spec は少なくとも次を明確にするべきである。
 
@@ -19,7 +19,7 @@ cc-sdd では、spec の一番重要な価値は責務境界と契約を明確�
 - どの依存が許可されるか
 - この spec が変わったとき、どの downstream を再検証すべきか
 
-そのため cc-sdd では、workflow 全体で境界を持ち運ぶ。
+そのため specbind では、workflow 全体で境界を持ち運ぶ。
 
 - discovery は **Boundary Candidates** を出す
 - requirements は必要なときに boundary context を明確にする
@@ -29,7 +29,7 @@ cc-sdd では、spec の一番重要な価値は責務境界と契約を明確�
 
 ### spec は独立した delivery 単位
 
-cc-sdd では、spec を単なる計画書ではなく、delivery と revalidation の単位として扱う。
+specbind では、spec を単なる計画書ではなく、delivery と revalidation の単位として扱う。
 
 実務上の狙いは、仕事を非同期に進められるようにすることにある。
 
@@ -45,33 +45,33 @@ discovery、mixed decomposition、spec batch generation、spec status はその�
 
 ownership が曖昧で、shared responsibility が多く、循環依存があり、責務の切れ目が不明確なシステムに spec を増やしても、独立性は生まれない。混乱を文書化するだけになる。
 
-そのため cc-sdd は、architecture を後工程ではなく前提条件として扱う。spec は architecture を置き換えるものではない。境界・依存・不変条件を日々の作業 artifact に変えることで、architecture を運用可能にするものである。
+そのため specbind は、architecture を後工程ではなく前提条件として扱う。spec は architecture を置き換えるものではない。境界・依存・不変条件を日々の作業 artifact に変えることで、architecture を運用可能にするものである。
 
 ### spec を中心に据え、機械的検証で支える
 
-cc-sdd は spec を中心に据える。意図、スコープ、境界、除外事項、再検証条件を持つ主たる作業 artifact は Markdown spec である。
+specbind は spec を中心に据える。意図、スコープ、境界、除外事項、再検証条件を持つ主たる作業 artifact は Markdown spec である。
 
 これは機械的検証の重要性を下げるものではない。テスト、build、lint、型チェック、runtime smoke check は引き続き重要であり、spec を現実に接続するための土台になる。
 
-cc-sdd ではこの 2 層は補完関係にある。
+specbind ではこの 2 層は補完関係にある。
 
 - spec が意図と境界を表現する
 - 機械的検証が execution-level の grounding を与える
 
 ### 変更容易性を前提に設計
 
-cc-sdd は、変えやすさを保てる程度にシンプルであることを重視している。
+specbind は、変えやすさを保てる程度にシンプルであることを重視している。
 
 これは 2 つのレベルで効く。
 
 - 理解が進むにつれて spec 自体を切り直しやすい
-- cc-sdd 自体もチームに合わせて変えやすい
+- specbind 自体もチームに合わせて変えやすい
 
 templates、rules、skill workflows はカスタマイズされる前提で設計されている。目標は、すべてのチームに 1 つの canonical workflow を強制することではない。境界と検証ループを保ったまま、各チームの構造や delivery model に合わせて process を進化させられるようにすることである。
 
 ### 長時間自律は spec harness に依存する
 
-cc-sdd における長時間自律は抽象的な約束ではない。`tasks.md` を中心にした workflow に支えられている。
+specbind における長時間自律は抽象的な約束ではない。`tasks.md` を中心にした workflow に支えられている。
 
 `/kiro-impl` は task を 1 つずつ TDD、task-local review、bounded remediation で進め、最後の task まで実行できる。spec、task boundary、validation expectation が明確なときは進み、人間の確認・承認・判断が本当に必要なところでは止まる。
 

@@ -1,8 +1,8 @@
-# cc-sdd Migration Guide
+# SpecBind Migration Guide
 
 > 📖 **日本語ガイドはこちら:** [マイグレーションガイド (日本語)](ja/migration-guide.md)
 
-cc-sdd 1.x (especially 1.1.5) and 2.0.0 share the same agentic SDLC philosophy and command list, but the **design artifacts, templates, and steering structure were rebuilt from the ground up**. Use this guide to pick one of two clear paths—either keep running 1.1.5 as-is, or accept the discontinuity and move to 2.0.0 where templates/rules make customization instant.
+specbind 1.x (especially 1.1.5) and 2.0.0 share the same agentic SDLC philosophy and command list, but the **design artifacts, templates, and steering structure were rebuilt from the ground up**. Use this guide to pick one of two clear paths—either keep running 1.1.5 as-is, or accept the discontinuity and move to 2.0.0 where templates/rules make customization instant.
 
 ---
 
@@ -10,8 +10,8 @@ cc-sdd 1.x (especially 1.1.5) and 2.0.0 share the same agentic SDLC philosophy a
 
 | Goal | Recommended action |
 | --- | --- |
-| Keep the legacy 1.x workflow untouched | Run `npx cc-sdd@1.1.5` whenever you install/refresh files. Continue editing agent-specific prompt folders (only the original 8 spec/steering commands exist). |
-| Adopt unified templates, research/design split, and consistent behavior across all 8 supported agents | Reinstall with `npx cc-sdd@latest` (=2.0.0) and customize only `.kiro/settings/templates/*` plus `.kiro/settings/rules/` (full 11-command set, including validate-*). |
+| Keep the legacy 1.x workflow untouched | Run `npx specbind@1.1.5` whenever you install/refresh files. Continue editing agent-specific prompt folders (only the original 8 spec/steering commands exist). |
+| Adopt unified templates, research/design split, and consistent behavior across all 8 supported agents | Reinstall with `npx specbind@latest` (=2.0.0) and customize only `.kiro/settings/templates/*` plus `.kiro/settings/rules/` (full 11-command set, including validate-*). |
 
 > ⚠️ Mixing 1.x and 2.x layouts in the same `.kiro` tree is not supported. Pick one path per repo/branch.
 
@@ -23,13 +23,13 @@ cc-sdd 1.x (especially 1.1.5) and 2.0.0 share the same agentic SDLC philosophy a
 
 ---
 
-## 1. Staying on cc-sdd 1.1.5 (fallback option)
+## 1. Staying on specbind 1.1.5 (fallback option)
 
 1.1.5 is no longer on `@latest`, but you can pin it explicitly:
 
 ```bash
-npx cc-sdd@1.1.5 --claude-code   # legacy flag name (use --cursor / --gemini / etc. for others)
-npx cc-sdd@1.1.5 --lang ja       # legacy i18n flags still work
+npx specbind@1.1.5 --claude-code   # legacy flag name (use --cursor / --gemini / etc. for others)
+npx specbind@1.1.5 --lang ja       # legacy i18n flags still work
 ```
 
 - You can keep editing `.claude/commands/*`, `.cursor/prompts/*`, `.codex/prompts/*` などのエージェント別フォルダを直接編集するスタイルで運用できます。
@@ -61,9 +61,9 @@ npx cc-sdd@1.1.5 --lang ja       # legacy i18n flags still work
 
 2. **Install v2 cleanly (reuse interactive choices)**
    ```bash
-   npx cc-sdd@latest                 # default (Claude Code)
-   npx cc-sdd@latest --cursor        # other agents
-   npx cc-sdd@latest --claude-agent  # Subagents mode
+   npx specbind@latest                 # default (Claude Code)
+   npx specbind@latest --cursor        # other agents
+   npx specbind@latest --claude-agent  # Subagents mode
    ```
    - The installer now prompts per file group (overwrite / append / keep). You can choose “append” for steering/specs to merge existing documents, or “keep” to skip untouched assets.
 
@@ -80,7 +80,7 @@ npx cc-sdd@1.1.5 --lang ja       # legacy i18n flags still work
    - Research/design templates reference this folder, so migrate existing notes here.
 
 6. **Update automation**
-   - Point all scripts/docs to `npx cc-sdd@latest`; retire `@next` usage.
+   - Point all scripts/docs to `npx specbind@latest`; retire `@next` usage.
    - Map old manual command invocations to the 11 supported ones (`spec-*`, `validate-*`, `steering*`).
 
 ---
@@ -120,14 +120,14 @@ npx cc-sdd@1.1.5 --lang ja       # legacy i18n flags still work
 
 1. **Reinstall** with the latest version (skills mode for your platform):
    ```bash
-   npx cc-sdd@latest --claude-skills     # Claude Code (default)
-   npx cc-sdd@latest --codex-skills      # Codex
-   npx cc-sdd@latest --cursor-skills     # Cursor IDE
-   npx cc-sdd@latest --copilot-skills    # GitHub Copilot
-   npx cc-sdd@latest --windsurf-skills   # Windsurf IDE
-   npx cc-sdd@latest --opencode-skills   # OpenCode
-   npx cc-sdd@latest --gemini-skills     # Gemini CLI
-   npx cc-sdd@latest --antigravity       # Antigravity
+   npx specbind@latest --claude-skills     # Claude Code (default)
+   npx specbind@latest --codex-skills      # Codex
+   npx specbind@latest --cursor-skills     # Cursor IDE
+   npx specbind@latest --copilot-skills    # GitHub Copilot
+   npx specbind@latest --windsurf-skills   # Windsurf IDE
+   npx specbind@latest --opencode-skills   # OpenCode
+   npx specbind@latest --gemini-skills     # Gemini CLI
+   npx specbind@latest --antigravity       # Antigravity
    ```
 
 2. **Remove legacy skill references** -- if you have custom scripts or documentation referencing `kiro-spec-impl`, update them to `/kiro-impl`.

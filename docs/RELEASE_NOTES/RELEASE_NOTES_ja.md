@@ -306,7 +306,7 @@ v2.0.0へ移行後にテンプレートを再生成すれば、追加フラグ�
 - CLI 引数パーサーに `--windsurf` フラグを追加し、エージェントレジストリへ Windsurf のレイアウト情報を登録。
 
 ### 📚 ドキュメント
-- ルート README、`tools/cc-sdd/README*`、および `docs/README/README_{en,ja,zh-TW}.md` を更新し、Windsurf 導入手順と `npx cc-sdd@next --windsurf` を用いた手動 QA 手順を追記しました。
+- ルート README、`tools/specbind/README*`、および `docs/README/README_{en,ja,zh-TW}.md` を更新し、Windsurf 導入手順と `npx cc-sdd@next --windsurf` を用いた手動 QA 手順を追記しました。
 
 ### 📈 指標
 - **対応プラットフォーム**: 7（Claude Code, Cursor IDE, Gemini CLI, Codex CLI, GitHub Copilot, Qwen Code, Windsurf IDE）
