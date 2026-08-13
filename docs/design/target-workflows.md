@@ -28,7 +28,7 @@ Requirements recorded so far:
 - A milestone has a machine-generated stable identity independent of an initially unknown release version.
 - Requirements and design are maintained when represented behavior changes.
 - Each spec has at most one active milestone change at a time.
-- Requirements freezes an explicit active requirement set for downstream design and task coverage.
+- Requirements freezes an explicit active requirement set in `spec.json` for downstream design and task coverage.
 - Briefs and tasks are milestone-local working documents, not append-only release history.
 - Released change history is indexed separately from the current requirements and design.
 - A release closes a milestone, not the specs involved in that milestone.

@@ -14,6 +14,7 @@ Related documents:
 - [Active spec lifecycle](./active-spec-lifecycle.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
+- [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
 
 ## Status and change types
 
@@ -38,7 +39,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design and trace the active requirement set. |
 | `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
 | `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
-| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze the active requirement set. |
+| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.json`. |
 | `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Distinguish released state, active change, current tasks, and history. |
 | `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
 | `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |

@@ -76,7 +76,7 @@ Discovery owns creating the active brief and transitioning an idle released spec
 
 ## Active requirement set
 
-`requirements.md` remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone:
+`requirements.md` remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone and store it in `spec.json`; see [Decision 0003](./decisions/0003-active-requirement-set.md):
 
 - It contains every Requirement ID that must be implemented or revalidated for the active change.
 - It may include unchanged existing requirements when the change requires their reimplementation or revalidation.
@@ -85,7 +85,7 @@ Discovery owns creating the active brief and transitioning an idle released spec
 - Changing the set returns the workflow to the requirements phase and invalidates affected downstream approval.
 - Design traces the same set, and tasks must provide 100% coverage of it.
 
-The machine-readable storage location for this set remains undecided.
+Within `spec.json`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a unique, deterministically ordered array of canonical Requirement IDs. Release finalization clears `active_change` as part of returning the spec to released / idle state.
 
 ## Active tasks and coverage
 
@@ -196,7 +196,6 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- Where the active requirement set is stored and how its schema is validated.
 - The generated milestone ID format and the authoritative location of the release-version binding.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether one milestone can contain multiple active Change IDs for the same spec.

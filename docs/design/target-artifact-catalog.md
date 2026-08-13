@@ -13,6 +13,7 @@ Related documents:
 - [Target workflows](./target-workflows.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
+- [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
 
 Status: Draft
 
@@ -49,11 +50,11 @@ Status: Draft
 | `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
 | `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
 | `changelog.md` | Persists as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Draft | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata; cancelled-entry naming remains open. |
-| `spec.json` | Represents lifecycle, active-change metadata, and current approvals. | Spec lifecycle workflows. | Draft | Must represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
+| `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; must also represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
 
 ## Open questions
 
-- What exact schema and ID format identify the active milestone, release binding, active change, and active requirement set?
+- What exact schema and ID format identify the active milestone, release binding, and remaining active-change fields?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - How are superseded or removed product capabilities reflected in long-lived specs?
