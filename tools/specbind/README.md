@@ -3,7 +3,7 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
 
 <div align="center" style="margin-bottom: 1rem; font-size: 1.1rem;"><sub>
-English | <a href="./README_ja.md">日本語</a> | <a href="./README_zh-TW.md">繁體中文</a>
+English | <a href="./README_ja.md">日本語</a>
 </sub></div>
 
 **Turn approved specs into long-running autonomous implementation.** One command installs an agentic SDLC workflow as Agent Skills: discovery, requirements, design, tasks, and autonomous implementation with per-task independent review. Supports Claude Code and Codex with the same 17-skill set.
@@ -41,14 +41,13 @@ cd your-project
 npx specbind@latest
 ```
 
-The default installs **Claude Code Skills** with English docs. To select Codex or another language:
+The default installs **Claude Code Skills** with English docs. To select Codex or Japanese:
 
 ```bash
 npx specbind@latest --codex-skills --lang ja      # Codex, Japanese
-npx specbind@latest --claude-skills --lang zh-TW  # Claude Code, Traditional Chinese
 ```
 
-Supports Claude Code, Codex, and 13 languages. See [Supported Agents](#supported-agents) for details.
+English (`en`) and Japanese (`ja`) are the only officially supported languages while SpecBind stabilizes. Additional languages may be reconsidered after the project stabilizes. See [Supported Agents](#supported-agents) for agent details.
 
 Then, in your agent:
 
@@ -107,9 +106,7 @@ Both supported integrations ship the same 17-skill set and are tested directly.
 
 ```bash
 npx specbind@latest --lang ja    # Japanese
-npx specbind@latest --lang zh-TW # Traditional Chinese
-npx specbind@latest --lang es    # Spanish
-# Supports: en, ja, zh-TW, zh, es, pt, de, fr, ru, it, ko, ar, el
+# Supports: en, ja
 ```
 
 ### Advanced options

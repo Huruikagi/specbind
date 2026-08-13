@@ -6,7 +6,9 @@ New features and improvements for cc-sdd. See [CHANGELOG.md](../../CHANGELOG.md)
 
 ## 🔬 In Development (Unreleased)
 
-No unreleased features at this time. The latest stable release is v3.0.2.
+- Official language support is temporarily limited to English (`en`) and Japanese (`ja`) while SpecBind stabilizes.
+- The CLI now rejects other language codes, and current Traditional Chinese README variants have been removed.
+- Additional languages may be reconsidered after the project stabilizes.
 
 ---
 
@@ -579,5 +581,5 @@ For detailed usage instructions, see [README_en.md](README_en.md).
 
 - **[Zenn Article](https://zenn.dev/gotalab/articles/3db0621ce3d6d2)** - Detailed explanation of Kiro's specification-driven development process
 - **[Japanese Documentation](README.md)**
-- **[Traditional Chinese Documentation](README_zh-TW.md)**
+- **Traditional Chinese Documentation** (historical; removed from current SpecBind documentation during stabilization)
 - **Claude Code Command Refresh**: Retired `.tpl` files and standardized on 11 commands (including `validate-impl`), delivering the same cross-platform template set with a simplified layout.

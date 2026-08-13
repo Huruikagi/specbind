@@ -3,7 +3,7 @@
 > ⚠️ **Legacy documentation (archived).** This page reflects an early specbind workflow and is kept for reference only. For the latest instructions, see the [current README](../../README.md).
 
 > 🌐 **Language**  
-> 📖 **English Version** (This page) | 📖 **[日本語版 README](README.md)** | 📖 **[繁體中文說明](README_zh-TW.md)**
+> 📖 **English Version** (This page) | 📖 **[日本語版 README](README_ja.md)**
 
 > 🚀 **Supported Platforms**  
 > 🤖 **Claude Code** | 🔮 **Cursor** | ⚡ **Gemini CLI** | 🧠 **Codex CLI**
@@ -312,10 +312,8 @@ sequenceDiagram
 │           └── tasks.md       # Implementation tasks
 ├── CLAUDE.md              # Main config (copied from a language-specific file below)
 ├── CLAUDE_en.md           # English version config
-├── CLAUDE_zh-TW.md        # Traditional Chinese version config
 ├── README.md              # Japanese version README
 ├── README_en.md           # English version README
-├── README_zh-TW.md        # Traditional Chinese version README
 └── (your project files)
 ```
 

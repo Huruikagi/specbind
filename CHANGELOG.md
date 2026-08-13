@@ -11,10 +11,12 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Limit the supported and directly tested Agent Skills integrations to Claude Code and Codex.
 - Align the CLI, package metadata, tests, and current documentation with the two supported install targets.
+- Temporarily limit official language support to English (`en`) and Japanese (`ja`) while SpecBind stabilizes ([#1](https://github.com/Huruikagi/specbind/issues/1)).
 
 ### Removed
 - Remove unverified Cursor, GitHub Copilot, Windsurf, OpenCode, Gemini CLI, Antigravity, and Qwen Code install targets.
 - Remove the deprecated Claude Code commands/agents modes and blocked Codex prompts mode.
+- Remove current Traditional Chinese README variants; additional languages may be reconsidered after stabilization.
 
 ## [3.0.2] - 2026-04-14
 
@@ -602,7 +604,7 @@ See the comprehensive [Migration Guide](docs/guides/migration-guide.md) for deta
 - **Documentation**:
   - [English](tools/specbind/README.md)
   - [Japanese](tools/specbind/README_ja.md)
-  - [Traditional Chinese](docs/README/README_zh-TW.md)
+  - Traditional Chinese (removed from current documentation during SpecBind stabilization; see [#1](https://github.com/Huruikagi/specbind/issues/1))
 
 ---
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

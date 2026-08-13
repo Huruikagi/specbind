@@ -28,7 +28,7 @@ describe('mergeConfigAndArgs', () => {
   it('respects precedence: CLI > config > defaults', () => {
     const args = parseArgs([
       '--agent', 'codex-skills',
-      '--lang', 'zh-TW',
+      '--lang', 'ja',
       '--os', 'mac',
       '--kiro-dir', '.work/kiro',
       '--overwrite', 'force',
@@ -48,7 +48,7 @@ describe('mergeConfigAndArgs', () => {
 
     const out = mergeConfigAndArgs(args, cfg, runtimeDarwin);
     expect(out.agent).toBe('codex-skills');
-    expect(out.lang).toBe('zh-TW');
+    expect(out.lang).toBe('ja');
     expect(out.os).toBe('mac');
     expect(out.resolvedOs).toBe('mac');
     expect(out.kiroDir).toBe('.work/kiro');
@@ -71,6 +71,12 @@ describe('mergeConfigAndArgs', () => {
     const args = parseArgs([]);
     const cfg: UserConfig = { kiroDir: '/abs' };
     expect(() => mergeConfigAndArgs(args, cfg, runtimeDarwin)).toThrowError(/kiroDir/i);
+  });
+
+  it('rejects unsupported languages loaded from config', () => {
+    const args = parseArgs([]);
+    const cfg = { lang: 'es' } as unknown as UserConfig;
+    expect(() => mergeConfigAndArgs(args, cfg, runtimeDarwin)).toThrowError(/lang.*invalid/i);
   });
 
   it('applies agentLayouts override into layout resolution', () => {

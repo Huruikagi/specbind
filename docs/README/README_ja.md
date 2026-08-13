@@ -3,7 +3,7 @@
 > ⚠️ **旧版ドキュメント（アーカイブ）です。** 本ページは初期の specbind ワークフローを扱っています。最新情報は [README.md](../../README.md) を参照してください。
 
 > 🌐 **Language**  
-> 📖 **[English Version](README_en.md)** | 📖 **日本語版 README** (このページ) | 📖 **[繁體中文說明](README_zh-TW.md)**
+> 📖 **[English Version](README_en.md)** | 📖 **日本語版 README** (このページ)
 
 > 🚀 **対応プラットフォーム**  
 > 🤖 **Claude Code** | 🔮 **Cursor** | ⚡ **Gemini CLI** | 🧠 **Codex CLI**
@@ -74,11 +74,9 @@ Claude Code、Cursor、Gemini CLI、Codex CLIの4つのプラットフォーム�
 ├── プラットフォーム別設定ファイル
 │   ├── CLAUDE.md              # Claude Code設定
 │   ├── CLAUDE_en.md           # 英語版 Claude Code設定
-│   ├── CLAUDE_zh-TW.md        # 繁体字版 Claude Code設定
 │   └── AGENTS.md              # Cursor用設定
 ├── README.md                  # 日本語版 README
 ├── README_en.md               # 英語版 README
-├── README_zh-TW.md            # 繁体字版 README
 └── （あなたのプロジェクトファイル）
 ```
 
@@ -344,11 +342,9 @@ sequenceDiagram
 ├── プラットフォーム別設定ファイル
 │   ├── CLAUDE.md                  # Claude Code設定（メイン）
 │   ├── CLAUDE_en.md               # 英語版 Claude Code設定
-│   ├── CLAUDE_zh-TW.md            # 繁体字版 Claude Code設定
 │   └── AGENTS.md                  # Cursor用設定
 ├── README.md                      # 日本語版 README
 ├── README_en.md                   # 英語版 README
-├── README_zh-TW.md                # 繁体字版 README
 └── （あなたのプロジェクトファイル）
 ```
 

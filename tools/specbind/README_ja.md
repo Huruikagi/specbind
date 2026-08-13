@@ -3,7 +3,7 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
 
 <div align="center" style="margin-bottom: 1rem; font-size: 1.1rem;"><sub>
-<a href="./README.md">English</a> | 日本語 | <a href="./README_zh-TW.md">繁體中文</a>
+<a href="./README.md">English</a> | 日本語
 </sub></div>
 
 **承認済みの仕様を、長時間でも壊れない自律実装ワークフローに変える。** ワンコマンドで agentic SDLC ワークフローを Agent Skills として導入する: discovery, requirements, design, tasks, そしてタスクごとの independent review 付きの自律実装。Claude Code と Codex に同じ 17-skill セットを提供する。
@@ -41,14 +41,13 @@ cd your-project
 npx specbind@latest
 ```
 
-デフォルトでは **Claude Code Skills** と英語ドキュメントがインストールされる。Codexまたは他の言語を指定する場合:
+デフォルトでは **Claude Code Skills** と英語ドキュメントがインストールされる。Codex または日本語を指定する場合:
 
 ```bash
 npx specbind@latest --codex-skills --lang ja      # Codex、日本語
-npx specbind@latest --claude-skills --lang zh-TW  # Claude Code、繁体字中国語
 ```
 
-Claude Code、Codex、13言語に対応。詳細は [対応エージェント](#対応エージェント) を参照。
+SpecBind の安定化期間中、公式対応言語は英語 (`en`) と日本語 (`ja`) のみ。追加言語はプロジェクトの安定後に再検討する。エージェントの詳細は [対応エージェント](#対応エージェント) を参照。
 
 その後、エージェント上で:
 
@@ -107,9 +106,7 @@ spec フェーズの典型的な出力（10 分以内）:
 
 ```bash
 npx specbind@latest --lang ja    # 日本語
-npx specbind@latest --lang zh-TW # 繁体字中国語
-npx specbind@latest --lang es    # スペイン語
-# 対応言語: en, ja, zh-TW, zh, es, pt, de, fr, ru, it, ko, ar, el
+# 対応言語: en, ja
 ```
 
 ### 高度なオプション

@@ -17,6 +17,10 @@ Until that transition is complete, do not assume that the existing commands or d
 - Rework inherited components deliberately instead of maintaining drop-in compatibility with cc-sdd.
 - Document migration and compatibility decisions as the project takes shape.
 
+## Language support
+
+During this stabilization phase, SpecBind officially supports English (`en`) and Japanese (`ja`) only. Additional languages may be reconsidered after the commands, workflows, and documentation have stabilized.
+
 ## Upstream and attribution
 
 SpecBind began from the source code of [cc-sdd](https://github.com/gotalab/cc-sdd) by gotalab. We are grateful to the original project and its contributors for the foundation.

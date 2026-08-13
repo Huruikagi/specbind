@@ -26,9 +26,9 @@ describe('parseArgs', () => {
     expect(args.yes).toBe(true);
   });
 
-  it('parses additional languages', () => {
-    expect(parseArgs(['--lang', 'es']).lang).toBe('es');
-    expect(parseArgs(['--lang', 'ko']).lang).toBe('ko');
+  it('parses the supported languages', () => {
+    expect(parseArgs(['--lang', 'en']).lang).toBe('en');
+    expect(parseArgs(['--lang', 'ja']).lang).toBe('ja');
   });
 
   it('parses backup with and without value', () => {
@@ -50,6 +50,8 @@ describe('parseArgs', () => {
   it('validates enum values for os/lang/overwrite/agent', () => {
     expect(() => parseArgs(['--os', 'macos'])).toThrowError(/os.*invalid/i);
     expect(() => parseArgs(['--lang', 'jp'])).toThrowError(/lang.*invalid/i);
+    expect(() => parseArgs(['--lang', 'zh-TW'])).toThrowError(/lang.*invalid/i);
+    expect(() => parseArgs(['--lang', 'es'])).toThrowError(/lang.*invalid/i);
     expect(() => parseArgs(['--overwrite', 'replace'])).toThrowError(/overwrite.*invalid/i);
     expect(() => parseArgs(['--agent', 'unknown'])).toThrowError(/agent.*invalid/i);
   });

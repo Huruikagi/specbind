@@ -18,6 +18,7 @@ import { determineCategoryPolicies, printSummary, summarizeCategories, type Cate
 import { defaultIO, type CliIO } from './cli/io.js';
 import { colors, formatBox, formatError, formatHeading, formatSuccess, formatWarning } from './cli/ui/colors.js';
 import { isInteractive, promptChoice, promptConfirm } from './cli/ui/prompt.js';
+import { supportedLanguages } from './constants/languages.js';
 
 const agentKeys = agentList;
 const aliasFlags = Array.from(new Set(agentKeys.flatMap((key) => getAgentDefinition(key).aliasFlags)));
@@ -28,7 +29,7 @@ const helpText = `Usage: specbind [options]
 
 Options:
   --agent <${agentKeys.join('|')}>  Select agent
-${agentAliasLine}  --lang <ja|en|zh-TW|zh|es|pt|de|fr|ru|it|ko|ar|el>  Language
+${agentAliasLine}  --lang <${supportedLanguages.join('|')}>  Language
   --os <auto|mac|windows|linux>               Target OS (auto uses runtime)
   --kiro-dir <path>                           Kiro root dir (default .kiro)
   --overwrite <prompt|skip|force>             Overwrite policy (default: prompt)

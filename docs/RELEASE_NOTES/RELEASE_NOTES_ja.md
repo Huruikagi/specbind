@@ -6,7 +6,9 @@ cc-sddの新機能・改善情報をお届けします。技術的な変更履�
 
 ## 🔬 開発中 (Unreleased)
 
-現在、未リリースの機能はありません。最新の安定版はv3.0.2です。
+- SpecBind の安定化期間中、公式対応言語を英語 (`en`) と日本語 (`ja`) に限定しました。
+- CLI はその他の言語コードを拒否し、現行の繁体字中国語 README を削除しました。
+- 追加言語はプロジェクトの安定後に再検討します。
 
 ---
 
@@ -607,5 +609,5 @@ requirements、design、tasksの各文書生成品質を大幅改善、過剰な
 - **[Zenn記事](https://zenn.dev/gotalab/articles/3db0621ce3d6d2)** - Kiroの仕様書駆動開発プロセスの詳細解説
 - **[日本語ドキュメント](docs/README/README_ja.md)**
 - **[English Documentation](docs/README/README_en.md)**
-- **[繁體中文說明](docs/README/README_zh-TW.md)**
+- **繁體中文說明**（履歴上の記録。SpecBind 安定化期間中の現行ドキュメントからは削除）
 - **Claude Codeコマンド刷新**：`.tpl` を撤廃し 10 → 11 コマンド体制へ（`validate-impl` を含む）。旧 OS 別テンプレートよりファイル数はそのまま維持しつつ、クロスプラットフォームで同一内容を配布。

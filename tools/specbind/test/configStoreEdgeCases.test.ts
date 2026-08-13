@@ -66,7 +66,7 @@ describe('config store edge cases', () => {
     const dir = await mkTmp();
     const complexConfig: UserConfig = {
       agent: 'codex-skills',
-      lang: 'zh-TW',
+      lang: 'en',
       os: 'linux',
       kiroDir: 'docs/kiro',
       overwrite: 'force',

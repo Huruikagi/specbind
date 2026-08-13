@@ -4,7 +4,7 @@ import { resolveAgentLayout } from '../resolvers/agentLayout.js';
 import type { OSType } from '../resolvers/os.js';
 import { resolveOs } from '../resolvers/os.js';
 import { resolveKiroDir } from '../resolvers/kiroDir.js';
-import type { SupportedLanguage } from '../constants/languages.js';
+import { supportedLanguages, type SupportedLanguage } from '../constants/languages.js';
 
 export type OverwritePolicy = 'prompt' | 'skip' | 'force';
 
@@ -54,7 +54,11 @@ export const mergeConfigAndArgs = (
   const agent: AgentType = (args.agent ?? config.agent ?? defaults.agent) as AgentType;
   const osInput: 'auto' | OSType = (args.os ?? config.os ?? defaults.os) as any;
   const resolvedOs = resolveOs(osInput, runtime);
-  const lang = (args.lang ?? config.lang ?? defaults.lang) as SupportedLanguage;
+  const langInput = args.lang ?? config.lang ?? defaults.lang;
+  if (!supportedLanguages.includes(langInput as SupportedLanguage)) {
+    throw new Error(`lang value invalid: ${langInput}`);
+  }
+  const lang = langInput as SupportedLanguage;
 
   const kiroDir = resolveKiroDir({ flag: args.kiroDir, config: config.kiroDir });
 
