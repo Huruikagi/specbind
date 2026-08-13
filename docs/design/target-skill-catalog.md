@@ -12,6 +12,7 @@ Related documents:
 - [Target workflows](./target-workflows.md)
 - [Target artifact catalog](./target-artifact-catalog.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
+- [CLI and agent responsibility boundary](./cli-agent-boundary.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
@@ -135,6 +136,7 @@ From the user's perspective, discovery still starts a milestone. Internally, it 
 
 - Whether users invoke `specbind-milestone` directly or it remains an internal responsibility used by discovery and release.
 - Whether release-version binding belongs here permanently or becomes a release preflight operation.
+- Whether deterministic CLI milestone commands make this separate agent skill unnecessary.
 
 ## `specbind-release`
 
@@ -195,3 +197,4 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Which validation and verification responsibilities should remain separate?
 - Should the quick and batch workflows remain skills, or become orchestration modes of a smaller command set?
 - How long, if at all, should old skill names remain available as compatibility aliases?
+- Which skills become thinner once deterministic checks and lifecycle mutations move into the bundled CLI?

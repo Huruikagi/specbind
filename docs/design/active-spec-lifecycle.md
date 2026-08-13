@@ -128,6 +128,8 @@ These operations are intentionally distinct from successful release finalization
 
 The proposed milestone-lifecycle responsibility owns the mechanical state transitions for scope changes and full abandonment. Discovery remains the user entry point and supplies the confirmed intent. Whether that responsibility becomes a directly invocable `specbind-milestone` skill remains open.
 
+The responsibility may be implemented primarily as guarded commands in the bundled SpecBind CLI rather than as another large agent skill. The agent would interpret intent and obtain confirmation; the CLI would validate and apply the deterministic state transition. See [CLI and agent responsibility boundary](./cli-agent-boundary.md).
+
 ## Release finalization contract
 
 The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
@@ -197,6 +199,7 @@ The project-local append-only Change Brief behavior is the observed problem, not
 
 - `specbind-discovery`: analyze and route work, create one active brief, and initiate confirmed milestone changes.
 - proposed milestone lifecycle: create and update the active roadmap, bind the target release, and perform confirmed abandonment cleanup.
+- bundled CLI: check active Requirement ID traceability and perform accepted deterministic lifecycle operations.
 - requirements workflow: revise current requirements and freeze the active requirement set.
 - design workflow: revise current design and trace the active requirement set.
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.

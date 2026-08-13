@@ -18,6 +18,7 @@
 - [`docs/design/target-artifact-catalog.md`](docs/design/target-artifact-catalog.md) — proposed artifact ownership and lifecycle
 - [`docs/design/target-workflows.md`](docs/design/target-workflows.md) — proposed user journeys and responsibility boundaries
 - [`docs/design/active-spec-lifecycle.md`](docs/design/active-spec-lifecycle.md) — detailed draft for active specs and milestone finalization
+- [`docs/design/cli-agent-boundary.md`](docs/design/cli-agent-boundary.md) — proposed boundary between bundled deterministic CLI operations and agent skills
 - [`docs/design/decisions/0002-project-release-adapter.md`](docs/design/decisions/0002-project-release-adapter.md) — accepted core-plus-project-adapter release direction
 - [`docs/design/decisions/0003-active-requirement-set.md`](docs/design/decisions/0003-active-requirement-set.md) — accepted storage contract for current milestone Requirement IDs
 - [`docs/design/decisions/0004-release-history-layout.md`](docs/design/decisions/0004-release-history-layout.md) — accepted per-spec changelog and roadmap archive layout

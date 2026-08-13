@@ -2,7 +2,7 @@
 
 This document defines the intended user journeys and responsibility boundaries for the future SpecBind skill system. It stays name-neutral where naming is not yet decided; concrete names belong in the [target skill catalog](./target-skill-catalog.md).
 
-The detailed milestone document lifecycle is defined in [Active spec lifecycle](./active-spec-lifecycle.md).
+The detailed milestone document lifecycle is defined in [Active spec lifecycle](./active-spec-lifecycle.md). Deterministic automation boundaries are developed in [CLI and agent responsibility boundary](./cli-agent-boundary.md).
 
 Status: Draft
 
@@ -14,6 +14,7 @@ Status: Draft
 - Support both a deliberate phase-by-phase path and an intentional accelerated path.
 - Keep equivalent Claude Code and Codex workflows aligned without hiding platform-specific capabilities.
 - Treat specs as active, maintained descriptions of the product across milestones and releases.
+- Move deterministic parsing, invariant checks, and state mutations out of agent-specific shell instructions and into the bundled CLI.
 
 ## Spec lifecycle
 
@@ -142,6 +143,19 @@ The target contract should state when project guidance and gap analysis are opti
 | Release core | Readiness gates, verified publication boundary, and active-spec finalization | Project-specific build or publication commands |
 | Release adapter | Project-specific Prepare, Publish, Verify, and optional After finalize instructions | Weakening core gates or directly defining spec lifecycle semantics |
 
+## CLI and agent execution order
+
+Where a transition has both mechanical and semantic requirements, the workflow should make both layers explicit:
+
+```text
+bundled CLI: parse and check deterministic invariants
+  -> agent: review meaning and explain or repair issues
+  -> user or workflow: approve the transition when required
+  -> bundled CLI: perform explicit, guarded state mutation
+```
+
+The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.json`, `design.md`, and `tasks.md`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
+
 ## Approval and automation model
 
 The future workflow needs an explicit answer for each transition:
@@ -161,8 +175,9 @@ Accelerated and batch workflows may automate transitions, but they should reuse 
 
 ## Topics to resolve next
 
-1. Refine discovery's existing-spec update route.
-2. Define milestone contents and release-readiness criteria.
-3. Define the concrete responsibilities of `specbind-release`.
-4. Decide whether quick and batch remain first-class skills.
-5. Review the separation among task review, integration validation, and completion verification.
+1. Define the initial `specbind check traceability` contract and diagnostic schema.
+2. Refine discovery's existing-spec update route and decide which milestone operations move into the CLI.
+3. Define milestone contents and release-readiness criteria.
+4. Define the concrete responsibilities of `specbind-release` and its CLI operations.
+5. Decide whether quick and batch remain first-class skills.
+6. Review the separation among task review, integration validation, and completion verification.
