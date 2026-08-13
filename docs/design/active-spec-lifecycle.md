@@ -24,7 +24,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
 | `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
 | `tasks.md` | Executable plan for the current milestone's change. | Contains only current tasks and numbers them from the start. | Removed. |
-| `changelog.md` | Per-spec index of released or cancelled changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
+| `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
 | `spec.json` | Current lifecycle, active-change metadata, and approvals. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 
@@ -32,7 +32,7 @@ Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec
 
 ## Milestone identity and release binding
 
-Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery creates the roadmap before it hands work to later phases. A missing roadmap means there is no active milestone.
+Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery confirms the route and initiates the milestone before it hands work to later phases. To avoid growing discovery into a general state-management skill, a proposed milestone-lifecycle responsibility performs the roadmap creation and later mechanical updates. A missing roadmap means there is no active milestone.
 
 The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
@@ -105,7 +105,7 @@ Within `spec.json`, `active_change.requirement_ids: null` means the set has not 
 
 - release version
 - milestone ID and change ID
-- status such as released or cancelled
+- released status
 - problem and delivered-scope summary
 - preserved contracts or explicitly unchanged behavior
 - completed-task count and active-requirement coverage
@@ -115,6 +115,18 @@ Within `spec.json`, `active_change.requirement_ids: null` means the set has not 
 - related roadmap, issue, or follow-up
 
 The complete pre-finalization `brief.md` and `tasks.md` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
+
+## Scope removal, abandonment, and rollback
+
+These operations are intentionally distinct from successful release finalization; see [Decision 0005](./decisions/0005-active-change-abandonment.md):
+
+- Unstarted scope can be removed by revising the active milestone and its affected briefs.
+- Partially implemented unreleased work must be restored with explicit project and Git operations. SpecBind then reconciles its active artifacts and metadata with that repository state; it does not perform an automatic revert.
+- An entire unreleased milestone can be abandoned only with explicit user confirmation. After requirements and design have been restored or reconciled, lifecycle cleanup removes its milestone-local briefs and tasks, clears affected `active_change` state, and removes `steering/roadmap.md`.
+- An abandoned unreleased milestone does not add per-spec changelog entries or a file under `releases/` by default. Committed work remains discoverable through Git history.
+- A rollback of released behavior is represented as a new active change in a new milestone and is released normally.
+
+The proposed milestone-lifecycle responsibility owns the mechanical state transitions for scope changes and full abandonment. Discovery remains the user entry point and supplies the confirmed intent. Whether that responsibility becomes a directly invocable `specbind-milestone` skill remains open.
 
 ## Release finalization contract
 
@@ -183,7 +195,8 @@ The project-local append-only Change Brief behavior is the observed problem, not
 
 ## Skills affected by the portable contract
 
-- `specbind-discovery`: create one active brief, route existing-spec changes, and initialize active-change state.
+- `specbind-discovery`: analyze and route work, create one active brief, and initiate confirmed milestone changes.
+- proposed milestone lifecycle: create and update the active roadmap, bind the target release, and perform confirmed abandonment cleanup.
 - requirements workflow: revise current requirements and freeze the active requirement set.
 - design workflow: revise current design and trace the active requirement set.
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.
@@ -200,6 +213,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
-- Which workflow finalizes cancelled changes.
+- Whether the milestone-lifecycle responsibility is directly invocable or internal orchestration.
+- Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - The target `spec.json` state model and migration compatibility.
 - Whether immutable history may use something other than a Git release tag.

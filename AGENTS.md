@@ -21,6 +21,7 @@
 - [`docs/design/decisions/0002-project-release-adapter.md`](docs/design/decisions/0002-project-release-adapter.md) — accepted core-plus-project-adapter release direction
 - [`docs/design/decisions/0003-active-requirement-set.md`](docs/design/decisions/0003-active-requirement-set.md) — accepted storage contract for current milestone Requirement IDs
 - [`docs/design/decisions/0004-release-history-layout.md`](docs/design/decisions/0004-release-history-layout.md) — accepted per-spec changelog and roadmap archive layout
+- [`docs/design/decisions/0005-active-change-abandonment.md`](docs/design/decisions/0005-active-change-abandonment.md) — accepted scope removal, abandonment, and rollback boundaries
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

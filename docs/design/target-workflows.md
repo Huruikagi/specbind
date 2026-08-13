@@ -45,10 +45,11 @@ Open questions:
 
 ```text
 No active milestone
-  -> discovery creates roadmap.md with stable milestone identity
+  -> discovery confirms the route and initiates milestone creation
+  -> milestone lifecycle creates roadmap.md with stable milestone identity
   -> active milestone
-       -> release version may be bound later
-       -> discovery maintains scope and ordering
+       -> milestone lifecycle maintains confirmed scope and ordering
+       -> release version may be bound later through milestone lifecycle
        -> new and existing specs are created or updated
        -> implementation and validation
        -> target release version is required
@@ -58,7 +59,16 @@ No active milestone
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins in discovery and remains present for the lifetime of that milestone. Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. After a successful release, it moves the active roadmap from `steering/` to the new flat file `releases/<version>-roadmap.md`.
+`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins from the discovery user journey and remains present for the lifetime of that milestone. To keep discovery from absorbing every state transition, the proposed milestone-lifecycle responsibility performs the mechanical creation, scope updates, and release-version binding from confirmed discovery output. Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. After a successful release, it moves the active roadmap from `steering/` to the new flat file `releases/<version>-roadmap.md`.
+
+### Scope removal, abandonment, and rollback
+
+- Removing unstarted work is a confirmed update to the active milestone scope.
+- Partially implemented unreleased work is restored through explicit project and Git operations, followed by reconciliation of roadmap and active-spec state. SpecBind does not automatically revert repository content.
+- Abandoning the entire unreleased milestone requires explicit user confirmation and reconciled specs before milestone-local artifacts and active-change metadata are cleared. It creates no changelog entry or release-roadmap archive by default.
+- Reversing released behavior is new work in a new milestone and returns through the normal release path.
+
+These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Whether milestone lifecycle is a directly invocable skill or an internal responsibility remains Draft.
 
 The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
 
@@ -120,7 +130,8 @@ The target contract should state when project guidance and gap analysis are opti
 
 | Stage | Owns | Does not own |
 | --- | --- | --- |
-| Discovery | Routing, scope clarification, decomposition, durable handoff context | Detailed requirements or technical design |
+| Discovery | Routing, scope clarification, decomposition, active brief, and confirmed milestone intent | Detailed requirements, technical design, or mechanical milestone-state transitions |
+| Milestone lifecycle (proposed) | Roadmap creation, confirmed scope updates, release-version binding, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
 | Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability | Task execution or unapproved scope changes |
 | Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage | Implementation or historical task accumulation |
