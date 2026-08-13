@@ -11,6 +11,7 @@ Related documents:
 
 - [Target skill catalog](./target-skill-catalog.md)
 - [Target workflows](./target-workflows.md)
+- [Active spec lifecycle](./active-spec-lifecycle.md)
 
 Status: Draft
 
@@ -33,15 +34,17 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Draft | A release must not delete a spec merely because its milestone completed. |
-| `requirements.md` | Updated when user-visible behavior or constraints change. | Requirements workflow. | Draft | Existing-spec update behavior will be refined separately. |
-| `design.md` | Updated when the active technical design changes. | Design workflow. | Draft | Historical design preservation is not yet defined. |
-| `tasks.md` | Supports implementation progress for spec changes. | Task and implementation workflows. | Draft | Reset, replacement, or archival behavior between milestones is not yet defined. |
+| `brief.md` | Exists only for one active milestone change. | `specbind-discovery`. | Draft | Removed by successful release finalization; same-milestone deltas merge into the active brief. |
+| `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
+| `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
+| `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
+| `changelog.md` | Persists as an index of released or cancelled changes and evidence. | Release and cancellation finalization workflows. | Draft | Points to immutable history without duplicating complete working documents. |
+| `spec.json` | Represents lifecycle, active-change metadata, and current approvals. | Spec lifecycle workflows. | Draft | Must represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
 
 ## Open questions
 
-- What metadata identifies the active milestone and its intended release?
+- What metadata identifies the active milestone, active change, and active requirement set?
 - Does discovery create `roadmap.md` for every milestone, including a single-spec milestone?
-- What evidence must the release skill require before removing `roadmap.md`?
-- Is milestone or release history stored anywhere before `roadmap.md` is deleted?
+- What exact evidence schema must the release skill require before finalization?
 - How are superseded or removed product capabilities reflected in long-lived specs?
-- Should task history remain in an active spec or move to a release-history artifact?
+- How are cancelled changes finalized and indexed?

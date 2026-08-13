@@ -2,6 +2,8 @@
 
 This document defines the intended user journeys and responsibility boundaries for the future SpecBind skill system. It stays name-neutral where naming is not yet decided; concrete names belong in the [target skill catalog](./target-skill-catalog.md).
 
+The detailed milestone document lifecycle is defined in [Active spec lifecycle](./active-spec-lifecycle.md).
+
 Status: Draft
 
 ## Design goals
@@ -23,6 +25,10 @@ Requirements recorded so far:
 
 - Existing specs remain available across releases.
 - Requirements and design are maintained when represented behavior changes.
+- Each spec has at most one active milestone change at a time.
+- Requirements freezes an explicit active requirement set for downstream design and task coverage.
+- Briefs and tasks are milestone-local working documents, not append-only release history.
+- Released change history is indexed separately from the current requirements and design.
 - A release closes a milestone, not the specs involved in that milestone.
 - Improvements to the existing-spec update route will be specified incrementally.
 
@@ -50,7 +56,7 @@ No active milestone
 
 `roadmap.md` is the durable representation of the active milestone. It begins in discovery and remains present for the lifetime of that milestone. The new `specbind-release` skill owns its removal, and only removes it after a successful release.
 
-The release skill's packaging, versioning, changelog, tagging, publishing, and history responsibilities are not yet defined.
+The portable release contract owns gated and idempotent spec finalization. Packaging, versioning, publishing, and repository-hosting operations may require repository-specific adapters or guidance.
 
 ## New work
 
@@ -101,8 +107,8 @@ The target contract should state when project guidance and gap analysis are opti
 | --- | --- | --- |
 | Discovery | Routing, scope clarification, decomposition, durable handoff context | Detailed requirements or technical design |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
-| Design | Architecture, interfaces, data flow, file boundaries | Task execution or unapproved scope changes |
-| Tasks | Executable decomposition, dependencies, verification expectations | Implementation |
+| Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability | Task execution or unapproved scope changes |
+| Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage | Implementation or historical task accumulation |
 | Implementation | Code and tests for approved tasks, progress recording | Silent changes to approved requirements or design |
 | Review | Independent task-level conformance review | Feature-level integration acceptance |
 | Integration validation | Cross-task behavior, full verification, spec coverage | Replacing missing task-level review |

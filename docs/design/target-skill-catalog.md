@@ -11,6 +11,7 @@ Related documents:
 
 - [Target workflows](./target-workflows.md)
 - [Target artifact catalog](./target-artifact-catalog.md)
+- [Active spec lifecycle](./active-spec-lifecycle.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 
 ## Status and change types
@@ -29,22 +30,22 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
 | `kiro-debug` | `specbind-debug` | Rename | Idea | Investigate implementation and verification failures. |
-| `kiro-discovery` | `specbind-discovery` | Rename | Idea | Classify and decompose new work. |
-| `kiro-impl` | `specbind-impl` | Rename | Idea | Implement approved tasks with TDD and subagents. |
+| `kiro-discovery` | `specbind-discovery` | Change | Draft | Classify work, create one active change, and route existing-spec maintenance. |
+| `kiro-impl` | `specbind-impl` | Change | Draft | Implement only the active milestone's approved tasks. |
 | `kiro-review` | `specbind-review` | Rename | Idea | Review one task implementation. |
 | `kiro-spec-batch` | `specbind-spec-batch` | Rename | Idea | Generate several specs from a roadmap. |
-| `kiro-spec-design` | `specbind-spec-design` | Rename | Idea | Create a technical design. |
+| `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design and trace the active requirement set. |
 | `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
 | `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
-| `kiro-spec-requirements` | `specbind-spec-requirements` | Rename | Idea | Create requirements. |
-| `kiro-spec-status` | `specbind-spec-status` | Rename | Idea | Report spec status and progress. |
-| `kiro-spec-tasks` | `specbind-spec-tasks` | Rename | Idea | Create implementation tasks. |
+| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze the active requirement set. |
+| `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Distinguish released state, active change, current tasks, and history. |
+| `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
 | `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |
 | `kiro-steering-custom` | `specbind-steering-custom` | Rename | Idea | Create specialized project guidance. |
 | `kiro-validate-design` | `specbind-validate-design` | Rename | Idea | Review technical design quality. |
 | `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
-| `kiro-validate-impl` | `specbind-validate-impl` | Rename | Idea | Validate feature-level integration and spec coverage. |
-| `kiro-verify-completion` | `specbind-verify-completion` | Rename | Idea | Verify completion claims with fresh evidence. |
+| `kiro-validate-impl` | `specbind-validate-impl` | Change | Draft | Validate current milestone integration and active-requirement coverage. |
+| `kiro-verify-completion` | `specbind-verify-completion` | Change | Draft | Verify current completion without confusing historical evidence. |
 | None | `specbind-release` | New | Draft | Complete a release and close its active milestone. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
@@ -99,8 +100,11 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Intended behavior
 
 - Confirm that the active milestone is ready to close.
-- Perform the release workflow; its concrete release operations are not yet defined.
-- Remove `{{SPEC_DIR}}/steering/roadmap.md` after the release completes successfully.
+- Verify an immutable release reference that preserves the active working documents.
+- Append an idempotent history entry for every participating spec.
+- Remove participating specs' active `brief.md` and `tasks.md` after successful release.
+- Transition their metadata to released / no-active-change state.
+- Remove `{{SPEC_DIR}}/steering/roadmap.md` when it contains no later milestone scope.
 - Preserve the active specs updated during the milestone.
 
 ### Inputs
@@ -110,19 +114,21 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ### Writes
 
-- Release state or history, if one is introduced
+- Per-spec `changelog.md` entries
+- Per-spec released / no-active-change metadata
+- Removal of finalized `brief.md` and `tasks.md`
 - Removal of the active `roadmap.md` after successful release completion
 
 ### Boundaries
 
 - Must not delete specs merely because the milestone is complete.
-- Must not remove `roadmap.md` before the release succeeds.
+- Must not remove active documents before the release succeeds and an immutable reference is verified.
+- Must be idempotent when finalization is retried.
 
 ### Open questions
 
-- What operations constitute a release?
-- What release-readiness checks are mandatory?
-- Where, if anywhere, is the completed milestone recorded before deleting `roadmap.md`?
+- Which publishing operations belong to core SpecBind and which are repository-specific adapters?
+- What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
 
 ## Cross-cutting questions
