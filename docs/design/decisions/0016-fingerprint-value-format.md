@@ -34,6 +34,6 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 
 ## Open questions
 
-- Which artifact and metadata inputs belong to each gate fingerprint projection.
+- Which artifact and metadata inputs belong to the design, tasks, and completion gate projections; Decision 0017 defines the requirements gate boundary.
 - How Markdown, YAML, and structured metadata are canonicalized before hashing.
 - Whether multiple inputs remain individually fingerprinted, gain an aggregate fingerprint, or use both.

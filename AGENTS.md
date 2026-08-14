@@ -38,6 +38,7 @@
 - [`docs/design/decisions/0014-structured-spec-metadata.md`](docs/design/decisions/0014-structured-spec-metadata.md) — accepted structured `spec.yaml` source-of-truth direction
 - [`docs/design/decisions/0015-runtime-schema-layout.md`](docs/design/decisions/0015-runtime-schema-layout.md) — accepted versioned runtime-schema location and validation layers
 - [`docs/design/decisions/0016-fingerprint-value-format.md`](docs/design/decisions/0016-fingerprint-value-format.md) — accepted tagged lowercase SHA-256 fingerprint representation
+- [`docs/design/decisions/0017-requirements-gate-inputs.md`](docs/design/decisions/0017-requirements-gate-inputs.md) — accepted requirements-gate fingerprint boundary excluding `brief.md`
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

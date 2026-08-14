@@ -123,6 +123,8 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 
 The complete pre-finalization `brief.md` and `tasks.yaml` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
 
+The brief may provide drafting context for the problem summary, but it is not authoritative release evidence. Changelog content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence; see [Decision 0017](./decisions/0017-requirements-gate-inputs.md).
+
 ## Scope removal, abandonment, and rollback
 
 These operations are intentionally distinct from successful release finalization; see [Decision 0005](./decisions/0005-active-change-abandonment.md):
