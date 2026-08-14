@@ -38,6 +38,8 @@ The goal is not to replace agent judgment. It is to remove mechanical work from 
 
 A skill may orchestrate a CLI operation, but the operation's contract belongs to the CLI rather than being duplicated in each agent template.
 
+For release, the agent executes the adapter's natural-language project instructions and supplies structured evidence to the CLI. The CLI owns preflight and finalization and never executes adapter Markdown as an unrestricted hook; see [Decision 0010](./decisions/0010-release-execution-boundary.md).
+
 ## First deterministic check: requirement traceability
 
 Issue #49 proposed checking mappings across:

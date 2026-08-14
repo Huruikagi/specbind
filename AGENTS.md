@@ -28,6 +28,7 @@
 - [`docs/design/decisions/0007-spec-root.md`](docs/design/decisions/0007-spec-root.md) — accepted configurable spec root with `.specbind` as the new-project default
 - [`docs/design/decisions/0008-customization-surface.md`](docs/design/decisions/0008-customization-surface.md) — accepted shared templates and rules as the stable project customization surface
 - [`docs/design/decisions/0009-milestone-cli-boundary.md`](docs/design/decisions/0009-milestone-cli-boundary.md) — accepted discovery-plus-Rust-CLI milestone responsibility boundary
+- [`docs/design/decisions/0010-release-execution-boundary.md`](docs/design/decisions/0010-release-execution-boundary.md) — accepted AI adapter execution and Rust CLI release-finalization boundary
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

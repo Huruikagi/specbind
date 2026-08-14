@@ -61,6 +61,8 @@ The exact crates are not yet fixed, but the code should separate:
 
 Core modules should return structured results and diagnostics. Human-readable and JSON rendering belongs at the CLI boundary so skills and CI consume the same semantics.
 
+Release commands expose preflight and finalization contracts. Project-specific Prepare, Publish, Verify, and After finalize instructions remain agent-executed; the Rust CLI does not become a natural-language command runner.
+
 ## Compatibility inventory
 
 Compatibility is not a promise to freeze today's generated tree. It distinguishes two kinds of change:

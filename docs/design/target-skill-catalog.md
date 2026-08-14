@@ -19,6 +19,7 @@ Related documents:
 - [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
 - [Decision 0009: milestone CLI boundary](./decisions/0009-milestone-cli-boundary.md)
+- [Decision 0010: release execution boundary](./decisions/0010-release-execution-boundary.md)
 
 ## Status and change types
 
@@ -107,7 +108,9 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - Confirm that the active milestone is ready to close.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
-- Run the adapter's Prepare, Publish, and Verify phases around the non-overridable core gates.
+- Ask the Rust CLI to run core preflight and readiness checks.
+- Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
+- Submit structured publication and verification evidence to the Rust CLI for guarded finalization.
 - Verify an immutable release reference that preserves the active working documents.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.md` after successful release.
@@ -136,6 +139,8 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must stop before release operations when the target release version is unset.
 - Must stop when the adapter lacks safe Publish or Verify instructions.
 - Must not let adapter instructions weaken core readiness or finalization gates.
+- Must not treat `settings/release.md` code blocks as CLI-executable hooks.
+- Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.
 - Must not remove active documents before the release succeeds and an immutable reference is verified.
 - Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.

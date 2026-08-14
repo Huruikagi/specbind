@@ -19,6 +19,8 @@ The core owns lifecycle gates, sequencing, fresh verification requirements, and 
 
 The adapter is an agent-readable instruction document, not an unrestricted executable hook interface. It may instruct the agent to use existing project commands and external release systems, subject to the normal repository instructions, authorization boundaries, and tool permissions.
 
+The execution boundary is fixed in [Decision 0010](./0010-release-execution-boundary.md): the AI agent executes adapter instructions, while the Rust CLI owns core preflight and idempotent finalization. The CLI never treats adapter Markdown as a shell script.
+
 ## Adapter phases
 
 The initial contract uses four explicit phases:
@@ -52,3 +54,4 @@ If `{{SPEC_DIR}}/settings/release.md` is missing or does not define enough infor
 - Claude Code and Codex consume the same adapter contract.
 - Adapter updates are project configuration changes and must be preserved during SpecBind upgrades.
 - The core reports adapter-phase failure separately from core-finalization failure.
+- An optional After finalize failure is reported without rolling back the verified release or completed core finalization.

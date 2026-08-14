@@ -132,20 +132,20 @@ Rust CLI milestone operations own the mechanical state transitions for scope cha
 
 The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
 
-1. Resolve the active milestone and participating specs.
-2. Require a concrete target release version; stop before release operations when it is unset.
-3. Verify zero incomplete or blocked current tasks and clean completion evidence.
-4. Load `{{SPEC_DIR}}/settings/release.md` and validate required adapter phases.
-5. Run project Prepare, Publish, and Verify instructions in order.
-6. Independently confirm an immutable release reference that still contains the active working documents.
-7. Append one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
-8. Remove each participating spec's `brief.md` and `tasks.md`.
-9. Transition each `spec.json` to released / no-active-change state.
-10. Move `steering/roadmap.md` to `releases/<version>-roadmap.md`, refusing conflicting archive content.
-11. Persist finalization as one coherent state change and verify the resulting idle state.
-12. Run optional project After finalize instructions and report their result separately.
+1. The release agent loads the active roadmap, target version, and `{{SPEC_DIR}}/settings/release.md`, then validates that required adapter phases are present.
+2. The release agent asks the Rust CLI to run core preflight.
+3. The CLI resolves participating specs, requires a concrete target version, and verifies current tasks, approvals, completion evidence, and lifecycle consistency.
+4. After successful preflight, the agent runs project Prepare, Publish, and Verify instructions in order and captures structured evidence.
+5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
+6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
+7. The CLI appends one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
+8. The CLI removes each participating spec's `brief.md` and `tasks.md`.
+9. The CLI transitions each `spec.json` to released / no-active-change state.
+10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md`, refusing conflicting archive content.
+11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
+12. The agent runs optional project After finalize instructions and reports their result separately.
 
-If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate changelog entries or remove unrelated work.
+If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate changelog entries or remove unrelated work. An After finalize failure does not undo the release or core finalization. See [Decision 0010](./decisions/0010-release-execution-boundary.md).
 
 ## Lifecycle and dependency semantics
 

@@ -76,15 +76,15 @@ These rules are accepted in [Decision 0005](./decisions/0005-active-change-aband
 The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
 
 ```text
-core preflight and readiness gates
-  -> adapter: Prepare
-  -> adapter: Publish
-  -> adapter: Verify
-  -> core: verify immutable reference and finalize active spec artifacts
-  -> adapter: After finalize (optional)
+Rust CLI: core preflight and readiness gates
+  -> AI agent: adapter Prepare
+  -> AI agent: adapter Publish and capture immutable reference
+  -> AI agent: adapter Verify and capture fresh evidence
+  -> Rust CLI: recheck evidence and finalize active spec artifacts
+  -> AI agent: adapter After finalize (optional)
 ```
 
-An adapter phase cannot waive a core gate. If Publish or Verify instructions are missing, release stops before publication rather than inferring commands from unrelated project files.
+An adapter phase cannot waive a core gate. If Publish or Verify instructions are missing, release stops before publication rather than inferring commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates them and hands structured results to the CLI under [Decision 0010](./decisions/0010-release-execution-boundary.md).
 
 ## New work
 
@@ -142,7 +142,8 @@ The target contract should state when project guidance and gap analysis are opti
 | Review | Independent task-level conformance review | Feature-level integration acceptance |
 | Integration validation | Cross-task behavior, full verification, spec coverage | Replacing missing task-level review |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
-| Release core | Readiness gates, verified publication boundary, and active-spec finalization | Project-specific build or publication commands |
+| Release agent orchestration | Read the adapter, call CLI preflight, execute project phases, collect evidence, call CLI finalization, and report outcomes | Reimplementing lifecycle mutations or bypassing core gates |
+| Rust CLI release core | Readiness gates, mechanically verifiable evidence, idempotent active-spec finalization, and stable diagnostics | Executing natural-language project publication instructions or claiming unobservable external success |
 | Release adapter | Project-specific Prepare, Publish, Verify, and optional After finalize instructions | Weakening core gates or directly defining spec lifecycle semantics |
 
 ## CLI and agent execution order
