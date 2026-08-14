@@ -41,6 +41,7 @@ Flattening every item into one list with a repeated `kind` field would also obsc
 ---
 type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
+baseline_revision: 0123456789abcdef0123456789abcdef01234567
 target_release: null
 work_items:
   new_specs:

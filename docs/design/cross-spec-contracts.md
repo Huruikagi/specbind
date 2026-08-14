@@ -88,7 +88,7 @@ Cross-spec review proceeds contract-first:
 1. Read the active roadmap and participating contracts.
 2. Ask the CLI to validate contract structure and construct the dependency graph.
 3. Review ownership overlap, dependency direction, invariants, and File Ownership conflicts.
-4. Compare changed entries with the prior released reference.
+4. Compare changed entries between the roadmap's Decision 0054 `baseline_revision` and the current active contracts.
 5. Classify the change as `LOCAL_ONLY`, `CONTRACT_COMPATIBLE`, or `CONTRACT_BREAKING`.
 6. Traverse affected consumers and load full requirements, design, and tasks only where the contract change or ambiguity requires it.
 7. Record one semantic classification per roadmap item, the accepted input revisions, and the AI-authored judgment once in `state/cross-spec-review.md` under [Decisions 0050](./decisions/0050-global-cross-spec-review.md), [0052](./decisions/0052-project-state-artifacts.md), and [0053](./decisions/0053-minimal-cross-spec-review-state.md). Affected entries and downstream scope remain derived review facts rather than duplicated rigid fields.

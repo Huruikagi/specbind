@@ -40,6 +40,7 @@ Every milestone has a `roadmap.md`, including a milestone that changes only one 
 The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
 - `milestone_id`: CLI-generated canonical UUID v7 accepted by Decision 0043
+- `baseline_revision`: full Git commit object ID captured from clean `HEAD` immediately before milestone creation under Decision 0054
 - `target_release`: concrete release version, initially unset when necessary
 
 Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap is an OKF concept document and this mapping is authoritative YAML frontmatter:
@@ -48,6 +49,7 @@ Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap i
 ---
 type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
+baseline_revision: 0123456789abcdef0123456789abcdef01234567
 target_release: null
 work_items:
   spec_updates:
@@ -62,6 +64,7 @@ When the release version becomes known, the workflow binds it to the active mile
 ---
 type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
+baseline_revision: 0123456789abcdef0123456789abcdef01234567
 target_release: v1.4.0
 work_items:
   spec_updates:
@@ -70,9 +73,9 @@ work_items:
 ---
 ```
 
-This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
+This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user. The baseline revision remains unchanged through ordinary work so contract review always compares the complete milestone delta.
 
-The Rust CLI generates the UUID v7 locally without mutating a project counter, so mainline, hotfix, and worktree milestones do not compete for one Git-tracked sequence. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
+The Rust CLI requires a clean repository immediately before roadmap creation, captures the full current `HEAD` as `baseline_revision`, and generates the UUID v7 locally without mutating a project counter. Mainline, hotfix, and worktree milestones therefore receive both collision-resistant identities and branch-local diff baselines. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
 ## Active change
 
@@ -235,7 +238,7 @@ The project-local append-only Change Brief behavior is the observed problem, not
 ## Skills affected by the portable contract
 
 - `specbind-discovery`: analyze and route work, create one active brief, and initiate confirmed milestone changes.
-- bundled CLI: create and update the active roadmap, bind the target release, perform confirmed abandonment cleanup, and check active Requirement ID traceability.
+- bundled CLI: capture and validate the milestone baseline, create and update the active roadmap, bind the target release, perform confirmed rebaseline or abandonment cleanup, and check active Requirement ID traceability.
 - requirements workflow: revise current requirements and freeze the active requirement set.
 - design workflow: revise current design, trace the active requirement set, and maintain the cross-spec contract.
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.

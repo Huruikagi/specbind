@@ -73,7 +73,7 @@ The CLI verifies that an ID is present in the required mapping. An agent still r
 
 ## Cross-spec contract checks
 
-Under [Decision 0011](./decisions/0011-cross-spec-contract.md), the CLI also validates the deterministic structure of `contract.md` files and their dependency graph. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs against a released reference.
+Under [Decision 0011](./decisions/0011-cross-spec-contract.md), the CLI also validates the deterministic structure of `contract.md` files and their dependency graph. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
 
 The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict.
 
@@ -109,7 +109,7 @@ The JSON schema and exit-code table must be versioned contracts before implement
 
 The same boundary can prevent `specbind-discovery` from becoming a general-purpose state manager. Candidate CLI command families include:
 
-- generate a branch-safe UUID v7 and create an active roadmap with its stable Decision 0043 milestone ID
+- capture a clean Decision 0054 Git baseline, generate a branch-safe UUID v7, and create an active roadmap with both its stable milestone ID and baseline revision
 - apply an explicitly confirmed roadmap scope update
 - mark or reopen a direct roadmap change through its sparse completed-state mutation
 - bind or rebind the target release version
