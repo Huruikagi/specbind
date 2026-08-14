@@ -50,6 +50,18 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
+  it('defines project-sequential milestone IDs', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+
+    expect(schema.$defs?.milestoneId).toEqual({
+      type: 'string',
+      description: 'Project-sequential milestone identity allocated from .specbind.json.',
+      pattern: '^m-[1-9][0-9]*$',
+    });
+  });
+
   it('defines timezone-qualified RFC 3339 gate timestamps', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),

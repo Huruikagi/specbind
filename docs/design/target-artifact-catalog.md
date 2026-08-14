@@ -44,7 +44,7 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | Holds a machine-generated milestone ID and an initially optional release-version binding. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | Holds a project-sequential `m-<N>` milestone ID and an initially optional release-version binding. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds a new flat file after verified publication; archive collisions must not overwrite history. |
 
 ## Settings artifacts
@@ -71,7 +71,7 @@ Status: Draft
 
 ## Open questions
 
-- What exact schema and ID format identify the active milestone, release binding, and remaining active-change fields?
+- What exact schema represents the release binding and remaining active-change fields?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts, and what parseable active-roadmap syntax represents the cross-spec review record owned there by Decision 0035?

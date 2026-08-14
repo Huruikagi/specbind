@@ -38,26 +38,26 @@ Every milestone has a `roadmap.md`, including a milestone that changes only one 
 
 The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
-- `milestone_id`: opaque, machine-generated stable identity assigned when discovery starts the milestone
+- `milestone_id`: CLI-generated project sequence in the `m-<positive integer>` form accepted by Decision 0042
 - `target_release`: concrete release version, initially unset when necessary
 
 Conceptual roadmap metadata:
 
 ```yaml
-milestone_id: <generated-id>
+milestone_id: m-12
 target_release: null
 ```
 
 When the release version becomes known, the workflow binds it to the active milestone:
 
 ```yaml
-milestone_id: <generated-id>
+milestone_id: m-12
 target_release: v1.4.0
 ```
 
 This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
 
-The exact generated-ID format remains an implementation choice. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
+Project-root `.specbind.json` stores the next unallocated sequence in the CLI-managed `nextMilestoneSequence` field. Allocation never reuses a number and may leave gaps after an abandoned or failed creation. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
 ## Active change
 
@@ -230,7 +230,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- The generated milestone ID format and the authoritative location of the release-version binding.
+- The authoritative location and exact syntax of the release-version binding.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.

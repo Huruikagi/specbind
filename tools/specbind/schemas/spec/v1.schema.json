@@ -3,6 +3,11 @@
   "title": "SpecBind spec metadata v1",
   "description": "Initial runtime-contract scaffold for spec.yaml. Add fields only after their schema decisions are accepted.",
   "$defs": {
+    "milestoneId": {
+      "type": "string",
+      "description": "Project-sequential milestone identity allocated from .specbind.json.",
+      "pattern": "^m-[1-9][0-9]*$"
+    },
     "passedAt": {
       "type": "string",
       "description": "RFC 3339 date-time with an explicit UTC or numeric-offset timezone.",

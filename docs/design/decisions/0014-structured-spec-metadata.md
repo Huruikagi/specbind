@@ -32,6 +32,8 @@ It does not change:
 
 Those formats change only through their own explicit decisions.
 
+Decision 0042 is the later explicit decision that adds CLI-managed `nextMilestoneSequence` state to `.specbind.json`; it does not place that project-level counter in `spec.yaml`.
+
 ## Lifecycle and writes
 
 - New target specs are created with `spec.yaml` and no `spec.json`.
