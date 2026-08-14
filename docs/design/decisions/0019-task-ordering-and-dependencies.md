@@ -14,7 +14,7 @@ Structured `tasks.yaml` still needs deterministic status and next-task calculati
 - A top-level item depends on completion of the preceding top-level item by default.
 - A group forms an execution barrier: its child tasks inherit the group's preceding top-level prerequisites.
 - Child tasks within a group depend on the preceding sibling task by default.
-- Every executable task stores an explicit `parallel` boolean.
+- Executable tasks omit `parallel` by default; when present its only valid value is `true` under Decision 0023.
 - `parallel: true` removes only that task's immediate implicit ordering dependency. It does not remove inherited group prerequisites or any explicit dependency.
 - `depends_on` is a sparse list of additional, non-obvious task prerequisites. It is not required to restate dependencies already implied by ordering or group barriers.
 - Container-only groups are not executable and do not carry `parallel` or `depends_on` fields.
@@ -32,6 +32,5 @@ Structured `tasks.yaml` still needs deterministic status and next-task calculati
 
 ## Open questions
 
-- Exact `group` and executable `task` object schemas.
 - Exact migration diagnostics when inherited numbering violates the positional ID rules accepted by Decision 0020.
 - How migration expands ambiguous inherited `(P)` and `_Depends:_` combinations.

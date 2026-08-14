@@ -1,0 +1,12 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: group
+      title: Redundant group
+      tasks:
+        - id: "1.1"
+          kind: task
+          title: Only child
+          requirement_ids:
+            - "1.1"

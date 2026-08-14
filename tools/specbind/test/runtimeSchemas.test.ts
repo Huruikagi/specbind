@@ -11,6 +11,7 @@ interface RuntimeSchema {
   required?: unknown;
   properties?: {
     schema_version?: unknown;
+    plan?: unknown;
   };
   additionalProperties?: unknown;
 }
@@ -64,18 +65,20 @@ describe('runtime schema scaffolds', () => {
     expect(JSON.stringify(evidence)).not.toContain('brief.md');
   });
 
-  it('defines explicit sparse scheduling fields for executable tasks', async () => {
+  it('defines sparse scheduling fields for executable tasks', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
     ) as RuntimeSchema;
-    const scheduling = schema.$defs?.taskScheduling as {
+    const task = schema.$defs?.executableTask as {
       required?: string[];
       properties?: Record<string, unknown>;
     };
 
-    expect(scheduling.required).toEqual(['parallel', 'depends_on']);
-    expect(scheduling.properties).toHaveProperty('parallel', { type: 'boolean' });
-    expect(scheduling.properties).toHaveProperty('depends_on');
+    expect(task.required).not.toContain('parallel');
+    expect(task.required).not.toContain('depends_on');
+    expect(task.properties).toHaveProperty('parallel', { const: true });
+    expect(task.properties).toHaveProperty('depends_on');
+    expect(JSON.stringify(task)).not.toContain('optional');
   });
 
   it('defines one- or two-level positional numeric task references', async () => {
@@ -95,12 +98,24 @@ describe('runtime schema scaffolds', () => {
     ) as RuntimeSchema;
 
     expect(schema.$defs?.completionCriteria).toEqual({
-      type: 'array',
-      minItems: 1,
-      items: {
-        type: 'string',
-        minLength: 1,
-      },
+      $ref: '#/$defs/nonEmptyStringList',
     });
+  });
+
+  it('wires the accepted task plan into the root schema', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const group = schema.$defs?.taskGroup as {
+      properties?: {
+        tasks?: {
+          minItems?: number;
+        };
+      };
+    };
+
+    expect(schema.required).toEqual(['schema_version', 'plan']);
+    expect(schema.properties.plan).toEqual({ $ref: '#/$defs/taskPlan' });
+    expect(group.properties?.tasks?.minItems).toBe(2);
   });
 });

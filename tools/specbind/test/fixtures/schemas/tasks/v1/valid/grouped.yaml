@@ -1,0 +1,26 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: group
+      title: Core work
+      tasks:
+        - id: "1.1"
+          kind: task
+          title: Implement component A
+          requirement_ids:
+            - "1.1"
+          boundaries:
+            - Component A
+          parallel: true
+        - id: "1.2"
+          kind: task
+          title: Integrate component A
+          details:
+            - Use the established component contract
+          completion_criteria:
+            - The project validation command passes
+          requirement_ids:
+            - "1.2"
+          depends_on:
+            - "1.1"

@@ -1,1 +1,8 @@
 schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Minimal task
+      requirement_ids:
+        - "1.1"

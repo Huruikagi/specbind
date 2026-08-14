@@ -1,8 +1,9 @@
-schema_version: 2
+schema_version: 1
 plan:
   items:
     - id: "1"
       kind: task
-      title: Unsupported schema version
+      title: Empty details
       requirement_ids:
         - "1.1"
+      details: []

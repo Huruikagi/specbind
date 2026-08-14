@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SpecBind task artifact v1",
-  "description": "Initial runtime-contract scaffold for tasks.yaml. Add fields only after their schema decisions are accepted.",
+  "description": "Runtime contract for the accepted tasks.yaml v1 plan shape. Execution-state fields remain to be added after their schema decisions are accepted.",
   "$defs": {
     "taskReference": {
       "type": "string",
       "pattern": "^[1-9][0-9]*(?:\\.[1-9][0-9]*)?$"
     },
-    "completionCriteria": {
+    "nonEmptyStringList": {
       "type": "array",
       "minItems": 1,
       "items": {
@@ -15,22 +15,131 @@
         "minLength": 1
       }
     },
-    "taskScheduling": {
+    "uniqueNonEmptyStringList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "completionCriteria": {
+      "$ref": "#/$defs/nonEmptyStringList"
+    },
+    "executableTask": {
       "type": "object",
       "required": [
-        "parallel",
-        "depends_on"
+        "id",
+        "kind",
+        "title",
+        "requirement_ids"
       ],
       "properties": {
+        "id": {
+          "$ref": "#/$defs/taskReference"
+        },
+        "kind": {
+          "const": "task"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "$ref": "#/$defs/nonEmptyStringList"
+        },
+        "completion_criteria": {
+          "$ref": "#/$defs/completionCriteria"
+        },
+        "requirement_ids": {
+          "$ref": "#/$defs/uniqueNonEmptyStringList"
+        },
+        "boundaries": {
+          "$ref": "#/$defs/uniqueNonEmptyStringList"
+        },
+        "contracts": {
+          "$ref": "#/$defs/uniqueNonEmptyStringList"
+        },
         "parallel": {
-          "type": "boolean"
+          "const": true
         },
         "depends_on": {
           "type": "array",
+          "minItems": 1,
           "items": {
             "$ref": "#/$defs/taskReference"
           },
           "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "parallel"
+            ]
+          },
+          "then": {
+            "required": [
+              "boundaries"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "taskGroup": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "tasks"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/taskReference"
+        },
+        "kind": {
+          "const": "group"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/executableTask"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "planItem": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/taskGroup"
+        },
+        {
+          "$ref": "#/$defs/executableTask"
+        }
+      ]
+    },
+    "taskPlan": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/planItem"
+          }
         }
       },
       "additionalProperties": false
@@ -38,11 +147,15 @@
   },
   "type": "object",
   "required": [
-    "schema_version"
+    "schema_version",
+    "plan"
   ],
   "properties": {
     "schema_version": {
       "const": 1
+    },
+    "plan": {
+      "$ref": "#/$defs/taskPlan"
     }
   },
   "additionalProperties": false
