@@ -103,7 +103,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - perform the deterministic portion of confirmed abandonment cleanup
 - run release preflight checks and idempotent finalization mutations
 
-These are candidate capabilities, not accepted command names. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands can own the resulting mechanical writes. This may remove the need for `specbind-milestone` to exist as a separately advertised agent skill.
+These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md), but their exact command names remain Draft. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
 ## Integration with skills
 
@@ -141,5 +141,4 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 - How the accepted Rust migration packages templates and preserves the current installation contract.
 - The canonical Requirement ID syntax and parsing rules for each supported language.
 - The JSON diagnostic schema and stable exit-code categories.
-- Which lifecycle operations graduate from candidate commands to accepted CLI contracts.
-- Whether `specbind-milestone` remains a user-facing skill, becomes thin orchestration, or disappears in favor of CLI operations called from discovery.
+- Exact command contracts for the accepted milestone operations and any additional lifecycle candidates.

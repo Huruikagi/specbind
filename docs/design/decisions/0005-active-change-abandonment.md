@@ -31,7 +31,7 @@ SpecBind artifacts describe the intended and current product state, while Git re
 - Scope editing, content restoration, and lifecycle cleanup remain distinct operations.
 - Release archives contain released milestones rather than cancelled drafts.
 - The discovery entry point does not need to own Git rollback behavior.
-- A separate milestone-lifecycle responsibility can own roadmap state changes without absorbing discovery analysis.
+- Rust CLI milestone operations can own roadmap state changes without absorbing discovery analysis; see [Decision 0009](./0009-milestone-cli-boundary.md).
 
 ## Open questions
 

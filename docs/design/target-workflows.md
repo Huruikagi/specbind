@@ -48,10 +48,11 @@ Open questions:
 ```text
 No active milestone
   -> discovery confirms the route and initiates milestone creation
-  -> milestone lifecycle creates roadmap.md with stable milestone identity
+  -> Rust CLI creates roadmap.md with stable milestone identity
   -> active milestone
-       -> milestone lifecycle maintains confirmed scope and ordering
-       -> release version may be bound later through milestone lifecycle
+       -> discovery confirms scope and ordering changes
+       -> Rust CLI applies confirmed milestone state
+       -> release version may be bound later through the CLI
        -> new and existing specs are created or updated
        -> implementation and validation
        -> target release version is required
@@ -61,7 +62,7 @@ No active milestone
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins from the discovery user journey and remains present for the lifetime of that milestone. To keep discovery from absorbing every state transition, the proposed milestone-lifecycle responsibility performs the mechanical creation, scope updates, and release-version binding from confirmed discovery output. Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. After a successful release, it moves the active roadmap from `steering/` to the new flat file `releases/<version>-roadmap.md`.
+`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins from the discovery user journey and remains present for the lifetime of that milestone. To keep discovery from absorbing every state transition, Rust CLI operations perform mechanical creation, scope updates, consistency checks, and release-version binding from confirmed discovery output; see [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Its machine-generated stable identity is mapped to a release version when that version becomes known; artifacts are not renamed or rewritten merely to replace a provisional version. `specbind-release` refuses to start release operations until the version is assigned. After a successful release, it moves the active roadmap from `steering/` to the new flat file `releases/<version>-roadmap.md`.
 
 ### Scope removal, abandonment, and rollback
 
@@ -70,7 +71,7 @@ No active milestone
 - Abandoning the entire unreleased milestone requires explicit user confirmation and reconciled specs before milestone-local artifacts and active-change metadata are cleared. It creates no changelog entry or release-roadmap archive by default.
 - Reversing released behavior is new work in a new milestone and returns through the normal release path.
 
-These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Whether milestone lifecycle is a directly invocable skill or an internal responsibility remains Draft.
+These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Discovery confirms the intent and the Rust CLI owns the guarded milestone-state mutation.
 
 The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
 
@@ -133,7 +134,7 @@ The target contract should state when project guidance and gap analysis are opti
 | Stage | Owns | Does not own |
 | --- | --- | --- |
 | Discovery | Routing, scope clarification, decomposition, active brief, and confirmed milestone intent | Detailed requirements, technical design, or mechanical milestone-state transitions |
-| Milestone lifecycle (proposed) | Roadmap creation, confirmed scope updates, release-version binding, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
+| Rust CLI milestone operations | Roadmap creation, confirmed scope updates, release-version binding, consistency checks, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
 | Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability | Task execution or unapproved scope changes |
 | Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage | Implementation or historical task accumulation |
@@ -177,7 +178,7 @@ Accelerated and batch workflows may automate transitions, but they should reuse 
 ## Topics to resolve next
 
 1. Define the initial `specbind check traceability` contract and diagnostic schema.
-2. Refine discovery's existing-spec update route and decide which milestone operations move into the CLI.
+2. Refine discovery's existing-spec update route and define the accepted milestone CLI command contracts.
 3. Define milestone contents and release-readiness criteria.
 4. Define the concrete responsibilities of `specbind-release` and its CLI operations.
 5. Decide whether quick and batch remain first-class skills.

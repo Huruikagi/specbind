@@ -18,6 +18,7 @@ Related documents:
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
 - [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
+- [Decision 0009: milestone CLI boundary](./decisions/0009-milestone-cli-boundary.md)
 
 ## Status and change types
 
@@ -51,7 +52,6 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
 | `kiro-validate-impl` | `specbind-validate-impl` | Change | Draft | Validate current milestone integration and active-requirement coverage. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Draft | Verify current completion without confusing historical evidence. |
-| None | `specbind-milestone` | New | Draft | Manage active milestone state without absorbing discovery analysis. |
 | None | `specbind-release` | New | Draft | Complete a release and close its active milestone. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
@@ -92,51 +92,6 @@ One responsibility stated from the user's perspective.
 ```
 
 For a new skill, add a `New` row to the working catalog and set `Current equivalent` to `None`. For a merge or split, name every affected current skill so migration work remains visible.
-
-## `specbind-milestone`
-
-Status: Draft
-
-Current equivalent: None
-
-### Purpose
-
-Own the mechanical lifecycle of the single active milestone while keeping discovery focused on understanding and routing work.
-
-From the user's perspective, discovery still starts a milestone. Internally, it delegates persistent milestone-state changes to this responsibility.
-
-### Intended behavior
-
-- Create `steering/roadmap.md` with a machine-generated stable milestone ID.
-- Apply confirmed scope and ordering updates supplied by discovery.
-- Bind or rebind the target release version before release begins.
-- Perform explicit, user-confirmed abandonment cleanup after repository and spec content is reconciled.
-
-### Inputs
-
-- Confirmed discovery output or an explicit milestone-state request
-- Current roadmap and participating-spec state
-- A concrete target version when binding a release
-
-### Writes
-
-- `{{SPEC_DIR}}/steering/roadmap.md`
-- Participating specs' active-change lifecycle metadata during confirmed abandonment
-- Removal of milestone-local artifacts during confirmed abandonment
-
-### Boundaries
-
-- Must not decide whether a request needs an existing spec, a new spec, or direct work.
-- Must not author detailed requirements or design.
-- Must not automatically revert code, Git history, requirements, or design.
-- Must not archive an unreleased abandoned roadmap under `releases/`.
-- Must not perform publication or successful-release finalization.
-
-### Open questions
-
-- Whether users invoke `specbind-milestone` directly or it remains an internal responsibility used by discovery and release.
-- Whether release-version binding belongs here permanently or becomes a release preflight operation.
-- Whether deterministic CLI milestone commands make this separate agent skill unnecessary.
 
 ## `specbind-release`
 

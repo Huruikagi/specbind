@@ -32,7 +32,7 @@ Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec
 
 ## Milestone identity and release binding
 
-Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery confirms the route and initiates the milestone before it hands work to later phases. To avoid growing discovery into a general state-management skill, a proposed milestone-lifecycle responsibility performs the roadmap creation and later mechanical updates. A missing roadmap means there is no active milestone.
+Every milestone has a `roadmap.md`, including a milestone that changes only one existing spec or creates only one new spec. Discovery confirms the route and initiates the milestone before it hands work to later phases. To avoid growing discovery into a general state-management skill, Rust CLI milestone operations perform roadmap creation and later mechanical updates under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). A missing roadmap means there is no active milestone.
 
 The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
@@ -126,9 +126,7 @@ These operations are intentionally distinct from successful release finalization
 - An abandoned unreleased milestone does not add per-spec changelog entries or a file under `releases/` by default. Committed work remains discoverable through Git history.
 - A rollback of released behavior is represented as a new active change in a new milestone and is released normally.
 
-The proposed milestone-lifecycle responsibility owns the mechanical state transitions for scope changes and full abandonment. Discovery remains the user entry point and supplies the confirmed intent. Whether that responsibility becomes a directly invocable `specbind-milestone` skill remains open.
-
-The responsibility may be implemented primarily as guarded commands in the bundled SpecBind CLI rather than as another large agent skill. The agent would interpret intent and obtain confirmation; the CLI would validate and apply the deterministic state transition. See [CLI and agent responsibility boundary](./cli-agent-boundary.md).
+Rust CLI milestone operations own the mechanical state transitions for scope changes and full abandonment. Discovery remains the user entry point, interprets intent, and obtains confirmation; the CLI validates and applies the deterministic transition. There is no separate `specbind-milestone` skill. See [CLI and agent responsibility boundary](./cli-agent-boundary.md).
 
 ## Release finalization contract
 
@@ -198,8 +196,7 @@ The project-local append-only Change Brief behavior is the observed problem, not
 ## Skills affected by the portable contract
 
 - `specbind-discovery`: analyze and route work, create one active brief, and initiate confirmed milestone changes.
-- proposed milestone lifecycle: create and update the active roadmap, bind the target release, and perform confirmed abandonment cleanup.
-- bundled CLI: check active Requirement ID traceability and perform accepted deterministic lifecycle operations.
+- bundled CLI: create and update the active roadmap, bind the target release, perform confirmed abandonment cleanup, and check active Requirement ID traceability.
 - requirements workflow: revise current requirements and freeze the active requirement set.
 - design workflow: revise current design and trace the active requirement set.
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.
@@ -216,7 +213,6 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
-- Whether the milestone-lifecycle responsibility is directly invocable or internal orchestration.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - The target `spec.json` state model and migration compatibility.
 - Whether immutable history may use something other than a Git release tag.
