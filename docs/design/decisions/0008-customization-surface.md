@@ -33,6 +33,8 @@ Customization remains subject to the machine-readable contracts required by Spec
 
 The bundled CLI should report incompatible customizations with focused diagnostics. It must not silently reinterpret an unsupported structure or use agent-specific ad hoc parsing as a fallback.
 
+[Decision 0059](./0059-okf-artifact-templates.md) defines spec Markdown templates as final-form OKF artifact prototypes: relative template paths determine initial output paths, literal frontmatter determines machine identity, and explicit `specbind:instruction` HTML comments carry template-only AI guidance. Existing artifacts are never silently reconciled to later template edits.
+
 ## Consequences
 
 - Project customization survives changes of coding agent.
@@ -44,5 +46,5 @@ The bundled CLI should report incompatible customizations with focused diagnosti
 ## Open questions
 
 - The exact merge and provenance mechanism for detecting untouched versus customized settings.
-- Which structural elements are fixed machine contracts and which can be configured safely.
+- Which non-spec template families should adopt the Decision 0059 prototype model and which require a different structural contract.
 - Whether projects can layer organization-wide settings above repository-local settings in a later release.

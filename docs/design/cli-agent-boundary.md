@@ -150,6 +150,12 @@ These commands replace routine raw-YAML interpretation but do not create a gener
 
 Agent skills directly read a known singleton or authoritative collection selector. They list first only when they need collection membership, optional-artifact discovery, selector choice, or structural diagnostics. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so list and read outputs never become mutation authority.
 
+## Template read and validation model
+
+[Decision 0059](./decisions/0059-okf-artifact-templates.md) defines a separate `specbind template list/read` family for project-owned scaffolds. Template inventory mirrors logical artifact selectors but reports both source template and derived output paths. Raw reads retain `specbind:instruction` comments for the authoring agent, while materialization removes those nodes and rejects leaks in live artifacts.
+
+The CLI owns template discovery, identity and path validation, collision checks, instruction-node recognition, and non-writing output-tree previews. A customization skill owns the semantic conversation about desired structure and guidance. Ordinary artifact workflows own materialization through their guarded lifecycle operation; template read commands never create or overwrite live artifacts.
+
 ## Completion validation handshake
 
 Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight captures a clean full Git `HEAD`, the task-plan fingerprint, and current lifecycle input revisions. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently rejects it unless the same clean revision, inputs, approvals, and all-completed task state still hold immediately before the atomic `IMPLEMENTATION_VALIDATED` mutation.

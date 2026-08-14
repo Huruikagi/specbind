@@ -59,6 +59,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-validate-impl` | `specbind-validate-impl` | Change | Draft | Validate current milestone integration and active-requirement coverage. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Draft | Verify current completion without confusing historical evidence. |
 | None | `specbind-release` | New | Draft | Complete a release and close its active milestone. |
+| None | `specbind-customize` | New | Draft | Interactively customize shared artifact templates and authoring rules, then validate and preview the resulting scaffold. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
 
@@ -157,6 +158,50 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - What exact adapter schema and validation rules should be used?
 - What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
+
+## `specbind-customize`
+
+Status: Draft
+
+Current equivalent: None
+
+### Purpose
+
+Help a project maintainer design and safely apply repository-local SpecBind document customization without requiring them to memorize OKF profiles, selector rules, or template-path invariants.
+
+### Intended behavior
+
+- Ask which artifact structure, filenames, design decomposition, prose scaffold, and project-wide authoring conventions the user wants to change.
+- Read the current shared template and rule inventory through the CLI rather than assuming inherited filenames.
+- Create or edit final-form OKF templates under `{{SPEC_DIR}}/settings/templates/`.
+- Put artifact-specific AI guidance in `specbind:instruction` comments and cross-artifact principles in `settings/rules/`.
+- Run deterministic template/profile validation and show the proposed output tree before completion.
+- Explain whether a change affects only future artifacts or requires a separate explicit migration for existing specs.
+
+### Inputs
+
+- User intent for document structure, naming, decomposition, and authoring guidance
+- Current project-owned templates and rules
+- Applicable SpecBind artifact profiles and CLI diagnostics
+
+### Writes
+
+- User-confirmed files under `{{SPEC_DIR}}/settings/templates/`
+- User-confirmed files under `{{SPEC_DIR}}/settings/rules/`
+
+### Boundaries
+
+- Must not edit product-managed agent skills as the customization mechanism.
+- Must not weaken CLI-owned artifact schemas, lifecycle gates, stable IDs, or required contract grammar.
+- Must not silently rewrite existing live artifacts when a template changes.
+- Must not treat a scaffold preview as an accepted lifecycle artifact or gate approval.
+- Must not migrate existing specs without a separate explicit user-confirmed migration operation.
+
+### Open questions
+
+- Whether the final user-facing name should remain `specbind-customize` or emphasize templates and rules more explicitly.
+- Which CLI command previews the complete rendered output tree without writing it.
+- Whether customization starts from the current project settings, official defaults, or an optional named preset.
 
 ## Cross-cutting questions
 

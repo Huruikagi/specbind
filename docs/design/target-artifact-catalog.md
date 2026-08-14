@@ -29,6 +29,7 @@ Related documents:
 - [Decision 0048: OKF per-spec log](./decisions/0048-okf-spec-log.md)
 - [Decision 0049: concise OKF authoring rule](./decisions/0049-okf-authoring-rule.md)
 - [Decision 0057: type-based artifact discovery](./decisions/0057-type-based-artifact-discovery.md)
+- [Decision 0059: OKF artifact templates](./decisions/0059-okf-artifact-templates.md)
 
 Status: Draft
 
@@ -60,7 +61,7 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Updates must not silently overwrite local changes. |
+| `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Spec Markdown templates are final-form OKF prototypes under Decision 0059; their relative paths define initial output paths and instruction comments are removed from materialized artifacts. Updates must not silently overwrite local changes or reconcile existing specs. |
 | `{{SPEC_DIR}}/settings/rules/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by all supported agents. | Accepted | Supported customization surface for shared judgment criteria and generation principles; includes the concise `okf-artifacts.md` authoring rule accepted by Decision 0049 and replaces editable agent-specific rule copies as the target model. |
 | `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Draft | Defines Prepare, Publish, Verify, and After finalize instructions without overriding core release gates. |
 
