@@ -88,4 +88,19 @@ describe('runtime schema scaffolds', () => {
       pattern: '^[1-9][0-9]*(?:\\.[1-9][0-9]*)?$',
     });
   });
+
+  it('defines explicit completion criteria as a non-empty list when present', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+
+    expect(schema.$defs?.completionCriteria).toEqual({
+      type: 'array',
+      minItems: 1,
+      items: {
+        type: 'string',
+        minLength: 1,
+      },
+    });
+  });
 });

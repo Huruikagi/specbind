@@ -42,6 +42,7 @@
 - [`docs/design/decisions/0018-gate-input-comparison.md`](docs/design/decisions/0018-gate-input-comparison.md) — accepted Markdown normalization, Requirement ID snapshot, and task-plan projection boundaries
 - [`docs/design/decisions/0019-task-ordering-and-dependencies.md`](docs/design/decisions/0019-task-ordering-and-dependencies.md) — accepted ordered task execution with sparse dependency exceptions
 - [`docs/design/decisions/0020-positional-task-ids.md`](docs/design/decisions/0020-positional-task-ids.md) — accepted cc-sdd-style positional numeric Task IDs
+- [`docs/design/decisions/0021-optional-completion-criteria.md`](docs/design/decisions/0021-optional-completion-criteria.md) — accepted dedicated, conditionally optional task completion criteria
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

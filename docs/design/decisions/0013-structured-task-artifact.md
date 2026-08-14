@@ -29,6 +29,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state, blocked execution details, and implementation notes are excluded from that projection under Decision 0018.
 - Task order remains a conservative implicit dependency; `parallel` records reviewed exceptions and `depends_on` adds sparse non-obvious prerequisites under Decision 0019.
 - Task and group IDs retain cc-sdd-style one- or two-level positional numbering under Decision 0020.
+- Executable tasks may carry dedicated `completion_criteria`; the field is required only when the completed state or verification would otherwise be ambiguous under Decision 0021.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -81,6 +82,7 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 - Top-level metadata and schema-version representation.
 - Task hierarchy and grouping representation.
 - Required plan fields and mutable execution fields.
+- Exact task-content fields around the optional completion criteria accepted by Decision 0021.
 - Status enum and blocked / skipped / optional semantics.
 - Completion and verification evidence references.
 - Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
