@@ -16,6 +16,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - The CLI does not interpret Markdown code blocks as executable hooks and does not run arbitrary adapter commands.
 - The agent passes the target version, immutable publication reference, and structured verification evidence into the finalization boundary.
 - The CLI must not accept a bare success assertion as sufficient proof. It rechecks core invariants and all evidence it can verify from repository or structured state before mutating active artifacts.
+- Release preflight rechecks that each accepted completion evidence still names the validated implementation revision, allowing only the expected later SpecBind evidence mutation described by Decision 0029; other repository changes stale completion first.
 - Exact CLI command names and the evidence handoff schema remain Draft.
 
 ## Execution sequence

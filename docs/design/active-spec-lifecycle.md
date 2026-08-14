@@ -107,6 +107,8 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 - Missing coverage for any active Requirement ID prevents completion of the tasks phase.
 - Tasks are not deleted until the release gate confirms zero incomplete or blocked tasks and valid completion evidence.
 
+Feature-level completion validation begins from a clean committed Git revision and uses the CLI preflight/finalize handshake accepted by [Decision 0029](./decisions/0029-completion-validation-handshake.md). The agent runs project validation between those calls; the CLI accepts evidence only if the implementation revision, lifecycle inputs, approvals, and completed-task state are unchanged.
+
 ## Released history
 
 `changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:
@@ -199,7 +201,7 @@ Issue #50 comes from a repository with local skill overrides. These details are 
 | pc-build-planner detail | SpecBind treatment |
 | --- | --- |
 | `kiro-spec-update-batch` as a separate skill | Existing-spec batch orchestration is required; whether it is a separate skill remains open. |
-| `kiro-record-validation` and a roadmap validation table | Stable completion evidence is required; its storage location and skill boundary remain open. |
+| `kiro-record-validation` and a roadmap validation table | Completion evidence belongs in `spec.yaml` through the integration-validation and CLI handshake accepted by Decision 0029; its exact schema remains open. |
 | `kiro-impl-direct` and structured direct candidates | Direct-work support is a separate workflow decision, not required by the active-spec lifecycle itself. |
 | GitHub Issues, GitHub milestones, Actions, ZIP packaging, and project version scripts | Repository-specific instructions in the release adapter, not hard-coded core behavior. |
 | Direct commits to `main` and exact commit messages | Repository policy, not a universal SpecBind requirement. |

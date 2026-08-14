@@ -127,6 +127,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 - Implement traceability checking in Rust.
 - Implement versioned `tasks.yaml` loading, validation, the `spec status` / `tasks list` / `tasks show` read model accepted by Decision 0025, and guarded progress updates in Rust.
 - Implement cross-spec contract parsing, reference validation, and dependency graph checks in Rust.
+- Implement the clean Git revision completion-preflight and guarded-acceptance handshake accepted by Decision 0029.
 - Add lifecycle checks and accepted mutations incrementally.
 - Update generated skills to call stable CLI contracts rather than shell-specific inspection logic.
 

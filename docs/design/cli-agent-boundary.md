@@ -143,6 +143,12 @@ Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbi
 
 These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. Human terminal output and `--json` must be two renderings of the same structured core result.
 
+## Completion validation handshake
+
+Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight captures a clean full Git `HEAD`, the task-plan fingerprint, and current lifecycle input revisions. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently rejects it unless the same clean revision, inputs, approvals, and all-completed task state still hold immediately before the atomic `IMPLEMENTATION_VALIDATED` mutation.
+
+The exact command names and structured evidence schema remain follow-up details. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
+
 ## Initial implementation boundary
 
 The first increment should remain narrow:
