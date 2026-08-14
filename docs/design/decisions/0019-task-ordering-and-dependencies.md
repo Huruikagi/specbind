@@ -16,7 +16,7 @@ Structured `tasks.yaml` still needs deterministic status and next-task calculati
 - Child tasks within a group depend on the preceding sibling task by default.
 - Executable tasks omit `parallel` by default; when present its only valid value is `true` under Decision 0023.
 - `parallel: true` removes only that task's immediate implicit ordering dependency. It does not remove inherited group prerequisites or any explicit dependency.
-- `depends_on` is a sparse list of additional, non-obvious task prerequisites. It is not required to restate dependencies already implied by ordering or group barriers.
+- `depends_on` is a sparse list of additional, non-obvious task prerequisites within the same `tasks.yaml`. It is not required to restate dependencies already implied by ordering or group barriers, and it never references another spec under Decision 0027.
 - Container-only groups are not executable and do not carry `parallel` or `depends_on` fields.
 - A top-level executable task may use `parallel: true`; when it must retain a prerequisite that the flag would otherwise remove, that prerequisite must appear in `depends_on`.
 - The CLI derives an effective dependency graph from order, group barriers, `parallel`, and `depends_on`, then rejects missing references, self-dependencies, and cycles.

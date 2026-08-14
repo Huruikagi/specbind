@@ -176,6 +176,8 @@ Dependencies must also distinguish:
 - a dependency on an active revision that must complete first
 - a dependency on a released implementation, proven by changelog and immutable release evidence
 
+Task dependencies remain local to one spec's active `tasks.yaml`. Active revision ordering belongs to the milestone roadmap, persistent observable dependencies belong to `contract.md`, and released dependencies use current contracts plus release history; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
+
 A released spec without `tasks.yaml` must not be treated as unimplemented.
 
 ## Initial migration

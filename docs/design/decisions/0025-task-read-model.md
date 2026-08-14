@@ -41,7 +41,7 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - They validate the relevant schemas and semantic invariants before presenting derived conclusions.
 - `spec status` may report declared state plus `inconsistent` health and diagnostics; it must not silently repair contradictions.
 - Task list/show operations fail clearly when corruption prevents a trustworthy projection.
-- The CLI derives pending tasks from sparse execution state, effective dependencies from Decision 0019, group progress, current Requirement ID coverage, and approval freshness.
+- The CLI derives pending tasks from sparse execution state, spec-local effective dependencies from Decisions 0019 and 0027, group progress, current Requirement ID coverage, and approval freshness.
 - No command generates or maintains a parallel `tasks.md` artifact.
 - Task commands do not parse or embed the free-form `implementation-notes.md` accepted by Decision 0026; semantic agent workflows read that artifact directly when needed.
 

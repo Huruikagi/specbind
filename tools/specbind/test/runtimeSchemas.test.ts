@@ -82,13 +82,15 @@ describe('runtime schema scaffolds', () => {
     expect(JSON.stringify(task)).not.toContain('optional');
   });
 
-  it('defines one- or two-level positional numeric task references', async () => {
+  it('defines spec-local one- or two-level positional numeric task references', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
     ) as RuntimeSchema;
 
     expect(schema.$defs?.taskReference).toEqual({
       type: 'string',
+      description:
+        'Unqualified positional Task ID resolved only within this tasks.yaml artifact.',
       pattern: '^[1-9][0-9]*(?:\\.[1-9][0-9]*)?$',
     });
   });

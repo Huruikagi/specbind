@@ -1,0 +1,10 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Wait for another spec task
+      requirement_ids:
+        - "1.1"
+      depends_on:
+        - "other-spec/2.1"

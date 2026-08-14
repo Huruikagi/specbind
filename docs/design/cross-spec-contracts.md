@@ -18,6 +18,8 @@ It answers:
 
 It does not explain the internal implementation of those boundaries.
 
+Cross-spec dependencies never resolve through another spec's milestone-local Task IDs. Active implementation order is carried by `roadmap.md`, while persistent observable dependencies resolve through this contract manifest; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
+
 ## Artifact lifecycle
 
 `{{SPEC_DIR}}/specs/<feature>/contract.md` persists with `requirements.md` and `design.md` as part of the active specification.

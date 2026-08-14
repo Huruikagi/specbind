@@ -28,7 +28,7 @@ Safe or empty defaults are clearer when represented by field absence. Exception 
 - `details`, `completion_criteria`, `boundaries`, `contracts`, and `depends_on` are omitted when empty. If present, each is a non-empty array.
 - `parallel` is omitted for ordinary sequential tasks. If present, its only valid value is `true`; `parallel: false` is invalid.
 - `parallel: true` requires a non-empty `boundaries` array so the parallel-safety claim has an explicit responsibility scope.
-- `depends_on` contains only sparse additional dependencies under Decision 0019; an empty array is invalid.
+- `depends_on` contains only sparse additional dependencies within the same `tasks.yaml` under Decisions 0019 and 0027; an empty array is invalid.
 - `optional` is unsupported under Decision 0022.
 - Unknown fields fail strict schema validation.
 
