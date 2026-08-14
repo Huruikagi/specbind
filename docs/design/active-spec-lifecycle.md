@@ -41,7 +41,7 @@ The milestone's stable identity does not depend on knowing the final release ver
 
 - `milestone_id`: CLI-generated canonical UUID v7 accepted by Decision 0043
 - `baseline_revision`: full Git commit object ID captured from clean `HEAD` immediately before milestone creation under Decision 0054
-- `target_release`: concrete release version, initially unset when necessary
+- `target_release`: concrete Decision 0073 portable release label, initially unset when necessary
 
 Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap is an OKF concept document and this mapping is authoritative YAML frontmatter:
 
@@ -75,7 +75,7 @@ work_items:
 
 This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Under [Decision 0072](./decisions/0072-explicit-release-rebinding.md), changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts: initial binding is ordinary, while replacing a non-null value requires the explicit `--rebind` operation and user confirmation in agent-assisted use. The generated ID is not intended to be selected or named by the user. The baseline revision remains unchanged through ordinary work so contract review always compares the complete milestone delta.
 
-The Rust CLI requires a clean repository immediately before roadmap creation, captures the full current `HEAD` as `baseline_revision`, and generates the UUID v7 locally without mutating a project counter. Mainline, hotfix, and worktree milestones therefore receive both collision-resistant identities and branch-local diff baselines. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
+The Rust CLI requires a clean repository immediately before roadmap creation, captures the full current `HEAD` as `baseline_revision`, and generates the UUID v7 locally without mutating a project counter. Mainline, hotfix, and worktree milestones therefore receive both collision-resistant identities and branch-local diff baselines. `specbind-release` requires a concrete `target_release` matching [Decision 0073](./decisions/0073-portable-release-version.md) for every release and refuses to begin release operations while it is unset or invalid.
 
 ## Active change
 

@@ -43,7 +43,7 @@ Decision 0066 assigns semantic release-summary authoring to the agent and struct
 
 ### Canonical log mutation
 
-- The CLI wraps each summary in this exact single-line list-item form:
+- The CLI wraps each summary in this exact single-line list-item form, using the exact Decision 0073 release label without normalization:
 
   ```markdown
   * **Release <version>** — <summary> ([roadmap](<relative-roadmap-path>), milestone `<milestone_id>`)

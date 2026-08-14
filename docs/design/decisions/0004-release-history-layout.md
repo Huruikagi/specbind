@@ -18,6 +18,7 @@ Keeping completed roadmaps under `steering/` would mix active project guidance w
 - Successful release finalization moves the roadmap to a new version-prefixed file at `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
 - Successful release finalization moves the accepted global review state to the companion `{{SPEC_DIR}}/releases/<version>-cross-spec-review.md`.
 - The archived roadmap retains its machine-generated milestone ID and release-version binding.
+- Under Decision 0073, `<version>` is the exact opaque portable label stored in `target_release`; archive filenames never add, remove, or normalize a leading `v`.
 
 Example after releasing `v1.4.0`:
 
@@ -56,4 +57,3 @@ Example after releasing `v1.4.0`:
 
 - Whether other project-level release summaries or state records will use the same `<version>-<artifact>` naming convention.
 - Whether projects need an opt-in audit artifact for cancelled, never-released milestones; by default they are not release-archived under [Decision 0005](./0005-active-change-abandonment.md).
-- Whether archived roadmap filenames normalize every release version to a leading `v`.

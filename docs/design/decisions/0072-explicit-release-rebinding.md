@@ -17,7 +17,7 @@ A milestone has a stable UUID v7 identity before its eventual release version is
   specbind milestone bind-release <version> --rebind [--json]
   ```
 
-- `<version>` is persisted exactly as a valid roadmap `target_release` value. This decision does not add normalization or an implicit leading `v`.
+- `<version>` is validated and persisted exactly under the Decision 0073 portable release-label grammar. No normalization or implicit leading `v` is applied.
 - When `target_release` is `null`, the normal form binds the requested version and returns `OK RELEASE_BOUND`.
 - When the requested version already equals the binding, either form performs no mutation and returns `NO_CHANGE RELEASE_ALREADY_BOUND`.
 - When a different non-null binding exists, the normal form returns `ERROR RELEASE_REBIND_REQUIRED` and reports the current and requested versions. It performs no mutation.
