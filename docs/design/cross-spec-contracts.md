@@ -34,6 +34,8 @@ Cross-spec dependencies never resolve through another spec's milestone-local Tas
 
 The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.yaml` are finalized.
 
+The design gate always fingerprints both `design.md` and `contract.md` under [Decision 0038](./decisions/0038-design-gate-inputs.md). A missing contract therefore prevents approval rather than silently taking the empty-contract path.
+
 ## Content boundary
 
 The initial conceptual sections are:

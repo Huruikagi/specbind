@@ -143,6 +143,36 @@ describe('runtime schema scaffolds', () => {
     expect(JSON.stringify(evidence)).not.toContain('brief.md');
   });
 
+  it('defines design gate evidence over required design and contract files', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const evidence = schema.$defs?.designGateEvidence as {
+      required?: string[];
+      properties?: {
+        input_revisions?: {
+          required?: string[];
+          properties?: Record<string, unknown>;
+          additionalProperties?: unknown;
+        };
+      };
+      additionalProperties?: unknown;
+    };
+
+    expect(evidence.required).toEqual(['passed_at', 'approval_mode', 'input_revisions']);
+    expect(evidence.properties?.input_revisions?.required).toEqual([
+      'design.md',
+      'contract.md',
+    ]);
+    expect(evidence.properties?.input_revisions?.properties).toEqual({
+      'design.md': { $ref: '#/$defs/fingerprint' },
+      'contract.md': { $ref: '#/$defs/fingerprint' },
+    });
+    expect(evidence.properties?.input_revisions?.additionalProperties).toBe(false);
+    expect(evidence.additionalProperties).toBe(false);
+    expect(JSON.stringify(evidence)).not.toContain('requirements.md');
+  });
+
   it('defines sparse scheduling fields for executable tasks', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),

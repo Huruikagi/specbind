@@ -34,6 +34,4 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 
 ## Open questions
 
-- Which artifact and metadata inputs belong to the design, tasks, and completion gate projections; Decision 0017 defines the requirements gate boundary.
-- Exact remaining design- and completion-evidence fields and serialization. Decision 0032 fixes their gate-local ownership boundary, and Decision 0028 defines the task-plan projection and serialization.
-- Whether multiple inputs remain individually fingerprinted, gain an aggregate fingerprint, or use both.
+- The exact tasks-gate evidence key used to store the normalized task-plan fingerprint. Decision 0028 defines the projection and serialization; Decision 0038 fixes the design gate's two individually fingerprinted inputs, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.
