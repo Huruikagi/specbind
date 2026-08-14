@@ -51,6 +51,7 @@
 - [`docs/design/decisions/0027-spec-local-task-dependencies.md`](docs/design/decisions/0027-spec-local-task-dependencies.md) — accepted local-only Task IDs with roadmap and contract routing for cross-spec dependencies
 - [`docs/design/decisions/0028-task-plan-fingerprint.md`](docs/design/decisions/0028-task-plan-fingerprint.md) — accepted normalized typed-plan projection and canonical fingerprint algorithm
 - [`docs/design/decisions/0029-completion-validation-handshake.md`](docs/design/decisions/0029-completion-validation-handshake.md) — accepted clean Git revision handshake for guarded completion validation
+- [`docs/design/decisions/0030-persist-only-accepted-completion-evidence.md`](docs/design/decisions/0030-persist-only-accepted-completion-evidence.md) — accepted current-state-only storage for successful completion evidence
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

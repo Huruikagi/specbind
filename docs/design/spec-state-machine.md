@@ -93,7 +93,6 @@ These operations may update documents or milestone context without advancing the
 | `DESIGN_DRAFT_UPDATED` | Writes or revises design and contract while the state remains `design`. |
 | `TASK_PLAN_UPDATED` | Writes or revises tasks while the state remains `tasks`. |
 | `TASK_PROGRESS_RECORDED` | Updates task completion while the state remains `implementation`. |
-| `EVIDENCE_RECORDED` | Adds candidate evidence without accepting the completion gate. |
 | `TARGET_RELEASE_BOUND` | Updates the milestone's release binding; it does not advance a participating spec. |
 | `MILESTONE_SCOPE_REORDERED` | Changes milestone ordering or dependencies without changing a spec gate unless the semantic scope also changes. |
 | `STATE_REPAIRED` | Restores artifacts or metadata to match the declared state; the workflow state itself does not change. |

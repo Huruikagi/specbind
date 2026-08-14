@@ -109,6 +109,8 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 
 Feature-level completion validation begins from a clean committed Git revision and uses the CLI preflight/finalize handshake accepted by [Decision 0029](./decisions/0029-completion-validation-handshake.md). The agent runs project validation between those calls; the CLI accepts evidence only if the implementation revision, lifecycle inputs, approvals, and completed-task state are unchanged.
 
+Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required, or rejected validation attempts remain run-scoped output under [Decision 0030](./decisions/0030-persist-only-accepted-completion-evidence.md).
+
 ## Released history
 
 `changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:

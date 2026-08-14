@@ -25,6 +25,7 @@ Completion validation uses a two-call CLI handshake. Exact command names remain 
 - The skill runs the full active-spec validation scope against that checkout, including required mechanical commands and semantic coverage, integration, design, contract-impact, and downstream-review assessments.
 - A validation command that changes tracked, staged, untracked, or submodule state prevents acceptance. The change must be reconciled and committed, then the complete validation rerun from a new preflight baseline.
 - `NO-GO` and `MANUAL_VERIFY_REQUIRED` never request the state transition. They report remediation or missing manual evidence while the spec remains in `implementation`.
+- Under Decision 0030, unsuccessful and manual-required results remain run-scoped output and are never written to `spec.yaml` as attempt history.
 
 ### Guarded acceptance
 
