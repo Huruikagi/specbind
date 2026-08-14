@@ -12,7 +12,18 @@ Some learnings remain useful after the active milestone ends. Storing them in `t
 
 - A spec may contain zero or more `SpecBind Implementation Notes` artifacts alongside its persistent requirements, design, and contract artifacts. Decision 0057 discovers them by OKF type; each has a stable `artifact_id`.
 - Notes are optional and are created only when useful implementation knowledge needs to be retained. Multiple artifacts may separate materially different knowledge areas without forcing one growing file.
+- The two SpecBind-owned Front Matter fields are:
+
+  ```yaml
+  ---
+  type: SpecBind Implementation Notes
+  artifact_id: persistence
+  ---
+  ```
+
+- `type` is exact. `artifact_id` follows the Decision 0057 collection-ID grammar and provides persistent identity across filename or directory changes. Unknown top-level Front Matter extensions are allowed under Decision 0045 but carry no SpecBind semantics.
 - Each implementation-notes body is free-form Markdown. Apart from OKF profile metadata, SpecBind defines no required headings, entry schema, Task ID links, authors, timestamps, categories, or stable note IDs.
+- A live implementation-notes artifact must not be empty. After removing complete HTML comment nodes and trimming whitespace, its Markdown body must contain content. If there is no durable knowledge to record, the artifact is absent rather than retained as a placeholder.
 - Agents may include task references, code examples, commands, failure details, or any other useful context directly in the Markdown. SpecBind does not parse, resolve, validate, or rewrite those contents.
 - The file is spec-scoped persistent implementation memory rather than a child of a task or active milestone.
 - Task generation, implementation, debugging, review, and implementation-validation workflows read it when present and update it when durable knowledge is discovered.
@@ -22,6 +33,12 @@ Some learnings remain useful after the active milestone ends. Storing them in `t
 - A note cannot substitute for `blocked`, a plan revision, a requirements/design rewind, or completion evidence when one of those state changes is required.
 - Successful release finalization preserves every discovered implementation-notes artifact unchanged while removing the milestone-local `tasks.yaml`.
 - Task CLI projections do not copy or serialize this free-form artifact; agent workflows read it directly when semantic context is needed.
+
+## Template behavior
+
+- A managed implementation-notes template may consist only of its final identity, scaffold, and `specbind:instruction` comments because it is not yet a live artifact.
+- The owning workflow does not materialize that optional template until it has durable content to retain. Materialized output must satisfy the non-empty live-body rule after instruction comments are removed.
+- Creating a new spec or active milestone does not create an empty default implementation-notes artifact.
 
 ## Migration
 
@@ -33,6 +50,7 @@ Some learnings remain useful after the active milestone ends. Storing them in `t
 ## Consequences
 
 - Useful implementation knowledge survives milestone refresh and release finalization.
+- Optionality is represented by file absence, so agents do not spend context loading empty memory artifacts.
 - Agents can record the context in its natural form without a schema migration for new note shapes.
 - Plan renumbering does not attempt unsafe rewrites inside free-form notes.
 - Consumers that need reliable dependencies, blockers, or evidence must use the corresponding structured artifacts instead of interpreting note prose.
