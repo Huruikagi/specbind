@@ -6,6 +6,79 @@
     "fingerprint": {
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "requirementIdList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "requirementsGateEvidence": {
+      "type": "object",
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "approved_requirement_ids",
+        "input_revisions"
+      ],
+      "properties": {
+        "passed_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approval_mode": {
+          "enum": [
+            "explicit",
+            "delegated"
+          ]
+        },
+        "delegation_workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approved_requirement_ids": {
+          "$ref": "#/$defs/requirementIdList"
+        },
+        "input_revisions": {
+          "type": "object",
+          "required": [
+            "requirements.md"
+          ],
+          "properties": {
+            "requirements.md": {
+              "$ref": "#/$defs/fingerprint"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "approval_mode": {
+              "const": "explicit"
+            }
+          },
+          "not": {
+            "required": [
+              "delegation_workflow"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "approval_mode": {
+              "const": "delegated"
+            }
+          },
+          "required": [
+            "delegation_workflow"
+          ]
+        }
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",

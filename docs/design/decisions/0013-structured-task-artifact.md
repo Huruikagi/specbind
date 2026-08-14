@@ -26,6 +26,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - Requirements, design, contracts, briefs, changelogs, and roadmaps remain Markdown unless a separate decision changes them.
 - `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the spec's configured product language.
 - The schema must distinguish the approved task-plan definition from mutable execution state so normal progress updates do not inherently rewrite the approved plan.
+- The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state, blocked execution details, and implementation notes are excluded from that projection under Decision 0018.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -80,5 +81,5 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 - Required plan fields and mutable execution fields.
 - Status enum and blocked / skipped / optional semantics.
 - Completion and verification evidence references.
-- Canonical fingerprint projections for task-plan and completion gates.
+- Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
 - Exact `tasks.md` migration grammar and diagnostics.

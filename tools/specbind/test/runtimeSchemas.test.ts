@@ -6,9 +6,7 @@ const schemaKinds = ['spec', 'tasks'] as const;
 
 interface RuntimeSchema {
   $schema?: unknown;
-  $defs?: {
-    fingerprint?: unknown;
-  };
+  $defs?: Record<string, unknown>;
   type?: unknown;
   required?: unknown;
   properties?: {
@@ -48,5 +46,21 @@ describe('runtime schema scaffolds', () => {
       type: 'string',
       pattern: '^sha256:[0-9a-f]{64}$',
     });
+  });
+
+  it('defines readable requirements gate evidence without a brief fingerprint', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const evidence = schema.$defs?.requirementsGateEvidence as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+    };
+
+    expect(evidence.required).toContain('approved_requirement_ids');
+    expect(evidence.properties).toHaveProperty('approved_requirement_ids');
+    expect(evidence.properties).toHaveProperty('input_revisions');
+    expect(JSON.stringify(evidence)).toContain('requirements.md');
+    expect(JSON.stringify(evidence)).not.toContain('brief.md');
   });
 });
