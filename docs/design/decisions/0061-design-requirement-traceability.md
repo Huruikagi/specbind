@@ -24,7 +24,7 @@ The inherited cc-sdd task format already uses an italic `_Requirements: 1.1, 2.3
 
 - `requirement_ids` is a non-empty YAML array of unique strings. Every value must be a canonical Requirement ID extracted under Decision 0060 and must exist in the current `SpecBind Requirements` artifact.
 - Array order has no semantic meaning. Overlap between different design artifacts is allowed because one Requirement may affect several design concerns.
-- Additional valid Front Matter fields are allowed and preserved. An unrecognized field is project metadata: the CLI does not assign it lifecycle, identity, traceability, or gate semantics, and bundled skills must not depend on it as a stable SpecBind contract.
+- Additional valid top-level Front Matter fields are allowed and preserved under the common Decision 0045 extension rule. An unrecognized field is project metadata: the CLI does not assign it lifecycle, identity, traceability, or gate semantics, and bundled skills must not depend on it as a stable SpecBind contract.
 - Projects may namespace custom fields to reduce future naming collisions, but v1 does not require a particular extension prefix. A field becomes part of the stable SpecBind contract only through a later profile decision and migration definition.
 - The Markdown body is otherwise template-defined free-form content. The CLI does not require a particular H1, title field, section inventory, or section order; only the explicit Requirement marker contract below is machine-recognized for this profile.
 - Each live design artifact must contain one or more explicit italic Requirement markers using this canonical presentation:

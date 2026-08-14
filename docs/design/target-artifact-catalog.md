@@ -49,6 +49,7 @@ Status: Draft
 - Release completion ends the active milestone but does not retire the specs it changed.
 - Abandoning an unreleased milestone does not create release history by default.
 - The configured spec root is an OKF v0.2 Knowledge Bundle. Its managed Markdown artifacts use YAML frontmatter plus free-form Markdown under Decision 0045.
+- Every OKF profile permits and preserves unknown top-level Front Matter extensions under Decision 0045, while known fields and nested SpecBind-owned structures retain their profile-specific validation.
 
 ## Project-level artifacts
 
