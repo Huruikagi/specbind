@@ -150,12 +150,14 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.
 - Must not remove active documents before applicable release work and required verification succeed.
 - Must allow unrelated dirty files while refusing uncommitted or conflicting paths that CLI finalization will mutate.
+- On `FINALIZE_TARGET_DIRTY`, must show the affected paths and obtain explicit user confirmation before retrying with `specbind release finalize --force`.
+- Must not use `--force` to bypass archive collisions or any lifecycle, freshness, evidence, schema, or path-safety guard.
 - Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.
 
 ### Open questions
 
-- What exact adapter schema and validation rules should be used?
+- What exact release-evidence arguments should `specbind release finalize` accept?
 - What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
 

@@ -35,6 +35,7 @@ Related documents:
 - [Decision 0062: minimal active brief profile](./decisions/0062-minimal-active-brief-profile.md)
 - [Decision 0063: free-form release adapter profile](./decisions/0063-free-form-release-adapter-profile.md)
 - [Decision 0064: path-scoped release finalization guard](./decisions/0064-path-scoped-release-finalization-guard.md)
+- [Decision 0065: forceable release target check](./decisions/0065-forceable-release-target-check.md)
 
 Status: Draft
 

@@ -17,7 +17,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - The agent passes the target version and structured release evidence into the finalization boundary. Decision 0064 does not require a universal publication or source-revision field.
 - The CLI must not accept a bare success assertion as sufficient proof. It rechecks core invariants and all evidence it can verify from repository or structured state before mutating active artifacts.
 - Release finalization applies the Decision 0064 path-scoped Git safety check rather than requiring repository-wide cleanliness or equality with a previously captured `HEAD`.
-- Exact CLI command names and the evidence handoff schema remain Draft.
+- Decision 0065 accepts `specbind release finalize [--json] [--force]` as the finalization command. The evidence handoff arguments remain Draft.
 
 ## Execution sequence
 
@@ -42,6 +42,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 - Adapter instructions cannot waive a CLI readiness or finalization gate.
 - Unrelated dirty files are governed by project policy; the CLI refuses only dirty or conflicting paths in its resolved finalization mutation set under Decision 0064.
+- Decision 0065 permits an explicitly user-confirmed `--force` retry for those forceable target-path conflicts only; archive collisions and all other core guards remain non-forceable.
 - The CLI does not invent missing publication commands or credentials.
 - The agent does not bypass the CLI by deleting the discovered `SpecBind Brief` artifact, `tasks.yaml`, or `roadmap.md` directly.
 - The CLI does not claim semantic or external verification that it cannot actually observe.
@@ -57,6 +58,6 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 ## Open questions
 
-- Exact preflight and finalize command names.
+- Exact preflight command name.
 - Evidence schema, provenance, freshness, and redaction rules.
 - Whether a preflight result has a stable session or plan ID that finalization must reference.

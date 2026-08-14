@@ -27,7 +27,7 @@ The core CLI still needs to avoid overwriting, deleting, or moving uncommitted S
   - an existing retry destination is clean and passes the existing identity-and-content idempotency check
 - Dirty or untracked files outside the resolved finalization target set do not block core finalization. A project adapter or repository instruction may impose a stricter repository-wide policy, but that is not a SpecBind core invariant.
 - The CLI still revalidates current lifecycle state, gate freshness, roadmap membership, release binding, accepted cross-spec review, task completion, archive collision rules, and all other deterministic finalization guards against the current artifact contents.
-- A target-path conflict returns a path-specific diagnostic and performs no mutation. The CLI never resets, stashes, stages, commits, or discards user changes. The agent or user resolves the affected path explicitly and retries.
+- A target-path conflict returns the Decision 0065 path-specific diagnostic and performs no mutation by default. The agent or user may resolve the affected path and retry, or explicitly use the narrow Decision 0065 `--force` override. The CLI never resets, stashes, stages, or commits user changes.
 
 ## Release history and references
 

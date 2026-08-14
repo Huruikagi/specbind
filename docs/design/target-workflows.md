@@ -95,7 +95,7 @@ Rust CLI: core preflight and readiness gates
   -> AI agent: adapter After finalize (when applicable)
 ```
 
-Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates applicable guidance and hands structured results to the CLI under [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0063](./decisions/0063-free-form-release-adapter-profile.md).
+Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates applicable guidance and hands structured results to the CLI under [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0063](./decisions/0063-free-form-release-adapter-profile.md). Finalization uses `specbind release finalize`; a forceable target-path conflict is reported to the user and may be retried with `--force` only after explicit confirmation under Decision 0065.
 
 ## Cross-spec review
 
