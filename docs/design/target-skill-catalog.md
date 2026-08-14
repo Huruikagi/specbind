@@ -115,7 +115,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Confirm that the active milestone is ready to close.
 - Require every roadmap direct change to have sparse `status: completed` state.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
-- Ask the Rust CLI to run core preflight and readiness checks.
+- Run the stateless `specbind release preflight` command and stop before adapter work unless it returns `OK RELEASE_READY`.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
 - Prepare one delivered-change summary per participating spec and submit them to the Rust CLI for guarded log insertion and finalization.
 - Append an idempotent history entry for every participating spec.
@@ -149,6 +149,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not treat `settings/release.md` code blocks as CLI-executable hooks.
 - Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.
 - Must not remove active documents before applicable release work and required verification succeed.
+- Must not treat a successful preflight as finalization authority or attempt to pass it back as a token; finalization rechecks current state independently.
 - Must allow unrelated dirty files while refusing uncommitted or conflicting paths that CLI finalization will mutate.
 - Build the strict Decision 0068 log-entry JSON outside the project or pass it on standard input.
 - On `FINALIZE_TARGET_DIRTY`, must show the affected paths and obtain explicit user confirmation before retrying the same `specbind release finalize --log-entries ...` request with `--force`.

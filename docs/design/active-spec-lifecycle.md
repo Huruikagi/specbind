@@ -168,11 +168,11 @@ Rust CLI milestone operations own the mechanical state transitions for scope cha
 The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
 
 1. The release agent loads the active roadmap, target version, and the free-form `{{SPEC_DIR}}/settings/release.md`, then validates its OKF profile and interprets any applicable project guidance under Decision 0063.
-2. The release agent asks the Rust CLI to run core preflight.
+2. The release agent runs the stateless `specbind release preflight [--json]` readiness check accepted by [Decision 0069](./decisions/0069-stateless-release-preflight.md).
 3. The CLI resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
 4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance and judges the result with the human.
 5. The agent submits one delivered-change summary per participating spec to the Rust CLI finalization boundary.
-6. The CLI independently rechecks core invariants, validates all evidence it can verify, and confirms that every resolved finalization target path is safe under Decision 0064.
+6. Without trusting or accepting a preflight token, the CLI independently rechecks core invariants, validates all evidence it can verify, and confirms that every resolved finalization target path is safe under Decision 0064.
 7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
 8. The CLI removes each participating spec's discovered singleton brief artifact and fixed `tasks.yaml`.
 9. The CLI transitions each `spec.yaml` to released / no-active-change state.

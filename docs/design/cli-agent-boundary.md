@@ -118,7 +118,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - bind or rebind the target release version
 - check milestone and per-spec lifecycle consistency
 - perform the deterministic portion of confirmed abandonment cleanup
-- run release preflight checks and idempotent finalization mutations
+- run the stateless `specbind release preflight [--json]` readiness check and idempotent finalization mutations
 
 These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind release finalize`, accepted by Decision 0065 with its narrow target-path `--force` override. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 

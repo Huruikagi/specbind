@@ -39,6 +39,7 @@ Related documents:
 - [Decision 0066: agent-judged release and CLI log insertion](./decisions/0066-agent-judged-release-and-cli-log-insertion.md)
 - [Decision 0067: text-first English CLI results](./decisions/0067-text-first-english-cli-results.md)
 - [Decision 0068: release log summary input](./decisions/0068-release-log-summary-input.md)
+- [Decision 0069: stateless release preflight](./decisions/0069-stateless-release-preflight.md)
 
 Status: Draft
 

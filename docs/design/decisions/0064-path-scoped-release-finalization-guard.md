@@ -11,7 +11,7 @@ The core CLI still needs to avoid overwriting, deleting, or moving uncommitted S
 ## Decision
 
 - SpecBind does not persist or require a core `release_source_revision`, immutable tag, Release URL, deployment ID, or other publication reference. Projects may create and record those references through their release adapter when useful.
-- Release preflight and finalization do not require the entire Git working tree to be clean and do not reject a candidate merely because `HEAD` advanced during project-specific release work.
+- Release preflight and finalization do not require the entire Git working tree to be clean. Under Decision 0069, preflight is stateless, and finalization does not reject current state merely because `HEAD` advanced after an earlier successful preflight during project-specific release work.
 - Immediately before finalization, the CLI resolves the complete set of paths it will create, modify, delete, or move. This set includes, as applicable:
   - each participating spec's `spec.yaml`
   - each participating spec's `log.md`
