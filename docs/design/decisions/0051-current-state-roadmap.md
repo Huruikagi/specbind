@@ -13,7 +13,7 @@ SpecBind already has distinct history surfaces: Git records active-artifact edit
 - `steering/roadmap.md` represents only the current active milestone state.
 - Its frontmatter and Markdown body contain no required history collection, `updated_at`, actor log, scope-change log, or cross-spec review-attempt list.
 - Confirmed scope and dependency changes update the current `work_items` through guarded CLI operations.
-- A change that invalidates the accepted global cross-spec review removes or supersedes that current evidence; the roadmap does not append the previous accepted record or failed attempts.
+- A change that invalidates the accepted global cross-spec review removes or supersedes the current Decision 0052 state artifact; the roadmap does not embed the previous accepted record or failed attempts.
 - Git history remains the source for active roadmap edits and authorship.
 - Successful release archives the final roadmap snapshot under `releases/`.
 - Per-spec `log.md` records the released result rather than the active planning sequence.
@@ -24,4 +24,4 @@ SpecBind already has distinct history surfaces: Git records active-artifact edit
 - Agents and humans read one unambiguous representation of current milestone intent.
 - CLI mutations do not need to maintain a second event log inside the roadmap.
 - Historical reconstruction before release depends on the repository's Git practices.
-- Release evidence remains durable without carrying transient review failures or superseded scope inside the final snapshot.
+- Release evidence remains durable in its companion archive without carrying transient review failures or superseded scope inside the roadmap snapshot.

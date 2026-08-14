@@ -91,7 +91,7 @@ Cross-spec review proceeds contract-first:
 4. Compare changed entries with the prior released reference.
 5. Classify the change as `LOCAL_ONLY`, `CONTRACT_COMPATIBLE`, or `CONTRACT_BREAKING`.
 6. Traverse affected consumers and load full requirements, design, and tasks only where the contract change or ambiguity requires it.
-7. Record the classification, affected entries, downstream review scope, and accepted all-consistent outcome in the active roadmap's single global record under [Decisions 0035](./decisions/0035-roadmap-owned-cross-spec-review.md) and [0050](./decisions/0050-global-cross-spec-review.md).
+7. Record the classification, affected entries, downstream review scope, and accepted all-consistent outcome once in `state/cross-spec-review.yaml` under [Decisions 0050](./decisions/0050-global-cross-spec-review.md) and [0052](./decisions/0052-project-state-artifacts.md).
 
 `LOCAL_ONLY` still requires the spec-local review appropriate to the change. `CONTRACT_COMPATIBLE` does not mean no review; it narrows review to relevant consumers. `CONTRACT_BREAKING` requires downstream revision or explicit revalidation before release readiness.
 
@@ -166,7 +166,7 @@ The default `settings/templates/specs/contract.md` and related shared rules are 
 
 - Exact Markdown grammar and localized headings.
 - Entry ID and cross-reference normalization.
-- Exact active-roadmap frontmatter extension and fingerprint inputs for the global cross-spec review record accepted by Decisions 0035 and 0050.
+- Exact schema and fingerprint inputs for the global `state/cross-spec-review.yaml` record accepted by Decisions 0050 and 0052.
 - Rules for shared File Ownership and generated files.
 - Approval invalidation when a contract classification changes.
 - Release-readiness evidence required for affected consumers.

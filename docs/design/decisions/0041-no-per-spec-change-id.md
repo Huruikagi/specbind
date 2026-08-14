@@ -13,7 +13,7 @@ A separate ID would add another value to generate, expose, validate, migrate, an
 - Target `spec.yaml` has no `change_id` field.
 - A spec-backed active change is identified by the pair `(milestone_id, canonical spec identity)`. The canonical spec identity is the spec's key/path under the configured spec root and must match its active-roadmap membership.
 - Each spec has at most one active change in a milestone. Same-milestone deltas merge into that change rather than creating another identity.
-- Roadmap-owned cross-spec review records resolve spec-backed changes by milestone and canonical spec identity.
+- The project-state-owned global cross-spec review resolves spec-backed changes through its milestone ID and canonical roadmap membership.
 - Per-spec `log.md` and release-finalization idempotency use the release binding, milestone ID, enclosing spec identity, and immutable release reference as applicable; they do not require a change ID.
 - Direct or other non-spec roadmap items may receive roadmap-local identities if their own schema later needs them. Those identities do not become `spec.yaml.change_id`.
 - Renaming a spec during an active milestone is outside the v1 lifecycle. A future explicit rename/migration workflow must reconcile the roadmap, contracts, history links, and filesystem atomically rather than silently treating a new path as the old identity.

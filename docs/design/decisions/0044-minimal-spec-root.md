@@ -24,7 +24,7 @@ Canonical spec identity is already the spec directory key/path under the configu
 - The root stores no `feature_name`. The CLI derives canonical spec identity from the spec's directory key/path and checks it against roadmap membership. Human-facing capability names belong in prose artifacts.
 - The root stores no `created_at` or `updated_at`. Git, roadmap, per-spec `log.md`, and gate-local `passed_at` values own the useful history.
 - The inherited `phase`, `approvals`, and `ready_for_implementation` fields are replaced by `active_change.state` and `gate_evidence` and are invalid target fields.
-- `target_release` and cross-spec review data remain roadmap-owned and are not copied into `spec.yaml`.
+- `target_release` remains roadmap-owned; cross-spec review data is owned by the Decision 0052 project-state artifact. Neither is copied into `spec.yaml`.
 - All root and active-change additional properties are rejected.
 - CLI-generated YAML writes root keys in `schema_version`, `language`, `active_change` order and active-change keys in `milestone_id`, `state`, `requirement_ids`, `gate_evidence` order when present. Readers do not treat mapping order as semantic.
 

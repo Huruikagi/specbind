@@ -2,11 +2,11 @@
 
 Status: Accepted
 
-Superseded in part by [Decision 0048](./0048-okf-spec-log.md): per-spec history now uses the OKF reserved `log.md`, with date-grouped newest-first insertion instead of `changelog.md` append semantics. Roadmap archival and per-spec history ownership remain accepted here.
+Superseded in part by [Decision 0048](./0048-okf-spec-log.md): per-spec history now uses the OKF reserved `log.md`, with date-grouped newest-first insertion instead of `changelog.md` append semantics. Decision 0052 adds a companion global-review archive while retaining this decision's flat version-prefixed release layout.
 
 ## Context
 
-Active specs need local history that explains how each capability changed across releases. The active `roadmap.md` also contains milestone-wide scope, dependency ordering, and cross-spec evidence that cannot be reconstructed conveniently from independent spec changelogs.
+Active specs need local history that explains how each capability changed across releases. The active `roadmap.md` contains milestone-wide scope and dependency ordering, while Decision 0052's project-state artifact contains detailed cross-spec evidence that cannot be reconstructed conveniently from independent spec logs.
 
 Keeping completed roadmaps under `steering/` would mix active project guidance with release history. Deleting them would make the immutable release reference the only complete milestone-wide record.
 
@@ -16,6 +16,7 @@ Keeping completed roadmaps under `steering/` would mix active project guidance w
 - Released spec entries use the release version as their human-facing key.
 - `{{SPEC_DIR}}/steering/roadmap.md` represents only the active milestone.
 - Successful release finalization moves the roadmap to a new version-prefixed file at `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
+- Successful release finalization moves the accepted global review state to the companion `{{SPEC_DIR}}/releases/<version>-cross-spec-review.yaml`.
 - The archived roadmap retains its machine-generated milestone ID and release-version binding.
 
 Example after releasing `v1.4.0`:
@@ -24,7 +25,9 @@ Example after releasing `v1.4.0`:
 {{SPEC_DIR}}/
 ├── releases/
 │   ├── v1.3.0-roadmap.md
-│   └── v1.4.0-roadmap.md
+│   ├── v1.3.0-cross-spec-review.yaml
+│   ├── v1.4.0-roadmap.md
+│   └── v1.4.0-cross-spec-review.yaml
 ├── specs/
 │   └── <feature>/
 │       └── changelog.md
@@ -37,8 +40,8 @@ Example after releasing `v1.4.0`:
 - Archive only after publication and immutable release-reference verification succeed.
 - Require the active roadmap's bound release version to match the archive filename.
 - Refuse to overwrite an existing archive path unless an idempotent retry proves identical milestone identity and content.
-- Move the roadmap as part of the same coherent finalization change that updates spec changelogs and lifecycle state.
-- Verify that `steering/roadmap.md` is absent and the archived roadmap is present after finalization.
+- Move the roadmap and accepted global review state as part of the same coherent finalization change that updates spec logs and lifecycle state.
+- Verify that `steering/roadmap.md` and `state/cross-spec-review.yaml` are absent and both companion archives are present after finalization.
 - Spec changelog entries point to the archived roadmap and immutable release reference where useful.
 
 ## Consequences
@@ -51,6 +54,6 @@ Example after releasing `v1.4.0`:
 
 ## Open questions
 
-- Whether other project-level release summaries or evidence files will use the same `<version>-<artifact>` naming convention.
+- Whether other project-level release summaries or state records will use the same `<version>-<artifact>` naming convention.
 - Whether projects need an opt-in audit artifact for cancelled, never-released milestones; by default they are not release-archived under [Decision 0005](./0005-active-change-abandonment.md).
 - Whether archived roadmap filenames normalize every release version to a leading `v`.

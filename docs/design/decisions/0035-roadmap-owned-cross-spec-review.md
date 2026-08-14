@@ -1,6 +1,8 @@
 # 0035: Keep cross-spec review evidence in the active roadmap
 
-Status: Accepted
+Status: Superseded by Decisions 0050 and 0052
+
+Decision 0050 replaces the per-item association with one global accepted result. Decision 0052 moves that result from roadmap frontmatter to `state/cross-spec-review.yaml`; the text below records the earlier storage decision.
 
 ## Context
 
