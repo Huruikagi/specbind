@@ -157,6 +157,8 @@ The exact command names and accepted structured evidence schema remain follow-up
 
 For accepted mechanical evidence, Decision 0033 requires an ordered list of categorized, display-safe commands with successful exit codes. The agent discovers and executes the project-appropriate set; the CLI validates its strict shape and rejects non-success entries without storing raw output.
 
+Decision 0034 keeps requirements coverage, design alignment, spec-local task integration, and boundary integrity as mandatory agent judgments but omits their fixed `passed` flags from persisted evidence. The CLI accepts only the final guarded `GO` candidate; it does not mistake stored booleans for replayable semantic proof.
+
 ## Initial implementation boundary
 
 The first increment should remain narrow:

@@ -109,7 +109,7 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 
 Feature-level completion validation begins from a clean committed Git revision and uses the CLI preflight/finalize handshake accepted by [Decision 0029](./decisions/0029-completion-validation-handshake.md). The agent runs project validation between those calls; the CLI accepts evidence only if the implementation revision, lifecycle inputs, approvals, and completed-task state are unchanged.
 
-Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required, or rejected validation attempts remain run-scoped output under [Decision 0030](./decisions/0030-persist-only-accepted-completion-evidence.md).
+Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required, or rejected validation attempts remain run-scoped output under [Decision 0030](./decisions/0030-persist-only-accepted-completion-evidence.md). The accepted record attests that the mandatory semantic validation protocol passed, but does not persist redundant per-dimension pass flags or a duplicated `GO` field under [Decision 0034](./decisions/0034-do-not-persist-semantic-pass-flags.md).
 
 Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
 
