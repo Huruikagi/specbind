@@ -23,6 +23,7 @@ Related documents:
 - [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
+- [Decision 0045: OKF Markdown artifacts](./decisions/0045-okf-markdown-artifacts.md)
 
 Status: Draft
 
@@ -39,12 +40,13 @@ Status: Draft
 - A concrete release version is mandatory before release execution begins.
 - Release completion ends the active milestone but does not retire the specs it changed.
 - Abandoning an unreleased milestone does not create release history by default.
+- The configured spec root is an OKF v0.2 Knowledge Bundle. Its managed Markdown artifacts use YAML frontmatter plus free-form Markdown under Decision 0045.
 
 ## Project-level artifacts
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | Holds a branch-safe UUID v7 milestone ID and an initially optional release-version binding. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID and an initially null release-version binding. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds a new flat file after verified publication; archive collisions must not overwrite history. |
 
 ## Settings artifacts
@@ -64,14 +66,14 @@ Status: Draft
 | `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
 | `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
 | `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
-| `implementation-notes.md` | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | Free-form Markdown with no required schema; project-wide knowledge should be promoted to `steering/`. |
+| `implementation-notes.md` | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | The body is free-form Markdown; only the common OKF frontmatter and artifact type profile are structured. Project-wide knowledge should be promoted to `steering/`. |
 | `tasks.yaml` | Exists only for the active milestone's structured task plan and execution state. | Task and implementation workflows. | Accepted | The only canonical task artifact; starts fresh between milestones and is removed by successful release finalization. No parallel `tasks.md` view is maintained. |
 | `changelog.md` | Persists per spec as an index of released changes and evidence. | Release finalization workflow. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata. Unreleased abandoned work is omitted by default. |
 | `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.yaml`. |
 
 ## Open questions
 
-- What exact schema represents the roadmap-owned release binding?
+- What remaining frontmatter fields and body grammar complete the `SpecBind Roadmap` profile beyond its accepted milestone and release binding?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts, and what parseable active-roadmap syntax represents the cross-spec review record owned there by Decision 0035?

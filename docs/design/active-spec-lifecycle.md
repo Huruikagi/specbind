@@ -41,18 +41,24 @@ The milestone's stable identity does not depend on knowing the final release ver
 - `milestone_id`: CLI-generated canonical UUID v7 accepted by Decision 0043
 - `target_release`: concrete release version, initially unset when necessary
 
-Conceptual roadmap metadata:
+Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap is an OKF concept document and this mapping is authoritative YAML frontmatter:
 
-```yaml
+```markdown
+---
+type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: null
+---
 ```
 
 When the release version becomes known, the workflow binds it to the active milestone:
 
-```yaml
+```markdown
+---
+type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: v1.4.0
+---
 ```
 
 This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
@@ -230,7 +236,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- The authoritative location and exact syntax of the release-version binding.
+- The remaining `SpecBind Roadmap` profile and body grammar beyond the accepted frontmatter release binding.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
