@@ -33,7 +33,7 @@ Flattening every item into one list with a repeated `kind` field would also obsc
 - Dependency relationships, not YAML list order, determine execution waves. List and category order are presentation order only.
 - The frontmatter stores no generic completion checkbox or roadmap-level status. Spec-backed progress is derived from the spec lifecycle and task execution artifacts. Direct changes use only the sparse completed state accepted by Decision 0047.
 - The Markdown body has no CLI-parsed schema and is never partially mutated by the CLI. Templates may recommend Overview, Approach Decision, Scope, Constraints, and Boundary Strategy sections for human and agent context.
-- Roadmap-wide cross-spec review evidence remains roadmap-owned under Decision 0035, but its frontmatter extension is outside this basic work-item shape.
+- One global cross-spec review record remains roadmap-owned under Decisions 0035 and 0050, but its frontmatter extension is outside this basic work-item shape.
 
 ## Consequences
 

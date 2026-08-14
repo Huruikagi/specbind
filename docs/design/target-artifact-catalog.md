@@ -50,8 +50,8 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, an initially null release-version binding, and grouped work items. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
-| `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds a new flat file after verified publication; archive collisions must not overwrite history. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, an initially null release-version binding, grouped work items, and at most one accepted global cross-spec review. It represents current state only under Decision 0051. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
+| `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope, dependency, and global cross-spec review record. | `specbind-release`. | Accepted | Each release adds the final active-roadmap snapshot as a new flat file after verified publication; archive collisions must not overwrite history. |
 
 ## Settings artifacts
 
@@ -77,7 +77,7 @@ Status: Draft
 
 ## Open questions
 
-- What frontmatter extension represents the roadmap-owned cross-spec review record accepted by Decision 0035?
+- What frontmatter extension and fingerprint inputs represent the global roadmap-owned cross-spec review record accepted by Decisions 0035 and 0050?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts?

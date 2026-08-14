@@ -125,9 +125,11 @@ Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required
 
 Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
 
-Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decision 0035](./decisions/0035-roadmap-owned-cross-spec-review.md). Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves that record from `milestone_id` and the canonical spec identity; completion evidence does not duplicate it or add another roadmap reference.
+Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decisions 0035](./decisions/0035-roadmap-owned-cross-spec-review.md) and [0050](./decisions/0050-global-cross-spec-review.md). The single accepted record covers the complete current milestone. Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves it from `milestone_id` and membership in the roadmap's current work items; completion evidence does not duplicate it or add another roadmap reference.
 
 The roadmap's machine-readable scope uses the grouped `work_items` frontmatter accepted by [Decision 0046](./decisions/0046-roadmap-work-items.md). New specs, existing-spec updates, and direct changes remain distinct categories; typed references form the dependency graph. Spec-backed progress is derived from each spec's lifecycle, while a direct change persists only optional `status: completed` under [Decision 0047](./decisions/0047-sparse-direct-change-status.md), with absence meaning pending. The Markdown body carries milestone context and rationale but has no CLI-parsed grammar.
+
+Under [Decision 0051](./decisions/0051-current-state-roadmap.md), the active roadmap is a current-state manifest rather than an embedded change log. Confirmed scope, dependencies, direct-change completion, release binding, and accepted global review evidence replace their current representations in place. Git records pre-release edits, the archived roadmap preserves the released snapshot, and per-spec `log.md` files summarize released results.
 
 ## Released history
 
