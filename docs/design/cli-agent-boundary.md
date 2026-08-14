@@ -49,7 +49,7 @@ Issue #49 proposed checking mappings across:
 ```text
 requirements.md
   -> design.md
-  -> tasks.md
+  -> tasks.yaml
 ```
 
 That proposal predates the accepted active-requirement-set model in [Decision 0003](./decisions/0003-active-requirement-set.md). The SpecBind version should therefore distinguish the complete requirement catalog from the active milestone scope.
@@ -61,11 +61,11 @@ The first check should mechanically verify:
 - every ID in `spec.json.active_change.requirement_ids` exists in `requirements.md`
 - the active Requirement ID set is established before downstream coverage is claimed
 - `design.md` traces every active Requirement ID
-- `tasks.md` maps every active Requirement ID through its machine-readable requirement references
+- `tasks.yaml` maps every active Requirement ID through its schema-defined requirement references
 - design and task mappings do not reference unknown Requirement IDs
 - task requirement mappings use only the supported canonical syntax
 
-Requirements outside the active set remain valid current requirements, but they do not need to appear in the current milestone's `tasks.md`. This differs intentionally from Issue #49's original all-requirements task-coverage rule.
+Requirements outside the active set remain valid current requirements, but they do not need to appear in the current milestone's `tasks.yaml`. This differs intentionally from Issue #49's original all-requirements task-coverage rule.
 
 The CLI verifies that an ID is present in the required mapping. An agent still reviews whether the mapped design and tasks actually satisfy the requirement.
 
@@ -98,7 +98,7 @@ FAIL
 ACTIVE_UNKNOWN: 9.9 at spec.json
 DESIGN_MISSING: 3.2
 TASKS_MISSING: 4.1, 4.2
-INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.md:42
+INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.yaml:18
 ```
 
 The JSON schema and exit-code table must be versioned contracts before implementation is considered complete.

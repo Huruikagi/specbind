@@ -24,12 +24,12 @@ Long-lived specs need to remain the current description of the product, but mile
 | `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
 | `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
 | `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
-| `tasks.md` | Executable plan for the current milestone's change. | Contains only current tasks and numbers them from the start. | Removed. |
+| `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
 | `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
 | `spec.json` | Current lifecycle, active-change metadata, and approvals. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 
-Absence of `brief.md` and `tasks.md` is the normal idle state of a released spec. Placeholder working documents should not be required.
+Absence of `brief.md` and `tasks.yaml` is the normal idle state of a released spec. Placeholder working documents should not be required.
 
 ## Milestone identity and release binding
 
@@ -96,7 +96,7 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 
 ## Active tasks and coverage
 
-`tasks.md` contains only tasks for the active milestone:
+`tasks.yaml` contains only tasks for the active milestone:
 
 - Task numbering restarts for a new milestone.
 - Same-milestone deltas may merge into the active task plan.
@@ -121,7 +121,7 @@ The contract contains only stable ownership, exports, consumes, cross-spec invar
 - relevant implementation, version, and finalization commits
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization `brief.md` and `tasks.md` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
+The complete pre-finalization `brief.md` and `tasks.yaml` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
 
 ## Scope removal, abandonment, and rollback
 
@@ -146,7 +146,7 @@ The portable release contract is a gated state transition. Project publication i
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
 7. The CLI appends one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
-8. The CLI removes each participating spec's `brief.md` and `tasks.md`.
+8. The CLI removes each participating spec's `brief.md` and `tasks.yaml`.
 9. The CLI transitions each `spec.json` to released / no-active-change state.
 10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md`, refusing conflicting archive content.
 11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
@@ -162,9 +162,9 @@ The workflow must distinguish these states:
 
 | State | Expected working files | Meaning |
 | --- | --- | --- |
-| Released and idle | No `brief.md` or `tasks.md` | The current requirements and design are implemented; no active milestone change exists. |
-| Active change before task generation | `brief.md` exists; `tasks.md` may not yet exist | Spec revision is in progress. |
-| Active implementation | `brief.md` and `tasks.md` exist | Current milestone tasks and approvals determine readiness. |
+| Released and idle | No `brief.md` or `tasks.yaml` | The current requirements and design are implemented; no active milestone change exists. |
+| Active change before task generation | `brief.md` exists; `tasks.yaml` may not yet exist | Spec revision is in progress. |
+| Active implementation | `brief.md` and `tasks.yaml` exist | Current milestone tasks and approvals determine readiness. |
 | Interrupted or inconsistent | Metadata says active but required phase artifacts are missing | Resume or repair is required. |
 
 Dependencies must also distinguish:
@@ -173,7 +173,7 @@ Dependencies must also distinguish:
 - a dependency on an active revision that must complete first
 - a dependency on a released implementation, proven by changelog and immutable release evidence
 
-A released spec without `tasks.md` must not be treated as unimplemented.
+A released spec without `tasks.yaml` must not be treated as unimplemented.
 
 ## Initial migration
 

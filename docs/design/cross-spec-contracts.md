@@ -6,7 +6,7 @@ Status: Draft
 
 ## Purpose
 
-`contract.md` is the current manifest of a spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating `requirements.md`, `design.md`, and `tasks.md`.
+`contract.md` is the current manifest of a spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating `requirements.md`, `design.md`, and `tasks.yaml`.
 
 It answers:
 
@@ -30,7 +30,7 @@ It does not explain the internal implementation of those boundaries.
 | Released change | The per-spec changelog records the contract impact classification and changed entry references where useful. |
 | Retired capability | Retirement rules must resolve or migrate incoming consumer references before removal. |
 
-The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.md` are finalized.
+The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.yaml` are finalized.
 
 ## Content boundary
 

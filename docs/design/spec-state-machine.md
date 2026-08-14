@@ -25,11 +25,11 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 
 | State | Persistent representation | Meaning | Minimum consistent artifacts and metadata |
 | --- | --- | --- | --- |
-| `idle` | `active_change: null` | The current requirements, design, and contract describe released behavior. No change for this spec is active. | `requirements.md`, `design.md`, `contract.md`, `changelog.md`, and released metadata; no `brief.md` or `tasks.md`. |
+| `idle` | `active_change: null` | The current requirements, design, and contract describe released behavior. No change for this spec is active. | `requirements.md`, `design.md`, `contract.md`, `changelog.md`, and released metadata; no `brief.md` or `tasks.yaml`. |
 | `requirements` | `active_change.state: "requirements"` | The active change is being scoped and its current Requirement ID set is not yet approved. | Active roadmap membership, `brief.md`, `requirements.md`, matching milestone and change IDs, and `requirement_ids: null`. |
 | `design` | `active_change.state: "design"` | Requirements and the active Requirement ID set are approved. Technical design and contract impact are being established or revised. | Requirements gate evidence and a non-null, canonical `requirement_ids` array. |
 | `tasks` | `active_change.state: "tasks"` | Design and contract impact are approved. The executable milestone-local plan is being prepared or revised. | Valid requirements and design gate evidence plus current `design.md` and `contract.md`. |
-| `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.md`. |
+| `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.yaml`. |
 | `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, coverage, and required downstream review have fresh accepted evidence. Milestone release gates may still block publication. | Valid prior gate evidence, zero incomplete or blocked required tasks, and fresh completion evidence. |
 
 `release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
@@ -117,7 +117,7 @@ If a draft update touches input that has already been approved, it is not a non-
 | `TASKS_CHANGED` | `tasks`, `implementation`, `release_ready` | `tasks` | Requirements and design remain valid; otherwise use the earlier invalidation event. | Clear tasks and completion gate evidence. |
 | `IMPLEMENTATION_VALIDATED` | `implementation` | `release_ready` | Required tasks are complete and unblocked; fresh integration, coverage, contract-impact, and downstream-review evidence pass. | Record completion evidence and its input revisions. |
 | `COMPLETION_INVALIDATED` | `release_ready` | `implementation` | Requirements, design, contract, and tasks remain approved; otherwise use the corresponding earlier invalidation event. | Clear completion evidence only. |
-| `RELEASE_FINALIZED` | `release_ready` | `idle` | Milestone release preflight, publication, verification, immutable-reference checks, and final invariant recheck pass for every participant. | Append idempotent changelog entry; remove this change's `brief.md` and `tasks.md`; clear `active_change`. Roadmap archival is part of the enclosing milestone transaction. |
+| `RELEASE_FINALIZED` | `release_ready` | `idle` | Milestone release preflight, publication, verification, immutable-reference checks, and final invariant recheck pass for every participant. | Append idempotent changelog entry; remove this change's `brief.md` and `tasks.yaml`; clear `active_change`. Roadmap archival is part of the enclosing milestone transaction. |
 | `SPEC_SCOPE_REMOVED` | Any active state | `idle` | Scope removal is confirmed; unstarted work or repository/spec content is restored and reconciled; no retained consumer dependency requires this active revision. | Remove milestone-local files for this change; clear `active_change`; create no release changelog entry. |
 | `MILESTONE_ABANDONED` | Any active state | `idle` | Full abandonment is explicitly confirmed; every participating spec and repository change is restored or reconciled. | Apply the same per-spec cleanup as scope removal as one milestone-wide guarded operation; remove the active roadmap; create no release history by default. |
 
@@ -151,9 +151,9 @@ Examples of `inconsistent` health include:
 - `requirements` with a non-null approved active set
 - `design` or later without current requirements gate evidence
 - `tasks` or later without a valid `contract.md`
-- `implementation` or later without `tasks.md`
+- `implementation` or later without `tasks.yaml`
 - an approval fingerprint that does not match the current artifact revision
-- `idle` with milestone-local `brief.md` or `tasks.md`
+- `idle` with milestone-local `brief.md` or `tasks.yaml`
 
 Read-only checks report the declared state, derived health, and repair diagnostics. They do not rewrite state. `STATE_REPAIRED` means an explicit repair operation has restored consistency and passed the same invariant check.
 

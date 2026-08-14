@@ -8,6 +8,8 @@ The target per-spec workflow states, approval invalidation events, and transitio
 
 Explicit and delegated gate approval, non-interactive execution, and rejection of the inherited `-y` flag are accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
 
+The active implementation plan and progress use canonical `tasks.yaml` rather than a Markdown task document under [Decision 0013](./decisions/0013-structured-task-artifact.md).
+
 Status: Draft
 
 ## Design goals
@@ -179,7 +181,7 @@ bundled CLI: parse and check deterministic invariants
   -> bundled CLI: perform explicit, guarded state mutation
 ```
 
-The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.json`, `design.md`, and `tasks.md`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
+The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.json`, `design.md`, and `tasks.yaml`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
 
 ## Approval and automation model
 

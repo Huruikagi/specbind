@@ -21,6 +21,8 @@ The current CLI under `tools/specbind/` owns more than process startup. Its obse
 
 The templates under `tools/specbind/templates/` are product content and remain inputs to the Rust CLI unless a later artifact-layout decision changes them.
 
+[Decision 0013](./decisions/0013-structured-task-artifact.md) is one such intentional product change: target workflows create canonical `tasks.yaml`, while inherited `tasks.md` is handled only as migration input.
+
 The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
 
 Official defaults are product-managed inputs, while installed `settings/templates/` and `settings/rules/` become user-owned customization surfaces under [Decision 0008](./decisions/0008-customization-surface.md). Packaging defaults into or beside the binary must not erase that ownership boundary.
@@ -97,6 +99,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 - Define normalized line-ending and path expectations across platforms.
 - Capture `.kiro`, `.specbind`, custom-root, and conflicting-root migration cases.
 - Capture untouched, customized, and newly added shared template/rule update cases.
+- Capture unambiguous and ambiguous in-progress `tasks.md` to `tasks.yaml` migration cases.
 
 ### 2. Read-only Rust core
 
@@ -116,6 +119,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 ### 4. Native SpecBind operations
 
 - Implement traceability checking in Rust.
+- Implement versioned `tasks.yaml` loading, validation, status reporting, and guarded progress updates in Rust.
 - Implement cross-spec contract parsing, reference validation, and dependency graph checks in Rust.
 - Add lifecycle checks and accepted mutations incrementally.
 - Update generated skills to call stable CLI contracts rather than shell-specific inspection logic.

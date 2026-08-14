@@ -23,6 +23,7 @@ Related documents:
 - [Decision 0010: release execution boundary](./decisions/0010-release-execution-boundary.md)
 - [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
 - [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
+- [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
 
 ## Status and change types
 
@@ -116,7 +117,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Submit structured publication and verification evidence to the Rust CLI for guarded finalization.
 - Verify an immutable release reference that preserves the active working documents.
 - Append an idempotent history entry for every participating spec.
-- Remove participating specs' active `brief.md` and `tasks.md` after successful release.
+- Remove participating specs' active `brief.md` and `tasks.yaml` after successful release.
 - Transition their metadata to released / no-active-change state.
 - Archive `{{SPEC_DIR}}/steering/roadmap.md` as `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
 - Run optional After finalize project instructions only after core finalization succeeds.
@@ -133,7 +134,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - Per-spec `changelog.md` entries
 - Per-spec released / no-active-change metadata
-- Removal of finalized `brief.md` and `tasks.md`
+- Removal of finalized `brief.md` and `tasks.yaml`
 - Version-prefixed milestone roadmap under `{{SPEC_DIR}}/releases/`
 
 ### Boundaries
