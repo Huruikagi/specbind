@@ -59,7 +59,7 @@ active_change:
         brief.md: <fingerprint>
 ```
 
-Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. Every gate uses `passed_at` for the time that the current revision passed; gate transition and evidence persistence are one guarded mutation, so the target schema has no separate `approved_at` or `recorded_at`. `explicit` records approval after the current revision exists and omits `delegation_workflow`. `delegated` requires `delegation_workflow` to identify the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.yaml` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the remaining gate-evidence fields and fingerprint canonicalization.
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. Fingerprint values use the `sha256:<64 lowercase hex characters>` representation accepted in [Decision 0016](./decisions/0016-fingerprint-value-format.md). Every gate uses `passed_at` for the time that the current revision passed; gate transition and evidence persistence are one guarded mutation, so the target schema has no separate `approved_at` or `recorded_at`. `explicit` records approval after the current revision exists and omits `delegation_workflow`. `delegated` requires `delegation_workflow` to identify the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.yaml` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the remaining gate-evidence fields, per-gate input projections, and fingerprint canonicalization.
 
 ## Event list
 
@@ -224,7 +224,7 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 
 ## Open questions
 
-- Exact gate-evidence storage and content-fingerprint schema under Decision 0012.
+- Exact gate-evidence storage, per-gate input projections, and content canonicalization under Decisions 0012 and 0016.
 - Whether an explicitly approved active Requirement ID set may be empty for any spec-backed change.
 - Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
 - Which repair operations the CLI may automate after presenting a dry-run plan.

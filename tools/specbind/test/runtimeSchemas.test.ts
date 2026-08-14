@@ -6,6 +6,9 @@ const schemaKinds = ['spec', 'tasks'] as const;
 
 interface RuntimeSchema {
   $schema?: unknown;
+  $defs?: {
+    fingerprint?: unknown;
+  };
   type?: unknown;
   required?: unknown;
   properties?: {
@@ -34,5 +37,16 @@ describe('runtime schema scaffolds', () => {
     ) as { files?: string[] };
 
     expect(packageJson.files).toContain('schemas');
+  });
+
+  it('defines the accepted tagged lowercase SHA-256 fingerprint value', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+
+    expect(schema.$defs?.fingerprint).toEqual({
+      type: 'string',
+      pattern: '^sha256:[0-9a-f]{64}$',
+    });
   });
 });

@@ -2,6 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SpecBind spec metadata v1",
   "description": "Initial runtime-contract scaffold for spec.yaml. Add fields only after their schema decisions are accepted.",
+  "$defs": {
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  },
   "type": "object",
   "required": [
     "schema_version"
