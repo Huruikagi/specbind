@@ -62,14 +62,15 @@ The first check should mechanically verify the Decision 0060 requirements gramma
 - Requirement IDs use the supported format and are unique
 - every ID in `spec.yaml.active_change.requirement_ids` exists in the requirements artifact
 - the active Requirement ID set is established before downstream coverage is claimed
-- the complete discovered design set traces every active Requirement ID
+- every design artifact's non-empty Front Matter `requirement_ids` set exactly matches the union of its Decision 0061 italic `_Requirements: ..._` body markers
+- every design mapping references current canonical Requirement IDs, and the complete discovered design set traces every active Requirement ID
 - `tasks.yaml` maps every active Requirement ID through its schema-defined requirement references
 - design and task mappings do not reference unknown Requirement IDs
 - task requirement mappings use only the supported canonical syntax
 
 Requirements outside the active set remain valid current requirements, but they do not need to appear in the current milestone's `tasks.yaml`. This differs intentionally from Issue #49's original all-requirements task-coverage rule.
 
-The CLI verifies that an ID is present in the required mapping. An agent still reviews whether the mapped design and tasks actually satisfy the requirement.
+The CLI recognizes only the exact Decision 0061 emphasis-marker grammar rather than scanning arbitrary numeric prose. It verifies that an ID is present in the required mapping. An agent still reviews whether the mapped design and tasks actually satisfy the requirement.
 
 ## Cross-spec contract checks
 

@@ -14,6 +14,7 @@ Every active spec has one persistent `SpecBind Contract` artifact under Decision
   - the singleton contract under logical key `contract`
   - every design document under logical key `design/<artifact_id>`
 - The contract and at least one design artifact are required. A missing contract is a migration or consistency failure and prevents design approval; it is not interpreted as no contract impact.
+- Before approval, every design artifact must satisfy the Decision 0061 Front Matter/body traceability contract, and the union of the complete design set must cover every active Requirement ID.
 - Each Markdown file is normalized only for line endings and then hashed as a complete file using the Decision 0016 fingerprint representation.
 - The design gate does not copy a requirements fingerprint or active Requirement ID list. It instead requires the prerequisite requirements gate to remain fresh under Decision 0032.
 - Design gate evidence uses the common `passed_at`, `approval_mode`, and conditional `delegation_workflow` approval fields. Its `input_revisions` object contains exactly the currently discovered contract and design logical keys and rejects any other key.
@@ -25,3 +26,4 @@ Every active spec has one persistent `SpecBind Contract` artifact under Decision
 - Renaming or moving a file alone does not invalidate approval because the stable logical identity and file content remain unchanged.
 - An intentionally empty contract remains explicit, reviewable, and distinguishable from a missing file.
 - Design evidence stays local to direct gate inputs without duplicating requirements evidence.
+- Traceability failures block approval without adding another evidence field.

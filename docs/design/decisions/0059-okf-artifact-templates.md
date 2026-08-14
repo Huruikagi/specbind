@@ -18,6 +18,7 @@ SpecBind needs customizable template sets that can create several design artifac
   - collection templates contain their exact `type` and literal stable `artifact_id`
 - `type`, `artifact_id`, and output paths contain no AI instructions or template variables. AI does not choose or rewrite these values during ordinary materialization.
 - The template set obeys the Decision 0057 profile multiplicity and ID rules. In particular, duplicate singleton types and duplicate collection `artifact_id` values are invalid.
+- Under Decision 0061, a `SpecBind Design` template omits the live-only `requirement_ids` field; its presence is invalid even as an empty array. An instruction comment may direct the authoring agent to add the non-empty mapping and matching italic body markers before materialization.
 - Template-relative placement is user customization. For example, `settings/templates/specs/technical-design/persistence.md` initially materializes as `specs/<spec>/technical-design/persistence.md`.
 
 ## AI instruction comments
