@@ -20,18 +20,18 @@ Long-lived specs need to remain the current description of the product, but mile
 
 | Artifact | Responsibility | During an active change | After release |
 | --- | --- | --- | --- |
-| `brief.md` | Why the spec changes in the current milestone. | Exactly one active change, including same-milestone deltas. | Removed. |
-| `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
-| `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
-| `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
-| `implementation-notes.md` | Optional free-form implementation knowledge useful to later AI runs. | Read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
+| `SpecBind Brief` | Why the spec changes in the current milestone. | At most one discovered artifact, including same-milestone deltas. | Removed. |
+| `SpecBind Requirements` | The complete set of currently valid requirements. | The discovered singleton is revised in place. | Preserved. |
+| `SpecBind Design` set | The complete currently valid design, optionally split by stable `artifact_id`. | One or more discovered artifacts are revised as needed. | Preserved. |
+| `SpecBind Contract` | The current minimal cross-spec seam manifest. | The discovered singleton is revised only when externally observable seams change. | Preserved. |
+| `SpecBind Implementation Notes` set | Optional free-form implementation knowledge useful to later AI runs. | Zero or more discovered artifacts are read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
 | `log.md` | Per-spec OKF update log of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry inserted under the applicable newest-first date heading. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Intent, scope, and dependencies for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 | `state/cross-spec-review.md` | Current accepted milestone-wide cross-spec review evidence and AI-authored judgment. | Exists only after a global review passes; ordinary agents do not preload it. | Moved to `releases/<version>-cross-spec-review.md`. |
 
-Absence of `brief.md` and `tasks.yaml` is the normal idle state of a released spec. Placeholder working documents should not be required.
+Absence of a `SpecBind Brief` artifact and `tasks.yaml` is the normal idle state of a released spec. Placeholder working documents should not be required. Decision 0057 discovers spec-local Markdown by OKF type; familiar Markdown filenames remain template defaults rather than lifecycle identity.
 
 ## Milestone identity and release binding
 
@@ -88,17 +88,17 @@ Each spec has at most one active change at a time. The active brief should ident
 - boundary impact and dependencies
 - source request or issue
 
-Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new `brief.md`; it does not append the new change to the previous milestone's brief.
+Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new brief artifact; it does not append the new change to the previous milestone's brief.
 
 Discovery owns creating the active brief and transitioning an idle released spec into an active-change state. The precise routing and approval invalidation rules still need refinement.
 
 ## Active requirement set
 
-`requirements.md` remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone and store it in `spec.yaml`; see [Decision 0003](./decisions/0003-active-requirement-set.md) and [Decision 0014](./decisions/0014-structured-spec-metadata.md):
+The singleton `SpecBind Requirements` artifact remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone and store it in `spec.yaml`; see [Decision 0003](./decisions/0003-active-requirement-set.md) and [Decision 0014](./decisions/0014-structured-spec-metadata.md):
 
 - It contains every Requirement ID that must be implemented or revalidated for the active change.
 - It may include unchanged existing requirements when the change requires their reimplementation or revalidation.
-- It is not implicitly equal to every requirement in `requirements.md`.
+- It is not implicitly equal to every requirement in the requirements artifact.
 - Requirements approval freezes the set for downstream phases.
 - Changing the set returns the workflow to the requirements phase and invalidates affected downstream approval.
 - Design traces the same set, and tasks must provide 100% coverage of it.
@@ -107,7 +107,7 @@ Within `spec.yaml`, `active_change.requirement_ids: null` means the set has not 
 
 ## Cross-spec contract
 
-Every active spec maintains `contract.md` as the current source of truth for seams other specs may observe or consume. It persists across releases and changes alongside design; see [Cross-spec contracts](./cross-spec-contracts.md) and [Decision 0011](./decisions/0011-cross-spec-contract.md).
+Every active spec maintains one discovered `SpecBind Contract` artifact as the current source of truth for seams other specs may observe or consume. It persists across releases and changes alongside the discovered design set; see [Cross-spec contracts](./cross-spec-contracts.md), [Decision 0011](./decisions/0011-cross-spec-contract.md), and [Decision 0057](./decisions/0057-type-based-artifact-discovery.md).
 
 The contract contains only stable ownership, exports, consumes, cross-spec invariants, and File Ownership entries. Design review confirms that internal design implements the contract and that an active change has not omitted a required contract update. CLI checks validate structure and references; agent review determines semantic compatibility and downstream revalidation scope.
 
@@ -150,7 +150,7 @@ Under [Decision 0048](./decisions/0048-okf-spec-log.md), `log.md` is a navigable
 - relevant implementation, version, and finalization commits
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization `brief.md` and `tasks.yaml` remain available from the immutable release reference. The roadmap and accepted global cross-spec review also remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Git history is not the only index: each spec's `log.md` points to the relevant release and roadmap references.
+The complete pre-finalization brief artifact and `tasks.yaml` remain available from the immutable release reference. The roadmap and accepted global cross-spec review also remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Git history is not the only index: each spec's `log.md` points to the relevant release and roadmap references.
 
 The brief may provide drafting context for the problem summary, but it is not authoritative release evidence. Changelog content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence; see [Decision 0017](./decisions/0017-requirements-gate-inputs.md).
 
@@ -177,7 +177,7 @@ The portable release contract is a gated state transition. Project publication i
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
 7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
-8. The CLI removes each participating spec's `brief.md` and `tasks.yaml`.
+8. The CLI removes each participating spec's discovered singleton brief artifact and fixed `tasks.yaml`.
 9. The CLI transitions each `spec.yaml` to released / no-active-change state.
 10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md` and the accepted `state/cross-spec-review.md` to `releases/<version>-cross-spec-review.md`, refusing conflicting archive content.
 11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
@@ -193,9 +193,9 @@ The workflow must distinguish these states:
 
 | State | Expected working files | Meaning |
 | --- | --- | --- |
-| Released and idle | No `brief.md` or `tasks.yaml` | The current requirements and design are implemented; no active milestone change exists. |
-| Active change before task generation | `brief.md` exists; `tasks.yaml` may not yet exist | Spec revision is in progress. |
-| Active implementation | `brief.md` and `tasks.yaml` exist | Current milestone tasks and approvals determine readiness. |
+| Released and idle | No brief artifact or `tasks.yaml` | The current requirements and design are implemented; no active milestone change exists. |
+| Active change before task generation | A singleton brief artifact exists; `tasks.yaml` may not yet exist | Spec revision is in progress. |
+| Active implementation | A singleton brief artifact and `tasks.yaml` exist | Current milestone tasks and approvals determine readiness. |
 | Interrupted or inconsistent | Metadata says active but required phase artifacts are missing | Resume or repair is required. |
 
 Dependencies must also distinguish:
@@ -204,7 +204,7 @@ Dependencies must also distinguish:
 - a dependency on an active revision that must complete first
 - a dependency on a released implementation, proven by the per-spec release log and immutable release evidence
 
-Task dependencies remain local to one spec's active `tasks.yaml`. Active revision ordering belongs to the milestone roadmap, persistent observable dependencies belong to `contract.md`, and released dependencies use current contracts plus release history; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
+Task dependencies remain local to one spec's active `tasks.yaml`. Active revision ordering belongs to the milestone roadmap, persistent observable dependencies belong to the singleton contract artifact, and released dependencies use current contracts plus release history; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
 
 A released spec without `tasks.yaml` must not be treated as unimplemented.
 

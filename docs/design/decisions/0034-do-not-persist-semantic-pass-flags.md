@@ -18,7 +18,7 @@ The detailed validation report remains useful during the run, especially for `NO
 - All mandatory semantic dimensions must pass before the skill may produce a `GO` candidate for the Decision 0029 handshake.
 - Accepted completion evidence stores no `semantic_checks` object, per-dimension `passed` flags, semantic summary, findings list, or duplicated `decision: GO` value.
 - Presence of accepted completion evidence means that the mandatory semantic protocol passed for the recorded implementation revision.
-- `NO-GO` and `MANUAL_VERIFY_REQUIRED` reports retain their semantic findings only in run-scoped output under Decision 0030. Durable implementation knowledge may be distilled into `implementation-notes.md`.
+- `NO-GO` and `MANUAL_VERIFY_REQUIRED` reports retain their semantic findings only in run-scoped output under Decision 0030. Durable implementation knowledge may be distilled into an applicable discovered implementation-notes artifact.
 - Decision 0033 mechanical command evidence remains persisted because it records concrete invocations and results rather than repeating the meaning of gate acceptance.
 - Contract impact and downstream-review data are outside this decision and are persisted once in the project-state artifact under Decisions 0050 and 0052.
 

@@ -6,7 +6,7 @@ Status: Draft
 
 ## Purpose
 
-`contract.md` is the current manifest of a spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating `requirements.md`, `design.md`, and `tasks.yaml`.
+The singleton `SpecBind Contract` artifact is the current manifest of a spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating requirements document, design document, and `tasks.yaml`.
 
 It answers:
 
@@ -22,7 +22,7 @@ Cross-spec dependencies never resolve through another spec's milestone-local Tas
 
 ## Artifact lifecycle
 
-`{{SPEC_DIR}}/specs/<feature>/contract.md` persists with `requirements.md` and `design.md` as part of the active specification.
+The CLI discovers the contract, requirements, and one-or-more design artifacts by OKF type under [Decision 0057](./decisions/0057-type-based-artifact-discovery.md). They persist as part of the active specification regardless of their current filenames.
 
 | State | Contract behavior |
 | --- | --- |
@@ -34,7 +34,7 @@ Cross-spec dependencies never resolve through another spec's milestone-local Tas
 
 The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.yaml` are finalized.
 
-The design gate always fingerprints both `design.md` and `contract.md` under [Decision 0038](./decisions/0038-design-gate-inputs.md). A missing contract therefore prevents approval rather than silently taking the empty-contract path.
+The design gate always fingerprints the singleton contract and complete current design artifact set under [Decision 0038](./decisions/0038-design-gate-inputs.md). A missing contract therefore prevents approval rather than silently taking the empty-contract path.
 
 ## Content boundary
 
@@ -56,7 +56,7 @@ If the answer is no, the information belongs in requirements, design, tasks, or 
 
 ## Canonical representation
 
-[Decision 0056](./decisions/0056-canonical-contract-markdown.md) defines `contract.md` as an OKF concept document whose semantic contract is canonical Markdown parsed through a Markdown syntax tree. Frontmatter identifies the profile with `type: SpecBind Contract`; it does not duplicate the contract entries.
+[Decision 0056](./decisions/0056-canonical-contract-markdown.md) defines the contract as an OKF concept document whose semantic contract is canonical Markdown parsed through a Markdown syntax tree. Frontmatter identifies the profile with `type: SpecBind Contract`; it does not duplicate the contract entries.
 
 The body has one `# Contract` heading and exactly these level-two sections in order: Owns, Exports, Consumes, Invariants, and File Ownership. Each section contains only a flat unordered list and may be empty without placeholder text. Structural headings remain canonical English tokens while descriptions may use either supported product language.
 
@@ -169,7 +169,7 @@ An active spec with no cross-spec seams still gets the canonical empty represent
 
 ## Missing-contract fallback
 
-When an active or referenced spec lacks `contract.md`:
+When an active or referenced spec lacks a discovered singleton contract:
 
 - report the migration or consistency failure
 - read the relevant requirements, design, and tasks for safe review
@@ -180,7 +180,7 @@ Fallback preserves safety but is not a supported steady state.
 
 ## Customization boundary
 
-The default `settings/templates/specs/contract.md` and related shared rules are project-customizable under [Decision 0008](./decisions/0008-customization-surface.md). Customization may adjust prose and presentation but must preserve the accepted machine-readable identity and reference contract. The CLI reports incompatible customization explicitly.
+The default `settings/templates/specs/contract.md` and related shared rules are project-customizable under [Decision 0008](./decisions/0008-customization-surface.md). The filename is only a default under Decision 0057. Customization may adjust prose and presentation but must preserve the accepted machine-readable identity and reference contract. The CLI reports incompatible customization explicitly.
 
 ## Open design questions
 

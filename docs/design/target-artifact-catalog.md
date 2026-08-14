@@ -28,6 +28,7 @@ Related documents:
 - [Decision 0047: sparse direct-change status](./decisions/0047-sparse-direct-change-status.md)
 - [Decision 0048: OKF per-spec log](./decisions/0048-okf-spec-log.md)
 - [Decision 0049: concise OKF authoring rule](./decisions/0049-okf-authoring-rule.md)
+- [Decision 0057: type-based artifact discovery](./decisions/0057-type-based-artifact-discovery.md)
 
 Status: Draft
 
@@ -48,7 +49,7 @@ Status: Draft
 
 ## Project-level artifacts
 
-| Target path | Lifecycle | Owner | Status | Notes |
+| Artifact or target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, the Decision 0054 branch-local Git baseline, an initially null release-version binding, and grouped work items. It represents current state only under Decision 0051 and carries no detailed cross-spec review evidence. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
 | `{{SPEC_DIR}}/state/cross-spec-review.md` | Exists only while the active milestone has a current accepted global cross-spec review. | Cross-spec review authors a candidate judgment; guarded Rust CLI operations persist it for status, completion, and release checks. | Accepted | OKF project-state concept under Decisions 0052 through 0055. Frontmatter retains compact per-item classifications and contract-first input revisions, while the body preserves the AI-authored judgment. Ordinary agents do not preload it, and its milestone ID must match the roadmap. |
@@ -68,19 +69,18 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Draft | A release must not delete a spec merely because its milestone completed. |
-| `brief.md` | Exists only for one active milestone change. | `specbind-discovery`. | Draft | Removed by successful release finalization; same-milestone deltas merge into the active brief. |
-| `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
-| `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
-| `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
-| `implementation-notes.md` | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | The body is free-form Markdown; only the common OKF frontmatter and artifact type profile are structured. Project-wide knowledge should be promoted to `steering/`. |
+| `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Discovered by OKF type and removed by successful release finalization; same-milestone deltas merge into the active brief. |
+| `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. The active requirement set is a separate milestone-scoped concept. |
+| `SpecBind Design` collection (`design.md`, `artifact_id: main` by default) | Holds the complete currently valid design across one or more focused documents. | Design workflow. | Accepted | Discovered by OKF type plus stable `artifact_id`; revised in place for an active change. |
+| `SpecBind Contract` singleton (`contract.md` by default) | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Discovered by OKF type. Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
+| `SpecBind Implementation Notes` collection (`implementation-notes.md`, `artifact_id: main` by default) | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | Discovered by OKF type plus stable `artifact_id`. Bodies are free-form Markdown. Project-wide knowledge should be promoted to `steering/`. |
 | `tasks.yaml` | Exists only for the active milestone's structured task plan and execution state. | Task and implementation workflows. | Accepted | The only canonical task artifact; starts fresh between milestones and is removed by successful release finalization. No parallel `tasks.md` view is maintained. |
 | `log.md` | Persists per spec as the OKF reserved update log for released changes and evidence. | Release finalization workflow. | Accepted | Has no frontmatter. Entries are grouped under newest-first ISO dates; release version is the human-facing entry label and milestone ID is secondary trace metadata. Unreleased abandoned work is omitted by default. |
-| `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.yaml`. |
+| `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring a brief artifact or `tasks.yaml`. |
 
 ## Open questions
 
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
-- What exact Markdown grammar and entry ID format represent contracts?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

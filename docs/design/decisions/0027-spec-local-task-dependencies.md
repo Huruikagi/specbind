@@ -14,7 +14,7 @@ SpecBind task artifacts are also milestone-local. A dependency on another spec's
 - `depends_on` cannot name a task in another spec. Qualified values such as `other-spec/1.2`, `other-spec:1.2`, or paths into another task artifact are invalid.
 - The CLI derives a task dependency graph from exactly one spec's current `tasks.yaml`; it does not load other task artifacts to decide whether a local task is actionable.
 - Active cross-spec ordering is represented at spec/change granularity in the milestone `roadmap.md`.
-- Persistent cross-spec dependencies on observable seams are represented by `contract.md` `Consumes` references and reviewed through the contract graph.
+- Persistent cross-spec dependencies on observable seams are represented by the discovered singleton contract's `Consumes` references and reviewed through the contract graph.
 - A dependency on already released behavior is established from the current contract plus the per-spec release log and immutable release evidence, not from historical Task IDs.
 - If a task cannot proceed until work in another active spec completes, the workflow updates the roadmap dependency and the relevant contract or design context. A local `blocked_reason` may explain the immediate wait, but it is not the authoritative cross-spec dependency edge.
 - Migration treats an inherited `_Depends:_` value that is not an unqualified local numeric Task ID as ambiguous input. It reports the source text and requires routing to roadmap, contract, or ordinary prose instead of stripping qualifiers or guessing a local Task ID.

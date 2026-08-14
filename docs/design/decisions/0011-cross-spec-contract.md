@@ -10,8 +10,8 @@ A separately written summary would reduce input size but drift from the authorit
 
 ## Decision
 
-- Every active spec has a persistent `contract.md` describing its current cross-spec seams.
-- `contract.md` is a manifest, not a summary of requirements, design, or tasks.
+- Every active spec has one persistent `SpecBind Contract` artifact describing its current cross-spec seams. Decision 0057 discovers it by OKF type; `contract.md` is the conventional default path rather than the artifact identity.
+- The contract is a manifest, not a summary of requirements, design, or tasks.
 - Its core categories are Owns, Exports, Consumes, Invariants, and File Ownership.
 - Entries have stable identifiers, and cross-spec references resolve an explicit spec, category, and entry ID.
 - The design workflow maintains the contract alongside the current design and reviews whether internal changes require contract updates.

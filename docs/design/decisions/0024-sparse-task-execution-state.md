@@ -23,7 +23,7 @@ Tasks may also be added during an active milestone. Treating absence as pending 
 - Groups never receive execution entries.
 - Execution map keys must resolve to current executable tasks. Plan mutations add, remove, or renumber execution keys atomically where applicable.
 - `completed_at`, `blocked_at`, commit hashes, and review transcripts are not stored in v1 task execution state. Git history and gate evidence retain their respective audit responsibilities.
-- Execution state is excluded from the task-plan fingerprint under Decision 0018. The persistent `implementation-notes.md` accepted by Decision 0026 is a separate artifact and is not a task-gate input.
+- Execution state is excluded from the task-plan fingerprint under Decision 0018. Persistent `SpecBind Implementation Notes` artifacts accepted by Decisions 0026 and 0057 are separate and are not task-gate inputs.
 
 ## Consequences
 

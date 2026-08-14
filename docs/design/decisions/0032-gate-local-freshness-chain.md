@@ -13,8 +13,8 @@ Freshness is a comparison of the current gate-owned input projection with the pr
 - Each gate persists only its direct input revision data. Reading an upstream artifact for semantic review does not transfer fingerprint ownership to the downstream gate.
 - A gate is fresh only when its own current input projection equals its accepted projection, every prerequisite gate is fresh, and the surrounding lifecycle invariants still hold.
 - Freshness cascades in this order: requirements -> design -> tasks -> completion.
-- Requirements freshness compares the normalized `requirements.md` fingerprint and the ordered active Requirement ID array accepted by Decisions 0017 and 0018.
-- Design freshness requires a fresh requirements gate and compares the normalized `design.md` and `contract.md` fingerprints owned by the design gate.
+- Requirements freshness compares the normalized singleton requirements artifact fingerprint under logical key `requirements` and the ordered active Requirement ID array accepted by Decisions 0017, 0018, and 0057.
+- Design freshness requires a fresh requirements gate and compares the complete logical-key set and normalized fingerprints for the singleton contract plus every current design artifact owned by the design gate.
 - Tasks freshness requires a fresh design gate and compares the normalized typed `plan` fingerprint accepted by Decision 0028.
 - Completion freshness requires a fresh tasks gate, a valid Decision 0029 implementation-revision relationship, current all-completed and unblocked task state, and currently accepted completion evidence under Decision 0030.
 - Completion evidence does not repeat requirements, design, contract, active Requirement ID, or task-plan revisions. Their authoritative snapshots remain in their owning gates and are checked through the freshness chain.

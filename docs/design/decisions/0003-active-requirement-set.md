@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-`requirements.md` represents the complete currently valid requirement set. A milestone may change or revalidate only a subset of those requirements, so downstream design, tasks, and completion verification need an explicit active requirement set.
+The singleton `SpecBind Requirements` artifact represents the complete currently valid requirement set. Decision 0057 discovers it by OKF type; `requirements.md` is only the default path. A milestone may change or revalidate only a subset of those requirements, so downstream design, tasks, and completion verification need an explicit active requirement set.
 
 The set is current lifecycle state rather than prose or release history. It must also be machine-readable so task coverage can be checked without inferring scope from document diffs.
 
@@ -41,10 +41,10 @@ active_change: null
 
 ## Invariants
 
-- Requirement IDs use the canonical IDs from `requirements.md`.
+- Requirement IDs use the canonical IDs from the discovered requirements artifact.
 - The array contains unique IDs in deterministic order.
 - The approved array is non-empty for every spec-backed active change.
-- Every stored ID must exist in the current `requirements.md`.
+- Every stored ID must exist in the current requirements artifact.
 - Requirements approval writes and freezes the array.
 - Design and tasks read the stored array; they do not independently infer or expand it.
 - Tasks must provide machine-checkable 100% coverage of the stored array.
@@ -54,7 +54,7 @@ active_change: null
 ## Consequences
 
 - `spec.yaml` becomes the source of truth for current milestone requirement scope under Decision 0014.
-- `requirements.md` remains the source of truth for requirement definitions.
+- The singleton requirements artifact remains the source of truth for requirement definitions.
 - The per-spec `log.md` records the released coverage summary, not current active state, under Decision 0048.
 - Migration must reconstruct the active set for an in-progress milestone before the project can claim tasks coverage.
 - Status and validation skills can distinguish an unestablished set from an approved set without parsing prose.

@@ -4,13 +4,13 @@ Status: Accepted
 
 ## Context
 
-`contract.md` must remain concise and readable by humans and agents while the CLI parses it into the deterministic cross-spec graph required by Decisions 0011 and 0055. Putting the semantic contract in YAML frontmatter would split authoring between two representations and diverge from the structured-Markdown direction also needed for `requirements.md`.
+The `SpecBind Contract` artifact must remain concise and readable by humans and agents while the CLI parses it into the deterministic cross-spec graph required by Decisions 0011 and 0055. Putting the semantic contract in YAML frontmatter would split authoring between two representations and diverge from the structured-Markdown direction also needed for requirements.
 
 File Ownership also needs a stable identity independent of its current path. Treating every repository file as a contract entry would turn the manifest into a brittle source-tree inventory and make ordinary refactoring create cross-spec noise.
 
 ## Decision
 
-- `contract.md` is an OKF concept document with the exact required frontmatter field `type: SpecBind Contract`. Unknown OKF extension fields remain allowed and preserved under Decision 0045, but they do not contain the v1 semantic contract.
+- The contract is an OKF concept document with the exact required frontmatter field `type: SpecBind Contract`. Decision 0057 discovers this singleton by type, so `contract.md` is its conventional default path rather than its identity. Unknown OKF extension fields remain allowed and preserved under Decision 0045, but they do not contain the v1 semantic contract.
 - The semantic contract is parsed from the Markdown syntax tree, not by regular expressions or presentation-dependent line scanning.
 - The document contains one `# Contract` heading followed by exactly one of each required level-two section in this order:
   1. `## Owns`

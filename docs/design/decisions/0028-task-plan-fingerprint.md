@@ -13,7 +13,7 @@ The plan also contains two kinds of arrays. Plan items, child tasks, details, an
 The task-plan fingerprint is computed as follows:
 
 1. Parse `tasks.yaml`, rejecting duplicate mapping keys, then perform schema and required semantic validation.
-2. Project exactly the root `plan` value. `schema_version`, `execution`, `implementation-notes.md`, and every other artifact are excluded.
+2. Project exactly the root `plan` value. `schema_version`, `execution`, every separately discovered implementation-notes artifact, and every other artifact are excluded.
 3. Preserve the order of `plan.items`, each group's `tasks`, `details`, and `completion_criteria`.
 4. At every executable task, sort `requirement_ids`, `boundaries`, `contracts`, and `depends_on` independently. Sorting compares raw strings by unsigned UTF-16 code units, ascending and independent of locale, matching the property-name comparison used by JCS. Schema validation rejects duplicates before this step.
 5. Serialize the normalized plan with the [RFC 8785 JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785.html). JCS recursively sorts object properties, preserves array order, emits no insignificant whitespace, preserves string content without Unicode normalization, and produces UTF-8 bytes.

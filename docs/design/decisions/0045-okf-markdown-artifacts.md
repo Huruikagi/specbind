@@ -38,7 +38,7 @@ The Open Knowledge Format (OKF) v0.2 already defines a minimal, vendor-neutral m
   ---
   ```
 
-- `brief.md`, `requirements.md`, `design.md`, `contract.md`, `implementation-notes.md`, steering documents, rules, templates, and the release adapter receive artifact-appropriate OKF frontmatter in the target model. The per-spec `log.md` accepted by Decision 0048 is an OKF reserved file and has no frontmatter.
+- The default `brief.md`, `requirements.md`, `design.md`, `contract.md`, and `implementation-notes.md`, plus steering documents, rules, templates, and the release adapter receive artifact-appropriate OKF frontmatter in the target model. Decision 0057 discovers spec-local concept documents by type and treats those filenames as defaults rather than identity. The per-spec `log.md` accepted by Decision 0048 is an OKF reserved file and has no frontmatter.
 - Free-form documents such as `implementation-notes.md` remain free-form in their Markdown body; OKF frontmatter is the only common structural requirement.
 - Project customization can add metadata without waiting for a SpecBind schema revision, while the CLI retains deterministic ownership of the fields it understands.
 - Exact profiles for each artifact, including their canonical `type` values and any additional required fields, can be accepted incrementally with that artifact's schema.

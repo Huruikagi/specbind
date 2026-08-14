@@ -42,7 +42,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 - Adapter instructions cannot waive a CLI readiness or finalization gate.
 - The CLI does not invent missing publication commands or credentials.
-- The agent does not bypass the CLI by deleting `brief.md`, `tasks.yaml`, or `roadmap.md` directly.
+- The agent does not bypass the CLI by deleting the discovered `SpecBind Brief` artifact, `tasks.yaml`, or `roadmap.md` directly.
 - The CLI does not claim semantic or external verification that it cannot actually observe.
 - External writes remain subject to the user's authority and the active agent environment's permission model.
 

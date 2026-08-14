@@ -33,7 +33,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - The target schema has no optional-task category; every executable task in the active plan is required under Decision 0022.
 - Group and executable-task objects use the strict sparse plan shape accepted by Decision 0023.
 - Task progress uses the sparse persisted `completed | blocked` execution state accepted by Decision 0024; absence means pending and `in_progress` remains run-scoped.
-- Persistent free-form implementation guidance lives in the optional per-spec `implementation-notes.md`, outside `tasks.yaml`, under Decision 0026.
+- Persistent free-form implementation guidance lives in optional discovered `SpecBind Implementation Notes` artifacts outside `tasks.yaml`, under Decisions 0026 and 0057.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -68,7 +68,7 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 
 - Existing `tasks.md` files are migration inputs, not a second supported steady-state format.
 - Migration reads only the inherited syntax that SpecBind explicitly supports and reports ambiguous task structure instead of guessing.
-- In-progress projects must preserve completion, dependency, boundary, Requirement ID, and blocked information where it can be established. Relevant inherited implementation notes move to `implementation-notes.md` under Decision 0026. Inherited optional markers require the explicit migration resolution defined by Decision 0022.
+- In-progress projects must preserve completion, dependency, boundary, Requirement ID, and blocked information where it can be established. Relevant inherited implementation notes move to the default implementation-notes artifact with `artifact_id: main` under Decisions 0026 and 0057. Inherited optional markers require the explicit migration resolution defined by Decision 0022.
 - Historical `tasks.md` files remain available at their existing commits or release references and are not rewritten merely to normalize history.
 - Target skills and the Rust CLI use `tasks.yaml` after migration; they do not continue dual writes.
 

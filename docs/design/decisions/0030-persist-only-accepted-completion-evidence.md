@@ -6,7 +6,7 @@ Status: Accepted
 
 Integration validation can return `GO`, `NO-GO`, or `MANUAL_VERIFY_REQUIRED`, and may require several attempts before a spec is ready. Persisting every candidate, failed command, remediation report, and manual-verification gap in `spec.yaml` would turn current lifecycle metadata into an append-only validation log and make the authoritative evidence difficult to identify.
 
-SpecBind needs to explain why the current active change is `release_ready`, not preserve every unsuccessful attempt. Detailed command output and CI history already have more appropriate run-scoped or external storage, while durable implementation knowledge has `implementation-notes.md`.
+SpecBind needs to explain why the current active change is `release_ready`, not preserve every unsuccessful attempt. Detailed command output and CI history already have more appropriate run-scoped or external storage, while durable implementation knowledge has the optional `SpecBind Implementation Notes` collection.
 
 ## Decision
 
@@ -16,7 +16,7 @@ SpecBind needs to explain why the current active change is `release_ready`, not 
 - `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failure, stale-input rejection, and malformed candidate evidence do not mutate `spec.yaml` or any lifecycle state.
 - Candidate evidence remains in the validation run context until acceptance. It is not a separately persisted SpecBind artifact and does not have its own lifecycle event.
 - Validation output reports failures, missing manual checks, ownership, and remediation to the caller. CI systems, agent task logs, or other project tooling may retain that output independently of SpecBind metadata.
-- A durable implementation lesson may be written to `implementation-notes.md`; a task that cannot proceed uses structured `blocked` state. Neither mechanism is a validation-attempt log.
+- A durable implementation lesson may be written to an applicable implementation-notes artifact; a task that cannot proceed uses structured `blocked` state. Neither mechanism is a validation-attempt log.
 - When completion is invalidated, the accepted completion evidence is cleared. A later successful handshake writes one new current record rather than appending attempt history.
 - Release finalization summarizes the accepted validation result in the per-spec `log.md` and release history as already required; it does not migrate failed attempts into release artifacts.
 - The completion evidence schema contains no failure counter, attempt array, rejected candidate, remediation transcript, raw command output, or conversation transcript. Decision 0033 retains only concise successful command metadata, while Decision 0034 excludes tautological semantic pass flags.

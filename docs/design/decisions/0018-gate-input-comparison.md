@@ -16,7 +16,7 @@ Most Markdown gate inputs are authoritative prose documents. A content edit shou
 - Every CRLF sequence and every remaining bare CR byte is replaced by LF before SHA-256 is computed.
 - All other bytes remain significant, including whitespace, a UTF-8 BOM if present, and the presence or absence of a final newline.
 - The resulting value uses the tagged lowercase representation from Decision 0016.
-- Decision 0017 still excludes `brief.md` from requirements gate evidence.
+- Decision 0017 still excludes the discovered `SpecBind Brief` artifact from requirements gate evidence.
 
 ### Active Requirement IDs
 

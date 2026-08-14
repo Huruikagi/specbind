@@ -43,7 +43,7 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - Task list/show operations fail clearly when corruption prevents a trustworthy projection.
 - The CLI derives pending tasks from sparse execution state, spec-local effective dependencies from Decisions 0019 and 0027, group progress, current Requirement ID coverage, and approval freshness.
 - No command generates or maintains a parallel `tasks.md` artifact.
-- Task commands do not parse or embed the free-form `implementation-notes.md` accepted by Decision 0026; semantic agent workflows read that artifact directly when needed.
+- Task commands do not parse or embed the free-form implementation-notes artifacts accepted by Decisions 0026 and 0057; semantic agent workflows ask the CLI to discover and read them when needed.
 
 ## Consequences
 

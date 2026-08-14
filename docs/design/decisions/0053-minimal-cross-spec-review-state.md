@@ -48,7 +48,7 @@ classifications:
     update-ci: LOCAL_ONLY
 input_revisions:
   steering/roadmap.md#cross-spec-scope: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-  specs/account-auth/contract.md: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  specs/account-auth#contract: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 ---
 
 # Cross-Spec Review

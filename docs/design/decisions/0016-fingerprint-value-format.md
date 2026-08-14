@@ -20,7 +20,7 @@ Example:
 
 ```yaml
 input_revisions:
-  requirements.md: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  requirements: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 ```
 
 The `sha256:` tag makes the persisted algorithm explicit and leaves room for a future schema version to accept another algorithm without guessing from digest length.
@@ -32,4 +32,4 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 - Producers must emit lowercase hexadecimal.
 - Changing the accepted algorithm or representation requires an explicit schema evolution decision.
 
-Decision 0039 fixes `tasks.yaml#plan` as the tasks-gate evidence key for the normalized projection defined by Decision 0028. Decision 0038 fixes the design gate's two individually fingerprinted inputs, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.
+Decision 0039 fixes `tasks.yaml#plan` as the tasks-gate evidence key for the normalized projection defined by Decision 0028. Decisions 0038 and 0057 fix the design gate's logical artifact-key set, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.
