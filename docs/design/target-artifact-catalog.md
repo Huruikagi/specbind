@@ -16,8 +16,11 @@ Related documents:
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
 - [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
+- [Decision 0007: configurable `.specbind` root](./decisions/0007-spec-root.md)
 
 Status: Draft
+
+`{{SPEC_DIR}}` is configurable and defaults to `.specbind` for new installations. Existing explicitly configured roots remain valid; migration from the inherited `.kiro` default must be deliberate and guarded.
 
 ## Lifecycle principles
 

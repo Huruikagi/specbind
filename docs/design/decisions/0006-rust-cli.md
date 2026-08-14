@@ -47,5 +47,5 @@ Exact package-manager installers and the duration of any transition wrapper rema
 - Binary embedding versus release-adjacent packaging of templates.
 - Supported installation channels and target triples.
 - Whether an npm compatibility package downloads or bundles platform binaries.
-- Compatibility guarantees for the current root-level installer arguments and `.specbind.json`.
+- Compatibility guarantees for current installer arguments and `.specbind.json`, except for the accepted spec-root rename in [Decision 0007](./0007-spec-root.md).
 - Whether the TypeScript and Rust CLIs coexist for one release or switch at a major-version boundary.

@@ -13,6 +13,8 @@ SpecBind should ship both:
 
 The CLI is part of the SpecBind repository and distribution. The Issue #49 plan to publish a separate Rust `spec-lint` repository is therefore no longer the target integration model. Under [Decision 0006](./decisions/0006-rust-cli.md), the existing SpecBind installer and future deterministic operations will be implemented together as the Rust `specbind` CLI.
 
+All command families resolve the same configurable specification root. New projects default to `.specbind`; see [Decision 0007](./decisions/0007-spec-root.md).
+
 ## Why this boundary exists
 
 Repeated grep, PowerShell, or shell-specific inspection consumes agent context and produces inconsistent diagnostics for questions that have deterministic answers. Moving those operations into the CLI provides:

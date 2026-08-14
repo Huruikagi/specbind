@@ -25,6 +25,7 @@
 - [`docs/design/decisions/0004-release-history-layout.md`](docs/design/decisions/0004-release-history-layout.md) — accepted per-spec changelog and roadmap archive layout
 - [`docs/design/decisions/0005-active-change-abandonment.md`](docs/design/decisions/0005-active-change-abandonment.md) — accepted scope removal, abandonment, and rollback boundaries
 - [`docs/design/decisions/0006-rust-cli.md`](docs/design/decisions/0006-rust-cli.md) — accepted direction to reimplement the complete SpecBind CLI in Rust
+- [`docs/design/decisions/0007-spec-root.md`](docs/design/decisions/0007-spec-root.md) — accepted configurable spec root with `.specbind` as the new-project default
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

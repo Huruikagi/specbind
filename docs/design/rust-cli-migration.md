@@ -21,6 +21,8 @@ The current CLI under `tools/specbind/` owns more than process startup. Its obse
 
 The templates under `tools/specbind/templates/` are product content and remain inputs to the Rust CLI unless a later artifact-layout decision changes them.
 
+The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
+
 ## Target command model
 
 The product remains one executable:
@@ -65,7 +67,7 @@ Before implementation, freeze expected behavior for:
 | --- | --- | --- |
 | Installed file trees | Real-manifest tests for Claude Code and Codex | Byte-equivalent output where no intentional template change is declared. |
 | Argument behavior | CLI and argument tests | Accepted flags, defaults, aliases, errors, help, and exit behavior are covered. |
-| Config precedence | Config merge and store tests | CLI, persisted config, environment, and defaults resolve identically or have a recorded change. |
+| Config precedence | Config merge and store tests | CLI, persisted config, environment, and defaults resolve identically except for the accepted `specDir` rename and `.specbind` default. |
 | Manifest semantics | Loader, planner, and processor tests | The same valid manifests plan the same artifacts; invalid input has stable diagnostics. |
 | File safety | Executor, file-operation, and path-safety behavior | No path escape, accidental broad overwrite, or backup regression. |
 | Interactive policy | Prompt and overwrite behavior | TTY and non-TTY behavior is explicitly tested. |
@@ -81,6 +83,7 @@ Golden generated-tree fixtures are preferable to duplicating internal TypeScript
 - Add golden fixtures for representative installation matrices.
 - Classify observed behavior as preserve, intentionally change, or remove.
 - Define normalized line-ending and path expectations across platforms.
+- Capture `.kiro`, `.specbind`, custom-root, and conflicting-root migration cases.
 
 ### 2. Read-only Rust core
 
@@ -136,3 +139,4 @@ The primary channel should make clean install, self-update or package-manager up
 - Supported release targets and minimum operating-system versions.
 - Primary installation and upgrade channels.
 - Cutover gate and rollback plan for the first Rust-backed release.
+- Duration and removal criteria for `--kiro-dir`, `kiroDir`, and `{{KIRO_DIR}}` compatibility aliases.
