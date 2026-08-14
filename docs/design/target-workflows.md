@@ -162,8 +162,8 @@ The target contract should state when project guidance and gap analysis are opti
 | Rust CLI milestone operations | Roadmap creation, confirmed scope updates, release-version binding, consistency checks, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
 | Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability, and current contract maintenance | Task execution or unapproved scope changes |
-| Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage | Implementation or historical task accumulation |
-| Implementation | Code and tests for approved tasks, progress recording | Silent changes to approved requirements or design |
+| Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage, and loading persistent spec implementation notes when present | Implementation or historical task accumulation |
+| Implementation | Code and tests for approved tasks, progress recording, and maintenance of durable spec-specific knowledge in `implementation-notes.md` | Silent changes to approved requirements or design |
 | Review | Independent task-level conformance review | Feature-level integration acceptance |
 | Integration validation | Cross-task behavior, full verification, spec coverage | Replacing missing task-level review |
 | Cross-spec review | Contract-first dependency, ownership, invariant, impact, and downstream review analysis | Reloading every complete spec by default or replacing local design review |

@@ -11,7 +11,7 @@ The inherited cc-sdd workflow stores the active implementation plan and its prog
 - optional and parallel markers
 - Requirement ID references
 - dependency and boundary annotations
-- blocked reasons and implementation notes
+- blocked reasons
 
 Reliable traceability, dependency checks, status reporting, approval-revision checks, and guarded lifecycle operations would require SpecBind to define and maintain a custom Markdown parser for this structure. Normal progress updates also change the same document whose plan was previously approved.
 
@@ -26,14 +26,14 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - Requirements, design, contracts, briefs, changelogs, and roadmaps remain Markdown unless a separate decision changes them.
 - `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the spec's configured product language.
 - The schema must distinguish the approved task-plan definition from mutable execution state so normal progress updates do not inherently rewrite the approved plan.
-- The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state, blocked execution details, and implementation notes are excluded from that projection under Decision 0018.
+- The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state and blocked execution details are excluded from that projection under Decision 0018.
 - Task order remains a conservative implicit dependency; `parallel` records reviewed exceptions and `depends_on` adds sparse non-obvious prerequisites under Decision 0019.
 - Task and group IDs retain cc-sdd-style one- or two-level positional numbering under Decision 0020.
 - Executable tasks may carry dedicated `completion_criteria`; the field is required only when the completed state or verification would otherwise be ambiguous under Decision 0021.
 - The target schema has no optional-task category; every executable task in the active plan is required under Decision 0022.
 - Group and executable-task objects use the strict sparse plan shape accepted by Decision 0023.
 - Task progress uses the sparse persisted `completed | blocked` execution state accepted by Decision 0024; absence means pending and `in_progress` remains run-scoped.
-- Cross-task implementation notes remain a simple runtime string list for later agents under Decision 0026.
+- Persistent free-form implementation guidance lives in the optional per-spec `implementation-notes.md`, outside `tasks.yaml`, under Decision 0026.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -68,7 +68,7 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 
 - Existing `tasks.md` files are migration inputs, not a second supported steady-state format.
 - Migration reads only the inherited syntax that SpecBind explicitly supports and reports ambiguous task structure instead of guessing.
-- In-progress projects must preserve completion, dependency, boundary, Requirement ID, blocked, and relevant note information where it can be established. Inherited optional markers require the explicit migration resolution defined by Decision 0022.
+- In-progress projects must preserve completion, dependency, boundary, Requirement ID, and blocked information where it can be established. Relevant inherited implementation notes move to `implementation-notes.md` under Decision 0026. Inherited optional markers require the explicit migration resolution defined by Decision 0022.
 - Historical `tasks.md` files remain available at their existing commits or release references and are not rewritten merely to normalize history.
 - Target skills and the Rust CLI use `tasks.yaml` after migration; they do not continue dual writes.
 

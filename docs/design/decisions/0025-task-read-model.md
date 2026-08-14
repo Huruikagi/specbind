@@ -25,13 +25,12 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - Default output is concise, readable terminal text rather than serialized YAML.
 - `spec status` includes declared lifecycle state, derived consistency health, completed/pending/blocked counts, next actionable task or tasks, blockers, Requirement ID coverage, and task-plan approval freshness.
 - `tasks list` preserves plan order and hierarchy, derives group progress, and distinguishes pending, completed, and blocked tasks.
-- `tasks show` displays title, details, Requirement IDs, boundaries, contracts, explicit and effective prerequisites, blocker state, explicit completion criteria when present, and the spec-wide implementation notes accepted by Decision 0026.
+- `tasks show` displays title, details, Requirement IDs, boundaries, contracts, explicit and effective prerequisites, blocker state, and explicit completion criteria when present.
 - Derived display labels such as partial group progress do not create new persisted task statuses.
 
 ### Structured output
 
 - Each command supports `--json` with the same underlying semantics as human output.
-- `tasks list --json` and `tasks show --json` include the ordered `implementation_notes` list verbatim for agent consumers.
 - JSON keys are stable English machine keys, contain no ANSI formatting, and are intended for agent skills and CI.
 - The JSON response schema and diagnostic/exit-code contract must be versioned before implementation is considered complete.
 - Generated skills use the structured CLI output when they need computed state; raw YAML remains available for authoring and narrowly scoped edits.
@@ -44,6 +43,7 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - Task list/show operations fail clearly when corruption prevents a trustworthy projection.
 - The CLI derives pending tasks from sparse execution state, effective dependencies from Decision 0019, group progress, current Requirement ID coverage, and approval freshness.
 - No command generates or maintains a parallel `tasks.md` artifact.
+- Task commands do not parse or embed the free-form `implementation-notes.md` accepted by Decision 0026; semantic agent workflows read that artifact directly when needed.
 
 ## Consequences
 

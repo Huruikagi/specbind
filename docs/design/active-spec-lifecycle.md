@@ -24,6 +24,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
 | `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
 | `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
+| `implementation-notes.md` | Optional free-form implementation knowledge useful to later AI runs. | Read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
 | `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
