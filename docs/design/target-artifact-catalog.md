@@ -20,6 +20,7 @@ Related documents:
 - [Decision 0007: configurable `.specbind` root](./decisions/0007-spec-root.md)
 - [Decision 0008: shared settings customization](./decisions/0008-customization-surface.md)
 - [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
+- [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
 
 Status: Draft
 

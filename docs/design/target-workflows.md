@@ -6,6 +6,8 @@ The detailed milestone document lifecycle is defined in [Active spec lifecycle](
 
 The target per-spec workflow states, approval invalidation events, and transition guards are defined in [Spec state machine](./spec-state-machine.md).
 
+Explicit and delegated gate approval, non-interactive execution, and the inherited `-y` migration boundary are accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
+
 Status: Draft
 
 ## Design goals
@@ -186,15 +188,17 @@ The future workflow needs an explicit answer for each transition:
 | Transition | Current target question |
 | --- | --- |
 | Discovery -> spec work | Is the selected route confirmed by the user? |
-| Requirements -> design | Are requirements accepted, and what counts as acceptance? |
-| Design -> tasks | Has technical design passed its review gate? |
-| Tasks -> implementation | Are task boundaries and dependencies approved? |
+| Requirements -> design | Did the review pass, and does current-revision evidence record valid explicit or delegated approval? |
+| Design -> tasks | Did technical and contract review pass, and is approval authorized for the current revision? |
+| Tasks -> implementation | Did task review pass, and is approval authorized for the current task revision? |
 | Implementation -> completion | Which reviews and fresh verification evidence are required? |
 | Milestone -> release | What proves every required milestone item is ready? |
 | Release version assignment | Is a concrete target version bound to the active milestone? |
 | Release -> milestone closed | Did the release succeed before `roadmap.md` is archived out of `steering/`? |
 
 Accelerated and batch workflows may automate transitions, but they should reuse the same phase contracts rather than define competing document formats or success criteria.
+
+An accelerated workflow records run-scoped `delegated` authorization for named future gates. Each gate still runs its normal checks and emits the same approval event as the deliberate path. Delegation only removes the extra confirmation pause after a passing gate. `--non-interactive` does not imply approval and stops when neither valid explicit approval nor in-scope delegated authorization is available.
 
 ## Topics to resolve next
 

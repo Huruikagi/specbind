@@ -2,7 +2,7 @@
 
 Status: Draft
 
-This document develops the active-spec direction into a portable SpecBind contract. The target per-spec states, events, invalidation rules, and transition diagram are defined in [Spec state machine](./spec-state-machine.md). It is informed by [pc-build-planner Issue #50](https://github.com/Huruikagi/pc-build-planner/issues/50), where the current project-local workflow exposed the cost of mixing active milestone work with accumulated history.
+This document develops the active-spec direction into a portable SpecBind contract. The target per-spec states, events, invalidation rules, and transition diagram are defined in [Spec state machine](./spec-state-machine.md), while [Decision 0012](./decisions/0012-delegated-approval.md) defines explicit and delegated gate approval. It is informed by [pc-build-planner Issue #50](https://github.com/Huruikagi/pc-build-planner/issues/50), where the current project-local workflow exposed the cost of mixing active milestone work with accumulated history.
 
 The source project overrides the generated skills and adds repository-local skills. This document therefore separates reusable product requirements from that repository's current implementation.
 
@@ -224,5 +224,5 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
-- The exact approval-evidence, provenance, and artifact-fingerprint schema used by the target `spec.json` state model.
+- The exact authorization-reference, gate-evidence storage, and artifact-fingerprint schema required by Decision 0012.
 - Whether immutable history may use something other than a Git release tag.

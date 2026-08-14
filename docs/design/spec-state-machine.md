@@ -2,7 +2,7 @@
 
 Status: Draft
 
-This document defines the target per-spec workflow states and events stored through `spec.json`. It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md) and the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md).
+This document defines the target per-spec workflow states and events stored through `spec.json`. It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md), the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md), and the approval modes accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
 
 The state machine describes one spec's active change. Milestone-wide scope, ordering, target release binding, and roadmap archival remain milestone concerns.
 
@@ -13,6 +13,7 @@ The state machine describes one spec's active change. Milestone-wide scope, orde
 - An active change stores its workflow state inside `active_change.state`.
 - A new spec is created directly in `requirements`; absence before `SPEC_CREATED` is not a persisted lifecycle state.
 - Approval records are evidence for gates already crossed. They do not independently determine the state.
+- Gate approval is `explicit` or run-scoped `delegated`; non-interactive execution does not itself authorize either mode.
 - Manual edits that invalidate approved input rewind the state to the earliest affected gate.
 - Missing files, stale approval evidence, and other contradictions produce a derived consistency failure. `inconsistent` is not written as a competing workflow state.
 - Document generation does not itself cross a gate. A state advances only when the corresponding approval event succeeds.
@@ -49,15 +50,20 @@ The exact schema and digest format remain to be accepted, but the state model re
     "gate_evidence": {
       "requirements": {
         "approved_at": "<timestamp>",
-        "approval_mode": "explicit",
-        "input_revision": "<fingerprint>"
+        "approval_mode": "delegated",
+        "authorization_scope": "active-change",
+        "workflow": "specbind-spec-quick",
+        "input_revisions": {
+          "requirements.md": "<fingerprint>",
+          "brief.md": "<fingerprint>"
+        }
       }
     }
   }
 }
 ```
 
-Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. The final contract still needs to define provenance fields, fingerprint canonicalization, and whether approval evidence is embedded or referenced.
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` references an intentional accelerated or batch workflow authorization recorded before the future gate outputs exist. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define exact authorization fields, fingerprint canonicalization, and whether approval evidence is embedded or referenced.
 
 ## Event list
 
@@ -104,11 +110,11 @@ If a draft update touches input that has already been approved, it is not a non-
 | --- | --- | --- | --- | --- |
 | `SPEC_CREATED` | Spec does not exist | `requirements` | An active roadmap exists; the new spec boundary and name are confirmed in scope; no conflicting spec path exists; milestone and change IDs are unique; an active brief and initial requirements scaffold are available. | Create the persistent spec artifacts and `active_change`; set `requirement_ids: null`; create no approval evidence. |
 | `CHANGE_STARTED` | `idle` | `requirements` | An active roadmap exists; the spec is confirmed in scope; no active change exists; milestone and change IDs are unique; an active brief is available. | Create `active_change`; set `requirement_ids: null`; create no approval evidence. |
-| `REQUIREMENTS_APPROVED` | `requirements` | `design` | Requirements review passed; canonical IDs are valid and unique; the selected active set is explicitly approved and normally non-empty. | Freeze the ordered active set; record requirements gate evidence. |
+| `REQUIREMENTS_APPROVED` | `requirements` | `design` | Requirements review passed; canonical IDs are valid and unique; the selected active set has valid explicit or delegated approval and is normally non-empty. | Freeze the ordered active set; record requirements gate evidence. |
 | `REQUIREMENTS_CHANGED` | Any active state | `requirements` | The changed scope belongs to the same active change, or discovery has confirmed the revised route. | Set `requirement_ids: null`; clear requirements, design, tasks, and completion gate evidence; retain downstream documents only as stale repair input. |
-| `DESIGN_APPROVED` | `design` | `tasks` | Requirements evidence is current; design covers every active Requirement ID; contract structure and impact review pass. | Record design and contract gate evidence. |
+| `DESIGN_APPROVED` | `design` | `tasks` | Requirements evidence is current; design covers every active Requirement ID; contract structure and impact review pass; explicit or delegated approval is valid for the current revision. | Record design and contract gate evidence. |
 | `DESIGN_CHANGED` | `design`, `tasks`, `implementation`, `release_ready` | `design` | Requirements and active set remain valid; otherwise use `REQUIREMENTS_CHANGED`. | Clear design, tasks, and completion gate evidence; retain requirements evidence. |
-| `TASKS_APPROVED` | `tasks` | `implementation` | Requirements and design evidence are current; every active Requirement ID maps to an executable task; task review passes. | Record tasks gate evidence. |
+| `TASKS_APPROVED` | `tasks` | `implementation` | Requirements and design evidence are current; every active Requirement ID maps to an executable task; task review passes; explicit or delegated approval is valid for the current revision. | Record tasks gate evidence. |
 | `TASKS_CHANGED` | `tasks`, `implementation`, `release_ready` | `tasks` | Requirements and design remain valid; otherwise use the earlier invalidation event. | Clear tasks and completion gate evidence. |
 | `IMPLEMENTATION_VALIDATED` | `implementation` | `release_ready` | Required tasks are complete and unblocked; fresh integration, coverage, contract-impact, and downstream-review evidence pass. | Record completion evidence and its input revisions. |
 | `COMPLETION_INVALIDATED` | `release_ready` | `implementation` | Requirements, design, contract, and tasks remain approved; otherwise use the corresponding earlier invalidation event. | Clear completion evidence only. |
@@ -222,7 +228,7 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 
 ## Open questions
 
-- Exact gate-evidence schema, approval provenance, and content-fingerprint algorithm.
+- Exact authorization-reference, gate-evidence storage, and content-fingerprint schema under Decision 0012.
 - Whether an explicitly approved active Requirement ID set may be empty for any spec-backed change.
 - Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
 - Which repair operations the CLI may automate after presenting a dry-run plan.

@@ -38,6 +38,8 @@ The goal is not to replace agent judgment. It is to remove mechanical work from 
 
 A skill may orchestrate a CLI operation, but the operation's contract belongs to the CLI rather than being duplicated in each agent template.
 
+Approval authority is also distinct from process interaction. Under [Decision 0012](./decisions/0012-delegated-approval.md), `--non-interactive` suppresses prompts but does not approve a gate. Explicit and delegated approvals both pass through the same guarded CLI event and carry revision-bound evidence.
+
 For release, the agent executes the adapter's natural-language project instructions and supplies structured evidence to the CLI. The CLI owns preflight and finalization and never executes adapter Markdown as an unrestricted hook; see [Decision 0010](./decisions/0010-release-execution-boundary.md).
 
 ## First deterministic check: requirement traceability

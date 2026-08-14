@@ -32,6 +32,7 @@
 - [`docs/design/decisions/0009-milestone-cli-boundary.md`](docs/design/decisions/0009-milestone-cli-boundary.md) — accepted discovery-plus-Rust-CLI milestone responsibility boundary
 - [`docs/design/decisions/0010-release-execution-boundary.md`](docs/design/decisions/0010-release-execution-boundary.md) — accepted AI adapter execution and Rust CLI release-finalization boundary
 - [`docs/design/decisions/0011-cross-spec-contract.md`](docs/design/decisions/0011-cross-spec-contract.md) — accepted persistent contract manifest and contract-first cross-spec review direction
+- [`docs/design/decisions/0012-delegated-approval.md`](docs/design/decisions/0012-delegated-approval.md) — accepted explicit-versus-delegated gate approval and non-interactive execution boundary
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
