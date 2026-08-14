@@ -30,7 +30,7 @@ Most Markdown gate inputs are authoritative prose documents. A content edit shou
 - `tasks.yaml` is not fingerprinted as a whole serialized file.
 - The tasks gate fingerprints a schema-defined plan projection that excludes mutable execution state.
 - Status or checkbox-equivalent state, blocked execution details, and implementation notes do not alter the approved plan fingerprint by themselves.
-- Changes to task identity, hierarchy, order, plan text, explicit completion criteria, Requirement ID coverage, `parallel`, `depends_on`, optionality, or other plan-definition fields do alter the plan projection. Decision 0019 defines the ordering and sparse-dependency semantics; Decision 0021 defines completion-criteria omission.
+- Changes to task identity, hierarchy, order, plan text, explicit completion criteria, Requirement ID coverage, `parallel`, `depends_on`, or other plan-definition fields do alter the plan projection. Decision 0019 defines the ordering and sparse-dependency semantics; Decision 0021 defines completion-criteria omission; Decision 0022 excludes optional tasks.
 - The exact v1 task fields, completion projection, and canonical serialization of projections remain follow-up schema decisions.
 
 ## Consequences

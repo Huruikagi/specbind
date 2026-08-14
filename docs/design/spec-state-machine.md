@@ -30,7 +30,7 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 | `design` | `active_change.state: "design"` | Requirements and the active Requirement ID set are approved. Technical design and contract impact are being established or revised. | Requirements gate evidence and a non-null, canonical `requirement_ids` array. |
 | `tasks` | `active_change.state: "tasks"` | Design and contract impact are approved. The executable milestone-local plan is being prepared or revised. | Valid requirements and design gate evidence plus current `design.md` and `contract.md`. |
 | `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.yaml`. |
-| `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, coverage, and required downstream review have fresh accepted evidence. Milestone release gates may still block publication. | Valid prior gate evidence, zero incomplete or blocked required tasks, and fresh completion evidence. |
+| `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, coverage, and required downstream review have fresh accepted evidence. Milestone release gates may still block publication. | Valid prior gate evidence, zero incomplete or blocked tasks, and fresh completion evidence. |
 
 `release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
 

@@ -30,6 +30,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - Task order remains a conservative implicit dependency; `parallel` records reviewed exceptions and `depends_on` adds sparse non-obvious prerequisites under Decision 0019.
 - Task and group IDs retain cc-sdd-style one- or two-level positional numbering under Decision 0020.
 - Executable tasks may carry dedicated `completion_criteria`; the field is required only when the completed state or verification would otherwise be ambiguous under Decision 0021.
+- The target schema has no optional-task category; every executable task in the active plan is required under Decision 0022.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -45,7 +46,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 
 The YAML artifact is not intended to make users review every task definition manually. The primary human surfaces are concise CLI views for:
 
-- completed, pending, blocked, and optional counts
+- completed, pending, and blocked counts
 - next actionable tasks
 - dependency blockers
 - active Requirement ID coverage
@@ -64,7 +65,7 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 
 - Existing `tasks.md` files are migration inputs, not a second supported steady-state format.
 - Migration reads only the inherited syntax that SpecBind explicitly supports and reports ambiguous task structure instead of guessing.
-- In-progress projects must preserve completion, optional, dependency, boundary, Requirement ID, blocked, and relevant note information where it can be established.
+- In-progress projects must preserve completion, dependency, boundary, Requirement ID, blocked, and relevant note information where it can be established. Inherited optional markers require the explicit migration resolution defined by Decision 0022.
 - Historical `tasks.md` files remain available at their existing commits or release references and are not rewritten merely to normalize history.
 - Target skills and the Rust CLI use `tasks.yaml` after migration; they do not continue dual writes.
 
@@ -83,7 +84,7 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 - Task hierarchy and grouping representation.
 - Required plan fields and mutable execution fields.
 - Exact task-content fields around the optional completion criteria accepted by Decision 0021.
-- Status enum and blocked / skipped / optional semantics.
+- Status enum and blocked semantics; Decision 0022 excludes optional-task and optional-derived skipped states.
 - Completion and verification evidence references.
 - Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
 - Exact group and executable-task object shapes within the ordered dependency model accepted by Decision 0019.

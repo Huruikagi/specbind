@@ -43,6 +43,7 @@
 - [`docs/design/decisions/0019-task-ordering-and-dependencies.md`](docs/design/decisions/0019-task-ordering-and-dependencies.md) — accepted ordered task execution with sparse dependency exceptions
 - [`docs/design/decisions/0020-positional-task-ids.md`](docs/design/decisions/0020-positional-task-ids.md) — accepted cc-sdd-style positional numeric Task IDs
 - [`docs/design/decisions/0021-optional-completion-criteria.md`](docs/design/decisions/0021-optional-completion-criteria.md) — accepted dedicated, conditionally optional task completion criteria
+- [`docs/design/decisions/0022-no-optional-tasks.md`](docs/design/decisions/0022-no-optional-tasks.md) — accepted removal of inherited optional tasks from `tasks.yaml` v1
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
