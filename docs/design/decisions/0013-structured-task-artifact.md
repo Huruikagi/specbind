@@ -22,7 +22,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - `tasks.yaml` is the only canonical task artifact in the target SpecBind workflow.
 - The tasks workflow creates `tasks.yaml`; implementation, review, validation, status, traceability, and release workflows read and update it.
 - Target SpecBind workflows do not generate or maintain a parallel `tasks.md` view.
-- Human-readable task and progress views are provided by CLI output such as status and task-display operations. Users may also inspect the YAML directly.
+- Human-readable task and progress views are provided by the accepted `spec status`, `tasks list`, and `tasks show` CLI read model under Decision 0025. Users may also inspect the YAML directly.
 - Requirements, design, contracts, briefs, changelogs, and roadmaps remain Markdown unless a separate decision changes them.
 - `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the spec's configured product language.
 - The schema must distinguish the approved task-plan definition from mutable execution state so normal progress updates do not inherently rewrite the approved plan.

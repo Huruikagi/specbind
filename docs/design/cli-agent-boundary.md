@@ -137,6 +137,12 @@ The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templa
 
 The CLI and skills must respect supported settings customization while still enforcing documented machine-readable structure. A mechanical check reports an incompatible customized format explicitly rather than silently falling back to agent-specific searches.
 
+## Task read model
+
+Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbind tasks show` as read-only CLI projections over `spec.yaml` and `tasks.yaml`. The CLI owns schema validation, consistency health, sparse-status expansion, effective dependency calculation, group rollups, Requirement ID coverage, approval freshness, and versioned JSON output. Agent skills own when to request a view, how to explain it in workflow context, and any semantic recommendation that cannot be derived mechanically.
+
+These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. Human terminal output and `--json` must be two renderings of the same structured core result.
+
 ## Initial implementation boundary
 
 The first increment should remain narrow:
@@ -152,7 +158,7 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 
 ## Open questions
 
-- Final command names and whether `check` becomes the common read-only validation namespace.
+- Final command names for remaining checks and whether `check` becomes their common read-only validation namespace; Decision 0025 fixes the task read-model command names.
 - How the accepted Rust migration packages templates and preserves the current installation contract.
 - The canonical Requirement ID syntax and parsing rules for each supported language.
 - The JSON diagnostic schema and stable exit-code categories.

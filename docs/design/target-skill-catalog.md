@@ -50,7 +50,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
 | `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
 | `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
-| `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Distinguish released state, active change, current tasks, and history. |
+| `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Explain released state, active change, current tasks, and history using the CLI status/read model rather than reparsing artifacts. |
 | `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
 | `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |
 | `kiro-steering-custom` | `specbind-steering-custom` | Rename | Idea | Create specialized project guidance. |
