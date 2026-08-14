@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpecBind task artifact v1",
+  "description": "Initial runtime-contract scaffold for tasks.yaml. Add fields only after their schema decisions are accepted.",
+  "type": "object",
+  "required": [
+    "schema_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "additionalProperties": false
+}

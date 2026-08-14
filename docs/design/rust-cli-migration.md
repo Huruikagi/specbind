@@ -25,6 +25,8 @@ The templates under `tools/specbind/templates/` are product content and remain i
 
 [Decision 0014](./decisions/0014-structured-spec-metadata.md) likewise makes `spec.yaml` the target per-spec metadata artifact. The persisted CLI configuration `.specbind.json` and JSON installation manifests are not changed by that decision.
 
+[Decision 0015](./decisions/0015-runtime-schema-layout.md) places versioned JSON Schema contracts under `tools/specbind/schemas/`. They are CLI-owned runtime inputs rather than project-customizable settings and must be embedded or packaged with the matching CLI version.
+
 The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
 
 Official defaults are product-managed inputs, while installed `settings/templates/` and `settings/rules/` become user-owned customization surfaces under [Decision 0008](./decisions/0008-customization-surface.md). Packaging defaults into or beside the binary must not erase that ownership boundary.
@@ -62,6 +64,7 @@ The exact crates are not yet fixed, but the code should separate:
 - `fs`: path safety, diffing, backup, and atomic or guarded writes
 - `check`: read-only specification parsers and diagnostics
 - `lifecycle`: explicit milestone and release state transitions
+- `schema`: packaged schema lookup and structural artifact validation
 
 Core modules should return structured results and diagnostics. Human-readable and JSON rendering belongs at the CLI boundary so skills and CI consume the same semantics.
 

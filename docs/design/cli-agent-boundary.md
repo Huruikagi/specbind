@@ -15,6 +15,8 @@ The CLI is part of the SpecBind repository and distribution. The Issue #49 plan 
 
 All command families resolve the same configurable specification root. New projects default to `.specbind`; see [Decision 0007](./decisions/0007-spec-root.md).
 
+Versioned structural contracts for `spec.yaml` and `tasks.yaml` live under `tools/specbind/schemas/` and are packaged with the CLI under [Decision 0015](./decisions/0015-runtime-schema-layout.md). YAML parsing, JSON Schema validation, and semantic invariant checks remain distinct validation layers.
+
 ## Why this boundary exists
 
 Repeated grep, PowerShell, or shell-specific inspection consumes agent context and produces inconsistent diagnostics for questions that have deterministic answers. Moving those operations into the CLI provides:
