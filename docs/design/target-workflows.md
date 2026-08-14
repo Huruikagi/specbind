@@ -6,7 +6,7 @@ The detailed milestone document lifecycle is defined in [Active spec lifecycle](
 
 The target per-spec workflow states, approval invalidation events, and transition guards are defined in [Spec state machine](./spec-state-machine.md).
 
-Explicit and delegated gate approval, non-interactive execution, and the inherited `-y` migration boundary are accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
+Explicit and delegated gate approval, non-interactive execution, and rejection of the inherited `-y` flag are accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
 
 Status: Draft
 

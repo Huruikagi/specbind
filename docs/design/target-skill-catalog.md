@@ -160,5 +160,4 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Which validation and verification responsibilities should remain separate?
 - Should the quick and batch workflows remain skills, or become orchestration modes of a smaller command set?
 - How long, if at all, should old skill names remain available as compatibility aliases?
-- How long should the inherited `-y` compatibility alias remain after quick and batch workflows adopt run-scoped delegated approval?
 - Which skills become thinner once deterministic checks and lifecycle mutations move into the bundled CLI?

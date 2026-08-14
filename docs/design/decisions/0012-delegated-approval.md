@@ -59,14 +59,14 @@ If the workflow encounters a material choice that was not covered by the initial
 
 ## Interaction flags and inherited `-y`
 
-The target interface does not use `-y` as a general “approve everything” switch.
+The target interface does not support `-y`.
 
 - New interfaces use an explicit accelerated workflow or approval-mode contract for delegation.
 - `--non-interactive` remains orthogonal and never implies `delegated`.
 - Quick and batch orchestration carry one run-scoped delegation reference into the individual gate events instead of asking phase skills to mutate all approval booleans.
-- An inherited `-y` entry point may remain temporarily as a deprecated compatibility alias for command-scoped delegated approval, but only when invoked from that command's immediately preceding valid state.
-- The compatibility alias never skips multiple missing prerequisite gates. A design command may start in `requirements` and approve that gate before generating design; a tasks command must start in `design` and cannot use `-y` to manufacture both requirements and design approval.
-- A command may accept its own generated output only where that command's compatibility contract already included output auto-approval, and only after the normal output gate passes. If the current state is earlier than the adjacent prerequisite, the command stops and points to explicit approval or an intentional accelerated workflow.
+- SpecBind skills and CLI commands do not expose a compatibility alias for the inherited flag.
+- Supplying `-y` to a target SpecBind interface stops with a stable unsupported-option diagnostic and points to an intentional accelerated workflow.
+- Migration guidance explains the replacement rather than silently reinterpreting an inherited invocation as delegated approval.
 
 This is an intentional product change from cc-sdd behavior rather than porting parity.
 
@@ -91,6 +91,7 @@ Artifact fingerprints are required to detect out-of-band edits, but their canoni
 - Non-interactive CI or agent execution fails safely when approval authority is absent.
 - Phase commands no longer gain authority to retroactively approve prerequisites.
 - Quick and batch workflows need a run-scoped delegation handoff rather than repeated `-y` flags.
+- Target SpecBind interfaces make inherited `-y` invocations fail visibly instead of preserving ambiguous auto-approval semantics.
 - Migration from inherited boolean approvals can preserve that a gate was approved, but must not invent whether it was explicit or delegated when historical evidence is absent.
 
 ## Open schema details
