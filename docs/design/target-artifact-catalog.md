@@ -71,7 +71,7 @@ Status: Draft
 
 ## Open questions
 
-- What exact schema represents the release binding and remaining active-change fields?
+- What exact schema represents the roadmap-owned release binding?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts, and what parseable active-roadmap syntax represents the cross-spec review record owned there by Decision 0035?

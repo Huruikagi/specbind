@@ -11,6 +11,8 @@ interface RuntimeSchema {
   required?: unknown;
   properties?: {
     schema_version?: unknown;
+    language?: unknown;
+    active_change?: unknown;
     plan?: unknown;
     execution?: unknown;
   };
@@ -61,6 +63,40 @@ describe('runtime schema scaffolds', () => {
       pattern:
         '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
     });
+  });
+
+  it('wires the minimal strict spec root and active change', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const activeChange = schema.$defs?.activeChange as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+      additionalProperties?: unknown;
+    };
+
+    expect(schema.required).toEqual(['schema_version', 'language', 'active_change']);
+    expect(schema.properties).toEqual({
+      schema_version: { const: 1 },
+      language: { $ref: '#/$defs/specLanguage' },
+      active_change: {
+        oneOf: [{ type: 'null' }, { $ref: '#/$defs/activeChange' }],
+      },
+    });
+    expect(schema.$defs?.specLanguage).toEqual({ enum: ['en', 'ja'] });
+    expect(activeChange.required).toEqual([
+      'milestone_id',
+      'state',
+      'requirement_ids',
+    ]);
+    expect(activeChange.properties).toHaveProperty('gate_evidence', {
+      $ref: '#/$defs/gateEvidence',
+    });
+    expect(activeChange.additionalProperties).toBe(false);
+    expect(JSON.stringify(schema)).not.toContain('feature_name');
+    expect(JSON.stringify(schema)).not.toContain('created_at');
+    expect(JSON.stringify(schema)).not.toContain('updated_at');
+    expect(JSON.stringify(schema)).not.toContain('ready_for_implementation');
   });
 
   it('defines timezone-qualified RFC 3339 gate timestamps', async () => {

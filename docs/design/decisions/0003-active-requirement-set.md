@@ -61,5 +61,4 @@ active_change: null
 
 ## Open schema details
 
-- The final names and placement of other `active_change` lifecycle fields.
 - The exact task-to-requirement trace representation used to prove coverage.

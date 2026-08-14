@@ -16,8 +16,8 @@ The inherited cc-sdd workflow stores per-spec lifecycle metadata in `spec.json`.
 - The top-level schema version is required.
 - Duplicate keys, unknown fields, YAML anchors, aliases, merge keys, and custom tags are rejected.
 - IDs, timestamps, and fingerprints are represented as strings under their eventual field schemas.
-- Human-authored values such as a feature name follow the spec's configured product language where applicable; machine keys and enum values remain stable.
-- Exact lifecycle, gate-evidence, and revision field schemas remain follow-up decisions.
+- Human-authored prose follows the spec's configured product language where applicable; machine keys and enum values remain stable.
+- Decision 0044 fixes the strict top-level and active-change shape after the gate-evidence and revision decisions it references.
 
 ## Scope boundary
 
@@ -67,8 +67,6 @@ Each gate instead defines an explicit projection of relevant metadata fields, su
 
 ## Open schema details
 
-- Exact top-level metadata fields and required ordering for generated output.
-- Lifecycle and active-change field names beyond the accepted state model.
-- Gate-evidence storage and fingerprint projections.
+- Migration diagnostics and recovery behavior for every contradictory inherited `spec.json` flag combination.
 - YAML normalization and stable serialization rules.
 - Recoverable migration flow and handling of locally edited `spec.json` files.

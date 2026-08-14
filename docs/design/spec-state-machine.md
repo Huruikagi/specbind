@@ -34,13 +34,12 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 
 `release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
 
-## Conceptual `spec.yaml` shape
+## `spec.yaml` shape
 
-The exact schema and digest format remain to be accepted, but the state model requires this distinction:
+Decision 0044 accepts the strict root and active-change object. The following shows an active design state:
 
 ```yaml
 schema_version: 1
-feature_name: example
 language: en
 active_change:
   milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
@@ -230,6 +229,5 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 
 ## Open questions
 
-- Exact `active_change` container wiring in the root `spec.yaml` schema; the `gate_evidence` container and its state invariants are accepted through Decision 0040.
 - Which repair operations the CLI may automate after presenting a dry-run plan.
 - Stable event, state, and diagnostic names in the public CLI and JSON contracts.

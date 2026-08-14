@@ -234,5 +234,4 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
-- The exact root `spec.yaml` wiring for the accepted gate-evidence container and active-change lifecycle states.
 - Whether immutable history may use something other than a Git release tag.

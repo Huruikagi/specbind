@@ -1,12 +1,27 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SpecBind spec metadata v1",
-  "description": "Initial runtime-contract scaffold for spec.yaml. Add fields only after their schema decisions are accepted.",
+  "description": "Runtime contract for the accepted strict spec.yaml root, active change, and gate evidence.",
   "$defs": {
     "milestoneId": {
       "type": "string",
       "description": "Canonical lowercase hyphenated UUID v7 milestone identity.",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "specLanguage": {
+      "enum": [
+        "en",
+        "ja"
+      ]
+    },
+    "workflowState": {
+      "enum": [
+        "requirements",
+        "design",
+        "tasks",
+        "implementation",
+        "release_ready"
+      ]
     },
     "passedAt": {
       "type": "string",
@@ -293,15 +308,60 @@
         }
       },
       "additionalProperties": false
+    },
+    "activeChange": {
+      "type": "object",
+      "required": [
+        "milestone_id",
+        "state",
+        "requirement_ids"
+      ],
+      "properties": {
+        "milestone_id": {
+          "$ref": "#/$defs/milestoneId"
+        },
+        "state": {
+          "$ref": "#/$defs/workflowState"
+        },
+        "requirement_ids": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/requirementIdList"
+            }
+          ]
+        },
+        "gate_evidence": {
+          "$ref": "#/$defs/gateEvidence"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
   "required": [
-    "schema_version"
+    "schema_version",
+    "language",
+    "active_change"
   ],
   "properties": {
     "schema_version": {
       "const": 1
+    },
+    "language": {
+      "$ref": "#/$defs/specLanguage"
+    },
+    "active_change": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/activeChange"
+        }
+      ]
     }
   },
   "additionalProperties": false

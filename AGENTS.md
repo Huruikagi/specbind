@@ -65,6 +65,7 @@
 - [`docs/design/decisions/0041-no-per-spec-change-id.md`](docs/design/decisions/0041-no-per-spec-change-id.md) — accepted milestone-plus-spec identity without a separate per-spec change ID
 - [`docs/design/decisions/0042-sequential-milestone-id.md`](docs/design/decisions/0042-sequential-milestone-id.md) — superseded project-sequential milestone ID decision
 - [`docs/design/decisions/0043-uuidv7-milestone-id.md`](docs/design/decisions/0043-uuidv7-milestone-id.md) — accepted branch-safe UUID v7 milestone IDs
+- [`docs/design/decisions/0044-minimal-spec-root.md`](docs/design/decisions/0044-minimal-spec-root.md) — accepted minimal strict `spec.yaml` root and active-change object
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
