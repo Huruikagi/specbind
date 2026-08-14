@@ -153,7 +153,7 @@ Decision 0032 makes freshness a gate-local chain. The CLI compares each gate's c
 
 Under Decision 0030, only successfully accepted evidence is persisted. `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failures, and rejected candidates return diagnostics without a `spec.yaml` mutation or a separate evidence-recording event.
 
-The exact command names and accepted structured evidence schema remain follow-up details. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
+The exact command names remain a follow-up detail; Decision 0037 fixes the accepted structured completion evidence shape. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
 
 For accepted mechanical evidence, Decision 0033 requires an ordered list of categorized, display-safe commands with successful exit codes. The agent discovers and executes the project-appropriate set; the CLI validates its strict shape and rejects non-success entries without storing raw output.
 

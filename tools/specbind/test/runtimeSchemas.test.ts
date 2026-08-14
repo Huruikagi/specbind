@@ -104,6 +104,29 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
+  it('defines strict minimal completion gate evidence', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const evidence = schema.$defs?.completionGateEvidence as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+      additionalProperties?: unknown;
+    };
+
+    expect(evidence.required).toEqual([
+      'passed_at',
+      'implementation_revision',
+      'mechanical_checks',
+    ]);
+    expect(evidence.properties).toEqual({
+      passed_at: { $ref: '#/$defs/passedAt' },
+      implementation_revision: { $ref: '#/$defs/implementationRevision' },
+      mechanical_checks: { $ref: '#/$defs/mechanicalCheckList' },
+    });
+    expect(evidence.additionalProperties).toBe(false);
+  });
+
   it('defines readable requirements gate evidence without a brief fingerprint', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),

@@ -65,6 +65,8 @@ Gate evidence must identify the approved input revision strongly enough for the 
 
 Under [Decision 0032](./decisions/0032-gate-local-freshness-chain.md), each gate owns only its direct input revision data and requires every prerequisite gate to remain fresh. A later workflow may read upstream artifacts without duplicating their fingerprints in its own evidence. The CLI reports the earliest stale gate and derives all downstream staleness from that chain.
 
+Under [Decision 0037](./decisions/0037-minimal-completion-evidence-shape.md), `gate_evidence.completion` contains exactly `passed_at`, `implementation_revision`, and `mechanical_checks`. All three are required and no additional completion fields are accepted.
+
 ## Event list
 
 ### State-changing events

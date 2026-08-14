@@ -207,7 +207,7 @@ Issue #50 comes from a repository with local skill overrides. These details are 
 | pc-build-planner detail | SpecBind treatment |
 | --- | --- |
 | `kiro-spec-update-batch` as a separate skill | Existing-spec batch orchestration is required; whether it is a separate skill remains open. |
-| `kiro-record-validation` and a roadmap validation table | Completion evidence belongs in `spec.yaml` through the integration-validation and CLI handshake accepted by Decision 0029; its exact schema remains open. |
+| `kiro-record-validation` and a roadmap validation table | Completion evidence belongs in `spec.yaml` through the integration-validation and CLI handshake accepted by Decision 0029; Decision 0037 fixes its strict three-field shape, while Decision 0035 keeps cross-spec evidence in the roadmap. |
 | `kiro-impl-direct` and structured direct candidates | Direct-work support is a separate workflow decision, not required by the active-spec lifecycle itself. |
 | GitHub Issues, GitHub milestones, Actions, ZIP packaging, and project version scripts | Repository-specific instructions in the release adapter, not hard-coded core behavior. |
 | Direct commits to `main` and exact commit messages | Repository policy, not a universal SpecBind requirement. |

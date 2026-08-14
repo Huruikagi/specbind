@@ -53,6 +53,26 @@
         "$ref": "#/$defs/mechanicalCheck"
       }
     },
+    "completionGateEvidence": {
+      "type": "object",
+      "required": [
+        "passed_at",
+        "implementation_revision",
+        "mechanical_checks"
+      ],
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/passedAt"
+        },
+        "implementation_revision": {
+          "$ref": "#/$defs/implementationRevision"
+        },
+        "mechanical_checks": {
+          "$ref": "#/$defs/mechanicalCheckList"
+        }
+      },
+      "additionalProperties": false
+    },
     "requirementIdList": {
       "type": "array",
       "items": {
