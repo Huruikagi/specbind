@@ -25,14 +25,14 @@ A stored boolean cannot distinguish direct user approval from previously delegat
 - Both modes emit the same state-machine approval events and must satisfy the same gate guards.
 - Delegation changes whether the workflow pauses after a passing gate. It does not skip generation, review, traceability, contract, or validation checks.
 - `--non-interactive` controls prompting only. It grants no approval authority, chooses no semantic defaults, and fails when required authorization or user judgment is unavailable.
-- Approval evidence records the mode, authorization scope, originating workflow, time, and approved input revision. It must not claim an authenticated human identity when the environment cannot verify one.
+- Approval evidence records only the mode, authorization scope, originating workflow, time, and approved input revision.
 - The state remains the authoritative lifecycle value. Approval evidence explains and validates a gate crossing; it is not a second set of independently writable phase booleans.
 
 ## Approval modes
 
 | Mode | Authorization timing | Gate behavior | Evidence expectation |
 | --- | --- | --- | --- |
-| `explicit` | After the current gate output exists. | Present or identify the current revision, obtain approval, then emit the gate event. | Record explicit mode, time, gate, scope, and input revision; include an actor reference only when reliably available. |
+| `explicit` | After the current gate output exists. | Present or identify the current revision, obtain approval, then emit the gate event. | Record explicit mode, time, gate, scope, and input revision. |
 | `delegated` | Before future gate outputs exist, through intentional accelerated or batch workflow invocation. | Run the complete gate; on success emit the gate event without another confirmation; on ambiguity or failure stop. | Record delegated mode, time, named workflow, authorization scope, covered gates, and input revision accepted at the event. |
 
 The first contract does not add a repository policy that permanently auto-approves gates. Such a mode would need a separate decision because it broadens authorization beyond one intentional workflow run.
@@ -82,7 +82,7 @@ Every accepted gate records enough structured evidence to answer:
 - When did approval occur?
 - Do the current inputs still match the approved revision?
 
-Artifact fingerprints are required to detect out-of-band edits, but their canonicalization and storage schema remain Draft. The implementation must avoid recording unverifiable identity claims or sensitive conversational content merely to prove authorization.
+Artifact fingerprints are required to detect out-of-band edits, but their canonicalization and storage schema remain Draft. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
 
 ## Consequences
 
