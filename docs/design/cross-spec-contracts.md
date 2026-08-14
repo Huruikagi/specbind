@@ -54,32 +54,52 @@ The inclusion test is:
 
 If the answer is no, the information belongs in requirements, design, tasks, or implementation evidence instead.
 
-## Working representation
+## Canonical representation
 
-The exact Markdown schema is not accepted yet. It should remain concise and structurally parseable, for example:
+[Decision 0056](./decisions/0056-canonical-contract-markdown.md) defines `contract.md` as an OKF concept document whose semantic contract is canonical Markdown parsed through a Markdown syntax tree. Frontmatter identifies the profile with `type: SpecBind Contract`; it does not duplicate the contract entries.
+
+The body has one `# Contract` heading and exactly these level-two sections in order: Owns, Exports, Consumes, Invariants, and File Ownership. Each section contains only a flat unordered list and may be empty without placeholder text. Structural headings remain canonical English tokens while descriptions may use either supported product language.
+
+Every entry begins with a stable lowercase kebab-case ID in inline code. IDs are unique within their section and never derive from list position. The canonical shape is:
 
 ```markdown
+---
+type: SpecBind Contract
+---
 # Contract
 
 ## Owns
-1. part-compatibility-evaluation
+
+- `part-compatibility-evaluation` — Evaluates compatibility between selected parts.
 
 ## Exports
-1. compatibility-result
-2. compatibility-rule-provider
+
+- `compatibility-result` — Result consumed by build presentation.
+- `compatibility-rule-provider` — Supplies compatibility rules.
 
 ## Consumes
-1. `part-catalog/exports/2` — part-type
-2. `build-state/exports/1` — selected-parts
+
+- `part-type` → `part-catalog/exports/part-type`
+- `selected-parts` → `build-state/exports/selected-parts`
 
 ## Invariants
-1. compatibility evaluation must not mutate selected parts
+
+- `no-selection-mutation` — Compatibility evaluation never mutates selected parts.
 
 ## File Ownership
-1. `src/domain/compatibility/**`
+
+- `compatibility-domain` — `src/domain/compatibility/**`
 ```
 
-Stable entry IDs must not be renumbered merely to close gaps. A changed label does not create a new identity when the meaning is unchanged; a breaking semantic replacement must remain distinguishable in history and review.
+Consumes targets use `<canonical-spec>/<target-section>/<target-id>`. File Ownership path patterns are repository-root-relative POSIX values attached to a stable entry ID. A path move therefore updates the value without changing identity when the semantic boundary remains the same.
+
+The canonical empty contract retains all five headings and has no list items. A changed description, reordered item, or path move does not create a new identity when the meaning is unchanged; a semantic replacement receives a new ID.
+
+### File Ownership scope
+
+File Ownership is deliberately sparse. Declare a path boundary when changing its owner or contents, or allowing another spec to modify it, could change another spec's design or verification. Typical entries include important shared files, ambiguous responsibility directories, public types and schemas, routing or migration boundaries, and generated-output boundaries that require cross-spec coordination.
+
+Do not enumerate private implementation files, ordinary fixtures, temporary outputs, every refactoring path, or every file currently touched by a task. An undeclared path is outside the persistent cross-spec graph; it is not asserted to be unowned or freely writable. Task-local concrete write scope belongs in `tasks.yaml` `boundaries` instead.
 
 ## Review flow
 
@@ -164,8 +184,6 @@ The default `settings/templates/specs/contract.md` and related shared rules are 
 
 ## Open design questions
 
-- Exact Markdown grammar and localized headings.
-- Entry ID and cross-reference normalization.
 - Rules for shared File Ownership and generated files.
 - Approval invalidation when a contract classification changes.
 - Release-readiness evidence required for affected consumers.

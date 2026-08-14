@@ -19,7 +19,7 @@ A separately written summary would reduce input size but drift from the authorit
 - Direct implementation candidates declare contract impact. A change that cannot justify no impact is rerouted to spec work.
 - The Rust CLI validates syntax, identifiers, references, graph consistency, and other deterministic invariants.
 - AI review classifies semantic impact and evaluates whether contracts and implementations are substantively compatible.
-- Exact Markdown syntax, ID format, and diagnostic schema remain Draft.
+- Exact Markdown syntax and ID format are accepted by [Decision 0056](./0056-canonical-contract-markdown.md). The diagnostic schema remains Draft.
 
 ## Scope boundary
 
@@ -53,7 +53,6 @@ The CLI may compute the structural diff and affected dependency graph, but it do
 
 ## Open questions
 
-- Canonical section names, entry ID format, and empty-section representation.
 - How an active change records changed contract entries and its compatibility classification.
 - Which File Ownership overlaps are allowed and how intentional sharing is declared.
 - Whether contract graph output is ephemeral CLI output or may be persisted as derived evidence.
