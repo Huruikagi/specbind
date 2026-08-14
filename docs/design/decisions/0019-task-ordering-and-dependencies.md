@@ -33,5 +33,5 @@ Structured `tasks.yaml` still needs deterministic status and next-task calculati
 ## Open questions
 
 - Exact `group` and executable `task` object schemas.
-- Whether task IDs remain limited to the inherited one- or two-level numeric form.
+- Exact migration diagnostics when inherited numbering violates the positional ID rules accepted by Decision 0020.
 - How migration expands ambiguous inherited `(P)` and `_Depends:_` combinations.
