@@ -18,6 +18,7 @@ The Open Knowledge Format (OKF) v0.2 already defines a minimal, vendor-neutral m
 - OKF-reserved `index.md` and `log.md` retain their OKF meanings if SpecBind introduces them. Neither file is required in v1.
 - SpecBind defines an artifact-specific profile on top of OKF. A profile may require an exact `type` value and additional fields, types, or invariants needed by the CLI.
 - The active roadmap uses `type: SpecBind Roadmap`. Its authoritative `milestone_id` and `target_release` mapping live in YAML frontmatter; the body remains the human- and agent-readable scope, ordering, and review record.
+- The v1 roadmap profile has no `schema_version` field. Its accepted `type` and field contract are sufficient while only one representation exists; a version field is introduced only alongside a future incompatible representation and an explicit migration rule.
 - SpecBind consumers validate known profile fields but accept and preserve unknown frontmatter fields when round-tripping a document, as required by OKF. This differs intentionally from strict standalone artifacts such as `spec.yaml` and `tasks.yaml`.
 - The full Markdown file, including frontmatter, remains the input to existing Markdown fingerprints after line-ending normalization.
 - Optional OKF provenance, trust, and lifecycle fields do not replace SpecBind lifecycle state or gate evidence. SpecBind-owned producers do not emit or interpret those fields as approval authority unless a later decision defines an explicit mapping.
