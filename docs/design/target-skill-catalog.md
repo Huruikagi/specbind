@@ -154,6 +154,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not use `--force` to bypass archive collisions or any lifecycle, freshness, evidence, schema, or path-safety guard.
 - Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.
+- Must consume concise English CLI results by default and translate or explain them in the user's language when useful; use `--json` only when structured details are needed.
 
 ### Open questions
 

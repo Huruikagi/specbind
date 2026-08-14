@@ -67,7 +67,7 @@ The exact crates are not yet fixed, but the code should separate:
 - `lifecycle`: explicit milestone and release state transitions
 - `schema`: packaged schema lookup and structural artifact validation
 
-Core modules should return structured results and diagnostics. Human-readable and JSON rendering belongs at the CLI boundary so skills and CI consume the same semantics.
+Core modules should return structured results and diagnostics. Under Decision 0067, concise English text is the default rendering and JSON is opt-in where structure is useful; both belong at the CLI boundary and preserve the same semantics.
 
 Release commands expose preflight and finalization contracts. Project-specific Prepare, Publish, Verify, and After finalize instructions remain agent-executed; the Rust CLI does not become a natural-language command runner.
 
@@ -120,7 +120,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 - Add guarded writes, conflict policies, backups, and summaries.
 - Match Claude Code and Codex generated trees for the same product-contract baseline.
 - Apply accepted To-Be artifact changes through explicit, reviewed fixture updates.
-- Verify English and Japanese output/template selection.
+- Verify English-only CLI-authored output and independent English/Japanese artifact-template selection.
 - Exercise Windows, macOS, and Linux path behavior in CI.
 
 ### 4. Native SpecBind operations

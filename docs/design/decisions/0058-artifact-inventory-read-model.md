@@ -46,11 +46,11 @@ A single command that always returns every body would defeat the context-saving 
 - Artifact ordering is deterministic: `brief`, `requirements`, all `design/<artifact_id>`, `contract`, then all `implementation-notes/<artifact_id>`. Each collection is ordered by `artifact_id`. Mapping-key order is presentation only.
 - `valid` is true only when discovery and every recognized SpecBind profile in the spec scope are valid. On discovery failure, the CLI returns every unambiguous artifact it safely discovered plus structured diagnostics, sets `valid: false`, and exits nonzero. Partial inventory is diagnostic information and does not authorize a lifecycle operation.
 - Each diagnostic has stable `code`, `severity`, and `message` fields. It may add `selector`, `path`, `line`, and `column` when known. Artifact-command error codes and the complete versioned diagnostics schema remain part of CLI implementation design, but fields may not be removed or repurposed within schema version 1.
-- Human output is a compact one-artifact-per-line rendering of the same ordered inventory, followed by diagnostics when present. It contains no additional semantic state that is absent from JSON.
+- Human list output begins with the concise English Decision 0067 outcome line, followed by a compact one-artifact-per-line rendering of the same ordered inventory and any diagnostics. It contains no additional semantic state that is absent from JSON.
 
 ## Content read model
 
-- Without `--json`, `artifact read` requires exactly one selector and writes that artifact's original UTF-8 Markdown content to standard output without a SpecBind wrapper, heading, separator, or normalization.
+- Without `--json`, `artifact read` requires exactly one selector and writes that artifact's original UTF-8 Markdown content to standard output without a SpecBind wrapper, outcome line, heading, separator, or normalization. This is the Decision 0067 raw-content exception.
 - Diagnostics are written to standard error so successful raw standard output remains solely the selected document.
 - Multiple selectors require `--json`. Supplying multiple selectors without it is a usage error.
 - JSON read output has this top-level shape:

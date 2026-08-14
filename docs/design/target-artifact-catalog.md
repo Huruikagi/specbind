@@ -37,6 +37,7 @@ Related documents:
 - [Decision 0064: path-scoped release finalization guard](./decisions/0064-path-scoped-release-finalization-guard.md)
 - [Decision 0065: forceable release target check](./decisions/0065-forceable-release-target-check.md)
 - [Decision 0066: agent-judged release and CLI log insertion](./decisions/0066-agent-judged-release-and-cli-log-insertion.md)
+- [Decision 0067: text-first English CLI results](./decisions/0067-text-first-english-cli-results.md)
 
 Status: Draft
 

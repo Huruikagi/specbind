@@ -28,6 +28,8 @@ Repeated grep, PowerShell, or shell-specific inspection consumes agent context a
 - one implementation shared by every supported agent
 - version alignment between installed templates and the rules they invoke
 
+Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands return an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Text is the default agent interface; `--json` is selected only when structured enumeration or value reuse justifies it. Agent skills translate or explain results for the user when needed.
+
 The goal is not to replace agent judgment. It is to remove mechanical work from prompts so the agent can focus on meaning and decisions.
 
 ## Responsibility model
@@ -94,7 +96,7 @@ Human-readable success output should stay compact:
 PASS requirements=24 active=6 design=6 tasks=6
 ```
 
-Failure output should contain stable diagnostic codes, affected IDs, and source locations where available:
+Failure output is English-only and contains stable diagnostic codes, affected IDs, and source locations where available:
 
 ```text
 FAIL

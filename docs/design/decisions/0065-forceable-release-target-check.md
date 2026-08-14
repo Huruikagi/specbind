@@ -17,11 +17,11 @@ The final choice belongs to the human working with the agent. SpecBind therefore
   ```
 
 - Without `--force`, the command resolves the complete finalization mutation set, runs every core guard, and performs the Decision 0064 target-path Git check before writing.
-- If a forceable target-path conflict exists, the command exits nonzero and performs no mutation. Human output lists each affected path, its planned operation, and its Git state. JSON output returns the same facts through stable diagnostics.
+- If a forceable target-path conflict exists, the command exits nonzero and performs no mutation. Default English text output lists each affected path, its planned operation, and its Git state under Decision 0067. Opt-in JSON returns the same facts through stable diagnostics.
 - The initial forceable diagnostic is `FINALIZE_TARGET_DIRTY`. Its structured fields are:
   - `code: "FINALIZE_TARGET_DIRTY"`
   - `severity: "error"`
-  - display-safe `message`
+  - concise English display-safe `message`
   - SpecBind-root-relative POSIX `path`
   - `operation`: `create`, `modify`, `delete`, `move_source`, or `move_destination`
   - `git_status`: a non-empty set drawn from `staged`, `unstaged`, and `untracked`

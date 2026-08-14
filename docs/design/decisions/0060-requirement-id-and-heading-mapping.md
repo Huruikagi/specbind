@@ -95,7 +95,7 @@ The canonical IDs are again `3.1` and `3.2`.
 - A requirements template contains literal `heading_labels` values and matching scaffold headings under Decision 0059. AI instructions may explain content generation but never redefine the parser grammar.
 - The CLI parses the Markdown syntax tree rather than using a document-wide regular expression. It reports source locations for duplicate group numbers, malformed headings, missing or duplicate Acceptance Criteria headings, empty criteria lists, and invalid mapping values where available.
 - Mapping changes are ordinary requirements-content changes. Because the complete OKF file is fingerprinted, they invalidate requirements approval even when the derived ID set happens to remain identical.
-- Human-facing summaries may display localized labels, but machine-facing IDs and diagnostic codes remain language-neutral.
+- CLI-authored summary framing and diagnostics are English-only under Decision 0067. A summary may echo artifact-defined labels and titles in their source language without translating them; machine-facing IDs and diagnostic codes remain language-neutral.
 
 ## Consequences
 

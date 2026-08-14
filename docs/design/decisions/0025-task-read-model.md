@@ -30,8 +30,8 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 
 ### Structured output
 
-- Each command supports `--json` with the same underlying semantics as human output.
-- JSON keys are stable English machine keys, contain no ANSI formatting, and are intended for agent skills and CI.
+- Each command supports `--json` with the same underlying semantics as the default concise English text output under Decision 0067.
+- JSON keys are stable English machine keys, contain no ANSI formatting, and are intended for structured agent processing and CI rather than routine skill calls.
 - The JSON response schema and diagnostic/exit-code contract must be versioned before implementation is considered complete.
 - Generated skills use the structured CLI output when they need computed state; raw YAML remains available for authoring and narrowly scoped edits.
 
@@ -55,5 +55,5 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 ## Open questions
 
 - Versioned JSON response schemas and stable exit-code categories.
-- Human-output localization and how spec-configured content language interacts with CLI label language.
+- Exact command-specific success and no-change codes within the Decision 0067 result contract.
 - Filters such as blocked-only, actionable-only, or group selection.
