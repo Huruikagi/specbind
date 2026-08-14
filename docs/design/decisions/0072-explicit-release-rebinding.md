@@ -13,8 +13,8 @@ A milestone has a stable UUID v7 identity before its eventual release version is
 - The accepted CLI forms are:
 
   ```text
-  specbind milestone bind-release <version> [--json]
-  specbind milestone bind-release <version> --rebind [--json]
+  specbind milestone bind-release <version>
+  specbind milestone bind-release <version> --rebind
   ```
 
 - `<version>` is validated and persisted exactly under the Decision 0073 portable release-label grammar. No normalization or implicit leading `v` is applied.

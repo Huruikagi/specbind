@@ -28,12 +28,11 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - `tasks show` displays title, details, Requirement IDs, boundaries, contracts, explicit and effective prerequisites, blocker state, and explicit completion criteria when present.
 - Derived display labels such as partial group progress do not create new persisted task statuses.
 
-### Structured output
+### V1 agent output
 
-- Each command supports `--json` with the same underlying semantics as the default concise English text output under Decision 0067.
-- JSON keys are stable English machine keys, contain no ANSI formatting, and are intended for structured agent processing and CI rather than routine skill calls.
-- The JSON response schema and diagnostic/exit-code contract must be versioned before implementation is considered complete.
-- Generated skills use the structured CLI output when they need computed state; raw YAML remains available for authoring and narrowly scoped edits.
+- Under Decision 0074, v1 exposes only the default concise English text projection and stable result codes; these commands have no `--json` response mode.
+- Generated skills consume the CLI projection directly when they need computed state. Raw YAML remains available for authoring and narrowly scoped edits.
+- A future structured response must render the same derived model, but its JSON shape is not reserved by this decision.
 
 ### Validation and ownership
 
@@ -50,10 +49,10 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - Humans regain a checklist-like view without sacrificing a single structured source of truth.
 - Agents and CI share deterministic calculations instead of embedding agent-specific YAML interpretation.
 - `specbind-spec-status` becomes orchestration and explanation over the CLI read model rather than a competing parser.
-- CLI compatibility now includes human rendering and versioned JSON projections as well as artifact schemas.
+- CLI compatibility includes the accepted command names, derived semantics, concise text rendering, and stable result codes as well as artifact schemas.
 
 ## Open questions
 
-- Versioned JSON response schemas and stable exit-code categories.
+- Stable numeric exit-code categories beyond the accepted zero/nonzero behavior.
 - Exact command-specific success and no-change codes within the Decision 0067 result contract.
 - Filters such as blocked-only, actionable-only, or group selection.

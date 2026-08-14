@@ -22,7 +22,7 @@ A proposed `specbind-milestone` skill would separate the name but still express 
 - Require the Decision 0054 clean Git baseline, capture the full current `HEAD`, generate a branch-safe Decision 0043 UUID v7, and create `steering/roadmap.md` with both the stable milestone ID and immutable baseline revision.
 - Apply an explicitly confirmed scope and ordering update.
 - Apply an explicitly confirmed Decision 0054 rebaseline and invalidate the accepted global cross-spec review; never infer one as repair.
-- Bind or explicitly rebind a target release version through `specbind milestone bind-release <version> [--rebind] [--json]` under Decision 0072.
+- Bind or explicitly rebind a target release version through `specbind milestone bind-release <version> [--rebind]` under Decision 0072.
 - Check consistency among the roadmap and participating specs' active-change metadata.
 - Apply the deterministic portion of explicitly confirmed abandonment cleanup after content reconciliation.
 

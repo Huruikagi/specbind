@@ -205,7 +205,7 @@ Every state-changing event is an explicit guarded CLI mutation with:
 - expected current state and active change identity
 - structured event input
 - dry-run or plan output where the mutation is destructive
-- stable human and JSON diagnostics
+- stable concise English diagnostics; JSON output is deferred beyond v1 under Decision 0074
 - atomic writes across the affected spec artifacts
 - an idempotency check for retries
 - a post-write consistency check
@@ -230,4 +230,4 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 ## Open questions
 
 - Which repair operations the CLI may automate after presenting a dry-run plan.
-- Stable event, state, and diagnostic names in the public CLI and JSON contracts.
+- Stable event, state, and diagnostic names in the public text CLI contract; any future JSON contract is post-v1 under Decision 0074.

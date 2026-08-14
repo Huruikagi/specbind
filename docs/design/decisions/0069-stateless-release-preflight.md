@@ -13,7 +13,7 @@ Release orchestration needs a deterministic check before an agent begins project
 - The accepted read-only command is:
 
   ```text
-  specbind release preflight [--json]
+  specbind release preflight
   ```
 
 - Preflight discovers the active milestone and validates every deterministic release prerequisite available before project-specific release work, including:
@@ -31,7 +31,7 @@ Release orchestration needs a deterministic check before an agent begins project
   OK RELEASE_READY: Release v1.4.0 is ready for project release work across 3 specs.
   ```
 
-- `--json` exposes the same result as a structured read model suitable for exact value reuse. On success it includes at least the milestone ID, release version, ordered participating-spec identities, direct-change count, and resolved mutation targets. Its common result envelope remains part of the command-wide JSON contract.
+- After the outcome line, the concise text result may list the milestone ID, release version, ordered participating-spec identities, direct-change count, and resolved mutation targets when those details help the agent begin release work.
 - Any failed check returns a stable English diagnostic, performs no mutation, and prevents the release skill from starting applicable adapter work.
 
 ### No preflight authority
@@ -47,4 +47,4 @@ Release orchestration needs a deterministic check before an agent begins project
 - Agents can detect core blockers before performing external release work without introducing durable run state.
 - Long-running or repository-mutating project release procedures do not create false stale-token guarantees.
 - Finalization remains the sole authoritative mutation boundary and stays safe when conditions change after preflight.
-- The release skill needs only the concise result for normal branching and can request JSON when it needs the exact discovered scope.
+- The release skill consumes the concise text result and stable code in v1.

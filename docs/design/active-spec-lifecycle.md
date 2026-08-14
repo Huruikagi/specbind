@@ -168,7 +168,7 @@ Rust CLI milestone operations own the mechanical state transitions for scope cha
 The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
 
 1. The release agent loads the active roadmap, target version, and the free-form `{{SPEC_DIR}}/settings/release.md`, then validates its OKF profile and interprets any applicable project guidance under Decision 0063.
-2. The release agent runs the stateless `specbind release preflight [--json]` readiness check accepted by [Decision 0069](./decisions/0069-stateless-release-preflight.md).
+2. The release agent runs the stateless `specbind release preflight` readiness check accepted by [Decision 0069](./decisions/0069-stateless-release-preflight.md).
 3. Without creating an aggregate readiness record, the CLI derives readiness from current artifacts: it resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency under [Decision 0070](./decisions/0070-derived-release-readiness.md).
 4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance and judges the result with the human.
 5. The agent submits one delivered-change summary per participating spec to the Rust CLI finalization boundary.

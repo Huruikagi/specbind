@@ -44,6 +44,7 @@ Related documents:
 - [Decision 0071: no partial milestone release](./decisions/0071-no-partial-milestone-release.md)
 - [Decision 0072: explicit release rebinding](./decisions/0072-explicit-release-rebinding.md)
 - [Decision 0073: portable release version](./decisions/0073-portable-release-version.md)
+- [Decision 0074: defer JSON CLI output](./decisions/0074-defer-json-cli-output.md)
 
 Status: Draft
 

@@ -159,7 +159,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not request or emulate finalization for only a subset of the active milestone's participating specs.
 - On partial external success, must preserve the active milestone, report observed external state, and coordinate retry or reconciliation instead of claiming a SpecBind release or automatic rollback.
 - Must report an After finalize failure as follow-up work without reopening the finalized milestone.
-- Must consume concise English CLI results by default and translate or explain them in the user's language when useful; use `--json` only when structured details are needed.
+- Must consume concise English CLI results and stable codes, then translate or explain them in the user's language when useful. V1 has no JSON output mode under Decision 0074.
 
 ## Cross-cutting questions
 

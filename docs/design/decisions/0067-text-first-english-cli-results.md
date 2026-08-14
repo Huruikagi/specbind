@@ -48,20 +48,19 @@ Hint: Resolve the changes or retry with --force after explicit confirmation.
 
 - All CLI-authored text is English-only in v1, including outcome messages, diagnostics, hints, help, usage errors, headings, column labels, and progress/status labels.
 - The CLI has no message-locale setting and does not select output language from the spec, process locale, operating system, or document template.
-- Stable codes, option names, JSON keys, and enum values are English machine tokens.
+- Stable codes, option names, structured artifact fields, and enum values are English machine tokens.
 - User-authored content is not translated. Paths, spec names, task text, Requirement titles, artifact bodies, and release-log summaries remain in their source language when echoed or returned.
 - Agent skills may translate or explain CLI results in the user's language. Translation belongs to the interaction layer and never changes the stable code or underlying result.
 
-### JSON boundary
+### V1 output boundary
 
-- Human-readable text is the default for both direct users and agent skills. Skills should not request JSON routinely when the concise result contains everything needed.
-- Commands expose `--json` when structured enumeration, exact value reuse, CI integration, or language-independent programmatic branching materially benefits from it.
-- JSON mode contains no ANSI formatting or duplicated human text layout. It uses stable English keys and codes and preserves the same semantic result as text mode through a command-specific versioned schema.
-- The exact common JSON envelope and exit-code category table remain separate CLI-contract work. This decision does not require every raw-content operation to gain a JSON wrapper solely for consistency.
+- Human-readable text is the sole non-raw v1 result surface for both direct users and agent skills.
+- Decision 0074 defers `--json`, the common JSON envelope, and command-response schemas until after v1.
+- Raw-content operations remain exceptions only where their accepted contract requires unmodified file content on standard output.
 
 ## Consequences
 
 - Agents can usually understand success or failure from one short line without another filesystem inspection or JSON parsing step.
 - Direct users always receive an explicit result instead of silent success.
 - Stable codes support reliable skill branching while English prose remains readable and easy for the agent to translate.
-- JSON remains available where its structure offsets its token and complexity cost rather than becoming the default agent interface.
+- A future JSON surface can be added deliberately without complicating the v1 result contract.

@@ -64,12 +64,12 @@ SpecBind needs customizable template sets that can create several design artifac
 - Templates use a separate read-only command family so agents cannot confuse a scaffold with current authoritative state:
 
   ```text
-  specbind template list spec [--json]
-  specbind template read spec <selector>... [--json]
+  specbind template list spec
+  specbind template read spec <selector>
   ```
 
 - Template selectors use the same singleton and collection forms as their intended live artifacts. Template inventory includes `selector`, `type`, conditional `artifact_id`, `template_path`, and derived `output_path`, but no body or fingerprint.
-- Direct reads of known selectors and list-then-read collection discovery follow the Decision 0058 behavior. A single raw read includes instruction comments; multiple reads require JSON with explicit template provenance.
+- Direct reads of known selectors and list-then-read collection discovery follow the Decision 0058 behavior. A raw read includes instruction comments and accepts one selector; workflows issue separate reads for multiple templates in v1.
 - Artifact authoring and lifecycle operations independently validate the current template set and materialize output. Read commands never write live artifacts, and template-read results are not mutation authority.
 
 ## Consequences

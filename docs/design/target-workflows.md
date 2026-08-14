@@ -185,7 +185,7 @@ bundled CLI: parse and check deterministic invariants
   -> bundled CLI: perform explicit, guarded state mutation
 ```
 
-The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.yaml`, `design.md`, and `tasks.yaml`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
+The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.yaml`, `design.md`, and `tasks.yaml`. Skills consume its concise text result and stable code instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
 
 ## Approval and automation model
 

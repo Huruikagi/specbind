@@ -102,4 +102,4 @@ Artifact fingerprints are required to detect out-of-band edits. Their stored val
 - Remaining gate-evidence YAML fields.
 - Fingerprint normalization rules and artifact-input sets for each gate.
 - Representation of migrated gate state when the original `passed_at` is unavailable.
-- Human-readable and JSON diagnostics for missing or out-of-scope run-context delegation.
+- Concise English diagnostics with stable codes for missing or out-of-scope run-context delegation; Decision 0074 defers JSON diagnostics beyond v1.

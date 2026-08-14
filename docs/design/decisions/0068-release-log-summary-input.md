@@ -13,7 +13,7 @@ Decision 0066 assigns semantic release-summary authoring to the agent and struct
 - The accepted finalization command shape is:
 
   ```text
-  specbind release finalize --log-entries <path|-> [--json] [--force]
+  specbind release finalize --log-entries <path|-> [--force]
   ```
 
 - `--log-entries` is required. A filesystem path loads one UTF-8 JSON document; `-` reads that document from standard input.
@@ -70,4 +70,4 @@ Decision 0066 assigns semantic release-summary authoring to the agent and struct
 - Agents can safely submit multilingual inline Markdown without shell-specific escaping conventions.
 - Direct users and CI can inspect or generate the same small input document.
 - The CLI owns date ordering, canonical metadata, and retry behavior without taking ownership of semantic summary authoring.
-- A JSON mutation input does not make verbose JSON the default CLI output.
+- A JSON mutation input does not add JSON CLI output; Decision 0074 defers that separate surface until after v1.

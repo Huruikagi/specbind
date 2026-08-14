@@ -46,12 +46,12 @@ The current option-only installer interface may remain as a compatibility alias,
 
 ```sh
 specbind install [options]
-specbind check traceability <spec-path> [--json]
+specbind check traceability <spec-path>
 specbind milestone <operation> [options]
-specbind milestone bind-release <version> [--rebind] [--json]
+specbind milestone bind-release <version> [--rebind]
 specbind release <operation> [options]
-specbind release preflight [--json]
-specbind release finalize --log-entries <path|-> [--json] [--force]
+specbind release preflight
+specbind release finalize --log-entries <path|-> [--force]
 ```
 
 These command names are Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065. The common constraint is one Rust `specbind` CLI.
@@ -69,9 +69,11 @@ The exact crates are not yet fixed, but the code should separate:
 - `lifecycle`: explicit milestone and release state transitions
 - `schema`: packaged schema lookup and structural artifact validation
 
-Core modules should return structured results and diagnostics. Under Decision 0067, concise English text is the default rendering and JSON is opt-in where structure is useful; both belong at the CLI boundary and preserve the same semantics.
+Core modules should return structured internal results and diagnostics. Under Decisions 0067 and 0074, the v1 CLI boundary renders them only as concise English text with stable codes; internal typing does not expose a JSON response contract.
 
 Release commands expose preflight and finalization contracts. Project-specific Prepare, Publish, Verify, and After finalize instructions remain agent-executed; the Rust CLI does not become a natural-language command runner.
+
+Decision 0074 keeps v1 CLI results text-only. The JSON Schemas packaged with the Rust CLI validate structured artifacts and mutation inputs; they are not response-envelope schemas.
 
 ## Compatibility inventory
 

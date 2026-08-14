@@ -23,12 +23,12 @@ Repeated grep, PowerShell, or shell-specific inspection consumes agent context a
 
 - stable parsing and validation rules
 - short human-readable output
-- machine-readable JSON for agents and CI
+- stable result codes and exit behavior for agents and CI
 - stable exit semantics
 - one implementation shared by every supported agent
 - version alignment between installed templates and the rules they invoke
 
-Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands return an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Text is the default agent interface; `--json` is selected only when structured enumeration or value reuse justifies it. Agent skills translate or explain results for the user when needed.
+Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands return an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decision 0074 makes text the sole non-raw v1 result surface; agent skills consume it directly and translate or explain results for the user when needed.
 
 The goal is not to replace agent judgment. It is to remove mechanical work from prompts so the agent can focus on meaning and decisions.
 
@@ -86,8 +86,7 @@ The exact command vocabulary is not yet accepted. The initial shape should remai
 
 ```sh
 specbind check traceability <spec-path>
-specbind check traceability <spec-path> --json
-specbind check contracts [<scope>] [--json]
+specbind check contracts [<scope>]
 ```
 
 Human-readable success output should stay compact:
@@ -106,7 +105,7 @@ TASKS_MISSING: 4.1, 4.2
 INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.yaml:18
 ```
 
-The JSON schema and exit-code table must be versioned contracts before implementation is considered complete.
+Stable result codes and exit behavior are part of the v1 contract. A JSON response schema is explicitly post-v1 under Decision 0074.
 
 ## Lifecycle automation candidates
 
@@ -115,10 +114,10 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - capture a clean Decision 0054 Git baseline, generate a branch-safe UUID v7, and create an active roadmap with both its stable milestone ID and baseline revision
 - apply an explicitly confirmed roadmap scope update
 - mark or reopen a direct roadmap change through its sparse completed-state mutation
-- bind the target release through `specbind milestone bind-release <version> [--json]`, or replace a non-null binding only through its explicitly confirmed `--rebind` form
+- bind the target release through `specbind milestone bind-release <version>`, or replace a non-null binding only through its explicitly confirmed `--rebind` form
 - check milestone and per-spec lifecycle consistency
 - perform the deterministic portion of confirmed abandonment cleanup
-- run the stateless `specbind release preflight [--json]` readiness check and idempotent finalization mutations
+- run the stateless `specbind release preflight` readiness check and idempotent finalization mutations
 
 These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065 with its narrow target-path `--force` override. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
@@ -143,13 +142,13 @@ The CLI and skills must respect supported settings customization while still enf
 
 ## Task read model
 
-Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbind tasks show` as read-only CLI projections over `spec.yaml` and `tasks.yaml`. The CLI owns schema validation, consistency health, sparse-status expansion, effective dependency calculation, group rollups, Requirement ID coverage, approval freshness, and versioned JSON output. Agent skills own when to request a view, how to explain it in workflow context, and any semantic recommendation that cannot be derived mechanically.
+Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbind tasks show` as read-only CLI projections over `spec.yaml` and `tasks.yaml`. The CLI owns schema validation, consistency health, sparse-status expansion, effective dependency calculation, group rollups, Requirement ID coverage, approval freshness, and concise text rendering. Agent skills own when to request a view, how to explain it in workflow context, and any semantic recommendation that cannot be derived mechanically.
 
-These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. Human terminal output and `--json` must be two renderings of the same structured core result.
+These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. V1 exposes one concise text projection; Decision 0074 defers alternate JSON rendering.
 
 ## Artifact inventory and content read model
 
-[Decision 0058](./decisions/0058-artifact-inventory-read-model.md) accepts `specbind artifact list <spec>` and `specbind artifact read <spec> <selector>...` as the read-only boundary over Decision 0057 type-based discovery. The list command returns a compact versioned inventory without bodies or hashes. The read command resolves logical selectors rather than agent-supplied paths; a single raw read returns untouched Markdown, while multiple reads require a provenance-preserving JSON envelope.
+[Decision 0058](./decisions/0058-artifact-inventory-read-model.md) accepts `specbind artifact list <spec>` and `specbind artifact read <spec> <selector>` as the read-only boundary over Decision 0057 type-based discovery. The list command returns a compact deterministic text inventory without bodies or hashes. The read command resolves one logical selector rather than an agent-supplied path and returns untouched Markdown; workflows issue separate reads for multiple bodies in v1.
 
 Agent skills directly read a known singleton or authoritative collection selector. They list first only when they need collection membership, optional-artifact discovery, selector choice, or structural diagnostics. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so list and read outputs never become mutation authority.
 
@@ -184,7 +183,7 @@ The first increment should remain narrow:
 - read-only traceability validation for one spec directory
 - concise default output
 - stable non-zero failure exit behavior
-- JSON output for agents and CI
+- stable text result codes for agents and CI
 - fixtures covering valid mappings, missing coverage, unknown references, duplicates, and invalid syntax
 - integration into at least the design and tasks review paths
 
@@ -194,5 +193,5 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 
 - Final command names for remaining checks and whether `check` becomes their common read-only validation namespace; Decision 0025 fixes the task read-model command names.
 - How the accepted Rust migration packages templates and preserves the current installation contract.
-- The JSON diagnostic schema and stable exit-code categories.
+- Stable numeric exit-code categories beyond the accepted zero/nonzero behavior.
 - Exact command contracts for the accepted milestone operations and any additional lifecycle candidates.

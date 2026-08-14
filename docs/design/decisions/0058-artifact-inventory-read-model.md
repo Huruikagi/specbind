@@ -13,8 +13,8 @@ A single command that always returns every body would defeat the context-saving 
 - The read-only CLI command family is:
 
   ```text
-  specbind artifact list <spec> [--json]
-  specbind artifact read <spec> <selector>... [--json]
+  specbind artifact list <spec>
+  specbind artifact read <spec> <selector>
   ```
 
 - `<spec>` is the canonical spec identity. Artifact commands resolve the configured SpecBind root and never accept a spec directory path as a substitute.
@@ -25,54 +25,22 @@ A single command that always returns every body would defeat the context-saving 
 
 ## Inventory model
 
-- JSON inventory has this top-level shape:
-
-  ```json
-  {
-    "schema_version": 1,
-    "spec": "checkout",
-    "valid": true,
-    "artifacts": [],
-    "diagnostics": []
-  }
-  ```
-
-- Every recognized artifact item contains exactly:
+- The v1 text inventory begins with the concise English Decision 0067 outcome line, followed by one deterministic line per recognized artifact.
+- Every recognized artifact line exposes:
   - `selector`: its Decision 0057 logical selector
   - `type`: the exact OKF type
   - `path`: its current SpecBind-root-relative POSIX path
-  - `artifact_id`: required only for collection profiles and omitted for singletons
+  - `artifact_id`: shown only for collection profiles
 - Inventory deliberately omits content, fingerprint, timestamps, Git revision, byte size, lifecycle evidence, and derived semantic summaries. Workflows needing those facts use their owning CLI operation.
 - Artifact ordering is deterministic: `brief`, `requirements`, all `design/<artifact_id>`, `contract`, then all `implementation-notes/<artifact_id>`. Each collection is ordered by `artifact_id`. Mapping-key order is presentation only.
-- `valid` is true only when discovery and every recognized SpecBind profile in the spec scope are valid. On discovery failure, the CLI returns every unambiguous artifact it safely discovered plus structured diagnostics, sets `valid: false`, and exits nonzero. Partial inventory is diagnostic information and does not authorize a lifecycle operation.
-- Each diagnostic has stable `code`, `severity`, and `message` fields. It may add `selector`, `path`, `line`, and `column` when known. Artifact-command error codes and the complete versioned diagnostics schema remain part of CLI implementation design, but fields may not be removed or repurposed within schema version 1.
-- Human list output begins with the concise English Decision 0067 outcome line, followed by a compact one-artifact-per-line rendering of the same ordered inventory and any diagnostics. It contains no additional semantic state that is absent from JSON.
+- On discovery failure, the CLI returns every unambiguous artifact it safely discovered plus stable English diagnostics and exits nonzero. Partial inventory is diagnostic information and does not authorize a lifecycle operation.
+- Diagnostics use stable codes and messages and include selector, path, line, or column when known. Decision 0074 defers a versioned JSON diagnostic schema.
 
 ## Content read model
 
-- Without `--json`, `artifact read` requires exactly one selector and writes that artifact's original UTF-8 Markdown content to standard output without a SpecBind wrapper, outcome line, heading, separator, or normalization. This is the Decision 0067 raw-content exception.
+- `artifact read` requires exactly one selector and writes that artifact's original UTF-8 Markdown content to standard output without a SpecBind wrapper, outcome line, heading, separator, or normalization. This is the Decision 0067 raw-content exception.
 - Diagnostics are written to standard error so successful raw standard output remains solely the selected document.
-- Multiple selectors require `--json`. Supplying multiple selectors without it is a usage error.
-- JSON read output has this top-level shape:
-
-  ```json
-  {
-    "schema_version": 1,
-    "spec": "checkout",
-    "artifacts": [
-      {
-        "selector": "design/persistence",
-        "type": "SpecBind Design",
-        "artifact_id": "persistence",
-        "path": "specs/checkout/persistence.md",
-        "content": "---\ntype: SpecBind Design\nartifact_id: persistence\n---\n"
-      }
-    ]
-  }
-  ```
-
-- Read results preserve request order. Duplicate requested selectors are a usage error rather than duplicated output.
-- A multi-artifact read is all-or-nothing: if any requested selector is missing, ambiguous, invalid, or unreadable, the command returns no content payload and exits nonzero with diagnostics.
+- Multiple selectors are a v1 usage error. A provenance-preserving multi-content JSON response may be added after v1 under Decision 0074.
 - Errors unrelated to the requested selectors remain visible as diagnostics from discovery, but they do not prevent a uniquely resolved, valid selected artifact from being read. Lifecycle and gate commands may still reject the overall invalid inventory under their stricter invariants.
 - Unknown OKF types have no SpecBind logical selector in v1 and are not returned or readable through these commands. They remain valid bundle content and may receive an explicit extension discovery contract later.
 
@@ -88,6 +56,6 @@ A single command that always returns every body would defeat the context-saving 
 
 - Known singleton reads avoid a redundant inventory round trip, while collection discovery still costs only a small, predictable context envelope.
 - Filename changes do not require skill changes because skills name logical selectors.
-- Raw single-document reads remain natural Markdown, while multi-document reads retain explicit provenance in JSON.
+- Raw single-document reads remain natural Markdown; workflows issue separate reads when they need several bodies.
 - Discovery races cannot turn an earlier path into mutation authority; guarded operations always resolve and fingerprint current artifacts again.
 - Project-wide inventory and unknown-type extension discovery remain separate follow-up capabilities rather than expanding the v1 spec-local command contract.

@@ -13,11 +13,11 @@ The final choice belongs to the human working with the agent. SpecBind therefore
 - The accepted mutation command is:
 
   ```text
-  specbind release finalize --log-entries <path|-> [--json] [--force]
+  specbind release finalize --log-entries <path|-> [--force]
   ```
 
 - Without `--force`, the command resolves the complete finalization mutation set, runs every core guard, and performs the Decision 0064 target-path Git check before writing.
-- If a forceable target-path conflict exists, the command exits nonzero and performs no mutation. Default English text output lists each affected path, its planned operation, and its Git state under Decision 0067. Opt-in JSON returns the same facts through stable diagnostics.
+- If a forceable target-path conflict exists, the command exits nonzero and performs no mutation. Concise English text output lists each affected path, its planned operation, and its Git state under Decision 0067; Decision 0074 defers alternate JSON rendering beyond v1.
 - The initial forceable diagnostic is `FINALIZE_TARGET_DIRTY`. Its structured fields are:
   - `code: "FINALIZE_TARGET_DIRTY"`
   - `severity: "error"`
@@ -26,7 +26,7 @@ The final choice belongs to the human working with the agent. SpecBind therefore
   - `operation`: `create`, `modify`, `delete`, `move_source`, or `move_destination`
   - `git_status`: a non-empty set drawn from `staged`, `unstaged`, and `untracked`
   - `forceable: true`
-- Multiple conflicts are reported together when they can be resolved safely without mutation. The human and JSON renderings come from the same structured result.
+- Multiple conflicts are reported together in the concise text result when they can be resolved safely without mutation.
 
 ## Force boundary
 
