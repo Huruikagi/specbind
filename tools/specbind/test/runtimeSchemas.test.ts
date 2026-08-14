@@ -63,4 +63,18 @@ describe('runtime schema scaffolds', () => {
     expect(JSON.stringify(evidence)).toContain('requirements.md');
     expect(JSON.stringify(evidence)).not.toContain('brief.md');
   });
+
+  it('defines explicit sparse scheduling fields for executable tasks', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const scheduling = schema.$defs?.taskScheduling as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+    };
+
+    expect(scheduling.required).toEqual(['parallel', 'depends_on']);
+    expect(scheduling.properties).toHaveProperty('parallel', { type: 'boolean' });
+    expect(scheduling.properties).toHaveProperty('depends_on');
+  });
 });

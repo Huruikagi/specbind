@@ -2,6 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SpecBind task artifact v1",
   "description": "Initial runtime-contract scaffold for tasks.yaml. Add fields only after their schema decisions are accepted.",
+  "$defs": {
+    "taskReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "taskScheduling": {
+      "type": "object",
+      "required": [
+        "parallel",
+        "depends_on"
+      ],
+      "properties": {
+        "parallel": {
+          "type": "boolean"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taskReference"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "type": "object",
   "required": [
     "schema_version"

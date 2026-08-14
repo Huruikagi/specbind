@@ -27,6 +27,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the spec's configured product language.
 - The schema must distinguish the approved task-plan definition from mutable execution state so normal progress updates do not inherently rewrite the approved plan.
 - The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state, blocked execution details, and implementation notes are excluded from that projection under Decision 0018.
+- Task order remains a conservative implicit dependency; `parallel` records reviewed exceptions and `depends_on` adds sparse non-obvious prerequisites under Decision 0019.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -82,4 +83,5 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 - Status enum and blocked / skipped / optional semantics.
 - Completion and verification evidence references.
 - Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
+- Exact group and executable-task object shapes within the ordered dependency model accepted by Decision 0019.
 - Exact `tasks.md` migration grammar and diagnostics.

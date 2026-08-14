@@ -40,6 +40,7 @@
 - [`docs/design/decisions/0016-fingerprint-value-format.md`](docs/design/decisions/0016-fingerprint-value-format.md) — accepted tagged lowercase SHA-256 fingerprint representation
 - [`docs/design/decisions/0017-requirements-gate-inputs.md`](docs/design/decisions/0017-requirements-gate-inputs.md) — accepted requirements-gate fingerprint boundary excluding `brief.md`
 - [`docs/design/decisions/0018-gate-input-comparison.md`](docs/design/decisions/0018-gate-input-comparison.md) — accepted Markdown normalization, Requirement ID snapshot, and task-plan projection boundaries
+- [`docs/design/decisions/0019-task-ordering-and-dependencies.md`](docs/design/decisions/0019-task-ordering-and-dependencies.md) — accepted ordered task execution with sparse dependency exceptions
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
