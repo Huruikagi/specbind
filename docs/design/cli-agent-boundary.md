@@ -147,6 +147,8 @@ These commands replace routine raw-YAML interpretation but do not create a gener
 
 Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight captures a clean full Git `HEAD`, the task-plan fingerprint, and current lifecycle input revisions. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently rejects it unless the same clean revision, inputs, approvals, and all-completed task state still hold immediately before the atomic `IMPLEMENTATION_VALIDATED` mutation.
 
+The CLI detects the repository's Git object format and validates the scalar full `implementation_revision` under Decision 0031. Generated skills neither submit per-evidence VCS metadata nor infer acceptable hash length themselves.
+
 Under Decision 0030, only successfully accepted evidence is persisted. `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failures, and rejected candidates return diagnostics without a `spec.yaml` mutation or a separate evidence-recording event.
 
 The exact command names and accepted structured evidence schema remain follow-up details. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.

@@ -15,7 +15,7 @@ Completion validation uses a two-call CLI handshake. Exact command names remain 
 ### Preflight
 
 - The validation skill asks the CLI to begin completion validation for one explicit active spec.
-- The CLI requires a Git repository, resolves the full current `HEAD` commit object ID as `implementation_revision`, and rejects a repository without a commit.
+- The CLI requires a Git repository, resolves the full current `HEAD` commit object ID as the scalar `implementation_revision` accepted by Decision 0031, and rejects a repository without a commit.
 - Before returning the baseline, the CLI requires a clean repository status: no staged changes, tracked worktree changes, untracked files, or dirty submodules. Ignored build and tool outputs do not make the repository dirty.
 - The CLI also captures the current task-plan fingerprint and the other already-defined lifecycle input revisions needed to detect a concurrent spec edit.
 - Preflight is read-only. Its returned baseline is run-scoped candidate data, not persisted approval or completion evidence.
@@ -39,7 +39,7 @@ Completion validation uses a two-call CLI handshake. Exact command names remain 
 
 - The completion evidence remains bound to the validated implementation commit, even when the subsequent commit contains the CLI-generated `spec.yaml` evidence mutation.
 - A later freshness check may accept such a successor commit only when every change since `implementation_revision` is an expected SpecBind completion-evidence mutation. Any implementation, spec input, task, configuration, or other repository-content change requires `COMPLETION_INVALIDATED` and a new validation handshake.
-- Release preflight rechecks this relationship; a branch name, abbreviated hash, timestamp, conversation report, or earlier command output cannot substitute for the recorded full commit identity.
+- Release preflight rechecks this relationship; Decision 0031 excludes a branch name, abbreviated hash, timestamp, conversation report, or earlier command output as a substitute for the recorded full commit identity.
 
 ## Consequences
 

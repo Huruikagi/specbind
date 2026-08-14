@@ -7,6 +7,11 @@
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"
     },
+    "implementationRevision": {
+      "type": "string",
+      "description": "Full lowercase Git commit object ID; semantic validation requires the form used by the current project repository.",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
     "requirementIdList": {
       "type": "array",
       "items": {

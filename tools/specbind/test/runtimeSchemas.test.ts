@@ -50,6 +50,19 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
+  it('defines a project-scoped full Git implementation revision', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+
+    expect(schema.$defs?.implementationRevision).toEqual({
+      type: 'string',
+      description:
+        'Full lowercase Git commit object ID; semantic validation requires the form used by the current project repository.',
+      pattern: '^(?:[0-9a-f]{40}|[0-9a-f]{64})$',
+    });
+  });
+
   it('defines readable requirements gate evidence without a brief fingerprint', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
