@@ -12,6 +12,7 @@ Related documents:
 - [Target workflows](./target-workflows.md)
 - [Target artifact catalog](./target-artifact-catalog.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
+- [Spec state machine](./spec-state-machine.md)
 - [CLI and agent responsibility boundary](./cli-agent-boundary.md)
 - [Decision 0001: skill naming](./decisions/0001-skill-naming.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)

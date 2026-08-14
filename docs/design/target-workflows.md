@@ -4,6 +4,8 @@ This document defines the intended user journeys and responsibility boundaries f
 
 The detailed milestone document lifecycle is defined in [Active spec lifecycle](./active-spec-lifecycle.md). Deterministic automation boundaries are developed in [CLI and agent responsibility boundary](./cli-agent-boundary.md), and the accepted implementation direction is the [Rust CLI migration](./rust-cli-migration.md).
 
+The target per-spec workflow states, approval invalidation events, and transition guards are defined in [Spec state machine](./spec-state-machine.md).
+
 Status: Draft
 
 ## Design goals
@@ -197,7 +199,7 @@ Accelerated and batch workflows may automate transitions, but they should reuse 
 ## Topics to resolve next
 
 1. Define the initial `specbind check traceability` contract and diagnostic schema.
-2. Refine discovery's existing-spec update route and define the accepted milestone CLI command contracts.
+2. Refine discovery's existing-spec update route and turn the draft spec-state events into accepted CLI mutation contracts.
 3. Define milestone contents and release-readiness criteria.
 4. Define the concrete responsibilities of `specbind-release` and its CLI operations.
 5. Decide whether quick and batch remain first-class skills.

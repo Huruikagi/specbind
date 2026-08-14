@@ -1,0 +1,229 @@
+# Spec state machine
+
+Status: Draft
+
+This document defines the target per-spec workflow states and events stored through `spec.json`. It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md) and the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md).
+
+The state machine describes one spec's active change. Milestone-wide scope, ordering, target release binding, and roadmap archival remain milestone concerns.
+
+## Modeling decisions
+
+- `spec.json` has one authoritative workflow state instead of separately writable `phase`, `generated`, `approved`, and `ready_for_implementation` booleans.
+- `active_change: null` represents the released and idle state.
+- An active change stores its workflow state inside `active_change.state`.
+- A new spec is created directly in `requirements`; absence before `SPEC_CREATED` is not a persisted lifecycle state.
+- Approval records are evidence for gates already crossed. They do not independently determine the state.
+- Manual edits that invalidate approved input rewind the state to the earliest affected gate.
+- Missing files, stale approval evidence, and other contradictions produce a derived consistency failure. `inconsistent` is not written as a competing workflow state.
+- Document generation does not itself cross a gate. A state advances only when the corresponding approval event succeeds.
+- Accelerated and batch workflows emit the same events and satisfy the same guards as phase-by-phase workflows.
+
+This removes invalid combinations such as `phase: "tasks-generated"` with unapproved requirements, while retaining explicit evidence of how each gate was crossed.
+
+## State list
+
+| State | Persistent representation | Meaning | Minimum consistent artifacts and metadata |
+| --- | --- | --- | --- |
+| `idle` | `active_change: null` | The current requirements, design, and contract describe released behavior. No change for this spec is active. | `requirements.md`, `design.md`, `contract.md`, `changelog.md`, and released metadata; no `brief.md` or `tasks.md`. |
+| `requirements` | `active_change.state: "requirements"` | The active change is being scoped and its current Requirement ID set is not yet approved. | Active roadmap membership, `brief.md`, `requirements.md`, matching milestone and change IDs, and `requirement_ids: null`. |
+| `design` | `active_change.state: "design"` | Requirements and the active Requirement ID set are approved. Technical design and contract impact are being established or revised. | Requirements gate evidence and a non-null, canonical `requirement_ids` array. |
+| `tasks` | `active_change.state: "tasks"` | Design and contract impact are approved. The executable milestone-local plan is being prepared or revised. | Valid requirements and design gate evidence plus current `design.md` and `contract.md`. |
+| `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.md`. |
+| `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, coverage, and required downstream review have fresh accepted evidence. Milestone release gates may still block publication. | Valid prior gate evidence, zero incomplete or blocked required tasks, and fresh completion evidence. |
+
+`release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
+
+## Conceptual `spec.json` shape
+
+The exact schema and digest format remain to be accepted, but the state model requires this distinction:
+
+```json
+{
+  "feature_name": "example",
+  "language": "en",
+  "active_change": {
+    "milestone_id": "<generated-id>",
+    "change_id": "<stable-id>",
+    "state": "design",
+    "requirement_ids": ["1.1", "1.2"],
+    "gate_evidence": {
+      "requirements": {
+        "approved_at": "<timestamp>",
+        "approval_mode": "explicit",
+        "input_revision": "<fingerprint>"
+      }
+    }
+  }
+}
+```
+
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. The final contract still needs to define provenance fields, fingerprint canonicalization, and whether approval evidence is embedded or referenced.
+
+## Event list
+
+### State-changing events
+
+| Event | Meaning | Principal producer |
+| --- | --- | --- |
+| `SPEC_CREATED` | Create a new spec directly inside the active milestone and open its first active change. | Discovery confirms the route; spec initialization authors the scaffold; the Rust CLI applies the guarded mutation. |
+| `CHANGE_STARTED` | Open one active change for an idle spec in the active milestone. | Discovery authors the confirmed intent; the Rust CLI applies the guarded mutation. |
+| `REQUIREMENTS_APPROVED` | Approve the current requirements and freeze the active Requirement ID set. | Requirements workflow through the Rust CLI contract. |
+| `REQUIREMENTS_CHANGED` | Declare that approved requirements or active scope changed and invalidate every downstream gate. | Requirements or discovery workflow through the Rust CLI contract. |
+| `DESIGN_APPROVED` | Approve design, requirement traceability, contract contents, and contract-impact analysis. | Design workflow through the Rust CLI contract. |
+| `DESIGN_CHANGED` | Declare that approved design or contract input changed and invalidate design and downstream gates. | Design or cross-spec review workflow through the Rust CLI contract. |
+| `TASKS_APPROVED` | Approve the current executable task plan and its complete active-requirement coverage. | Tasks workflow through the Rust CLI contract. |
+| `TASKS_CHANGED` | Declare that the approved task plan changed and invalidate tasks and completion gates. | Tasks or implementation workflow through the Rust CLI contract. |
+| `IMPLEMENTATION_VALIDATED` | Accept fresh spec-level completion and downstream-review evidence. | Integration validation / completion workflow through the Rust CLI contract. |
+| `COMPLETION_INVALIDATED` | Declare that code, required verification input, or accepted completion evidence changed. | Implementation, validation, or status repair workflow through the Rust CLI contract. |
+| `RELEASE_FINALIZED` | Finalize the verified release and return the spec to released / idle state. | Rust CLI release finalization. |
+| `SPEC_SCOPE_REMOVED` | Remove this spec's unreleased change from the active milestone after confirmed scope revision and content reconciliation. | Discovery confirms intent; the Rust CLI applies cleanup. |
+| `MILESTONE_ABANDONED` | Clear this spec's active change as part of an explicitly confirmed, fully reconciled milestone abandonment. | Rust CLI milestone abandonment operation. |
+
+### Non-transitioning events
+
+These operations may update documents or milestone context without advancing the per-spec state:
+
+| Event | Effect |
+| --- | --- |
+| `REQUIREMENTS_DRAFT_UPDATED` | Writes or revises requirements while the state remains `requirements`. |
+| `DESIGN_DRAFT_UPDATED` | Writes or revises design and contract while the state remains `design`. |
+| `TASK_PLAN_UPDATED` | Writes or revises tasks while the state remains `tasks`. |
+| `TASK_PROGRESS_RECORDED` | Updates task completion while the state remains `implementation`. |
+| `EVIDENCE_RECORDED` | Adds candidate evidence without accepting the completion gate. |
+| `TARGET_RELEASE_BOUND` | Updates the milestone's release binding; it does not advance a participating spec. |
+| `MILESTONE_SCOPE_REORDERED` | Changes milestone ordering or dependencies without changing a spec gate unless the semantic scope also changes. |
+| `STATE_REPAIRED` | Restores artifacts or metadata to match the declared state; the workflow state itself does not change. |
+
+If a draft update touches input that has already been approved, it is not a non-transitioning draft event. The workflow must emit the corresponding `*_CHANGED` invalidation event first.
+
+## State transition table
+
+`Current` lists the states from which the event is valid. Repeating an event against its already-realized target may return an idempotent no-op only when the inputs and recorded evidence are identical; otherwise it is a conflict.
+
+| Event | Current | Next | Required guards | Atomic state effects |
+| --- | --- | --- | --- | --- |
+| `SPEC_CREATED` | Spec does not exist | `requirements` | An active roadmap exists; the new spec boundary and name are confirmed in scope; no conflicting spec path exists; milestone and change IDs are unique; an active brief and initial requirements scaffold are available. | Create the persistent spec artifacts and `active_change`; set `requirement_ids: null`; create no approval evidence. |
+| `CHANGE_STARTED` | `idle` | `requirements` | An active roadmap exists; the spec is confirmed in scope; no active change exists; milestone and change IDs are unique; an active brief is available. | Create `active_change`; set `requirement_ids: null`; create no approval evidence. |
+| `REQUIREMENTS_APPROVED` | `requirements` | `design` | Requirements review passed; canonical IDs are valid and unique; the selected active set is explicitly approved and normally non-empty. | Freeze the ordered active set; record requirements gate evidence. |
+| `REQUIREMENTS_CHANGED` | Any active state | `requirements` | The changed scope belongs to the same active change, or discovery has confirmed the revised route. | Set `requirement_ids: null`; clear requirements, design, tasks, and completion gate evidence; retain downstream documents only as stale repair input. |
+| `DESIGN_APPROVED` | `design` | `tasks` | Requirements evidence is current; design covers every active Requirement ID; contract structure and impact review pass. | Record design and contract gate evidence. |
+| `DESIGN_CHANGED` | `design`, `tasks`, `implementation`, `release_ready` | `design` | Requirements and active set remain valid; otherwise use `REQUIREMENTS_CHANGED`. | Clear design, tasks, and completion gate evidence; retain requirements evidence. |
+| `TASKS_APPROVED` | `tasks` | `implementation` | Requirements and design evidence are current; every active Requirement ID maps to an executable task; task review passes. | Record tasks gate evidence. |
+| `TASKS_CHANGED` | `tasks`, `implementation`, `release_ready` | `tasks` | Requirements and design remain valid; otherwise use the earlier invalidation event. | Clear tasks and completion gate evidence. |
+| `IMPLEMENTATION_VALIDATED` | `implementation` | `release_ready` | Required tasks are complete and unblocked; fresh integration, coverage, contract-impact, and downstream-review evidence pass. | Record completion evidence and its input revisions. |
+| `COMPLETION_INVALIDATED` | `release_ready` | `implementation` | Requirements, design, contract, and tasks remain approved; otherwise use the corresponding earlier invalidation event. | Clear completion evidence only. |
+| `RELEASE_FINALIZED` | `release_ready` | `idle` | Milestone release preflight, publication, verification, immutable-reference checks, and final invariant recheck pass for every participant. | Append idempotent changelog entry; remove this change's `brief.md` and `tasks.md`; clear `active_change`. Roadmap archival is part of the enclosing milestone transaction. |
+| `SPEC_SCOPE_REMOVED` | Any active state | `idle` | Scope removal is confirmed; unstarted work or repository/spec content is restored and reconciled; no retained consumer dependency requires this active revision. | Remove milestone-local files for this change; clear `active_change`; create no release changelog entry. |
+| `MILESTONE_ABANDONED` | Any active state | `idle` | Full abandonment is explicitly confirmed; every participating spec and repository change is restored or reconciled. | Apply the same per-spec cleanup as scope removal as one milestone-wide guarded operation; remove the active roadmap; create no release history by default. |
+
+Events received from an invalid current state fail without mutation and return a stable diagnostic. The CLI must never repair an invalid transition by silently skipping a required gate.
+
+## Invalidation rules
+
+The rewind target is the earliest gate whose approved input changed:
+
+| Changed input | Rewind target | Evidence invalidated | Evidence retained |
+| --- | --- | --- | --- |
+| Requirements, active Requirement IDs, or user-visible scope | `requirements` | Requirements, design, tasks, completion | None |
+| Design, contract entries, contract classification, or required downstream-review scope | `design` | Design, tasks, completion | Requirements |
+| Task contents, coverage mapping, dependency order, or required task set | `tasks` | Tasks, completion | Requirements, design |
+| Implementation content or verification inputs only | `implementation` | Completion | Requirements, design, tasks |
+
+Rewinding does not automatically delete prose documents. It marks them as unapproved inputs so the responsible workflow can revise, replace, or deliberately reuse them. Destructive cleanup remains limited to successful release finalization or confirmed scope removal / abandonment.
+
+## Consistency health
+
+Workflow state and consistency health are separate dimensions:
+
+```text
+declared workflow state: idle | requirements | design | tasks | implementation | release_ready
+derived health:          consistent | inconsistent
+```
+
+Examples of `inconsistent` health include:
+
+- an active state without matching roadmap membership or milestone ID
+- `requirements` with a non-null approved active set
+- `design` or later without current requirements gate evidence
+- `tasks` or later without a valid `contract.md`
+- `implementation` or later without `tasks.md`
+- an approval fingerprint that does not match the current artifact revision
+- `idle` with milestone-local `brief.md` or `tasks.md`
+
+Read-only checks report the declared state, derived health, and repair diagnostics. They do not rewrite state. `STATE_REPAIRED` means an explicit repair operation has restored consistency and passed the same invariant check.
+
+## State transition diagram
+
+The diagram shows the normal forward path and approval invalidation rewinds. `SPEC_SCOPE_REMOVED` and `MILESTONE_ABANDONED` can return any active state to `idle` subject to the guards in the transition table.
+
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    [*] --> requirements: SPEC_CREATED
+    idle --> requirements: CHANGE_STARTED
+    requirements --> design: REQUIREMENTS_APPROVED
+    design --> tasks: DESIGN_APPROVED
+    tasks --> implementation: TASKS_APPROVED
+    implementation --> release_ready: IMPLEMENTATION_VALIDATED
+    release_ready --> idle: RELEASE_FINALIZED
+
+    design --> requirements: REQUIREMENTS_CHANGED
+    tasks --> requirements: REQUIREMENTS_CHANGED
+    implementation --> requirements: REQUIREMENTS_CHANGED
+    release_ready --> requirements: REQUIREMENTS_CHANGED
+
+    tasks --> design: DESIGN_CHANGED
+    implementation --> design: DESIGN_CHANGED
+    release_ready --> design: DESIGN_CHANGED
+
+    implementation --> tasks: TASKS_CHANGED
+    release_ready --> tasks: TASKS_CHANGED
+    release_ready --> implementation: COMPLETION_INVALIDATED
+
+    note right of idle
+      Scope removal or full milestone abandonment
+      returns any active state to idle after reconciliation.
+    end note
+
+    note right of release_ready
+      Per-spec readiness does not by itself
+      prove milestone release readiness.
+    end note
+```
+
+## CLI mutation contract
+
+Every state-changing event is an explicit guarded CLI mutation with:
+
+- expected current state and active change identity
+- structured event input
+- dry-run or plan output where the mutation is destructive
+- stable human and JSON diagnostics
+- atomic writes across the affected spec artifacts
+- an idempotency check for retries
+- a post-write consistency check
+
+Milestone-wide events additionally require one coherent mutation across the roadmap and all participating specs. Exact command names belong to the CLI contract and remain Draft.
+
+## Migration from the inherited metadata
+
+The current template stores `phase`, three pairs of `generated` / `approved` booleans, and `ready_for_implementation`. Migration must validate the whole combination before selecting a target state; `phase` alone is insufficient.
+
+| Validated inherited condition | Initial target state |
+| --- | --- |
+| No active milestone change and current behavior is released | `idle` |
+| Initialized or requirements generated but not approved | `requirements` |
+| Requirements approved; design absent or not approved | `design` |
+| Design approved; tasks absent or not approved | `tasks` |
+| Tasks approved with incomplete work | `implementation` |
+| Tasks complete with accepted fresh completion evidence | `release_ready` |
+
+Contradictory flags, missing artifacts, or absent evidence produce an explicit migration diagnostic. Migration must not guess the furthest plausible state or manufacture approval evidence.
+
+## Open questions
+
+- Exact gate-evidence schema, approval provenance, and content-fingerprint algorithm.
+- Whether an explicitly approved active Requirement ID set may be empty for any spec-backed change.
+- Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
+- Which repair operations the CLI may automate after presenting a dry-run plan.
+- Stable event, state, and diagnostic names in the public CLI and JSON contracts.

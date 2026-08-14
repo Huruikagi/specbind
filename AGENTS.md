@@ -18,6 +18,7 @@
 - [`docs/design/target-artifact-catalog.md`](docs/design/target-artifact-catalog.md) — proposed artifact ownership and lifecycle
 - [`docs/design/target-workflows.md`](docs/design/target-workflows.md) — proposed user journeys and responsibility boundaries
 - [`docs/design/active-spec-lifecycle.md`](docs/design/active-spec-lifecycle.md) — detailed draft for active specs and milestone finalization
+- [`docs/design/spec-state-machine.md`](docs/design/spec-state-machine.md) — draft per-spec states, events, invalidation rules, and transition diagram
 - [`docs/design/cli-agent-boundary.md`](docs/design/cli-agent-boundary.md) — proposed boundary between bundled deterministic CLI operations and agent skills
 - [`docs/design/cross-spec-contracts.md`](docs/design/cross-spec-contracts.md) — detailed draft for persistent cross-spec seam manifests and contract-first review
 - [`docs/design/rust-cli-migration.md`](docs/design/rust-cli-migration.md) — working migration plan from the TypeScript installer to the complete Rust CLI

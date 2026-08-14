@@ -12,6 +12,7 @@ Related documents:
 - [Target skill catalog](./target-skill-catalog.md)
 - [Target workflows](./target-workflows.md)
 - [Active spec lifecycle](./active-spec-lifecycle.md)
+- [Spec state machine](./spec-state-machine.md)
 - [Decision 0002: project release adapter](./decisions/0002-project-release-adapter.md)
 - [Decision 0003: active requirement set](./decisions/0003-active-requirement-set.md)
 - [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
@@ -62,7 +63,7 @@ Status: Draft
 | `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
 | `changelog.md` | Persists per spec as an index of released changes and evidence. | Release finalization workflow. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata. Unreleased abandoned work is omitted by default. |
-| `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; must also represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
+| `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
 
 ## Open questions
 
