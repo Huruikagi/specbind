@@ -23,6 +23,8 @@ The templates under `tools/specbind/templates/` are product content and remain i
 
 The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
 
+Official defaults are product-managed inputs, while installed `settings/templates/` and `settings/rules/` become user-owned customization surfaces under [Decision 0008](./decisions/0008-customization-surface.md). Packaging defaults into or beside the binary must not erase that ownership boundary.
+
 ## Target command model
 
 The product remains one executable:
@@ -77,6 +79,7 @@ Before implementation, capture expected behavior for:
 | File safety | Executor, file-operation, and path-safety behavior | No path escape, accidental broad overwrite, or backup regression. |
 | Interactive policy | Prompt and overwrite behavior | TTY and non-TTY behavior is explicitly tested. |
 | Rendering | Template tests | Supported variables, conditional content, and line endings remain defined. |
+| Settings customization | Current defaults plus customized settings fixtures | Untouched, modified, and newly introduced template/rule files follow explicit non-destructive update behavior. |
 
 Golden generated-tree fixtures are preferable to duplicating internal TypeScript unit structure in Rust. Each fixture should identify the product-contract version or accepted design change it represents. This preserves user-visible behavior during the port while allowing both an idiomatic rewrite and deliberate evolution of the installed artifacts.
 
@@ -91,6 +94,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 - Classify observed behavior as preserve, intentionally change, or remove.
 - Define normalized line-ending and path expectations across platforms.
 - Capture `.kiro`, `.specbind`, custom-root, and conflicting-root migration cases.
+- Capture untouched, customized, and newly added shared template/rule update cases.
 
 ### 2. Read-only Rust core
 

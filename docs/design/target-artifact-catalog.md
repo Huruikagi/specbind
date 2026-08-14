@@ -17,6 +17,7 @@ Related documents:
 - [Decision 0004: release history layout](./decisions/0004-release-history-layout.md)
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
 - [Decision 0007: configurable `.specbind` root](./decisions/0007-spec-root.md)
+- [Decision 0008: shared settings customization](./decisions/0008-customization-surface.md)
 
 Status: Draft
 
@@ -45,6 +46,8 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
+| `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Updates must not silently overwrite local changes. |
+| `{{SPEC_DIR}}/settings/rules/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by all supported agents. | Accepted | Supported customization surface for shared judgment criteria and generation principles; replaces editable agent-specific rule copies as the target model. |
 | `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Draft | Defines Prepare, Publish, Verify, and After finalize instructions without overriding core release gates. |
 
 ## Spec artifacts

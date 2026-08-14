@@ -15,6 +15,7 @@ Status: Draft
 - Keep equivalent Claude Code and Codex workflows aligned without hiding platform-specific capabilities.
 - Treat specs as active, maintained descriptions of the product across milestones and releases.
 - Move deterministic parsing, invariant checks, and state mutations out of agent-specific shell instructions and into the bundled CLI.
+- Keep document formats and project-wide AI rules customizable through shared settings consumed consistently by every supported agent.
 
 ## Spec lifecycle
 

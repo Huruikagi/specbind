@@ -118,7 +118,9 @@ CLI mechanical check
 
 For the traceability check, requirements, design, tasks, validation, and release-readiness workflows should consume the same CLI contract instead of embedding agent-specific grep instructions. A standalone validation skill is unnecessary when its only purpose would be to expose one deterministic CLI command.
 
-Consumer customization remains safe because installing or updating the CLI does not require overwriting a customized skill. Generated skill updates can adopt newer commands through the normal SpecBind template update and merge policy.
+The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templates/` and `{{SPEC_DIR}}/settings/rules/`; see [Decision 0008](./decisions/0008-customization-surface.md). Generated skills, agent metadata, and manifests are product-managed resources. The installer must preserve conflicting local edits safely, but direct skill modification is not the cross-agent customization contract.
+
+The CLI and skills must respect supported settings customization while still enforcing documented machine-readable structure. A mechanical check reports an incompatible customized format explicitly rather than silently falling back to agent-specific searches.
 
 ## Initial implementation boundary
 
