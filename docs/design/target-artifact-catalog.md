@@ -22,6 +22,7 @@ Related documents:
 - [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
 - [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
+- [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 
 Status: Draft
 
@@ -65,7 +66,7 @@ Status: Draft
 | `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `tasks.yaml` | Exists only for the active milestone's structured task plan and execution state. | Task and implementation workflows. | Accepted | The only canonical task artifact; starts fresh between milestones and is removed by successful release finalization. No parallel `tasks.md` view is maintained. |
 | `changelog.md` | Persists per spec as an index of released changes and evidence. | Release finalization workflow. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata. Unreleased abandoned work is omitted by default. |
-| `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.yaml`. |
+| `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.yaml`. |
 
 ## Open questions
 

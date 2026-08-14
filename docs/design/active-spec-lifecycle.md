@@ -26,7 +26,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
 | `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
-| `spec.json` | Current lifecycle, active-change metadata, and approvals. | Represents an active change. | Represents released state with no active change. |
+| `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 
 Absence of `brief.md` and `tasks.yaml` is the normal idle state of a released spec. Placeholder working documents should not be required.
@@ -77,7 +77,7 @@ Discovery owns creating the active brief and transitioning an idle released spec
 
 ## Active requirement set
 
-`requirements.md` remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone and store it in `spec.json`; see [Decision 0003](./decisions/0003-active-requirement-set.md):
+`requirements.md` remains the complete current requirement set. Separately, the requirements phase must establish an explicit active requirement set for the milestone and store it in `spec.yaml`; see [Decision 0003](./decisions/0003-active-requirement-set.md) and [Decision 0014](./decisions/0014-structured-spec-metadata.md):
 
 - It contains every Requirement ID that must be implemented or revalidated for the active change.
 - It may include unchanged existing requirements when the change requires their reimplementation or revalidation.
@@ -86,7 +86,7 @@ Discovery owns creating the active brief and transitioning an idle released spec
 - Changing the set returns the workflow to the requirements phase and invalidates affected downstream approval.
 - Design traces the same set, and tasks must provide 100% coverage of it.
 
-Within `spec.json`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a unique, deterministically ordered array of canonical Requirement IDs. Release finalization clears `active_change` as part of returning the spec to released / idle state.
+Within `spec.yaml`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a unique, deterministically ordered array of canonical Requirement IDs. Release finalization clears `active_change` as part of returning the spec to released / idle state.
 
 ## Cross-spec contract
 
@@ -147,7 +147,7 @@ The portable release contract is a gated state transition. Project publication i
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
 7. The CLI appends one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
 8. The CLI removes each participating spec's `brief.md` and `tasks.yaml`.
-9. The CLI transitions each `spec.json` to released / no-active-change state.
+9. The CLI transitions each `spec.yaml` to released / no-active-change state.
 10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md`, refusing conflicting archive content.
 11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
 12. The agent runs optional project After finalize instructions and reports their result separately.

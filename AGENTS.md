@@ -34,6 +34,7 @@
 - [`docs/design/decisions/0011-cross-spec-contract.md`](docs/design/decisions/0011-cross-spec-contract.md) — accepted persistent contract manifest and contract-first cross-spec review direction
 - [`docs/design/decisions/0012-delegated-approval.md`](docs/design/decisions/0012-delegated-approval.md) — accepted explicit-versus-delegated gate approval and non-interactive execution boundary
 - [`docs/design/decisions/0013-structured-task-artifact.md`](docs/design/decisions/0013-structured-task-artifact.md) — accepted structured `tasks.yaml` source-of-truth direction
+- [`docs/design/decisions/0014-structured-spec-metadata.md`](docs/design/decisions/0014-structured-spec-metadata.md) — accepted structured `spec.yaml` source-of-truth direction
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

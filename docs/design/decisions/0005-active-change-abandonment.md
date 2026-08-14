@@ -13,7 +13,7 @@ SpecBind artifacts describe the intended and current product state, while Git re
 - SpecBind will not introduce a dedicated `specbind-cancel` skill.
 - Removing unstarted work from an active milestone is a normal milestone-scope revision.
 - Rolling back partially implemented, unreleased work is explicit project work performed with version-control operations. SpecBind does not automatically revert code or specification content.
-- After a partial rollback, the active roadmap, briefs, current requirements and design, tasks, and `spec.json` state must be reconciled with the repository state before work continues.
+- After a partial rollback, the active roadmap, briefs, current requirements and design, tasks, and `spec.yaml` state must be reconciled with the repository state before work continues.
 - Reversing released behavior is a new active milestone change and follows the normal specification and release workflow.
 - Abandoning an entire unreleased milestone is an explicit, user-confirmed lifecycle operation. It may close active-change metadata and remove milestone-local `brief.md`, `tasks.yaml`, and `steering/roadmap.md` only after affected repository and active-spec content has been restored or reconciled.
 - An abandoned unreleased milestone is not added to per-spec `changelog.md` and its roadmap is not archived under `releases/` by default. Git history remains available when the abandoned work was committed.

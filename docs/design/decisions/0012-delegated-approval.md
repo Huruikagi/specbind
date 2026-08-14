@@ -48,7 +48,7 @@ An accelerated workflow must establish delegation in its run context before it c
 - time the delegation was recorded
 - whether the run may continue across every covered passing gate or must stop at a named boundary
 
-This run context is orchestration state, not a user-facing SpecBind artifact. It is not written to `spec.json`, `roadmap.md`, or a separate authorization file. If the workflow run ends or restarts, its delegation ends; continuing acceleration requires a new intentional workflow invocation.
+This run context is orchestration state, not a user-facing SpecBind artifact. It is not written to `spec.yaml`, `roadmap.md`, or a separate authorization file. If the workflow run ends or restarts, its delegation ends; continuing acceleration requires a new intentional workflow invocation.
 
 Delegation is consumed only after each gate independently passes. It cannot:
 

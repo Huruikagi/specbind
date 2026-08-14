@@ -10,6 +10,8 @@ Explicit and delegated gate approval, non-interactive execution, and rejection o
 
 The active implementation plan and progress use canonical `tasks.yaml` rather than a Markdown task document under [Decision 0013](./decisions/0013-structured-task-artifact.md).
 
+Per-spec lifecycle metadata uses canonical `spec.yaml`; CLI configuration and installation manifests remain outside that decision under [Decision 0014](./decisions/0014-structured-spec-metadata.md).
+
 Status: Draft
 
 ## Design goals
@@ -37,7 +39,7 @@ Requirements recorded so far:
 - A milestone has a machine-generated stable identity independent of an initially unknown release version.
 - Requirements and design are maintained when represented behavior changes.
 - Each spec has at most one active milestone change at a time.
-- Requirements freezes an explicit active requirement set in `spec.json` for downstream design and task coverage.
+- Requirements freezes an explicit active requirement set in `spec.yaml` for downstream design and task coverage.
 - Briefs and tasks are milestone-local working documents, not append-only release history.
 - Released change history is indexed separately from the current requirements and design.
 - A release closes a milestone, not the specs involved in that milestone.
@@ -181,7 +183,7 @@ bundled CLI: parse and check deterministic invariants
   -> bundled CLI: perform explicit, guarded state mutation
 ```
 
-The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.json`, `design.md`, and `tasks.yaml`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
+The first concrete checker validates active Requirement ID traceability across `requirements.md`, `spec.yaml`, `design.md`, and `tasks.yaml`. Skills consume its concise or JSON result instead of independently rebuilding the same check with shell searches. Mechanical success is necessary but never substitutes for semantic review.
 
 ## Approval and automation model
 

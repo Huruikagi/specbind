@@ -24,6 +24,7 @@ Related documents:
 - [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
 - [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
+- [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 
 ## Status and change types
 
@@ -48,7 +49,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design, active-requirement traceability, and the cross-spec contract. |
 | `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
 | `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
-| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.json`. |
+| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
 | `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Distinguish released state, active change, current tasks, and history. |
 | `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
 | `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |

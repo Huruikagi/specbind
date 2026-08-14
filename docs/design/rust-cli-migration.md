@@ -23,6 +23,8 @@ The templates under `tools/specbind/templates/` are product content and remain i
 
 [Decision 0013](./decisions/0013-structured-task-artifact.md) is one such intentional product change: target workflows create canonical `tasks.yaml`, while inherited `tasks.md` is handled only as migration input.
 
+[Decision 0014](./decisions/0014-structured-spec-metadata.md) likewise makes `spec.yaml` the target per-spec metadata artifact. The persisted CLI configuration `.specbind.json` and JSON installation manifests are not changed by that decision.
+
 The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
 
 Official defaults are product-managed inputs, while installed `settings/templates/` and `settings/rules/` become user-owned customization surfaces under [Decision 0008](./decisions/0008-customization-surface.md). Packaging defaults into or beside the binary must not erase that ownership boundary.
@@ -100,6 +102,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 - Capture `.kiro`, `.specbind`, custom-root, and conflicting-root migration cases.
 - Capture untouched, customized, and newly added shared template/rule update cases.
 - Capture unambiguous and ambiguous in-progress `tasks.md` to `tasks.yaml` migration cases.
+- Capture valid, contradictory, and partially complete `spec.json` to `spec.yaml` migration cases.
 
 ### 2. Read-only Rust core
 

@@ -2,13 +2,13 @@
 
 Status: Draft
 
-This document defines the target per-spec workflow states and events stored through `spec.json`. It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md), the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md), and the approval modes accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
+This document defines the target per-spec workflow states and events stored through `spec.yaml` under [Decision 0014](./decisions/0014-structured-spec-metadata.md). It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md), the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md), and the approval modes accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
 
 The state machine describes one spec's active change. Milestone-wide scope, ordering, target release binding, and roadmap archival remain milestone concerns.
 
 ## Modeling decisions
 
-- `spec.json` has one authoritative workflow state instead of separately writable `phase`, `generated`, `approved`, and `ready_for_implementation` booleans.
+- `spec.yaml` has one authoritative workflow state instead of separately writable `phase`, `generated`, `approved`, and `ready_for_implementation` booleans.
 - `active_change: null` represents the released and idle state.
 - An active change stores its workflow state inside `active_change.state`.
 - A new spec is created directly in `requirements`; absence before `SPEC_CREATED` is not a persisted lifecycle state.
@@ -34,35 +34,32 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 
 `release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
 
-## Conceptual `spec.json` shape
+## Conceptual `spec.yaml` shape
 
 The exact schema and digest format remain to be accepted, but the state model requires this distinction:
 
-```json
-{
-  "feature_name": "example",
-  "language": "en",
-  "active_change": {
-    "milestone_id": "<generated-id>",
-    "change_id": "<stable-id>",
-    "state": "design",
-    "requirement_ids": ["1.1", "1.2"],
-    "gate_evidence": {
-      "requirements": {
-        "approved_at": "<timestamp>",
-        "approval_mode": "delegated",
-        "workflow": "specbind-spec-quick",
-        "input_revisions": {
-          "requirements.md": "<fingerprint>",
-          "brief.md": "<fingerprint>"
-        }
-      }
-    }
-  }
-}
+```yaml
+schema_version: 1
+feature_name: example
+language: en
+active_change:
+  milestone_id: <generated-id>
+  change_id: <stable-id>
+  state: design
+  requirement_ids:
+    - "1.1"
+    - "1.2"
+  gate_evidence:
+    requirements:
+      approved_at: <timestamp>
+      approval_mode: delegated
+      workflow: specbind-spec-quick
+      input_revisions:
+        requirements.md: <fingerprint>
+        brief.md: <fingerprint>
 ```
 
-Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` records the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.json` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the exact gate-evidence fields and fingerprint canonicalization.
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` records the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.yaml` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the exact gate-evidence fields and fingerprint canonicalization.
 
 ## Event list
 
@@ -212,7 +209,7 @@ Milestone-wide events additionally require one coherent mutation across the road
 
 ## Migration from the inherited metadata
 
-The current template stores `phase`, three pairs of `generated` / `approved` booleans, and `ready_for_implementation`. Migration must validate the whole combination before selecting a target state; `phase` alone is insufficient.
+The current `spec.json` template stores `phase`, three pairs of `generated` / `approved` booleans, and `ready_for_implementation`. Migration must validate the whole combination before writing `spec.yaml`; `phase` alone is insufficient.
 
 | Validated inherited condition | Initial target state |
 | --- | --- |

@@ -58,7 +58,7 @@ The first check should mechanically verify:
 
 - canonical Requirement IDs can be extracted from `requirements.md`
 - Requirement IDs use the supported format and are unique
-- every ID in `spec.json.active_change.requirement_ids` exists in `requirements.md`
+- every ID in `spec.yaml.active_change.requirement_ids` exists in `requirements.md`
 - the active Requirement ID set is established before downstream coverage is claimed
 - `design.md` traces every active Requirement ID
 - `tasks.yaml` maps every active Requirement ID through its schema-defined requirement references
@@ -95,7 +95,7 @@ Failure output should contain stable diagnostic codes, affected IDs, and source 
 
 ```text
 FAIL
-ACTIVE_UNKNOWN: 9.9 at spec.json
+ACTIVE_UNKNOWN: 9.9 at spec.yaml
 DESIGN_MISSING: 3.2
 TASKS_MISSING: 4.1, 4.2
 INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.yaml:18
