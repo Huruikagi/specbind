@@ -148,7 +148,7 @@ These commands replace routine raw-YAML interpretation but do not create a gener
 
 [Decision 0058](./decisions/0058-artifact-inventory-read-model.md) accepts `specbind artifact list <spec>` and `specbind artifact read <spec> <selector>...` as the read-only boundary over Decision 0057 type-based discovery. The list command returns a compact versioned inventory without bodies or hashes. The read command resolves logical selectors rather than agent-supplied paths; a single raw read returns untouched Markdown, while multiple reads require a provenance-preserving JSON envelope.
 
-Agent skills list first, select only semantically relevant artifacts, and then read those selectors. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so read output never becomes mutation authority.
+Agent skills directly read a known singleton or authoritative collection selector. They list first only when they need collection membership, optional-artifact discovery, selector choice, or structural diagnostics. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so list and read outputs never become mutation authority.
 
 ## Completion validation handshake
 
