@@ -50,6 +50,25 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
+  it('defines timezone-qualified RFC 3339 gate timestamps', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const requirementsEvidence = schema.$defs?.requirementsGateEvidence as {
+      properties?: Record<string, unknown>;
+    };
+
+    expect(schema.$defs?.passedAt).toEqual({
+      type: 'string',
+      description: 'RFC 3339 date-time with an explicit UTC or numeric-offset timezone.',
+      format: 'date-time',
+      pattern: '(?:[Zz]|[+-][0-9]{2}:[0-9]{2})$',
+    });
+    expect(requirementsEvidence.properties?.passed_at).toEqual({
+      $ref: '#/$defs/passedAt',
+    });
+  });
+
   it('defines a project-scoped full Git implementation revision', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),

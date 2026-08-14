@@ -12,7 +12,7 @@ SpecBind needs to explain why the current active change is `release_ready`, not 
 
 - `spec.yaml` stores at most the currently accepted completion-gate evidence for the active change.
 - Only a `GO` candidate that passes the complete Decision 0029 CLI handshake is persisted.
-- Accepted evidence is written atomically with the `IMPLEMENTATION_VALIDATED` transition and records `passed_at` for that accepted revision.
+- Accepted evidence is written atomically with the `IMPLEMENTATION_VALIDATED` transition and records the Decision 0036 timezone-qualified RFC 3339 `passed_at` for that accepted revision.
 - `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failure, stale-input rejection, and malformed candidate evidence do not mutate `spec.yaml` or any lifecycle state.
 - Candidate evidence remains in the validation run context until acceptance. It is not a separately persisted SpecBind artifact and does not have its own lifecycle event.
 - Validation output reports failures, missing manual checks, ownership, and remediation to the caller. CI systems, agent task logs, or other project tooling may retain that output independently of SpecBind metadata.

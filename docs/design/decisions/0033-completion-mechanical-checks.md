@@ -21,7 +21,7 @@ Projects may run several commands of the same type and may have important checks
 - The schema does not prescribe that every project has all categories. The validation skill derives the required set from project automation and rules, while the CLI requires a non-empty, structurally successful submitted set.
 - `command` contains no inline secret value. Credentials and sensitive values must be supplied outside the recorded command, such as through the execution environment; environment variable names may remain visible.
 - Entries do not store stdout, stderr, duration, per-command timestamps, environment values, working-directory copies, agent identity, or retry history.
-- The completion-level `passed_at` supplies the accepted timestamp. Detailed logs remain with CI, agent-run output, or other project tooling.
+- The completion-level `passed_at` supplies the accepted timestamp in the Decision 0036 format. Detailed logs remain with CI, agent-run output, or other project tooling.
 
 Example:
 

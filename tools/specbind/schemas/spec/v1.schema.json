@@ -3,6 +3,12 @@
   "title": "SpecBind spec metadata v1",
   "description": "Initial runtime-contract scaffold for spec.yaml. Add fields only after their schema decisions are accepted.",
   "$defs": {
+    "passedAt": {
+      "type": "string",
+      "description": "RFC 3339 date-time with an explicit UTC or numeric-offset timezone.",
+      "format": "date-time",
+      "pattern": "(?:[Zz]|[+-][0-9]{2}:[0-9]{2})$"
+    },
     "fingerprint": {
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"
@@ -65,8 +71,7 @@
       ],
       "properties": {
         "passed_at": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/passedAt"
         },
         "approval_mode": {
           "enum": [
