@@ -180,7 +180,7 @@ The portable release contract is a gated state transition. Project publication i
 11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
 12. The agent runs optional project After finalize instructions and reports their result separately.
 
-If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate `log.md` entries or remove unrelated work. An After finalize failure does not undo the release or core finalization. See [Decision 0010](./decisions/0010-release-execution-boundary.md).
+If publishing or release verification fails, finalization does not run and active documents remain intact. External partial success is reconciled by the agent and human without creating a partially released SpecBind milestone. Core finalization always covers the complete participating set as one logical transition; re-running it must not duplicate `log.md` entries or remove unrelated work. An After finalize failure becomes follow-up work and does not undo or reopen the release. See [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0071](./decisions/0071-no-partial-milestone-release.md).
 
 ## Lifecycle and dependency semantics
 

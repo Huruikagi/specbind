@@ -41,6 +41,7 @@ Related documents:
 - [Decision 0068: release log summary input](./decisions/0068-release-log-summary-input.md)
 - [Decision 0069: stateless release preflight](./decisions/0069-stateless-release-preflight.md)
 - [Decision 0070: derived release readiness](./decisions/0070-derived-release-readiness.md)
+- [Decision 0071: no partial milestone release](./decisions/0071-no-partial-milestone-release.md)
 
 Status: Draft
 

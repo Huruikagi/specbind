@@ -36,9 +36,9 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 - A preflight failure prevents adapter execution.
 - A failure in applicable preparation, publication, or project-verification guidance prevents core finalization and preserves active SpecBind artifacts.
-- Publication success followed by failed verification remains an active milestone until verification and finalization succeed; it is not reported as an unreleased rollback automatically.
-- A core finalization failure is retryable and must not duplicate history or partially discard unrelated work.
-- An After finalize failure does not roll back a verified release or completed core finalization. It is reported as follow-up work.
+- Publication success followed by failed verification remains an active milestone until verification and finalization succeed; under Decision 0071 it is reported as external partial success, not as a completed SpecBind release or automatic rollback.
+- A core finalization failure is retryable and must not duplicate history, partially finalize the milestone, or discard unrelated work.
+- An After finalize failure does not roll back or reopen a verified release or completed core finalization. It is reported as follow-up work under Decision 0071.
 
 ## Boundaries
 
