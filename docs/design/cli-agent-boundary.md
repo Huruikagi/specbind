@@ -155,6 +155,8 @@ Under Decision 0030, only successfully accepted evidence is persisted. `NO-GO`, 
 
 The exact command names and accepted structured evidence schema remain follow-up details. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
 
+For accepted mechanical evidence, Decision 0033 requires an ordered list of categorized, display-safe commands with successful exit codes. The agent discovers and executes the project-appropriate set; the CLI validates its strict shape and rejects non-success entries without storing raw output.
+
 ## Initial implementation boundary
 
 The first increment should remain narrow:

@@ -12,6 +12,41 @@
       "description": "Full lowercase Git commit object ID; semantic validation requires the form used by the current project repository.",
       "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
     },
+    "mechanicalCheck": {
+      "type": "object",
+      "required": [
+        "kind",
+        "command",
+        "exit_code"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "test",
+            "build",
+            "smoke",
+            "lint",
+            "typecheck",
+            "custom"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exit_code": {
+          "const": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "mechanicalCheckList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mechanicalCheck"
+      }
+    },
     "requirementIdList": {
       "type": "array",
       "items": {

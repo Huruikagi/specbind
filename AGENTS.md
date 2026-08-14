@@ -54,6 +54,7 @@
 - [`docs/design/decisions/0030-persist-only-accepted-completion-evidence.md`](docs/design/decisions/0030-persist-only-accepted-completion-evidence.md) — accepted current-state-only storage for successful completion evidence
 - [`docs/design/decisions/0031-project-scoped-revision-format.md`](docs/design/decisions/0031-project-scoped-revision-format.md) — accepted scalar Git implementation revision interpreted from project context
 - [`docs/design/decisions/0032-gate-local-freshness-chain.md`](docs/design/decisions/0032-gate-local-freshness-chain.md) — accepted gate-local revision ownership and cascading freshness semantics
+- [`docs/design/decisions/0033-completion-mechanical-checks.md`](docs/design/decisions/0033-completion-mechanical-checks.md) — accepted concise categorized command evidence for successful completion validation
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

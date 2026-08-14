@@ -19,7 +19,7 @@ SpecBind needs to explain why the current active change is `release_ready`, not 
 - A durable implementation lesson may be written to `implementation-notes.md`; a task that cannot proceed uses structured `blocked` state. Neither mechanism is a validation-attempt log.
 - When completion is invalidated, the accepted completion evidence is cleared. A later successful handshake writes one new current record rather than appending attempt history.
 - Release finalization summarizes the accepted validation result in changelog and release history as already required; it does not migrate failed attempts into release artifacts.
-- The completion evidence schema contains no failure counter, attempt array, rejected candidate, remediation transcript, raw command output, or conversation transcript.
+- The completion evidence schema contains no failure counter, attempt array, rejected candidate, remediation transcript, raw command output, or conversation transcript. Decision 0033 retains only concise successful command metadata.
 
 ## Consequences
 

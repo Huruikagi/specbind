@@ -63,6 +63,28 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
+  it('defines concise successful mechanical completion checks', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const check = schema.$defs?.mechanicalCheck as {
+      required?: string[];
+      properties?: Record<string, unknown>;
+      additionalProperties?: unknown;
+    };
+
+    expect(check.required).toEqual(['kind', 'command', 'exit_code']);
+    expect(check.properties?.kind).toEqual({
+      enum: ['test', 'build', 'smoke', 'lint', 'typecheck', 'custom'],
+    });
+    expect(check.properties?.exit_code).toEqual({ const: 0 });
+    expect(check.additionalProperties).toBe(false);
+    expect(schema.$defs?.mechanicalCheckList).toMatchObject({
+      type: 'array',
+      minItems: 1,
+    });
+  });
+
   it('defines readable requirements gate evidence without a brief fingerprint', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
