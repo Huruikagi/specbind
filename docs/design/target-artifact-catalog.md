@@ -42,6 +42,7 @@ Related documents:
 - [Decision 0069: stateless release preflight](./decisions/0069-stateless-release-preflight.md)
 - [Decision 0070: derived release readiness](./decisions/0070-derived-release-readiness.md)
 - [Decision 0071: no partial milestone release](./decisions/0071-no-partial-milestone-release.md)
+- [Decision 0072: explicit release rebinding](./decisions/0072-explicit-release-rebinding.md)
 
 Status: Draft
 

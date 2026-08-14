@@ -115,12 +115,12 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - capture a clean Decision 0054 Git baseline, generate a branch-safe UUID v7, and create an active roadmap with both its stable milestone ID and baseline revision
 - apply an explicitly confirmed roadmap scope update
 - mark or reopen a direct roadmap change through its sparse completed-state mutation
-- bind or rebind the target release version
+- bind the target release through `specbind milestone bind-release <version> [--json]`, or replace a non-null binding only through its explicitly confirmed `--rebind` form
 - check milestone and per-spec lifecycle consistency
 - perform the deterministic portion of confirmed abandonment cleanup
 - run the stateless `specbind release preflight [--json]` readiness check and idempotent finalization mutations
 
-These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind release finalize`, accepted by Decision 0065 with its narrow target-path `--force` override. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
+These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065 with its narrow target-path `--force` override. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
 The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
 

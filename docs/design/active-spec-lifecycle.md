@@ -73,7 +73,7 @@ work_items:
 ---
 ```
 
-This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user. The baseline revision remains unchanged through ordinary work so contract review always compares the complete milestone delta.
+This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Under [Decision 0072](./decisions/0072-explicit-release-rebinding.md), changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts: initial binding is ordinary, while replacing a non-null value requires the explicit `--rebind` operation and user confirmation in agent-assisted use. The generated ID is not intended to be selected or named by the user. The baseline revision remains unchanged through ordinary work so contract review always compares the complete milestone delta.
 
 The Rust CLI requires a clean repository immediately before roadmap creation, captures the full current `HEAD` as `baseline_revision`, and generates the UUID v7 locally without mutating a project counter. Mainline, hotfix, and worktree milestones therefore receive both collision-resistant identities and branch-local diff baselines. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
@@ -86,7 +86,7 @@ Each spec has at most one active change at a time. Under [Decision 0062](./decis
 - boundary impact and dependencies
 - source request or issue
 
-None of those topics is a required parsed section. Milestone identity and release binding remain authoritative in the roadmap and `spec.yaml`, not in brief metadata. Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new brief artifact; it does not append the new change to the previous milestone's brief.
+None of those topics is a required parsed section. Milestone identity is connected through the roadmap and `spec.yaml`, while release binding is roadmap-owned under Decision 0044; neither belongs in brief metadata. Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new brief artifact; it does not append the new change to the previous milestone's brief.
 
 Discovery owns creating the active brief and transitioning an idle released spec into an active-change state. The precise routing and approval invalidation rules still need refinement.
 
@@ -249,6 +249,5 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- Whether rebinding a target release requires explicit approval after implementation has started.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - Whether immutable history may use something other than a Git release tag.

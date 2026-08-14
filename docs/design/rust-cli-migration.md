@@ -48,12 +48,13 @@ The current option-only installer interface may remain as a compatibility alias,
 specbind install [options]
 specbind check traceability <spec-path> [--json]
 specbind milestone <operation> [options]
+specbind milestone bind-release <version> [--rebind] [--json]
 specbind release <operation> [options]
 specbind release preflight [--json]
 specbind release finalize --log-entries <path|-> [--json] [--force]
 ```
 
-These command names are Draft except for `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065. The common constraint is one Rust `specbind` CLI.
+These command names are Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065. The common constraint is one Rust `specbind` CLI.
 
 ## Suggested Rust boundaries
 
