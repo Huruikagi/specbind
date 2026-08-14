@@ -1,0 +1,11 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Pending task with runtime context
+      requirement_ids:
+        - "1.1"
+execution:
+  implementation_notes:
+    - The project requires a separate native-module rebuild before tests

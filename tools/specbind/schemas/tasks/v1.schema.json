@@ -199,6 +199,9 @@
       "properties": {
         "tasks": {
           "$ref": "#/$defs/taskExecutionStates"
+        },
+        "implementation_notes": {
+          "$ref": "#/$defs/nonEmptyStringList"
         }
       },
       "additionalProperties": false

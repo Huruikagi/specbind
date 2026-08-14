@@ -22,3 +22,5 @@ execution:
     "1.2":
       status: blocked
       blocked_reason: Waiting for an upstream contract decision
+  implementation_notes:
+    - Task 1.1 established the reusable validation setup

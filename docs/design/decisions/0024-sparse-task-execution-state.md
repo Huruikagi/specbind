@@ -23,7 +23,7 @@ Tasks may also be added during an active milestone. Treating absence as pending 
 - Groups never receive execution entries.
 - Execution map keys must resolve to current executable tasks. Plan mutations add, remove, or renumber execution keys atomically where applicable.
 - `completed_at`, `blocked_at`, commit hashes, and review transcripts are not stored in v1 task execution state. Git history and gate evidence retain their respective audit responsibilities.
-- Execution state and future implementation notes are excluded from the task-plan fingerprint under Decision 0018.
+- Execution state and the implementation-note list accepted by Decision 0026 are excluded from the task-plan fingerprint under Decision 0018.
 
 ## Consequences
 
@@ -32,7 +32,3 @@ Tasks may also be added during an active milestone. Treating absence as pending 
 - Status output derives pending tasks by subtracting completed and blocked IDs from the executable plan.
 - Completion requires every executable task to have a completed entry and no blocked entries.
 - JSON Schema validates state shape and Task ID syntax; Rust semantic validation resolves keys against executable plan tasks.
-
-## Open question
-
-- The structured representation and lifecycle of cross-task implementation notes.

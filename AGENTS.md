@@ -47,6 +47,7 @@
 - [`docs/design/decisions/0023-sparse-task-plan-shape.md`](docs/design/decisions/0023-sparse-task-plan-shape.md) — accepted strict sparse group and executable-task plan objects
 - [`docs/design/decisions/0024-sparse-task-execution-state.md`](docs/design/decisions/0024-sparse-task-execution-state.md) — accepted sparse persisted completed and blocked task states
 - [`docs/design/decisions/0025-task-read-model.md`](docs/design/decisions/0025-task-read-model.md) — accepted human and JSON CLI projections for task status and detail
+- [`docs/design/decisions/0026-runtime-implementation-notes.md`](docs/design/decisions/0026-runtime-implementation-notes.md) — accepted unstructured runtime implementation-note list for later agents
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

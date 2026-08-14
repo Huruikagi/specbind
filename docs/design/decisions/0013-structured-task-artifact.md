@@ -33,6 +33,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - The target schema has no optional-task category; every executable task in the active plan is required under Decision 0022.
 - Group and executable-task objects use the strict sparse plan shape accepted by Decision 0023.
 - Task progress uses the sparse persisted `completed | blocked` execution state accepted by Decision 0024; absence means pending and `in_progress` remains run-scoped.
+- Cross-task implementation notes remain a simple runtime string list for later agents under Decision 0026.
 - Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
 
 ## Lifecycle
@@ -82,7 +83,6 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 
 ## Open schema details
 
-- Structured implementation-note fields and lifecycle.
 - Completion and verification evidence references.
 - Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
 - Exact `tasks.md` migration grammar and diagnostics.

@@ -141,4 +141,17 @@ describe('runtime schema scaffolds', () => {
       additionalProperties: false,
     });
   });
+
+  it('defines implementation notes as an optional non-empty string list', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const execution = schema.$defs?.taskExecution as {
+      properties?: Record<string, unknown>;
+    };
+
+    expect(execution.properties).toHaveProperty('implementation_notes', {
+      $ref: '#/$defs/nonEmptyStringList',
+    });
+  });
 });
