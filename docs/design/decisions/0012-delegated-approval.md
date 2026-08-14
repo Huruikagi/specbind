@@ -84,7 +84,7 @@ Every accepted gate records enough structured evidence to answer:
 - When did the current revision pass the gate?
 - Do the current inputs still match the approved revision?
 
-Artifact fingerprints are required to detect out-of-band edits. Their stored value uses the `sha256:<64 lowercase hex characters>` format accepted in [Decision 0016](./0016-fingerprint-value-format.md); input projections and canonicalization remain Draft. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
+Artifact fingerprints are required to detect out-of-band edits. Their stored value uses the `sha256:<64 lowercase hex characters>` format accepted in [Decision 0016](./0016-fingerprint-value-format.md). Requirements inputs are defined by Decisions 0017 and 0018, and the task-plan projection and canonicalization by Decision 0028; design- and completion-gate details remain Draft. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
 
 ## Consequences
 

@@ -26,6 +26,7 @@ Safe or empty defaults are clearer when represented by field absence. Exception 
 
 - An executable task requires `id`, `kind: task`, `title`, and a non-empty `requirement_ids` array.
 - `details`, `completion_criteria`, `boundaries`, `contracts`, and `depends_on` are omitted when empty. If present, each is a non-empty array.
+- `details` and `completion_criteria` are ordered sequences. `requirement_ids`, `boundaries`, `contracts`, and `depends_on` are unique sets whose presentation order is normalized only for fingerprinting under Decision 0028.
 - `parallel` is omitted for ordinary sequential tasks. If present, its only valid value is `true`; `parallel: false` is invalid.
 - `parallel: true` requires a non-empty `boundaries` array so the parallel-safety claim has an explicit responsibility scope.
 - `depends_on` contains only sparse additional dependencies within the same `tasks.yaml` under Decisions 0019 and 0027; an empty array is invalid.

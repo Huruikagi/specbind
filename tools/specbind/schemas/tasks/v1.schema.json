@@ -10,6 +10,7 @@
     },
     "nonEmptyStringList": {
       "type": "array",
+      "description": "Ordered non-empty string sequence; array order is preserved in the task-plan fingerprint.",
       "minItems": 1,
       "items": {
         "type": "string",
@@ -18,6 +19,7 @@
     },
     "uniqueNonEmptyStringList": {
       "type": "array",
+      "description": "Non-empty string set; values are sorted during task-plan fingerprint normalization.",
       "minItems": 1,
       "items": {
         "type": "string",
@@ -67,6 +69,7 @@
         },
         "depends_on": {
           "type": "array",
+          "description": "Spec-local dependency set sorted during task-plan fingerprint normalization.",
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/taskReference"

@@ -26,7 +26,7 @@ Structured `tasks.yaml` still needs deterministic status and next-task calculati
 
 - AI authors provide only reviewed exceptions instead of reconstructing a complete DAG.
 - Missing optional optimization data falls back to safe sequential execution.
-- Array order and group structure cannot be changed without changing the task-plan fingerprint.
+- Plan-item order, child-task order, and group structure cannot be changed without changing the task-plan fingerprint. Decision 0028 separately normalizes set-like arrays whose order has no task semantics.
 - Parallel execution remains opt-in and conservative while status tooling can still derive a deterministic set of actionable tasks.
 - Cross-group or other non-obvious dependencies remain explicit and machine-checkable.
 

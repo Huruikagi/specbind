@@ -35,5 +35,5 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 ## Open questions
 
 - Which artifact and metadata inputs belong to the design, tasks, and completion gate projections; Decision 0017 defines the requirements gate boundary.
-- Exact structured task projections and their canonical serialization; Decision 0018 defines Markdown normalization and direct Requirement ID comparison.
+- Exact design- and completion-gate projections and their canonical serialization. Decision 0028 defines the task-plan projection and serialization.
 - Whether multiple inputs remain individually fingerprinted, gain an aggregate fingerprint, or use both.

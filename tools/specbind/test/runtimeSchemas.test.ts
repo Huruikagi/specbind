@@ -103,6 +103,14 @@ describe('runtime schema scaffolds', () => {
     expect(schema.$defs?.completionCriteria).toEqual({
       $ref: '#/$defs/nonEmptyStringList',
     });
+    expect(schema.$defs?.nonEmptyStringList).toMatchObject({
+      description:
+        'Ordered non-empty string sequence; array order is preserved in the task-plan fingerprint.',
+    });
+    expect(schema.$defs?.uniqueNonEmptyStringList).toMatchObject({
+      description:
+        'Non-empty string set; values are sorted during task-plan fingerprint normalization.',
+    });
   });
 
   it('wires the accepted task plan into the root schema', async () => {

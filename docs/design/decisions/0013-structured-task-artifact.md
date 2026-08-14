@@ -84,6 +84,6 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 ## Open schema details
 
 - Completion and verification evidence references.
-- Exact plan and completion projection fields and their canonical serialization; Decision 0018 fixes the plan/execution boundary but not the v1 field set.
+- Completion projection fields and their canonical serialization. Decision 0028 fixes the task-plan projection and fingerprint algorithm.
 - Exact `tasks.md` migration grammar and diagnostics.
 - Routing diagnostics for inherited cross-spec `_Depends:_` text follow Decision 0027 and must not coerce it into a local Task ID.
