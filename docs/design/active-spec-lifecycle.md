@@ -249,7 +249,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- The exact schema and fingerprint inputs for `state/cross-spec-review.yaml`.
+- The exact fingerprint keys and normalization for the Decision 0053 `state/cross-spec-review.yaml` shape.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - The exact `log.md` release-entry prose convention, release-date source, and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.

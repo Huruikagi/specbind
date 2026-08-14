@@ -51,7 +51,7 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, an initially null release-version binding, and grouped work items. It represents current state only under Decision 0051 and carries no detailed cross-spec review evidence. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
-| `{{SPEC_DIR}}/state/cross-spec-review.yaml` | Exists only while the active milestone has a current accepted global cross-spec review. | Cross-spec review through guarded Rust CLI operations; consumed by status, completion, and release checks. | Accepted | Strict project-state YAML under Decision 0052. Ordinary agents do not preload it; the internal milestone ID must match the roadmap. |
+| `{{SPEC_DIR}}/state/cross-spec-review.yaml` | Exists only while the active milestone has a current accepted global cross-spec review. | Cross-spec review through guarded Rust CLI operations; consumed by status, completion, and release checks. | Accepted | Strict project-state YAML under Decisions 0052 and 0053. It retains compact per-item semantic classifications and input revisions; ordinary agents do not preload it, and its milestone ID must match the roadmap. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds the final active-roadmap snapshot as a new flat file after verified publication; archive collisions must not overwrite history. |
 | `{{SPEC_DIR}}/releases/<version>-cross-spec-review.yaml` | Persists the final accepted milestone-wide cross-spec review evidence. | `specbind-release`. | Accepted | Companion archive moved from `state/` during the same finalization transaction as the roadmap. |
 
@@ -79,7 +79,7 @@ Status: Draft
 
 ## Open questions
 
-- What exact schema and fingerprint inputs represent `state/cross-spec-review.yaml` under Decisions 0050 and 0052?
+- What exact fingerprint keys and normalization complete the Decision 0053 `state/cross-spec-review.yaml` shape?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts?

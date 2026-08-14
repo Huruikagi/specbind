@@ -15,9 +15,9 @@ Failed reviews and remediation attempts are useful while a workflow is running, 
 - The persisted record represents only the latest accepted all-consistent outcome. Failed, incomplete, and remediation-in-progress results remain in workflow run context and are not appended to the roadmap.
 - No milestone item or participating spec stores its own cross-spec pass flag, review status, or copy of the accepted record.
 - Every participating spec resolves the same global record through its `active_change.milestone_id` and membership in the roadmap's current `work_items`. `spec.yaml` does not add a reference to it.
-- The record may retain facts such as affected contract entries and reviewed downstream consumers, but these facts do not become independent per-spec acceptance records.
+- Under Decision 0053, the record retains only one compact semantic classification per roadmap item. Affected contract entries and reviewed downstream consumers are not persisted as independent facts or acceptance records.
 - Any change to roadmap scope, dependencies, applicable contracts, or required downstream review scope makes the complete record stale. A later accepted review replaces it atomically in the state artifact.
-- The exact `cross_spec_review` fields and fingerprint inputs remain a follow-up schema decision.
+- Decision 0053 fixes the strict state-file fields and classification shape. The exact fingerprint inputs remain a follow-up decision.
 
 ## Consequences
 

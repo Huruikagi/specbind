@@ -160,7 +160,7 @@ For accepted mechanical evidence, Decision 0033 requires an ordered list of cate
 
 Decision 0034 keeps requirements coverage, design alignment, spec-local task integration, and boundary integrity as mandatory agent judgments but omits their fixed `passed` flags from persisted evidence. The CLI accepts only the final guarded `GO` candidate; it does not mistake stored booleans for replayable semantic proof.
 
-Decisions 0050 and 0052 keep contract-impact classification, affected contract entries, and downstream review once in `state/cross-spec-review.yaml`. During completion acceptance, the CLI resolves the global record through the matching milestone ID and roadmap membership; the agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
+Decisions 0050, 0052, and 0053 keep one compact contract-impact classification per roadmap item plus accepted input revisions in `state/cross-spec-review.yaml`. Affected entries and downstream scope remain derived rather than persisted. During completion acceptance, the CLI resolves the global record through the matching milestone ID and roadmap membership; the agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
 
 ## Initial implementation boundary
 
