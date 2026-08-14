@@ -23,7 +23,7 @@ In practice this marker is uncommon, and it conflicts with SpecBind's simpler co
 - Migration detects inherited `- [ ]*` entries and stops for explicit resolution.
 - The user must choose whether each entry becomes a normal required task or is removed from the active plan through the appropriate scope revision.
 - Migration must not silently drop an incomplete optional task or preserve a hidden completion exemption.
-- Historical source content remains available through Git and immutable release references.
+- Historical source content remains available through Git and any project-created release references.
 
 ## Consequences
 

@@ -42,7 +42,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - It is created or replaced by the tasks workflow after requirements and design gates permit task generation.
 - Same-milestone task-plan revisions update the active YAML and invalidate the tasks gate as defined by the spec state machine.
 - Implementation updates structured progress and execution fields without changing plan approval when the plan definition is unchanged.
-- Successful release finalization removes `tasks.yaml` after the immutable release reference has preserved its pre-finalization content.
+- Successful release finalization removes `tasks.yaml`; its pre-finalization content normally remains in ordinary Git history or an optional project-created release reference under Decision 0064.
 - Released and idle specs do not require a placeholder task file.
 
 ## Human interaction

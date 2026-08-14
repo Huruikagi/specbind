@@ -117,8 +117,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
 - Ask the Rust CLI to run core preflight and readiness checks.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
-- Submit structured publication and verification evidence to the Rust CLI for guarded finalization.
-- Verify an immutable release reference that preserves the active working documents.
+- Submit structured release evidence to the Rust CLI for guarded finalization.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.yaml` after successful release.
 - Transition their metadata to released / no-active-change state.
@@ -149,7 +148,8 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not let adapter instructions weaken core readiness or finalization gates.
 - Must not treat `settings/release.md` code blocks as CLI-executable hooks.
 - Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.
-- Must not remove active documents before the release succeeds and an immutable reference is verified.
+- Must not remove active documents before applicable release work and required verification succeed.
+- Must allow unrelated dirty files while refusing uncommitted or conflicting paths that CLI finalization will mutate.
 - Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.
 

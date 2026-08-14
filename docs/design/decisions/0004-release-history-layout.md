@@ -8,7 +8,7 @@ Superseded in part by [Decision 0048](./0048-okf-spec-log.md): per-spec history 
 
 Active specs need local history that explains how each capability changed across releases. The active `roadmap.md` contains milestone-wide scope and dependency ordering, while Decision 0052's project-state artifact contains detailed cross-spec evidence that cannot be reconstructed conveniently from independent spec logs.
 
-Keeping completed roadmaps under `steering/` would mix active project guidance with release history. Deleting them would make the immutable release reference the only complete milestone-wide record.
+Keeping completed roadmaps under `steering/` would mix active project guidance with release history. Deleting them would leave ordinary Git history or optional project release references as the only complete milestone-wide record.
 
 ## Decision
 
@@ -37,12 +37,12 @@ Example after releasing `v1.4.0`:
 
 ## Finalization rules
 
-- Archive only after publication and immutable release-reference verification succeed.
+- Archive only after applicable project release actions and required core release verification succeed.
 - Require the active roadmap's bound release version to match the archive filename.
 - Refuse to overwrite an existing archive path unless an idempotent retry proves identical milestone identity and content.
 - Move the roadmap and accepted global review state as part of the same coherent finalization change that updates spec logs and lifecycle state.
 - Verify that `steering/roadmap.md` and `state/cross-spec-review.md` are absent and both companion archives are present after finalization.
-- Spec changelog entries point to the archived roadmap and immutable release reference where useful.
+- Spec log entries point to the archived roadmap and may include project release references where useful.
 
 ## Consequences
 

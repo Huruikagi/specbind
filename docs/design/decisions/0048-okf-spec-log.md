@@ -19,7 +19,7 @@ OKF reserves `log.md` for the history of changes to the directory scope where it
   - a flat prose list under each date
 - Each released milestone that participated in the spec contributes one concise release entry under the applicable date.
 - The release version remains the entry's primary human-facing label. The milestone ID remains secondary trace metadata.
-- An entry retains the useful SpecBind release references already required by the active-spec lifecycle, including the delivered-scope summary, validation result, archived roadmap, and immutable release reference as applicable.
+- An entry retains useful SpecBind release context, including the delivered-scope summary, validation result, and archived roadmap. A project tag, Release URL, deployment identifier, or commit may be included when useful but is not required by SpecBind.
 - Release finalization inserts an entry into newest-first date order instead of appending to the end of the file. Re-running finalization must not duplicate the same release entry.
 - An abandoned unreleased change creates no `log.md` entry.
 - The exact prose convention, release-date source, and evidence granularity remain part of the release-history entry profile to be accepted with the release evidence contract.
@@ -31,7 +31,7 @@ OKF reserves `log.md` for the history of changes to the directory scope where it
 
 ## 2026-08-14
 
-* **Release v1.4.0**: Added authenticated checkout. Milestone `0198b2d1-7c4a-7e31-9f42-8e7c3a110d62`; see [roadmap](../../releases/v1.4.0-roadmap.md) and immutable reference `v1.4.0`.
+* **Release v1.4.0**: Added authenticated checkout. Milestone `0198b2d1-7c4a-7e31-9f42-8e7c3a110d62`; see [roadmap](../../releases/v1.4.0-roadmap.md).
 
 ## 2026-07-20
 

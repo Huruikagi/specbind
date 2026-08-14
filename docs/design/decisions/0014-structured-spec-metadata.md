@@ -55,7 +55,7 @@ Each gate instead defines an explicit projection of relevant metadata fields, su
 - Contradictory booleans, missing artifacts, or unsupported values produce diagnostics rather than guessed state.
 - Migration writes `spec.yaml` only after the converted state passes target schema and lifecycle validation.
 - The original `spec.json` is preserved or removed through an explicit, recoverable migration operation; normal target workflows do not keep it synchronized.
-- Historical `spec.json` files remain available at existing commits and immutable release references.
+- Historical `spec.json` files remain available at existing commits and any project-created release references.
 
 ## Consequences
 

@@ -8,7 +8,7 @@ The `SpecBind Brief` artifact is discovery-owned, milestone-local free-form guid
 
 Fingerprinting the brief would make later editorial changes to that guidance look like changes to already-approved requirements even when the authoritative requirements and active set remain identical.
 
-Release history needs a problem and delivered-scope summary, but the brief does not need to become an authoritative release input for that purpose. The final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence describe what was actually delivered. The pre-finalization brief remains available through the immutable release reference.
+Release history needs a problem and delivered-scope summary, but the brief does not need to become an authoritative release input for that purpose. The final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence describe what was actually delivered. The pre-finalization brief normally remains available through ordinary Git history or an optional project-created release reference under Decision 0064.
 
 ## Decision
 
@@ -24,4 +24,4 @@ Release history needs a problem and delivered-scope summary, but the brief does 
 - Out-of-band edits to the brief are not detected through gate-evidence fingerprint comparison.
 - Requirements approval remains attached to the output of requirements work rather than its discovery prompt.
 - A scope-changing brief update cannot rely on automatic fingerprint invalidation; workflows must express the semantic change explicitly.
-- Release history can remain concise while the immutable release reference preserves the complete original brief for deeper inspection.
+- Release history can remain concise while ordinary Git history or an optional project reference preserves the complete original brief for deeper inspection.

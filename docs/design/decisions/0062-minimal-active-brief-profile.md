@@ -29,7 +29,7 @@ The authoritative milestone identity and release binding already live in the roa
 - The requirements workflow reads the current brief as natural-language input for creating or revising the persistent requirements and active Requirement ID set.
 - Under Decision 0017, the brief is not fingerprinted and does not appear in requirements-gate evidence. Editing only the brief does not invalidate an approved gate; a real scope change must update authoritative downstream artifacts and use the corresponding lifecycle event.
 - Release-log authoring may use the brief as drafting context, but it must derive the delivered summary from final requirements, active Requirement IDs, completed tasks, roadmap scope, and release evidence. The brief is not authoritative release evidence.
-- Successful release finalization removes the discovered brief. The immutable release reference retains its final pre-finalization content for deeper inspection.
+- Successful release finalization removes the discovered brief. Its final pre-finalization content normally remains available through ordinary Git history or an optional project-created release reference under Decision 0064.
 - Confirmed abandonment may remove the brief only through the existing guarded milestone cleanup after affected persistent artifacts have been reconciled.
 
 ## Template behavior
@@ -42,4 +42,4 @@ The authoritative milestone identity and release binding already live in the roa
 - Brief authoring remains natural and adaptable to different kinds of changes.
 - Milestone and approval state stay in their authoritative machine-owned artifacts instead of being copied into prose metadata.
 - The brief can evolve as discovery continues without creating automatic fingerprint invalidation unrelated to authoritative requirements.
-- Released history remains concise in `log.md`, while Git retains the complete final working brief at the immutable release revision.
+- Released history remains concise in `log.md`, while ordinary Git history normally retains the complete final working brief.

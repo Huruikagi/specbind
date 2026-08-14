@@ -144,11 +144,10 @@ Under [Decision 0048](./decisions/0048-okf-spec-log.md), `log.md` is a navigable
 - preserved contracts or explicitly unchanged behavior
 - completed-task count and active-requirement coverage
 - validation result and timestamp
-- immutable release reference, normally a tag
-- relevant implementation, version, and finalization commits
+- project release reference or relevant commit when useful
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization brief artifact and `tasks.yaml` remain available from the immutable release reference. The roadmap and accepted global cross-spec review also remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Git history is not the only index: each spec's `log.md` points to the relevant release and roadmap references.
+The complete pre-finalization brief artifact and `tasks.yaml` normally remain available through ordinary Git history or a project-created release reference. The roadmap and accepted global cross-spec review remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Each spec's `log.md` points to the archived roadmap and may include project references when useful, but SpecBind requires no universal tag or commit field.
 
 The brief may provide drafting context for the problem summary, but it is not authoritative release evidence. Changelog content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence; see [Decision 0017](./decisions/0017-requirements-gate-inputs.md).
 
@@ -172,8 +171,8 @@ The portable release contract is a gated state transition. Project publication i
 2. The release agent asks the Rust CLI to run core preflight.
 3. The CLI resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
 4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance at the corresponding orchestration points and captures structured evidence required by the core contract.
-5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
-6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
+5. The agent submits the target version and required evidence to the Rust CLI finalization boundary.
+6. The CLI independently rechecks core invariants, validates all evidence it can verify, and confirms that every resolved finalization target path is safe under Decision 0064.
 7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
 8. The CLI removes each participating spec's discovered singleton brief artifact and fixed `tasks.yaml`.
 9. The CLI transitions each `spec.yaml` to released / no-active-change state.

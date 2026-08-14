@@ -89,7 +89,7 @@ The portable release contract owns gated and idempotent spec finalization. Proje
 ```text
 Rust CLI: core preflight and readiness gates
   -> AI agent: adapter Prepare (when applicable)
-  -> AI agent: adapter Publish (when applicable) and capture required immutable reference
+  -> AI agent: adapter Publish (when applicable) and capture useful project evidence
   -> AI agent: adapter Verify (when applicable) and capture required fresh evidence
   -> Rust CLI: recheck evidence and finalize active spec artifacts
   -> AI agent: adapter After finalize (when applicable)

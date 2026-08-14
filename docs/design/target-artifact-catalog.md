@@ -34,6 +34,7 @@ Related documents:
 - [Decision 0061: Design Requirement traceability](./decisions/0061-design-requirement-traceability.md)
 - [Decision 0062: minimal active brief profile](./decisions/0062-minimal-active-brief-profile.md)
 - [Decision 0063: free-form release adapter profile](./decisions/0063-free-form-release-adapter-profile.md)
+- [Decision 0064: path-scoped release finalization guard](./decisions/0064-path-scoped-release-finalization-guard.md)
 
 Status: Draft
 

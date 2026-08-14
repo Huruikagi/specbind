@@ -36,7 +36,7 @@ If the agent owns semantic interpretation, requiring literal headings or a parse
 
 - An empty or permissive adapter cannot waive a core gate, authorize an external write, provide credentials, or count as publication or verification evidence.
 - The release skill remains responsible for obtaining any authority required by project instructions and for submitting the structured evidence required by the CLI finalization contract.
-- Whether a no-publication project can satisfy the core immutable-reference and verification contract, and the exact evidence representation, belong to the release-evidence decision rather than the adapter Markdown profile.
+- The core does not require a universal publication or source-revision reference under Decision 0064. The exact concise release-evidence representation remains separate from the adapter Markdown profile.
 - A missing `settings/release.md` remains an installation or configuration error because the project-owned customization surface is absent. A present empty adapter is the explicit no-project-actions representation.
 
 ## Consequences
