@@ -23,6 +23,7 @@ The Open Knowledge Format (OKF) v0.2 already defines a minimal, vendor-neutral m
 - The full Markdown file, including frontmatter, remains the input to existing Markdown fingerprints after line-ending normalization.
 - Optional OKF provenance, trust, and lifecycle fields do not replace SpecBind lifecycle state or gate evidence. SpecBind-owned producers do not emit or interpret those fields as approval authority unless a later decision defines an explicit mapping.
 - Files outside `{{SPEC_DIR}}`, including agent packages and repository documentation, are not made part of the consumer project's OKF bundle by this decision.
+- Decision 0049 distributes the shared `settings/rules/okf-artifacts.md` guidance used by agents to preserve these invariants.
 
 ## Consequences
 
