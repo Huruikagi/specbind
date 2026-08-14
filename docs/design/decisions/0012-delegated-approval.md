@@ -26,15 +26,15 @@ A stored boolean cannot distinguish direct user approval from previously delegat
 - Delegation changes whether the workflow pauses after a passing gate. It does not skip generation, review, traceability, contract, or validation checks.
 - Delegation exists only in the accelerated workflow's run context. It is not persisted as a project artifact or authorization object.
 - `--non-interactive` controls prompting only. It grants no approval authority, chooses no semantic defaults, and fails when required authorization or user judgment is unavailable.
-- Approval evidence records only the mode, originating workflow for delegated approval, time, and approved input revision. Its active change and milestone scope come from the surrounding lifecycle state rather than duplicated authorization metadata.
+- Approval evidence records only the mode, originating workflow for delegated approval, `passed_at`, and approved input revision. `passed_at` is the time that the current revision passed the gate, recorded by the same guarded mutation; the target schema does not add separate `approved_at` or `recorded_at` fields. Its active change and milestone scope come from the surrounding lifecycle state rather than duplicated authorization metadata.
 - The state remains the authoritative lifecycle value. Approval evidence explains and validates a gate crossing; it is not a second set of independently writable phase booleans.
 
 ## Approval modes
 
 | Mode | Authorization timing | Gate behavior | Evidence expectation |
 | --- | --- | --- | --- |
-| `explicit` | After the current gate output exists. | Present or identify the current revision, obtain approval, then emit the gate event. | Record explicit mode, time, gate, scope, and input revision. |
-| `delegated` | Before future gate outputs exist, through intentional accelerated or batch workflow invocation. | Run the complete gate; on success emit the gate event without another confirmation; on ambiguity or failure stop. | Record delegated mode, time, named workflow, and input revision accepted at the event. |
+| `explicit` | After the current gate output exists. | Present or identify the current revision, obtain approval, then emit the gate event. | Record explicit mode, `passed_at`, gate, scope, and input revision. |
+| `delegated` | Before future gate outputs exist, through intentional accelerated or batch workflow invocation. | Run the complete gate; on success emit the gate event without another confirmation; on ambiguity or failure stop. | Record delegated mode, `passed_at`, named workflow, and input revision accepted at the event. |
 
 The first contract does not add a repository policy that permanently auto-approves gates. Such a mode would need a separate decision because it broadens authorization beyond one intentional workflow run.
 
@@ -81,7 +81,7 @@ Every accepted gate records enough structured evidence to answer:
 - Was approval explicit or delegated?
 - For delegated approval, which workflow crossed the gate?
 - Which exact artifact inputs and active Requirement ID set were accepted?
-- When did approval occur?
+- When did the current revision pass the gate?
 - Do the current inputs still match the approved revision?
 
 Artifact fingerprints are required to detect out-of-band edits, but their canonicalization and storage schema remain Draft. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
@@ -99,6 +99,7 @@ Artifact fingerprints are required to detect out-of-band edits, but their canoni
 
 ## Open schema details
 
-- Exact gate-evidence JSON fields.
+- Remaining gate-evidence YAML fields.
 - Fingerprint algorithm, normalization rules, and artifact-input sets for each gate.
+- Representation of migrated gate state when the original `passed_at` is unavailable.
 - Human-readable and JSON diagnostics for missing or out-of-scope run-context delegation.

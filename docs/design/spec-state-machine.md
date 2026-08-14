@@ -51,7 +51,7 @@ active_change:
     - "1.2"
   gate_evidence:
     requirements:
-      approved_at: <timestamp>
+      passed_at: <timestamp>
       approval_mode: delegated
       workflow: specbind-spec-quick
       input_revisions:
@@ -59,7 +59,7 @@ active_change:
         brief.md: <fingerprint>
 ```
 
-Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` records the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.yaml` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the exact gate-evidence fields and fingerprint canonicalization.
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. Every gate uses `passed_at` for the time that the current revision passed; gate transition and evidence persistence are one guarded mutation, so the target schema has no separate `approved_at` or `recorded_at`. `explicit` records approval after the current revision exists. `delegated` records the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.yaml` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the remaining gate-evidence fields and fingerprint canonicalization.
 
 ## Event list
 
