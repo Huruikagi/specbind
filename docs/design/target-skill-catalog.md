@@ -117,7 +117,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
 - Ask the Rust CLI to run core preflight and readiness checks.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
-- Submit structured release evidence to the Rust CLI for guarded finalization.
+- Prepare one delivered-change summary per participating spec and submit them to the Rust CLI for guarded log insertion and finalization.
 - Append an idempotent history entry for every participating spec.
 - Remove participating specs' active `brief.md` and `tasks.yaml` after successful release.
 - Transition their metadata to released / no-active-change state.
@@ -157,7 +157,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ### Open questions
 
-- What exact release-evidence arguments should `specbind release finalize` accept?
+- What exact log-summary arguments should `specbind release finalize` accept?
 - What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
 

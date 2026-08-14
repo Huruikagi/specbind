@@ -38,7 +38,7 @@ The adapter cannot weaken or replace these rules:
 
 - A concrete target release version is required before release operations begin.
 - Current milestone scope, tasks, approvals, and completion evidence must pass core readiness gates.
-- Applicable project release actions and required core verification must have fresh success evidence before active spec documents are finalized.
+- Applicable project release actions must be judged successful by the agent and human before they request finalization; every deterministic core guard must pass independently.
 - Finalization must be idempotent, archive the active roadmap without overwriting history, and must not remove unrelated work.
 - Failure before required release verification preserves all active documents.
 

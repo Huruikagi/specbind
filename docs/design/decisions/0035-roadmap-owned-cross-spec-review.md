@@ -18,7 +18,7 @@ The active `roadmap.md` already owns milestone scope, dependency ordering, and c
 - Under Decisions 0041 and 0050, the CLI resolves the same global roadmap record through the active change's `milestone_id` and the spec's membership in the current roadmap work items. No additional roadmap-evidence reference field is added to `spec.yaml` v1.
 - Completion acceptance requires the resolved roadmap classification to be present and current. A justified local-only classification satisfies this guard without a downstream-spec list; a contract-affecting classification additionally requires the applicable downstream review scope and accepted outcome.
 - If downstream review requires another spec to change or be revalidated, discovery and roadmap maintenance add or update that work in milestone scope. Merely reviewing a consumer does not create completion evidence in the consumer's `spec.yaml`.
-- Roadmap archival preserves the accepted cross-spec record as milestone release evidence. Per-spec `log.md` entries may summarize the final classification and changed contract entries without becoming the canonical active review store.
+- Roadmap archival preserves the accepted cross-spec record in milestone release history. Per-spec `log.md` entries may summarize the final classification and changed contract entries without becoming the canonical active review store.
 - This decision fixes storage ownership and lookup identity. Decision 0046 keeps the Markdown body outside CLI parsing, so the exact frontmatter extension for the cross-spec review record remains a separate schema decision.
 
 ## Consequences

@@ -14,19 +14,19 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - The Rust CLI owns core release preflight, deterministic state checks, evidence validation where mechanically possible, and idempotent finalization mutations.
 - The AI agent reads the complete free-form `settings/release.md` under Decision 0063 and executes any applicable Prepare, Publish, Verify, and After finalize guidance under normal repository, authorization, and tool-permission boundaries.
 - The CLI does not interpret Markdown code blocks as executable hooks and does not run arbitrary adapter commands.
-- The agent passes the target version and structured release evidence into the finalization boundary. Decision 0064 does not require a universal publication or source-revision field.
-- The CLI must not accept a bare success assertion as sufficient proof. It rechecks core invariants and all evidence it can verify from repository or structured state before mutating active artifacts.
+- Under Decision 0066, the agent and human judge applicable project release work and pass the per-spec log summaries needed for mutation, not a structured external release-evidence object.
+- The CLI does not claim to verify external release success. It rechecks every deterministic core invariant it can observe before mutating active artifacts.
 - Release finalization applies the Decision 0064 path-scoped Git safety check rather than requiring repository-wide cleanliness or equality with a previously captured `HEAD`.
-- Decision 0065 accepts `specbind release finalize [--json] [--force]` as the finalization command. The evidence handoff arguments remain Draft.
+- Decision 0065 accepts `specbind release finalize [--json] [--force]` as the finalization command. The Decision 0066 log-summary transport remains Draft.
 
 ## Execution sequence
 
 1. The release skill loads the active milestone, target version, and `settings/release.md`.
 2. The release skill asks the Rust CLI to run core preflight and readiness checks.
 3. If preflight succeeds, the agent executes applicable adapter preparation guidance.
-4. The agent executes applicable publication guidance and captures any project reference plus other evidence useful to the release judgment.
-5. The agent executes applicable project verification guidance and captures fresh results.
-6. The agent submits the version and required structured evidence to the Rust CLI finalization operation.
+4. The agent executes applicable publication guidance and uses any project references or results in its release judgment.
+5. The agent executes applicable project verification guidance and decides with the human whether the project work succeeded.
+6. The agent submits the per-spec delivered-change summaries to the Rust CLI finalization operation.
 7. The CLI revalidates core invariants, checks evidence it can verify, and applies idempotent per-spec `log.md`, metadata, active-document, and roadmap-archive mutations.
 8. After core finalization succeeds, the agent executes any applicable after-finalize guidance and reports its result separately.
 
@@ -53,11 +53,11 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - Project release flexibility remains in an editable Markdown adapter.
 - SpecBind lifecycle safety and idempotency remain shared across every supported agent.
 - The release skill becomes orchestration around stable CLI contracts rather than a file-mutation implementation.
-- CLI diagnostics and evidence inputs need stable human-readable and JSON representations.
+- CLI diagnostics and log-summary inputs need stable human-readable and JSON representations.
 - Tests must cover handoff and retry behavior across each failure boundary.
 
 ## Open questions
 
 - Exact preflight command name.
-- Evidence schema, provenance, freshness, and redaction rules.
 - Whether a preflight result has a stable session or plan ID that finalization must reference.
+- Exact per-spec log-summary transport and validation rules.

@@ -43,14 +43,14 @@ The final choice belongs to the human working with the agent. SpecBind therefore
 - A pre-existing roadmap or cross-spec-review archive collision is never forceable. `--force` cannot overwrite released history.
 - `--force` does not reset, stash, stage, commit, back up, or otherwise preserve affected working-tree content. It authorizes the normal finalization mutation even though the reported target paths contain uncommitted state.
 - Direct human use of `--force` is explicit override authority. An agent must first present the forceable diagnostics and obtain explicit user confirmation for the affected paths; `--non-interactive`, delegated gate approval, or adapter prose does not authorize force automatically.
-- A rejected normal invocation and a rejected or successful forced invocation do not add a separate field to `spec.yaml`, `log.md`, or release evidence. The command result reports `forced: true` when the override was actually used.
+- A rejected normal invocation and a rejected or successful forced invocation do not add a separate force field to `spec.yaml` or `log.md`. The command result reports `forced: true` when the override was actually used.
 
 ## CLI and workflow behavior
 
-- `specbind-release` invokes `specbind release finalize` normally after applicable project release work and required evidence collection.
+- `specbind-release` invokes `specbind release finalize` normally after applicable project release work is judged successful and the Decision 0066 per-spec log summaries are prepared.
 - On `FINALIZE_TARGET_DIRTY`, the skill reports the complete affected-path summary. It may help the user inspect and resolve those paths, or—with explicit confirmation—retry the same current finalization using `--force`.
 - The CLI independently rediscovers targets and reruns every non-forceable guard on the forced retry. The earlier diagnostic output is not mutation authority and no stale path list is trusted.
-- Exact release-evidence arguments and the broader diagnostics envelope remain separate CLI-contract work; this decision fixes the command name, override semantics, and forceable diagnostic payload.
+- Exact log-summary arguments and the broader diagnostics envelope remain separate CLI-contract work; this decision fixes the command name, override semantics, and forceable diagnostic payload.
 
 ## Consequences
 

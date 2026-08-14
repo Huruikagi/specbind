@@ -33,7 +33,7 @@ The core CLI still needs to avoid overwriting, deleting, or moving uncommitted S
 
 - Git history normally retains the pre-finalization Brief and `tasks.yaml`; a project-created tag or external release reference may make that state easier to locate but is not required by SpecBind.
 - `log.md` may mention a project tag, Release URL, deployment identifier, or relevant commit when useful. None is a mandatory structured field in the core log profile.
-- Removal of the mandatory immutable-reference concept does not decide the remaining release-evidence schema. The finalization boundary may still require concise evidence that applicable project and core verification succeeded, without requiring a universal publication identifier.
+- Under Decision 0066, the finalization boundary accepts per-spec log-summary content but no dedicated external release-evidence object.
 
 ## Consequences
 

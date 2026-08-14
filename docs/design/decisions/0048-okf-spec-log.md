@@ -20,9 +20,9 @@ OKF reserves `log.md` for the history of changes to the directory scope where it
 - Each released milestone that participated in the spec contributes one concise release entry under the applicable date.
 - The release version remains the entry's primary human-facing label. The milestone ID remains secondary trace metadata.
 - An entry retains useful SpecBind release context, including the delivered-scope summary, validation result, and archived roadmap. A project tag, Release URL, deployment identifier, or commit may be included when useful but is not required by SpecBind.
-- Release finalization inserts an entry into newest-first date order instead of appending to the end of the file. Re-running finalization must not duplicate the same release entry.
+- Under Decision 0066, the agent supplies each participating spec's delivered-change summary and release finalization inserts the canonical entry into newest-first date order instead of appending to the end of the file. Re-running finalization must not duplicate the same milestone entry.
 - An abandoned unreleased change creates no `log.md` entry.
-- The exact prose convention, release-date source, and evidence granularity remain part of the release-history entry profile to be accepted with the release evidence contract.
+- The exact summary transport, canonical prose wrapper, release-date source, and inline-Markdown constraints remain part of the log-entry input contract.
 
 ## Consequences
 

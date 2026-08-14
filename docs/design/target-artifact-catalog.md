@@ -36,6 +36,7 @@ Related documents:
 - [Decision 0063: free-form release adapter profile](./decisions/0063-free-form-release-adapter-profile.md)
 - [Decision 0064: path-scoped release finalization guard](./decisions/0064-path-scoped-release-finalization-guard.md)
 - [Decision 0065: forceable release target check](./decisions/0065-forceable-release-target-check.md)
+- [Decision 0066: agent-judged release and CLI log insertion](./decisions/0066-agent-judged-release-and-cli-log-insertion.md)
 
 Status: Draft
 
@@ -83,11 +84,11 @@ Status: Draft
 | `SpecBind Contract` singleton (`contract.md` by default) | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Discovered by OKF type. Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `SpecBind Implementation Notes` collection (`implementation-notes.md`, `artifact_id: main` by default) | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | The known Front Matter fields are `type` and stable `artifact_id`. Live bodies are non-empty free-form Markdown; absence represents no durable notes. Gate fingerprints exclude the collection, release preserves it, and project-wide knowledge should be promoted to `steering/`. |
 | `tasks.yaml` | Exists only for the active milestone's structured task plan and execution state. | Task and implementation workflows. | Accepted | The only canonical task artifact; starts fresh between milestones and is removed by successful release finalization. No parallel `tasks.md` view is maintained. |
-| `log.md` | Persists per spec as the OKF reserved update log for released changes and evidence. | Release finalization workflow. | Accepted | Has no frontmatter. Entries are grouped under newest-first ISO dates; release version is the human-facing entry label and milestone ID is secondary trace metadata. Unreleased abandoned work is omitted by default. |
+| `log.md` | Persists per spec as the OKF reserved update log for released changes. | Release finalization workflow. | Accepted | Has no frontmatter. Under Decision 0066, AI supplies one delivered-change summary per participating spec and the CLI inserts its canonical entry under newest-first ISO dates. Release version is the human-facing label, milestone ID is secondary trace metadata, and abandoned work is omitted. |
 | `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring a brief artifact or `tasks.yaml`. |
 
 ## Open questions
 
-- What exact evidence schema must the release skill require before finalization?
+- What exact transport and inline-Markdown contract should per-spec release-log summaries use?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

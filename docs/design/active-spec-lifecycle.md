@@ -26,7 +26,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `SpecBind Contract` | The current minimal cross-spec seam manifest. | The discovered singleton is revised only when externally observable seams change. | Preserved. |
 | `SpecBind Implementation Notes` set | Optional free-form implementation knowledge useful to later AI runs. | Zero or more discovered artifacts are read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
-| `log.md` | Per-spec OKF update log of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry inserted under the applicable newest-first date heading. |
+| `log.md` | Per-spec OKF update log of released changes. | Preserved; not pre-edited during ordinary release orchestration. | The CLI inserts one AI-authored concise summary under the applicable newest-first date heading. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Intent, scope, and dependencies for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 | `state/cross-spec-review.md` | Current accepted milestone-wide cross-spec review evidence and AI-authored judgment. | Exists only after a global review passes; ordinary agents do not preload it. | Moved to `releases/<version>-cross-spec-review.md`. |
@@ -149,7 +149,7 @@ Under [Decision 0048](./decisions/0048-okf-spec-log.md), `log.md` is a navigable
 
 The complete pre-finalization brief artifact and `tasks.yaml` normally remain available through ordinary Git history or a project-created release reference. The roadmap and accepted global cross-spec review remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Each spec's `log.md` points to the archived roadmap and may include project references when useful, but SpecBind requires no universal tag or commit field.
 
-The brief may provide drafting context for the problem summary, but it is not authoritative release evidence. Changelog content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence; see [Decision 0017](./decisions/0017-requirements-gate-inputs.md).
+The brief may provide drafting context for the problem summary, but it is not authoritative released state. Log content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, accepted completion evidence, and cross-spec review; see [Decisions 0017](./decisions/0017-requirements-gate-inputs.md) and [0066](./decisions/0066-agent-judged-release-and-cli-log-insertion.md).
 
 ## Scope removal, abandonment, and rollback
 
@@ -170,8 +170,8 @@ The portable release contract is a gated state transition. Project publication i
 1. The release agent loads the active roadmap, target version, and the free-form `{{SPEC_DIR}}/settings/release.md`, then validates its OKF profile and interprets any applicable project guidance under Decision 0063.
 2. The release agent asks the Rust CLI to run core preflight.
 3. The CLI resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
-4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance at the corresponding orchestration points and captures structured evidence required by the core contract.
-5. The agent submits the target version and required evidence to the Rust CLI finalization boundary.
+4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance and judges the result with the human.
+5. The agent submits one delivered-change summary per participating spec to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants, validates all evidence it can verify, and confirms that every resolved finalization target path is safe under Decision 0064.
 7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
 8. The CLI removes each participating spec's discovered singleton brief artifact and fixed `tasks.yaml`.
@@ -199,7 +199,7 @@ Dependencies must also distinguish:
 
 - a dependency on the current approved spec contract
 - a dependency on an active revision that must complete first
-- a dependency on a released implementation, proven by the per-spec release log and immutable release evidence
+- a dependency on released behavior, established from the current contract and per-spec release log
 
 Task dependencies remain local to one spec's active `tasks.yaml`. Active revision ordering belongs to the milestone roadmap, persistent observable dependencies belong to the singleton contract artifact, and released dependencies use current contracts plus release history; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
 
@@ -241,7 +241,7 @@ The project-local append-only Change Brief behavior is the observed problem, not
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.
 - implementation and validation workflows: operate only on current tasks and current milestone evidence.
 - status workflow: report released state, active-change state, current tasks, and latest history separately.
-- completion verification: distinguish current coverage from historical release evidence.
+- completion verification: distinguish current coverage from historical release records.
 - cross-spec review: read contracts first and deepen into affected specs only when boundaries change or remain ambiguous.
 - `specbind-release`: perform gated, idempotent finalization after release success.
 
