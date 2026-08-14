@@ -2,7 +2,7 @@
 
 Status: Superseded by Decisions 0050 and 0052
 
-Decision 0050 replaces the per-item association with one global accepted result. Decision 0052 moves that result from roadmap frontmatter to `state/cross-spec-review.yaml`; the text below records the earlier storage decision.
+Decision 0050 replaces the per-item association with one global accepted result. Decisions 0052 and 0053 move that result from roadmap frontmatter to `state/cross-spec-review.md`; the text below records the earlier storage decision.
 
 ## Context
 
