@@ -26,7 +26,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 - Collection profiles require an `artifact_id` frontmatter field matching `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`. The pair of exact `type` and `artifact_id` is unique within a spec. Singleton profiles omit `artifact_id`; their role supplies the identity.
 - A collection artifact keeps its `artifact_id` when its filename, containing directory, or prose title changes but its semantic responsibility remains the same. Splitting a document keeps the old ID on the continuing responsibility and assigns new IDs to newly separated responsibilities.
 - Paths are current locators and diagnostics, not persistent identity. Default templates retain the familiar names `brief.md`, `requirements.md`, `design.md`, `contract.md`, and `implementation-notes.md`; a default single design and implementation-notes artifact use `artifact_id: main`.
-- A workflow asks the CLI for the relevant typed artifact inventory before loading content. The inventory contains logical role, current SpecBind-root-relative POSIX path, and profile metadata. Agent workflows begin from that compact inventory and request the applicable content rather than independently guessing filenames or loading every Markdown file.
+- A workflow uses the Decision 0058 `specbind artifact list` read model before loading content. The inventory contains logical role, current SpecBind-root-relative POSIX path, and profile metadata. Agent workflows begin from that compact inventory and request applicable selectors through `specbind artifact read` rather than independently guessing filenames or loading every Markdown file.
 - Duplicate singleton roles, duplicate collection IDs, missing required roles, invalid profiles, and paths that escape the spec directory are hard discovery errors for workflows that require the affected role.
 
 ## Fingerprint identity
@@ -54,5 +54,5 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 
 - A spec can split design into files such as `architecture.md`, `persistence.md`, and `error-handling.md` without adding another manifest.
 - Human organization and machine identity are decoupled, while duplicate or missing authoritative artifacts remain deterministic errors.
-- CLI summaries can present a small typed artifact index before an agent spends context on document bodies.
+- The Decision 0058 CLI read model presents a small typed artifact index before an agent spends context on document bodies.
 - Existing path-keyed gate evidence and accepted cross-spec review state require explicit migration or regeneration; logical-key and path-key representations are not mixed in one evidence record.

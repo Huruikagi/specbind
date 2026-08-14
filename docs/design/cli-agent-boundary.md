@@ -46,11 +46,11 @@ For release, the agent executes the adapter's natural-language project instructi
 
 ## First deterministic check: requirement traceability
 
-Issue #49 proposed checking mappings across:
+Issue #49 proposed checking mappings across the inherited fixed files. Under Decision 0057, the equivalent logical artifact flow is:
 
 ```text
-requirements.md
-  -> design.md
+SpecBind Requirements singleton
+  -> SpecBind Design collection
   -> tasks.yaml
 ```
 
@@ -58,11 +58,11 @@ That proposal predates the accepted active-requirement-set model in [Decision 00
 
 The first check should mechanically verify:
 
-- canonical Requirement IDs can be extracted from `requirements.md`
+- canonical Requirement IDs can be extracted from the discovered requirements artifact
 - Requirement IDs use the supported format and are unique
-- every ID in `spec.yaml.active_change.requirement_ids` exists in `requirements.md`
+- every ID in `spec.yaml.active_change.requirement_ids` exists in the requirements artifact
 - the active Requirement ID set is established before downstream coverage is claimed
-- `design.md` traces every active Requirement ID
+- the complete discovered design set traces every active Requirement ID
 - `tasks.yaml` maps every active Requirement ID through its schema-defined requirement references
 - design and task mappings do not reference unknown Requirement IDs
 - task requirement mappings use only the supported canonical syntax
@@ -73,9 +73,9 @@ The CLI verifies that an ID is present in the required mapping. An agent still r
 
 ## Cross-spec contract checks
 
-Under [Decisions 0011](./decisions/0011-cross-spec-contract.md) and [0055](./decisions/0055-cross-spec-review-inputs.md), the CLI loads every current persistent `contract.md`, validates deterministic structure and the complete dependency graph, and fingerprints the accepted input set. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
+Under [Decisions 0011](./decisions/0011-cross-spec-contract.md), [0055](./decisions/0055-cross-spec-review-inputs.md), and [0057](./decisions/0057-type-based-artifact-discovery.md), the CLI discovers every current persistent contract by OKF type, validates deterministic structure and the complete dependency graph, and fingerprints the accepted input set. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
 
-The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. When deeper requirements, design, or task-plan content materially supports that verdict, the agent declares its canonical path and the CLI adds its current revision under Decision 0055.
+The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. When deeper requirements, design, or task-plan content materially supports that verdict, the agent declares its logical selector and the CLI resolves and adds its current revision under Decision 0055.
 
 ## Working command shape
 
@@ -143,6 +143,12 @@ The CLI and skills must respect supported settings customization while still enf
 Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbind tasks show` as read-only CLI projections over `spec.yaml` and `tasks.yaml`. The CLI owns schema validation, consistency health, sparse-status expansion, effective dependency calculation, group rollups, Requirement ID coverage, approval freshness, and versioned JSON output. Agent skills own when to request a view, how to explain it in workflow context, and any semantic recommendation that cannot be derived mechanically.
 
 These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. Human terminal output and `--json` must be two renderings of the same structured core result.
+
+## Artifact inventory and content read model
+
+[Decision 0058](./decisions/0058-artifact-inventory-read-model.md) accepts `specbind artifact list <spec>` and `specbind artifact read <spec> <selector>...` as the read-only boundary over Decision 0057 type-based discovery. The list command returns a compact versioned inventory without bodies or hashes. The read command resolves logical selectors rather than agent-supplied paths; a single raw read returns untouched Markdown, while multiple reads require a provenance-preserving JSON envelope.
+
+Agent skills list first, select only semantically relevant artifacts, and then read those selectors. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so read output never becomes mutation authority.
 
 ## Completion validation handshake
 
