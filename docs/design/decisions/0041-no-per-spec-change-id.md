@@ -24,4 +24,4 @@ A separate ID would add another value to generate, expose, validate, migrate, an
 - Ordinary active-change metadata has one fewer opaque identifier.
 - Roadmap and spec lifecycle records use identities that already exist and are visible in project structure.
 - Supporting spec rename later requires an explicit identity-migration design.
-- Decision 0042 supplies the remaining generated lifecycle identifier as a project-sequential `milestone_id`.
+- Decision 0043 supplies the remaining generated lifecycle identifier as a UUID v7 `milestone_id`.

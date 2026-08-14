@@ -1,6 +1,8 @@
 # 0042: Use a project-sequential milestone ID
 
-Status: Accepted
+Status: Superseded by Decision 0043
+
+> This sequence-based design is retained as decision history. Decision 0043 replaces it with UUID v7 because Git branches and worktrees cannot safely share the proposed project-local counter.
 
 ## Context
 

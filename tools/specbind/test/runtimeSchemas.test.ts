@@ -50,15 +50,16 @@ describe('runtime schema scaffolds', () => {
     });
   });
 
-  it('defines project-sequential milestone IDs', async () => {
+  it('defines canonical UUID v7 milestone IDs', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
     ) as RuntimeSchema;
 
     expect(schema.$defs?.milestoneId).toEqual({
       type: 'string',
-      description: 'Project-sequential milestone identity allocated from .specbind.json.',
-      pattern: '^m-[1-9][0-9]*$',
+      description: 'Canonical lowercase hyphenated UUID v7 milestone identity.',
+      pattern:
+        '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
     });
   });
 

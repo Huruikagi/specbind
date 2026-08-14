@@ -16,7 +16,7 @@ Conceptual shape before requirements approval:
 
 ```yaml
 active_change:
-  milestone_id: m-12
+  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
   requirement_ids: null
 ```
 
@@ -24,7 +24,7 @@ After requirements approval:
 
 ```yaml
 active_change:
-  milestone_id: m-12
+  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
   requirement_ids:
     - "1.1"
     - "1.2"

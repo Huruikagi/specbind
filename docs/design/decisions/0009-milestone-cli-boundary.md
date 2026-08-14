@@ -19,7 +19,7 @@ A proposed `specbind-milestone` skill would separate the name but still express 
 
 ## CLI-owned milestone operations
 
-- Reserve the next Decision 0042 project sequence in `.specbind.json`, create `steering/roadmap.md`, and assign the resulting stable milestone ID.
+- Generate a branch-safe Decision 0043 UUID v7, create `steering/roadmap.md`, and assign the resulting stable milestone ID.
 - Apply an explicitly confirmed scope and ordering update.
 - Bind or rebind a target release version subject to the applicable approval rules.
 - Check consistency among the roadmap and participating specs' active-change metadata.

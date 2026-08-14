@@ -43,7 +43,7 @@ schema_version: 1
 feature_name: example
 language: en
 active_change:
-  milestone_id: m-12
+  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
   state: design
   requirement_ids:
     - "1.1"

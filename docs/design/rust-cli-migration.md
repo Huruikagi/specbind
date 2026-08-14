@@ -98,7 +98,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 
 ### 1. Contract capture
 
-- Record the current CLI surface and config schema, then add the CLI-managed `nextMilestoneSequence` field accepted by Decision 0042 without exposing it through ordinary option precedence.
+- Record the current CLI surface and config schema. Decision 0043 requires no project-level milestone allocation field.
 - Add golden fixtures for representative installation matrices.
 - Classify observed behavior as preserve, intentionally change, or remove.
 - Define normalized line-ending and path expectations across platforms.

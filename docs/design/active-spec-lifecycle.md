@@ -38,26 +38,26 @@ Every milestone has a `roadmap.md`, including a milestone that changes only one 
 
 The milestone's stable identity does not depend on knowing the final release version. The working model separates:
 
-- `milestone_id`: CLI-generated project sequence in the `m-<positive integer>` form accepted by Decision 0042
+- `milestone_id`: CLI-generated canonical UUID v7 accepted by Decision 0043
 - `target_release`: concrete release version, initially unset when necessary
 
 Conceptual roadmap metadata:
 
 ```yaml
-milestone_id: m-12
+milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: null
 ```
 
 When the release version becomes known, the workflow binds it to the active milestone:
 
 ```yaml
-milestone_id: m-12
+milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: v1.4.0
 ```
 
 This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
 
-Project-root `.specbind.json` stores the next unallocated sequence in the CLI-managed `nextMilestoneSequence` field. Allocation never reuses a number and may leave gaps after an abandoned or failed creation. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
+The Rust CLI generates the UUID v7 locally without mutating a project counter, so mainline, hotfix, and worktree milestones do not compete for one Git-tracked sequence. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
 ## Active change
 

@@ -109,7 +109,7 @@ The JSON schema and exit-code table must be versioned contracts before implement
 
 The same boundary can prevent `specbind-discovery` from becoming a general-purpose state manager. Candidate CLI command families include:
 
-- reserve the next project sequence and create an active roadmap with its stable Decision 0042 milestone ID
+- generate a branch-safe UUID v7 and create an active roadmap with its stable Decision 0043 milestone ID
 - apply an explicitly confirmed roadmap scope update
 - bind or rebind the target release version
 - check milestone and per-spec lifecycle consistency

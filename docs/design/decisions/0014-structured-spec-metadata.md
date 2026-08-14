@@ -32,7 +32,7 @@ It does not change:
 
 Those formats change only through their own explicit decisions.
 
-Decision 0042 is the later explicit decision that adds CLI-managed `nextMilestoneSequence` state to `.specbind.json`; it does not place that project-level counter in `spec.yaml`.
+Decision 0043 keeps UUID v7 generation local and adds no milestone-allocation state to `.specbind.json` or `spec.yaml`.
 
 ## Lifecycle and writes
 
