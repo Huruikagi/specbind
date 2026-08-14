@@ -10,7 +10,7 @@ The inherited cc-sdd task format already uses an italic `_Requirements: 1.1, 2.3
 
 ## Decision
 
-- Every live `SpecBind Design` artifact requires a `requirement_ids` Front Matter field:
+- Every live `SpecBind Design` artifact requires the three SpecBind-owned Front Matter fields `type`, `artifact_id`, and `requirement_ids`:
 
   ```yaml
   ---
@@ -24,6 +24,9 @@ The inherited cc-sdd task format already uses an italic `_Requirements: 1.1, 2.3
 
 - `requirement_ids` is a non-empty YAML array of unique strings. Every value must be a canonical Requirement ID extracted under Decision 0060 and must exist in the current `SpecBind Requirements` artifact.
 - Array order has no semantic meaning. Overlap between different design artifacts is allowed because one Requirement may affect several design concerns.
+- Additional valid Front Matter fields are allowed and preserved. An unrecognized field is project metadata: the CLI does not assign it lifecycle, identity, traceability, or gate semantics, and bundled skills must not depend on it as a stable SpecBind contract.
+- Projects may namespace custom fields to reduce future naming collisions, but v1 does not require a particular extension prefix. A field becomes part of the stable SpecBind contract only through a later profile decision and migration definition.
+- The Markdown body is otherwise template-defined free-form content. The CLI does not require a particular H1, title field, section inventory, or section order; only the explicit Requirement marker contract below is machine-recognized for this profile.
 - Each live design artifact must contain one or more explicit italic Requirement markers using this canonical presentation:
 
   ```markdown
@@ -57,12 +60,13 @@ The inherited cc-sdd task format already uses an italic `_Requirements: 1.1, 2.3
 ## Fingerprints and freshness
 
 - Design-gate evidence continues to fingerprint the complete Markdown file after line-ending normalization under Decisions 0038 and 0057.
-- Consequently, `requirement_ids` order is semantically irrelevant to traceability comparison, but reordering or reformatting the Front Matter still changes the complete-file fingerprint and invalidates existing design approval.
+- Consequently, `requirement_ids` order and unrecognized Front Matter fields have no additional design-profile semantics, but adding, removing, reordering, or reformatting them still changes the complete-file fingerprint and invalidates existing design approval.
 - The design gate does not duplicate the active Requirement ID list or requirements fingerprint in its evidence. It requires fresh prerequisite requirements evidence, validates current traceability, and records the current contract and complete design logical-key set as already accepted by Decision 0038.
 
 ## Consequences
 
 - Humans and agents can see Requirement coverage in the design body, while the CLI receives an inexpensive typed mapping from Front Matter.
 - Splitting design across files remains supported and each file states its own scope explicitly.
+- Projects can attach local metadata without forking the core profile, while the three required fields remain the only stable v1 Front Matter contract for bundled workflows.
 - Exact set equality prevents Front Matter from becoming a stale index that disagrees with visible design content.
 - Reusing the narrow italic marker keeps ordinary prose and examples from accidentally satisfying traceability checks.
