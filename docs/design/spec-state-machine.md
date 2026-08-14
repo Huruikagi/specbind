@@ -51,7 +51,6 @@ The exact schema and digest format remain to be accepted, but the state model re
       "requirements": {
         "approved_at": "<timestamp>",
         "approval_mode": "delegated",
-        "authorization_scope": "active-change",
         "workflow": "specbind-spec-quick",
         "input_revisions": {
           "requirements.md": "<fingerprint>",
@@ -63,7 +62,7 @@ The exact schema and digest format remain to be accepted, but the state model re
 }
 ```
 
-Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` references an intentional accelerated or batch workflow authorization recorded before the future gate outputs exist. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define exact authorization fields, fingerprint canonicalization, and whether approval evidence is embedded or referenced.
+Gate evidence must identify the approved input revision strongly enough for the CLI to detect a later out-of-band edit. `explicit` records approval after the current revision exists. `delegated` records the accelerated or batch workflow that crossed the gate. The delegation itself remains only in that workflow's run context and is not persisted in `spec.json` or another project artifact. Both modes satisfy the same gate guards; only the post-gate confirmation pause differs. `--non-interactive` controls prompting and never creates approval authority. The final contract still needs to define the exact gate-evidence fields and fingerprint canonicalization.
 
 ## Event list
 
@@ -228,7 +227,7 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 
 ## Open questions
 
-- Exact authorization-reference, gate-evidence storage, and content-fingerprint schema under Decision 0012.
+- Exact gate-evidence storage and content-fingerprint schema under Decision 0012.
 - Whether an explicitly approved active Requirement ID set may be empty for any spec-backed change.
 - Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
 - Which repair operations the CLI may automate after presenting a dry-run plan.

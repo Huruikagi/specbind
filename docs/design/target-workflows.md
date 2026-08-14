@@ -198,7 +198,7 @@ The future workflow needs an explicit answer for each transition:
 
 Accelerated and batch workflows may automate transitions, but they should reuse the same phase contracts rather than define competing document formats or success criteria.
 
-An accelerated workflow records run-scoped `delegated` authorization for named future gates. Each gate still runs its normal checks and emits the same approval event as the deliberate path. Delegation only removes the extra confirmation pause after a passing gate. `--non-interactive` does not imply approval and stops when neither valid explicit approval nor in-scope delegated authorization is available.
+An accelerated workflow keeps run-scoped `delegated` authorization for named future gates in its orchestration context; it does not add a project artifact. Each gate still runs its normal checks and emits the same approval event as the deliberate path. Delegation only removes the extra confirmation pause after a passing gate. `--non-interactive` does not imply approval and stops when neither valid explicit approval nor in-scope delegated authorization is available.
 
 ## Topics to resolve next
 

@@ -224,5 +224,5 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
-- The exact authorization-reference, gate-evidence storage, and artifact-fingerprint schema required by Decision 0012.
+- The exact gate-evidence storage and artifact-fingerprint schema required by Decision 0012.
 - Whether immutable history may use something other than a Git release tag.

@@ -24,8 +24,9 @@ A stored boolean cannot distinguish direct user approval from previously delegat
 - Delegation is bounded to an identified active change or active milestone and to named gate types. It is not a standing permission for later unrelated work.
 - Both modes emit the same state-machine approval events and must satisfy the same gate guards.
 - Delegation changes whether the workflow pauses after a passing gate. It does not skip generation, review, traceability, contract, or validation checks.
+- Delegation exists only in the accelerated workflow's run context. It is not persisted as a project artifact or authorization object.
 - `--non-interactive` controls prompting only. It grants no approval authority, chooses no semantic defaults, and fails when required authorization or user judgment is unavailable.
-- Approval evidence records only the mode, authorization scope, originating workflow, time, and approved input revision.
+- Approval evidence records only the mode, originating workflow for delegated approval, time, and approved input revision. Its active change and milestone scope come from the surrounding lifecycle state rather than duplicated authorization metadata.
 - The state remains the authoritative lifecycle value. Approval evidence explains and validates a gate crossing; it is not a second set of independently writable phase booleans.
 
 ## Approval modes
@@ -33,19 +34,21 @@ A stored boolean cannot distinguish direct user approval from previously delegat
 | Mode | Authorization timing | Gate behavior | Evidence expectation |
 | --- | --- | --- | --- |
 | `explicit` | After the current gate output exists. | Present or identify the current revision, obtain approval, then emit the gate event. | Record explicit mode, time, gate, scope, and input revision. |
-| `delegated` | Before future gate outputs exist, through intentional accelerated or batch workflow invocation. | Run the complete gate; on success emit the gate event without another confirmation; on ambiguity or failure stop. | Record delegated mode, time, named workflow, authorization scope, covered gates, and input revision accepted at the event. |
+| `delegated` | Before future gate outputs exist, through intentional accelerated or batch workflow invocation. | Run the complete gate; on success emit the gate event without another confirmation; on ambiguity or failure stop. | Record delegated mode, time, named workflow, and input revision accepted at the event. |
 
 The first contract does not add a repository policy that permanently auto-approves gates. Such a mode would need a separate decision because it broadens authorization beyond one intentional workflow run.
 
 ## Delegation contract
 
-An accelerated workflow must establish delegation before it crosses a future gate. The authorization identifies at least:
+An accelerated workflow must establish delegation in its run context before it crosses a future gate. The run context identifies at least:
 
 - active milestone and, for a single-spec workflow, active Change ID
 - originating workflow or orchestration mode
 - gates covered by the delegation
 - time the delegation was recorded
 - whether the run may continue across every covered passing gate or must stop at a named boundary
+
+This run context is orchestration state, not a user-facing SpecBind artifact. It is not written to `spec.json`, `roadmap.md`, or a separate authorization file. If the workflow run ends or restarts, its delegation ends; continuing acceleration requires a new intentional workflow invocation.
 
 Delegation is consumed only after each gate independently passes. It cannot:
 
@@ -63,7 +66,7 @@ The target interface does not support `-y`.
 
 - New interfaces use an explicit accelerated workflow or approval-mode contract for delegation.
 - `--non-interactive` remains orthogonal and never implies `delegated`.
-- Quick and batch orchestration carry one run-scoped delegation reference into the individual gate events instead of asking phase skills to mutate all approval booleans.
+- Quick and batch orchestration keep delegation in their run context instead of asking phase skills to mutate all approval booleans.
 - SpecBind skills and CLI commands do not expose a compatibility alias for the inherited flag.
 - Supplying `-y` to a target SpecBind interface stops with a stable unsupported-option diagnostic and points to an intentional accelerated workflow.
 - Migration guidance explains the replacement rather than silently reinterpreting an inherited invocation as delegated approval.
@@ -76,8 +79,7 @@ Every accepted gate records enough structured evidence to answer:
 
 - Which gate crossed?
 - Was approval explicit or delegated?
-- What active change or milestone was authorized?
-- Which workflow recorded delegated authorization?
+- For delegated approval, which workflow crossed the gate?
 - Which exact artifact inputs and active Requirement ID set were accepted?
 - When did approval occur?
 - Do the current inputs still match the approved revision?
@@ -91,12 +93,12 @@ Artifact fingerprints are required to detect out-of-band edits, but their canoni
 - Non-interactive CI or agent execution fails safely when approval authority is absent.
 - Phase commands no longer gain authority to retroactively approve prerequisites.
 - Quick and batch workflows need a run-scoped delegation handoff rather than repeated `-y` flags.
+- Delegation adds no project file or persistent authorization object for users to understand or maintain.
 - Target SpecBind interfaces make inherited `-y` invocations fail visibly instead of preserving ambiguous auto-approval semantics.
 - Migration from inherited boolean approvals can preserve that a gate was approved, but must not invent whether it was explicit or delegated when historical evidence is absent.
 
 ## Open schema details
 
-- Exact authorization-reference and gate-evidence JSON fields.
+- Exact gate-evidence JSON fields.
 - Fingerprint algorithm, normalization rules, and artifact-input sets for each gate.
-- How long a run-scoped delegation remains valid across retries or process restarts.
-- Human-readable and JSON diagnostics for missing, expired, or out-of-scope delegation.
+- Human-readable and JSON diagnostics for missing or out-of-scope run-context delegation.
