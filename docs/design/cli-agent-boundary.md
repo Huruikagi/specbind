@@ -11,7 +11,7 @@ SpecBind should ship both:
 - agent-facing skills and templates for interpretation, authoring, review, and orchestration
 - a deterministic CLI for parsing, invariant checks, and safe lifecycle state changes
 
-The CLI is part of the SpecBind repository and distribution. The Issue #49 plan to publish a separate Rust `spec-lint` repository is therefore no longer the target integration model. A separate executable or implementation language should be introduced only if packaging evidence shows that extending the existing `specbind` CLI is insufficient.
+The CLI is part of the SpecBind repository and distribution. The Issue #49 plan to publish a separate Rust `spec-lint` repository is therefore no longer the target integration model. Under [Decision 0006](./decisions/0006-rust-cli.md), the existing SpecBind installer and future deterministic operations will be implemented together as the Rust `specbind` CLI.
 
 ## Why this boundary exists
 
@@ -134,7 +134,7 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 ## Open questions
 
 - Final command names and whether `check` becomes the common read-only validation namespace.
-- Whether implementation remains TypeScript inside the current Node CLI or a separately built binary is packaged with it.
+- How the accepted Rust migration packages templates and preserves the current installation contract.
 - The canonical Requirement ID syntax and parsing rules for each supported language.
 - The JSON diagnostic schema and stable exit-code categories.
 - Which lifecycle operations graduate from candidate commands to accepted CLI contracts.
