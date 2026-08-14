@@ -56,6 +56,7 @@
 - [`docs/design/decisions/0032-gate-local-freshness-chain.md`](docs/design/decisions/0032-gate-local-freshness-chain.md) — accepted gate-local revision ownership and cascading freshness semantics
 - [`docs/design/decisions/0033-completion-mechanical-checks.md`](docs/design/decisions/0033-completion-mechanical-checks.md) — accepted concise categorized command evidence for successful completion validation
 - [`docs/design/decisions/0034-do-not-persist-semantic-pass-flags.md`](docs/design/decisions/0034-do-not-persist-semantic-pass-flags.md) — accepted semantic validation protocol without redundant persisted pass flags
+- [`docs/design/decisions/0035-roadmap-owned-cross-spec-review.md`](docs/design/decisions/0035-roadmap-owned-cross-spec-review.md) — accepted roadmap ownership for contract-impact and downstream-review evidence
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

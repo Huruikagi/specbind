@@ -159,6 +159,8 @@ For accepted mechanical evidence, Decision 0033 requires an ordered list of cate
 
 Decision 0034 keeps requirements coverage, design alignment, spec-local task integration, and boundary integrity as mandatory agent judgments but omits their fixed `passed` flags from persisted evidence. The CLI accepts only the final guarded `GO` candidate; it does not mistake stored booleans for replayable semantic proof.
 
+Decision 0035 keeps contract-impact classification, affected contract entries, and downstream review in the active roadmap. The CLI resolves the applicable record through the spec's existing milestone and change identities during completion acceptance; the agent does not copy that record into per-spec candidate evidence.
+
 ## Initial implementation boundary
 
 The first increment should remain narrow:

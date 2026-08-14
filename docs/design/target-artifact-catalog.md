@@ -74,6 +74,6 @@ Status: Draft
 - What exact schema and ID format identify the active milestone, release binding, and remaining active-change fields?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
-- What exact Markdown grammar, entry ID format, and active-change metadata represent contract impact?
+- What exact Markdown grammar and entry ID format represent contracts, and what parseable active-roadmap syntax represents the cross-spec review record owned there by Decision 0035?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?
