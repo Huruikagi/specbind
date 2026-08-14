@@ -30,6 +30,7 @@ Related documents:
 - [Decision 0049: concise OKF authoring rule](./decisions/0049-okf-authoring-rule.md)
 - [Decision 0057: type-based artifact discovery](./decisions/0057-type-based-artifact-discovery.md)
 - [Decision 0059: OKF artifact templates](./decisions/0059-okf-artifact-templates.md)
+- [Decision 0060: Requirement ID and heading mapping](./decisions/0060-requirement-id-and-heading-mapping.md)
 
 Status: Draft
 
@@ -71,7 +72,7 @@ Status: Draft
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Draft | A release must not delete a spec merely because its milestone completed. |
 | `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Discovered by OKF type and removed by successful release finalization; same-milestone deltas merge into the active brief. |
-| `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. The active requirement set is a separate milestone-scoped concept. |
+| `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. Front Matter maps the two customizable structural heading labels, while Requirement IDs derive from explicit group number plus Acceptance Criteria list position under Decision 0060. The active requirement set is a separate milestone-scoped concept. |
 | `SpecBind Design` collection (`design.md`, `artifact_id: main` by default) | Holds the complete currently valid design across one or more focused documents. | Design workflow. | Accepted | Discovered by OKF type plus stable `artifact_id`; revised in place for an active change. |
 | `SpecBind Contract` singleton (`contract.md` by default) | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Discovered by OKF type. Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `SpecBind Implementation Notes` collection (`implementation-notes.md`, `artifact_id: main` by default) | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | Discovered by OKF type plus stable `artifact_id`. Bodies are free-form Markdown. Project-wide knowledge should be promoted to `steering/`. |

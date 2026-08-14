@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-The singleton `SpecBind Requirements` artifact represents the complete currently valid requirement set. Decision 0057 discovers it by OKF type; `requirements.md` is only the default path. A milestone may change or revalidate only a subset of those requirements, so downstream design, tasks, and completion verification need an explicit active requirement set.
+The singleton `SpecBind Requirements` artifact represents the complete currently valid requirement set. Decision 0057 discovers it by OKF type; `requirements.md` is only the default path. Decision 0060 derives canonical Requirement IDs from an explicit mapped Requirement heading number and Acceptance Criteria list position. A milestone may change or revalidate only a subset of those requirements, so downstream design, tasks, and completion verification need an explicit active requirement set.
 
 The set is current lifecycle state rather than prose or release history. It must also be machine-readable so task coverage can be checked without inferring scope from document diffs.
 

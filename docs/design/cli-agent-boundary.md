@@ -56,7 +56,7 @@ SpecBind Requirements singleton
 
 That proposal predates the accepted active-requirement-set model in [Decision 0003](./decisions/0003-active-requirement-set.md). The SpecBind version should therefore distinguish the complete requirement catalog from the active milestone scope.
 
-The first check should mechanically verify:
+The first check should mechanically verify the Decision 0060 requirements grammar and then:
 
 - canonical Requirement IDs can be extracted from the discovered requirements artifact
 - Requirement IDs use the supported format and are unique
@@ -191,6 +191,5 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 
 - Final command names for remaining checks and whether `check` becomes their common read-only validation namespace; Decision 0025 fixes the task read-model command names.
 - How the accepted Rust migration packages templates and preserves the current installation contract.
-- The canonical Requirement ID syntax and parsing rules for each supported language.
 - The JSON diagnostic schema and stable exit-code categories.
 - Exact command contracts for the accepted milestone operations and any additional lifecycle candidates.
