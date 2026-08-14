@@ -19,6 +19,7 @@
 - [`docs/design/target-workflows.md`](docs/design/target-workflows.md) — proposed user journeys and responsibility boundaries
 - [`docs/design/active-spec-lifecycle.md`](docs/design/active-spec-lifecycle.md) — detailed draft for active specs and milestone finalization
 - [`docs/design/cli-agent-boundary.md`](docs/design/cli-agent-boundary.md) — proposed boundary between bundled deterministic CLI operations and agent skills
+- [`docs/design/cross-spec-contracts.md`](docs/design/cross-spec-contracts.md) — detailed draft for persistent cross-spec seam manifests and contract-first review
 - [`docs/design/rust-cli-migration.md`](docs/design/rust-cli-migration.md) — working migration plan from the TypeScript installer to the complete Rust CLI
 - [`docs/design/decisions/0002-project-release-adapter.md`](docs/design/decisions/0002-project-release-adapter.md) — accepted core-plus-project-adapter release direction
 - [`docs/design/decisions/0003-active-requirement-set.md`](docs/design/decisions/0003-active-requirement-set.md) — accepted storage contract for current milestone Requirement IDs
@@ -29,6 +30,7 @@
 - [`docs/design/decisions/0008-customization-surface.md`](docs/design/decisions/0008-customization-surface.md) — accepted shared templates and rules as the stable project customization surface
 - [`docs/design/decisions/0009-milestone-cli-boundary.md`](docs/design/decisions/0009-milestone-cli-boundary.md) — accepted discovery-plus-Rust-CLI milestone responsibility boundary
 - [`docs/design/decisions/0010-release-execution-boundary.md`](docs/design/decisions/0010-release-execution-boundary.md) — accepted AI adapter execution and Rust CLI release-finalization boundary
+- [`docs/design/decisions/0011-cross-spec-contract.md`](docs/design/decisions/0011-cross-spec-contract.md) — accepted persistent contract manifest and contract-first cross-spec review direction
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

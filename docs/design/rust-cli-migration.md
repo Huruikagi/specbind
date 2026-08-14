@@ -116,6 +116,7 @@ When a To-Be decision changes generated output, update the relevant target artif
 ### 4. Native SpecBind operations
 
 - Implement traceability checking in Rust.
+- Implement cross-spec contract parsing, reference validation, and dependency graph checks in Rust.
 - Add lifecycle checks and accepted mutations incrementally.
 - Update generated skills to call stable CLI contracts rather than shell-specific inspection logic.
 

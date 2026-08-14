@@ -16,6 +16,7 @@ Status: Draft
 - Treat specs as active, maintained descriptions of the product across milestones and releases.
 - Move deterministic parsing, invariant checks, and state mutations out of agent-specific shell instructions and into the bundled CLI.
 - Keep document formats and project-wide AI rules customizable through shared settings consumed consistently by every supported agent.
+- Make cross-spec review contract-first so context follows affected boundaries rather than total document volume.
 
 ## Spec lifecycle
 
@@ -86,6 +87,22 @@ Rust CLI: core preflight and readiness gates
 
 An adapter phase cannot waive a core gate. If Publish or Verify instructions are missing, release stops before publication rather than inferring commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates them and hands structured results to the CLI under [Decision 0010](./decisions/0010-release-execution-boundary.md).
 
+## Cross-spec review
+
+Every active spec has a persistent `contract.md` containing only the seam that other specs may observe or depend on. Cross-spec review reads the roadmap and contracts first, asks the CLI to validate and build the dependency graph, and then loads full requirements, design, and tasks only for affected or ambiguous specs.
+
+```text
+roadmap + current contracts
+  -> CLI structure, reference, ownership, and graph checks
+  -> agent semantic classification
+       -> LOCAL_ONLY: spec-local review
+       -> CONTRACT_COMPATIBLE: targeted consumer review
+       -> CONTRACT_BREAKING: downstream revision or revalidation
+  -> scoped deep review and milestone evidence
+```
+
+Direct implementation candidates must declare contract impact. An unjustified `none` returns the request to discovery for existing-spec or new-spec routing. Missing contracts trigger a safe full-document fallback and a migration diagnostic, not an assumption of no impact. See [Cross-spec contracts](./cross-spec-contracts.md).
+
 ## New work
 
 ```text
@@ -110,7 +127,7 @@ Open questions:
 
 - Whether direct implementation remains only a recommendation or gets a dedicated skill.
 - Whether multi-spec decomposition belongs to discovery or a separate planning skill.
-- Whether cross-spec validation is part of batch orchestration or an explicit final skill.
+- Whether the reusable contract-first review stage is implemented inside batch orchestration or as a shared workflow invoked by batch and other routes.
 
 ## Existing-system work
 
@@ -136,11 +153,12 @@ The target contract should state when project guidance and gap analysis are opti
 | Discovery | Routing, scope clarification, decomposition, active brief, and confirmed milestone intent | Detailed requirements, technical design, or mechanical milestone-state transitions |
 | Rust CLI milestone operations | Roadmap creation, confirmed scope updates, release-version binding, consistency checks, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
-| Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability | Task execution or unapproved scope changes |
+| Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability, and current contract maintenance | Task execution or unapproved scope changes |
 | Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage | Implementation or historical task accumulation |
 | Implementation | Code and tests for approved tasks, progress recording | Silent changes to approved requirements or design |
 | Review | Independent task-level conformance review | Feature-level integration acceptance |
 | Integration validation | Cross-task behavior, full verification, spec coverage | Replacing missing task-level review |
+| Cross-spec review | Contract-first dependency, ownership, invariant, impact, and downstream review analysis | Reloading every complete spec by default or replacing local design review |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
 | Release agent orchestration | Read the adapter, call CLI preflight, execute project phases, collect evidence, call CLI finalization, and report outcomes | Reimplementing lifecycle mutations or bypassing core gates |
 | Rust CLI release core | Readiness gates, mechanically verifiable evidence, idempotent active-spec finalization, and stable diagnostics | Executing natural-language project publication instructions or claiming unobservable external success |

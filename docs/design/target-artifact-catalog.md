@@ -18,6 +18,7 @@ Related documents:
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
 - [Decision 0007: configurable `.specbind` root](./decisions/0007-spec-root.md)
 - [Decision 0008: shared settings customization](./decisions/0008-customization-surface.md)
+- [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
 
 Status: Draft
 
@@ -58,6 +59,7 @@ Status: Draft
 | `brief.md` | Exists only for one active milestone change. | `specbind-discovery`. | Draft | Removed by successful release finalization; same-milestone deltas merge into the active brief. |
 | `requirements.md` | Holds the complete currently valid requirements across releases. | Requirements workflow. | Draft | The active requirement set is a separate milestone-scoped concept. |
 | `design.md` | Holds the complete currently valid design across releases. | Design workflow. | Draft | Revised in place for an active change. |
+| `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `tasks.md` | Exists only for the active milestone's task plan. | Task and implementation workflows. | Draft | Starts fresh between milestones and is removed by successful release finalization. |
 | `changelog.md` | Persists per spec as an index of released changes and evidence. | Release finalization workflow. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata. Unreleased abandoned work is omitted by default. |
 | `spec.json` | Represents lifecycle, active-change metadata, active Requirement IDs, and current approvals. | Spec lifecycle workflows. | Draft | Source of truth for current milestone scope; must also represent released / no-active-change without requiring `brief.md` or `tasks.md`. |
@@ -67,5 +69,6 @@ Status: Draft
 - What exact schema and ID format identify the active milestone, release binding, and remaining active-change fields?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
+- What exact Markdown grammar, entry ID format, and active-change metadata represent contract impact?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

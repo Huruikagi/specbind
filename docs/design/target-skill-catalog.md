@@ -20,6 +20,7 @@ Related documents:
 - [Decision 0005: active change abandonment](./decisions/0005-active-change-abandonment.md)
 - [Decision 0009: milestone CLI boundary](./decisions/0009-milestone-cli-boundary.md)
 - [Decision 0010: release execution boundary](./decisions/0010-release-execution-boundary.md)
+- [Decision 0011: cross-spec contract manifest](./decisions/0011-cross-spec-contract.md)
 
 ## Status and change types
 
@@ -40,8 +41,8 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-discovery` | `specbind-discovery` | Change | Draft | Analyze requests, classify work, and route active spec maintenance. |
 | `kiro-impl` | `specbind-impl` | Change | Draft | Implement only the active milestone's approved tasks. |
 | `kiro-review` | `specbind-review` | Rename | Idea | Review one task implementation. |
-| `kiro-spec-batch` | `specbind-spec-batch` | Rename | Idea | Generate several specs from a roadmap. |
-| `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design and trace the active requirement set. |
+| `kiro-spec-batch` | `specbind-spec-batch` | Change | Draft | Generate several specs and perform contract-first cross-spec review. |
+| `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design, active-requirement traceability, and the cross-spec contract. |
 | `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
 | `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
 | `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.json`. |
@@ -49,7 +50,7 @@ The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix deci
 | `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
 | `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |
 | `kiro-steering-custom` | `specbind-steering-custom` | Rename | Idea | Create specialized project guidance. |
-| `kiro-validate-design` | `specbind-validate-design` | Rename | Idea | Review technical design quality. |
+| `kiro-validate-design` | `specbind-validate-design` | Change | Draft | Review technical design quality and design-to-contract consistency. |
 | `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
 | `kiro-validate-impl` | `specbind-validate-impl` | Change | Draft | Validate current milestone integration and active-requirement coverage. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Draft | Verify current completion without confusing historical evidence. |

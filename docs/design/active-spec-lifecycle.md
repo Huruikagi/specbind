@@ -23,6 +23,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `brief.md` | Why the spec changes in the current milestone. | Exactly one active change, including same-milestone deltas. | Removed. |
 | `requirements.md` | The complete set of currently valid requirements. | Revised in place. | Preserved. |
 | `design.md` | The complete currently valid design. | Revised in place. | Preserved. |
+| `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
 | `tasks.md` | Executable plan for the current milestone's change. | Contains only current tasks and numbers them from the start. | Removed. |
 | `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
 | `spec.json` | Current lifecycle, active-change metadata, and approvals. | Represents an active change. | Represents released state with no active change. |
@@ -87,6 +88,12 @@ Discovery owns creating the active brief and transitioning an idle released spec
 
 Within `spec.json`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a unique, deterministically ordered array of canonical Requirement IDs. Release finalization clears `active_change` as part of returning the spec to released / idle state.
 
+## Cross-spec contract
+
+Every active spec maintains `contract.md` as the current source of truth for seams other specs may observe or consume. It persists across releases and changes alongside design; see [Cross-spec contracts](./cross-spec-contracts.md) and [Decision 0011](./decisions/0011-cross-spec-contract.md).
+
+The contract contains only stable ownership, exports, consumes, cross-spec invariants, and File Ownership entries. Design review confirms that internal design implements the contract and that an active change has not omitted a required contract update. CLI checks validate structure and references; agent review determines semantic compatibility and downstream revalidation scope.
+
 ## Active tasks and coverage
 
 `tasks.md` contains only tasks for the active milestone:
@@ -134,7 +141,7 @@ The portable release contract is a gated state transition. Project publication i
 
 1. The release agent loads the active roadmap, target version, and `{{SPEC_DIR}}/settings/release.md`, then validates that required adapter phases are present.
 2. The release agent asks the Rust CLI to run core preflight.
-3. The CLI resolves participating specs, requires a concrete target version, and verifies current tasks, approvals, completion evidence, and lifecycle consistency.
+3. The CLI resolves participating specs, requires a concrete target version, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
 4. After successful preflight, the agent runs project Prepare, Publish, and Verify instructions in order and captures structured evidence.
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
@@ -198,11 +205,12 @@ The project-local append-only Change Brief behavior is the observed problem, not
 - `specbind-discovery`: analyze and route work, create one active brief, and initiate confirmed milestone changes.
 - bundled CLI: create and update the active roadmap, bind the target release, perform confirmed abandonment cleanup, and check active Requirement ID traceability.
 - requirements workflow: revise current requirements and freeze the active requirement set.
-- design workflow: revise current design and trace the active requirement set.
+- design workflow: revise current design, trace the active requirement set, and maintain the cross-spec contract.
 - tasks workflow: generate a milestone-local plan with complete active-requirement coverage.
 - implementation and validation workflows: operate only on current tasks and current milestone evidence.
 - status workflow: report released state, active-change state, current tasks, and latest history separately.
 - completion verification: distinguish current coverage from historical release evidence.
+- cross-spec review: read contracts first and deepen into affected specs only when boundaries change or remain ambiguous.
 - `specbind-release`: perform gated, idempotent finalization after release success.
 
 Batch update and evidence-recording responsibilities are required, but their final skill boundaries are not yet decided.

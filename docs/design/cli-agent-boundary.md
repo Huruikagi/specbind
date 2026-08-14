@@ -67,6 +67,12 @@ Requirements outside the active set remain valid current requirements, but they 
 
 The CLI verifies that an ID is present in the required mapping. An agent still reviews whether the mapped design and tasks actually satisfy the requirement.
 
+## Cross-spec contract checks
+
+Under [Decision 0011](./decisions/0011-cross-spec-contract.md), the CLI also validates the deterministic structure of `contract.md` files and their dependency graph. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs against a released reference.
+
+The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict.
+
 ## Working command shape
 
 The exact command vocabulary is not yet accepted. The initial shape should remain within the existing `specbind` executable, for example:
@@ -74,6 +80,7 @@ The exact command vocabulary is not yet accepted. The initial shape should remai
 ```sh
 specbind check traceability <spec-path>
 specbind check traceability <spec-path> --json
+specbind check contracts [<scope>] [--json]
 ```
 
 Human-readable success output should stay compact:
