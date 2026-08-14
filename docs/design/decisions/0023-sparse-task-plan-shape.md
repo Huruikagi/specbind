@@ -14,7 +14,7 @@ Safe or empty defaults are clearer when represented by field absence. Exception 
 
 - `tasks.yaml` requires `schema_version: 1` and a `plan` object.
 - `plan.items` is a non-empty ordered array of top-level groups or executable tasks.
-- The execution-state object remains a follow-up schema decision and is not introduced by this decision.
+- The plan shape is independent of the sparse execution-state object accepted separately by Decision 0024.
 
 ### Groups
 
@@ -42,4 +42,4 @@ Safe or empty defaults are clearer when represented by field absence. Exception 
 - A straightforward task remains compact while exceptional planning information stays visible.
 - Missing `parallel` is conservatively sequential; missing `depends_on` means no additional dependency beyond ordering rules.
 - There is no ambiguous difference between an absent list and an explicitly empty list.
-- The accepted plan can now be represented by the v1 root JSON Schema before execution-state fields are added.
+- The accepted plan remains a stable root projection while execution-state fields change independently.

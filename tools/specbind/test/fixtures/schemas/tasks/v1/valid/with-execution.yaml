@@ -1,0 +1,24 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: group
+      title: Execution example
+      tasks:
+        - id: "1.1"
+          kind: task
+          title: Completed task
+          requirement_ids:
+            - "1.1"
+        - id: "1.2"
+          kind: task
+          title: Blocked task
+          requirement_ids:
+            - "1.2"
+execution:
+  tasks:
+    "1.1":
+      status: completed
+    "1.2":
+      status: blocked
+      blocked_reason: Waiting for an upstream contract decision

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SpecBind task artifact v1",
-  "description": "Runtime contract for the accepted tasks.yaml v1 plan shape. Execution-state fields remain to be added after their schema decisions are accepted.",
+  "description": "Runtime contract for the accepted tasks.yaml v1 plan and sparse execution-state shape.",
   "$defs": {
     "taskReference": {
       "type": "string",
@@ -143,6 +143,65 @@
         }
       },
       "additionalProperties": false
+    },
+    "completedTaskState": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "const": "completed"
+        }
+      },
+      "additionalProperties": false
+    },
+    "blockedTaskState": {
+      "type": "object",
+      "required": [
+        "status",
+        "blocked_reason"
+      ],
+      "properties": {
+        "status": {
+          "const": "blocked"
+        },
+        "blocked_reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "taskExecutionState": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/completedTaskState"
+        },
+        {
+          "$ref": "#/$defs/blockedTaskState"
+        }
+      ]
+    },
+    "taskExecutionStates": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/taskReference"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/taskExecutionState"
+      }
+    },
+    "taskExecution": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "tasks": {
+          "$ref": "#/$defs/taskExecutionStates"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "type": "object",
@@ -156,6 +215,9 @@
     },
     "plan": {
       "$ref": "#/$defs/taskPlan"
+    },
+    "execution": {
+      "$ref": "#/$defs/taskExecution"
     }
   },
   "additionalProperties": false

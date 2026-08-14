@@ -45,6 +45,7 @@
 - [`docs/design/decisions/0021-optional-completion-criteria.md`](docs/design/decisions/0021-optional-completion-criteria.md) — accepted dedicated, conditionally optional task completion criteria
 - [`docs/design/decisions/0022-no-optional-tasks.md`](docs/design/decisions/0022-no-optional-tasks.md) — accepted removal of inherited optional tasks from `tasks.yaml` v1
 - [`docs/design/decisions/0023-sparse-task-plan-shape.md`](docs/design/decisions/0023-sparse-task-plan-shape.md) — accepted strict sparse group and executable-task plan objects
+- [`docs/design/decisions/0024-sparse-task-execution-state.md`](docs/design/decisions/0024-sparse-task-execution-state.md) — accepted sparse persisted completed and blocked task states
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

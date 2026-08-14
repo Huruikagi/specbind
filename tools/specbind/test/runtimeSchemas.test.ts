@@ -12,6 +12,7 @@ interface RuntimeSchema {
   properties?: {
     schema_version?: unknown;
     plan?: unknown;
+    execution?: unknown;
   };
   additionalProperties?: unknown;
 }
@@ -117,5 +118,27 @@ describe('runtime schema scaffolds', () => {
     expect(schema.required).toEqual(['schema_version', 'plan']);
     expect(schema.properties.plan).toEqual({ $ref: '#/$defs/taskPlan' });
     expect(group.properties?.tasks?.minItems).toBe(2);
+  });
+
+  it('defines sparse durable task execution states', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const executionText = JSON.stringify(schema.$defs?.taskExecutionState);
+
+    expect(schema.properties.execution).toEqual({ $ref: '#/$defs/taskExecution' });
+    expect(executionText).toContain('completedTaskState');
+    expect(executionText).toContain('blockedTaskState');
+    expect(executionText).not.toContain('pending');
+    expect(executionText).not.toContain('in_progress');
+    expect(executionText).not.toContain('skipped');
+    expect(schema.$defs?.completedTaskState).toEqual({
+      type: 'object',
+      required: ['status'],
+      properties: {
+        status: { const: 'completed' },
+      },
+      additionalProperties: false,
+    });
   });
 });
