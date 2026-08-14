@@ -112,6 +112,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 ### Intended behavior
 
 - Confirm that the active milestone is ready to close.
+- Require every roadmap direct change to have sparse `status: completed` state.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
 - Ask the Rust CLI to run core preflight and readiness checks.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
@@ -142,6 +143,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - Must not delete specs merely because the milestone is complete.
 - Must stop before release operations when the target release version is unset.
+- Must stop while any roadmap direct change remains pending.
 - Must stop when the adapter lacks safe Publish or Verify instructions.
 - Must not let adapter instructions weaken core readiness or finalization gates.
 - Must not treat `settings/release.md` code blocks as CLI-executable hooks.

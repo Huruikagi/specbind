@@ -127,7 +127,7 @@ Completion relies on the gate-local freshness chain accepted by [Decision 0032](
 
 Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decision 0035](./decisions/0035-roadmap-owned-cross-spec-review.md). Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves that record from `milestone_id` and the canonical spec identity; completion evidence does not duplicate it or add another roadmap reference.
 
-The roadmap's machine-readable scope uses the grouped `work_items` frontmatter accepted by [Decision 0046](./decisions/0046-roadmap-work-items.md). New specs, existing-spec updates, and direct changes remain distinct categories; typed references form the dependency graph. The Markdown body carries milestone context and rationale but has no CLI-parsed grammar.
+The roadmap's machine-readable scope uses the grouped `work_items` frontmatter accepted by [Decision 0046](./decisions/0046-roadmap-work-items.md). New specs, existing-spec updates, and direct changes remain distinct categories; typed references form the dependency graph. Spec-backed progress is derived from each spec's lifecycle, while a direct change persists only optional `status: completed` under [Decision 0047](./decisions/0047-sparse-direct-change-status.md), with absence meaning pending. The Markdown body carries milestone context and rationale but has no CLI-parsed grammar.
 
 ## Released history
 
@@ -166,7 +166,7 @@ The portable release contract is a gated state transition. Project publication i
 
 1. The release agent loads the active roadmap, target version, and `{{SPEC_DIR}}/settings/release.md`, then validates that required adapter phases are present.
 2. The release agent asks the Rust CLI to run core preflight.
-3. The CLI resolves participating specs, requires a concrete target version, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
+3. The CLI resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
 4. After successful preflight, the agent runs project Prepare, Publish, and Verify instructions in order and captures structured evidence.
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.

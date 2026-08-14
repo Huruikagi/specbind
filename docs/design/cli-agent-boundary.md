@@ -111,6 +111,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 
 - generate a branch-safe UUID v7 and create an active roadmap with its stable Decision 0043 milestone ID
 - apply an explicitly confirmed roadmap scope update
+- mark or reopen a direct roadmap change through its sparse completed-state mutation
 - bind or rebind the target release version
 - check milestone and per-spec lifecycle consistency
 - perform the deterministic portion of confirmed abandonment cleanup

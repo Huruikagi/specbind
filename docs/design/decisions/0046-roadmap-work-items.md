@@ -24,13 +24,14 @@ Flattening every item into one list with a repeated `kind` field would also obsc
   - `id`: a non-empty roadmap-local identity
   - `summary`: a non-empty one-line description
   - optional non-empty `depends_on`
+  - optional `status: completed` under Decision 0047
 - A dependency is a typed single-key reference to exactly one roadmap item:
   - `{ spec: <canonical spec identity> }` refers to either a new-spec or spec-update item
   - `{ direct: <roadmap-local identity> }` refers to a direct-change item
 - Every dependency target must exist in the same roadmap. Duplicate references, self-dependencies, and dependency cycles are invalid.
 - A canonical spec identity appears at most once across `new_specs` and `spec_updates`. Direct-change IDs are unique within `direct_changes`.
 - Dependency relationships, not YAML list order, determine execution waves. List and category order are presentation order only.
-- The frontmatter stores no generic completion checkbox or status. Spec-backed progress is derived from the spec lifecycle and task execution artifacts. Direct-change completion and evidence remain a separate workflow decision.
+- The frontmatter stores no generic completion checkbox or roadmap-level status. Spec-backed progress is derived from the spec lifecycle and task execution artifacts. Direct changes use only the sparse completed state accepted by Decision 0047.
 - The Markdown body has no CLI-parsed schema and is never partially mutated by the CLI. Templates may recommend Overview, Approach Decision, Scope, Constraints, and Boundary Strategy sections for human and agent context.
 - Roadmap-wide cross-spec review evidence remains roadmap-owned under Decision 0035, but its frontmatter extension is outside this basic work-item shape.
 
@@ -55,6 +56,7 @@ work_items:
       summary: Add the new validation command to CI
       depends_on:
         - spec: checkout
+      status: completed
 ---
 
 # Roadmap

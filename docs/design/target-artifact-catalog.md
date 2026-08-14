@@ -25,6 +25,7 @@ Related documents:
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 - [Decision 0045: OKF Markdown artifacts](./decisions/0045-okf-markdown-artifacts.md)
 - [Decision 0046: grouped roadmap work items](./decisions/0046-roadmap-work-items.md)
+- [Decision 0047: sparse direct-change status](./decisions/0047-sparse-direct-change-status.md)
 
 Status: Draft
 
