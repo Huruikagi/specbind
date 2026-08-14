@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Superseded in part by [Decision 0048](./0048-okf-spec-log.md): per-spec history now uses the OKF reserved `log.md`, with date-grouped newest-first insertion instead of `changelog.md` append semantics. Roadmap archival and per-spec history ownership remain accepted here.
+
 ## Context
 
 Active specs need local history that explains how each capability changed across releases. The active `roadmap.md` also contains milestone-wide scope, dependency ordering, and cross-spec evidence that cannot be reconstructed conveniently from independent spec changelogs.

@@ -27,7 +27,7 @@ It does not change:
 
 - the persisted CLI configuration file `.specbind.json`
 - installation manifests currently distributed as JSON
-- requirements, design, contract, brief, changelog, roadmap, or other prose artifacts
+- requirements, design, contract, brief, per-spec release log, roadmap, or other prose artifacts
 - the `tasks.yaml` schema accepted separately by Decision 0013
 
 Those formats change only through their own explicit decisions.

@@ -26,7 +26,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | `contract.md` | The current minimal cross-spec seam manifest. | Revised only when externally observable seams change. | Preserved. |
 | `implementation-notes.md` | Optional free-form implementation knowledge useful to later AI runs. | Read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
-| `changelog.md` | Per-spec index of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry appended. |
+| `log.md` | Per-spec OKF update log of released changes and their evidence. | Preserved; normally not the active authoring surface. | One concise entry inserted under the applicable newest-first date heading. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Scope, dependencies, and evidence for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 
@@ -131,7 +131,7 @@ The roadmap's machine-readable scope uses the grouped `work_items` frontmatter a
 
 ## Released history
 
-`changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:
+Under [Decision 0048](./decisions/0048-okf-spec-log.md), `log.md` is a navigable OKF update log, not a snapshot of the entire spec. Released entries are grouped under newest-first ISO `YYYY-MM-DD` date headings. Each entry uses release version as its primary human-facing label; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:
 
 - release version
 - milestone ID
@@ -144,7 +144,7 @@ The roadmap's machine-readable scope uses the grouped `work_items` frontmatter a
 - relevant implementation, version, and finalization commits
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization `brief.md` and `tasks.yaml` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `changelog.md` points to the relevant release and roadmap references.
+The complete pre-finalization `brief.md` and `tasks.yaml` remain available from the immutable release reference. The roadmap also remains directly available under `releases/<version>-roadmap.md`. Git history is not the only index: each spec's `log.md` points to the relevant release and roadmap references.
 
 The brief may provide drafting context for the problem summary, but it is not authoritative release evidence. Changelog content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, and release evidence; see [Decision 0017](./decisions/0017-requirements-gate-inputs.md).
 
@@ -155,7 +155,7 @@ These operations are intentionally distinct from successful release finalization
 - Unstarted scope can be removed by revising the active milestone and its affected briefs.
 - Partially implemented unreleased work must be restored with explicit project and Git operations. SpecBind then reconciles its active artifacts and metadata with that repository state; it does not perform an automatic revert.
 - An entire unreleased milestone can be abandoned only with explicit user confirmation. After requirements and design have been restored or reconciled, lifecycle cleanup removes its milestone-local briefs and tasks, clears affected `active_change` state, and removes `steering/roadmap.md`.
-- An abandoned unreleased milestone does not add per-spec changelog entries or a file under `releases/` by default. Committed work remains discoverable through Git history.
+- An abandoned unreleased milestone does not add per-spec release-log entries or a file under `releases/` by default. Committed work remains discoverable through Git history.
 - A rollback of released behavior is represented as a new active change in a new milestone and is released normally.
 
 Rust CLI milestone operations own the mechanical state transitions for scope changes and full abandonment. Discovery remains the user entry point, interprets intent, and obtains confirmation; the CLI validates and applies the deterministic transition. There is no separate `specbind-milestone` skill. See [CLI and agent responsibility boundary](./cli-agent-boundary.md).
@@ -170,14 +170,14 @@ The portable release contract is a gated state transition. Project publication i
 4. After successful preflight, the agent runs project Prepare, Publish, and Verify instructions in order and captures structured evidence.
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
-7. The CLI appends one version-keyed, idempotent release entry to each participating spec's `changelog.md`.
+7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
 8. The CLI removes each participating spec's `brief.md` and `tasks.yaml`.
 9. The CLI transitions each `spec.yaml` to released / no-active-change state.
 10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md`, refusing conflicting archive content.
 11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
 12. The agent runs optional project After finalize instructions and reports their result separately.
 
-If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate changelog entries or remove unrelated work. An After finalize failure does not undo the release or core finalization. See [Decision 0010](./decisions/0010-release-execution-boundary.md).
+If publishing or release verification fails, finalization does not run and active documents remain intact. Re-running finalization must not duplicate `log.md` entries or remove unrelated work. An After finalize failure does not undo the release or core finalization. See [Decision 0010](./decisions/0010-release-execution-boundary.md).
 
 ## Lifecycle and dependency semantics
 
@@ -196,7 +196,7 @@ Dependencies must also distinguish:
 
 - a dependency on the current approved spec contract
 - a dependency on an active revision that must complete first
-- a dependency on a released implementation, proven by changelog and immutable release evidence
+- a dependency on a released implementation, proven by the per-spec release log and immutable release evidence
 
 Task dependencies remain local to one spec's active `tasks.yaml`. Active revision ordering belongs to the milestone roadmap, persistent observable dependencies belong to `contract.md`, and released dependencies use current contracts plus release history; see [Decision 0027](./decisions/0027-spec-local-task-dependencies.md).
 
@@ -207,7 +207,7 @@ A released spec without `tasks.yaml` must not be treated as unimplemented.
 Existing projects need a one-time cutover separate from normal release finalization:
 
 1. Group earlier completed briefs and tasks by released change where evidence permits.
-2. Backfill concise `changelog.md` entries with release and validation references.
+2. Backfill concise date-grouped `log.md` entries with release and validation references.
 3. Preserve only the current milestone's brief and tasks as the active working set.
 4. Reconstruct and verify the current active requirement set.
 5. Leave the current active documents in place until their normal release finalization.
@@ -248,6 +248,6 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 - The frontmatter extension for roadmap-owned cross-spec review evidence.
 - Whether rebinding a target release requires explicit approval after implementation has started.
-- The exact `changelog.md` schema and evidence granularity.
+- The exact `log.md` release-entry prose convention, release-date source, and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - Whether immutable history may use something other than a Git release tag.

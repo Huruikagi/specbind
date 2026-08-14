@@ -77,7 +77,7 @@ No active milestone
 
 - Removing unstarted work is a confirmed update to the active milestone scope.
 - Partially implemented unreleased work is restored through explicit project and Git operations, followed by reconciliation of roadmap and active-spec state. SpecBind does not automatically revert repository content.
-- Abandoning the entire unreleased milestone requires explicit user confirmation and reconciled specs before milestone-local artifacts and active-change metadata are cleared. It creates no changelog entry or release-roadmap archive by default.
+- Abandoning the entire unreleased milestone requires explicit user confirmation and reconciled specs before milestone-local artifacts and active-change metadata are cleared. It creates no release-log entry or release-roadmap archive by default.
 - Reversing released behavior is new work in a new milestone and returns through the normal release path.
 
 These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Discovery confirms the intent and the Rust CLI owns the guarded milestone-state mutation.

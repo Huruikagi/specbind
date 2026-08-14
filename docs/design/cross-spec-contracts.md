@@ -29,7 +29,7 @@ Cross-spec dependencies never resolve through another spec's milestone-local Tas
 | New spec | Design establishes the initial contract, including an explicit empty contract when no cross-spec seam exists. |
 | Active change | Design updates affected entries while preserving stable IDs for unchanged meanings. |
 | Released and idle | The current released contract remains present and available to consumers. |
-| Released change | The per-spec changelog records the contract impact classification and changed entry references where useful. |
+| Released change | The per-spec `log.md` records the contract impact classification and changed entry references where useful. |
 | Retired capability | Retirement rules must resolve or migrate incoming consumer references before removal. |
 
 The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.yaml` are finalized.

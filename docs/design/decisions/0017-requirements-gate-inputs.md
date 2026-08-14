@@ -16,7 +16,7 @@ Release history needs a problem and delivered-scope summary, but `brief.md` does
 - `brief.md` is not fingerprinted and is not stored in requirements gate evidence.
 - Editing only `brief.md` after requirements approval does not by itself make the spec inconsistent or invalidate the requirements gate.
 - If a brief revision represents a real scope change, the responsible workflow must revise the authoritative requirements or active Requirement ID set as needed and emit `REQUIREMENTS_CHANGED`.
-- Changelog authoring may use `brief.md` as drafting context, but the released summary must be checked against final authoritative artifacts and release evidence. Brief content alone does not determine the changelog entry.
+- Per-spec `log.md` authoring may use `brief.md` as drafting context, but the released summary must be checked against final authoritative artifacts and release evidence. Brief content alone does not determine the release-log entry.
 - Requirements gate evidence stores the ordered active Requirement ID snapshot directly as `approved_requirement_ids`; Decision 0018 defines its comparison contract.
 
 ## Consequences

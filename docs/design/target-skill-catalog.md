@@ -134,7 +134,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ### Writes
 
-- Per-spec `changelog.md` entries
+- Per-spec date-grouped `log.md` entries
 - Per-spec released / no-active-change metadata
 - Removal of finalized `brief.md` and `tasks.yaml`
 - Version-prefixed milestone roadmap under `{{SPEC_DIR}}/releases/`

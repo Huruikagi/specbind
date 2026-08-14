@@ -22,7 +22,7 @@ Canonical spec identity is already the spec directory key/path under the configu
   - optional non-empty `gate_evidence`: the Decision 0040 container
 - The state-dependent `requirement_ids` and evidence combinations remain semantic lifecycle invariants under Decision 0040 rather than a JSON Schema state union.
 - The root stores no `feature_name`. The CLI derives canonical spec identity from the spec's directory key/path and checks it against roadmap membership. Human-facing capability names belong in prose artifacts.
-- The root stores no `created_at` or `updated_at`. Git, roadmap, changelog, and gate-local `passed_at` values own the useful history.
+- The root stores no `created_at` or `updated_at`. Git, roadmap, per-spec `log.md`, and gate-local `passed_at` values own the useful history.
 - The inherited `phase`, `approvals`, and `ready_for_implementation` fields are replaced by `active_change.state` and `gate_evidence` and are invalid target fields.
 - `target_release` and cross-spec review data remain roadmap-owned and are not copied into `spec.yaml`.
 - All root and active-change additional properties are rejected.

@@ -26,6 +26,7 @@ Related documents:
 - [Decision 0045: OKF Markdown artifacts](./decisions/0045-okf-markdown-artifacts.md)
 - [Decision 0046: grouped roadmap work items](./decisions/0046-roadmap-work-items.md)
 - [Decision 0047: sparse direct-change status](./decisions/0047-sparse-direct-change-status.md)
+- [Decision 0048: OKF per-spec log](./decisions/0048-okf-spec-log.md)
 
 Status: Draft
 
@@ -70,7 +71,7 @@ Status: Draft
 | `contract.md` | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
 | `implementation-notes.md` | Optionally persists spec-scoped implementation knowledge across milestones and releases. | Task generation, implementation, debugging, review, and implementation-validation workflows. | Accepted | The body is free-form Markdown; only the common OKF frontmatter and artifact type profile are structured. Project-wide knowledge should be promoted to `steering/`. |
 | `tasks.yaml` | Exists only for the active milestone's structured task plan and execution state. | Task and implementation workflows. | Accepted | The only canonical task artifact; starts fresh between milestones and is removed by successful release finalization. No parallel `tasks.md` view is maintained. |
-| `changelog.md` | Persists per spec as an index of released changes and evidence. | Release finalization workflow. | Accepted | Released entries use release version as the human-facing key and milestone ID as secondary trace metadata. Unreleased abandoned work is omitted by default. |
+| `log.md` | Persists per spec as the OKF reserved update log for released changes and evidence. | Release finalization workflow. | Accepted | Has no frontmatter. Entries are grouped under newest-first ISO dates; release version is the human-facing entry label and milestone ID is secondary trace metadata. Unreleased abandoned work is omitted by default. |
 | `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring `brief.md` or `tasks.yaml`. |
 
 ## Open questions

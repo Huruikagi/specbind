@@ -27,7 +27,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 4. The agent executes Publish and captures the resulting immutable reference and other evidence.
 5. The agent executes Verify and captures fresh results.
 6. The agent submits the version, publication reference, and evidence to the Rust CLI finalization operation.
-7. The CLI revalidates core invariants, checks evidence it can verify, and applies idempotent changelog, metadata, active-document, and roadmap-archive mutations.
+7. The CLI revalidates core invariants, checks evidence it can verify, and applies idempotent per-spec `log.md`, metadata, active-document, and roadmap-archive mutations.
 8. After core finalization succeeds, the agent executes optional After finalize instructions and reports their result separately.
 
 ## Failure semantics

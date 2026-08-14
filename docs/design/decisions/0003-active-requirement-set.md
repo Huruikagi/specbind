@@ -55,7 +55,7 @@ active_change: null
 
 - `spec.yaml` becomes the source of truth for current milestone requirement scope under Decision 0014.
 - `requirements.md` remains the source of truth for requirement definitions.
-- `changelog.md` records the released coverage summary, not current active state.
+- The per-spec `log.md` records the released coverage summary, not current active state, under Decision 0048.
 - Migration must reconstruct the active set for an in-progress milestone before the project can claim tasks coverage.
 - Status and validation skills can distinguish an unestablished set from an approved set without parsing prose.
 
