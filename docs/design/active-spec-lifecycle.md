@@ -48,6 +48,10 @@ Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap i
 type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: null
+work_items:
+  spec_updates:
+    - spec: checkout
+      summary: Require authenticated checkout
 ---
 ```
 
@@ -58,6 +62,10 @@ When the release version becomes known, the workflow binds it to the active mile
 type: SpecBind Roadmap
 milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
 target_release: v1.4.0
+work_items:
+  spec_updates:
+    - spec: checkout
+      summary: Require authenticated checkout
 ---
 ```
 
@@ -118,6 +126,8 @@ Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required
 Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
 
 Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decision 0035](./decisions/0035-roadmap-owned-cross-spec-review.md). Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves that record from `milestone_id` and the canonical spec identity; completion evidence does not duplicate it or add another roadmap reference.
+
+The roadmap's machine-readable scope uses the grouped `work_items` frontmatter accepted by [Decision 0046](./decisions/0046-roadmap-work-items.md). New specs, existing-spec updates, and direct changes remain distinct categories; typed references form the dependency graph. The Markdown body carries milestone context and rationale but has no CLI-parsed grammar.
 
 ## Released history
 
@@ -236,7 +246,7 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 ## Open questions
 
-- The remaining `SpecBind Roadmap` profile and body grammar beyond the accepted frontmatter release binding.
+- The frontmatter extension for roadmap-owned cross-spec review evidence.
 - Whether rebinding a target release requires explicit approval after implementation has started.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.

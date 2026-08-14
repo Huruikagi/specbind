@@ -24,6 +24,7 @@ Related documents:
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 - [Decision 0045: OKF Markdown artifacts](./decisions/0045-okf-markdown-artifacts.md)
+- [Decision 0046: grouped roadmap work items](./decisions/0046-roadmap-work-items.md)
 
 Status: Draft
 
@@ -46,7 +47,7 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID and an initially null release-version binding. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, an initially null release-version binding, and grouped work items. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds a new flat file after verified publication; archive collisions must not overwrite history. |
 
 ## Settings artifacts
@@ -73,9 +74,9 @@ Status: Draft
 
 ## Open questions
 
-- What remaining frontmatter fields and body grammar complete the `SpecBind Roadmap` profile beyond its accepted milestone and release binding?
+- What frontmatter extension represents the roadmap-owned cross-spec review record accepted by Decision 0035?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
-- What exact Markdown grammar and entry ID format represent contracts, and what parseable active-roadmap syntax represents the cross-spec review record owned there by Decision 0035?
+- What exact Markdown grammar and entry ID format represent contracts?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

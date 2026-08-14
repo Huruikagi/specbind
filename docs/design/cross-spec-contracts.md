@@ -166,7 +166,7 @@ The default `settings/templates/specs/contract.md` and related shared rules are 
 
 - Exact Markdown grammar and localized headings.
 - Entry ID and cross-reference normalization.
-- Exact active-roadmap grammar for the cross-spec review record accepted by Decision 0035.
+- Exact active-roadmap frontmatter extension for the cross-spec review record accepted by Decision 0035.
 - Rules for shared File Ownership and generated files.
 - Approval invalidation when a contract classification changes.
 - Release-readiness evidence required for affected consumers.
