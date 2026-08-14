@@ -23,7 +23,7 @@ A separately written summary would reduce input size but drift from the authorit
 
 ## Scope boundary
 
-Include an item only when changing it could require another spec's design or verification result to change. Do not include internal architecture, implementation steps, prose summaries, completed Change IDs, or release history.
+Include an item only when changing it could require another spec's design or verification result to change. Do not include internal architecture, implementation steps, prose summaries, completed spec changes, or release history.
 
 ## Compatibility classes
 

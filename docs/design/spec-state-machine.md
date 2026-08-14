@@ -26,7 +26,7 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 | State | Persistent representation | Meaning | Minimum consistent artifacts and metadata |
 | --- | --- | --- | --- |
 | `idle` | `active_change: null` | The current requirements, design, and contract describe released behavior. No change for this spec is active. | `requirements.md`, `design.md`, `contract.md`, `changelog.md`, and released metadata; no `brief.md` or `tasks.yaml`. |
-| `requirements` | `active_change.state: "requirements"` | The active change is being scoped and its current Requirement ID set is not yet approved. | Active roadmap membership, `brief.md`, `requirements.md`, matching milestone and change IDs, and `requirement_ids: null`. |
+| `requirements` | `active_change.state: "requirements"` | The active change is being scoped and its current Requirement ID set is not yet approved. | Active roadmap membership, `brief.md`, `requirements.md`, matching milestone and canonical spec identities, and `requirement_ids: null`. |
 | `design` | `active_change.state: "design"` | Requirements and the active Requirement ID set are approved. Technical design and contract impact are being established or revised. | Requirements gate evidence and a non-null, canonical `requirement_ids` array. |
 | `tasks` | `active_change.state: "tasks"` | Design and contract impact are approved. The executable milestone-local plan is being prepared or revised. | Valid requirements and design gate evidence plus current `design.md` and `contract.md`. |
 | `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.yaml`. |
@@ -44,7 +44,6 @@ feature_name: example
 language: en
 active_change:
   milestone_id: <generated-id>
-  change_id: <stable-id>
   state: design
   requirement_ids:
     - "1.1"
@@ -111,9 +110,9 @@ If a draft update touches input that has already been approved, it is not a non-
 
 | Event | Current | Next | Required guards | Atomic state effects |
 | --- | --- | --- | --- | --- |
-| `SPEC_CREATED` | Spec does not exist | `requirements` | An active roadmap exists; the new spec boundary and name are confirmed in scope; no conflicting spec path exists; milestone and change IDs are unique; an active brief and initial requirements scaffold are available. | Create the persistent spec artifacts and `active_change`; set `requirement_ids: null`; create no approval evidence. |
-| `CHANGE_STARTED` | `idle` | `requirements` | An active roadmap exists; the spec is confirmed in scope; no active change exists; milestone and change IDs are unique; an active brief is available. | Create `active_change`; set `requirement_ids: null`; create no approval evidence. |
-| `REQUIREMENTS_APPROVED` | `requirements` | `design` | Requirements review passed; canonical IDs are valid and unique; the selected active set has valid explicit or delegated approval and is normally non-empty. | Freeze the ordered active set; record requirements gate evidence. |
+| `SPEC_CREATED` | Spec does not exist | `requirements` | An active roadmap exists; the new spec boundary and canonical identity are confirmed in scope; no conflicting spec path exists; the milestone ID is valid; an active brief and initial requirements scaffold are available. | Create the persistent spec artifacts and `active_change`; set `requirement_ids: null`; create no approval evidence. |
+| `CHANGE_STARTED` | `idle` | `requirements` | An active roadmap exists; the canonical spec identity is confirmed in scope; no active change exists; the milestone ID matches roadmap membership; an active brief is available. | Create `active_change`; set `requirement_ids: null`; create no approval evidence. |
+| `REQUIREMENTS_APPROVED` | `requirements` | `design` | Requirements review passed; canonical IDs are valid and unique; the selected active set is non-empty and has valid explicit or delegated approval. | Freeze the ordered active set; record requirements gate evidence. |
 | `REQUIREMENTS_CHANGED` | Any active state | `requirements` | The changed scope belongs to the same active change, or discovery has confirmed the revised route. | Set `requirement_ids: null`; clear requirements, design, tasks, and completion gate evidence; retain downstream documents only as stale repair input. |
 | `DESIGN_APPROVED` | `design` | `tasks` | Requirements evidence is current; design covers every active Requirement ID; contract structure and impact review pass; explicit or delegated approval is valid for the current revision. | Record design and contract gate evidence. |
 | `DESIGN_CHANGED` | `design`, `tasks`, `implementation`, `release_ready` | `design` | Requirements and active set remain valid; otherwise use `REQUIREMENTS_CHANGED`. | Clear design, tasks, and completion gate evidence; retain requirements evidence. |
@@ -232,6 +231,5 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 ## Open questions
 
 - Exact `active_change` container wiring in the root `spec.yaml` schema; the `gate_evidence` container and its state invariants are accepted through Decision 0040.
-- Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
 - Which repair operations the CLI may automate after presenting a dry-run plan.
 - Stable event, state, and diagnostic names in the public CLI and JSON contracts.

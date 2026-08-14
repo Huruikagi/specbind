@@ -42,7 +42,7 @@ The first contract does not add a repository policy that permanently auto-approv
 
 An accelerated workflow must establish delegation in its run context before it crosses a future gate. The run context identifies at least:
 
-- active milestone and, for a single-spec workflow, active Change ID
+- active milestone and, for a single-spec workflow, canonical spec identity
 - originating workflow or orchestration mode
 - gates covered by the delegation
 - time the delegation was recorded

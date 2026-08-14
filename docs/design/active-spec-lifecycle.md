@@ -40,7 +40,6 @@ The milestone's stable identity does not depend on knowing the final release ver
 
 - `milestone_id`: opaque, machine-generated stable identity assigned when discovery starts the milestone
 - `target_release`: concrete release version, initially unset when necessary
-- `change_id`: stable per-spec change identity associated with `milestone_id`, not derived from `target_release`
 
 Conceptual roadmap metadata:
 
@@ -56,7 +55,7 @@ milestone_id: <generated-id>
 target_release: v1.4.0
 ```
 
-This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and Change IDs continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
+This is a metadata mapping, not textual replacement. Requirements, tasks, evidence, and spec changes continue to refer to the stable milestone identity. Changing an unshipped target version updates the binding in one authoritative place instead of rewriting milestone artifacts. The generated ID is not intended to be selected or named by the user.
 
 The exact generated-ID format remains an implementation choice. `specbind-release` requires a concrete `target_release` for every release and refuses to begin release operations while it is unset.
 
@@ -66,7 +65,6 @@ Each spec has at most one active change at a time. The active brief should ident
 
 - stable milestone ID
 - target release when assigned
-- stable change ID
 - problem and desired outcome
 - in-scope and out-of-scope behavior
 - boundary impact and dependencies
@@ -113,14 +111,14 @@ Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required
 
 Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
 
-Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decision 0035](./decisions/0035-roadmap-owned-cross-spec-review.md). The CLI resolves that record from the existing `milestone_id` and `change_id`; completion evidence does not duplicate it or add another roadmap reference.
+Contract-impact classification and downstream review are milestone-wide evidence owned once by the active roadmap under [Decision 0035](./decisions/0035-roadmap-owned-cross-spec-review.md). Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves that record from `milestone_id` and the canonical spec identity; completion evidence does not duplicate it or add another roadmap reference.
 
 ## Released history
 
 `changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:
 
 - release version
-- milestone ID and change ID
+- milestone ID
 - released status
 - problem and delivered-scope summary
 - preserved contracts or explicitly unchanged behavior
@@ -234,7 +232,6 @@ Batch update and evidence-recording responsibilities are required, but their fin
 
 - The generated milestone ID format and the authoritative location of the release-version binding.
 - Whether rebinding a target release requires explicit approval after implementation has started.
-- Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - The exact root `spec.yaml` wiring for the accepted gate-evidence container and active-change lifecycle states.

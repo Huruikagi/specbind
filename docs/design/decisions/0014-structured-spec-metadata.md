@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-The inherited cc-sdd workflow stores per-spec lifecycle metadata in `spec.json`. Target SpecBind metadata now includes an active-change state, milestone and Change IDs, the active Requirement ID set, gate evidence, approval mode, and artifact revisions. This is machine-validated state that users may occasionally inspect but do not primarily review as prose.
+The inherited cc-sdd workflow stores per-spec lifecycle metadata in `spec.json`. Target SpecBind metadata now includes an active-change state, milestone ID, the active Requirement ID set, gate evidence, approval mode, and artifact revisions. This is machine-validated state that users may occasionally inspect but do not primarily review as prose. Decision 0041 identifies the per-spec change through milestone and canonical spec identity instead of another stored ID.
 
 [Decision 0013](./0013-structured-task-artifact.md) establishes `tasks.yaml` as the canonical structured task artifact. Keeping related per-spec lifecycle state in JSON would require two structured authoring formats without providing a meaningful product boundary.
 

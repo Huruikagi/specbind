@@ -17,7 +17,6 @@ Conceptual shape before requirements approval:
 ```yaml
 active_change:
   milestone_id: <generated-id>
-  change_id: <generated-or-stable-id>
   requirement_ids: null
 ```
 
@@ -26,7 +25,6 @@ After requirements approval:
 ```yaml
 active_change:
   milestone_id: <generated-id>
-  change_id: <generated-or-stable-id>
   requirement_ids:
     - "1.1"
     - "1.2"
