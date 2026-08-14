@@ -67,6 +67,8 @@ Under [Decision 0032](./decisions/0032-gate-local-freshness-chain.md), each gate
 
 Under [Decision 0037](./decisions/0037-minimal-completion-evidence-shape.md), `gate_evidence.completion` contains exactly `passed_at`, `implementation_revision`, and `mechanical_checks`. All three are required and no additional completion fields are accepted.
 
+Under [Decision 0040](./decisions/0040-state-gate-evidence-invariants.md), gate evidence is sparse and cumulative: the `requirements` state has no `gate_evidence` container, while `design`, `tasks`, `implementation`, and `release_ready` require exactly the cumulative evidence sets shown in that decision. JSON Schema validates the non-empty container and nested shapes; lifecycle semantic validation reports missing or premature evidence relative to the declared state. Approved `requirement_ids` are non-empty from `design` onward.
+
 ## Event list
 
 ### State-changing events
@@ -229,8 +231,7 @@ Contradictory flags, missing artifacts, or absent evidence produce an explicit m
 
 ## Open questions
 
-- Exact `active_change` and `gate_evidence` container wiring in the root `spec.yaml` schema; per-gate evidence shapes, projections, and canonicalization are accepted through Decision 0039.
-- Whether an explicitly approved active Requirement ID set may be empty for any spec-backed change.
+- Exact `active_change` container wiring in the root `spec.yaml` schema; the `gate_evidence` container and its state invariants are accepted through Decision 0040.
 - Whether one spec may ever need more than one Change ID inside one milestone; the initial state machine assumes one active Change ID whose same-milestone deltas are merged.
 - Which repair operations the CLI may automate after presenting a dry-run plan.
 - Stable event, state, and diagnostic names in the public CLI and JSON contracts.

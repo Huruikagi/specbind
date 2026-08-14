@@ -87,7 +87,7 @@ Discovery owns creating the active brief and transitioning an idle released spec
 - Changing the set returns the workflow to the requirements phase and invalidates affected downstream approval.
 - Design traces the same set, and tasks must provide 100% coverage of it.
 
-Within `spec.yaml`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a unique, deterministically ordered array of canonical Requirement IDs. Release finalization clears `active_change` as part of returning the spec to released / idle state.
+Within `spec.yaml`, `active_change.requirement_ids: null` means the set has not yet been established. Requirements approval replaces it with a non-empty, unique, deterministically ordered array of canonical Requirement IDs under Decision 0040. Release finalization clears `active_change` as part of returning the spec to released / idle state.
 
 ## Cross-spec contract
 
@@ -237,5 +237,5 @@ Batch update and evidence-recording responsibilities are required, but their fin
 - Whether one milestone can contain multiple active Change IDs for the same spec.
 - The exact `changelog.md` schema and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
-- The exact root `spec.yaml` wiring for the accepted gate-evidence definitions and active-change lifecycle states.
+- The exact root `spec.yaml` wiring for the accepted gate-evidence container and active-change lifecycle states.
 - Whether immutable history may use something other than a Git release tag.

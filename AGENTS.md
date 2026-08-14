@@ -61,6 +61,7 @@
 - [`docs/design/decisions/0037-minimal-completion-evidence-shape.md`](docs/design/decisions/0037-minimal-completion-evidence-shape.md) — accepted strict three-field completion evidence object
 - [`docs/design/decisions/0038-design-gate-inputs.md`](docs/design/decisions/0038-design-gate-inputs.md) — accepted design and contract fingerprint inputs for the design gate
 - [`docs/design/decisions/0039-minimal-tasks-gate-evidence.md`](docs/design/decisions/0039-minimal-tasks-gate-evidence.md) — accepted minimal approval evidence for the normalized task-plan projection
+- [`docs/design/decisions/0040-state-gate-evidence-invariants.md`](docs/design/decisions/0040-state-gate-evidence-invariants.md) — accepted sparse cumulative evidence and semantic state-to-gate invariants
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

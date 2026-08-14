@@ -45,6 +45,7 @@ active_change: null
 
 - Requirement IDs use the canonical IDs from `requirements.md`.
 - The array contains unique IDs in deterministic order.
+- The approved array is non-empty for every spec-backed active change.
 - Every stored ID must exist in the current `requirements.md`.
 - Requirements approval writes and freezes the array.
 - Design and tasks read the stored array; they do not independently infer or expand it.
@@ -63,5 +64,4 @@ active_change: null
 ## Open schema details
 
 - The final names and placement of other `active_change` lifecycle fields.
-- Whether an approved active set may ever be empty; the default expectation is at least one Requirement ID for spec-backed work.
 - The exact task-to-requirement trace representation used to prove coverage.

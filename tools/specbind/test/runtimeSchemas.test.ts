@@ -141,6 +141,11 @@ describe('runtime schema scaffolds', () => {
     expect(evidence.properties).toHaveProperty('input_revisions');
     expect(JSON.stringify(evidence)).toContain('requirements.md');
     expect(JSON.stringify(evidence)).not.toContain('brief.md');
+    expect(schema.$defs?.requirementIdList).toMatchObject({
+      type: 'array',
+      minItems: 1,
+      uniqueItems: true,
+    });
   });
 
   it('defines design gate evidence over required design and contract files', async () => {
@@ -200,6 +205,24 @@ describe('runtime schema scaffolds', () => {
     expect(evidence.additionalProperties).toBe(false);
     expect(JSON.stringify(evidence)).not.toContain('execution');
     expect(JSON.stringify(evidence)).not.toContain('requirement_ids');
+  });
+
+  it('defines a non-empty sparse gate evidence container', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+
+    expect(schema.$defs?.gateEvidence).toEqual({
+      type: 'object',
+      minProperties: 1,
+      properties: {
+        requirements: { $ref: '#/$defs/requirementsGateEvidence' },
+        design: { $ref: '#/$defs/designGateEvidence' },
+        tasks: { $ref: '#/$defs/tasksGateEvidence' },
+        completion: { $ref: '#/$defs/completionGateEvidence' },
+      },
+      additionalProperties: false,
+    });
   });
 
   it('defines sparse scheduling fields for executable tasks', async () => {
