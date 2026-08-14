@@ -111,6 +111,8 @@ Feature-level completion validation begins from a clean committed Git revision a
 
 Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required, or rejected validation attempts remain run-scoped output under [Decision 0030](./decisions/0030-persist-only-accepted-completion-evidence.md).
 
+Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
+
 ## Released history
 
 `changelog.md` is a navigable index, not a snapshot of the entire spec. Released entries are organized and presented by release version; the machine-generated milestone ID remains secondary trace metadata. An entry should include enough information to locate and understand the historical change:

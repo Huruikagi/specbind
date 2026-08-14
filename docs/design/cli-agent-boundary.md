@@ -149,6 +149,8 @@ Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Pr
 
 The CLI detects the repository's Git object format and validates the scalar full `implementation_revision` under Decision 0031. Generated skills neither submit per-evidence VCS metadata nor infer acceptable hash length themselves.
 
+Decision 0032 makes freshness a gate-local chain. The CLI compares each gate's current direct input projection with that gate's accepted evidence, then derives downstream staleness from prerequisite freshness. Agent workflows may read broader context, but they do not duplicate upstream fingerprints when submitting later-gate evidence.
+
 Under Decision 0030, only successfully accepted evidence is persisted. `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failures, and rejected candidates return diagnostics without a `spec.yaml` mutation or a separate evidence-recording event.
 
 The exact command names and accepted structured evidence schema remain follow-up details. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
