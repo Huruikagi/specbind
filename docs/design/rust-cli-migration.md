@@ -61,11 +61,16 @@ Core modules should return structured results and diagnostics. Human-readable an
 
 ## Compatibility inventory
 
-Before implementation, freeze expected behavior for:
+Compatibility is not a promise to freeze today's generated tree. It distinguishes two kinds of change:
+
+- **Porting parity:** for the same product contract, configuration, templates, and inputs, the TypeScript and Rust implementations produce equivalent observable behavior.
+- **Product evolution:** accepted SpecBind changes may intentionally add, remove, rename, or revise generated artifacts and command behavior.
+
+Before implementation, capture expected behavior for:
 
 | Contract | Current source of evidence | Migration gate |
 | --- | --- | --- |
-| Installed file trees | Real-manifest tests for Claude Code and Codex | Byte-equivalent output where no intentional template change is declared. |
+| Installed file trees | Real-manifest tests for Claude Code and Codex | Equivalent output for the same contract version; documented To-Be changes update the expected tree deliberately. |
 | Argument behavior | CLI and argument tests | Accepted flags, defaults, aliases, errors, help, and exit behavior are covered. |
 | Config precedence | Config merge and store tests | CLI, persisted config, environment, and defaults resolve identically except for the accepted `specDir` rename and `.specbind` default. |
 | Manifest semantics | Loader, planner, and processor tests | The same valid manifests plan the same artifacts; invalid input has stable diagnostics. |
@@ -73,7 +78,9 @@ Before implementation, freeze expected behavior for:
 | Interactive policy | Prompt and overwrite behavior | TTY and non-TTY behavior is explicitly tested. |
 | Rendering | Template tests | Supported variables, conditional content, and line endings remain defined. |
 
-Golden generated-tree fixtures are preferable to duplicating internal TypeScript unit structure in Rust. They preserve user-visible behavior while allowing an idiomatic rewrite.
+Golden generated-tree fixtures are preferable to duplicating internal TypeScript unit structure in Rust. Each fixture should identify the product-contract version or accepted design change it represents. This preserves user-visible behavior during the port while allowing both an idiomatic rewrite and deliberate evolution of the installed artifacts.
+
+When a To-Be decision changes generated output, update the relevant target artifact catalog entry and fixture expectation together. A fixture diff must therefore be explainable as either an accepted product change or a regression; merely regenerating snapshots is not sufficient evidence.
 
 ## Migration increments
 
@@ -95,7 +102,8 @@ Golden generated-tree fixtures are preferable to duplicating internal TypeScript
 ### 3. Installer parity
 
 - Add guarded writes, conflict policies, backups, and summaries.
-- Match Claude Code and Codex generated trees.
+- Match Claude Code and Codex generated trees for the same product-contract baseline.
+- Apply accepted To-Be artifact changes through explicit, reviewed fixture updates.
 - Verify English and Japanese output/template selection.
 - Exercise Windows, macOS, and Linux path behavior in CI.
 

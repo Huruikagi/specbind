@@ -16,6 +16,7 @@ Keeping the installer in Node while adding a separate Rust checker would split p
 - Preserve templates as data owned and distributed by SpecBind; Rust replaces the CLI implementation, not the agent-facing Markdown artifact model.
 - Do not require Node.js at runtime after the Rust CLI becomes the supported implementation.
 - Treat the current TypeScript implementation and tests as the behavioral reference during migration, not as a permanent compatibility layer.
+- Define migration compatibility relative to the same product contract and input. Accepted SpecBind feature changes may intentionally add, remove, rename, or revise generated artifacts.
 - Keep semantic authoring and review in agent skills. Rust does not replace AI judgment.
 
 ## Migration principle
@@ -27,7 +28,7 @@ The migration should be incremental and parity-driven:
 3. Implement equivalent Rust planning and dry-run behavior without writing files.
 4. Implement file application, conflict handling, backup, and interactive behavior.
 5. Add the new deterministic checks and lifecycle operations to the Rust command model.
-6. Compare generated trees and observable behavior across supported agents, languages, operating systems, and overwrite policies.
+6. Compare generated trees and observable behavior across supported agents, languages, operating systems, and overwrite policies, accounting separately for accepted product-contract changes.
 7. Switch release packaging to the Rust binary only after the agreed compatibility gates pass.
 8. Remove the TypeScript implementation and Node runtime dependency in a later cleanup change.
 
@@ -38,6 +39,7 @@ Exact package-manager installers and the duration of any transition wrapper rema
 - The installer and machine-checking features share one parser, error model, release, and distribution channel.
 - Cross-platform binary builds and release automation become core product infrastructure.
 - Existing TypeScript tests need black-box equivalents or fixtures that can exercise both implementations during migration.
+- Compatibility fixtures need an explicit product-contract version or change rationale so intended To-Be artifact evolution is not mistaken for a porting regression.
 - The repository can eventually remove npm as a runtime distribution requirement, though npm may remain one installation channel if it wraps platform binaries.
 - Rust implementation details must not leak into generated skills; skills depend on the `specbind` command contract.
 
