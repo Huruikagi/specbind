@@ -20,7 +20,7 @@ The correct baseline is the repository snapshot immediately before the active mi
 - Rebaselining is an explicit, user-confirmed CLI operation, never an inferred repair. It requires a clean repository and an explicit full commit object ID, validates that commit as an ancestor of current `HEAD`, replaces `baseline_revision`, and removes the accepted `state/cross-spec-review.md`. Exact command syntax remains a CLI-surface decision.
 - For a roadmap `new_specs` item, absence of its contract at the baseline is the expected before-state and the complete current contract is treated as newly added.
 - For a `spec_updates` item, a contract missing at the baseline is a migration or consistency failure rather than an implicit empty contract. The existing-spec bootstrap or missing-contract fallback must be resolved before normal diff classification can pass.
-- The normalized `roadmap.md#cross-spec-scope` input projection includes `baseline_revision`, so an explicit rebaseline makes prior review evidence stale even if all current contract files are byte-identical.
+- The normalized `steering/roadmap.md#cross-spec-scope` input projection accepted by Decision 0055 includes `baseline_revision`, so an explicit rebaseline makes prior review evidence stale even if all current contract files are byte-identical.
 
 ## Consequences
 

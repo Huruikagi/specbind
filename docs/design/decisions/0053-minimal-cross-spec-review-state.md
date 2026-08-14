@@ -26,7 +26,7 @@ Detailed changed-entry and consumer lists should not be duplicated as rigid pers
 - A classification group is present only when it contains at least one entry. At least one group is required.
 - Every current roadmap work item appears exactly once in `classifications`: both `new_specs` and `spec_updates` resolve into `specs`, while `direct_changes` resolves into `direct_changes`.
 - A direct change with non-local contract impact is invalid and must be rerouted to a new-spec or spec-update item before the global review can pass.
-- `input_revisions` is a non-empty mapping whose values use the Decision 0016 fingerprint representation. It identifies the current source artifact revisions from which classifications and the final judgment were produced. The Decision 0054 baseline supplies the immutable before-state and is included in the normalized roadmap scope projection. The exact remaining owned projections, path-key rules, and normalization remain a follow-up decision.
+- `input_revisions` is the non-empty contract-first mapping accepted by Decision 0055. It identifies the current source artifact revisions from which classifications and the final judgment were produced. The Decision 0054 baseline supplies the immutable before-state and is included in the normalized roadmap scope projection.
 - The non-empty Markdown body is the accepted AI-authored final judgment. The review workflow must address every structured classification there and explain semantic compatibility or breakage, downstream conclusions, and any reasoning needed to understand why the complete milestone is cross-spec consistent.
 - The CLI does not parse required Markdown headings or turn prose claims into independent booleans. Templates may recommend Conclusion, Assessment, and Downstream Compatibility sections.
 - The artifact contains no duplicated `status`, approval mode, workflow name, reviewer identity, rigid affected-entry list, rigid downstream-spec list, failed findings, or attempt history. Presence of a fresh accepted artifact means the global review passed.
@@ -47,7 +47,7 @@ classifications:
   direct_changes:
     update-ci: LOCAL_ONLY
 input_revisions:
-  roadmap.md#cross-spec-scope: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  steering/roadmap.md#cross-spec-scope: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
   specs/account-auth/contract.md: sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 ---
 

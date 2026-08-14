@@ -85,13 +85,13 @@ Stable entry IDs must not be renumbered merely to close gaps. A changed label do
 
 Cross-spec review proceeds contract-first:
 
-1. Read the active roadmap and participating contracts.
-2. Ask the CLI to validate contract structure and construct the dependency graph.
+1. Read the active roadmap and ask the CLI to load every current persistent contract.
+2. Ask the CLI to validate contract structure and construct the complete dependency graph.
 3. Review ownership overlap, dependency direction, invariants, and File Ownership conflicts.
 4. Compare changed entries between the roadmap's Decision 0054 `baseline_revision` and the current active contracts.
 5. Classify the change as `LOCAL_ONLY`, `CONTRACT_COMPATIBLE`, or `CONTRACT_BREAKING`.
-6. Traverse affected consumers and load full requirements, design, and tasks only where the contract change or ambiguity requires it.
-7. Record one semantic classification per roadmap item, the accepted input revisions, and the AI-authored judgment once in `state/cross-spec-review.md` under [Decisions 0050](./decisions/0050-global-cross-spec-review.md), [0052](./decisions/0052-project-state-artifacts.md), and [0053](./decisions/0053-minimal-cross-spec-review-state.md). Affected entries and downstream scope remain derived review facts rather than duplicated rigid fields.
+6. Traverse affected consumers and load full requirements, design, and task plans only where the contract change or ambiguity requires it. Under [Decision 0055](./decisions/0055-cross-spec-review-inputs.md), only deeper artifacts that materially support the final judgment become optional freshness inputs.
+7. Record one semantic classification per roadmap item, the accepted contract-first input revisions, and the AI-authored judgment once in `state/cross-spec-review.md` under [Decisions 0050](./decisions/0050-global-cross-spec-review.md), [0052](./decisions/0052-project-state-artifacts.md), and [0053](./decisions/0053-minimal-cross-spec-review-state.md). Affected entries and downstream scope remain derived review facts rather than duplicated rigid fields.
 
 `LOCAL_ONLY` still requires the spec-local review appropriate to the change. `CONTRACT_COMPATIBLE` does not mean no review; it narrows review to relevant consumers. `CONTRACT_BREAKING` requires downstream revision or explicit revalidation before release readiness.
 
@@ -166,7 +166,6 @@ The default `settings/templates/specs/contract.md` and related shared rules are 
 
 - Exact Markdown grammar and localized headings.
 - Entry ID and cross-reference normalization.
-- Exact fingerprint keys and normalization for the global `state/cross-spec-review.md` frontmatter accepted by Decision 0053.
 - Rules for shared File Ownership and generated files.
 - Approval invalidation when a contract classification changes.
 - Release-readiness evidence required for affected consumers.

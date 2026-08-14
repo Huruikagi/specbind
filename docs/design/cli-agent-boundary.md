@@ -73,9 +73,9 @@ The CLI verifies that an ID is present in the required mapping. An agent still r
 
 ## Cross-spec contract checks
 
-Under [Decision 0011](./decisions/0011-cross-spec-contract.md), the CLI also validates the deterministic structure of `contract.md` files and their dependency graph. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
+Under [Decisions 0011](./decisions/0011-cross-spec-contract.md) and [0055](./decisions/0055-cross-spec-review-inputs.md), the CLI loads every current persistent `contract.md`, validates deterministic structure and the complete dependency graph, and fingerprints the accepted input set. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
 
-The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict.
+The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. When deeper requirements, design, or task-plan content materially supports that verdict, the agent declares its canonical path and the CLI adds its current revision under Decision 0055.
 
 ## Working command shape
 

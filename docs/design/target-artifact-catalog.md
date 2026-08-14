@@ -51,7 +51,7 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, the Decision 0054 branch-local Git baseline, an initially null release-version binding, and grouped work items. It represents current state only under Decision 0051 and carries no detailed cross-spec review evidence. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
-| `{{SPEC_DIR}}/state/cross-spec-review.md` | Exists only while the active milestone has a current accepted global cross-spec review. | Cross-spec review authors a candidate judgment; guarded Rust CLI operations persist it for status, completion, and release checks. | Accepted | OKF project-state concept under Decisions 0052 and 0053. Frontmatter retains compact per-item classifications and input revisions, while the body preserves the AI-authored judgment. Ordinary agents do not preload it, and its milestone ID must match the roadmap. |
+| `{{SPEC_DIR}}/state/cross-spec-review.md` | Exists only while the active milestone has a current accepted global cross-spec review. | Cross-spec review authors a candidate judgment; guarded Rust CLI operations persist it for status, completion, and release checks. | Accepted | OKF project-state concept under Decisions 0052 through 0055. Frontmatter retains compact per-item classifications and contract-first input revisions, while the body preserves the AI-authored judgment. Ordinary agents do not preload it, and its milestone ID must match the roadmap. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds the final active-roadmap snapshot as a new flat file after verified publication; archive collisions must not overwrite history. |
 | `{{SPEC_DIR}}/releases/<version>-cross-spec-review.md` | Persists the final accepted milestone-wide cross-spec review evidence and judgment. | `specbind-release`. | Accepted | Companion archive moved from `state/` during the same finalization transaction as the roadmap. |
 
@@ -79,7 +79,6 @@ Status: Draft
 
 ## Open questions
 
-- What exact fingerprint keys and normalization complete the Decision 0053 `state/cross-spec-review.md` frontmatter?
 - What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - What exact Markdown grammar and entry ID format represent contracts?

@@ -17,7 +17,7 @@ Failed reviews and remediation attempts are useful while a workflow is running, 
 - Every participating spec resolves the same global record through its `active_change.milestone_id` and membership in the roadmap's current `work_items`. `spec.yaml` does not add a reference to it.
 - Under Decision 0053, the record retains only one compact semantic classification per roadmap item. Affected contract entries and reviewed downstream consumers are not persisted as independent facts or acceptance records.
 - Any change to the Decision 0054 milestone baseline, roadmap scope, dependencies, applicable contracts, or required downstream review scope makes the complete record stale. A later accepted review replaces it atomically in the state artifact.
-- Decision 0053 fixes the strict state-file fields and classification shape. The exact fingerprint inputs remain a follow-up decision.
+- Decision 0053 fixes the state-artifact fields, classification summary, and AI-authored judgment; Decision 0055 fixes the contract-first fingerprint inputs.
 
 ## Consequences
 
