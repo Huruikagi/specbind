@@ -145,7 +145,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not delete specs merely because the milestone is complete.
 - Must stop before release operations when the target release version is unset.
 - Must stop while any roadmap direct change remains pending.
-- Must stop when the adapter lacks safe Publish or Verify instructions.
+- Must accept an empty adapter as no project-specific actions, while stopping when non-empty guidance is ambiguous or unsafe and never weakening core evidence requirements.
 - Must not let adapter instructions weaken core readiness or finalization gates.
 - Must not treat `settings/release.md` code blocks as CLI-executable hooks.
 - Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.

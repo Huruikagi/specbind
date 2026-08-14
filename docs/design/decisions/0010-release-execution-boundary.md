@@ -12,7 +12,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 - Keep `specbind-release` as the agent-facing orchestration skill.
 - The Rust CLI owns core release preflight, deterministic state checks, evidence validation where mechanically possible, and idempotent finalization mutations.
-- The AI agent reads `settings/release.md` and executes its Prepare, Publish, Verify, and optional After finalize instructions under normal repository, authorization, and tool-permission boundaries.
+- The AI agent reads the complete free-form `settings/release.md` under Decision 0063 and executes any applicable Prepare, Publish, Verify, and After finalize guidance under normal repository, authorization, and tool-permission boundaries.
 - The CLI does not interpret Markdown code blocks as executable hooks and does not run arbitrary adapter commands.
 - The agent passes the target version, immutable publication reference, and structured verification evidence into the finalization boundary.
 - The CLI must not accept a bare success assertion as sufficient proof. It rechecks core invariants and all evidence it can verify from repository or structured state before mutating active artifacts.
@@ -23,17 +23,17 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 1. The release skill loads the active milestone, target version, and `settings/release.md`.
 2. The release skill asks the Rust CLI to run core preflight and readiness checks.
-3. If preflight succeeds, the agent executes the adapter's Prepare instructions.
-4. The agent executes Publish and captures the resulting immutable reference and other evidence.
-5. The agent executes Verify and captures fresh results.
+3. If preflight succeeds, the agent executes applicable adapter preparation guidance.
+4. The agent executes applicable publication guidance and captures the resulting immutable reference and other evidence required by the core contract.
+5. The agent executes applicable project verification guidance and captures fresh results.
 6. The agent submits the version, publication reference, and evidence to the Rust CLI finalization operation.
 7. The CLI revalidates core invariants, checks evidence it can verify, and applies idempotent per-spec `log.md`, metadata, active-document, and roadmap-archive mutations.
-8. After core finalization succeeds, the agent executes optional After finalize instructions and reports their result separately.
+8. After core finalization succeeds, the agent executes any applicable after-finalize guidance and reports its result separately.
 
 ## Failure semantics
 
 - A preflight failure prevents adapter execution.
-- A Prepare, Publish, or Verify failure prevents core finalization and preserves active SpecBind artifacts.
+- A failure in applicable preparation, publication, or project-verification guidance prevents core finalization and preserves active SpecBind artifacts.
 - Publication success followed by failed verification remains an active milestone until verification and finalization succeed; it is not reported as an unreleased rollback automatically.
 - A core finalization failure is retryable and must not duplicate history or partially discard unrelated work.
 - An After finalize failure does not roll back a verified release or completed core finalization. It is reported as follow-up work.

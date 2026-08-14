@@ -33,6 +33,7 @@ Related documents:
 - [Decision 0060: Requirement ID and heading mapping](./decisions/0060-requirement-id-and-heading-mapping.md)
 - [Decision 0061: Design Requirement traceability](./decisions/0061-design-requirement-traceability.md)
 - [Decision 0062: minimal active brief profile](./decisions/0062-minimal-active-brief-profile.md)
+- [Decision 0063: free-form release adapter profile](./decisions/0063-free-form-release-adapter-profile.md)
 
 Status: Draft
 
@@ -67,7 +68,7 @@ Status: Draft
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Spec Markdown templates are final-form OKF prototypes under Decision 0059; their relative paths define initial output paths and instruction comments are removed from materialized artifacts. Updates must not silently overwrite local changes or reconcile existing specs. |
 | `{{SPEC_DIR}}/settings/rules/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by all supported agents. | Accepted | Supported customization surface for shared judgment criteria and generation principles; includes the concise `okf-artifacts.md` authoring rule accepted by Decision 0049 and replaces editable agent-specific rule copies as the target model. |
-| `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Draft | Defines Prepare, Publish, Verify, and After finalize instructions without overriding core release gates. |
+| `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Accepted | Free-form OKF project guidance under Decision 0063. Its only known field is `type`; headings are not machine syntax and an empty body means no adapter-specific actions. It cannot override core release gates or evidence requirements. |
 
 ## Spec artifacts
 
@@ -85,7 +86,6 @@ Status: Draft
 
 ## Open questions
 
-- What exact Markdown schema and validation rules should `settings/release.md` use?
 - What exact evidence schema must the release skill require before finalization?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

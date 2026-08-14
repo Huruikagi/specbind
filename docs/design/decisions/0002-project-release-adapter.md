@@ -21,16 +21,16 @@ The adapter is an agent-readable instruction document, not an unrestricted execu
 
 The execution boundary is fixed in [Decision 0010](./0010-release-execution-boundary.md): the AI agent executes adapter instructions, while the Rust CLI owns core preflight and idempotent finalization. The CLI never treats adapter Markdown as a shell script.
 
-## Adapter phases
+## Adapter orchestration phases
 
-The initial contract uses four explicit phases:
+The release skill uses four semantic project-action phases within the core sequence:
 
 1. `Prepare`: version synchronization, build/package preparation, and project-specific pre-publication checks.
 2. `Publish`: tag, deployment, release workflow, store submission, or other publication operations.
 3. `Verify`: fresh checks proving that the intended version was actually published and is usable.
 4. `After finalize`: optional project cleanup that runs only after core SpecBind finalization succeeds.
 
-The exact Markdown schema remains Draft. Explicit phases are preferred over generic before/after hooks because the core must know where publication succeeded and which evidence permits destructive finalization of active documents.
+Under Decision 0063, these phases do not require literal Markdown headings or a parsed section order. The agent interprets the complete free-form adapter and applies relevant instructions at the appropriate point. An empty body explicitly means no adapter-specific actions, while the core still requires its own readiness and finalization evidence.
 
 ## Core invariants
 
@@ -43,9 +43,9 @@ The adapter cannot weaken or replace these rules:
 - Finalization must be idempotent, archive the active roadmap without overwriting history, and must not remove unrelated work.
 - Failure before verified publication preserves all active documents.
 
-## Missing or incomplete adapter
+## Missing or unclear adapter
 
-If `{{SPEC_DIR}}/settings/release.md` is missing or does not define enough information to publish and verify the project safely, `specbind-release` stops before external publication. It reports the missing phase instead of inventing release commands from incidental repository files.
+If `{{SPEC_DIR}}/settings/release.md` is missing, `specbind-release` stops because required project configuration is absent. A present empty adapter is valid. If non-empty guidance appears to require a project action but is ambiguous or unsafe, the agent stops before that action instead of inventing release commands from incidental repository files.
 
 ## Consequences
 

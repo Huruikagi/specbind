@@ -168,10 +168,10 @@ Rust CLI milestone operations own the mechanical state transitions for scope cha
 
 The portable release contract is a gated state transition. Project publication is supplied by the [project release adapter](./decisions/0002-project-release-adapter.md), while the lifecycle gates and SpecBind artifact finalization remain core behavior:
 
-1. The release agent loads the active roadmap, target version, and `{{SPEC_DIR}}/settings/release.md`, then validates that required adapter phases are present.
+1. The release agent loads the active roadmap, target version, and the free-form `{{SPEC_DIR}}/settings/release.md`, then validates its OKF profile and interprets any applicable project guidance under Decision 0063.
 2. The release agent asks the Rust CLI to run core preflight.
 3. The CLI resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency.
-4. After successful preflight, the agent runs project Prepare, Publish, and Verify instructions in order and captures structured evidence.
+4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance at the corresponding orchestration points and captures structured evidence required by the core contract.
 5. The agent submits the target version, immutable reference, and evidence to the Rust CLI finalization boundary.
 6. The CLI independently rechecks core invariants and confirms all publication evidence it can verify, including that the immutable reference retains the active working documents.
 7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.

@@ -88,14 +88,14 @@ The portable release contract owns gated and idempotent spec finalization. Proje
 
 ```text
 Rust CLI: core preflight and readiness gates
-  -> AI agent: adapter Prepare
-  -> AI agent: adapter Publish and capture immutable reference
-  -> AI agent: adapter Verify and capture fresh evidence
+  -> AI agent: adapter Prepare (when applicable)
+  -> AI agent: adapter Publish (when applicable) and capture required immutable reference
+  -> AI agent: adapter Verify (when applicable) and capture required fresh evidence
   -> Rust CLI: recheck evidence and finalize active spec artifacts
-  -> AI agent: adapter After finalize (optional)
+  -> AI agent: adapter After finalize (when applicable)
 ```
 
-An adapter phase cannot waive a core gate. If Publish or Verify instructions are missing, release stops before publication rather than inferring commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates them and hands structured results to the CLI under [Decision 0010](./decisions/0010-release-execution-boundary.md).
+Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates applicable guidance and hands structured results to the CLI under [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0063](./decisions/0063-free-form-release-adapter-profile.md).
 
 ## Cross-spec review
 
