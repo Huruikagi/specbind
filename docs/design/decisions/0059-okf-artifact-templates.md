@@ -77,4 +77,4 @@ SpecBind needs customizable template sets that can create several design artifac
 - Template sources remain valid OKF concept documents while template-only comments have an explicit removal and leak-detection contract.
 - Machine identity and output paths remain deterministic instead of depending on AI interpretation.
 - Existing specs remain stable when project defaults evolve.
-- A project-facing customization skill can safely edit templates and rules, then use CLI inventory, validation, and output-tree preview rather than teaching users every low-level invariant.
+- V1 can document manual customization and provide deterministic CLI validation. An interactive customization skill remains an optional post-v1 convenience rather than part of this decision's delivery scope.

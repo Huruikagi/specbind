@@ -154,7 +154,7 @@ Agent skills directly read a known singleton or authoritative collection selecto
 
 [Decision 0059](./decisions/0059-okf-artifact-templates.md) defines a separate `specbind template list/read` family for project-owned scaffolds. Template inventory mirrors logical artifact selectors but reports both source template and derived output paths. Raw reads retain `specbind:instruction` comments for the authoring agent, while materialization removes those nodes and rejects leaks in live artifacts.
 
-The CLI owns template discovery, identity and path validation, collision checks, instruction-node recognition, and non-writing output-tree previews. A customization skill owns the semantic conversation about desired structure and guidance. Ordinary artifact workflows own materialization through their guarded lifecycle operation; template read commands never create or overwrite live artifacts.
+The CLI owns template discovery, identity and path validation, collision checks, instruction-node recognition, and non-writing output-tree previews. In v1, maintainers follow customization guidance and edit project-owned settings directly; a dedicated customization skill is post-v1. Ordinary artifact workflows own materialization through their guarded lifecycle operation; template read commands never create or overwrite live artifacts.
 
 ## Completion validation handshake
 
