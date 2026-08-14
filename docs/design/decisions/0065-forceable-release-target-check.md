@@ -13,7 +13,7 @@ The final choice belongs to the human working with the agent. SpecBind therefore
 - The accepted mutation command is:
 
   ```text
-  specbind release finalize [--json] [--force]
+  specbind release finalize --log-entries <path|-> [--json] [--force]
   ```
 
 - Without `--force`, the command resolves the complete finalization mutation set, runs every core guard, and performs the Decision 0064 target-path Git check before writing.
@@ -50,7 +50,7 @@ The final choice belongs to the human working with the agent. SpecBind therefore
 - `specbind-release` invokes `specbind release finalize` normally after applicable project release work is judged successful and the Decision 0066 per-spec log summaries are prepared.
 - On `FINALIZE_TARGET_DIRTY`, the skill reports the complete affected-path summary. It may help the user inspect and resolve those paths, or—with explicit confirmation—retry the same current finalization using `--force`.
 - The CLI independently rediscovers targets and reruns every non-forceable guard on the forced retry. The earlier diagnostic output is not mutation authority and no stale path list is trusted.
-- Exact log-summary arguments and the broader diagnostics envelope remain separate CLI-contract work; this decision fixes the command name, override semantics, and forceable diagnostic payload.
+- Decision 0068 fixes the required log-summary argument. The broader diagnostics envelope remains separate CLI-contract work; this decision fixes the command name, override semantics, and forceable diagnostic payload.
 
 ## Consequences
 

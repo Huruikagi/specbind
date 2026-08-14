@@ -33,7 +33,7 @@ Release finalization still needs to add one correctly placed, idempotent `log.md
   - accept an identical retry without duplication and reject conflicting existing content
 - The log updates occur in the same coherent finalization mutation as `spec.yaml` transitions, Brief and `tasks.yaml` removal, and roadmap/cross-spec-review archival.
 - The agent does not pre-edit `log.md` as part of ordinary release orchestration. It may use the Brief as drafting context, but each summary must agree with the final requirements, active Requirement IDs, design, completed tasks, roadmap scope, and accepted completion/cross-spec records.
-- Exact CLI transport, date source, canonical wrapper prose, inline-Markdown constraints, and length limits remain the next log-entry input decision. This decision fixes ownership and atomicity, not that surface syntax.
+- Decision 0068 defines the strict JSON transport, local-date source, canonical wrapper, inline-Markdown safety check, and retry diagnostics.
 
 ## Consequences
 

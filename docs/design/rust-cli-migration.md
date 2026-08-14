@@ -49,7 +49,7 @@ specbind install [options]
 specbind check traceability <spec-path> [--json]
 specbind milestone <operation> [options]
 specbind release <operation> [options]
-specbind release finalize [--json] [--force]
+specbind release finalize --log-entries <path|-> [--json] [--force]
 ```
 
 These command names are Draft except for `specbind release finalize`, accepted by Decision 0065. The common constraint is one Rust `specbind` CLI.

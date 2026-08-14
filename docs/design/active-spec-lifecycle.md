@@ -250,6 +250,5 @@ Batch update and evidence-recording responsibilities are required, but their fin
 ## Open questions
 
 - Whether rebinding a target release requires explicit approval after implementation has started.
-- The exact `log.md` release-entry prose convention, release-date source, and evidence granularity.
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
 - Whether immutable history may use something other than a Git release tag.

@@ -38,6 +38,7 @@ Related documents:
 - [Decision 0065: forceable release target check](./decisions/0065-forceable-release-target-check.md)
 - [Decision 0066: agent-judged release and CLI log insertion](./decisions/0066-agent-judged-release-and-cli-log-insertion.md)
 - [Decision 0067: text-first English CLI results](./decisions/0067-text-first-english-cli-results.md)
+- [Decision 0068: release log summary input](./decisions/0068-release-log-summary-input.md)
 
 Status: Draft
 
@@ -90,6 +91,5 @@ Status: Draft
 
 ## Open questions
 
-- What exact transport and inline-Markdown contract should per-spec release-log summaries use?
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?

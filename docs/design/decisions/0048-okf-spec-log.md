@@ -19,10 +19,10 @@ OKF reserves `log.md` for the history of changes to the directory scope where it
   - a flat prose list under each date
 - Each released milestone that participated in the spec contributes one concise release entry under the applicable date.
 - The release version remains the entry's primary human-facing label. The milestone ID remains secondary trace metadata.
-- An entry retains useful SpecBind release context, including the delivered-scope summary, validation result, and archived roadmap. A project tag, Release URL, deployment identifier, or commit may be included when useful but is not required by SpecBind.
+- An entry retains the delivered-scope summary, archived roadmap reference, and milestone identity. A project tag, Release URL, deployment identifier, commit, or validation detail may be included in the agent-authored summary when useful but is not required by SpecBind.
 - Under Decision 0066, the agent supplies each participating spec's delivered-change summary and release finalization inserts the canonical entry into newest-first date order instead of appending to the end of the file. Re-running finalization must not duplicate the same milestone entry.
 - An abandoned unreleased change creates no `log.md` entry.
-- The exact summary transport, canonical prose wrapper, release-date source, and inline-Markdown constraints remain part of the log-entry input contract.
+- Decision 0068 defines the strict JSON summary transport, canonical prose wrapper, local release-date source, inline-Markdown safety check, and idempotent milestone match.
 
 ## Consequences
 
@@ -31,11 +31,11 @@ OKF reserves `log.md` for the history of changes to the directory scope where it
 
 ## 2026-08-14
 
-* **Release v1.4.0**: Added authenticated checkout. Milestone `0198b2d1-7c4a-7e31-9f42-8e7c3a110d62`; see [roadmap](../../releases/v1.4.0-roadmap.md).
+* **Release v1.4.0** — Added authenticated checkout. ([roadmap](../../releases/v1.4.0-roadmap.md), milestone `0198b2d1-7c4a-7e31-9f42-8e7c3a110d62`)
 
 ## 2026-07-20
 
-* **Release v1.3.0**: Added the initial checkout flow.
+* **Release v1.3.0** — Added the initial checkout flow. ([roadmap](../../releases/v1.3.0-roadmap.md), milestone `0197d07b-3510-7ec2-a43e-3176200d10e9`)
 ```
 
 - Multiple releases on the same date are separate list entries under one date heading.

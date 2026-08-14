@@ -17,7 +17,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - Under Decision 0066, the agent and human judge applicable project release work and pass the per-spec log summaries needed for mutation, not a structured external release-evidence object.
 - The CLI does not claim to verify external release success. It rechecks every deterministic core invariant it can observe before mutating active artifacts.
 - Release finalization applies the Decision 0064 path-scoped Git safety check rather than requiring repository-wide cleanliness or equality with a previously captured `HEAD`.
-- Decision 0065 accepts `specbind release finalize [--json] [--force]` as the finalization command. The Decision 0066 log-summary transport remains Draft.
+- Decisions 0065 and 0068 accept `specbind release finalize --log-entries <path|-> [--json] [--force]` as the finalization command and summary transport.
 
 ## Execution sequence
 
@@ -53,11 +53,10 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - Project release flexibility remains in an editable Markdown adapter.
 - SpecBind lifecycle safety and idempotency remain shared across every supported agent.
 - The release skill becomes orchestration around stable CLI contracts rather than a file-mutation implementation.
-- CLI diagnostics and log-summary inputs need stable human-readable and JSON representations.
+- CLI diagnostics need a stable command-wide JSON envelope in addition to the accepted Decision 0067 text result.
 - Tests must cover handoff and retry behavior across each failure boundary.
 
 ## Open questions
 
 - Exact preflight command name.
 - Whether a preflight result has a stable session or plan ID that finalization must reference.
-- Exact per-spec log-summary transport and validation rules.
