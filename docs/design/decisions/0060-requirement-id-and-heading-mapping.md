@@ -41,7 +41,8 @@ Fixed English headings would make parsing simple but would unnecessarily constra
 - That heading is followed by exactly one non-empty top-level ordered list before the next heading of level four or higher. Its items, in document order, are the Requirement's Acceptance Criteria.
 - Nested list items, ordered lists elsewhere in the Requirement, examples inside code fences, and lists under another heading do not create Requirement IDs.
 - The ordered-list item at one-based position `<M>` has canonical Requirement ID `<N>.<M>`. Source marker spelling is presentation only; the list must begin at one, while ID derivation uses AST item order rather than trusting repeated or manually edited marker text.
-- Document-title and surrounding section headings are not part of ID extraction. This decision also does not require or parse an Objective block; its authoring requirement remains a separate profile question.
+- Document-title and surrounding section headings are not part of ID extraction.
+- An Objective or equivalent rationale block is optional free-form Markdown for human and agent context. SpecBind does not require a particular label, heading, user-story shape, or EARS notation, and the CLI does not parse or validate it. An authoring agent should include such context when the Acceptance Criteria alone would not communicate the Requirement's intent clearly.
 - Criterion position is intentionally identity-bearing. Inserting, deleting, or reordering an Acceptance Criterion may change subsequent IDs in that Requirement group. The responsible requirements workflow must update active Requirement IDs and downstream design/task references; existing gate freshness and rewind rules then apply.
 - No separate per-criterion stable ID, UUID, anchor, or hidden HTML metadata is introduced in v1.
 
@@ -101,4 +102,5 @@ The canonical IDs are again `3.1` and `3.2`.
 - Requirements remain readable and locally customizable without sacrificing deterministic ID extraction.
 - English and Japanese specs can coexist in one project without parser behavior depending on ambient locale.
 - Requirement group identities survive document reordering and deletion gaps, while criterion editing retains the familiar positional behavior.
+- Requirement rationale can remain natural in either supported product language without expanding the deterministic parser contract.
 - Template authors can rename the two structural labels but cannot redefine heading levels, numeric capture, punctuation, or list semantics.
