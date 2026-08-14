@@ -32,6 +32,4 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 - Producers must emit lowercase hexadecimal.
 - Changing the accepted algorithm or representation requires an explicit schema evolution decision.
 
-## Open questions
-
-- The exact tasks-gate evidence key used to store the normalized task-plan fingerprint. Decision 0028 defines the projection and serialization; Decision 0038 fixes the design gate's two individually fingerprinted inputs, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.
+Decision 0039 fixes `tasks.yaml#plan` as the tasks-gate evidence key for the normalized projection defined by Decision 0028. Decision 0038 fixes the design gate's two individually fingerprinted inputs, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.

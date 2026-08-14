@@ -173,6 +173,35 @@ describe('runtime schema scaffolds', () => {
     expect(JSON.stringify(evidence)).not.toContain('requirements.md');
   });
 
+  it('defines minimal tasks gate evidence over only the normalized plan', async () => {
+    const schema = JSON.parse(
+      await readFile(join(process.cwd(), 'schemas', 'spec', 'v1.schema.json'), 'utf8'),
+    ) as RuntimeSchema;
+    const evidence = schema.$defs?.tasksGateEvidence as {
+      required?: string[];
+      properties?: {
+        input_revisions?: {
+          required?: string[];
+          properties?: Record<string, unknown>;
+          additionalProperties?: unknown;
+        };
+      };
+      additionalProperties?: unknown;
+    };
+
+    expect(evidence.required).toEqual(['passed_at', 'approval_mode', 'input_revisions']);
+    expect(evidence.properties?.input_revisions?.required).toEqual([
+      'tasks.yaml#plan',
+    ]);
+    expect(evidence.properties?.input_revisions?.properties).toEqual({
+      'tasks.yaml#plan': { $ref: '#/$defs/fingerprint' },
+    });
+    expect(evidence.properties?.input_revisions?.additionalProperties).toBe(false);
+    expect(evidence.additionalProperties).toBe(false);
+    expect(JSON.stringify(evidence)).not.toContain('execution');
+    expect(JSON.stringify(evidence)).not.toContain('requirement_ids');
+  });
+
   it('defines sparse scheduling fields for executable tasks', async () => {
     const schema = JSON.parse(
       await readFile(join(process.cwd(), 'schemas', 'tasks', 'v1.schema.json'), 'utf8'),

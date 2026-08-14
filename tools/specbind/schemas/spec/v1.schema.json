@@ -208,6 +208,66 @@
         }
       ],
       "additionalProperties": false
+    },
+    "tasksGateEvidence": {
+      "type": "object",
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "input_revisions"
+      ],
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/passedAt"
+        },
+        "approval_mode": {
+          "enum": [
+            "explicit",
+            "delegated"
+          ]
+        },
+        "delegation_workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_revisions": {
+          "type": "object",
+          "required": [
+            "tasks.yaml#plan"
+          ],
+          "properties": {
+            "tasks.yaml#plan": {
+              "$ref": "#/$defs/fingerprint"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "approval_mode": {
+              "const": "explicit"
+            }
+          },
+          "not": {
+            "required": [
+              "delegation_workflow"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "approval_mode": {
+              "const": "delegated"
+            }
+          },
+          "required": [
+            "delegation_workflow"
+          ]
+        }
+      ],
+      "additionalProperties": false
     }
   },
   "type": "object",
