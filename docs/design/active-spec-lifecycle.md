@@ -14,7 +14,7 @@ Long-lived specs need to remain the current description of the product, but mile
 - Agents repeatedly load completed work that is irrelevant to the current milestone.
 - Task numbering and resume logic span unrelated milestones.
 - Release gates can confuse current evidence with historical completion.
-- A discovery brief becomes both the current change input and an append-only decision log.
+- A discovery brief can accumulate unrelated historical detail when it is treated as both the current change input and an append-only decision log.
 
 ## Target document responsibilities
 
@@ -79,16 +79,14 @@ The Rust CLI requires a clean repository immediately before roadmap creation, ca
 
 ## Active change
 
-Each spec has at most one active change at a time. The active brief should identify at least:
+Each spec has at most one active change at a time. Under [Decision 0062](./decisions/0062-minimal-active-brief-profile.md), the active brief is free-form authoring input rather than another state schema. It should ordinarily communicate the context needed for the change, which may include:
 
-- stable milestone ID
-- target release when assigned
 - problem and desired outcome
 - in-scope and out-of-scope behavior
 - boundary impact and dependencies
 - source request or issue
 
-Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new brief artifact; it does not append the new change to the previous milestone's brief.
+None of those topics is a required parsed section. Milestone identity and release binding remain authoritative in the roadmap and `spec.yaml`, not in brief metadata. Additional deltas discovered in the same milestone are merged into that active brief. A later milestone creates a new brief artifact; it does not append the new change to the previous milestone's brief.
 
 Discovery owns creating the active brief and transitioning an idle released spec into an active-change state. The precise routing and approval invalidation rules still need refinement.
 

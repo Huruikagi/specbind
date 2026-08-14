@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-The `SpecBind Brief` artifact is discovery-owned, milestone-local guidance for applying a requested change to the persistent requirements. It is removed after successful release finalization. The requirements gate instead approves the resulting singleton `SpecBind Requirements` content and the active Requirement ID set selected for the change. Decision 0057 discovers these Markdown artifacts by OKF type rather than filename.
+The `SpecBind Brief` artifact is discovery-owned, milestone-local free-form guidance under Decision 0062 for applying a requested change to the persistent requirements. It is removed after successful release finalization. The requirements gate instead approves the resulting singleton `SpecBind Requirements` content and the active Requirement ID set selected for the change. Decision 0057 discovers these Markdown artifacts by OKF type rather than filename.
 
 Fingerprinting the brief would make later editorial changes to that guidance look like changes to already-approved requirements even when the authoritative requirements and active set remain identical.
 

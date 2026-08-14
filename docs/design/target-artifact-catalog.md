@@ -32,6 +32,7 @@ Related documents:
 - [Decision 0059: OKF artifact templates](./decisions/0059-okf-artifact-templates.md)
 - [Decision 0060: Requirement ID and heading mapping](./decisions/0060-requirement-id-and-heading-mapping.md)
 - [Decision 0061: Design Requirement traceability](./decisions/0061-design-requirement-traceability.md)
+- [Decision 0062: minimal active brief profile](./decisions/0062-minimal-active-brief-profile.md)
 
 Status: Draft
 
@@ -73,7 +74,7 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Draft | A release must not delete a spec merely because its milestone completed. |
-| `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Discovered by OKF type and removed by successful release finalization; same-milestone deltas merge into the active brief. |
+| `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Minimal free-form OKF input under Decision 0062. Its only known field is `type`; the CLI does not parse its body or fingerprint it for gate evidence. Same-milestone deltas merge into it, and successful release finalization removes it. |
 | `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. Front Matter maps the two customizable structural heading labels, while Requirement IDs derive from explicit group number plus Acceptance Criteria list position under Decision 0060. The active requirement set is a separate milestone-scoped concept. |
 | `SpecBind Design` collection (`design.md`, `artifact_id: main` by default) | Holds the complete currently valid design across one or more focused documents. | Design workflow. | Accepted | Discovered by OKF type plus stable `artifact_id`; revised in place for an active change. Its stable v1 Front Matter contract is `type`, `artifact_id`, and non-empty `requirement_ids`; unknown project metadata is allowed but ignored by SpecBind. The mapping set exactly matches its italic `_Requirements: ..._` body markers under Decision 0061. |
 | `SpecBind Contract` singleton (`contract.md` by default) | Holds the current minimal cross-spec seam manifest across releases. | Design and cross-spec review workflows. | Accepted | Discovered by OKF type. Contains stable Owns, Exports, Consumes, Invariants, and File Ownership entries; never an internal-design summary. |
