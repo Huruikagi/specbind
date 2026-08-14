@@ -40,6 +40,7 @@ Related documents:
 - [Decision 0067: text-first English CLI results](./decisions/0067-text-first-english-cli-results.md)
 - [Decision 0068: release log summary input](./decisions/0068-release-log-summary-input.md)
 - [Decision 0069: stateless release preflight](./decisions/0069-stateless-release-preflight.md)
+- [Decision 0070: derived release readiness](./decisions/0070-derived-release-readiness.md)
 
 Status: Draft
 

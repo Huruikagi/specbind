@@ -15,6 +15,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - The AI agent reads the complete free-form `settings/release.md` under Decision 0063 and executes any applicable Prepare, Publish, Verify, and After finalize guidance under normal repository, authorization, and tool-permission boundaries.
 - The CLI does not interpret Markdown code blocks as executable hooks and does not run arbitrary adapter commands.
 - Under Decision 0066, the agent and human judge applicable project release work and pass the per-spec log summaries needed for mutation, not a structured external release-evidence object.
+- Under Decision 0070, the CLI derives release readiness from existing authoritative artifacts and does not persist a separate aggregate readiness record.
 - The CLI does not claim to verify external release success. It rechecks every deterministic core invariant it can observe before mutating active artifacts.
 - Release finalization applies the Decision 0064 path-scoped Git safety check rather than requiring repository-wide cleanliness or equality with a previously captured `HEAD`.
 - Decision 0069 accepts `specbind release preflight [--json]` as a stateless read-only readiness check whose result is not passed to finalization.

@@ -44,7 +44,7 @@ A skill may orchestrate a CLI operation, but the operation's contract belongs to
 
 Approval authority is also distinct from process interaction. Under [Decision 0012](./decisions/0012-delegated-approval.md), `--non-interactive` suppresses prompts but does not approve a gate. Explicit and delegated approvals both pass through the same guarded CLI event and carry revision-bound evidence.
 
-For release, the agent executes the adapter's natural-language project instructions and supplies structured evidence to the CLI. The CLI owns preflight and finalization and never executes adapter Markdown as an unrestricted hook; see [Decision 0010](./decisions/0010-release-execution-boundary.md).
+For release, the agent executes the adapter's natural-language project instructions, judges their result with the human, and supplies only the per-spec log summaries required for finalization. The CLI derives core readiness from existing lifecycle artifacts, owns preflight and finalization, and never executes adapter Markdown as an unrestricted hook; see [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0070](./decisions/0070-derived-release-readiness.md).
 
 ## First deterministic check: requirement traceability
 

@@ -130,7 +130,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - The active `roadmap.md`
 - A concrete target release version
 - `{{SPEC_DIR}}/settings/release.md`
-- Release-readiness state and evidence, to be defined
+- Existing lifecycle artifacts from which the CLI derives release readiness under Decision 0070
 
 ### Writes
 
@@ -158,7 +158,6 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must be idempotent when finalization is retried.
 - Must consume concise English CLI results by default and translate or explain them in the user's language when useful; use `--json` only when structured details are needed.
 
-- What exact release-readiness evidence schema is mandatory?
 - What happens when release succeeds only partially?
 
 ## Cross-cutting questions

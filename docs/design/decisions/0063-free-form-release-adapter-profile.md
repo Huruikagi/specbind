@@ -44,4 +44,4 @@ If the agent owns semantic interpretation, requiring literal headings or a parse
 - Projects can document release procedures in the structure natural to them without maintaining a CLI-specific Markdown grammar.
 - The same adapter remains usable by every supported agent because interpretation belongs to the shared release workflow contract.
 - Projects with no special preparation, publication, verification, or cleanup steps can keep an intentionally empty body.
-- Safety continues to come from core preflight, structured evidence, authorization boundaries, and guarded finalization rather than from parsing prose headings.
+- Safety continues to come from core preflight, existing lifecycle evidence, authorization boundaries, and guarded finalization rather than from parsing prose headings or persisting a universal external release record.
