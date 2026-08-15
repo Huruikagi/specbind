@@ -1,6 +1,6 @@
 # 0065: Expose guarded release finalization with a narrow force override
 
-Status: Accepted
+Status: Superseded by Decision 0081
 
 ## Context
 

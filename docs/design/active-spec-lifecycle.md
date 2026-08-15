@@ -21,6 +21,7 @@ Long-lived specs need to remain the current description of the product, but mile
 | Artifact | Responsibility | During an active change | After release |
 | --- | --- | --- | --- |
 | `SpecBind Brief` | Why the spec changes in the current milestone. | At most one discovered artifact, including same-milestone deltas. | Removed. |
+| `SpecBind Research` | Optional current brownfield gap-analysis findings used as non-authoritative authoring input. | At most one discovered artifact; revised in place rather than appended as attempt history. | Removed. |
 | `SpecBind Requirements` | The complete set of currently valid requirements. | The discovered singleton is revised in place. | Preserved. |
 | `SpecBind Design` set | The complete currently valid design, optionally split by stable `artifact_id`. | One or more discovered artifacts are revised as needed. | Preserved. |
 | `SpecBind Contract` | The current minimal cross-spec seam manifest. | The discovered singleton is revised only when externally observable seams change. | Preserved. |
@@ -29,9 +30,9 @@ Long-lived specs need to remain the current description of the product, but mile
 | `log.md` | Per-spec OKF update log of released changes. | Preserved; not pre-edited during ordinary release orchestration. | The CLI inserts one AI-authored concise summary under the applicable newest-first date heading. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Intent, scope, and dependencies for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
-| `state/cross-spec-review.md` | Current accepted milestone-wide cross-spec review evidence and AI-authored judgment. | Exists only after a global review passes; ordinary agents do not preload it. | Moved to `releases/<version>-cross-spec-review.md`. |
+| `state/cross-spec-review.md` | Current accepted milestone-wide contract review inputs and free-form AI judgment. | Exists only after review passes for a milestone containing Spec-backed items. | Moved to `releases/<version>-cross-spec-review.md`; absent for Direct-only releases. |
 
-Absence of a `SpecBind Brief` artifact and `tasks.yaml` is the normal idle state of a released spec. Placeholder working documents should not be required. Decision 0057 discovers spec-local Markdown by OKF type; familiar Markdown filenames remain template defaults rather than lifecycle identity.
+Absence of `SpecBind Brief`, `SpecBind Research`, and `tasks.yaml` is the normal idle state of a released Spec. Placeholder working documents should not be required. Decision 0057 discovers Spec-local Markdown by OKF type; familiar Markdown filenames remain template defaults rather than lifecycle identity.
 
 ## Milestone identity and release binding
 
@@ -127,11 +128,11 @@ Only accepted `GO` evidence is persisted in `spec.yaml`; failed, manual-required
 
 Completion relies on the gate-local freshness chain accepted by [Decision 0032](./decisions/0032-gate-local-freshness-chain.md). Requirements, design, contract, active Requirement IDs, and the task plan remain owned by their earlier gates rather than being copied into completion evidence.
 
-Contract-impact classification and downstream review are milestone-wide evidence represented once under [Decision 0050](./decisions/0050-global-cross-spec-review.md). [Decisions 0052](./decisions/0052-project-state-artifacts.md) and [0053](./decisions/0053-minimal-cross-spec-review-state.md) store the structured summary and accepted AI judgment together in `state/cross-spec-review.md`, outside always-loaded roadmap context. The roadmap remains the scope owner. Under [Decision 0041](./decisions/0041-no-per-spec-change-id.md), the CLI resolves the state record from its matching `milestone_id` and membership in the roadmap's current work items; completion evidence does not duplicate it or add another reference.
+Cross-spec review is milestone-wide state represented once under Decisions 0050, 0052, and 0078. `state/cross-spec-review.md` stores exact input revisions and the accepted free-form AI judgment outside always-loaded Roadmap context; the Roadmap remains scope owner. Per-Spec completion evidence does not duplicate it, and its absence or staleness does not by itself make an unaffected `release_ready` Spec locally inconsistent.
 
 The roadmap's machine-readable scope uses the grouped `work_items` frontmatter accepted by [Decision 0046](./decisions/0046-roadmap-work-items.md). New specs, existing-spec updates, and direct changes remain distinct categories; typed references form the dependency graph. Spec-backed progress is derived from each spec's lifecycle, while a direct change persists only optional `status: completed` under [Decision 0047](./decisions/0047-sparse-direct-change-status.md), with absence meaning pending. The Markdown body carries milestone context and rationale but has no CLI-parsed grammar.
 
-Under [Decision 0051](./decisions/0051-current-state-roadmap.md), the active roadmap is a current-state manifest rather than an embedded change log. Confirmed scope, dependencies, direct-change completion, and release binding replace their current representations in place. The separate accepted global review state is likewise current-only. Git records pre-release edits, the paired release archives preserve the released scope and review evidence, and per-spec `log.md` files summarize released results.
+Under [Decision 0051](./decisions/0051-current-state-roadmap.md), the active roadmap is a current-state manifest rather than an embedded change log. Confirmed scope, dependencies, direct-change completion, and release binding replace their current representations in place. When Spec-backed work exists, the separate accepted global review state is likewise current-only. Git records pre-release edits, release archives preserve the released scope and applicable review evidence, and per-spec `log.md` files summarize Spec-backed results.
 
 ## Released history
 
@@ -147,7 +148,7 @@ Under [Decision 0048](./decisions/0048-okf-spec-log.md), `log.md` is a navigable
 - project release reference or relevant commit when useful
 - related roadmap, issue, or follow-up
 
-The complete pre-finalization brief artifact and `tasks.yaml` normally remain available through ordinary Git history or a project-created release reference. The roadmap and accepted global cross-spec review remain directly available under `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`. Each spec's `log.md` points to the archived roadmap and may include project references when useful, but SpecBind requires no universal tag or commit field.
+The complete pre-finalization Brief, optional Research, and `tasks.yaml` normally remain available through ordinary Git history or a project-created release reference. The roadmap remains directly available under `releases/<version>-roadmap.md`; a Spec-backed release also preserves its accepted review under `releases/<version>-cross-spec-review.md`. Each participating spec's `log.md` points to the archived roadmap and may include project references when useful, but SpecBind requires no universal tag or commit field. A Direct-only release has no per-spec log entry.
 
 The brief may provide drafting context for the problem summary, but it is not authoritative released state. Log content must agree with the final requirements, active Requirement IDs, completed tasks, roadmap, accepted completion evidence, and cross-spec review; see [Decisions 0017](./decisions/0017-requirements-gate-inputs.md) and [0066](./decisions/0066-agent-judged-release-and-cli-log-insertion.md).
 
@@ -157,7 +158,7 @@ These operations are intentionally distinct from successful release finalization
 
 - Unstarted scope can be removed by revising the active milestone and its affected briefs.
 - Partially implemented unreleased work must be restored with explicit project and Git operations. SpecBind then reconciles its active artifacts and metadata with that repository state; it does not perform an automatic revert.
-- An entire unreleased milestone can be abandoned only with explicit user confirmation. After requirements and design have been restored or reconciled, lifecycle cleanup removes its milestone-local briefs and tasks, clears affected `active_change` state, and removes `steering/roadmap.md` plus any matching `state/cross-spec-review.md`.
+- An entire unreleased milestone can be abandoned only with explicit user confirmation. After Requirements and Design have been restored or reconciled, lifecycle cleanup removes milestone-local Brief, Research, and Tasks artifacts, clears affected `active_change` state, and removes `steering/roadmap.md` plus any matching `state/cross-spec-review.md`.
 - An abandoned unreleased milestone does not add per-spec release-log entries or a file under `releases/` by default. Committed work remains discoverable through Git history.
 - A rollback of released behavior is represented as a new active change in a new milestone and is released normally.
 
@@ -169,15 +170,15 @@ The portable release contract is a gated state transition. Project publication i
 
 1. The release agent loads the active roadmap, target version, and the free-form `{{SPEC_DIR}}/settings/release.md`, then validates its OKF profile and interprets any applicable project guidance under Decision 0063.
 2. The release agent runs the stateless `specbind release preflight` readiness check accepted by [Decision 0069](./decisions/0069-stateless-release-preflight.md).
-3. Without creating an aggregate readiness record, the CLI derives readiness from current artifacts: it resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies current tasks, approvals, completion evidence, contract-impact/downstream-review evidence, and lifecycle consistency under [Decision 0070](./decisions/0070-derived-release-readiness.md).
+3. Without creating an aggregate readiness record, the CLI derives readiness from current artifacts: it resolves participating specs, requires a concrete target version, requires every direct change to be completed, and verifies applicable tasks, approvals, completion evidence, fresh cross-spec review, and lifecycle consistency under [Decision 0070](./decisions/0070-derived-release-readiness.md).
 4. After successful preflight, the agent runs any applicable project preparation, publication, and verification guidance and judges the result with the human.
-5. The agent submits one delivered-change summary per participating spec to the Rust CLI finalization boundary.
+5. For a Spec-backed milestone, the agent submits one delivered-change summary per participating spec to the Rust CLI finalization boundary. A Direct-only milestone omits this input.
 6. Without trusting or accepting a preflight token, the CLI independently rechecks core invariants, validates all evidence it can verify, and confirms that every resolved finalization target path is safe under Decision 0064.
-7. The CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
-8. The CLI removes each participating spec's discovered singleton brief artifact and fixed `tasks.yaml`.
+7. For Spec-backed work, the CLI inserts one version-labeled, idempotent release entry into each participating spec's `log.md` under the applicable newest-first date heading.
+8. The CLI removes each participating Spec's discovered Brief and optional Research artifacts plus fixed `tasks.yaml`.
 9. The CLI transitions each `spec.yaml` to released / no-active-change state.
-10. The CLI moves `steering/roadmap.md` to `releases/<version>-roadmap.md` and the accepted `state/cross-spec-review.md` to `releases/<version>-cross-spec-review.md`, refusing conflicting archive content.
-11. The CLI persists finalization as one coherent state change and verifies the resulting idle state.
+10. The CLI moves an applicable accepted `state/cross-spec-review.md` to its release archive, then moves `steering/roadmap.md` last as the finalization completion marker. Direct-only milestones skip the review archive.
+11. The CLI verifies the resulting idle state. A crash-interrupted mutation is idempotently retryable or stops for Git-assisted recovery under Decision 0081.
 12. The agent runs optional project After finalize instructions and reports their result separately.
 
 If publishing or release verification fails, finalization does not run and active documents remain intact. External partial success is reconciled by the agent and human without creating a partially released SpecBind milestone. Core finalization always covers the complete participating set as one logical transition; re-running it must not duplicate `log.md` entries or remove unrelated work. An After finalize failure becomes follow-up work and does not undo or reopen the release. See [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0071](./decisions/0071-no-partial-milestone-release.md).

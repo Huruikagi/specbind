@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0078 narrows the Roadmap projection to Spec-backed scope, removes Tasks from optional deep inputs, and removes classification input.
+
 ## Context
 
 Global cross-spec review must discover consumers that are not already named in the active roadmap. Reading only changed producers cannot find a new or previously unrelated `Consumes` edge, so the deterministic contract graph must cover every current persistent spec.
@@ -15,7 +17,8 @@ At the same time, always fingerprinting every requirement, design, and task plan
 - The cross-spec scope projection contains exactly:
   - `milestone_id`
   - `baseline_revision`
-  - `work_items`, including category, item identity, summary, and dependencies but excluding direct-change execution `status`
+- Spec-backed `work_items`, including category, Spec identity, summary, and Spec-to-Spec dependencies
+- Direct items, Direct status, and dependencies to or from Direct items are excluded.
 - The projection excludes `type`, `target_release`, the roadmap Markdown body, unknown OKF extension fields, and the review artifact itself.
 - Because Decision 0046 makes item and dependency list order non-semantic, normalization sorts spec items by canonical spec identity, direct items by roadmap-local ID, and each typed dependency list by kind then identity. It then serializes the typed projection through RFC 8785 JCS and computes SHA-256.
 - Every current persistent spec contributes exactly one required `specs/<canonical-spec>#contract` logical key, resolved by the Decision 0057 OKF inventory, including specs outside active roadmap scope and canonical empty contracts. The key set itself is part of freshness, so adding or removing a contract makes an accepted review stale.
@@ -25,10 +28,9 @@ At the same time, always fingerprinting every requirement, design, and task plan
 - When the final judgment materially relies on deeper content, `input_revisions` may additionally contain only:
   - `specs/<canonical-spec>#requirements`
   - `specs/<canonical-spec>#design/<artifact_id>`
-  - `specs/<canonical-spec>/tasks.yaml#plan`
 - Requirements and design use complete-file Markdown fingerprints after line-ending normalization. Task plans use the Decision 0028 normalized typed plan projection and JCS fingerprint; mutable execution state is excluded.
 - A file that was merely opened or consulted incidentally is not an input. The review workflow declares every deeper artifact whose content materially supports the accepted conclusion, and its Markdown assessment explains why deep review was necessary.
-- The agent submits canonical logical selectors, classifications, and the candidate assessment to the guarded CLI operation. The CLI resolves current paths through type-based discovery, validates the allowed and required key set, reads the files, computes every fingerprint itself, and writes the accepted artifact atomically. Agent-supplied paths and hash values are not accepted as authority.
+- The agent submits canonical optional deep selectors and the candidate assessment to the guarded CLI operation. The CLI resolves current paths through type-based discovery, validates the allowed and required key set, reads the files, computes every fingerprint itself, and writes the accepted artifact. Agent-supplied paths and hash values are not accepted as authority.
 - Logical selectors use the Decision 0057 forms. Fixed machine projections remain SpecBind-root-relative POSIX paths with no `.` or `..` segments. CLI-generated YAML writes the roadmap projection first, required contracts in canonical spec identity order, then optional deep inputs ordered by spec identity, artifact kind, and collection ID. Mapping order is presentation only.
 - Any current fingerprint mismatch, required-key-set change, missing declared deep input, stale applicable active-spec prerequisite gate, or invalid Decision 0054 baseline makes the global review unusable until the responsible state is repaired and a new review passes.
 

@@ -32,7 +32,7 @@ A single command that always returns every body would defeat the context-saving 
   - `path`: its current SpecBind-root-relative POSIX path
   - `artifact_id`: shown only for collection profiles
 - Inventory deliberately omits content, fingerprint, timestamps, Git revision, byte size, lifecycle evidence, and derived semantic summaries. Workflows needing those facts use their owning CLI operation.
-- Artifact ordering is deterministic: `brief`, `requirements`, all `design/<artifact_id>`, `contract`, then all `implementation-notes/<artifact_id>`. Each collection is ordered by `artifact_id`. Mapping-key order is presentation only.
+- Artifact ordering is deterministic: `brief`, `research`, `requirements`, all `design/<artifact_id>`, `contract`, then all `implementation-notes/<artifact_id>`. Each collection is ordered by `artifact_id`. Absent optional roles are skipped; mapping-key order is presentation only.
 - On discovery failure, the CLI returns every unambiguous artifact it safely discovered plus stable English diagnostics and exits nonzero. Partial inventory is diagnostic information and does not authorize a lifecycle operation.
 - Diagnostics use stable codes and messages and include selector, path, line, or column when known. Decision 0074 defers a versioned JSON diagnostic schema.
 
@@ -46,7 +46,7 @@ A single command that always returns every body would defeat the context-saving 
 
 ## Agent usage
 
-- A workflow directly requests a known singleton such as `requirements`, `contract`, or `brief` through `artifact read` without listing first.
+- A workflow directly requests a known singleton such as `requirements`, `contract`, or `brief` through `artifact read` without listing first. It lists first when deciding whether optional `research` exists.
 - A workflow may also directly read a known collection selector such as `design/persistence` when that stable ID came from authoritative workflow context.
 - A workflow uses `artifact list` when it needs to discover all members of a collection, determine which optional artifacts exist, choose among selectors, or diagnose the spec's artifact structure.
 - If a direct read reports a missing or ambiguous selector, the workflow may use `artifact list` to obtain the broader inventory and diagnostics.

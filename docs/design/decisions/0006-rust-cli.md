@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decisions 0077 and 0081 narrow the v1 port: public manifests, backups, overwrite policy, compatibility aliases, and untested platform targets are not parity requirements. The current TypeScript implementation is migration evidence rather than the final Rust interface.
+
 ## Context
 
 SpecBind currently ships a Node.js and TypeScript CLI that installs and updates agent skills, settings, rules, and templates. The target product also needs deterministic specification checks and guarded lifecycle operations.

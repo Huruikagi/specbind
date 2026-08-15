@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decisions 0077 and 0081 supersede the compatibility-alias details below. V1 accepts only `specDir`, performs legacy handling through explicit `specbind migrate cc-sdd`, and applies the stricter project-child, submodule, and link-traversal rules in Decision 0081.
+
 ## Context
 
 The current TypeScript CLI allows the project specification root to be changed with `--kiro-dir` or `.specbind.json`'s `kiroDir`. Its precedence is command-line value, persisted configuration, then the `.kiro` default.

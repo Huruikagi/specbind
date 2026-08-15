@@ -15,12 +15,13 @@ Projects may run several commands of the same type and may have important checks
   - `kind`: one of `test`, `build`, `smoke`, `lint`, `typecheck`, or `custom`
   - `command`: the non-empty, display-safe command invocation that was run
   - `exit_code: 0`
+- An entry may include `working_directory`, a portable project-root-relative POSIX path. Omission means the SpecBind project root.
 - Multiple entries may use the same `kind`; array order records execution order.
 - `custom` covers a project-specific mechanical check without expanding the core enum. Its command remains the explanation of what ran; v1 adds no separate label field.
 - Because only accepted `GO` evidence is persisted under Decision 0030, a nonzero exit code is candidate failure output and cannot appear in persisted completion evidence.
 - The schema does not prescribe that every project has all categories. The validation skill derives the required set from project automation and rules, while the CLI requires a non-empty, structurally successful submitted set.
 - `command` contains no inline secret value. Credentials and sensitive values must be supplied outside the recorded command, such as through the execution environment; environment variable names may remain visible.
-- Entries do not store stdout, stderr, duration, per-command timestamps, environment values, working-directory copies, agent identity, or retry history.
+- Entries do not store stdout, stderr, duration, per-command timestamps, environment values, agent identity, or retry history.
 - The completion-level `passed_at` supplies the accepted timestamp in the Decision 0036 format. Detailed logs remain with CI, agent-run output, or other project tooling.
 
 Example:

@@ -6,7 +6,7 @@ Status: Draft
 
 ## Purpose
 
-The singleton `SpecBind Contract` artifact is the current manifest of a spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating requirements document, design document, and `tasks.yaml`.
+The singleton `SpecBind Contract` artifact is the current manifest of a Spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating Requirements and Design document.
 
 It answers:
 
@@ -29,10 +29,10 @@ The CLI discovers the contract, requirements, and one-or-more design artifacts b
 | New spec | Design establishes the initial contract, including an explicit empty contract when no cross-spec seam exists. |
 | Active change | Design updates affected entries while preserving stable IDs for unchanged meanings. |
 | Released and idle | The current released contract remains present and available to consumers. |
-| Released change | The per-spec `log.md` records the contract impact classification and changed entry references where useful. |
+| Released change | The per-spec `log.md` may summarize meaningful Contract changes and entry references where useful. |
 | Retired capability | Retirement rules must resolve or migrate incoming consumer references before removal. |
 
-The contract is not milestone-local and is never deleted merely because `brief.md` and `tasks.yaml` are finalized.
+The contract is not milestone-local and is never deleted merely because the active Brief, optional Research, and `tasks.yaml` are finalized.
 
 The design gate always fingerprints the singleton contract and complete current design artifact set under [Decision 0038](./decisions/0038-design-gate-inputs.md). A missing contract therefore prevents approval rather than silently taking the empty-contract path.
 
@@ -91,7 +91,7 @@ type: SpecBind Contract
 - `compatibility-domain` — `src/domain/compatibility/**`
 ```
 
-Consumes targets use `<canonical-spec>/<target-section>/<target-id>`. File Ownership path patterns are repository-root-relative POSIX values attached to a stable entry ID. A path move therefore updates the value without changing identity when the semantic boundary remains the same.
+Consumes targets use `<canonical-spec>/<target-section>/<target-id>`, where the target section is `owns`, `exports`, `invariants`, or `file-ownership`; a `consumes` entry never targets another `consumes` entry. File Ownership paths are SpecBind-project-root-relative POSIX values attached to a stable entry ID. V1 accepts exact paths and directory subtrees ending in `/**` only. A path move therefore updates the value without changing identity when the semantic boundary remains the same.
 
 The canonical empty contract retains all five headings and has no list items. A changed description, reordered item, or path move does not create a new identity when the meaning is unchanged; a semantic replacement receives a new ID.
 
@@ -109,11 +109,11 @@ Cross-spec review proceeds contract-first:
 2. Ask the CLI to validate contract structure and construct the complete dependency graph.
 3. Review ownership overlap, dependency direction, invariants, and File Ownership conflicts.
 4. Compare changed entries between the roadmap's Decision 0054 `baseline_revision` and the current active contracts.
-5. Classify the change as `LOCAL_ONLY`, `CONTRACT_COMPATIBLE`, or `CONTRACT_BREAKING`.
-6. Traverse affected consumers and load full requirements, design, and task plans only where the contract change or ambiguity requires it. Under [Decision 0055](./decisions/0055-cross-spec-review-inputs.md), only deeper artifacts that materially support the final judgment become optional freshness inputs.
-7. Record one semantic classification per roadmap item, the accepted contract-first input revisions, and the AI-authored judgment once in `state/cross-spec-review.md` under [Decisions 0050](./decisions/0050-global-cross-spec-review.md), [0052](./decisions/0052-project-state-artifacts.md), and [0053](./decisions/0053-minimal-cross-spec-review-state.md). Affected entries and downstream scope remain derived review facts rather than duplicated rigid fields.
+5. Traverse affected consumers and load full Requirements or selected Design artifacts only where the Contract change or ambiguity requires it. Tasks do not yet exist.
+6. Return affected Specs explicitly to Design when revision is required; add an out-of-scope owned consumer to the Roadmap before acceptance.
+7. Record exact input revisions and one free-form accepted AI judgment in `state/cross-spec-review.md` under Decision 0078.
 
-`LOCAL_ONLY` still requires the spec-local review appropriate to the change. `CONTRACT_COMPATIBLE` does not mean no review; it narrows review to relevant consumers. `CONTRACT_BREAKING` requires downstream revision or explicit revalidation before release readiness.
+The assessment is not forced into a closed compatibility enum. External consumers, migration constraints, compatibility measures, and accepted user guidance are handled in prose and agent judgment.
 
 ## CLI and agent boundary
 
@@ -125,7 +125,7 @@ The Rust CLI can deterministically check:
 - missing targets and dangling consumer edges
 - duplicate ownership declarations
 - File Ownership overlap candidates
-- dependency cycles where the configured rules prohibit them
+- dependency-cycle paths as review warnings
 - structural differences between current and released contracts
 - presence of a contract for every active spec in the review scope
 
@@ -142,15 +142,7 @@ Mechanical findings may identify candidates and affected graph nodes; they do no
 
 ## Direct implementation candidates
 
-Every direct item in the active roadmap declares contract impact, conceptually:
-
-```markdown
-- Contract Impact: none
-```
-
-If the agent cannot justify `none` against current contracts and the intended file/behavior changes, discovery stops the direct route and reclassifies the work as an existing-spec update or new spec. When impact exists, the roadmap should reference the affected contract entries rather than only free-form names.
-
-The CLI can validate that the field is present and references resolve. The agent validates the truth of the declaration.
+Direct work has no persisted Contract-impact field. Requiring no canonical Requirements, Design, or Contract change is the route precondition. If the agent cannot maintain that premise, discovery reclassifies the item as an existing-Spec update or new Spec before completion. Direct items are excluded from cross-spec-review scope.
 
 ## Existing-spec bootstrap
 
@@ -169,21 +161,18 @@ An active spec with no cross-spec seams still gets the canonical empty represent
 
 ## Missing-contract fallback
 
-When an active or referenced spec lacks a discovered singleton contract:
+When an active or referenced Spec lacks a discovered singleton Contract:
 
 - report the migration or consistency failure
-- read the relevant requirements, design, and tasks for safe review
 - do not treat absence as proof of no cross-spec impact
 - do not silently generate and accept inferred entries during unrelated work
 
-Fallback preserves safety but is not a supported steady state.
+Relevant documents may be read for migration diagnosis, but missing-Contract fallback never produces accepted v1 review evidence.
 
 ## Customization boundary
 
 The default `settings/templates/specs/contract.md` and related shared rules are project-customizable under [Decision 0008](./decisions/0008-customization-surface.md). The filename is only a default under Decision 0057. Customization may adjust prose and presentation but must preserve the accepted machine-readable identity and reference contract. The CLI reports incompatible customization explicitly.
 
-## Open design questions
+## V1 semantic policy boundary
 
-- Rules for shared File Ownership and generated files.
-- Approval invalidation when a contract classification changes.
-- Release-readiness evidence required for affected consumers.
+Shared ownership, generated-file precedence, overlap candidates, and dependency cycles are interpreted by the reviewing agent using project guidance. The CLI reports candidates but does not encode a closed policy model.

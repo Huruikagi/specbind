@@ -41,7 +41,7 @@ The CLI may compute the structural diff and affected dependency graph, but it do
 - Do not invent a contract or rewrite requirements and design merely to complete migration.
 - Mark ambiguous ownership and dependencies for review instead of silently resolving them.
 - A missing contract on an active spec is an incomplete migration or damaged state, not the normal empty-contract representation.
-- When a required contract is missing, cross-spec review falls back to the relevant full documents and reports the missing manifest.
+- When a required contract is missing, cross-spec review fails. Requirements and Design may be selected as deeper semantic inputs, but they never substitute for the required Contract.
 
 ## Consequences
 

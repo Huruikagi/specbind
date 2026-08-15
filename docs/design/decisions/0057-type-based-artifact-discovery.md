@@ -18,6 +18,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
   | `type` | Multiplicity | Persistent identity |
   | --- | --- | --- |
   | `SpecBind Brief` | zero or one while a change is active | singleton role `brief` |
+  | `SpecBind Research` | zero or one while a change is active | singleton role `research` |
   | `SpecBind Requirements` | exactly one for an established spec | singleton role `requirements` |
   | `SpecBind Contract` | exactly one for an established spec | singleton role `contract` |
   | `SpecBind Design` | one or more from design approval onward | collection role `design/<artifact_id>` |
@@ -25,7 +26,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 
 - Collection profiles require an `artifact_id` frontmatter field matching `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`. The pair of exact `type` and `artifact_id` is unique within a spec. Singleton profiles omit `artifact_id`; their role supplies the identity.
 - A collection artifact keeps its `artifact_id` when its filename, containing directory, or prose title changes but its semantic responsibility remains the same. Splitting a document keeps the old ID on the continuing responsibility and assigns new IDs to newly separated responsibilities.
-- Paths are current locators and diagnostics, not persistent identity. Default templates retain the familiar names `brief.md`, `requirements.md`, `design.md`, `contract.md`, and `implementation-notes.md`; a default single design and implementation-notes artifact use `artifact_id: main`.
+- Paths are current locators and diagnostics, not persistent identity. Default templates retain the familiar names `brief.md`, `research.md`, `requirements.md`, `design.md`, `contract.md`, and `implementation-notes.md`; a default single design and implementation-notes artifact use `artifact_id: main`.
 - Under Decision 0058, a workflow may directly load a known selector through `specbind artifact read`. When it needs to discover collection members, optional artifacts, or structural diagnostics, it first uses `specbind artifact list`; the compact inventory contains logical role, current SpecBind-root-relative POSIX path, and profile metadata. Agent workflows never independently guess filenames or load every Markdown file by default.
 - Duplicate singleton roles, duplicate collection IDs, missing required roles, invalid profiles, and paths that escape the spec directory are hard discovery errors for workflows that require the affected role.
 
@@ -45,7 +46,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 
 ## Lifecycle and migration
 
-- Release finalization removes the discovered `SpecBind Brief` artifact and fixed `tasks.yaml`; it does not assume the brief filename.
+- Release finalization removes the discovered `SpecBind Brief` and optional `SpecBind Research` artifacts and fixed `tasks.yaml`; it does not assume the Markdown filenames.
 - Persistent requirements, design, contract, and implementation-notes artifacts survive release regardless of their current paths.
 - Existing canonical files migrate by adding the appropriate exact `type`. Existing `design.md` and `implementation-notes.md` receive `artifact_id: main` unless migration identifies multiple semantic documents that need distinct stable IDs.
 - Contract discovery applies independently at the Decision 0054 baseline and current revision. A contract rename with unchanged logical role and content therefore remains the same contract across the diff.

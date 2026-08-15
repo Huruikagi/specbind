@@ -1,8 +1,8 @@
 # 0035: Keep cross-spec review evidence in the active roadmap
 
-Status: Superseded by Decisions 0050 and 0052
+Status: Superseded by [Decision 0078](./0078-contract-first-review-between-design-and-tasks.md)
 
-Decision 0050 replaces the per-item association with one global accepted result. Decisions 0052 and 0053 move that result from roadmap frontmatter to `state/cross-spec-review.md`; the text below records the earlier storage decision.
+Decision 0050 replaced the per-item association with one global accepted result. Decisions 0052 and 0053 moved that result from roadmap frontmatter to `state/cross-spec-review.md`. Decision 0078 then removed persisted classifications and fixed the Contract-first review boundary; the text below records the earlier storage decision.
 
 ## Context
 

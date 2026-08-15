@@ -1,6 +1,6 @@
 # 0053: Pair structured classifications with an AI-authored review
 
-Status: Accepted
+Status: Superseded by Decision 0078
 
 ## Context
 

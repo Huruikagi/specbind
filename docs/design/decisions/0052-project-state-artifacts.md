@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0078 simplifies the stored review to input revisions plus a free-form accepted assessment and defines absence for Direct-only milestones.
+
 ## Context
 
 The active roadmap is intentionally loaded often by humans and agents because it explains current milestone intent, scope, and dependencies. Persisting detailed fingerprints, impact records, and downstream review inputs in its frontmatter would consume routine context with data needed only by deterministic checks and specialized workflows.
@@ -11,7 +13,7 @@ A generic `evidence/` directory would also imply that spec-local gate evidence b
 ## Decision
 
 - `{{SPEC_DIR}}/state/` is the canonical location for committed, currently effective project- or milestone-wide machine state owned by the SpecBind CLI.
-- Under Decision 0053, the accepted global cross-spec review is stored as the OKF concept `{{SPEC_DIR}}/state/cross-spec-review.md`, not in roadmap frontmatter.
+- The accepted global cross-spec review is stored as the OKF concept `{{SPEC_DIR}}/state/cross-spec-review.md`, not in roadmap frontmatter.
 - Its structured frontmatter and AI-authored Markdown body form one CLI-managed state artifact. Its internal `milestone_id` must equal the active `steering/roadmap.md` milestone ID. The roadmap stores no pointer to the canonical path.
 - Absence of the file means that the active milestone has no accepted global cross-spec review. At most one such active file exists because SpecBind permits at most one active milestone.
 - Ordinary agents and always-loaded steering context do not preload `state/`. Status and ordinary workflows consume concise CLI summaries; only the cross-spec review, release, repair, or explicit diagnostic flow requests detailed state through the CLI.

@@ -25,12 +25,12 @@ This removes invalid combinations such as `phase: "tasks-generated"` with unappr
 
 | State | Persistent representation | Meaning | Minimum consistent artifacts and metadata |
 | --- | --- | --- | --- |
-| `idle` | `active_change: null` | The current requirements, design set, and contract describe released behavior. No change for this spec is active. | Discovered singleton requirements and contract artifacts, one or more design artifacts, `log.md`, and released metadata; no brief artifact or `tasks.yaml`. |
+| `idle` | `active_change: null` | The current requirements, design set, and contract describe released behavior. No change for this spec is active. | Discovered singleton requirements and contract artifacts, one or more design artifacts, `log.md`, and released metadata; no Brief, Research, or `tasks.yaml`. |
 | `requirements` | `active_change.state: "requirements"` | The active change is being scoped and its current Requirement ID set is not yet approved. | Active roadmap membership, discovered brief and requirements artifacts, matching milestone and canonical spec identities, and `requirement_ids: null`. |
 | `design` | `active_change.state: "design"` | Requirements and the active Requirement ID set are approved. Technical design and contract impact are being established or revised. | Requirements gate evidence and a non-null, canonical `requirement_ids` array. |
 | `tasks` | `active_change.state: "tasks"` | Design and contract impact are approved. The executable milestone-local plan is being prepared or revised. | Valid requirements and design gate evidence plus the current discovered design set and contract. |
 | `implementation` | `active_change.state: "implementation"` | The task plan is approved and implementation or validation remains incomplete. | Valid requirements, design, and tasks gate evidence plus `tasks.yaml`. |
-| `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, and coverage have fresh accepted evidence, and the milestone's global cross-spec review is current. Milestone release gates may still block publication. | Valid prior gate evidence, zero incomplete or blocked tasks, fresh completion evidence, and a fresh accepted `state/cross-spec-review.md` record. |
+| `release_ready` | `active_change.state: "release_ready"` | Spec-level implementation, integration, and coverage have fresh accepted evidence. Milestone dependencies or project release work may still block publication. | Valid prior gate evidence, zero incomplete or blocked tasks, and fresh completion evidence. |
 
 `release_ready` is deliberately per spec. A milestone is release-ready only when all participating specs, direct items, project checks, target-version requirements, and release-adapter prerequisites pass their respective gates.
 
@@ -40,7 +40,6 @@ Decision 0044 accepts the strict root and active-change object. The following sh
 
 ```yaml
 schema_version: 1
-language: en
 active_change:
   milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
   state: design
@@ -51,7 +50,7 @@ active_change:
     requirements:
       passed_at: <timestamp>
       approval_mode: delegated
-      delegation_workflow: specbind-spec-quick
+      delegation_workflow: specbind-quick
       approved_requirement_ids:
         - "1.1"
         - "1.2"
@@ -107,7 +106,7 @@ If a draft update touches input that has already been approved, it is not a non-
 
 `Current` lists the states from which the event is valid. Repeating an event against its already-realized target may return an idempotent no-op only when the inputs and recorded evidence are identical; otherwise it is a conflict.
 
-| Event | Current | Next | Required guards | Atomic state effects |
+| Event | Current | Next | Required guards | Guarded state effects |
 | --- | --- | --- | --- | --- |
 | `SPEC_CREATED` | Spec does not exist | `requirements` | An active roadmap exists; the new spec boundary and canonical identity are confirmed in scope; no conflicting spec path exists; the milestone ID is valid; an active brief and initial requirements scaffold are available. | Create the persistent spec artifacts and `active_change`; set `requirement_ids: null`; create no approval evidence. |
 | `CHANGE_STARTED` | `idle` | `requirements` | An active roadmap exists; the canonical spec identity is confirmed in scope; no active change exists; the milestone ID matches roadmap membership; an active brief is available. | Create `active_change`; set `requirement_ids: null`; create no approval evidence. |
@@ -115,11 +114,11 @@ If a draft update touches input that has already been approved, it is not a non-
 | `REQUIREMENTS_CHANGED` | Any active state | `requirements` | The changed scope belongs to the same active change, or discovery has confirmed the revised route. | Set `requirement_ids: null`; clear requirements, design, tasks, and completion gate evidence; retain downstream documents only as stale repair input. |
 | `DESIGN_APPROVED` | `design` | `tasks` | Requirements evidence is current; design covers every active Requirement ID; contract structure and impact review pass; explicit or delegated approval is valid for the current revision. | Record design and contract gate evidence. |
 | `DESIGN_CHANGED` | `design`, `tasks`, `implementation`, `release_ready` | `design` | Requirements and active set remain valid; otherwise use `REQUIREMENTS_CHANGED`. | Clear design, tasks, and completion gate evidence; retain requirements evidence. |
-| `TASKS_APPROVED` | `tasks` | `implementation` | Requirements and design evidence are current; every active Requirement ID maps to an executable task; task review passes; explicit or delegated approval is valid for the current revision. | Record tasks gate evidence. |
+| `TASKS_APPROVED` | `tasks` | `implementation` | Requirements and Design evidence are current; a fresh accepted global review exists for the Spec-backed milestone; every active Requirement ID maps to an executable Task; Task review passes; explicit or delegated approval is valid for the current revision. | Record Tasks gate evidence. |
 | `TASKS_CHANGED` | `tasks`, `implementation`, `release_ready` | `tasks` | Requirements and design remain valid; otherwise use the earlier invalidation event. | Clear tasks and completion gate evidence. |
-| `IMPLEMENTATION_VALIDATED` | `implementation` | `release_ready` | Required tasks are complete and unblocked; the mandatory semantic validation protocol produces `GO`; the global `state/cross-spec-review.md` record is current for the complete milestone; the unchanged clean Git revision and lifecycle inputs satisfy the Decision 0029 handshake. | Atomically record spec-local completion evidence and its input revisions, then transition. Semantic pass flags and cross-spec review data are not copied into `spec.yaml` under Decisions 0034, 0050, 0052, and 0053. |
+| `IMPLEMENTATION_VALIDATED` | `implementation` | `release_ready` | Required Tasks are complete and unblocked; the mandatory semantic validation protocol produces `GO`; the global review is fresh for the complete Spec-backed milestone; the unchanged clean Git revision satisfies the Decision 0029 and 0080 handshake. | Record Spec-local completion evidence and transition. Semantic pass flags and cross-spec review data are not copied into `spec.yaml`. |
 | `COMPLETION_INVALIDATED` | `release_ready` | `implementation` | Requirements, design, contract, and tasks remain approved; the validated implementation revision or another completion input changed; otherwise use the corresponding earlier invalidation event. | Clear completion evidence only. |
-| `RELEASE_FINALIZED` | `release_ready` | `idle` | The caller has judged applicable project release work successful; per-spec log summaries cover the exact participant set; all deterministic finalization invariants pass. | Insert idempotent date-grouped `log.md` release entries; remove each change's brief and `tasks.yaml`; clear `active_change`. Roadmap archival is part of the enclosing milestone transaction. |
+| `RELEASE_FINALIZED` | `release_ready` | `idle` | The caller has judged applicable project release work successful; per-spec log summaries cover the exact Spec-backed participant set; all deterministic finalization invariants pass. | Insert idempotent date-grouped `log.md` release entries; remove each change's Brief, optional Research, and `tasks.yaml`; clear `active_change`. Roadmap and review archival are part of the enclosing ordered, retry-safe milestone transaction. |
 | `SPEC_SCOPE_REMOVED` | Any active state | `idle` | Scope removal is confirmed; unstarted work or repository/spec content is restored and reconciled; no retained consumer dependency requires this active revision. | Remove milestone-local files for this change; clear `active_change`; create no release-log entry. |
 | `MILESTONE_ABANDONED` | Any active state | `idle` | Full abandonment is explicitly confirmed; every participating spec and repository change is restored or reconciled. | Apply the same per-spec cleanup as scope removal as one milestone-wide guarded operation; remove the active roadmap; create no release history by default. |
 
@@ -132,7 +131,7 @@ The rewind target is the earliest gate whose approved input changed:
 | Changed input | Rewind target | Evidence invalidated | Evidence retained |
 | --- | --- | --- | --- |
 | Requirements, active Requirement IDs, or user-visible scope | `requirements` | Requirements, design, tasks, completion | None |
-| Design, contract entries, contract classification, or required downstream-review scope | `design` | Design, tasks, completion | Requirements |
+| Design, Contract, or accepted cross-spec-review input set | `design` | Design, tasks, completion and the global review | Requirements |
 | Task contents, coverage mapping, dependency order, or required task set | `tasks` | Tasks, completion | Requirements, design |
 | Implementation content or verification inputs only | `implementation` | Completion | Requirements, design, tasks |
 
@@ -155,7 +154,7 @@ Examples of `inconsistent` health include:
 - `tasks` or later without a valid discovered singleton contract artifact
 - `implementation` or later without `tasks.yaml`
 - an approval fingerprint that does not match the current artifact revision
-- `idle` with a milestone-local discovered brief artifact or `tasks.yaml`
+- `idle` with a milestone-local discovered Brief, Research, or `tasks.yaml`
 
 Read-only checks report the declared state, derived health, and repair diagnostics. They do not rewrite state. `STATE_REPAIRED` means an explicit repair operation has restored consistency and passed the same invariant check.
 
@@ -206,7 +205,7 @@ Every state-changing event is an explicit guarded CLI mutation with:
 - structured event input
 - dry-run or plan output where the mutation is destructive
 - stable concise English diagnostics; JSON output is deferred beyond v1 under Decision 0074
-- atomic writes across the affected spec artifacts
+- guarded, ordered, idempotent writes across the affected spec artifacts; cross-file crash atomicity is not promised
 - an idempotency check for retries
 - a post-write consistency check
 

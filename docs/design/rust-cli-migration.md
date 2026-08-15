@@ -1,173 +1,147 @@
 # Rust CLI migration
 
-This document is the working migration plan for [Decision 0006](./decisions/0006-rust-cli.md). It describes how the current TypeScript installer evolves into the Rust implementation of the complete SpecBind CLI.
+This document is the working migration plan for [Decision 0006](./decisions/0006-rust-cli.md). It describes how the inherited TypeScript installer is retired in favor of the complete Rust `specbind` CLI.
 
 Status: Draft
 
 ## Current implementation baseline
 
-The current CLI under `tools/specbind/` owns more than process startup. Its observable responsibilities include:
+The TypeScript implementation under `tools/specbind/` remains useful as executable migration evidence. It currently owns option parsing, `.specbind.json`, manifests, template rendering, installation planning, overwrite prompts, backups, and installed skill trees. Those surfaces are not automatically the Rust product contract.
 
-- command-line parsing and help/version output
-- persisted `.specbind.json` configuration and precedence
-- agent, language, operating-system, profile, and manifest selection
-- manifest loading and validation
-- template-variable resolution and Markdown rendering
-- installation planning and dry-run output
-- category and overwrite policies
-- interactive conflict decisions
-- backups and path-safe file operations
-- installation summaries and completion guidance
+The accepted v1 contract deliberately removes public manifests, profiles, operating-system selectors, overwrite and backup modes, `--yes`, and inherited compatibility aliases. [Decision 0077](./decisions/0077-v1-installation-distribution-and-migration.md) defines the smaller installation and migration surface. [Decision 0081](./decisions/0081-v1-release-git-path-and-cli-safety.md) makes Git, guarded target paths, and deterministic retry the safety model.
 
-The templates under `tools/specbind/templates/` are product content and remain inputs to the Rust CLI unless a later artifact-layout decision changes them.
+The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. Runtime JSON Schemas remain versioned under `tools/specbind/schemas/` during development and are embedded into the matching Rust binary under Decision 0015. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
 
-[Decision 0013](./decisions/0013-structured-task-artifact.md) is one such intentional product change: target workflows create canonical `tasks.yaml`, while inherited `tasks.md` is handled only as migration input.
+## Repository and cutover layout
 
-[Decision 0014](./decisions/0014-structured-spec-metadata.md) likewise makes `spec.yaml` the target per-spec metadata artifact. The persisted CLI configuration `.specbind.json` and JSON installation manifests are not changed by that decision.
+Porting proceeds without overwriting the current implementation in place:
 
-[Decision 0015](./decisions/0015-runtime-schema-layout.md) places versioned JSON Schema contracts under `tools/specbind/schemas/`. They are CLI-owned runtime inputs rather than project-customizable settings and must be embedded or packaged with the matching CLI version.
+```text
+tools/specbind/  # inherited TypeScript implementation until cutover
+tools/cc-sdd/    # temporary home after the Rust implementation takes the canonical path
+```
 
-The specification root remains configurable, but [Decision 0007](./decisions/0007-spec-root.md) changes the target names to `--spec-dir`, `specDir`, and `{{SPEC_DIR}}`, with `.specbind` as the default for new installations.
-
-Official defaults are product-managed inputs, while installed `settings/templates/` and `settings/rules/` become user-owned customization surfaces under [Decision 0008](./decisions/0008-customization-surface.md). Packaging defaults into or beside the binary must not erase that ownership boundary.
+At the cutover increment, move the inherited implementation to `tools/cc-sdd/` and place the Rust workspace at `tools/specbind/`. This makes the accepted product path authoritative while retaining the old code long enough to compare fixtures and migration behavior. Delete the temporary implementation only after the cutover gates pass.
 
 ## Target command model
 
-The product remains one executable:
+The product is one executable:
 
 ```text
 specbind
-├── install or update agent assets
-├── check deterministic spec invariants
-└── perform accepted guarded lifecycle operations
+├── install [options]
+├── migrate cc-sdd [--apply]
+├── check <operation>
+├── artifact <list|read>
+├── template <list|read>
+├── spec <operation>
+├── tasks <operation>
+├── milestone <operation>
+└── release <preflight|finalize>
 ```
 
-The current option-only installer interface may remain as a compatibility alias, but new capabilities should use explicit subcommands. A possible working shape is:
+There is no option-only compatibility alias. `specbind install` performs initial installation and idempotent agent-asset refresh; the command name `update` remains available for a future binary-update workflow. Lifecycle commands are non-interactive. The installer may prompt only in a TTY; non-TTY execution supplies its choices explicitly.
 
-```sh
-specbind install [options]
-specbind check traceability <spec-path>
-specbind milestone <operation> [options]
-specbind milestone bind-release <version> [--rebind]
-specbind release <operation> [options]
-specbind release preflight
-specbind release finalize --log-entries <path|-> [--force]
-```
-
-These command names are Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065. The common constraint is one Rust `specbind` CLI.
+Accepted named commands include `specbind milestone bind-release`, `specbind release preflight`, and `specbind release finalize`. Finalization has no `--force` bypass.
 
 ## Suggested Rust boundaries
 
-The exact crates are not yet fixed, but the code should separate:
+The exact crates are not fixed, but the code should separate:
 
-- `cli`: arguments, output mode, prompting, and exit mapping
-- `config`: configuration loading, validation, and precedence
-- `manifest`: schema, loading, and installation planning
-- `template`: context construction and deterministic rendering
-- `fs`: path safety, diffing, backup, and atomic or guarded writes
-- `check`: read-only specification parsers and diagnostics
-- `lifecycle`: explicit milestone and release state transitions
-- `schema`: packaged schema lookup and structural artifact validation
+- `cli`: arguments, TTY prompting for installation, text rendering, stream routing, and exit mapping
+- `config`: `.specbind.json` loading and validation
+- `assets`: embedded agent assets and installation planning
+- `template`: embedded defaults, project-owned overrides, and deterministic rendering
+- `fs`: path validation, Git-aware guards, semantic reads, and guarded writes
+- `check`: read-only artifact parsers and diagnostics
+- `lifecycle`: explicit milestone, task, and release transitions
+- `schema`: embedded schema lookup and structural validation
+- `migration`: read-only cc-sdd planning and explicit `--apply`
 
-Core modules should return structured internal results and diagnostics. Under Decisions 0067 and 0074, the v1 CLI boundary renders them only as concise English text with stable codes; internal typing does not expose a JSON response contract.
-
-Release commands expose preflight and finalization contracts. Project-specific Prepare, Publish, Verify, and After finalize instructions remain agent-executed; the Rust CLI does not become a natural-language command runner.
-
-Decision 0074 keeps v1 CLI results text-only. The JSON Schemas packaged with the Rust CLI validate structured artifacts and mutation inputs; they are not response-envelope schemas.
+Core modules return structured internal results. V1 exposes concise English text with stable codes, not a public JSON result envelope. Project-specific release instructions remain agent-executed natural language and never become unrestricted CLI hooks.
 
 ## Compatibility inventory
 
-Compatibility is not a promise to freeze today's generated tree. It distinguishes two kinds of change:
+Compatibility work distinguishes porting evidence from the accepted interface:
 
-- **Porting parity:** for the same product contract, configuration, templates, and inputs, the TypeScript and Rust implementations produce equivalent observable behavior.
-- **Product evolution:** accepted SpecBind changes may intentionally add, remove, rename, or revise generated artifacts and command behavior.
+- **Porting evidence:** retained behavior that still matches an accepted SpecBind decision.
+- **Intentional removal:** inherited behavior explicitly excluded by Decisions 0075 through 0081.
+- **Migration input:** cc-sdd files that `specbind migrate cc-sdd` may recognize without becoming supported aliases.
 
-Before implementation, capture expected behavior for:
+Capture focused fixtures for:
 
-| Contract | Current source of evidence | Migration gate |
-| --- | --- | --- |
-| Installed file trees | Real-manifest tests for Claude Code and Codex | Equivalent output for the same contract version; documented To-Be changes update the expected tree deliberately. |
-| Argument behavior | CLI and argument tests | Accepted flags, defaults, aliases, errors, help, and exit behavior are covered. |
-| Config precedence | Config merge and store tests | CLI, persisted config, environment, and defaults resolve identically except for the accepted `specDir` rename and `.specbind` default. |
-| Manifest semantics | Loader, planner, and processor tests | The same valid manifests plan the same artifacts; invalid input has stable diagnostics. |
-| File safety | Executor, file-operation, and path-safety behavior | No path escape, accidental broad overwrite, or backup regression. |
-| Interactive policy | Prompt and overwrite behavior | TTY and non-TTY behavior is explicitly tested. |
-| Rendering | Template tests | Supported variables, conditional content, and line endings remain defined. |
-| Settings customization | Current defaults plus customized settings fixtures | Untouched, modified, and newly introduced template/rule files follow explicit non-destructive update behavior. |
+| Contract | Migration gate |
+| --- | --- |
+| Installed Claude Code and Codex trees | Generated product-managed assets match the accepted catalog; user-owned settings are never overwritten. |
+| `.specbind.json` | Only the v1 fields and precedence accepted by Decision 0077 are supported. |
+| Artifact templates and schemas | Embedded defaults and runtime schemas match the CLI version; custom settings remain external. |
+| Git and path safety | Root, submodule, ignored-path, portability, and clean-target cases match Decision 0081. |
+| TTY behavior | Installer prompting and non-interactive lifecycle behavior are covered. |
+| cc-sdd migration | Default plan is read-only; `--apply` handles only unambiguous known artifacts and stops on ambiguity. |
+| Output | Stable English result codes, stdout/stderr routing, sanitization, and zero/nonzero exits are covered. |
 
-Golden generated-tree fixtures are preferable to duplicating internal TypeScript unit structure in Rust. Each fixture should identify the product-contract version or accepted design change it represents. This preserves user-visible behavior during the port while allowing both an idiomatic rewrite and deliberate evolution of the installed artifacts.
-
-When a To-Be decision changes generated output, update the relevant target artifact catalog entry and fixture expectation together. A fixture diff must therefore be explainable as either an accepted product change or a regression; merely regenerating snapshots is not sufficient evidence.
+Golden generated-tree fixtures should identify the accepted decision that explains each intentional difference. Regenerating snapshots alone is not sufficient evidence.
 
 ## Migration increments
 
 ### 1. Contract capture
 
-- Record the current CLI surface and config schema. Decision 0043 requires no project-level milestone allocation field.
-- Add golden fixtures for representative installation matrices.
-- Classify observed behavior as preserve, intentionally change, or remove.
-- Define normalized line-ending and path expectations across platforms.
-- Capture `.kiro`, `.specbind`, custom-root, and conflicting-root migration cases.
-- Capture untouched, customized, and newly added shared template/rule update cases.
-- Capture unambiguous and ambiguous in-progress `tasks.md` to `tasks.yaml` migration cases.
-- Capture valid, contradictory, and partially complete `spec.json` to `spec.yaml` migration cases.
+- Freeze the relevant TypeScript behavior as migration evidence, not as blanket compatibility.
+- Classify current options, files, and generated assets as retain, replace, migrate, or remove.
+- Add fixtures for clean and locally modified agent assets, existing user settings, custom roots, and project-instruction blocks.
+- Add cc-sdd fixtures for unambiguous and ambiguous `spec.json`, `tasks.md`, `.kiro`, and root quick-start content.
+- Add Windows path and WSL2 Linux path fixtures, including case collisions, ignored paths, nested repositories, symlinks, and junctions.
 
 ### 2. Read-only Rust core
 
 - Create the Rust workspace and CLI entry point.
-- Load configuration and manifests.
-- Resolve templates and produce an installation plan.
-- Support dry-run and structured diagnostics without filesystem writes.
+- Load `.specbind.json`, embedded schemas, assets, and default templates.
+- Implement artifact discovery, validation, inventory, and dry-run installation planning.
+- Implement concise diagnostics and stable exit behavior without filesystem writes.
 
-### 3. Installer parity
+### 3. Installer and migration
 
-- Add guarded writes, conflict policies, backups, and summaries.
-- Match Claude Code and Codex generated trees for the same product-contract baseline.
-- Apply accepted To-Be artifact changes through explicit, reviewed fixture updates.
-- Verify English-only CLI-authored output and independent English/Japanese artifact-template selection.
-- Exercise Windows, macOS, and Linux path behavior in CI.
+- Implement `specbind install` with additive agent selection and idempotent asset refresh.
+- Preserve existing settings files and create only absent defaults.
+- Implement optional managed blocks in project-root agent instructions.
+- Implement `specbind migrate cc-sdd` as plan-first and `--apply`-guarded behavior.
+- Exercise Windows x64 and Linux x64 under WSL2 in the environments actually available for v1.
 
 ### 4. Native SpecBind operations
 
-- Implement traceability checking in Rust.
-- Implement versioned `tasks.yaml` loading, validation, the `spec status` / `tasks list` / `tasks show` read model accepted by Decision 0025, and guarded progress updates in Rust.
-- Implement cross-spec contract parsing, reference validation, and dependency graph checks in Rust.
-- Implement the clean Git revision completion-preflight and guarded-acceptance handshake accepted by Decision 0029.
-- Add lifecycle checks and accepted mutations incrementally.
-- Update generated skills to call stable CLI contracts rather than shell-specific inspection logic.
+- Implement structured artifact loading, traceability, status, and task read models.
+- Implement contract parsing and contract-first cross-spec review support.
+- Implement the completion preflight and guarded acceptance handshake.
+- Add milestone and release mutations incrementally, including Git-clean finalization targets and idempotent retry.
+- Update generated skills to call stable CLI contracts instead of shell-specific inspection.
 
 ### 5. Distribution cutover
 
-- Produce checksummed binaries for supported targets.
-- Select installation channels and upgrade behavior.
-- Make Rust the authoritative `specbind` command.
-- Retire TypeScript sources, Node build scripts, and obsolete tests only after parity and upgrade verification.
+- Move the inherited TypeScript code to temporary `tools/cc-sdd/` and make the Rust workspace canonical at `tools/specbind/`.
+- Produce Windows x64 and Linux x64 GitHub Release binaries plus `SHA256SUMS`.
+- Publish PowerShell and shell installers that select the latest stable version by default, accept explicit prerelease versions, verify checksums, and never edit PATH.
+- Verify `%LOCALAPPDATA%\SpecBind\bin` and `$HOME/.local/bin` defaults plus `--install-dir`.
+- Start public Rust versioning at `1.0.0`.
+- Retire the temporary TypeScript tree only after install, migration, artifact, lifecycle, and distribution fixtures pass.
 
-## Distribution questions
+## V1 distribution boundary
 
-Rust removes the Node runtime requirement but does not by itself choose how users install SpecBind. Candidate channels include:
+V1 officially supports Windows x64 and Linux x64 as tested through WSL2. Native macOS ARM64, macOS Intel, and Linux ARM64 are deferred until corresponding test environments exist. GitHub Releases and the two installer scripts are the only primary distribution channel. Homebrew, WinGet, Scoop, Cargo installation, npm launchers, self-update, code signing, and notarization are post-v1 options.
 
-- GitHub Release binaries and install scripts
-- Homebrew and WinGet or Scoop
-- Cargo installation for developer-oriented use
-- an npm compatibility package that selects a platform binary
-
-The primary channel should make clean install, self-update or package-manager update, version pinning, and checksum verification straightforward for both humans and agents.
+The installers verify the selected archive against `SHA256SUMS`, install to the platform default or `--install-dir`, and print an exact PATH follow-up when needed. They do not modify shell profiles. `specbind --version` reports the installed version.
 
 ## Non-goals of the first migration
 
-- Rewriting or renaming all inherited skills at the same time as the CLI port
-- Changing manifest and template formats solely to make the Rust implementation easier
-- Encoding semantic requirement or design review into deterministic Rust checks
-- Preserving TypeScript module boundaries or implementation details
-- Shipping a second long-lived `spec-lint` executable
+- Drop-in cc-sdd command or configuration compatibility
+- Public custom installation manifests or profiles
+- Backup, overwrite-policy, or destructive force machinery
+- macOS or Linux ARM64 release claims without test coverage
+- Encoding semantic requirement, design, review, or validation judgments in Rust
+- A second long-lived `spec-lint` executable
 
-## Decisions still needed before coding
+## Remaining implementation details
 
-- Repository layout: replace `tools/specbind` in place or introduce a temporary sibling during parity work.
-- Initial compatibility level for the current option-only command.
-- Template packaging: compile into the binary, install beside it, or use a hybrid override model.
-- Supported release targets and minimum operating-system versions.
-- Primary installation and upgrade channels.
-- Cutover gate and rollback plan for the first Rust-backed release.
-- Duration and removal criteria for `--kiro-dir`, `kiroDir`, and `{{KIRO_DIR}}` compatibility aliases.
+- Minimum supported Windows and WSL2 Linux versions
+- Exact archive names and installer-script URLs
+- Internal Rust crate layout and dependency choices
+- Cutover and rollback checklist for the first Rust-backed release

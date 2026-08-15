@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0077 removes public installation manifests and backup/conflict modes. Product-managed agent assets are replaced only from a clean committed state; existing user-owned settings files are never overwritten, while absent new defaults may be created.
+
 ## Context
 
 cc-sdd defines two project-wide customization points under its settings root: templates control generated document structure and rules control AI judgment and generation principles. The current SpecBind snapshot instead installs shared templates under the spec root while copying referenced rules into agent-specific skill directories.

@@ -20,7 +20,7 @@ Release orchestration needs a deterministic check before an agent begins project
   - a valid active roadmap, milestone identity, and concrete target release version
   - the complete participating-spec set and completed direct-change items
   - valid spec lifecycle state, required artifacts, completed tasks, approvals, fresh gate evidence, and accepted completion evidence
-  - accepted and fresh roadmap-owned cross-spec review state
+  - accepted and fresh roadmap-owned cross-spec review state when Spec-backed work exists
   - archive destination collision rules
   - the currently resolved finalization mutation set and its Decision 0064 target-path Git safety
 - Preflight does not require Decision 0068 log-entry input. The agent authors those summaries after it has judged the delivered release work.
@@ -40,7 +40,7 @@ Release orchestration needs a deterministic check before an agent begins project
 - `specbind release finalize` accepts no preflight token or preflight-result file.
 - Finalization independently rediscovers the active milestone, resolves its mutation targets, and reruns every applicable core invariant against current artifacts and Git state before mutating anything.
 - A successful preflight is therefore an early readiness diagnosis, not authorization to finalize. Changes after preflight may cause finalization to fail and be retried after reconciliation.
-- Decision 0065 `--force` remains exclusive to finalization and bypasses only the current target-path dirtiness check after explicit user confirmation. It does not alter preflight or turn a preflight result into mutation authority.
+- V1 has no finalization force bypass. Preflight remains read-only and never becomes mutation authority.
 
 ## Consequences
 

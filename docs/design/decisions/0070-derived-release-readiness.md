@@ -12,7 +12,7 @@ Release preflight needs a complete readiness judgment, but SpecBind already pers
 - The CLI derives core release readiness from the current authoritative artifacts and project state, including:
   - per-spec lifecycle state, gate evidence, accepted completion evidence, active Requirement IDs, and task completion
   - roadmap membership, release binding, milestone identity, and completed direct-change items
-  - the accepted roadmap-owned cross-spec review
+  - the accepted roadmap-owned cross-spec review when the milestone contains Spec-backed work
   - required artifact validity, archive collision rules, and finalization target-path safety
 - `specbind release preflight` reports that derived judgment without persisting it under Decision 0069. It does not consolidate the source facts into another artifact.
 - Project-specific Prepare, Publish, and Verify results remain in the active agent run context and the human-agent release judgment. They are not submitted to or archived by the CLI as universal structured evidence.

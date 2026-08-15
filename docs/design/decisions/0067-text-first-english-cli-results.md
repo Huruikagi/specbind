@@ -43,7 +43,7 @@ NO_CHANGE RELEASE_ALREADY_FINALIZED: Release v1.4.0 is already finalized.
 ERROR FINALIZE_TARGET_DIRTY: 2 finalization targets contain uncommitted changes.
   specs/checkout/tasks.yaml (delete, unstaged)
   steering/roadmap.md (move_source, staged)
-Hint: Resolve the changes or retry with --force after explicit confirmation.
+Hint: Commit, stash, or otherwise resolve the affected paths before retrying.
 ```
 
 ### Output language

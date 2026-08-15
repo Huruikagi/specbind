@@ -117,9 +117,9 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
 - Run the stateless `specbind release preflight` command and stop before adapter work unless it returns `OK RELEASE_READY`.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
-- Prepare one delivered-change summary per participating spec and submit them to the Rust CLI for guarded log insertion and finalization.
-- Append an idempotent history entry for every participating spec.
-- Remove participating specs' active `brief.md` and `tasks.yaml` after successful release.
+- For a Spec-backed milestone, prepare one delivered-change summary per participating spec and submit them to the Rust CLI for guarded log insertion and finalization.
+- Append an idempotent history entry for every participating spec when Spec-backed work exists.
+- Remove participating specs' active Brief, optional Research, and `tasks.yaml` after successful release.
 - Transition their metadata to released / no-active-change state.
 - Archive `{{SPEC_DIR}}/steering/roadmap.md` as `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
 - Run optional After finalize project instructions only after core finalization succeeds.
@@ -134,9 +134,9 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ### Writes
 
-- Per-spec date-grouped `log.md` entries
+- Per-spec date-grouped `log.md` entries for Spec-backed milestones
 - Per-spec released / no-active-change metadata
-- Removal of finalized `brief.md` and `tasks.yaml`
+- Removal of finalized Brief, optional Research, and `tasks.yaml`
 - Version-prefixed milestone roadmap under `{{SPEC_DIR}}/releases/`
 
 ### Boundaries

@@ -44,7 +44,7 @@ A skill may orchestrate a CLI operation, but the operation's contract belongs to
 
 Approval authority is also distinct from process interaction. Under [Decision 0012](./decisions/0012-delegated-approval.md), `--non-interactive` suppresses prompts but does not approve a gate. Explicit and delegated approvals both pass through the same guarded CLI event and carry revision-bound evidence.
 
-For release, the agent executes the adapter's natural-language project instructions, judges their result with the human, and supplies only the per-spec log summaries required for finalization. The CLI derives core readiness from existing lifecycle artifacts, owns preflight and finalization, and never executes adapter Markdown as an unrestricted hook; see [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0070](./decisions/0070-derived-release-readiness.md).
+For release, the agent executes the adapter's natural-language project instructions and judges their result with the human. It supplies per-spec log summaries only when the milestone contains Spec-backed work; Direct-only milestones have no per-spec log update. The CLI derives core readiness from existing lifecycle artifacts, owns preflight and finalization, and never executes adapter Markdown as an unrestricted hook; see [Decisions 0010](./decisions/0010-release-execution-boundary.md), [0070](./decisions/0070-derived-release-readiness.md), and [0081](./decisions/0081-v1-release-git-path-and-cli-safety.md).
 
 ## First deterministic check: requirement traceability
 
@@ -76,9 +76,9 @@ The CLI recognizes only the exact Decision 0061 emphasis-marker grammar rather t
 
 ## Cross-spec contract checks
 
-Under [Decisions 0011](./decisions/0011-cross-spec-contract.md), [0055](./decisions/0055-cross-spec-review-inputs.md), and [0057](./decisions/0057-type-based-artifact-discovery.md), the CLI discovers every current persistent contract by OKF type, validates deterministic structure and the complete dependency graph, and fingerprints the accepted input set. It can report duplicate IDs, unresolved references, ownership overlap candidates, prohibited cycles, missing manifests, and structural diffs between the Decision 0054 milestone baseline and current contracts.
+Under [Decisions 0011](./decisions/0011-cross-spec-contract.md), [0055](./decisions/0055-cross-spec-review-inputs.md), [0057](./decisions/0057-type-based-artifact-discovery.md), and [0078](./decisions/0078-contract-first-review-between-design-and-tasks.md), the CLI discovers every current persistent contract by OKF type, validates deterministic structure and the complete dependency graph, and fingerprints the accepted input set. It reports duplicate IDs, unresolved references, missing manifests, and dangling references as errors. Ownership overlaps and dependency cycles are review warnings rather than unconditional structural failures.
 
-The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. When deeper requirements, design, or task-plan content materially supports that verdict, the agent declares its logical selector and the CLI resolves and adds its current revision under Decision 0055.
+The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. The review starts from all current Contracts after every participating Design is approved and before current `tasks.yaml` authoring. When deeper Requirements or Design content materially supports the verdict, the agent declares its logical selector and the CLI resolves and fingerprints it. Task plans and Direct roadmap items are not review inputs.
 
 ## Working command shape
 
@@ -119,7 +119,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - perform the deterministic portion of confirmed abandonment cleanup
 - run the stateless `specbind release preflight` readiness check and idempotent finalization mutations
 
-These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`, accepted by Decision 0065 with its narrow target-path `--force` override. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
+These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
 The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
 
@@ -136,7 +136,7 @@ CLI mechanical check
 
 For the traceability check, requirements, design, tasks, validation, and release-readiness workflows should consume the same CLI contract instead of embedding agent-specific grep instructions. A standalone validation skill is unnecessary when its only purpose would be to expose one deterministic CLI command.
 
-The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templates/` and `{{SPEC_DIR}}/settings/rules/`; see [Decision 0008](./decisions/0008-customization-surface.md). Generated skills, agent metadata, and manifests are product-managed resources. The installer must preserve conflicting local edits safely, but direct skill modification is not the cross-agent customization contract.
+The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templates/` and `{{SPEC_DIR}}/settings/rules/`; see [Decision 0008](./decisions/0008-customization-surface.md). Generated skills and agent metadata are product-managed resources. The installer replaces clean product-managed assets, never overwrites an existing user-owned settings file, and creates newly introduced defaults when their target is absent. Direct skill modification is not the cross-agent customization contract.
 
 The CLI and skills must respect supported settings customization while still enforcing documented machine-readable structure. A mechanical check reports an incompatible customized format explicitly rather than silently falling back to agent-specific searches.
 
@@ -160,7 +160,7 @@ The CLI owns template discovery, identity and path validation, collision checks,
 
 ## Completion validation handshake
 
-Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight captures a clean full Git `HEAD`, the task-plan fingerprint, and current lifecycle input revisions. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently rejects it unless the same clean revision, inputs, approvals, and all-completed task state still hold immediately before the atomic `IMPLEMENTATION_VALIDATED` mutation.
+Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight returns only a clean full Git `HEAD`; it does not round-trip authoritative fingerprints through the agent. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently recomputes current inputs and rejects it unless the same clean revision, approvals, fresh cross-spec review, and all-completed task state still hold immediately before the `IMPLEMENTATION_VALIDATED` mutation.
 
 The CLI detects the repository's Git object format and validates the scalar full `implementation_revision` under Decision 0031. Generated skills neither submit per-evidence VCS metadata nor infer acceptable hash length themselves.
 
@@ -174,7 +174,7 @@ For accepted mechanical evidence, Decision 0033 requires an ordered list of cate
 
 Decision 0034 keeps requirements coverage, design alignment, spec-local task integration, and boundary integrity as mandatory agent judgments but omits their fixed `passed` flags from persisted evidence. The CLI accepts only the final guarded `GO` candidate; it does not mistake stored booleans for replayable semantic proof.
 
-Decisions 0050, 0052, and 0053 keep one compact contract-impact classification per roadmap item, accepted input revisions, and the AI-authored judgment in `state/cross-spec-review.md`. Affected entries and downstream scope remain derived rather than duplicated as rigid fields. During completion acceptance, the CLI resolves the global record through the matching milestone ID and roadmap membership; the agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
+Decisions 0050, 0052, 0053, and 0055 are refined by Decision 0078. The singleton `state/cross-spec-review.md` contains free-form accepted judgment and only `type`, `milestone_id`, `passed_at`, and `input_revisions` in Front Matter. During Tasks approval, completion acceptance, and release readiness, the CLI resolves this global record through the matching milestone ID and current Spec-backed roadmap membership. The agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
 
 ## Initial implementation boundary
 
