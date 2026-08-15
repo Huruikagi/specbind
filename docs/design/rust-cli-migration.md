@@ -10,7 +10,7 @@ The TypeScript implementation under `tools/specbind/` remains useful as executab
 
 The accepted v1 contract deliberately removes public manifests, profiles, operating-system selectors, overwrite and backup modes, `--yes`, and inherited compatibility aliases. [Decision 0077](./decisions/0077-v1-installation-distribution-and-migration.md) defines the smaller installation and migration surface. [Decision 0081](./decisions/0081-v1-release-git-path-and-cli-safety.md) makes Git, guarded target paths, and deterministic retry the safety model.
 
-The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. Runtime JSON Schemas remain versioned under `tools/specbind/schemas/` during development and are embedded into the matching Rust binary under Decision 0015. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
+The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. Runtime JSON Schemas remain versioned under `tools/specbind/schemas/` and are embedded into the matching Rust binary under Decisions 0015 and 0083. They are the structural authority; typed Rust models follow them and share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
 
 ## Repository and cutover layout
 
@@ -55,7 +55,7 @@ The exact crates are not fixed, but the code should separate:
 - `fs`: path validation, Git-aware guards, semantic reads, and guarded writes
 - `check`: read-only artifact parsers and diagnostics
 - `lifecycle`: explicit milestone, task, and release transitions
-- `schema`: embedded schema lookup and structural validation
+- `schema`: embedded authoritative schema lookup, structural validation, typed-model conversion, and shared conformance fixtures
 - `migration`: read-only cc-sdd planning and explicit `--apply`
 
 Core modules return structured internal results. V1 exposes concise English text with stable codes, not a public JSON result envelope. Project-specific release instructions remain agent-executed natural language and never become unrestricted CLI hooks.
