@@ -99,3 +99,5 @@ Status: Draft
 
 - How are superseded or removed product capabilities reflected in long-lived specs?
 - Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?
+- Post-v1, should canonical spec identity expand from one portable path segment to an OKF-aligned namespace path below `specs/` (for example, `commerce/checkout`), so the namespace prefix groups every concept owned by that spec without adding an opaque ID?
+- Can the same namespace model, together with stable collection `artifact_id` values, allow project-customizable artifact subdirectories and layouts without making current filenames the semantic identity?
