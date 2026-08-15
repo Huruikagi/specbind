@@ -210,7 +210,7 @@ An accelerated workflow keeps run-scoped `delegated` authorization for named fut
 
 1. Define the initial `specbind check traceability` contract and diagnostic schema.
 2. Refine discovery's existing-spec update route and turn the draft spec-state events into accepted CLI mutation contracts.
-3. Define milestone contents and release-readiness criteria.
+3. Define a milestone-level state machine for roadmap scope, cross-spec review freshness, aggregate readiness, release execution, and closure without duplicating per-spec state.
 4. Define the concrete responsibilities of `specbind-release` and its CLI operations.
 5. Decide whether quick and batch remain first-class skills.
 6. Review the separation among task review, integration validation, and completion verification.
