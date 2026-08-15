@@ -48,7 +48,7 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 
 - Humans regain a checklist-like view without sacrificing a single structured source of truth.
 - Agents and CI share deterministic calculations instead of embedding agent-specific YAML interpretation.
-- `specbind-spec-status` becomes orchestration and explanation over the CLI read model rather than a competing parser.
+- `specbind-status` becomes orchestration and explanation over the CLI read model rather than a competing parser.
 - CLI compatibility includes the accepted command names, derived semantics, concise text rendering, and stable result codes as well as artifact schemas.
 
 ## Open questions

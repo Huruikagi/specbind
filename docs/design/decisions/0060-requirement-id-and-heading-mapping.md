@@ -20,7 +20,7 @@ Fixed English headings would make parsing simple but would unnecessarily constra
 
 - `heading_labels` contains exactly the two required string fields `requirement` and `acceptance_criteria`. Each value is a non-empty, single-line string with no leading or trailing whitespace.
 - Labels are literal Unicode text. They are not regular expressions, locale keys, aliases, or renderer variables.
-- The artifact is self-describing. Parsing does not select labels implicitly from `spec.yaml.language`, the current process locale, or a template filename.
+- The artifact is self-describing. Parsing does not select labels implicitly from `.specbind.json.language`, the current process locale, or a template filename.
 - A Requirement begins at a level-three heading with this fixed grammar:
 
   ```text

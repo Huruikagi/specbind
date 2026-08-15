@@ -1,6 +1,6 @@
 # Target workflows
 
-This document defines the intended user journeys and responsibility boundaries for the future SpecBind skill system. It stays name-neutral where naming is not yet decided; concrete names belong in the [target skill catalog](./target-skill-catalog.md).
+This document defines the intended user journeys and responsibility boundaries for the SpecBind v1 skill system. Concrete names belong in the [target skill catalog](./target-skill-catalog.md) and are accepted by [Decision 0075](./decisions/0075-v1-skill-and-orchestration-scope.md).
 
 The detailed milestone document lifecycle is defined in [Active spec lifecycle](./active-spec-lifecycle.md). Deterministic automation boundaries are developed in [CLI and agent responsibility boundary](./cli-agent-boundary.md), and the accepted implementation direction is the [Rust CLI migration](./rust-cli-migration.md).
 
@@ -47,12 +47,7 @@ Requirements recorded so far:
 - A release closes a milestone, not the specs involved in that milestone.
 - Improvements to the existing-spec update route will be specified incrementally.
 
-Open questions:
-
-- How discovery decides between updating an existing spec and creating a new spec.
-- Which spec phases must rerun after different kinds of change.
-- How approval state and implementation tasks reset when an active spec is revised.
-- How obsolete capabilities and their specs are retired.
+Capability retirement remains explicitly outside v1. Other routing and invalidation rules are defined by the per-Spec state machine and the accepted skill boundary.
 
 ## Milestone and release lifecycle
 
@@ -64,8 +59,10 @@ No active milestone
        -> discovery confirms scope and ordering changes
        -> Rust CLI applies confirmed milestone state
        -> release version may be bound later through the CLI; replacing it is an explicit confirmed rebind
-       -> new and existing specs are created or updated
-       -> implementation and validation
+       -> new and existing specs pass Requirements and Design
+       -> one contract-first global review passes
+       -> Tasks are authored and approved
+       -> each Roadmap item is implemented and validated
        -> target release version is required
        -> release readiness
   -> release succeeds
@@ -73,7 +70,7 @@ No active milestone
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-spec work. It begins from the discovery user journey and remains present for the lifetime of that milestone. Under [Decisions 0045](./decisions/0045-okf-markdown-artifacts.md), [0046](./decisions/0046-roadmap-work-items.md), and [0054](./decisions/0054-milestone-baseline-revision.md), it is an OKF concept whose YAML frontmatter owns `type: SpecBind Roadmap`, the milestone identity, the branch-local baseline revision, the release binding, and grouped work items while its unparsed Markdown body remains the readable context and rationale. Spec-backed progress is derived, while direct changes persist only the sparse completed state accepted by [Decision 0047](./decisions/0047-sparse-direct-change-status.md). [Decision 0050](./decisions/0050-global-cross-spec-review.md) defines one accepted milestone-wide cross-spec review with no per-spec pass records; [Decisions 0052](./decisions/0052-project-state-artifacts.md), [0053](./decisions/0053-minimal-cross-spec-review-state.md), and [0055](./decisions/0055-cross-spec-review-inputs.md) store its structured classifications, contract-first input revisions, and AI-authored judgment in `state/cross-spec-review.md` so ordinary agents can keep loading the roadmap without that context cost. The CLI always parses every current contract to build the graph, while the agent loads deeper requirements, design, or task plans only when the judgment materially depends on them. Under [Decision 0051](./decisions/0051-current-state-roadmap.md), the active roadmap represents current state only, leaving edit history to Git and preserving only the final snapshot at release. To keep discovery from absorbing every state transition, Rust CLI operations perform clean-baseline capture, mechanical creation, scope updates, explicit rebaseline, direct-change status mutation, consistency checks, and release-version binding from confirmed discovery output; see [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Its Decision 0043 UUID v7 stable identity is mapped to a release version when that version becomes known; replacing a non-null binding uses the explicitly confirmed Decision 0072 rebind operation, while its Decision 0054 baseline remains fixed through ordinary work. `specbind-release` refuses to start release operations until the version is assigned or while a direct change remains pending. After a successful release, it moves the active roadmap and global review state to the paired flat files `releases/<version>-roadmap.md` and `releases/<version>-cross-spec-review.md`.
+`roadmap.md` is the required durable representation of every active milestone, including single-item and Direct-only work. It begins from discovery and remains present for the milestone lifetime. Under Decisions 0045, 0046, and 0054, its frontmatter owns the milestone identity, branch-local baseline revision, release binding, and grouped work items while its body remains readable context. Spec-backed progress is derived; Direct items persist only sparse completion state. Decision 0078 stores one accepted free-form cross-spec assessment plus its contract-first input revisions in `state/cross-spec-review.md` whenever the milestone contains a Spec-backed item. Direct-only milestones have no such artifact. Git preserves pre-release history, while release archives the final roadmap and, when present, the accepted global review.
 
 ### Scope removal, abandonment, and rollback
 
@@ -95,23 +92,21 @@ Rust CLI: core preflight and readiness gates
   -> AI agent: adapter After finalize (when applicable)
 ```
 
-Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions; the agent orchestrates applicable guidance and hands structured results to the CLI under [Decisions 0010](./decisions/0010-release-execution-boundary.md) and [0063](./decisions/0063-free-form-release-adapter-profile.md). Finalization uses `specbind release finalize`; a forceable target-path conflict is reported to the user and may be retried with `--force` only after explicit confirmation under Decision 0065.
+Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions. Finalization uses `specbind release finalize`; any dirty finalization target stops the operation until the path is made Git-clean. V1 has no finalization `--force` bypass.
 
 ## Cross-spec review
 
-Every active spec has a persistent `contract.md` containing only the seam that other specs may observe or depend on. Cross-spec review reads the roadmap and contracts first, asks the CLI to validate and build the dependency graph, and then loads full requirements, design, and tasks only for affected or ambiguous specs.
+Every persistent Spec has a Contract containing only the seam that other Specs may observe or depend on. After all participating Designs are approved, cross-spec review reads the Spec-backed Roadmap projection and every current Contract, asks the CLI to validate and build the graph, and loads Requirements or selected Design artifacts only where semantic judgment requires them. Tasks do not yet exist and are never review inputs.
 
 ```text
-roadmap + current contracts
+Spec-backed roadmap scope + every current contract
   -> CLI structure, reference, ownership, and graph checks
-  -> agent semantic classification
-       -> LOCAL_ONLY: spec-local review
-       -> CONTRACT_COMPATIBLE: targeted consumer review
-       -> CONTRACT_BREAKING: downstream revision or revalidation
-  -> scoped deep review and milestone evidence
+  -> agent free-form semantic assessment
+  -> affected Specs return explicitly to Design when necessary
+  -> successful assessment is bound to exact input revisions
 ```
 
-Direct implementation candidates must declare contract impact. An unjustified `none` returns the request to discovery for existing-spec or new-spec routing. Missing contracts trigger a safe full-document fallback and a migration diagnostic, not an assumption of no impact. See [Cross-spec contracts](./cross-spec-contracts.md).
+Direct items are excluded from review scope because requiring no canonical Contract change is already a Direct-route precondition. A missing Contract prevents normal acceptance rather than falling back to an inferred steady state. File-ownership overlap and dependency-cycle findings are warnings for agent judgment; dangling references remain mechanical errors. See Decision 0078 and [Cross-spec contracts](./cross-spec-contracts.md).
 
 ## New work
 
@@ -123,21 +118,17 @@ User request
        -> create one new spec
             -> requirements
             -> design
+            -> cross-spec review
             -> tasks
             -> implementation
-            -> integration validation
+            -> implementation validation
        -> create several new specs
             -> roadmap and boundaries
-            -> per-spec requirements, design, and tasks
-            -> implementation by dependency order
-            -> cross-spec validation
+            -> per-spec requirements and design
+            -> one cross-spec review
+            -> per-spec tasks approval
+            -> stop; implementation remains per-item in v1
 ```
-
-Open questions:
-
-- Whether direct implementation remains only a recommendation or gets a dedicated skill.
-- Whether multi-spec decomposition belongs to discovery or a separate planning skill.
-- Whether the reusable contract-first review stage is implemented inside batch orchestration or as a shared workflow invoked by batch and other routes.
 
 ## Existing-system work
 
@@ -165,10 +156,10 @@ The target contract should state when project guidance and gap analysis are opti
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
 | Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability, and current contract maintenance | Task execution or unapproved scope changes |
 | Tasks | Executable decomposition, dependencies, verification expectations, complete active-requirement coverage, and loading persistent spec implementation notes when present | Implementation or historical task accumulation |
-| Implementation | Code and tests for approved tasks, progress recording, and maintenance of durable spec-specific knowledge in `implementation-notes.md` | Silent changes to approved requirements or design |
-| Review | Independent task-level conformance review | Feature-level integration acceptance |
-| Integration validation | Spec-local task integration, full verification, requirements/design/boundary judgment, and run-scoped candidate evidence produced between the CLI completion preflight and guarded acceptance calls | Replacing missing task-level review, directly mutating completion state, or persisting semantic pass checklists and failed attempts in lifecycle metadata |
-| Cross-spec review | Contract-first dependency, ownership, invariant, impact, and downstream review analysis, with the accepted milestone-wide result recorded once in the active roadmap | Reloading every complete spec by default, replacing local design review, or copying the result into each spec's completion evidence |
+| Implementation | Code and tests for one Spec-backed or Direct Roadmap item, progress recording, and maintenance of durable spec-specific knowledge | Silent changes to approved requirements, design, or contract; multi-item orchestration in v1 |
+| Task review | Independent or inline task-level conformance review according to the run-scoped review mode | Spec-level implementation acceptance |
+| Implementation validation | One Spec's complete task integration, full verification, requirements/design/boundary judgment, and run-scoped candidate evidence produced between CLI completion calls | Replacing task-level review, directly mutating completion state, or persisting failed attempts |
+| Cross-spec review | Contract-first dependency, ownership, invariant, impact, and downstream analysis, recorded once as accepted project state | Loading Tasks, replacing local Design review, reviewing Direct items, or copying results into per-Spec evidence |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
 | Release agent orchestration | Read the adapter, call stateless `specbind release preflight`, execute project phases, reconcile any external partial success, prepare per-spec summaries, call whole-milestone CLI finalization, and report outcomes | Treating preflight as mutation authority, claiming a subset release, automatically rolling back external systems, reimplementing lifecycle mutations, or bypassing core gates |
 | Rust CLI release core | Readiness gates, mechanically verifiable evidence, idempotent active-spec finalization, and stable diagnostics | Executing natural-language project publication instructions or claiming unobservable external success |
@@ -212,5 +203,4 @@ An accelerated workflow keeps run-scoped `delegated` authorization for named fut
 2. Refine discovery's existing-spec update route and turn the draft spec-state events into accepted CLI mutation contracts.
 3. Define a milestone-level state machine for roadmap scope, phase-relative dependency readiness and waves, cross-spec review freshness, aggregate readiness, release execution, and closure without duplicating per-spec state.
 4. Define the concrete responsibilities of `specbind-release` and its CLI operations.
-5. Decide whether quick and batch remain first-class skills.
-6. Review the separation among task review, integration validation, and completion verification.
+5. Define the concrete public CLI commands and stable result codes for accepted lifecycle mutations.

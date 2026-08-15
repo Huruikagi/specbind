@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0076 supersedes the per-Spec language member. The current v1 root contains only `schema_version` and `active_change`.
+
 ## Context
 
 The inherited `spec.json` stores `feature_name`, `created_at`, `updated_at`, `language`, phase flags, approval booleans, and readiness booleans. The target lifecycle now has precise state, gate evidence, and gate-local timestamps. Retaining the inherited summary fields would duplicate authoritative values and create contradictory combinations.
@@ -10,9 +12,8 @@ Canonical spec identity is already the spec directory key/path under the configu
 
 ## Decision
 
-- A target `spec.yaml` root is a strict object with exactly three required fields:
+- A target `spec.yaml` root is a strict object with exactly two required fields:
   - `schema_version: 1`
-  - `language: en | ja`
   - `active_change`
 - `active_change` is always present. It is `null` for the released idle state or a strict active-change object.
 - An active-change object requires exactly:
@@ -26,7 +27,7 @@ Canonical spec identity is already the spec directory key/path under the configu
 - The inherited `phase`, `approvals`, and `ready_for_implementation` fields are replaced by `active_change.state` and `gate_evidence` and are invalid target fields.
 - `target_release` remains roadmap-owned; cross-spec review data is owned by the Decision 0052 project-state artifact. Neither is copied into `spec.yaml`.
 - All root and active-change additional properties are rejected.
-- CLI-generated YAML writes root keys in `schema_version`, `language`, `active_change` order and active-change keys in `milestone_id`, `state`, `requirement_ids`, `gate_evidence` order when present. Readers do not treat mapping order as semantic.
+- CLI-generated YAML writes root keys in `schema_version`, `active_change` order and active-change keys in `milestone_id`, `state`, `requirement_ids`, `gate_evidence` order when present. Readers do not treat mapping order as semantic.
 
 ## Consequences
 
@@ -34,10 +35,9 @@ Canonical spec identity is already the spec directory key/path under the configu
 
   ```yaml
   schema_version: 1
-  language: ja
   active_change: null
   ```
 
 - Spec moves or renames cannot be hidden by editing a duplicate name field; they remain an explicit future migration concern under Decision 0041.
 - Status derives lifecycle meaning from one state model rather than reconciling inherited summary flags.
-- Per-spec language remains available to every agent workflow without relying on project-global language.
+- Agent workflows read the project-global language from `.specbind.json`.

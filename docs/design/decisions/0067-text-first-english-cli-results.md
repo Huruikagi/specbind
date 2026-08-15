@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0076 narrows the English-only rule to terminal results and machine tokens. CLI-authored display prose inserted into managed Markdown is localized to the project language.
+
 ## Context
 
 SpecBind's CLI exists primarily to save agent context by performing deterministic discovery, parsing, summaries, validation, and guarded mutations. An exit code alone forces the agent or human to investigate again, while always returning verbose JSON spends tokens on repeated keys and structure when a short result would be sufficient.
@@ -46,7 +48,7 @@ Hint: Resolve the changes or retry with --force after explicit confirmation.
 
 ### Output language
 
-- All CLI-authored text is English-only in v1, including outcome messages, diagnostics, hints, help, usage errors, headings, column labels, and progress/status labels.
+- All CLI-authored terminal text is English-only in v1, including outcome messages, diagnostics, hints, help, usage errors, headings, column labels, and progress/status labels.
 - The CLI has no message-locale setting and does not select output language from the spec, process locale, operating system, or document template.
 - Stable codes, option names, structured artifact fields, and enum values are English machine tokens.
 - User-authored content is not translated. Paths, spec names, task text, Requirement titles, artifact bodies, and release-log summaries remain in their source language when echoed or returned.

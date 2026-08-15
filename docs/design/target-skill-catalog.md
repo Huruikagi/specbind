@@ -25,6 +25,7 @@ Related documents:
 - [Decision 0012: delegated approval](./decisions/0012-delegated-approval.md)
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
+- [Decision 0075: v1 skill and orchestration scope](./decisions/0075-v1-skill-and-orchestration-scope.md)
 
 ## Status and change types
 
@@ -37,29 +38,28 @@ Related documents:
 
 ## Working catalog
 
-The inherited `kiro-` prefix will be replaced with `specbind-`. This prefix decision is accepted, while each skill's final responsibility and suffix remain subject to review.
+Decision 0075 accepts the v1 public skill set below. Compatibility aliases are not shipped.
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
-| `kiro-debug` | `specbind-debug` | Rename | Idea | Investigate implementation and verification failures. |
-| `kiro-discovery` | `specbind-discovery` | Change | Draft | Analyze requests, classify work, and route active spec maintenance. |
-| `kiro-impl` | `specbind-impl` | Change | Draft | Implement only the active milestone's approved tasks. |
-| `kiro-review` | `specbind-review` | Rename | Idea | Review one task implementation. |
-| `kiro-spec-batch` | `specbind-spec-batch` | Change | Draft | Generate several specs and perform contract-first cross-spec review. |
-| `kiro-spec-design` | `specbind-spec-design` | Change | Draft | Maintain current design, active-requirement traceability, and the cross-spec contract. |
-| `kiro-spec-init` | `specbind-spec-init` | Rename | Idea | Initialize a spec. |
-| `kiro-spec-quick` | `specbind-spec-quick` | Rename | Idea | Run a shortened single-spec workflow. |
-| `kiro-spec-requirements` | `specbind-spec-requirements` | Change | Draft | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
-| `kiro-spec-status` | `specbind-spec-status` | Change | Draft | Explain released state, active change, current tasks, and history using the CLI status/read model rather than reparsing artifacts. |
-| `kiro-spec-tasks` | `specbind-spec-tasks` | Change | Draft | Create a milestone-local plan covering the active requirement set. |
-| `kiro-steering` | `specbind-steering` | Rename | Idea | Maintain core project guidance. |
-| `kiro-steering-custom` | `specbind-steering-custom` | Rename | Idea | Create specialized project guidance. |
-| `kiro-validate-design` | `specbind-validate-design` | Change | Draft | Review technical design quality and design-to-contract consistency. |
-| `kiro-validate-gap` | `specbind-validate-gap` | Rename | Idea | Compare requirements with an existing codebase. |
-| `kiro-validate-impl` | `specbind-validate-impl` | Change | Draft | Validate current milestone integration and active-requirement coverage. |
-| `kiro-verify-completion` | `specbind-verify-completion` | Change | Draft | Verify current completion without confusing historical evidence. |
-| None | `specbind-release` | New | Draft | Complete a release and close its active milestone. |
-| None | `specbind-customize` | New | Idea | Post-v1 candidate for interactively customizing shared artifact templates and authoring rules. |
+| `kiro-debug` | `specbind-debug` | Change | Accepted | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
+| `kiro-discovery` | `specbind-discovery` | Change | Accepted | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
+| `kiro-impl` | `specbind-implement` | Change | Accepted | Implement one Spec-backed or Direct Roadmap item. |
+| `kiro-review` | `specbind-review-task` | Rename | Accepted | Review one task implementation using the actual diff and approved inputs. |
+| `kiro-spec-batch` | `specbind-batch` | Change | Accepted | Bring all Spec-backed milestone items through Tasks approval without implementation. |
+| `kiro-spec-design` | `specbind-design` | Change | Accepted | Maintain current design, active-requirement traceability, and the cross-spec contract. |
+| `kiro-spec-init` | None | Remove | Accepted | Initialization is a deterministic Rust CLI operation invoked by discovery. |
+| `kiro-spec-quick` | `specbind-quick` | Change | Accepted | Bring one Spec-backed item through Tasks approval using delegated gates. |
+| `kiro-spec-requirements` | `specbind-requirements` | Change | Accepted | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
+| `kiro-spec-status` | `specbind-status` | Change | Accepted | Explain project, milestone, Spec, task, and history state from CLI read models. |
+| `kiro-spec-tasks` | `specbind-tasks` | Change | Accepted | Create a milestone-local plan covering the active requirement set after cross-spec review. |
+| `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Accepted | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
+| `kiro-validate-design` | `specbind-validate-design` | Change | Accepted | Review technical design quality and design-to-contract consistency. |
+| `kiro-validate-gap` | `specbind-gap-analysis` | Change | Accepted | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
+| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Accepted | Validate one Spec's complete implementation and active-requirement coverage. |
+| `kiro-verify-completion` | `specbind-verify-completion` | Change | Accepted | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
+| None | `specbind-cross-spec-review` | New | Accepted | Review the complete current contract graph after Design approval and before Tasks authoring. |
+| None | `specbind-release` | New | Accepted | Complete a release and close its active milestone. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
 
@@ -152,8 +152,8 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must not treat a successful preflight as finalization authority or attempt to pass it back as a token; finalization rechecks current state independently.
 - Must allow unrelated dirty files while refusing uncommitted or conflicting paths that CLI finalization will mutate.
 - Build the strict Decision 0068 log-entry JSON outside the project or pass it on standard input.
-- On `FINALIZE_TARGET_DIRTY`, must show the affected paths and obtain explicit user confirmation before retrying the same `specbind release finalize --log-entries ...` request with `--force`.
-- Must not use `--force` to bypass archive collisions or any lifecycle, freshness, evidence, schema, or path-safety guard.
+- On `FINALIZE_TARGET_DIRTY`, must show the affected paths and stop until they are committed, stashed, or otherwise made clean.
+- Must not offer or emulate a release-finalization `--force` bypass.
 - Must not overwrite a conflicting roadmap archive.
 - Must be idempotent when finalization is retried.
 - Must not request or emulate finalization for only a subset of the active milestone's participating specs.
@@ -161,10 +161,8 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must report an After finalize failure as follow-up work without reopening the finalized milestone.
 - Must consume concise English CLI results and stable codes, then translate or explain them in the user's language when useful. V1 has no JSON output mode under Decision 0074.
 
-## Cross-cutting questions
+## Post-v1 candidates
 
-- Are `spec-*` names useful to users, or should names describe workflow outcomes more directly?
-- Which validation and verification responsibilities should remain separate?
-- Should the quick and batch workflows remain skills, or become orchestration modes of a smaller command set?
-- How long, if at all, should old skill names remain available as compatibility aliases?
-- Which skills become thinner once deterministic checks and lifecycle mutations move into the bundled CLI?
+- A milestone-wide implementation orchestrator with dependency-wave and subagent coordination.
+- A dedicated customization convenience skill over the stable shared settings surface.
+- Agent removal and uninstall workflows.

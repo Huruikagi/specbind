@@ -1,6 +1,6 @@
 # 0001: Replace inherited skill naming
 
-Status: Accepted
+Status: Superseded by Decision 0075
 
 ## Context
 
