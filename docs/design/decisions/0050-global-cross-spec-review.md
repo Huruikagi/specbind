@@ -13,13 +13,13 @@ Failed reviews and remediation attempts are useful while a workflow is running, 
 ## Decision
 
 - The active milestone has at most one accepted `cross_spec_review` record, stored in the canonical state artifact defined by Decision 0052 rather than in roadmap frontmatter.
-- That record covers the complete current `work_items` scope, its dependency graph, all applicable persistent contracts, and every required downstream review.
+- That record covers the complete current Spec-backed Roadmap projection, all current persistent Contracts, and every deeper Requirements or Design input materially used by the judgment. Direct items and dependencies to or from them are excluded under Decision 0078.
 - The persisted record represents only the latest accepted all-consistent outcome. Failed, incomplete, and remediation-in-progress results remain in workflow run context and are not appended to the roadmap.
 - No milestone item or participating spec stores its own cross-spec pass flag, review status, or copy of the accepted record.
 - Every participating spec resolves the same global record through its `active_change.milestone_id` and membership in the roadmap's current `work_items`. `spec.yaml` does not add a reference to it.
-- Under Decision 0053, the record retains only one compact semantic classification per roadmap item. Affected contract entries and reviewed downstream consumers are not persisted as independent facts or acceptance records.
+- The record contains the minimal Decision 0078 Front Matter and one free-form accepted assessment. It persists no per-item classification, affected-entry list, or reviewed-consumer result.
 - Any change to the Decision 0054 milestone baseline, roadmap scope, dependencies, applicable contracts, or required downstream review scope makes the complete record stale. A later accepted review replaces it atomically in the state artifact.
-- Decision 0053 fixes the state-artifact fields, classification summary, and AI-authored judgment; Decision 0055 fixes the contract-first fingerprint inputs.
+- Decision 0078 fixes the state-artifact fields and free-form judgment; Decision 0055, as amended, fixes the Contract-first fingerprint inputs.
 
 ## Consequences
 

@@ -59,6 +59,4 @@ active_change: null
 - Migration must reconstruct the active set for an in-progress milestone before the project can claim tasks coverage.
 - Status and validation skills can distinguish an unestablished set from an approved set without parsing prose.
 
-## Open schema details
-
-- The exact task-to-requirement trace representation used to prove coverage.
+Decision 0023 resolves task-to-Requirement traceability through each executable Task's non-empty `requirement_ids` set. The Tasks gate and read model validate complete active-set coverage.

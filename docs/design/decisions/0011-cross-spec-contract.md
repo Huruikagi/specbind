@@ -16,24 +16,18 @@ A separately written summary would reduce input size but drift from the authorit
 - Entries have stable identifiers, and cross-spec references resolve an explicit spec, category, and entry ID.
 - The design workflow maintains the contract alongside the current design and reviews whether internal changes require contract updates.
 - Cross-spec review reads roadmap and contracts first, then loads full spec documents only for affected or ambiguous boundaries.
-- Direct implementation candidates declare contract impact. A change that cannot justify no impact is rerouted to spec work.
+- Direct implementation has no persisted Contract-impact field. Requiring no canonical Requirements, Design, or Contract change is the route precondition; a change that cannot preserve it is rerouted to Spec work.
 - The Rust CLI validates syntax, identifiers, references, graph consistency, and other deterministic invariants.
-- AI review classifies semantic impact and evaluates whether contracts and implementations are substantively compatible.
+- AI review evaluates semantic compatibility and downstream impact in a free-form accepted assessment under Decision 0078.
 - Exact Markdown syntax and ID format are accepted by [Decision 0056](./0056-canonical-contract-markdown.md). The diagnostic schema remains Draft.
 
 ## Scope boundary
 
 Include an item only when changing it could require another spec's design or verification result to change. Do not include internal architecture, implementation steps, prose summaries, completed spec changes, or release history.
 
-## Compatibility classes
+## Semantic review
 
-Agent review classifies a contract-relevant change as:
-
-- `LOCAL_ONLY`: the current contract is unchanged.
-- `CONTRACT_COMPATIBLE`: the contract changes without breaking existing consumers, such as an additive export.
-- `CONTRACT_BREAKING`: an existing dependency, ownership boundary, or invariant may require downstream revision or revalidation.
-
-The CLI may compute the structural diff and affected dependency graph, but it does not decide semantic compatibility from syntax alone.
+The CLI computes structural differences and the current dependency graph but does not classify semantic compatibility. The review agent records one accepted free-form judgment bound to exact Contract-first inputs. Graph output remains an ephemeral read model; the accepted review persists its input revisions and judgment, not a duplicate derived graph or closed compatibility enum.
 
 ## Migration and fallback
 
@@ -51,8 +45,4 @@ The CLI may compute the structural diff and affected dependency graph, but it do
 - Downstream revalidation can be targeted from changed entries and consumer edges.
 - Contract maintenance and mechanical graph checks become explicit workflow gates.
 
-## Open questions
-
-- How an active change records changed contract entries and its compatibility classification.
-- Which File Ownership overlaps are allowed and how intentional sharing is declared.
-- Whether contract graph output is ephemeral CLI output or may be persisted as derived evidence.
+File Ownership overlaps remain warnings for semantic review. V1 does not add a machine-readable shared-ownership declaration or reject every overlap automatically.

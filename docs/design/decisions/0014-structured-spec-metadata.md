@@ -16,7 +16,7 @@ The inherited cc-sdd workflow stores per-spec lifecycle metadata in `spec.json`.
 - The top-level schema version is required.
 - Duplicate keys, unknown fields, YAML anchors, aliases, merge keys, and custom tags are rejected.
 - IDs, timestamps, and fingerprints are represented as strings under their eventual field schemas.
-- Human-authored prose follows the spec's configured product language where applicable; machine keys and enum values remain stable.
+- Human-authored prose follows the project language in `.specbind.json` where applicable; `spec.yaml` has no language field under Decision 0076. Machine keys and enum values remain stable.
 - Decision 0044 fixes the strict top-level and active-change shape after the gate-evidence and revision decisions it references.
 
 ## Scope boundary
@@ -26,7 +26,7 @@ This decision changes only metadata inside each spec directory.
 It does not change:
 
 - the persisted CLI configuration file `.specbind.json`
-- installation manifests currently distributed as JSON
+- the v1 installation surface, governed separately by Decision 0077
 - requirements, design, contract, brief, per-spec release log, roadmap, or other prose artifacts
 - the `tasks.yaml` schema accepted separately by Decision 0013
 
@@ -68,5 +68,4 @@ Each gate instead defines an explicit projection of relevant metadata fields, su
 ## Open schema details
 
 - Migration diagnostics and recovery behavior for every contradictory inherited `spec.json` flag combination.
-- YAML normalization and stable serialization rules.
-- Recoverable migration flow and handling of locally edited `spec.json` files.
+- Detailed diagnostics for the plan-first cc-sdd migration when locally edited or contradictory `spec.json` input cannot be converted unambiguously. Decision 0081 defines semantic Front Matter/YAML preservation for ordinary guarded rewrites.

@@ -57,7 +57,3 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 - The release skill becomes orchestration around stable CLI contracts rather than a file-mutation implementation.
 - CLI diagnostics use the accepted Decision 0067 text result in v1; Decision 0074 defers a command-wide JSON envelope.
 - Tests must cover handoff and retry behavior across each failure boundary.
-
-## Open questions
-
-- None currently recorded for this boundary.

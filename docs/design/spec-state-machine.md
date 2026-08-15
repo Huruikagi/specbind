@@ -209,7 +209,7 @@ Every state-changing event is an explicit guarded CLI mutation with:
 - an idempotency check for retries
 - a post-write consistency check
 
-Milestone-wide events additionally require one coherent mutation across the roadmap and all participating specs. Exact command names belong to the CLI contract and remain Draft except for `specbind release finalize`, accepted by Decision 0065.
+Milestone-wide events additionally require one coherent logical mutation across the roadmap and all participating Specs. Exact command names belong to the CLI contract and remain Draft except for `specbind release finalize`, whose current boundary is accepted by Decisions 0068 and 0081.
 
 ## Migration from the inherited metadata
 

@@ -31,7 +31,7 @@ Most Markdown gate inputs are authoritative prose documents. A content edit shou
 - The tasks gate fingerprints only the normalized, schema-defined `plan` projection under Decision 0028; mutable execution state and other artifacts are excluded.
 - Status or checkbox-equivalent state and blocked execution details do not alter the approved plan fingerprint by themselves.
 - Changes to task identity, hierarchy, meaningful sequence, plan text, explicit completion criteria, Requirement ID coverage, `parallel`, set membership in `depends_on`, or other plan-definition fields alter the plan fingerprint. Reordering set-like Requirement IDs, boundaries, contracts, or dependencies does not. Decision 0019 defines the ordering and sparse-dependency semantics; Decision 0021 defines completion-criteria omission; Decision 0022 excludes optional tasks.
-- Completion-gate inputs and canonicalization remain a follow-up decision.
+- Completion uses the clean project-revision handshake and CLI recomputation accepted by Decisions 0029, 0031 through 0033, and 0080 rather than another serialized semantic projection.
 
 ## Consequences
 

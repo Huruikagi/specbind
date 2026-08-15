@@ -24,7 +24,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - Target SpecBind workflows do not generate or maintain a parallel `tasks.md` view.
 - Human-readable task and progress views are provided by the accepted `spec status`, `tasks list`, and `tasks show` CLI read model under Decision 0025. Users may also inspect the YAML directly.
 - Requirements, design, contracts, briefs, per-spec release logs, and roadmaps remain Markdown unless a separate decision changes them.
-- `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the spec's configured product language.
+- `tasks.yaml` uses a versioned, machine-validated schema with stable English field names. Human-authored task text follows the project language in `.specbind.json` under Decision 0076.
 - The schema must distinguish the approved task-plan definition from mutable execution state so normal progress updates do not inherently rewrite the approved plan.
 - The tasks gate fingerprints a typed plan projection rather than the serialized YAML file. Status or checkbox-equivalent state and blocked execution details are excluded from that projection under Decision 0018.
 - Task order remains a conservative implicit dependency; `parallel` records reviewed exceptions and `depends_on` adds sparse non-obvious prerequisites within the same spec under Decisions 0019 and 0027.
@@ -34,7 +34,7 @@ Operationally, requirements and design benefit from prose review, while tasks ar
 - Group and executable-task objects use the strict sparse plan shape accepted by Decision 0023.
 - Task progress uses the sparse persisted `completed | blocked` execution state accepted by Decision 0024; absence means pending and `in_progress` remains run-scoped.
 - Persistent free-form implementation guidance lives in optional discovered `SpecBind Implementation Notes` artifacts outside `tasks.yaml`, under Decisions 0026 and 0057.
-- Exact fields, status values, hierarchy representation, fingerprint projections, and evidence references remain a follow-up schema decision.
+- Decisions 0020 through 0028 and 0080 fix the v1 hierarchy, fields, sparse execution state, path and Contract references, and task-plan fingerprint projection.
 
 ## Lifecycle
 
@@ -81,9 +81,4 @@ Detailed YAML remains available when a user wants to inspect or edit the task pl
 - Current task, implementation, status, batch, review, validation, and release skill templates require coordinated migration.
 - The target artifact catalog and lifecycle documents use `tasks.yaml`; the current artifact index continues to describe shipped `tasks.md` behavior until implementation changes.
 
-## Open schema details
-
-- Completion and verification evidence references.
-- Completion projection fields and their canonical serialization. Decision 0028 fixes the task-plan projection and fingerprint algorithm.
-- Exact `tasks.md` migration grammar and diagnostics.
-- Routing diagnostics for inherited cross-spec `_Depends:_` text follow Decision 0027 and must not coerce it into a local Task ID.
+Exact inherited `tasks.md` migration grammar and diagnostics remain implementation details. Cross-spec `_Depends:_` text follows Decision 0027 and must never be coerced into a local Task ID.

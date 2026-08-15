@@ -47,4 +47,3 @@ A proposed `specbind-milestone` skill would separate the name but still express 
 ## Open questions
 
 - Final command and argument names.
-- Which scope updates require user confirmation versus prior roadmap approval.

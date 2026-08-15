@@ -26,7 +26,7 @@ Requiring bespoke criteria for every task would add boilerplate when the complet
 - Important completion expectations have a stable structured location instead of being hidden among detail bullets.
 - Straightforward tasks avoid repetitive criteria such as merely restating that the normal test suite passes.
 - Task-plan review remains responsible for rejecting an omitted field when the completed state is not actually self-evident.
-- JSON Schema can validate explicit values but cannot decide whether omission is semantically justified; that remains an agent review and Rust semantic-validation boundary where determinable.
+- JSON Schema and Rust validate explicit values but do not decide whether omission is semantically justified. Task review owns that judgment under Decision 0080.
 
 ## Migration
 

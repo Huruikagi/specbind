@@ -192,6 +192,4 @@ It should not initially validate task hierarchy, task dependencies, approval sem
 ## Open questions
 
 - Final command names for remaining checks and whether `check` becomes their common read-only validation namespace; Decision 0025 fixes the task read-model command names.
-- How the accepted Rust migration packages templates and preserves the current installation contract.
-- Stable numeric exit-code categories beyond the accepted zero/nonzero behavior.
 - Exact command contracts for the accepted milestone operations and any additional lifecycle candidates.

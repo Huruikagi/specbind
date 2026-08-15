@@ -55,5 +55,4 @@ Example after releasing `v1.4.0`:
 
 ## Open questions
 
-- Whether other project-level release summaries or state records will use the same `<version>-<artifact>` naming convention.
 - Whether projects need an opt-in audit artifact for cancelled, never-released milestones; by default they are not release-archived under [Decision 0005](./0005-active-change-abandonment.md).

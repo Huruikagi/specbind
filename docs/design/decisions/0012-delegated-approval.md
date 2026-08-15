@@ -84,7 +84,7 @@ Every accepted gate records enough structured evidence to answer:
 - When did the current revision pass the gate?
 - Do the current inputs still match the approved revision?
 
-Artifact fingerprints are required to detect out-of-band edits. Their stored value uses the `sha256:<64 lowercase hex characters>` format accepted in [Decision 0016](./0016-fingerprint-value-format.md). Requirements inputs are defined by Decisions 0017 and 0018, and the task-plan projection and canonicalization by Decision 0028; design- and completion-gate details remain Draft. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
+Artifact fingerprints are required to detect out-of-band edits. Their stored value uses the `sha256:<64 lowercase hex characters>` format accepted in [Decision 0016](./0016-fingerprint-value-format.md). Requirements inputs are defined by Decisions 0017 and 0018, Design inputs by Decision 0038, the Task-plan projection by Decision 0028, and completion evidence by Decisions 0029 and 0037. Approval evidence does not preserve conversation transcripts or other fields beyond this contract merely to prove authorization.
 
 ## Consequences
 
@@ -99,7 +99,6 @@ Artifact fingerprints are required to detect out-of-band edits. Their stored val
 
 ## Open schema details
 
-- Remaining gate-evidence YAML fields.
-- Fingerprint normalization rules and artifact-input sets for each gate.
-- Representation of migrated gate state when the original `passed_at` is unavailable.
-- Concise English diagnostics with stable codes for missing or out-of-scope run-context delegation; Decision 0074 defers JSON diagnostics beyond v1.
+- Exact concise English diagnostic codes for missing or out-of-scope run-context delegation; Decision 0074 defers JSON diagnostics beyond v1.
+
+Decisions 0036 through 0040 fix the v1 gate-evidence fields and state invariants. Decisions 0017, 0018, 0028, 0032, and 0038 fix their input projections and normalization. Migration never invents approval mode or `passed_at` evidence that cannot be established from the inherited state.

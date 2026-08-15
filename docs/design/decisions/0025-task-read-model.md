@@ -53,6 +53,6 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 
 ## Open questions
 
-- Stable numeric exit-code categories beyond the accepted zero/nonzero behavior.
-- Exact command-specific success and no-change codes within the Decision 0067 result contract.
-- Filters such as blocked-only, actionable-only, or group selection.
+- Exact command-specific success and no-change codes within the Decision 0067 result contract. Decision 0081 fixes process exit `0` for `OK`/`NO_CHANGE` and `1` for every v1 `ERROR`.
+
+Filters such as blocked-only, actionable-only, or group selection are optional future CLI ergonomics rather than required v1 read-model semantics.

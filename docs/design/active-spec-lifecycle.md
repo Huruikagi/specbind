@@ -251,4 +251,3 @@ Batch update and evidence-recording responsibilities are required, but their fin
 ## Open questions
 
 - Whether projects need an opt-in audit record for abandoned, unreleased milestones.
-- Whether immutable history may use something other than a Git release tag.

@@ -10,7 +10,7 @@ Explicit and delegated gate approval, non-interactive execution, and rejection o
 
 The active implementation plan and progress use canonical `tasks.yaml` rather than a Markdown task document under [Decision 0013](./decisions/0013-structured-task-artifact.md).
 
-Per-spec lifecycle metadata uses canonical `spec.yaml`; CLI configuration and installation manifests remain outside that decision under [Decision 0014](./decisions/0014-structured-spec-metadata.md).
+Per-spec lifecycle metadata uses canonical `spec.yaml`; `.specbind.json` and the v1 installation surface remain outside that decision under [Decision 0014](./decisions/0014-structured-spec-metadata.md).
 
 Status: Draft
 
@@ -200,6 +200,5 @@ An accelerated workflow keeps run-scoped `delegated` authorization for named fut
 ## Topics to resolve next
 
 1. Define the initial `specbind check traceability` contract and diagnostic schema.
-2. Refine discovery's existing-spec update route and turn the draft spec-state events into accepted CLI mutation contracts.
-3. Define the concrete public CLI commands and stable result codes for accepted lifecycle mutations.
-4. Refine discovery's existing-Spec update and scope-reconciliation operations from implementation experience.
+2. Turn the accepted Spec and milestone events into concrete public CLI commands and stable result codes.
+3. Refine discovery's existing-Spec update and scope-reconciliation operations from implementation experience.
