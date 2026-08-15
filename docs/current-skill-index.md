@@ -32,8 +32,8 @@ Both supported agents receive the same 17 skills:
 
 ## Sources of truth
 
-- Skill templates: `tools/specbind/templates/agents/{claude-code-skills,codex-skills}/skills/`
-- Installation manifests: `tools/specbind/templates/manifests/{claude-code-skills,codex-skills}.json`
-- Agent paths and invocation syntax: `tools/specbind/src/agents/registry.ts`
+- Skill templates: `tools/cc-sdd/templates/agents/{claude-code-skills,codex-skills}/skills/`
+- Installation manifests: `tools/cc-sdd/templates/manifests/{claude-code-skills,codex-skills}.json`
+- Agent paths and invocation syntax: `tools/cc-sdd/src/agents/registry.ts`
 
 When the command system changes, update this index together with the templates and manifests so it remains a useful migration checklist.

@@ -6,22 +6,22 @@ Status: Draft
 
 ## Current implementation baseline
 
-The TypeScript implementation under `tools/specbind/` remains useful as executable migration evidence. It currently owns option parsing, `.specbind.json`, manifests, template rendering, installation planning, overwrite prompts, backups, and installed skill trees. Those surfaces are not automatically the Rust product contract.
+The inherited TypeScript implementation under `tools/cc-sdd/` remains useful as executable migration evidence. It currently owns option parsing, `.specbind.json`, manifests, template rendering, installation planning, overwrite prompts, backups, and installed skill trees. Those surfaces are not automatically the Rust product contract.
 
 The accepted v1 contract deliberately removes public manifests, profiles, operating-system selectors, overwrite and backup modes, `--yes`, and inherited compatibility aliases. [Decision 0077](./decisions/0077-v1-installation-distribution-and-migration.md) defines the smaller installation and migration surface. [Decision 0081](./decisions/0081-v1-release-git-path-and-cli-safety.md) makes Git, guarded target paths, and deterministic retry the safety model.
 
-The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. Runtime JSON Schemas remain versioned under `tools/specbind/schemas/` and are embedded into the matching Rust binary under Decisions 0015 and 0083. They are the structural authority; typed Rust models follow them and share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
+The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. The preparatory directory move temporarily carries the current schema copies under `tools/cc-sdd/schemas/`; the first Rust scaffold increment adopts them at the authoritative `tools/specbind/schemas/` path required by Decisions 0015 and 0083 and embeds them into the matching binary. Typed Rust models follow them and share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
 
 ## Repository and cutover layout
 
-Porting proceeds without overwriting the current implementation in place:
+The preparatory move establishes this repository layout:
 
 ```text
-tools/specbind/  # inherited TypeScript implementation until cutover
-tools/cc-sdd/    # temporary home after the Rust implementation takes the canonical path
+tools/cc-sdd/    # inherited TypeScript comparison and migration oracle
+tools/specbind/  # canonical Rust workspace, created by the next scaffold increment
 ```
 
-At the cutover increment, move the inherited implementation to `tools/cc-sdd/` and place the Rust workspace at `tools/specbind/`. This makes the accepted product path authoritative while retaining the old code long enough to compare fixtures and migration behavior. Delete the temporary implementation only after the cutover gates pass.
+The TypeScript move is complete before Rust scaffolding so the accepted product path can be created without an in-place language rewrite. Delete the temporary implementation only after the cutover gates pass.
 
 ## Target command model
 
@@ -117,7 +117,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 ### 5. Distribution cutover
 
-- Move the inherited TypeScript code to temporary `tools/cc-sdd/` and make the Rust workspace canonical at `tools/specbind/`.
+- Make the Rust workspace canonical at `tools/specbind/` while retaining `tools/cc-sdd/` as the temporary oracle.
 - Produce Windows x64 and Linux x64 GitHub Release binaries plus `SHA256SUMS`.
 - Publish PowerShell and shell installers that select the latest stable version by default, accept explicit prerelease versions, verify checksums, and never edit PATH.
 - Verify `%LOCALAPPDATA%\SpecBind\bin` and `$HOME/.local/bin` defaults plus `--install-dir`.

@@ -30,7 +30,7 @@ The CLI installs these files under `{{KIRO_DIR}}/settings/templates/` for both s
 
 ## Shared rules
 
-The rule sources live under `tools/specbind/templates/shared/settings/rules/`. The current CLI copies each referenced rule into the consuming skill's `rules/` directory:
+The rule sources live under `tools/cc-sdd/templates/shared/settings/rules/`. The current CLI copies each referenced rule into the consuming skill's `rules/` directory:
 
 - Claude Code: `.claude/skills/<skill>/rules/`
 - Codex: `.agents/skills/<skill>/rules/`
@@ -81,9 +81,9 @@ Skills create or update these feature-level files under `{{KIRO_DIR}}/specs/<fea
 
 ## Sources of truth
 
-- Settings templates and shared rule sources: `tools/specbind/templates/shared/settings/`
-- Skill output behavior: `tools/specbind/templates/agents/{claude-code-skills,codex-skills}/skills/`
-- Installation manifests: `tools/specbind/templates/manifests/{claude-code-skills,codex-skills}.json`
-- Shared-rule expansion: `tools/specbind/src/plan/sharedRules.ts` and `tools/specbind/src/plan/fileOperations.ts`
+- Settings templates and shared rule sources: `tools/cc-sdd/templates/shared/settings/`
+- Skill output behavior: `tools/cc-sdd/templates/agents/{claude-code-skills,codex-skills}/skills/`
+- Installation manifests: `tools/cc-sdd/templates/manifests/{claude-code-skills,codex-skills}.json`
+- Shared-rule expansion: `tools/cc-sdd/src/plan/sharedRules.ts` and `tools/cc-sdd/src/plan/fileOperations.ts`
 
 When installed paths or skill outputs change, update this index together with the templates, manifests, and skill instructions so it remains a useful migration checklist.

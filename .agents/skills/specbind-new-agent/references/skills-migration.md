@@ -19,16 +19,16 @@ Use in-place migration only when the user explicitly asks for a breaking change.
 - Verify invocation style differences from command mode
 
 2. Compare current implementation
-- Check `tools/specbind/src/agents/registry.ts` for current `agent-id`
-- Check current manifest in `tools/specbind/templates/manifests/`
-- Check current templates in `tools/specbind/templates/agents/{agent-id}/`
-- Check existing real-manifest test coverage in `tools/specbind/test/`
+- Check `tools/cc-sdd/src/agents/registry.ts` for current `agent-id`
+- Check current manifest in `tools/cc-sdd/templates/manifests/`
+- Check current templates in `tools/cc-sdd/templates/agents/{agent-id}/`
+- Check existing real-manifest test coverage in `tools/cc-sdd/test/`
 
 3. Define migration target
 - New variant id: `{agent-id}-skills`
-- New templates root: `tools/specbind/templates/agents/{agent-id}-skills/`
-- New manifest: `tools/specbind/templates/manifests/{agent-id}-skills.json`
-- New test: `tools/specbind/test/realManifest{AgentName}Skills.test.ts`
+- New templates root: `tools/cc-sdd/templates/agents/{agent-id}-skills/`
+- New manifest: `tools/cc-sdd/templates/manifests/{agent-id}-skills.json`
+- New test: `tools/cc-sdd/test/realManifest{AgentName}Skills.test.ts`
 
 4. Implement skills-specific behavior
 - Registry `layout.commandsDir` points to skills directory
@@ -45,10 +45,10 @@ Use in-place migration only when the user explicitly asks for a breaking change.
 ## Recommended Base Example
 
 Use these files as concrete reference for skills-mode implementation:
-- `tools/specbind/src/agents/registry.ts` (`claude-code-skills` entry)
-- `tools/specbind/templates/manifests/claude-code-skills.json`
-- `tools/specbind/templates/agents/claude-code-skills/`
-- `tools/specbind/test/realManifestClaudeCodeSkills.test.ts`
+- `tools/cc-sdd/src/agents/registry.ts` (`claude-code-skills` entry)
+- `tools/cc-sdd/templates/manifests/claude-code-skills.json`
+- `tools/cc-sdd/templates/agents/claude-code-skills/`
+- `tools/cc-sdd/test/realManifestClaudeCodeSkills.test.ts`
 
 ## Review Output Requirement
 

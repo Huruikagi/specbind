@@ -22,7 +22,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Huruikagi/specbind.git",
-    "directory": "tools/specbind"
+    "directory": "tools/cc-sdd"
   },
   "type": "module",
   "bin": {

@@ -46,7 +46,7 @@ package-lock.json
 yarn.lock
 
 # Exceptions for CI reproducibility
-!tools/specbind/package-lock.json
+!tools/cc-sdd/package-lock.json
 
 # Environment variables
 .env

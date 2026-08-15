@@ -9,11 +9,12 @@
 
 ## Source Layout
 
-- `tools/specbind/src/` — CLI implementation
-- `tools/specbind/test/` — automated tests
-- `tools/specbind/templates/` — files installed into consumer projects
+- `tools/cc-sdd/src/` — inherited TypeScript CLI retained as a migration and comparison oracle
+- `tools/cc-sdd/test/` — inherited TypeScript automated tests
+- `tools/cc-sdd/templates/` — current files installed into consumer projects
+- `tools/specbind/` — canonical Rust CLI workspace once scaffolded
 
-The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Consumer-facing `.kiro/` files must be maintained under `tools/specbind/templates/shared/settings/`. Do not require `/kiro-*` workflows for this repository unless the user explicitly requests one.
+The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Current consumer-facing `.kiro/` files must be maintained under `tools/cc-sdd/templates/shared/settings/` until the Rust templates replace them. Do not require `/kiro-*` workflows for this repository unless the user explicitly requests one.
 
 ## Development Workflow
 
@@ -24,7 +25,7 @@ The root `.kiro/` directory is not used to develop SpecBind and is intentionally
 
 ## Validation
 
-Run commands from `tools/specbind/`:
+Run inherited TypeScript verification from `tools/cc-sdd/`:
 
 ```sh
 npm test

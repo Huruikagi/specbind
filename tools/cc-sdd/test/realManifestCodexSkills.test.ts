@@ -34,9 +34,9 @@ const exists = async (p: string) => {
   }
 };
 
-// vitest runs in tools/specbind; repoRoot is two levels up
+// vitest runs in tools/cc-sdd; repoRoot is two levels up
 const repoRoot = join(process.cwd(), '..', '..');
-const manifestPath = join(repoRoot, 'tools/specbind/templates/manifests/codex-skills.json');
+const manifestPath = join(repoRoot, 'tools/cc-sdd/templates/manifests/codex-skills.json');
 
 describe('real codex-skills manifest', () => {
   it('dry-run prints plan for codex-skills.json with placeholders applied', async () => {
