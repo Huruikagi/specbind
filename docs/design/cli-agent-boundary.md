@@ -121,7 +121,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 
 These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
-The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
+The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). The aggregate read model and phase-relative dependency waves are defined in [Milestone state machine](./milestone-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
 
 ## Integration with skills
 

@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0082 fixes how the single Roadmap DAG is projected into Design and Implementation waves. Wave numbers and aggregate progress remain derived.
+
 ## Context
 
 The inherited roadmap mixed free-form milestone context with a Markdown checklist that grouped new specs, existing-spec updates, and direct implementation candidates. SpecBind needs the same scope categories and dependency information for deterministic membership checks, dependency-wave calculation, status rendering, and release preflight, but it should not require the CLI to parse or partially rewrite prose.

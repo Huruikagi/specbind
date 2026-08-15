@@ -35,7 +35,7 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - `specbind-implement` targets exactly one roadmap item per invocation:
   - for a Spec-backed item, it executes the approved local task plan;
   - for a Direct item, it performs the scoped implementation without creating Requirements, Design, Contract, or Tasks artifacts.
-- V1 has no milestone-wide implementation orchestrator. Phase-relative dependency waves and aggregate implementation scheduling belong to the future milestone state machine.
+- V1 has no milestone-wide implementation orchestrator. Decision 0082 and the milestone state machine define phase-relative dependency waves as a CLI read model that per-item skills can follow without adding an orchestration skill.
 - Direct implementation is valid only while the change requires no canonical Requirements, Design, or Contract change. Discovery must reroute a Direct item when that premise fails.
 - The default task-review mode is `required` for Spec-backed implementation and `inline` for Direct implementation. `required`, `inline`, and `off` are run-scoped choices; `off` never disables final implementation validation or completion verification.
 - `specbind-debug` is a read-only, fresh-context root-cause protocol. It returns a run-scoped diagnosis and next action; a new implementer applies any fix.
@@ -47,4 +47,3 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - Direct work has an explicit implementation owner without adding another public skill.
 - Quick and batch improve throughput without defining weaker lifecycle semantics.
 - A later milestone orchestrator can coordinate multiple Spec and Direct items without changing the v1 per-item implementation contract.
-

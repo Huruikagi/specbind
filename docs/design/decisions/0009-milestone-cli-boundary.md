@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0082 defines the derived milestone stage, phase-relative dependency waves, and aggregate readiness without adding a persisted Roadmap status.
+
 ## Context
 
 Every change-bearing milestone needs a roadmap with a stable identity, confirmed scope, an optional release-version binding, and explicit lifecycle transitions. Putting analysis, decomposition, roadmap persistence, version binding, and abandonment into `specbind-discovery` would make that skill too broad.

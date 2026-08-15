@@ -4,7 +4,7 @@ Status: Draft
 
 This document defines the target per-spec workflow states and events stored through `spec.yaml` under [Decision 0014](./decisions/0014-structured-spec-metadata.md). It refines the lifecycle described in [Active spec lifecycle](./active-spec-lifecycle.md), the active requirement set accepted in [Decision 0003](./decisions/0003-active-requirement-set.md), and the approval modes accepted in [Decision 0012](./decisions/0012-delegated-approval.md).
 
-The state machine describes one spec's active change. Milestone-wide scope, ordering, target release binding, and roadmap archival remain milestone concerns.
+The state machine describes one spec's active change. Milestone-wide scope, phase-relative dependency ordering, aggregate readiness, release execution, and roadmap archival are defined in [Milestone state machine](./milestone-state-machine.md).
 
 ## Modeling decisions
 
