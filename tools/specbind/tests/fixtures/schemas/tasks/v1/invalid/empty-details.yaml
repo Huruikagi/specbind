@@ -1,0 +1,8 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Empty details
+      requirement_ids: ["1.1"]
+      details: []

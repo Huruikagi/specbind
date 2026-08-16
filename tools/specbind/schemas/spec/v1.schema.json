@@ -1,0 +1,411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpecBind spec metadata v1",
+  "description": "Runtime contract for the accepted strict spec.yaml root, active change, and gate evidence.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "$ref": "#/$defs/SchemaVersion"
+    },
+    "active_change": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActiveChange"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "active_change"
+  ],
+  "$defs": {
+    "SchemaVersion": {
+      "type": "integer",
+      "format": "uint8",
+      "minimum": 0,
+      "maximum": 255,
+      "const": 1
+    },
+    "ActiveChange": {
+      "type": "object",
+      "properties": {
+        "milestone_id": {
+          "$ref": "#/$defs/MilestoneId"
+        },
+        "state": {
+          "$ref": "#/$defs/WorkflowState"
+        },
+        "requirement_ids": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RequirementIdList"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gate_evidence": {
+          "$ref": "#/$defs/GateEvidence"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "milestone_id",
+        "state",
+        "requirement_ids"
+      ]
+    },
+    "MilestoneId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "WorkflowState": {
+      "type": "string",
+      "enum": [
+        "requirements",
+        "design",
+        "tasks",
+        "implementation",
+        "release_ready"
+      ]
+    },
+    "RequirementIdList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "GateEvidence": {
+      "type": "object",
+      "properties": {
+        "requirements": {
+          "$ref": "#/$defs/RequirementsGateEvidence"
+        },
+        "design": {
+          "$ref": "#/$defs/DesignGateEvidence"
+        },
+        "tasks": {
+          "$ref": "#/$defs/TasksGateEvidence"
+        },
+        "completion": {
+          "$ref": "#/$defs/CompletionGateEvidence"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "RequirementsGateEvidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExplicitRequirementsGateEvidence"
+        },
+        {
+          "$ref": "#/$defs/DelegatedRequirementsGateEvidence"
+        }
+      ]
+    },
+    "ExplicitRequirementsGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/ExplicitApprovalMode"
+        },
+        "approved_requirement_ids": {
+          "$ref": "#/$defs/RequirementIdList"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/RequirementsInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "approved_requirement_ids",
+        "input_revisions"
+      ]
+    },
+    "PassedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:[Zz]|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "ExplicitApprovalMode": {
+      "type": "string",
+      "enum": [
+        "explicit"
+      ]
+    },
+    "RequirementsInputRevisions": {
+      "type": "object",
+      "properties": {
+        "requirements.md": {
+          "$ref": "#/$defs/Fingerprint"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "requirements.md"
+      ]
+    },
+    "Fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "DelegatedRequirementsGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/DelegatedApprovalMode"
+        },
+        "delegation_workflow": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "approved_requirement_ids": {
+          "$ref": "#/$defs/RequirementIdList"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/RequirementsInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "delegation_workflow",
+        "approved_requirement_ids",
+        "input_revisions"
+      ]
+    },
+    "DelegatedApprovalMode": {
+      "type": "string",
+      "enum": [
+        "delegated"
+      ]
+    },
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "DesignGateEvidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExplicitDesignGateEvidence"
+        },
+        {
+          "$ref": "#/$defs/DelegatedDesignGateEvidence"
+        }
+      ]
+    },
+    "ExplicitDesignGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/ExplicitApprovalMode"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/DesignInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "input_revisions"
+      ]
+    },
+    "DesignInputRevisions": {
+      "type": "object",
+      "properties": {
+        "design.md": {
+          "$ref": "#/$defs/Fingerprint"
+        },
+        "contract.md": {
+          "$ref": "#/$defs/Fingerprint"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "design.md",
+        "contract.md"
+      ]
+    },
+    "DelegatedDesignGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/DelegatedApprovalMode"
+        },
+        "delegation_workflow": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/DesignInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "delegation_workflow",
+        "input_revisions"
+      ]
+    },
+    "TasksGateEvidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExplicitTasksGateEvidence"
+        },
+        {
+          "$ref": "#/$defs/DelegatedTasksGateEvidence"
+        }
+      ]
+    },
+    "ExplicitTasksGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/ExplicitApprovalMode"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/TasksInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "input_revisions"
+      ]
+    },
+    "TasksInputRevisions": {
+      "type": "object",
+      "properties": {
+        "tasks.yaml#plan": {
+          "$ref": "#/$defs/Fingerprint"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "tasks.yaml#plan"
+      ]
+    },
+    "DelegatedTasksGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "approval_mode": {
+          "$ref": "#/$defs/DelegatedApprovalMode"
+        },
+        "delegation_workflow": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "input_revisions": {
+          "$ref": "#/$defs/TasksInputRevisions"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "approval_mode",
+        "delegation_workflow",
+        "input_revisions"
+      ]
+    },
+    "CompletionGateEvidence": {
+      "type": "object",
+      "properties": {
+        "passed_at": {
+          "$ref": "#/$defs/PassedAt"
+        },
+        "implementation_revision": {
+          "$ref": "#/$defs/ImplementationRevision"
+        },
+        "mechanical_checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MechanicalCheck"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "passed_at",
+        "implementation_revision",
+        "mechanical_checks"
+      ]
+    },
+    "ImplementationRevision": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "MechanicalCheck": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/MechanicalCheckKind"
+        },
+        "command": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "exit_code": {
+          "$ref": "#/$defs/SuccessfulExitCode"
+        },
+        "working_directory": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "command",
+        "exit_code"
+      ]
+    },
+    "MechanicalCheckKind": {
+      "type": "string",
+      "enum": [
+        "test",
+        "build",
+        "smoke",
+        "lint",
+        "typecheck",
+        "custom"
+      ]
+    },
+    "SuccessfulExitCode": {
+      "type": "integer",
+      "format": "uint8",
+      "minimum": 0,
+      "maximum": 255,
+      "const": 0
+    }
+  }
+}

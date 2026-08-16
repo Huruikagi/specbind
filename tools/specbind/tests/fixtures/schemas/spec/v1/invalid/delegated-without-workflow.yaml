@@ -1,0 +1,12 @@
+schema_version: 1
+active_change:
+  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
+  state: design
+  requirement_ids: [REQ-1]
+  gate_evidence:
+    requirements:
+      passed_at: 2026-08-16T10:00:00Z
+      approval_mode: delegated
+      approved_requirement_ids: [REQ-1]
+      input_revisions:
+        requirements.md: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

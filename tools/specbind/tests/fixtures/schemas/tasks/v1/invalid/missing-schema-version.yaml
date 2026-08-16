@@ -1,0 +1,6 @@
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Missing schema version
+      requirement_ids: ["1.1"]

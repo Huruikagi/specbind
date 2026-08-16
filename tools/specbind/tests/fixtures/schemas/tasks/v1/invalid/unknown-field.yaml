@@ -1,0 +1,8 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Unknown root field
+      requirement_ids: ["1.1"]
+unknown_field: true

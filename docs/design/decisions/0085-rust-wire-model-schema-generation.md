@@ -29,6 +29,10 @@ The current `spec.yaml` and `tasks.yaml` contracts contain patterns, tagged alte
 - The existing hand-authored schema files are migration inputs for the first schema implementation increment after workspace bootstrap. The initial wire models must preserve their intended accepted and rejected fixture sets; byte-for-byte reproduction of incidental hand-authored layout is not required.
 - Consumer projects cannot override runtime schemas through settings. Schema generation is a maintainer build operation, not an end-user CLI command in v1.
 
+## Implementation status
+
+The first Rust schema increment implements the v1 `spec.yaml` and `tasks.yaml` wire models, explicit Draft 2020-12 generation, embedded checked-in schemas, deterministic regeneration checks, and Rust-owned conformance fixtures. YAML feature restrictions, wire-to-domain conversion, and semantic lifecycle validation remain subsequent runtime-validation increments.
+
 ## Consequences
 
 - Rust wire types and published schemas no longer drift through independent manual edits.

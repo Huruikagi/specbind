@@ -27,11 +27,11 @@ The schemas are product-managed runtime contracts. They are not consumer customi
 - Cross-artifact references, lifecycle transitions, dependency graphs, fingerprints, and other semantic invariants remain Rust validation responsibilities after structural schema validation and typed deserialization.
 - Schema files are embedded in the CLI version that supports them. Runtime resolution does not depend on project-owned settings.
 - The current TypeScript package includes `schemas/` in its package surface so migration tooling and tests can reference the same source files.
-- Schema conformance fixtures live under `tools/specbind/test/fixtures/schemas/<artifact>/<version>/` until the Rust test layout supersedes them.
+- Schema conformance fixtures live under `tools/specbind/tests/fixtures/schemas/<artifact>/<version>/`.
 
-## Initial scaffold
+## Implemented scaffold
 
-The first checked-in schemas intentionally contain only fields already accepted for the common envelope. They are not wired into current TypeScript artifact generation or validation.
+The Rust workspace owns complete v1 structural wire models for the accepted `spec.yaml` and `tasks.yaml` fields. It generates and embeds their checked-in schemas and verifies valid and invalid fixtures against schema validation and wire-model deserialization. The inherited TypeScript artifact generation and validation remain unchanged migration inputs.
 
 New fields are added as their decisions become accepted. A structural change must update:
 

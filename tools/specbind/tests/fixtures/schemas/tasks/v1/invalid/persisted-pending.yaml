@@ -1,0 +1,11 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Pending task
+      requirement_ids: ["1.1"]
+execution:
+  tasks:
+    "1":
+      status: pending

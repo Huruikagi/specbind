@@ -14,6 +14,8 @@
 - `tools/cc-sdd/templates/` — current files installed into consumer projects
 - `tools/specbind/` — canonical Rust CLI workspace
 - `tools/specbind/src/` — Rust CLI implementation
+- `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
+- `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification
 
@@ -32,6 +34,7 @@ The root `.kiro/` directory is not used to develop SpecBind and is intentionally
 - Windows MSVC validation requires Visual Studio Build Tools with the C++ workload and a Windows SDK.
 - Commit `tools/specbind/Cargo.lock` and keep dependency versions and features centralized in `tools/specbind/Cargo.toml`.
 - Prefer focused external crates behind SpecBind-owned module boundaries; third-party types do not define public artifact or CLI contracts.
+- Change structured artifact contracts through the versioned wire models and conformance fixtures, then regenerate schemas with `cargo run --example generate_schemas`; do not hand-edit generated schemas.
 
 ## Validation
 
@@ -39,6 +42,7 @@ Run Rust verification from `tools/specbind/`:
 
 ```sh
 cargo fmt --all -- --check
+cargo run --example generate_schemas -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
 cargo build --workspace --release

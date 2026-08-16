@@ -6,7 +6,7 @@ SpecBind is an experimental command system for binding durable specifications to
 
 This repository was bootstrapped from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) and has been detached from the GitHub fork network. The canonical SpecBind CLI is now being implemented in Rust under [`tools/specbind/`](./tools/specbind/). The inherited TypeScript implementation remains under [`tools/cc-sdd/`](./tools/cc-sdd/) as a temporary migration and comparison oracle.
 
-The Rust CLI currently provides only its initial executable scaffold. Commands, workflows, artifact formats, and release behavior are being implemented incrementally from the accepted design decisions. Until that transition is complete, do not treat inherited cc-sdd behavior as the final SpecBind interface.
+The Rust CLI currently provides its initial executable scaffold plus authoritative v1 wire models and generated JSON Schemas for `spec.yaml` and `tasks.yaml`. Commands, lifecycle validation, and release behavior are being implemented incrementally from the accepted design decisions. Until that transition is complete, do not treat inherited cc-sdd behavior as the final SpecBind interface.
 
 For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md), [target artifact catalog](./docs/design/target-artifact-catalog.md), and [target workflows](./docs/design/target-workflows.md).
 
@@ -38,12 +38,19 @@ Run the complete Rust verification set before committing Rust changes:
 
 ```sh
 cargo fmt --all -- --check
+cargo run --example generate_schemas -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
 cargo build --workspace --release
 ```
 
 `Cargo.lock` is committed because SpecBind distributes an application binary. The same checks run on Windows and Linux in [the Rust workflow](./.github/workflows/rust.yml).
+
+The versioned Rust DTOs under [`src/schema/`](./tools/specbind/src/schema/) are the structural source of truth for structured artifacts. After changing them, regenerate the checked-in Draft 2020-12 schemas and review the resulting diff:
+
+```sh
+cargo run --example generate_schemas
+```
 
 The inherited TypeScript oracle retains its own verification commands:
 

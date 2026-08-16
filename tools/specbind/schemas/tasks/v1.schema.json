@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpecBind task artifact v1",
+  "description": "Runtime contract for the accepted tasks.yaml v1 plan and sparse execution-state shape.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "$ref": "#/$defs/SchemaVersion"
+    },
+    "plan": {
+      "$ref": "#/$defs/TaskPlan"
+    },
+    "execution": {
+      "$ref": "#/$defs/TaskExecution"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan"
+  ],
+  "$defs": {
+    "SchemaVersion": {
+      "type": "integer",
+      "format": "uint8",
+      "minimum": 0,
+      "maximum": 255,
+      "const": 1
+    },
+    "TaskPlan": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanItem"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "items"
+      ]
+    },
+    "PlanItem": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TaskGroup"
+        },
+        {
+          "$ref": "#/$defs/ExecutableTask"
+        }
+      ]
+    },
+    "TaskGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/TaskReference"
+        },
+        "kind": {
+          "$ref": "#/$defs/GroupKind"
+        },
+        "title": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExecutableTask"
+          },
+          "minItems": 2
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "tasks"
+      ]
+    },
+    "TaskReference": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*(?:\\.[1-9][0-9]*)?$"
+    },
+    "GroupKind": {
+      "type": "string",
+      "enum": [
+        "group"
+      ]
+    },
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ExecutableTask": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParallelTask"
+        },
+        {
+          "$ref": "#/$defs/SequentialTask"
+        }
+      ]
+    },
+    "ParallelTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/TaskReference"
+        },
+        "kind": {
+          "$ref": "#/$defs/TaskKind"
+        },
+        "title": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "details": {
+          "$ref": "#/$defs/NonEmptyStringList"
+        },
+        "completion_criteria": {
+          "$ref": "#/$defs/NonEmptyStringList"
+        },
+        "requirement_ids": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "boundaries": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "contracts": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "parallel": {
+          "$ref": "#/$defs/ParallelMarker"
+        },
+        "depends_on": {
+          "$ref": "#/$defs/TaskReferenceList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "requirement_ids",
+        "boundaries",
+        "parallel"
+      ]
+    },
+    "TaskKind": {
+      "type": "string",
+      "enum": [
+        "task"
+      ]
+    },
+    "NonEmptyStringList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "UniqueNonEmptyStringList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "ParallelMarker": {
+      "type": "boolean",
+      "const": true
+    },
+    "TaskReferenceList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TaskReference"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "SequentialTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/TaskReference"
+        },
+        "kind": {
+          "$ref": "#/$defs/TaskKind"
+        },
+        "title": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "details": {
+          "$ref": "#/$defs/NonEmptyStringList"
+        },
+        "completion_criteria": {
+          "$ref": "#/$defs/NonEmptyStringList"
+        },
+        "requirement_ids": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "boundaries": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "contracts": {
+          "$ref": "#/$defs/UniqueNonEmptyStringList"
+        },
+        "depends_on": {
+          "$ref": "#/$defs/TaskReferenceList"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "requirement_ids"
+      ]
+    },
+    "TaskExecution": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "$ref": "#/$defs/TaskExecutionStates"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "tasks"
+      ],
+      "minProperties": 1
+    },
+    "TaskExecutionStates": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[1-9][0-9]*(?:\\.[1-9][0-9]*)?$": {
+          "$ref": "#/$defs/TaskExecutionState"
+        }
+      },
+      "minProperties": 1
+    },
+    "TaskExecutionState": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CompletedTaskState"
+        },
+        {
+          "$ref": "#/$defs/BlockedTaskState"
+        }
+      ]
+    },
+    "CompletedTaskState": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/CompletedStatus"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ]
+    },
+    "CompletedStatus": {
+      "type": "string",
+      "enum": [
+        "completed"
+      ]
+    },
+    "BlockedTaskState": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/BlockedStatus"
+        },
+        "blocked_reason": {
+          "$ref": "#/$defs/NonEmptyString"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "blocked_reason"
+      ]
+    },
+    "BlockedStatus": {
+      "type": "string",
+      "enum": [
+        "blocked"
+      ]
+    }
+  }
+}

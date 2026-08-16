@@ -1,0 +1,11 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Blocked task
+      requirement_ids: ["1.1"]
+execution:
+  tasks:
+    "1":
+      status: blocked

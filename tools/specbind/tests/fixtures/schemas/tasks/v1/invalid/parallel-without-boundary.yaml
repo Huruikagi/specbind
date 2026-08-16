@@ -1,0 +1,8 @@
+schema_version: 1
+plan:
+  items:
+    - id: "1"
+      kind: task
+      title: Unscoped parallel task
+      requirement_ids: ["1.1"]
+      parallel: true
