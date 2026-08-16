@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Implementation status: the Rust acceptance operation validates strict version-1 candidate JSON, non-empty assessment Markdown, canonical optional deep selectors, the complete Contract graph, and the exact current input revision map. Direct-only Roadmaps are rejected. It then verifies the full baseline commit and ancestry, matching participating-Spec `tasks` state, fresh Design gates, and absence of `tasks.yaml`; re-resolves all inputs; owns the RFC 3339 timestamp; and atomically replaces the four-field accepted artifact. CLI command rendering and later freshness consumption remain subsequent increments.
+Implementation status: the Rust acceptance operation validates strict version-1 candidate JSON, non-empty assessment Markdown, canonical optional deep selectors, the complete Contract graph, and the exact current input revision map. Direct-only Roadmaps are rejected. It then verifies the full baseline commit and ancestry, matching participating-Spec `tasks` state, fresh Design gates, and absence of `tasks.yaml`; re-resolves all inputs; owns the RFC 3339 timestamp; and atomically replaces the four-field accepted artifact. The read model strictly validates the accepted profile and Markdown body, reconstructs deep selectors, re-resolves current inputs, rechecks the Git baseline, and reports `not required`, `missing`, `fresh`, `stale`, or `invalid`. CLI command rendering and enforcement at Tasks approval, completion, and release preflight remain subsequent increments.
 
 ## Context
 

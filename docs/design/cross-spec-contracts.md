@@ -4,7 +4,7 @@ This document adapts [pc-build-planner Issue #48](https://github.com/Huruikagi/p
 
 Status: Draft
 
-Implementation status: the Rust read model now parses every canonical Contract, enumerates every immediate persistent Spec, resolves valid Consumes edges, rejects unavailable or dangling targets, and returns structured cross-Spec File Ownership duplicate and overlap candidates plus representative dependency-cycle paths. Overlap and cycle findings remain warnings for agent judgment. Baseline diffs, review-input fingerprinting, and accepted review persistence remain later increments.
+Implementation status: the Rust read model parses every canonical Contract, resolves the complete persistent dependency graph and its mechanical errors, and returns structured File Ownership overlap and dependency-cycle warnings for agent judgment. The review operation fingerprints authoritative Contract-first inputs, guards and persists acceptance, then strictly reads the four-field artifact and reports `not required`, `missing`, `fresh`, `stale`, or `invalid` from the current Roadmap, Git baseline, required Contract set, and persisted deep selectors. Baseline diff presentation and CLI rendering remain later increments.
 
 ## Purpose
 

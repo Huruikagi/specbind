@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Implementation status: the Rust Cross-spec review acceptance operation now creates `state/` only as a regular directory, rejects symlink or non-file targets, renders the four-field accepted OKF profile, flushes a temporary file in the target directory, and atomically replaces `state/cross-spec-review.md`. Replacement retains no failed attempt state or backup file; Git remains recovery history.
+Implementation status: the Rust Cross-spec review acceptance operation creates `state/` only as a regular directory, rejects symlink or non-file targets, renders the four-field accepted OKF profile, flushes a temporary file in the target directory, and atomically replaces `state/cross-spec-review.md`. Its read model strictly validates the same profile and body and distinguishes Direct-only absence, Spec-backed absence, freshness, staleness, and invalid persisted state. Replacement retains no failed attempt state or backup file; Git remains recovery history.
 
 Decision 0078 simplifies the stored review to input revisions plus a free-form accepted assessment and defines absence for Direct-only milestones.
 

@@ -2,7 +2,10 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-use specbind::{cross_spec_review, fingerprint::Fingerprint};
+use specbind::{
+    cross_spec_review::{self, ReviewFreshnessStatus},
+    fingerprint::Fingerprint,
+};
 use tempfile::TempDir;
 
 const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
@@ -256,4 +259,128 @@ fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
             .iter()
             .any(|issue| issue.code == "CROSS_SPEC_REVIEW_DESIGN_NOT_FRESH")
     );
+}
+
+#[test]
+fn reports_fresh_and_then_stale_authoritative_inputs() {
+    let root = acceptance_fixture();
+    let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;
+    cross_spec_review::accept(root.path(), root.path(), candidate).expect("accepted review");
+
+    let fresh = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(fresh.status, ReviewFreshnessStatus::Fresh);
+    assert!(fresh.issues.is_empty());
+    assert!(fresh.accepted.is_some());
+    assert!(fresh.current_input_revisions.is_some());
+
+    write(
+        root.path(),
+        "specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n",
+    );
+    let stale = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(stale.status, ReviewFreshnessStatus::Stale);
+    assert!(
+        stale
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_INPUTS_STALE"),
+        "{:?}",
+        stale.issues
+    );
+}
+
+#[test]
+fn reconstructs_and_checks_persisted_deep_inputs() {
+    let root = acceptance_fixture();
+    let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed deeply.","deepInputs":["specs/checkout#requirements","specs/checkout#design/main"]}"#;
+    cross_spec_review::accept(root.path(), root.path(), candidate).expect("accepted deep review");
+
+    let accepted = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(accepted.status, ReviewFreshnessStatus::Fresh);
+    write(
+        root.path(),
+        "specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Changed Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n",
+    );
+
+    let stale = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(stale.status, ReviewFreshnessStatus::Stale);
+    assert!(
+        stale
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_INPUTS_STALE")
+    );
+}
+
+#[test]
+fn distinguishes_not_required_missing_and_unexpected_review() {
+    let root = fixture();
+    let missing = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(missing.status, ReviewFreshnessStatus::Missing);
+
+    write(
+        root.path(),
+        "steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
+        ),
+    );
+    let not_required = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(not_required.status, ReviewFreshnessStatus::NotRequired);
+
+    write(
+        root.path(),
+        "state/cross-spec-review.md",
+        "leftover review\n",
+    );
+    let unexpected = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(unexpected.status, ReviewFreshnessStatus::Invalid);
+    assert!(
+        unexpected
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY")
+    );
+}
+
+#[test]
+fn reports_malformed_accepted_review_as_invalid() {
+    let root = fixture();
+    write(
+        root.path(),
+        "state/cross-spec-review.md",
+        &format!(
+            "---\ntype: Wrong Type\nmilestone_id: {MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\nunknown: true\n---\n"
+        ),
+    );
+
+    let invalid = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(invalid.status, ReviewFreshnessStatus::Invalid);
+    assert!(
+        invalid
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID")
+    );
+
+    write(
+        root.path(),
+        "state/cross-spec-review.md",
+        &format!(
+            "---\ntype: Wrong Type\nmilestone_id: {MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\n---\n"
+        ),
+    );
+    let invalid_values = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    let codes = invalid_values
+        .issues
+        .iter()
+        .map(|issue| issue.code)
+        .collect::<Vec<_>>();
+    assert_eq!(invalid_values.status, ReviewFreshnessStatus::Invalid);
+    assert!(codes.contains(&"CROSS_SPEC_REVIEW_TYPE_INVALID"));
+    assert!(codes.contains(&"CROSS_SPEC_REVIEW_PASSED_AT_INVALID"));
+    assert!(codes.contains(&"CROSS_SPEC_REVIEW_FINGERPRINT_INVALID"));
+    assert!(codes.contains(&"CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY"));
 }

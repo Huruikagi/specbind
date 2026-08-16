@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use tempfile::NamedTempFile;
 use time::OffsetDateTime;
 use time::format_description::well_known::Rfc3339;
+use uuid::Uuid;
 
 use crate::artifacts::{Artifact, ArtifactInventory, ArtifactKind, resolve_gate_inputs};
 use crate::contract_graph::{self, ContractGraphResolution, GraphIssueSeverity};
@@ -45,6 +46,41 @@ pub struct AcceptedReview {
     pub milestone_id: String,
     pub passed_at: String,
     pub input_revisions: BTreeMap<String, Fingerprint>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReviewFreshnessStatus {
+    NotRequired,
+    Missing,
+    Fresh,
+    Stale,
+    Invalid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AcceptedReviewRecord {
+    pub milestone_id: String,
+    pub passed_at: String,
+    pub input_revisions: BTreeMap<String, String>,
+    pub assessment: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReviewFreshnessReport {
+    pub status: ReviewFreshnessStatus,
+    pub accepted: Option<AcceptedReviewRecord>,
+    pub current_input_revisions: Option<BTreeMap<String, Fingerprint>>,
+    pub issues: Vec<ReviewIssue>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StoredReviewFrontmatter {
+    #[serde(rename = "type")]
+    artifact_type: String,
+    milestone_id: String,
+    passed_at: String,
+    input_revisions: BTreeMap<String, String>,
 }
 
 #[derive(Serialize)]
@@ -106,6 +142,13 @@ pub fn resolve_inputs(
     candidate_json: &str,
 ) -> Result<ReviewInputResolution, ReviewIssues> {
     let candidate = parse_candidate(candidate_json)?;
+    resolve_candidate_inputs(specbind_root, candidate)
+}
+
+fn resolve_candidate_inputs(
+    specbind_root: &Path,
+    candidate: ReviewCandidate,
+) -> Result<ReviewInputResolution, ReviewIssues> {
     let mut issues = Vec::new();
     let roadmap_path = specbind_root.join("steering/roadmap.md");
     let roadmap_bytes = read_regular(&roadmap_path, ROADMAP_KEY, &mut issues);
@@ -249,6 +292,328 @@ pub fn accept(
         milestone_id: current.roadmap.milestone_id,
         passed_at,
         input_revisions: current.input_revisions,
+    })
+}
+
+/// Reads the accepted review, reconstructs its declared deep inputs, and
+/// compares the persisted revisions with the current authoritative inputs.
+#[must_use]
+pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFreshnessReport {
+    let roadmap = match read_current_roadmap(specbind_root) {
+        Ok(roadmap) => roadmap,
+        Err(error) => {
+            return freshness_report(ReviewFreshnessStatus::Invalid, None, None, error.issues);
+        }
+    };
+    let relative = "state/cross-spec-review.md";
+    let accepted = match read_accepted_review(specbind_root, &roadmap, relative) {
+        Ok(accepted) => accepted,
+        Err(report) => return *report,
+    };
+
+    let deep_inputs = accepted
+        .input_revisions
+        .keys()
+        .filter(|key| parse_deep_selector(key).is_some())
+        .cloned()
+        .collect();
+    let candidate = ReviewCandidate {
+        schema_version: 1,
+        assessment: accepted.assessment.clone(),
+        deep_inputs,
+    };
+    let current = match resolve_candidate_inputs(specbind_root, candidate) {
+        Ok(current) => current,
+        Err(error) => {
+            return freshness_report(
+                ReviewFreshnessStatus::Stale,
+                Some(accepted),
+                None,
+                error.issues,
+            );
+        }
+    };
+    let current_revisions = current.input_revisions;
+    let mut issues = Vec::new();
+    validate_baseline(project_root, &roadmap.baseline_revision, &mut issues);
+    if accepted.milestone_id != roadmap.milestone_id {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_MILESTONE_STALE",
+            Some(relative.to_owned()),
+            "accepted review milestone_id does not match the current Roadmap",
+        ));
+    }
+    if accepted.input_revisions.len() != current_revisions.len()
+        || accepted.input_revisions.iter().any(|(key, persisted)| {
+            current_revisions
+                .get(key)
+                .is_none_or(|current| persisted != &current.to_string())
+        })
+    {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_INPUTS_STALE",
+            Some(relative.to_owned()),
+            "accepted input_revisions do not match the current authoritative review inputs",
+        ));
+    }
+    issues.sort();
+    issues.dedup();
+    let status = if issues.is_empty() {
+        ReviewFreshnessStatus::Fresh
+    } else {
+        ReviewFreshnessStatus::Stale
+    };
+    freshness_report(status, Some(accepted), Some(current_revisions), issues)
+}
+
+fn read_accepted_review(
+    specbind_root: &Path,
+    roadmap: &RoadmapDocument,
+    relative: &str,
+) -> Result<AcceptedReviewRecord, Box<ReviewFreshnessReport>> {
+    let path = specbind_root.join(relative);
+    let metadata = match fs::symlink_metadata(&path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            let status = if roadmap.spec_ids().is_empty() {
+                ReviewFreshnessStatus::NotRequired
+            } else {
+                ReviewFreshnessStatus::Missing
+            };
+            let issues = (status == ReviewFreshnessStatus::Missing)
+                .then(|| {
+                    review_issue(
+                        "CROSS_SPEC_REVIEW_MISSING",
+                        Some(relative.to_owned()),
+                        "Spec-backed milestone requires an accepted cross-spec review",
+                    )
+                })
+                .into_iter()
+                .collect();
+            return Err(Box::new(freshness_report(status, None, None, issues)));
+        }
+        Err(error) => {
+            return Err(Box::new(invalid_read_report(relative, error.to_string())));
+        }
+    };
+    if roadmap.spec_ids().is_empty() {
+        return Err(Box::new(freshness_report(
+            ReviewFreshnessStatus::Invalid,
+            None,
+            None,
+            vec![review_issue(
+                "CROSS_SPEC_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY",
+                Some(relative.to_owned()),
+                "Direct-only milestone must not retain an accepted cross-spec review",
+            )],
+        )));
+    }
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err(Box::new(freshness_report(
+            ReviewFreshnessStatus::Invalid,
+            None,
+            None,
+            vec![review_issue(
+                "CROSS_SPEC_REVIEW_TARGET_INVALID",
+                Some(relative.to_owned()),
+                "accepted review must be a regular non-symlink file",
+            )],
+        )));
+    }
+    let content = fs::read_to_string(path)
+        .map_err(|error| Box::new(invalid_read_report(relative, error.to_string())))?;
+    parse_accepted_review(&content, relative).map_err(|error| {
+        Box::new(freshness_report(
+            ReviewFreshnessStatus::Invalid,
+            None,
+            None,
+            error.issues,
+        ))
+    })
+}
+
+fn invalid_read_report(relative: &str, message: String) -> ReviewFreshnessReport {
+    freshness_report(
+        ReviewFreshnessStatus::Invalid,
+        None,
+        None,
+        vec![review_issue(
+            "CROSS_SPEC_REVIEW_READ_FAILED",
+            Some(relative.to_owned()),
+            message,
+        )],
+    )
+}
+
+fn freshness_report(
+    status: ReviewFreshnessStatus,
+    accepted: Option<AcceptedReviewRecord>,
+    current_input_revisions: Option<BTreeMap<String, Fingerprint>>,
+    issues: Vec<ReviewIssue>,
+) -> ReviewFreshnessReport {
+    ReviewFreshnessReport {
+        status,
+        accepted,
+        current_input_revisions,
+        issues,
+    }
+}
+
+fn read_current_roadmap(specbind_root: &Path) -> Result<RoadmapDocument, ReviewIssues> {
+    let mut issues = Vec::new();
+    let bytes = read_regular(
+        &specbind_root.join("steering/roadmap.md"),
+        ROADMAP_KEY,
+        &mut issues,
+    );
+    let Some(bytes) = bytes else {
+        return Err(ReviewIssues { issues });
+    };
+    let content = std::str::from_utf8(&bytes).map_err(|error| {
+        one_review_issue(
+            "CROSS_SPEC_REVIEW_ROADMAP_NOT_UTF8",
+            Some(ROADMAP_KEY.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    roadmap::parse(content).map_err(|error| ReviewIssues {
+        issues: error
+            .issues
+            .into_iter()
+            .map(|value| review_issue(value.code, Some(ROADMAP_KEY.to_owned()), value.message))
+            .collect(),
+    })
+}
+
+fn parse_accepted_review(
+    content: &str,
+    source: &str,
+) -> Result<AcceptedReviewRecord, ReviewIssues> {
+    let (frontmatter, body) = split_review_frontmatter(content).map_err(|message| {
+        one_review_issue(
+            "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID",
+            Some(source.to_owned()),
+            message,
+        )
+    })?;
+    let raw = serde_saphyr::from_str::<StoredReviewFrontmatter>(frontmatter).map_err(|error| {
+        one_review_issue(
+            "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID",
+            Some(source.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    let mut issues = Vec::new();
+    if raw.artifact_type != "SpecBind Cross-Spec Review" {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_TYPE_INVALID",
+            Some(source.to_owned()),
+            "type must be SpecBind Cross-Spec Review",
+        ));
+    }
+    if Uuid::parse_str(&raw.milestone_id).map_or(true, |id| {
+        id.get_version_num() != 7 || id.hyphenated().to_string() != raw.milestone_id
+    }) {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_MILESTONE_ID_INVALID",
+            Some(source.to_owned()),
+            "milestone_id must be a canonical UUID v7",
+        ));
+    }
+    if OffsetDateTime::parse(&raw.passed_at, &Rfc3339).is_err() {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_PASSED_AT_INVALID",
+            Some(source.to_owned()),
+            "passed_at must be a timezone-qualified RFC 3339 timestamp",
+        ));
+    }
+    if body.trim().is_empty() {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY",
+            Some(source.to_owned()),
+            "accepted review must contain a non-empty Markdown body",
+        ));
+    }
+    if !raw.input_revisions.contains_key(ROADMAP_KEY) {
+        issues.push(review_issue(
+            "CROSS_SPEC_REVIEW_ROADMAP_INPUT_MISSING",
+            Some(source.to_owned()),
+            "input_revisions must include the Roadmap cross-spec scope",
+        ));
+    }
+    for (key, value) in &raw.input_revisions {
+        if key != ROADMAP_KEY
+            && parse_contract_selector(key).is_none()
+            && parse_deep_selector(key).is_none()
+        {
+            issues.push(review_issue(
+                "CROSS_SPEC_REVIEW_INPUT_KEY_INVALID",
+                Some(key.clone()),
+                "input revision key is not a canonical cross-spec review selector",
+            ));
+        }
+        if !valid_fingerprint(value) {
+            issues.push(review_issue(
+                "CROSS_SPEC_REVIEW_FINGERPRINT_INVALID",
+                Some(key.clone()),
+                "input revision must use sha256: followed by 64 lowercase hexadecimal characters",
+            ));
+        }
+    }
+    if issues.is_empty() {
+        Ok(AcceptedReviewRecord {
+            milestone_id: raw.milestone_id,
+            passed_at: raw.passed_at,
+            input_revisions: raw.input_revisions,
+            assessment: body.to_owned(),
+        })
+    } else {
+        issues.sort();
+        issues.dedup();
+        Err(ReviewIssues { issues })
+    }
+}
+
+fn split_review_frontmatter(content: &str) -> Result<(&str, &str), String> {
+    let mut offset = 0;
+    let mut lines = content.split_inclusive('\n');
+    let first = lines
+        .next()
+        .ok_or_else(|| "accepted review is empty".to_owned())?;
+    if line_content(first) != "---" {
+        return Err("frontmatter must begin with --- on the first line".to_owned());
+    }
+    offset += first.len();
+    let frontmatter_start = offset;
+    for line in lines {
+        if line_content(line) == "---" {
+            return Ok((
+                &content[frontmatter_start..offset],
+                &content[offset + line.len()..],
+            ));
+        }
+        offset += line.len();
+    }
+    Err("frontmatter closing --- delimiter is missing".to_owned())
+}
+
+fn line_content(line: &str) -> &str {
+    let line = line.strip_suffix('\n').unwrap_or(line);
+    line.strip_suffix('\r').unwrap_or(line)
+}
+
+fn parse_contract_selector(selector: &str) -> Option<&str> {
+    let rest = selector.strip_prefix("specs/")?;
+    let spec = rest.strip_suffix("#contract")?;
+    valid_id(spec).then_some(spec)
+}
+
+fn valid_fingerprint(value: &str) -> bool {
+    value.strip_prefix("sha256:").is_some_and(|digest| {
+        digest.len() == 64
+            && digest
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
     })
 }
 
