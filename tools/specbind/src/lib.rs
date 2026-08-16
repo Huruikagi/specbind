@@ -5,4 +5,5 @@ pub mod fingerprint;
 pub mod freshness;
 pub mod requirements;
 pub mod schema;
+pub mod traceability;
 pub mod yaml;

@@ -18,9 +18,10 @@
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
-- `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, and gate-input resolution
+- `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
 - `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
+- `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence and active Design coverage
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas

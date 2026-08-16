@@ -11,11 +11,12 @@ use walkdir::WalkDir;
 
 use crate::{
     design,
-    domain::{self, tasks::Tasks},
+    domain::{self, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
     requirements,
     schema::runtime,
+    traceability::{self, DesignRequirementSet, TraceabilityReport},
 };
 
 const TYPE_BRIEF: &str = "SpecBind Brief";
@@ -61,6 +62,12 @@ pub struct ArtifactInventory {
 pub struct GateInputResolution {
     pub inventory: ArtifactInventory,
     pub inputs: CurrentGateInputs,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TraceabilityResolution {
+    pub inventory: ArtifactInventory,
+    pub report: Option<TraceabilityReport>,
 }
 
 /// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
@@ -164,6 +171,279 @@ pub fn resolve_gate_inputs(specbind_root: &Path, canonical_spec: &str) -> GateIn
     inventory.issues.dedup();
 
     GateInputResolution { inventory, inputs }
+}
+
+/// Resolves and checks Requirements, Design mappings, and the current active scope.
+#[must_use]
+pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> TraceabilityResolution {
+    let mut inventory = discover_spec(specbind_root, canonical_spec);
+    let artifacts = inventory.artifacts.clone();
+    let mut requirement_ids = None;
+    let mut designs = Vec::new();
+    let mut design_paths = BTreeMap::new();
+
+    for artifact in &artifacts {
+        match artifact.kind {
+            ArtifactKind::Requirements => {
+                requirement_ids =
+                    resolve_requirements_projection(specbind_root, artifact, &mut inventory.issues);
+            }
+            ArtifactKind::Design => {
+                if let Some(ids) =
+                    resolve_design_projection(specbind_root, artifact, &mut inventory.issues)
+                {
+                    design_paths.insert(artifact.selector.clone(), artifact.path.clone());
+                    designs.push(DesignRequirementSet {
+                        selector: artifact.selector.clone(),
+                        requirement_ids: ids,
+                    });
+                }
+            }
+            ArtifactKind::Brief
+            | ArtifactKind::Research
+            | ArtifactKind::Contract
+            | ArtifactKind::ImplementationNotes => {}
+        }
+    }
+
+    let active =
+        resolve_active_requirement_ids(specbind_root, canonical_spec, &mut inventory.issues);
+    let requirements_unavailable = requirement_ids.is_none();
+    let report = requirement_ids
+        .zip(active.ok())
+        .map(|(requirements, active)| {
+            let report = traceability::evaluate(&requirements, designs, active);
+            let spec_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
+            for traceability_issue in &report.issues {
+                let path = traceability_issue
+                    .selector
+                    .as_ref()
+                    .and_then(|selector| design_paths.get(selector))
+                    .cloned()
+                    .or_else(|| Some(spec_path.clone()));
+                inventory.issues.push(issue(
+                    traceability_issue.code,
+                    path,
+                    traceability_issue.message.clone(),
+                ));
+            }
+            report
+        });
+    if requirements_unavailable {
+        inventory.issues.push(issue(
+            "TRACEABILITY_REQUIREMENTS_UNAVAILABLE",
+            None,
+            "traceability requires one valid discovered Requirements artifact",
+        ));
+    }
+    inventory.issues.sort();
+    inventory.issues.dedup();
+    TraceabilityResolution { inventory, report }
+}
+
+fn resolve_requirements_projection(
+    specbind_root: &Path,
+    artifact: &Artifact,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<Vec<String>> {
+    let (mapping, body) = read_traceability_concept(specbind_root, artifact, issues)?;
+    let labels = mapping.get("heading_labels")?.as_object()?;
+    let expected = BTreeSet::from(["acceptance_criteria", "requirement"]);
+    if mapping.contains_key("artifact_id")
+        || labels.keys().map(String::as_str).collect::<BTreeSet<_>>() != expected
+    {
+        return None;
+    }
+    let requirement_label = labels.get("requirement")?.as_str()?;
+    let acceptance_label = labels.get("acceptance_criteria")?.as_str()?;
+    if !valid_label(requirement_label) || !valid_label(acceptance_label) {
+        return None;
+    }
+    match requirements::parse(&body, requirement_label, acceptance_label) {
+        Ok(document) => Some(
+            document
+                .requirement_ids()
+                .into_iter()
+                .map(str::to_owned)
+                .collect(),
+        ),
+        Err(_) => None,
+    }
+}
+
+fn resolve_design_projection(
+    specbind_root: &Path,
+    artifact: &Artifact,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<Vec<String>> {
+    let (mapping, _) = read_traceability_concept(specbind_root, artifact, issues)?;
+    let ids = mapping
+        .get("requirement_ids")?
+        .as_array()?
+        .iter()
+        .map(|id| id.as_str().map(str::to_owned))
+        .collect::<Option<Vec<_>>>()?;
+    let unique = ids.iter().collect::<BTreeSet<_>>();
+    if ids.is_empty()
+        || unique.len() != ids.len()
+        || ids
+            .iter()
+            .any(|id| domain::parse_requirement_id(id).is_none())
+    {
+        return None;
+    }
+    Some(ids)
+}
+
+fn read_traceability_concept(
+    specbind_root: &Path,
+    artifact: &Artifact,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<(Map<String, Value>, String)> {
+    let native_path = specbind_root.join(artifact.path.as_std_path());
+    let metadata = match fs::symlink_metadata(&native_path) {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+                Some(artifact.path.clone()),
+                format!("cannot reinspect artifact for traceability: {error}"),
+            ));
+            return None;
+        }
+    };
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        issues.push(issue(
+            "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+            Some(artifact.path.clone()),
+            "artifact is no longer a regular non-symlink file",
+        ));
+        return None;
+    }
+    let content = match fs::read_to_string(&native_path) {
+        Ok(content) => content,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+                Some(artifact.path.clone()),
+                format!("cannot reread artifact for traceability: {error}"),
+            ));
+            return None;
+        }
+    };
+    let (frontmatter, body) = match split_frontmatter(&content) {
+        Ok(parts) => parts,
+        Err(message) => {
+            issues.push(issue(
+                "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+                Some(artifact.path.clone()),
+                message,
+            ));
+            return None;
+        }
+    };
+    let value = match serde_saphyr::from_str::<Value>(frontmatter) {
+        Ok(value) => value,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+                Some(artifact.path.clone()),
+                format!("artifact Front Matter changed during traceability: {error}"),
+            ));
+            return None;
+        }
+    };
+    let Some(mapping) = value.as_object() else {
+        issues.push(issue(
+            "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+            Some(artifact.path.clone()),
+            "artifact Front Matter is no longer a mapping",
+        ));
+        return None;
+    };
+    let current_type = mapping.get("type").and_then(Value::as_str);
+    let current_id = collection_id(artifact.kind, mapping);
+    if current_type != Some(artifact.artifact_type.as_str())
+        || current_id != artifact.artifact_id.as_deref()
+    {
+        issues.push(issue(
+            "ARTIFACT_CHANGED_DURING_TRACEABILITY",
+            Some(artifact.path.clone()),
+            "artifact logical identity changed during traceability resolution",
+        ));
+        return None;
+    }
+    Some((mapping.clone(), body.to_owned()))
+}
+
+fn resolve_active_requirement_ids(
+    specbind_root: &Path,
+    canonical_spec: &str,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Result<Option<Vec<String>>, ()> {
+    let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
+    let native_path = specbind_root.join(relative.as_std_path());
+    let metadata = match fs::symlink_metadata(&native_path) {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            issues.push(issue(
+                "TRACEABILITY_SPEC_UNAVAILABLE",
+                Some(relative),
+                format!("cannot inspect spec.yaml: {error}"),
+            ));
+            return Err(());
+        }
+    };
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        issues.push(issue(
+            "TRACEABILITY_SPEC_UNAVAILABLE",
+            Some(relative),
+            "spec.yaml must be a regular non-symlink file",
+        ));
+        return Err(());
+    }
+    let input = match fs::read_to_string(&native_path) {
+        Ok(input) => input,
+        Err(error) => {
+            issues.push(issue(
+                "TRACEABILITY_SPEC_UNAVAILABLE",
+                Some(relative),
+                format!("cannot read spec.yaml as UTF-8: {error}"),
+            ));
+            return Err(());
+        }
+    };
+    let wire = match runtime::load_spec(&input) {
+        Ok(wire) => wire,
+        Err(error) => {
+            issues.push(issue(
+                "TRACEABILITY_SPEC_STRUCTURAL_INVALID",
+                Some(relative),
+                error.to_string(),
+            ));
+            return Err(());
+        }
+    };
+    let spec = match Spec::try_from(wire) {
+        Ok(spec) => spec,
+        Err(error) => {
+            for semantic in error.issues {
+                issues.push(issue(
+                    semantic.code,
+                    Some(relative.clone()),
+                    semantic.message,
+                ));
+            }
+            return Err(());
+        }
+    };
+    Ok(spec
+        .as_wire()
+        .active_change
+        .0
+        .as_ref()
+        .and_then(|active| active.requirement_ids.0.clone())
+        .map(|ids| ids.0))
 }
 
 fn fingerprint_artifact(
