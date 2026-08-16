@@ -107,6 +107,8 @@ INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.yaml:18
 
 Stable result codes and exit behavior are part of the v1 contract. A JSON response schema is explicitly post-v1 under Decision 0074.
 
+The Rust read model now implements the complete Requirements-to-Design-to-Tasks existence and active-coverage calculation behind this proposed command. It treats absent `tasks.yaml` as normal before the `tasks` state, requires it from `tasks` onward, and reports unknown Task mappings whenever a valid plan exists. The command vocabulary, concise text rendering, and exit-code exposure remain unimplemented.
+
 ## Lifecycle automation candidates
 
 The same boundary can prevent `specbind-discovery` from becoming a general-purpose state manager. Candidate CLI command families include:

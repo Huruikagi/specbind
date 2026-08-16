@@ -3,7 +3,7 @@ use std::path::Path;
 
 use specbind::{
     artifacts::resolve_traceability,
-    traceability::{self, DesignRequirementSet},
+    traceability::{self, DesignRequirementSet, TaskRequirementSet},
 };
 use tempfile::TempDir;
 
@@ -14,6 +14,13 @@ fn strings(values: &[&str]) -> Vec<String> {
 fn design(selector: &str, values: &[&str]) -> DesignRequirementSet {
     DesignRequirementSet {
         selector: selector.to_owned(),
+        requirement_ids: strings(values),
+    }
+}
+
+fn task(task_id: &str, values: &[&str]) -> TaskRequirementSet {
+    TaskRequirementSet {
+        task_id: task_id.to_owned(),
         requirement_ids: strings(values),
     }
 }
@@ -33,6 +40,8 @@ fn accepts_inactive_design_mappings_and_complete_active_coverage() {
             design("design/legacy", &["3.1"]),
         ],
         Some(strings(&["1.1", "2.1"])),
+        Some(vec![task("1", &["1.1", "2.1"])]),
+        true,
     );
 
     assert!(report.issues.is_empty());
@@ -48,11 +57,13 @@ fn distinguishes_unknown_ids_from_missing_active_coverage() {
         &strings(&["1.1", "2.1"]),
         vec![design("design/main", &["1.1", "9.1"])],
         Some(strings(&["1.1", "2.1", "8.1"])),
+        None,
+        false,
     );
     let codes = report
         .issues
         .iter()
-        .map(|issue| (issue.code, issue.requirement_id.as_str()))
+        .filter_map(|issue| Some((issue.code, issue.requirement_id.as_deref()?)))
         .collect::<Vec<_>>();
 
     assert!(codes.contains(&("TRACEABILITY_DESIGN_REQUIREMENT_UNKNOWN", "9.1")));
@@ -63,10 +74,52 @@ fn distinguishes_unknown_ids_from_missing_active_coverage() {
 
 #[test]
 fn skips_active_coverage_when_no_active_set_is_established() {
-    let report = traceability::evaluate(&strings(&["1.1"]), Vec::new(), None);
+    let report = traceability::evaluate(&strings(&["1.1"]), Vec::new(), None, None, false);
 
     assert!(report.issues.is_empty());
     assert!(report.active_requirement_ids.is_none());
+}
+
+#[test]
+fn validates_task_references_and_required_active_coverage() {
+    let report = traceability::evaluate(
+        &strings(&["1.1", "2.1", "3.1"]),
+        vec![design("design/main", &["1.1", "2.1"])],
+        Some(strings(&["1.1", "2.1"])),
+        Some(vec![task("1", &["1.1", "9.1"]), task("2", &["3.1"])]),
+        true,
+    );
+    let codes = report
+        .issues
+        .iter()
+        .filter_map(|issue| Some((issue.code, issue.requirement_id.as_deref()?)))
+        .collect::<Vec<_>>();
+
+    assert!(codes.contains(&("TRACEABILITY_TASK_REQUIREMENT_UNKNOWN", "9.1")));
+    assert!(codes.contains(&("TRACEABILITY_TASK_COVERAGE_MISSING", "2.1")));
+    assert!(!codes.contains(&("TRACEABILITY_TASK_COVERAGE_MISSING", "3.1")));
+    assert_eq!(report.task_requirement_ids, strings(&["1.1", "3.1", "9.1"]));
+}
+
+#[test]
+fn requires_tasks_only_after_the_workflow_reaches_tasks() {
+    let not_required = traceability::evaluate(
+        &strings(&["1.1"]),
+        vec![design("design/main", &["1.1"])],
+        Some(strings(&["1.1"])),
+        None,
+        false,
+    );
+    assert!(not_required.issues.is_empty());
+
+    let required = traceability::evaluate(
+        &strings(&["1.1"]),
+        vec![design("design/main", &["1.1"])],
+        Some(strings(&["1.1"])),
+        None,
+        true,
+    );
+    assert_eq!(required.issues[0].code, "TRACEABILITY_TASKS_UNAVAILABLE");
 }
 
 #[test]
@@ -95,7 +148,12 @@ fn resolves_current_artifacts_and_active_scope_with_owned_paths() {
     write(
         root.path(),
         "specs/example/spec.yaml",
-        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: design\n  requirement_ids: ['1.1', '2.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1', '2.1']\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: tasks\n  requirement_ids: ['1.1', '2.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1', '2.1']\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n        design/main: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n",
+    );
+    write(
+        root.path(),
+        "specs/example/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Implement first\n      requirement_ids: ['1.1', '8.1']\n",
     );
 
     let resolution = resolve_traceability(root.path(), "example");
@@ -106,6 +164,8 @@ fn resolves_current_artifacts_and_active_scope_with_owned_paths() {
         report.active_requirement_ids,
         Some(strings(&["1.1", "2.1"]))
     );
+    assert!(report.tasks_required);
+    assert_eq!(report.task_requirement_ids, strings(&["1.1", "8.1"]));
     let unknown = resolution
         .inventory
         .issues
@@ -116,17 +176,30 @@ fn resolves_current_artifacts_and_active_scope_with_owned_paths() {
         unknown.path.as_ref().map(|path| path.as_str()),
         Some("specs/example/main.md")
     );
-    let missing = resolution
+    let design_missing = resolution
         .inventory
         .issues
         .iter()
         .find(|issue| issue.code == "TRACEABILITY_DESIGN_COVERAGE_MISSING")
         .expect("missing active Design coverage");
     assert_eq!(
-        missing.path.as_ref().map(|path| path.as_str()),
+        design_missing.path.as_ref().map(|path| path.as_str()),
         Some("specs/example/spec.yaml")
     );
-    assert!(missing.message.contains("2.1"));
+    assert!(design_missing.message.contains("2.1"));
+    let task_unknown = resolution
+        .inventory
+        .issues
+        .iter()
+        .find(|issue| issue.code == "TRACEABILITY_TASK_REQUIREMENT_UNKNOWN")
+        .expect("unknown Task reference");
+    assert_eq!(
+        task_unknown.path.as_ref().map(|path| path.as_str()),
+        Some("specs/example/tasks.yaml")
+    );
+    assert!(resolution.inventory.issues.iter().any(|issue| {
+        issue.code == "TRACEABILITY_TASK_COVERAGE_MISSING" && issue.message.contains("2.1")
+    }));
     assert!(resolution.inventory.issues.iter().any(|issue| {
         issue.code == "ARTIFACT_DESIGN_REQUIREMENT_IDS_INVALID"
             && issue.path.as_ref().map(|path| path.as_str())

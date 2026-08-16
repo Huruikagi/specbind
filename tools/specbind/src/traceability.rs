@@ -8,11 +8,17 @@ pub struct DesignRequirementSet {
     pub requirement_ids: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TaskRequirementSet {
+    pub task_id: String,
+    pub requirement_ids: Vec<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TraceabilityIssue {
     pub code: &'static str,
-    pub selector: Option<String>,
-    pub requirement_id: String,
+    pub source: Option<String>,
+    pub requirement_id: Option<String>,
     pub message: String,
 }
 
@@ -22,15 +28,20 @@ pub struct TraceabilityReport {
     pub active_requirement_ids: Option<Vec<String>>,
     pub design_requirement_ids: Vec<String>,
     pub designs: BTreeMap<String, Vec<String>>,
+    pub task_requirement_ids: Vec<String>,
+    pub tasks: Option<BTreeMap<String, Vec<String>>>,
+    pub tasks_required: bool,
     pub issues: Vec<TraceabilityIssue>,
 }
 
-/// Compares the complete Requirements catalog, per-Design mappings, and active scope.
+/// Compares the Requirements catalog, Design mappings, Tasks mappings, and active scope.
 #[must_use]
 pub fn evaluate(
     requirement_ids: &[String],
     designs: Vec<DesignRequirementSet>,
     active_requirement_ids: Option<Vec<String>>,
+    tasks: Option<Vec<TaskRequirementSet>>,
+    tasks_required: bool,
 ) -> TraceabilityReport {
     let requirements = requirement_ids.iter().cloned().collect::<BTreeSet<_>>();
     let mut design_map = BTreeMap::new();
@@ -42,8 +53,8 @@ pub fn evaluate(
         for id in ids.difference(&requirements) {
             issues.push(TraceabilityIssue {
                 code: "TRACEABILITY_DESIGN_REQUIREMENT_UNKNOWN",
-                selector: Some(design.selector.clone()),
-                requirement_id: id.clone(),
+                source: Some(design.selector.clone()),
+                requirement_id: Some(id.clone()),
                 message: format!(
                     "{} references Requirement ID {id}, which does not exist in Requirements",
                     design.selector
@@ -59,19 +70,45 @@ pub fn evaluate(
             if !requirements.contains(id) {
                 issues.push(TraceabilityIssue {
                     code: "TRACEABILITY_ACTIVE_REQUIREMENT_UNKNOWN",
-                    selector: None,
-                    requirement_id: id.clone(),
+                    source: None,
+                    requirement_id: Some(id.clone()),
                     message: format!("active Requirement ID {id} does not exist in Requirements"),
                 });
             } else if !design_union.contains(id) {
                 issues.push(TraceabilityIssue {
                     code: "TRACEABILITY_DESIGN_COVERAGE_MISSING",
-                    selector: None,
-                    requirement_id: id.clone(),
+                    source: None,
+                    requirement_id: Some(id.clone()),
                     message: format!(
                         "active Requirement ID {id} is not covered by any Design artifact"
                     ),
                 });
+            }
+        }
+    }
+
+    let (task_map, task_union) = evaluate_tasks(tasks, &requirements, &mut issues);
+    if tasks_required {
+        if task_map.is_none() {
+            issues.push(TraceabilityIssue {
+                code: "TRACEABILITY_TASKS_UNAVAILABLE",
+                source: None,
+                requirement_id: None,
+                message: "tasks.yaml is required for traceability in the current workflow state"
+                    .to_owned(),
+            });
+        } else if let Some(active) = &active_requirement_ids {
+            for id in active {
+                if requirements.contains(id) && !task_union.contains(id) {
+                    issues.push(TraceabilityIssue {
+                        code: "TRACEABILITY_TASK_COVERAGE_MISSING",
+                        source: None,
+                        requirement_id: Some(id.clone()),
+                        message: format!(
+                            "active Requirement ID {id} is not covered by any executable Task"
+                        ),
+                    });
+                }
             }
         }
     }
@@ -83,8 +120,40 @@ pub fn evaluate(
         active_requirement_ids,
         design_requirement_ids: numeric_ids(design_union),
         designs: design_map,
+        task_requirement_ids: numeric_ids(task_union),
+        tasks: task_map,
+        tasks_required,
         issues,
     }
+}
+
+fn evaluate_tasks(
+    tasks: Option<Vec<TaskRequirementSet>>,
+    requirements: &BTreeSet<String>,
+    issues: &mut Vec<TraceabilityIssue>,
+) -> (Option<BTreeMap<String, Vec<String>>>, BTreeSet<String>) {
+    let Some(tasks) = tasks else {
+        return (None, BTreeSet::new());
+    };
+    let mut task_map = BTreeMap::new();
+    let mut task_union = BTreeSet::new();
+    for task in tasks {
+        let ids = task.requirement_ids.into_iter().collect::<BTreeSet<_>>();
+        for id in ids.difference(requirements) {
+            issues.push(TraceabilityIssue {
+                code: "TRACEABILITY_TASK_REQUIREMENT_UNKNOWN",
+                source: Some(format!("tasks/{}", task.task_id)),
+                requirement_id: Some(id.clone()),
+                message: format!(
+                    "Task {} references Requirement ID {id}, which does not exist in Requirements",
+                    task.task_id
+                ),
+            });
+        }
+        task_union.extend(ids.iter().cloned());
+        task_map.insert(task.task_id, numeric_ids(ids));
+    }
+    (Some(task_map), task_union)
 }
 
 fn numeric_ids(ids: BTreeSet<String>) -> Vec<String> {

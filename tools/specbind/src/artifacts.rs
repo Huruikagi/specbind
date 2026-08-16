@@ -15,8 +15,12 @@ use crate::{
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
     requirements,
-    schema::runtime,
-    traceability::{self, DesignRequirementSet, TraceabilityReport},
+    schema::{
+        runtime,
+        spec::v1::WorkflowState,
+        tasks::v1::{ExecutableTask, PlanItem},
+    },
+    traceability::{self, DesignRequirementSet, TaskRequirementSet, TraceabilityReport},
 };
 
 const TYPE_BRIEF: &str = "SpecBind Brief";
@@ -68,6 +72,11 @@ pub struct GateInputResolution {
 pub struct TraceabilityResolution {
     pub inventory: ArtifactInventory,
     pub report: Option<TraceabilityReport>,
+}
+
+struct ActiveTraceabilityScope {
+    requirement_ids: Option<Vec<String>>,
+    tasks_required: bool,
 }
 
 /// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
@@ -207,19 +216,39 @@ pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> Trace
     }
 
     let active =
-        resolve_active_requirement_ids(specbind_root, canonical_spec, &mut inventory.issues);
+        resolve_active_traceability_scope(specbind_root, canonical_spec, &mut inventory.issues);
+    let tasks = load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues)
+        .ok()
+        .flatten()
+        .as_ref()
+        .map(task_requirement_sets);
     let requirements_unavailable = requirement_ids.is_none();
     let report = requirement_ids
         .zip(active.ok())
         .map(|(requirements, active)| {
-            let report = traceability::evaluate(&requirements, designs, active);
+            let report = traceability::evaluate(
+                &requirements,
+                designs,
+                active.requirement_ids,
+                tasks,
+                active.tasks_required,
+            );
             let spec_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
+            let tasks_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
             for traceability_issue in &report.issues {
                 let path = traceability_issue
-                    .selector
+                    .source
                     .as_ref()
-                    .and_then(|selector| design_paths.get(selector))
+                    .and_then(|source| design_paths.get(source))
                     .cloned()
+                    .or_else(|| {
+                        (traceability_issue.code.starts_with("TRACEABILITY_TASK")
+                            || traceability_issue
+                                .source
+                                .as_deref()
+                                .is_some_and(|source| source.starts_with("tasks/")))
+                        .then(|| tasks_path.clone())
+                    })
                     .or_else(|| Some(spec_path.clone()));
                 inventory.issues.push(issue(
                     traceability_issue.code,
@@ -376,11 +405,11 @@ fn read_traceability_concept(
     Some((mapping.clone(), body.to_owned()))
 }
 
-fn resolve_active_requirement_ids(
+fn resolve_active_traceability_scope(
     specbind_root: &Path,
     canonical_spec: &str,
     issues: &mut Vec<DiscoveryIssue>,
-) -> Result<Option<Vec<String>>, ()> {
+) -> Result<ActiveTraceabilityScope, ()> {
     let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
     let native_path = specbind_root.join(relative.as_std_path());
     let metadata = match fs::symlink_metadata(&native_path) {
@@ -437,13 +466,20 @@ fn resolve_active_requirement_ids(
             return Err(());
         }
     };
-    Ok(spec
-        .as_wire()
-        .active_change
-        .0
-        .as_ref()
+    let active = spec.as_wire().active_change.0.as_ref();
+    let requirement_ids = active
         .and_then(|active| active.requirement_ids.0.clone())
-        .map(|ids| ids.0))
+        .map(|ids| ids.0);
+    let tasks_required = active.is_some_and(|active| {
+        matches!(
+            active.state,
+            WorkflowState::Tasks | WorkflowState::Implementation | WorkflowState::ReleaseReady
+        )
+    });
+    Ok(ActiveTraceabilityScope {
+        requirement_ids,
+        tasks_required,
+    })
 }
 
 fn fingerprint_artifact(
@@ -489,18 +525,40 @@ fn resolve_task_plan(
     canonical_spec: &str,
     issues: &mut Vec<DiscoveryIssue>,
 ) -> Option<Fingerprint> {
+    let tasks = load_tasks_artifact(specbind_root, canonical_spec, issues)
+        .ok()
+        .flatten()?;
+    let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
+    match Fingerprint::task_plan(&tasks) {
+        Ok(fingerprint) => Some(fingerprint),
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_TASK_PLAN_FINGERPRINT_FAILED",
+                Some(relative),
+                format!("cannot canonicalize task plan: {error}"),
+            ));
+            None
+        }
+    }
+}
+
+fn load_tasks_artifact(
+    specbind_root: &Path,
+    canonical_spec: &str,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Result<Option<Tasks>, ()> {
     let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
     let native_path = specbind_root.join(relative.as_std_path());
     let metadata = match fs::symlink_metadata(&native_path) {
         Ok(metadata) => metadata,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return None,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
         Err(error) => {
             issues.push(issue(
                 "ARTIFACT_TASKS_READ_FAILED",
                 Some(relative),
                 format!("cannot inspect tasks.yaml: {error}"),
             ));
-            return None;
+            return Err(());
         }
     };
     if metadata.file_type().is_symlink() || !metadata.is_file() {
@@ -509,7 +567,7 @@ fn resolve_task_plan(
             Some(relative),
             "tasks.yaml must be a regular non-symlink file",
         ));
-        return None;
+        return Err(());
     }
     let input = match fs::read_to_string(&native_path) {
         Ok(input) => input,
@@ -519,7 +577,7 @@ fn resolve_task_plan(
                 Some(relative),
                 format!("cannot read tasks.yaml as UTF-8: {error}"),
             ));
-            return None;
+            return Err(());
         }
     };
     let wire = match runtime::load_tasks(&input) {
@@ -530,7 +588,7 @@ fn resolve_task_plan(
                 Some(relative),
                 error.to_string(),
             ));
-            return None;
+            return Err(());
         }
     };
     let tasks = match Tasks::try_from(wire) {
@@ -543,19 +601,35 @@ fn resolve_task_plan(
                     semantic.message,
                 ));
             }
-            return None;
+            return Err(());
         }
     };
-    match Fingerprint::task_plan(&tasks) {
-        Ok(fingerprint) => Some(fingerprint),
-        Err(error) => {
-            issues.push(issue(
-                "ARTIFACT_TASK_PLAN_FINGERPRINT_FAILED",
-                Some(relative),
-                format!("cannot canonicalize task plan: {error}"),
-            ));
-            None
-        }
+    Ok(Some(tasks))
+}
+
+fn task_requirement_sets(tasks: &Tasks) -> Vec<TaskRequirementSet> {
+    tasks
+        .as_wire()
+        .plan
+        .items
+        .iter()
+        .flat_map(|item| match item {
+            PlanItem::Task(task) => vec![task_requirement_set(task)],
+            PlanItem::Group(group) => group.tasks.iter().map(task_requirement_set).collect(),
+        })
+        .collect()
+}
+
+fn task_requirement_set(task: &ExecutableTask) -> TaskRequirementSet {
+    match task {
+        ExecutableTask::Parallel(task) => TaskRequirementSet {
+            task_id: task.id.0.clone(),
+            requirement_ids: task.requirement_ids.0.clone(),
+        },
+        ExecutableTask::Sequential(task) => TaskRequirementSet {
+            task_id: task.id.0.clone(),
+            requirement_ids: task.requirement_ids.0.clone(),
+        },
     }
 }
 

@@ -60,3 +60,7 @@ active_change: null
 - Status and validation skills can distinguish an unestablished set from an approved set without parsing prose.
 
 Decision 0023 resolves task-to-Requirement traceability through each executable Task's non-empty `requirement_ids` set. The Tasks gate and read model validate complete active-set coverage.
+
+## Implementation status
+
+The Rust traceability read model now validates every active ID against the current Requirements catalog and requires complete coverage through executable Task `requirement_ids` once the workflow reaches `tasks`. It allows `tasks.yaml` to remain absent in earlier states, validates unknown Task references whenever a valid plan is present, and does not require inactive current Requirements to appear in the milestone plan. CLI rendering and gate-transition enforcement remain subsequent work.
