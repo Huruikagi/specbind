@@ -38,7 +38,7 @@ fn discovers_recognized_artifacts_in_inventory_order() {
     write(
         root.path(),
         "specs/example/contract.md",
-        "---\ntype: SpecBind Contract\nproject_default: &default stable\nproject_copy: *default\n---\n# Contract\n",
+        "---\ntype: SpecBind Contract\nproject_default: &default stable\nproject_copy: *default\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
     );
     write(
         root.path(),
@@ -95,7 +95,7 @@ fn reports_invalid_concepts_and_keeps_valid_partial_inventory() {
     write(
         root.path(),
         "specs/example/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
     );
     write(
         root.path(),
@@ -248,6 +248,29 @@ fn reports_design_marker_mismatches_with_document_lines() {
 }
 
 #[test]
+fn reports_contract_body_issues_with_document_lines() {
+    let root = root();
+    write(
+        root.path(),
+        "specs/example/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n- `Bad_ID` — Description\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+
+    let inventory = discover_spec(root.path(), "example");
+    let issue = inventory
+        .issues
+        .iter()
+        .find(|issue| issue.code == "CONTRACT_DESCRIBED_ENTRY_INVALID")
+        .expect("Contract body diagnostic");
+
+    assert_eq!(
+        issue.path.as_deref(),
+        Some("specs/example/contract.md".into())
+    );
+    assert!(issue.message.starts_with("line 8:"), "{}", issue.message);
+}
+
+#[test]
 fn rejects_invalid_spec_ids_and_missing_directories() {
     let root = root();
 
@@ -262,7 +285,7 @@ fn rejects_invalid_spec_ids_and_missing_directories() {
 fn resolves_discovered_markdown_and_fixed_task_plan_inputs() {
     let root = root();
     let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Example\n\n#### Acceptance Criteria\n\n1. It works.\n";
-    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n";
+    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
     let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n_Requirements: 1.1_\n";
     write(root.path(), "specs/example/requirements.md", requirements);
     write(root.path(), "specs/example/contract.md", contract);

@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: `tools/specbind/src/contract.rs` now parses this profile from the Markdown syntax tree into typed Owns, Exports, Consumes, Invariants, and File Ownership entries. It validates the exact heading and flat-list structure, stable IDs, local Consumes target shape, path grammar, and section-local uniqueness, and artifact discovery surfaces its deterministic line-qualified diagnostics. Cross-spec target resolution, graph findings, and overlap or cycle analysis remain separate project-level validation increments.
+
 ## Context
 
 The `SpecBind Contract` artifact must remain concise and readable by humans and agents while the CLI parses it into the deterministic cross-spec graph required by Decisions 0011 and 0055. Putting the semantic contract in YAML frontmatter would split authoring between two representations and diverge from the structured-Markdown direction also needed for requirements.

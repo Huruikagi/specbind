@@ -10,7 +10,7 @@ use serde_json::{Map, Value};
 use walkdir::WalkDir;
 
 use crate::{
-    design,
+    contract, design,
     domain::{self, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
@@ -822,6 +822,21 @@ fn validate_profile(
     if kind == ArtifactKind::Design
         && let Some(declared_ids) = validate_design_requirement_ids(mapping, path, &mut issues)
         && let Err(error) = design::validate(body, &declared_ids)
+    {
+        issues.extend(error.issues.into_iter().map(|body_issue| {
+            issue(
+                body_issue.code,
+                Some(path.clone()),
+                format!(
+                    "line {}: {}",
+                    body_start_line + body_issue.line - 1,
+                    body_issue.message
+                ),
+            )
+        }));
+    }
+    if kind == ArtifactKind::Contract
+        && let Err(error) = contract::parse(body)
     {
         issues.extend(error.issues.into_iter().map(|body_issue| {
             issue(
