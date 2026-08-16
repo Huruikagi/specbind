@@ -52,9 +52,11 @@ The dependency direction is accepted by Decision 0084, and the code should separ
 
 - `cli`: arguments, TTY prompting for installation, text rendering, stream routing, and exit mapping
 - `config`: `.specbind.json` loading and validation
+- `repository`: narrow installed-Git executable adapter with caller-owned product diagnostics
+- `guarded_fs`: regular-file validation and atomic replacement for SpecBind-owned state
 - `assets`: embedded agent assets and installation planning
 - `template`: embedded defaults, project-owned overrides, and deterministic rendering
-- `fs`: path validation, Git-aware guards, semantic reads, and guarded writes
+- `fs`: project-path validation and semantic reads
 - `check`: read-only artifact parsers and diagnostics
 - `lifecycle`: explicit milestone, task, and release transitions
 - `schema`: versioned wire models, deterministic schema generation, embedded generated-schema lookup, structural validation, domain conversion, and shared conformance fixtures

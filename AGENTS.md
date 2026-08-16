@@ -29,6 +29,9 @@
 - `tools/specbind/src/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
+- `tools/specbind/src/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
+- `tools/specbind/src/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
+- `tools/specbind/src/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification

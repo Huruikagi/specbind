@@ -3,13 +3,10 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::fs;
-use std::io::Write;
 use std::path::Path;
-use std::process::Command;
 
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Serialize, Serializer};
-use tempfile::NamedTempFile;
 use time::OffsetDateTime;
 use time::format_description::well_known::Rfc3339;
 use uuid::Uuid;
@@ -19,6 +16,8 @@ use crate::contract_graph::{self, ContractGraphResolution, GraphIssueSeverity};
 use crate::domain::spec::Spec;
 use crate::fingerprint::Fingerprint;
 use crate::freshness::{self, FreshnessStatus};
+use crate::guarded_fs::{self, GuardedWriteError};
+use crate::repository;
 use crate::roadmap::{self, RoadmapDocument};
 use crate::schema::{runtime, spec::v1::WorkflowState};
 
@@ -940,69 +939,27 @@ fn persist_review(specbind_root: &Path, relative: &str, bytes: &[u8]) -> Result<
         }
     }
     let target = specbind_root.join(relative);
-    if fs::symlink_metadata(&target)
-        .is_ok_and(|metadata| metadata.file_type().is_symlink() || !metadata.is_file())
-    {
-        return Err(one_review_issue(
+    guarded_fs::replace_optional(&target, bytes).map_err(|error| match error {
+        GuardedWriteError::InvalidTarget(_) => one_review_issue(
             "CROSS_SPEC_REVIEW_TARGET_INVALID",
             Some(relative.to_owned()),
             "accepted review target must be absent or a regular non-symlink file",
-        ));
-    }
-    let mut temporary = NamedTempFile::new_in(&state).map_err(|error| {
-        one_review_issue(
+        ),
+        _ => one_review_issue(
             "CROSS_SPEC_REVIEW_WRITE_FAILED",
             Some(relative.to_owned()),
             error.to_string(),
-        )
-    })?;
-    temporary
-        .write_all(bytes)
-        .and_then(|()| temporary.as_file().sync_all())
-        .map_err(|error| {
-            one_review_issue(
-                "CROSS_SPEC_REVIEW_WRITE_FAILED",
-                Some(relative.to_owned()),
-                error.to_string(),
-            )
-        })?;
-    temporary.persist(&target).map_err(|error| {
-        one_review_issue(
-            "CROSS_SPEC_REVIEW_WRITE_FAILED",
-            Some(relative.to_owned()),
-            error.error.to_string(),
-        )
+        ),
     })?;
     Ok(())
 }
 
 fn git_output(project_root: &Path, arguments: &[&str]) -> Result<String, String> {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(arguments)
-        .output()
-        .map_err(|error| format!("cannot start Git: {error}"))?;
-    if output.status.success() {
-        String::from_utf8(output.stdout)
-            .map_err(|error| format!("Git output is not UTF-8: {error}"))
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).trim().to_owned())
-    }
+    repository::output(project_root, arguments).map_err(|error| error.to_string())
 }
 
 fn git_status(project_root: &Path, arguments: &[&str]) -> Result<bool, String> {
-    let status = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(arguments)
-        .status()
-        .map_err(|error| format!("cannot start Git: {error}"))?;
-    match status.code() {
-        Some(0) => Ok(true),
-        Some(1) => Ok(false),
-        _ => Err(format!("Git exited with status {status}")),
-    }
+    repository::predicate(project_root, arguments).map_err(|error| error.to_string())
 }
 
 fn one_review_issue(

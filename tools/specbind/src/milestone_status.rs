@@ -4,13 +4,13 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
     path::Path,
-    process::Command,
 };
 
 use crate::{
     artifacts::{self, DiscoveryIssue},
     cross_spec_review::{self, ReviewFreshnessStatus},
     freshness::{self, FreshnessStatus},
+    repository,
     roadmap::{self, Dependency, DirectStatus, RoadmapDocument},
     schema::spec::v1::WorkflowState,
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
@@ -599,33 +599,18 @@ fn diagnose_unscoped_active_specs(
 }
 
 fn git_state(project_root: &Path) -> GitState {
-    let revision = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(["rev-parse", "HEAD"])
-        .output();
-    let status = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(["status", "--porcelain=v1", "-z", "--untracked-files=all"])
-        .output();
+    let revision = repository::output(project_root, &["rev-parse", "HEAD"]);
+    let status = repository::output_bytes(
+        project_root,
+        &["status", "--porcelain=v1", "-z", "--untracked-files=all"],
+    );
     match (revision, status) {
-        (Ok(revision), Ok(status)) if revision.status.success() && status.status.success() => {
-            match String::from_utf8(revision.stdout) {
-                Ok(revision) => GitState {
-                    revision: Some(revision.trim().to_owned()),
-                    clean: status.stdout.is_empty(),
-                    diagnostic: None,
-                },
-                Err(error) => git_failure(error.to_string()),
-            }
-        }
+        (Ok(revision), Ok(status)) => GitState {
+            revision: Some(revision.trim().to_owned()),
+            clean: status.is_empty(),
+            diagnostic: None,
+        },
         (Err(error), _) | (_, Err(error)) => git_failure(error.to_string()),
-        (Ok(revision), Ok(status)) => git_failure(format!(
-            "Git status resolution failed: {}{}",
-            String::from_utf8_lossy(&revision.stderr),
-            String::from_utf8_lossy(&status.stderr)
-        )),
     }
 }
 

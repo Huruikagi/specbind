@@ -3,10 +3,11 @@
 use std::{
     fmt, fs,
     path::{Component, Path, PathBuf},
-    process::Command,
 };
 
 use serde::Deserialize;
+
+use crate::repository::{self, RepositoryError};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectPaths {
@@ -94,23 +95,19 @@ pub fn resolve_from(start: &Path) -> Result<ProjectPaths, ConfigError> {
 }
 
 fn reject_nested_submodule(project_root: &Path, spec_dir: &str) -> Result<(), ConfigError> {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(["ls-files", "--stage", "-z"])
-        .output()
-        .map_err(|error| ConfigError {
-            code: "GIT_START_FAILED",
-            message: format!("cannot start Git: {error}"),
-        })?;
-    if !output.status.success() {
-        return Err(ConfigError {
-            code: "SPEC_ROOT_SUBMODULE_CHECK_FAILED",
-            message: String::from_utf8_lossy(&output.stderr).trim().to_owned(),
-        });
-    }
+    let output = repository::output_bytes(project_root, &["ls-files", "--stage", "-z"]).map_err(
+        |error| match error {
+            RepositoryError::Start(_) => ConfigError {
+                code: "GIT_START_FAILED",
+                message: error.to_string(),
+            },
+            _ => ConfigError {
+                code: "SPEC_ROOT_SUBMODULE_CHECK_FAILED",
+                message: error.to_string(),
+            },
+        },
+    )?;
     let nested = output
-        .stdout
         .split(|byte| *byte == 0)
         .filter_map(|record| {
             record
@@ -154,25 +151,23 @@ fn is_link_like(metadata: &fs::Metadata) -> bool {
 }
 
 fn git_project_root(start: &Path) -> Result<PathBuf, ConfigError> {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(start)
-        .args(["rev-parse", "--show-toplevel"])
-        .output()
-        .map_err(|error| ConfigError {
-            code: "GIT_START_FAILED",
-            message: format!("cannot start Git: {error}"),
-        })?;
-    if !output.status.success() {
-        return Err(ConfigError {
-            code: "PROJECT_ROOT_NOT_FOUND",
-            message: String::from_utf8_lossy(&output.stderr).trim().to_owned(),
-        });
-    }
-    let root = String::from_utf8(output.stdout).map_err(|error| ConfigError {
-        code: "GIT_OUTPUT_INVALID",
-        message: format!("Git project root is not UTF-8: {error}"),
-    })?;
+    let root =
+        repository::output(start, &["rev-parse", "--show-toplevel"]).map_err(
+            |error| match error {
+                RepositoryError::Start(_) => ConfigError {
+                    code: "GIT_START_FAILED",
+                    message: error.to_string(),
+                },
+                RepositoryError::NonUtf8(error) => ConfigError {
+                    code: "GIT_OUTPUT_INVALID",
+                    message: format!("Git project root is not UTF-8: {error}"),
+                },
+                _ => ConfigError {
+                    code: "PROJECT_ROOT_NOT_FOUND",
+                    message: error.to_string(),
+                },
+            },
+        )?;
     Ok(PathBuf::from(root.trim()))
 }
 

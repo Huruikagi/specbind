@@ -4,12 +4,12 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
     path::Path,
-    process::Command,
 };
 
 use crate::{
     domain::{SemanticIssue, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
+    repository,
     schema::{
         runtime,
         spec::v1 as wire,
@@ -658,31 +658,11 @@ fn git_output(project_root: &Path, arguments: &[&str]) -> Result<String, String>
 }
 
 fn git_output_bytes(project_root: &Path, arguments: &[&str]) -> Result<Vec<u8>, String> {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(arguments)
-        .output()
-        .map_err(|error| format!("cannot start Git: {error}"))?;
-    if output.status.success() {
-        Ok(output.stdout)
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).trim().to_owned())
-    }
+    repository::output_bytes(project_root, arguments).map_err(|error| error.to_string())
 }
 
 fn git_status(project_root: &Path, arguments: &[&str]) -> Result<bool, String> {
-    let status = Command::new("git")
-        .arg("-C")
-        .arg(project_root)
-        .args(arguments)
-        .status()
-        .map_err(|error| format!("cannot start Git: {error}"))?;
-    match status.code() {
-        Some(0) => Ok(true),
-        Some(1) => Ok(false),
-        _ => Err(format!("Git exited with status {status}")),
-    }
+    repository::predicate(project_root, arguments).map_err(|error| error.to_string())
 }
 
 fn completion_assessment(mut issues: Vec<SemanticIssue>) -> CompletionRevisionAssessment {
