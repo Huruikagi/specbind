@@ -31,7 +31,7 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - `specbind-steering-custom` is merged into `specbind-steering`; the skill bootstraps, synchronizes, or adds guidance based on intent.
 - A dedicated customization skill is post-v1. Project maintainers edit the documented settings customization surface directly.
 - `specbind-quick` and `specbind-batch` are thin orchestrators over the same artifacts, reviews, approvals, and CLI guards as the deliberate flow. They stop after Tasks approval and never implement code.
-- Cross-spec review occurs after every participating Spec has passed its Design gate and entered the `tasks` state, but before any current `tasks.yaml` is authored. It is a contract-first milestone review, not a general Design review or release gate.
+- Cross-spec review occurs after every participating Spec has passed its Design gate and entered the `tasks` state, but before any current `tasks.yaml` is authored. It is a contract-first milestone review, not a general Design review or release gate. Decision 0087 routes its focused read and accepted assessment through `specbind milestone review status` and `specbind milestone review accept --candidate <path|->`.
 - `specbind-implement` targets exactly one roadmap item per invocation:
   - for a Spec-backed item, it executes the approved local task plan;
   - for a Direct item, it performs the scoped implementation without creating Requirements, Design, Contract, or Tasks artifacts.

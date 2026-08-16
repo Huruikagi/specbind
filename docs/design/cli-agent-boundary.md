@@ -82,7 +82,14 @@ The agent remains responsible for deciding whether the manifest describes the re
 
 ## Working command shape
 
-The exact command vocabulary is not yet accepted. The initial shape should remain within the existing `specbind` executable, for example:
+[Decision 0087](./decisions/0087-milestone-review-cli.md) accepts the milestone-owned review commands:
+
+```sh
+specbind milestone review status
+specbind milestone review accept --candidate <path|->
+```
+
+The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/cross-spec-review.md`. The exact command vocabulary for standalone deterministic checks remains unaccepted. Its initial shape should remain within the existing `specbind` executable, for example:
 
 ```sh
 specbind check traceability <spec-path>
@@ -109,7 +116,7 @@ Stable result codes and exit behavior are part of the v1 contract. A JSON respon
 
 The Rust read model now implements the complete Requirements-to-Design-to-Tasks existence and active-coverage calculation behind this proposed command. It treats absent `tasks.yaml` as normal before the `tasks` state, requires it from `tasks` onward, and reports unknown Task mappings whenever a valid plan exists. The command vocabulary, concise text rendering, and exit-code exposure remain unimplemented.
 
-The read model for `check contracts` now parses each canonical five-section Contract, loads every immediate persistent Spec, resolves valid Consumes edges, and reports unavailable Contracts, missing targets, cross-Spec File Ownership duplicate or overlap candidates, and deterministic dependency-cycle paths. The latter two remain warnings for agent judgment. The review operation parses and validates the active Roadmap DAG, fingerprints its normalized Spec-backed scope, validates strict candidate JSON, resolves every required Contract and optional Requirements or Design input through authoritative selectors, enforces Git and participating-Spec guards, re-resolves inputs, and atomically replaces the accepted state artifact. Its read model strictly parses that artifact, reconstructs persisted deep selectors, re-resolves current authoritative revisions, rechecks the Git baseline, and distinguishes Direct-only `not required`, Spec-backed `missing`, `fresh`, `stale`, and structurally `invalid` state. Command rendering and enforcement at later phase boundaries remain unimplemented.
+The read model for `check contracts` now parses each canonical five-section Contract, loads every immediate persistent Spec, resolves valid Consumes edges, and reports unavailable Contracts, missing targets, cross-Spec File Ownership duplicate or overlap candidates, and deterministic dependency-cycle paths. The latter two remain warnings for agent judgment. The review operation parses and validates the active Roadmap DAG, fingerprints its normalized Spec-backed scope, validates strict candidate JSON, resolves every required Contract and optional Requirements or Design input through authoritative selectors, enforces Git and participating-Spec guards, re-resolves inputs, and atomically replaces the accepted state artifact. Its read model strictly parses that artifact, reconstructs persisted deep selectors, re-resolves current authoritative revisions, rechecks the Git baseline, and distinguishes Direct-only `not required`, Spec-backed `missing`, `fresh`, `stale`, and structurally `invalid` state. Later phase boundaries already enforce the applicable fresh result. Public routing and concise rendering for the Decision 0087 review commands, plus standalone `check` command rendering, remain unimplemented.
 
 ## Lifecycle automation candidates
 

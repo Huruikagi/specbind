@@ -96,7 +96,7 @@ Adapter guidance cannot waive a core gate. An empty adapter means no project-spe
 
 ## Cross-spec review
 
-Every persistent Spec has a Contract containing only the seam that other Specs may observe or depend on. After all participating Designs are approved, cross-spec review reads the Spec-backed Roadmap projection and every current Contract, asks the CLI to validate and build the graph, and loads Requirements or selected Design artifacts only where semantic judgment requires them. Tasks do not yet exist and are never review inputs.
+Every persistent Spec has a Contract containing only the seam that other Specs may observe or depend on. After all participating Designs are approved, cross-spec review reads the Spec-backed Roadmap projection and every current Contract, asks the CLI to validate and build the graph, and loads Requirements or selected Design artifacts only where semantic judgment requires them. Tasks do not yet exist and are never review inputs. The skill requests the focused state through `specbind milestone review status` and submits its accepted assessment through `specbind milestone review accept --candidate <path|->`; it never edits the state artifact directly.
 
 ```text
 Spec-backed roadmap scope + every current contract
