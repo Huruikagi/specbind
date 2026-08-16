@@ -90,7 +90,7 @@ OK SPEC_REQUIREMENTS_APPROVED: Approved requirements for spec checkout.
 - The CLI owns discovery, validation, fingerprinting, freshness and review guards, timestamping, persistence, concise English results, and process exit status.
 - Delegation run context remains orchestration state and is never persisted beyond the recorded `approval_mode` and `delegation_workflow` fields.
 - V1 returns no general JSON response under Decisions 0067 and 0074.
-- `SPEC_CREATED`, `CHANGE_STARTED`, `SPEC_SCOPE_REMOVED`, and `MILESTONE_ABANDONED` remain a separate lifecycle CLI decision. The standalone `check` command vocabulary remains unaccepted under Decision 0087.
+- `SPEC_CREATED` and `CHANGE_STARTED` are fixed by [Decision 0089](./0089-milestone-creation-cli.md) as effects of milestone creation and scope update. `SPEC_SCOPE_REMOVED` and `MILESTONE_ABANDONED` remain a separate lifecycle CLI decision. The standalone `check` command vocabulary remains unaccepted under Decision 0087.
 
 ## Consequences
 

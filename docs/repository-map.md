@@ -147,3 +147,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0086](./design/decisions/0086-completion-cli-handshake.md) | Accepted | Spec and Direct completion CLI handshake |
 | [0087](./design/decisions/0087-milestone-review-cli.md) | Accepted | Milestone-owned cross-spec review commands |
 | [0088](./design/decisions/0088-gate-approval-cli.md) | Accepted | Spec gate approval and invalidation commands |
+| [0089](./design/decisions/0089-milestone-creation-cli.md) | Accepted | Milestone creation, scope, and rebaseline commands |
