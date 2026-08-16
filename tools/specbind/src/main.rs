@@ -25,6 +25,11 @@ enum Command {
         #[command(subcommand)]
         command: ArtifactCommand,
     },
+    /// Run one deterministic read-only consistency check.
+    Check {
+        #[command(subcommand)]
+        command: CheckCommand,
+    },
     /// Read the project-owned OKF artifact templates.
     Template {
         #[command(subcommand)]
@@ -58,6 +63,14 @@ enum ArtifactCommand {
     List { spec: String },
     /// Read one logical artifact selector as raw UTF-8 Markdown.
     Read { spec: String, selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum CheckCommand {
+    /// Verify Requirement existence and active Design and Task coverage.
+    Traceability { spec: String },
+    /// Verify the project-wide Contract graph.
+    Contracts,
 }
 
 #[derive(Debug, Subcommand)]
@@ -239,6 +252,13 @@ fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
     }
 }
 
+fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
+    match command {
+        CheckCommand::Traceability { spec } => specbind::cli::check_traceability(start, &spec),
+        CheckCommand::Contracts => specbind::cli::check_contracts(start),
+    }
+}
+
 fn run_template(start: &Path, command: TemplateCommand) -> CommandOutput {
     match command {
         TemplateCommand::List { scope: _ } => specbind::cli::template_list_spec(start),
@@ -338,6 +358,7 @@ fn main() -> ExitCode {
     };
     let output = match cli.command {
         Command::Artifact { command } => run_artifact(&start, command),
+        Command::Check { command } => run_check(&start, command),
         Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
         Command::Spec { command } => run_spec(&start, command),

@@ -75,4 +75,4 @@ OK CONTRACTS_VERIFIED: Verified 4 contract(s) and 7 dependency reference(s).
 
 ## Implementation status
 
-Not implemented. The traceability resolver and Contract graph read models, their diagnostics, and the discovery inventory already exist. Clap routing, the two concise renderings, stable exit behavior, and CLI integration tests remain to be implemented.
+Implemented. `check traceability <spec>` resolves the discovery inventory and traceability report, fails closed with `ERROR TRACEABILITY_FAILED` on any inventory or traceability diagnostic, and otherwise reports the catalog size, active scope, and Design and Task coverage ratios with the current requirement state. An idle Spec reports `none` for the active scope and omits the ratios. `check contracts` resolves the project-wide graph, treats project, per-Spec inventory, and error-severity graph diagnostics as `ERROR CONTRACTS_FAILED`, and otherwise reports the contract and dependency counts with ownership findings, dependency cycles, and warning details at zero exit.

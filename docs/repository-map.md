@@ -20,7 +20,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/template.rs` — project-owned OKF artifact template discovery, profile validation, and raw reads
 - `tools/specbind/src/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
 - `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
-- `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage
+- `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
 - `tools/specbind/src/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
 - `tools/specbind/src/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
 - `tools/specbind/src/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection

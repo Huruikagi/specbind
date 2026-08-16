@@ -894,6 +894,127 @@ fn reaccepts_a_currently_fresh_review() {
 }
 
 #[test]
+fn verifies_traceability_and_fails_closed_on_missing_coverage() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+
+    let mut pass = Command::cargo_bin("specbind").expect("specbind binary should build");
+    pass.current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            "OK TRACEABILITY_VERIFIED: Verified traceability for spec checkout.\n  Requirements: 1\n  Active requirement IDs: 1\n  Design coverage: 1/1\n  Task coverage: 1/1 (required)\n",
+        )
+        .stderr("");
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Build\n      requirement_ids: ['9.9']\n",
+    );
+    let mut fail = Command::cargo_bin("specbind").expect("specbind binary should build");
+    fail.current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR TRACEABILITY_FAILED: Traceability for spec checkout has diagnostics.",
+            )
+            .and(predicate::str::contains(
+                "TRACEABILITY_TASK_COVERAGE_MISSING",
+            ))
+            .and(predicate::str::contains(
+                "TRACEABILITY_TASK_REQUIREMENT_UNKNOWN",
+            )),
+        );
+}
+
+#[test]
+fn reports_an_idle_spec_without_active_coverage_ratios() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            "OK TRACEABILITY_VERIFIED: Verified traceability for spec checkout.\n  Requirements: 1\n  Active requirement IDs: none\n",
+        )
+        .stderr("");
+}
+
+#[test]
+fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/provider/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n- `shared-tree` — `src/shared/**`\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/consumer/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `value` → `provider/exports/value`\n\n## Invariants\n\n## File Ownership\n\n- `shared-tree` — `src/shared/**`\n",
+    );
+
+    let mut warned = Command::cargo_bin("specbind").expect("specbind binary should build");
+    warned
+        .current_dir(root.path())
+        .args(["check", "contracts"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK CONTRACTS_VERIFIED: Verified 3 contract(s) and 1 dependency reference(s).\n",
+            )
+            .and(predicate::str::contains("\n  Dependency cycles: 0\n"))
+            .and(predicate::str::contains("\n  Warnings:\n")),
+        )
+        .stderr("");
+
+    write(
+        root.path(),
+        ".specbind/specs/consumer/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `missing` → `provider/exports/missing`\n\n## Invariants\n\n## File Ownership\n",
+    );
+    let mut failed = Command::cargo_bin("specbind").expect("specbind binary should build");
+    failed
+        .current_dir(root.path())
+        .args(["check", "contracts"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR CONTRACTS_FAILED: Contract graph has structural diagnostics.",
+            )
+            .and(predicate::str::contains(
+                "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
+            )),
+        );
+}
+
+#[test]
 fn lists_and_reads_project_owned_spec_templates() {
     let root = project_fixture();
     write_template_fixture(root.path());

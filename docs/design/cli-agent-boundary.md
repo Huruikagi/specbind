@@ -98,34 +98,38 @@ specbind spec tasks approve <spec> --approval-mode <explicit|delegated>
 specbind spec <requirements|design|tasks> invalidate <spec>
 ```
 
-The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/cross-spec-review.md`. The exact command vocabulary for standalone deterministic checks remains unaccepted. Its initial shape should remain within the existing `specbind` executable, for example:
+The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/cross-spec-review.md`.
+
+[Decision 0090](./decisions/0090-standalone-check-cli.md) accepts the standalone deterministic checks:
 
 ```sh
-specbind check traceability <spec-path>
-specbind check contracts [<scope>]
+specbind check traceability <spec>
+specbind check contracts
 ```
 
-Human-readable success output should stay compact:
+They take one canonical Spec identity and the complete current Contract set respectively, and their success output follows the Decision 0067 contract:
 
 ```text
-PASS requirements=24 active=6 design=6 tasks=6
+OK TRACEABILITY_VERIFIED: Verified traceability for spec checkout.
+  Requirements: 24
+  Active requirement IDs: 6
+  Design coverage: 6/6
+  Task coverage: 6/6 (required)
 ```
 
 Failure output is English-only and contains stable diagnostic codes, affected IDs, and source locations where available:
 
 ```text
-FAIL
-ACTIVE_UNKNOWN: 9.9 at spec.yaml
-DESIGN_MISSING: 3.2
-TASKS_MISSING: 4.1, 4.2
-INVALID_TASK_MAPPING: "Requirement 2.1" at tasks.yaml:18
+ERROR TRACEABILITY_FAILED: Traceability for spec checkout has diagnostics.
+  TRACEABILITY_ACTIVE_REQUIREMENT_UNKNOWN active Requirement ID 9.9 does not exist in Requirements
+  TRACEABILITY_DESIGN_COVERAGE_MISSING active Requirement ID 3.2 is not covered by any Design artifact
 ```
 
-Stable result codes and exit behavior are part of the v1 contract. A JSON response schema is explicitly post-v1 under Decision 0074.
+Stable result codes and exit behavior are part of the v1 contract, which is what makes these commands usable as a continuous check outside an agent session. Contract ownership overlaps and dependency cycles stay review warnings and do not change the exit status. A JSON response schema is explicitly post-v1 under Decision 0074.
 
-The Rust read model now implements the complete Requirements-to-Design-to-Tasks existence and active-coverage calculation behind this proposed command. It treats absent `tasks.yaml` as normal before the `tasks` state, requires it from `tasks` onward, and reports unknown Task mappings whenever a valid plan exists. The command vocabulary, concise text rendering, and exit-code exposure remain unimplemented.
+The Rust read model now implements the complete Requirements-to-Design-to-Tasks existence and active-coverage calculation behind this proposed command. It treats absent `tasks.yaml` as normal before the `tasks` state, requires it from `tasks` onward, and reports unknown Task mappings whenever a valid plan exists. Decision 0090 exposes that calculation through `check traceability`.
 
-The read model for `check contracts` now parses each canonical five-section Contract, loads every immediate persistent Spec, resolves valid Consumes edges, and reports unavailable Contracts, missing targets, cross-Spec File Ownership duplicate or overlap candidates, and deterministic dependency-cycle paths. The latter two remain warnings for agent judgment. The review operation parses and validates the active Roadmap DAG, fingerprints its normalized Spec-backed scope, validates strict candidate JSON, resolves every required Contract and optional Requirements or Design input through authoritative selectors, enforces Git and participating-Spec guards, re-resolves inputs, and atomically replaces the accepted state artifact. Its read model strictly parses that artifact, reconstructs persisted deep selectors, re-resolves current authoritative revisions, rechecks the Git baseline, and distinguishes Direct-only `not required`, Spec-backed `missing`, `fresh`, `stale`, and structurally `invalid` state. Later phase boundaries already enforce the applicable fresh result. The Decision 0087 commands now expose that operation and read model publicly: `milestone review status` reports the active milestone ID and the `not_applicable`, `absent`, `fresh`, or `stale` value with zero exit status, adds the accepted timestamp and persisted input count only for a structurally available record, withholds the assessment body and fingerprint values, and fails closed on invalid state, while `milestone review accept` loads one strict repository-external or standard-input candidate and delegates every guard to the core operation. The Decision 0088 gate commands now own every Requirements, Design, and Tasks approval and rewind, so the Tasks-approval review guard has its intended caller. Standalone `check` command routing and rendering remain unimplemented.
+The read model for `check contracts` now parses each canonical five-section Contract, loads every immediate persistent Spec, resolves valid Consumes edges, and reports unavailable Contracts, missing targets, cross-Spec File Ownership duplicate or overlap candidates, and deterministic dependency-cycle paths. The latter two remain warnings for agent judgment. The review operation parses and validates the active Roadmap DAG, fingerprints its normalized Spec-backed scope, validates strict candidate JSON, resolves every required Contract and optional Requirements or Design input through authoritative selectors, enforces Git and participating-Spec guards, re-resolves inputs, and atomically replaces the accepted state artifact. Its read model strictly parses that artifact, reconstructs persisted deep selectors, re-resolves current authoritative revisions, rechecks the Git baseline, and distinguishes Direct-only `not required`, Spec-backed `missing`, `fresh`, `stale`, and structurally `invalid` state. Later phase boundaries already enforce the applicable fresh result. The Decision 0087 commands now expose that operation and read model publicly: `milestone review status` reports the active milestone ID and the `not_applicable`, `absent`, `fresh`, or `stale` value with zero exit status, adds the accepted timestamp and persisted input count only for a structurally available record, withholds the assessment body and fingerprint values, and fails closed on invalid state, while `milestone review accept` loads one strict repository-external or standard-input candidate and delegates every guard to the core operation. The Decision 0088 gate commands now own every Requirements, Design, and Tasks approval and rewind, so the Tasks-approval review guard has its intended caller. Decision 0090 exposes the Contract graph through `check contracts`.
 
 ## Lifecycle automation candidates
 
