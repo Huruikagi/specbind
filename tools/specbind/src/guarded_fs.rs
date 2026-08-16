@@ -45,7 +45,7 @@ pub fn replace_optional(target: &Path, bytes: &[u8]) -> Result<(), GuardedWriteE
 
 fn validate_target(target: &Path, allow_absent: bool) -> Result<(), GuardedWriteError> {
     match fs::symlink_metadata(target) {
-        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => Err(
+        Ok(metadata) if is_link_like(&metadata) || !metadata.is_file() => Err(
             GuardedWriteError::InvalidTarget("mutation target must be a regular non-symlink file"),
         ),
         Ok(_) => Ok(()),
@@ -58,6 +58,12 @@ fn replace(target: &Path, bytes: &[u8]) -> Result<(), GuardedWriteError> {
     let parent = target.parent().ok_or(GuardedWriteError::InvalidTarget(
         "mutation target has no parent directory",
     ))?;
+    let parent_metadata = fs::symlink_metadata(parent).map_err(GuardedWriteError::Inspect)?;
+    if is_link_like(&parent_metadata) || !parent_metadata.is_dir() {
+        return Err(GuardedWriteError::InvalidTarget(
+            "mutation target parent must be a regular non-symlink directory",
+        ));
+    }
     let mut temporary = NamedTempFile::new_in(parent).map_err(GuardedWriteError::Write)?;
     temporary
         .write_all(bytes)
@@ -67,4 +73,18 @@ fn replace(target: &Path, bytes: &[u8]) -> Result<(), GuardedWriteError> {
         .persist(target)
         .map_err(|error| GuardedWriteError::Write(error.error))?;
     Ok(())
+}
+
+#[cfg(windows)]
+pub(crate) fn is_link_like(metadata: &fs::Metadata) -> bool {
+    use std::os::windows::fs::MetadataExt as _;
+
+    const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x400;
+    metadata.file_type().is_symlink()
+        || metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
+}
+
+#[cfg(not(windows))]
+pub(crate) fn is_link_like(metadata: &fs::Metadata) -> bool {
+    metadata.file_type().is_symlink()
 }

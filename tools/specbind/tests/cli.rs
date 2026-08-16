@@ -434,6 +434,97 @@ fn exposes_the_direct_completion_handshake_with_stable_results() {
 }
 
 #[test]
+fn binds_and_explicitly_rebinds_a_milestone_release() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n# Roadmap\n",
+    );
+    commit_all(root.path());
+
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "bad/version"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR INVALID_RELEASE_VERSION: Cannot bind milestone release.",
+        ));
+
+    let mut bind = Command::cargo_bin("specbind").expect("specbind binary should build");
+    bind.current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.4.0"])
+        .assert()
+        .success()
+        .stdout(
+            "OK RELEASE_BOUND: Bound milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62 to release v1.4.0.\n  Roadmap archive: releases/v1.4.0-roadmap.md\n  Cross-spec review archive: releases/v1.4.0-cross-spec-review.md\n",
+        )
+        .stderr("");
+
+    let mut retry = Command::cargo_bin("specbind").expect("specbind binary should build");
+    retry
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.4.0"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE RELEASE_ALREADY_BOUND: Milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62 is already bound to release v1.4.0.\n")
+        .stderr("");
+
+    let mut confirmation = Command::cargo_bin("specbind").expect("specbind binary should build");
+    confirmation
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.5.0"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with(
+            "ERROR RELEASE_REBIND_REQUIRED: Cannot bind milestone release.",
+        ));
+
+    let mut dirty = Command::cargo_bin("specbind").expect("specbind binary should build");
+    dirty
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.5.0", "--rebind"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with(
+            "ERROR MILESTONE_ROADMAP_DIRTY: Cannot bind milestone release.",
+        ));
+
+    commit_all(root.path());
+    write(
+        root.path(),
+        ".specbind/releases/V1.5.0-ROADMAP.MD",
+        "occupied\n",
+    );
+    let mut collision = Command::cargo_bin("specbind").expect("specbind binary should build");
+    collision
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.5.0", "--rebind"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::starts_with(
+            "ERROR RELEASE_ARCHIVE_COLLISION: Cannot bind milestone release.",
+        ));
+
+    let mut rebind = Command::cargo_bin("specbind").expect("specbind binary should build");
+    rebind
+        .current_dir(root.path())
+        .args(["milestone", "bind-release", "v1.6.0", "--rebind"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "OK RELEASE_REBOUND: Rebound milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62 from release v1.4.0 to v1.6.0.",
+        ));
+    let roadmap = fs::read_to_string(root.path().join(".specbind/steering/roadmap.md"))
+        .expect("read rebound Roadmap");
+    assert!(roadmap.ends_with("# Roadmap\n"));
+    assert!(roadmap.contains("target_release: v1.6.0"));
+}
+
+#[test]
 fn reads_spec_completion_evidence_from_explicit_stdin() {
     let root = project_fixture();
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");

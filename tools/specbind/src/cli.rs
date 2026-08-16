@@ -11,6 +11,7 @@ use crate::{
     artifacts::{self, Artifact, DiscoveryIssue},
     completion::{self, CompletionIssue},
     config,
+    milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
@@ -479,6 +480,84 @@ fn render_completion_failure(message: &str, error: completion::CompletionIssues)
 }
 
 fn render_completion_issue(issue: &CompletionIssue) -> String {
+    let path = issue
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", issue.code, escape(&issue.message))
+}
+
+#[must_use]
+pub fn milestone_bind_release(start: &Path, version: &str, rebind: bool) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match milestone::bind_release(
+        &paths.project_root,
+        &paths.specbind_root,
+        version,
+        rebind,
+    ) {
+        Ok(milestone::BindReleaseOutcome::Bound {
+            milestone_id,
+            version,
+            targets,
+        }) => CommandOutput::success(
+            format!(
+                "OK RELEASE_BOUND: Bound milestone {} to release {}.\n  Roadmap archive: {}\n  Cross-spec review archive: {}\n",
+                escape(&milestone_id),
+                escape(&version),
+                escape(&targets.roadmap),
+                escape(&targets.cross_spec_review)
+            )
+            .into_bytes(),
+        ),
+        Ok(milestone::BindReleaseOutcome::Rebound {
+            milestone_id,
+            previous,
+            version,
+            targets,
+        }) => CommandOutput::success(
+            format!(
+                "OK RELEASE_REBOUND: Rebound milestone {} from release {} to {}.\n  Roadmap archive: {}\n  Cross-spec review archive: {}\n",
+                escape(&milestone_id),
+                escape(&previous),
+                escape(&version),
+                escape(&targets.roadmap),
+                escape(&targets.cross_spec_review)
+            )
+            .into_bytes(),
+        ),
+        Ok(milestone::BindReleaseOutcome::AlreadyBound {
+            milestone_id,
+            version,
+        }) => CommandOutput::no_change(
+            "RELEASE_ALREADY_BOUND",
+            &format!(
+                "Milestone {} is already bound to release {}.",
+                escape(&milestone_id),
+                escape(&version)
+            ),
+        ),
+        Err(error) => render_milestone_mutation_failure("Cannot bind milestone release.", error),
+    }
+}
+
+fn render_milestone_mutation_failure(
+    message: &str,
+    error: milestone::MilestoneIssues,
+) -> CommandOutput {
+    let mut issues = error.issues.into_iter();
+    let Some(first) = issues.next() else {
+        return CommandOutput::failure("MILESTONE_MUTATION_FAILED", message, vec![]);
+    };
+    let mut details = vec![render_milestone_issue(&first)];
+    details.extend(issues.map(|issue| render_milestone_issue(&issue)));
+    CommandOutput::failure(first.code, message, details)
+}
+
+fn render_milestone_issue(issue: &MilestoneIssue) -> String {
     let path = issue
         .path
         .as_ref()

@@ -70,6 +70,19 @@ fn rejects_direct_only_empty_and_invalid_root_metadata() {
 }
 
 #[test]
+fn rejects_a_nonportable_bound_release() {
+    let input = roadmap("  direct_changes:\n    - id: docs\n      summary: Update docs\n")
+        .replace("target_release: null", "target_release: bad/version");
+    let error = roadmap::parse(&input).expect_err("nonportable release must fail");
+    assert!(
+        error
+            .issues
+            .iter()
+            .any(|issue| issue.code == "ROADMAP_TARGET_RELEASE_INVALID")
+    );
+}
+
+#[test]
 fn marks_one_direct_item_completed_and_preserves_the_body() {
     let input = roadmap(
         "  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: release-notes\n      summary: Write notes\n      depends_on:\n        - direct: docs\n",
@@ -88,5 +101,43 @@ fn marks_one_direct_item_completed_and_preserves_the_body() {
     assert_eq!(
         roadmap::complete_direct(&updated, "docs").expect("idempotent completion"),
         roadmap::DirectCompletionEdit::NoChange
+    );
+}
+
+#[test]
+fn binds_and_explicitly_rebinds_a_release_while_preserving_the_body() {
+    let input = roadmap("  direct_changes:\n    - id: docs\n      summary: Update docs\n");
+    let updated = roadmap::bind_release(&input, "v1.4.0", false).expect("bind release");
+    let roadmap::ReleaseBindingEdit::Updated(updated) = updated else {
+        panic!("unbound Roadmap should be updated");
+    };
+    assert!(updated.ends_with("# Roadmap\n"));
+    assert_eq!(
+        roadmap::parse(&updated)
+            .expect("valid bound Roadmap")
+            .target_release
+            .as_deref(),
+        Some("v1.4.0")
+    );
+    assert_eq!(
+        roadmap::bind_release(&updated, "v1.4.0", false).expect("idempotent binding"),
+        roadmap::ReleaseBindingEdit::NoChange
+    );
+    assert_eq!(
+        roadmap::bind_release(&updated, "v1.5.0", false).expect("guarded rebinding"),
+        roadmap::ReleaseBindingEdit::RebindRequired {
+            current: "v1.4.0".to_owned()
+        }
+    );
+    let rebound = roadmap::bind_release(&updated, "v1.5.0", true).expect("explicit rebind");
+    let roadmap::ReleaseBindingEdit::Updated(rebound) = rebound else {
+        panic!("explicit rebind should update");
+    };
+    assert_eq!(
+        roadmap::parse(&rebound)
+            .expect("valid rebound Roadmap")
+            .target_release
+            .as_deref(),
+        Some("v1.5.0")
     );
 }

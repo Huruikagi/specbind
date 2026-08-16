@@ -85,6 +85,12 @@ enum SpecCompletionCommand {
 enum MilestoneCommand {
     /// Report stage, progress, actions, dependencies, and release blockers.
     Status,
+    /// Bind or explicitly rebind the active milestone release label.
+    BindRelease {
+        version: String,
+        #[arg(long)]
+        rebind: bool,
+    },
     /// Validate and complete a milestone-owned Direct item.
     Direct {
         #[command(subcommand)]
@@ -150,6 +156,9 @@ fn main() -> ExitCode {
         Command::Milestone {
             command: MilestoneCommand::Status,
         } => specbind::cli::milestone_status(&start),
+        Command::Milestone {
+            command: MilestoneCommand::BindRelease { version, rebind },
+        } => specbind::cli::milestone_bind_release(&start, &version, rebind),
         Command::Milestone {
             command:
                 MilestoneCommand::Direct {

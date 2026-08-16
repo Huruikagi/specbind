@@ -8,6 +8,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use uuid::Uuid;
 
+use crate::release;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RoadmapDocument {
     pub milestone_id: String,
@@ -48,6 +50,13 @@ pub enum DirectStatus {
 pub enum DirectCompletionEdit {
     Updated(String),
     NoChange,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ReleaseBindingEdit {
+    Updated(String),
+    NoChange,
+    RebindRequired { current: String },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -170,12 +179,12 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
         && !raw
             .target_release
             .as_str()
-            .is_some_and(|value| !value.is_empty() && !value.contains(['\r', '\n']))
+            .is_some_and(release::valid_version)
     {
         issues.push(issue(
             "ROADMAP_TARGET_RELEASE_INVALID",
             "/target_release",
-            "target_release must be null or a non-empty single-line string",
+            "target_release must be null or match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
         ));
     }
     for (category, empty) in [
@@ -321,6 +330,58 @@ pub fn complete_direct(
         ));
     }
     Ok(DirectCompletionEdit::Updated(rendered))
+}
+
+/// Binds or explicitly rebinds the release label while preserving the Roadmap body.
+///
+/// # Errors
+///
+/// Returns Roadmap diagnostics when the document or requested release is invalid,
+/// or when the mutated frontmatter cannot be rendered and revalidated.
+pub fn bind_release(
+    content: &str,
+    requested: &str,
+    allow_rebind: bool,
+) -> Result<ReleaseBindingEdit, RoadmapIssues> {
+    if !release::valid_version(requested) {
+        return Err(RoadmapIssues {
+            issues: vec![issue(
+                "ROADMAP_TARGET_RELEASE_INVALID",
+                "/target_release",
+                "requested release must match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+            )],
+        });
+    }
+    let roadmap = parse(content)?;
+    if roadmap.target_release.as_deref() == Some(requested) {
+        return Ok(ReleaseBindingEdit::NoChange);
+    }
+    if let Some(current) = roadmap.target_release
+        && !allow_rebind
+    {
+        return Ok(ReleaseBindingEdit::RebindRequired { current });
+    }
+
+    let (frontmatter, body) = split_frontmatter_parts(content).map_err(single_issue)?;
+    let mut value = serde_saphyr::from_str::<Value>(frontmatter)
+        .map_err(|error| single_issue(format!("ROADMAP_FRONTMATTER_INVALID: {error}")))?;
+    let root = value.as_object_mut().ok_or_else(|| {
+        single_issue("ROADMAP_RELEASE_MUTATION_FAILED: root is not a mapping".to_owned())
+    })?;
+    root.insert(
+        "target_release".to_owned(),
+        Value::String(requested.to_owned()),
+    );
+    let yaml = serde_saphyr::to_string(&value)
+        .map_err(|error| single_issue(format!("ROADMAP_RELEASE_SERIALIZE_FAILED: {error}")))?;
+    let rendered = format!("---\n{yaml}---\n{body}");
+    let validated = parse(&rendered)?;
+    if validated.target_release.as_deref() != Some(requested) {
+        return Err(single_issue(
+            "ROADMAP_RELEASE_MUTATION_FAILED: target release was not preserved".to_owned(),
+        ));
+    }
+    Ok(ReleaseBindingEdit::Updated(rendered))
 }
 
 fn validate_items(
