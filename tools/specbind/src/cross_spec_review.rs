@@ -1176,12 +1176,7 @@ fn read_regular(path: &Path, source: &str, issues: &mut Vec<ReviewIssue>) -> Opt
 }
 
 fn valid_id(value: &str) -> bool {
-    let mut bytes = value.bytes();
-    value.len() <= 64
-        && bytes.next().is_some_and(|byte| byte.is_ascii_lowercase())
-        && bytes.all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
-        && !value.ends_with('-')
-        && !value.contains("--")
+    crate::artifacts::canonical_id(value)
 }
 
 fn review_issue(

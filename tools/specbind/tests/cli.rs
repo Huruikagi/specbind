@@ -893,6 +893,445 @@ fn reaccepts_a_currently_fresh_review() {
     assert!(!accepted.contains("First assessment."));
 }
 
+#[test]
+fn walks_every_gate_from_requirements_to_implementation() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+
+    let mut requirements = Command::cargo_bin("specbind").expect("specbind binary should build");
+    requirements
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK SPEC_REQUIREMENTS_APPROVED: Approved requirements for spec checkout.\n  State: design\n  Approval mode: explicit\n  Passed at: ",
+            )
+            .and(predicate::str::contains("\n  Approved requirement IDs: 1\n")),
+        )
+        .stderr("");
+
+    let mut design = Command::cargo_bin("specbind").expect("specbind binary should build");
+    design
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK SPEC_DESIGN_APPROVED: Approved design for spec checkout.\n  State: tasks\n  Approval mode: explicit\n  Passed at: ",
+            )
+            .and(predicate::str::contains("Approved requirement IDs").not()),
+        )
+        .stderr("");
+
+    let mut review = Command::cargo_bin("specbind").expect("specbind binary should build");
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        gate_task_fixture(),
+    );
+    let mut tasks = Command::cargo_bin("specbind").expect("specbind binary should build");
+    tasks
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "tasks",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--delegation-workflow",
+            "specbind-quick",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK SPEC_TASKS_APPROVED: Approved tasks for spec checkout.\n  State: implementation\n  Approval mode: delegated\n  Delegation workflow: specbind-quick\n  Passed at: ",
+            ),
+        )
+        .stderr("");
+
+    let mut status = Command::cargo_bin("specbind").expect("specbind binary should build");
+    status
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  State: implementation\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains(
+                    "  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n",
+                )),
+        );
+}
+
+#[test]
+fn reports_an_identical_fresh_approval_as_no_change() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+
+    let mut repeat = Command::cargo_bin("specbind").expect("specbind binary should build");
+    repeat
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE SPEC_REQUIREMENTS_ALREADY_APPROVED: Spec checkout already has identical fresh requirements approval.\n")
+        .stderr("");
+}
+
+#[test]
+fn rejects_gate_approval_from_the_wrong_state() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+
+    let mut design = Command::cargo_bin("specbind").expect("specbind binary should build");
+    design
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR SPEC_DESIGN_APPROVE_FAILED: Cannot approve design for spec checkout.",
+            )
+            .and(predicate::str::contains(
+                "SPEC_DESIGN_STATE_INVALID specs/checkout/spec.yaml: design approval requires the Spec in design state",
+            )),
+        );
+}
+
+#[test]
+fn requires_an_unambiguous_approval_authority() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+
+    let mut missing = Command::cargo_bin("specbind").expect("specbind binary should build");
+    missing
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("--approval-mode"));
+
+    let mut explicit_with_workflow =
+        Command::cargo_bin("specbind").expect("specbind binary should build");
+    explicit_with_workflow
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+            "--delegation-workflow",
+            "specbind-quick",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "SPEC_GATE_DELEGATION_INVALID explicit approval does not accept a delegation workflow",
+        ));
+
+    let mut delegated_without_workflow =
+        Command::cargo_bin("specbind").expect("specbind binary should build");
+    delegated_without_workflow
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "SPEC_GATE_DELEGATION_INVALID delegated approval requires --delegation-workflow",
+        ));
+}
+
+#[test]
+fn rejects_an_empty_unknown_or_duplicated_requirement_selection() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+
+    for (ids, code) in [
+        (None, "SPEC_REQUIREMENTS_SELECTION_EMPTY"),
+        (Some("9.9"), "SPEC_REQUIREMENTS_SELECTION_UNKNOWN"),
+        (Some("1.1,1.1"), "SPEC_REQUIREMENTS_SELECTION_DUPLICATE"),
+        (Some("1"), "SPEC_REQUIREMENTS_SELECTION_INVALID"),
+    ] {
+        let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+        let mut arguments = vec![
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ];
+        if let Some(ids) = ids {
+            arguments.push("--requirement-ids");
+            arguments.push(ids);
+        }
+        command
+            .current_dir(root.path())
+            .args(arguments)
+            .assert()
+            .failure()
+            .stdout("")
+            .stderr(predicate::str::contains(code));
+    }
+}
+
+#[test]
+fn blocks_tasks_approval_without_a_fresh_cross_spec_review() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    approve_design(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        gate_task_fixture(),
+    );
+
+    let mut tasks = Command::cargo_bin("specbind").expect("specbind binary should build");
+    tasks
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "tasks",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR SPEC_TASKS_APPROVE_FAILED: Cannot approve tasks for spec checkout.",
+            )
+            .and(predicate::str::contains(
+                "CROSS_SPEC_REVIEW_TASKS_APPROVAL_BLOCKED",
+            )),
+        );
+}
+
+#[test]
+fn invalidates_one_gate_and_clears_only_its_downstream_evidence() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    approve_design(root.path());
+    commit_all(root.path());
+
+    let mut invalidate = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalidate
+        .current_dir(root.path())
+        .args(["spec", "design", "invalidate", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            "OK SPEC_DESIGN_INVALIDATED: Invalidated design for spec checkout.\n  State: design\n",
+        )
+        .stderr("");
+
+    let spec = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("rewound spec metadata");
+    assert!(spec.contains("state: design"), "{spec}");
+    assert!(spec.contains("requirements:"), "{spec}");
+    assert!(!spec.contains("design:"), "{spec}");
+
+    let mut repeat = Command::cargo_bin("specbind").expect("specbind binary should build");
+    repeat
+        .current_dir(root.path())
+        .args(["spec", "design", "invalidate", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            "NO_CHANGE SPEC_DESIGN_NOT_APPROVED: Spec checkout has no design approval to invalidate.\n",
+        );
+
+    commit_all(root.path());
+    let mut requirements = Command::cargo_bin("specbind").expect("specbind binary should build");
+    requirements
+        .current_dir(root.path())
+        .args(["spec", "requirements", "invalidate", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            "OK SPEC_REQUIREMENTS_INVALIDATED: Invalidated requirements for spec checkout.\n  State: requirements\n",
+        );
+    let rewound = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("rewound spec metadata");
+    assert!(rewound.contains("state: requirements"), "{rewound}");
+    assert!(rewound.contains("requirement_ids: null"), "{rewound}");
+    assert!(!rewound.contains("gate_evidence"), "{rewound}");
+}
+
+#[test]
+fn refuses_gate_invalidation_with_a_dirty_target() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    commit_all(root.path());
+    approve_design(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["spec", "design", "invalidate", "checkout"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR SPEC_DESIGN_INVALIDATE_FAILED:").and(
+                predicate::str::contains(
+                    "SPEC_DESIGN_TARGET_DIRTY specs/checkout/spec.yaml: gate invalidation refuses to overwrite a dirty or staged spec.yaml",
+                ),
+            ),
+        );
+}
+
+fn approve_requirements(root: &Path) {
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root)
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .success();
+}
+
+fn approve_design(root: &Path) {
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root)
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success();
+}
+
+fn gate_task_fixture() -> &'static str {
+    "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Build\n      requirement_ids: ['1.1']\n"
+}
+
+/// Writes a Spec-backed milestone whose one participating Spec sits in the
+/// `requirements` state with no approval evidence yet.
+fn write_gate_fixture(root: &Path) {
+    write(root, "baseline.txt", "baseline\n");
+    commit_all(root);
+    let baseline = git_stdout(root, &["rev-parse", "HEAD"]);
+    write(
+        root,
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+        ),
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {REVIEW_MILESTONE}\n  state: requirements\n  requirement_ids: null\n"
+        ),
+    );
+}
+
 const REVIEW_MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
 
 fn review_candidate(assessment: &str) -> String {

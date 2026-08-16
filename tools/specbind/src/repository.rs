@@ -53,6 +53,26 @@ pub fn output(project_root: &Path, arguments: &[&str]) -> Result<String, Reposit
     String::from_utf8(output_bytes(project_root, arguments)?).map_err(RepositoryError::NonUtf8)
 }
 
+/// Returns the porcelain worktree and index status limited to one repository
+/// relative path, including untracked entries.
+///
+/// # Errors
+///
+/// Returns a start or command failure when Git cannot produce successful output.
+pub fn path_status(project_root: &Path, relative_path: &str) -> Result<Vec<u8>, RepositoryError> {
+    output_bytes(
+        project_root,
+        &[
+            "status",
+            "--porcelain=v1",
+            "-z",
+            "--untracked-files=all",
+            "--",
+            relative_path,
+        ],
+    )
+}
+
 /// Runs a Git predicate whose exit codes zero and one mean true and false.
 ///
 /// # Errors

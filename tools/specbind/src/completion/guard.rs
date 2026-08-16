@@ -311,17 +311,9 @@ pub(super) fn ensure_target_clean(
         .join(spec_relative)
         .to_string_lossy()
         .replace('\\', "/");
-    match git_output_bytes(
-        project_root,
-        &[
-            "status",
-            "--porcelain=v1",
-            "-z",
-            "--untracked-files=all",
-            "--",
-            &path,
-        ],
-    ) {
+    match repository::path_status(project_root, &path)
+        .map_err(|error| one_issue("COMPLETION_GIT_FAILED", None, error.to_string()))
+    {
         Ok(output) if output.is_empty() => {}
         Ok(_) => issues.push(issue(
             "SPEC_COMPLETION_TARGET_DIRTY",
@@ -349,14 +341,7 @@ pub(super) fn validate_revision(value: &str) -> Result<(), CompletionIssues> {
 }
 
 pub(super) fn valid_id(value: &str) -> bool {
-    !value.is_empty()
-        && value.len() <= 64
-        && value.as_bytes()[0].is_ascii_lowercase()
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
-        && !value.ends_with('-')
-        && !value.contains("--")
+    artifacts::canonical_id(value)
 }
 
 fn git_output(project_root: &Path, arguments: &[&str]) -> Result<String, CompletionIssues> {

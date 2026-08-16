@@ -1,9 +1,11 @@
 use std::{
     io::{self, Write as _},
+    path::Path,
     process::ExitCode,
 };
 
 use clap::{Parser, Subcommand};
+use specbind::cli::CommandOutput;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -70,6 +72,38 @@ enum SpecCommand {
         #[command(subcommand)]
         command: SpecCompletionCommand,
     },
+    /// Approve or invalidate the requirements gate.
+    Requirements {
+        #[command(subcommand)]
+        command: GateCommand,
+    },
+    /// Approve or invalidate the design gate.
+    Design {
+        #[command(subcommand)]
+        command: GateCommand,
+    },
+    /// Approve or invalidate the tasks gate.
+    Tasks {
+        #[command(subcommand)]
+        command: GateCommand,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+enum GateCommand {
+    /// Record approval evidence and advance the Spec to the next state.
+    Approve {
+        spec: String,
+        #[arg(long, value_parser = ["explicit", "delegated"])]
+        approval_mode: String,
+        #[arg(long)]
+        delegation_workflow: Option<String>,
+        /// Comma-separated canonical active Requirement IDs; requirements only.
+        #[arg(long)]
+        requirement_ids: Option<String>,
+    },
+    /// Clear this gate and its cumulative downstream evidence.
+    Invalidate { spec: String },
 }
 
 #[derive(Debug, Subcommand)]
@@ -142,6 +176,106 @@ enum ReleaseCommand {
     },
 }
 
+fn run_gate(start: &Path, gate: specbind::approval::Gate, command: GateCommand) -> CommandOutput {
+    match command {
+        GateCommand::Approve {
+            spec,
+            approval_mode,
+            delegation_workflow,
+            requirement_ids,
+        } => specbind::cli::spec_gate_approve(
+            start,
+            &spec,
+            gate,
+            &approval_mode,
+            delegation_workflow.as_deref(),
+            requirement_ids.as_deref(),
+        ),
+        GateCommand::Invalidate { spec } => specbind::cli::spec_gate_invalidate(start, &spec, gate),
+    }
+}
+
+fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
+    match command {
+        ArtifactCommand::List { spec } => specbind::cli::artifact_list(start, &spec),
+        ArtifactCommand::Read { spec, selector } => {
+            specbind::cli::artifact_read(start, &spec, &selector)
+        }
+    }
+}
+
+fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
+    match command {
+        TasksCommand::List { spec } => specbind::cli::tasks_list(start, &spec),
+        TasksCommand::Show { spec, task_id } => specbind::cli::tasks_show(start, &spec, &task_id),
+    }
+}
+
+fn run_spec(start: &Path, command: SpecCommand) -> CommandOutput {
+    match command {
+        SpecCommand::Status { spec } => specbind::cli::spec_status(start, &spec),
+        SpecCommand::Completion { command } => run_spec_completion(start, command),
+        SpecCommand::Requirements { command } => {
+            run_gate(start, specbind::approval::Gate::Requirements, command)
+        }
+        SpecCommand::Design { command } => {
+            run_gate(start, specbind::approval::Gate::Design, command)
+        }
+        SpecCommand::Tasks { command } => run_gate(start, specbind::approval::Gate::Tasks, command),
+    }
+}
+
+fn run_spec_completion(start: &Path, command: SpecCompletionCommand) -> CommandOutput {
+    match command {
+        SpecCompletionCommand::Preflight { spec } => {
+            specbind::cli::spec_completion_preflight(start, &spec)
+        }
+        SpecCompletionCommand::Accept { spec, evidence } => {
+            specbind::cli::spec_completion_accept(start, &spec, &evidence)
+        }
+        SpecCompletionCommand::Invalidate { spec } => {
+            specbind::cli::spec_completion_invalidate(start, &spec)
+        }
+    }
+}
+
+fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
+    match command {
+        MilestoneCommand::Status => specbind::cli::milestone_status(start),
+        MilestoneCommand::BindRelease { version, rebind } => {
+            specbind::cli::milestone_bind_release(start, &version, rebind)
+        }
+        MilestoneCommand::Direct { command } => run_direct(start, command),
+        MilestoneCommand::Review {
+            command: ReviewCommand::Status,
+        } => specbind::cli::milestone_review_status(start),
+        MilestoneCommand::Review {
+            command: ReviewCommand::Accept { candidate },
+        } => specbind::cli::milestone_review_accept(start, &candidate),
+    }
+}
+
+fn run_direct(start: &Path, command: DirectCommand) -> CommandOutput {
+    match command {
+        DirectCommand::Preflight { direct } => {
+            specbind::cli::direct_completion_preflight(start, &direct)
+        }
+        DirectCommand::Complete {
+            direct,
+            implementation_revision,
+        } => specbind::cli::direct_completion_complete(start, &direct, &implementation_revision),
+    }
+}
+
+fn run_release(start: &Path, command: ReleaseCommand) -> CommandOutput {
+    match command {
+        ReleaseCommand::Preflight => specbind::cli::release_preflight(start),
+        ReleaseCommand::Finalize { log_entries } => {
+            specbind::cli::release_finalize(start, log_entries.as_deref())
+        }
+    }
+}
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let start = match std::env::current_dir() {
@@ -152,79 +286,11 @@ fn main() -> ExitCode {
         }
     };
     let output = match cli.command {
-        Command::Artifact {
-            command: ArtifactCommand::List { spec },
-        } => specbind::cli::artifact_list(&start, &spec),
-        Command::Artifact {
-            command: ArtifactCommand::Read { spec, selector },
-        } => specbind::cli::artifact_read(&start, &spec, &selector),
-        Command::Tasks {
-            command: TasksCommand::List { spec },
-        } => specbind::cli::tasks_list(&start, &spec),
-        Command::Tasks {
-            command: TasksCommand::Show { spec, task_id },
-        } => specbind::cli::tasks_show(&start, &spec, &task_id),
-        Command::Spec {
-            command: SpecCommand::Status { spec },
-        } => specbind::cli::spec_status(&start, &spec),
-        Command::Spec {
-            command:
-                SpecCommand::Completion {
-                    command: SpecCompletionCommand::Preflight { spec },
-                },
-        } => specbind::cli::spec_completion_preflight(&start, &spec),
-        Command::Spec {
-            command:
-                SpecCommand::Completion {
-                    command: SpecCompletionCommand::Accept { spec, evidence },
-                },
-        } => specbind::cli::spec_completion_accept(&start, &spec, &evidence),
-        Command::Spec {
-            command:
-                SpecCommand::Completion {
-                    command: SpecCompletionCommand::Invalidate { spec },
-                },
-        } => specbind::cli::spec_completion_invalidate(&start, &spec),
-        Command::Milestone {
-            command: MilestoneCommand::Status,
-        } => specbind::cli::milestone_status(&start),
-        Command::Milestone {
-            command: MilestoneCommand::BindRelease { version, rebind },
-        } => specbind::cli::milestone_bind_release(&start, &version, rebind),
-        Command::Milestone {
-            command:
-                MilestoneCommand::Direct {
-                    command: DirectCommand::Preflight { direct },
-                },
-        } => specbind::cli::direct_completion_preflight(&start, &direct),
-        Command::Milestone {
-            command:
-                MilestoneCommand::Direct {
-                    command:
-                        DirectCommand::Complete {
-                            direct,
-                            implementation_revision,
-                        },
-                },
-        } => specbind::cli::direct_completion_complete(&start, &direct, &implementation_revision),
-        Command::Milestone {
-            command:
-                MilestoneCommand::Review {
-                    command: ReviewCommand::Status,
-                },
-        } => specbind::cli::milestone_review_status(&start),
-        Command::Milestone {
-            command:
-                MilestoneCommand::Review {
-                    command: ReviewCommand::Accept { candidate },
-                },
-        } => specbind::cli::milestone_review_accept(&start, &candidate),
-        Command::Release {
-            command: ReleaseCommand::Preflight,
-        } => specbind::cli::release_preflight(&start),
-        Command::Release {
-            command: ReleaseCommand::Finalize { log_entries },
-        } => specbind::cli::release_finalize(&start, log_entries.as_deref()),
+        Command::Artifact { command } => run_artifact(&start, command),
+        Command::Tasks { command } => run_tasks(&start, command),
+        Command::Spec { command } => run_spec(&start, command),
+        Command::Milestone { command } => run_milestone(&start, command),
+        Command::Release { command } => run_release(&start, command),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

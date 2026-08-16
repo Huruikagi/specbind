@@ -699,14 +699,7 @@ fn completion_spec_path(
 }
 
 fn valid_id(value: &str) -> bool {
-    !value.is_empty()
-        && value.len() <= 64
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
-        && value.as_bytes()[0].is_ascii_lowercase()
-        && !value.ends_with('-')
-        && !value.contains("--")
+    crate::artifacts::canonical_id(value)
 }
 
 fn requirements_fingerprint(evidence: &wire::RequirementsGateEvidence) -> &wire::Fingerprint {

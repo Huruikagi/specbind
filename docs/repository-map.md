@@ -26,6 +26,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
+- `tools/specbind/src/approval.rs` — guarded Requirements, Design, and Tasks gate approval and invalidation transitions
 - `tools/specbind/src/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
 - `tools/specbind/src/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
 - `tools/specbind/src/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization

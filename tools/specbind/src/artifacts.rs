@@ -146,6 +146,17 @@ fn validate_spec_directory(
     }
 }
 
+/// Reports whether a value is a canonical `SpecBind` Spec or Direct identity.
+#[must_use]
+pub fn canonical_id(value: &str) -> bool {
+    let mut bytes = value.bytes();
+    value.len() <= 64
+        && bytes.next().is_some_and(|byte| byte.is_ascii_lowercase())
+        && bytes.all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+        && !value.ends_with('-')
+        && !value.contains("--")
+}
+
 /// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
 #[must_use]
 pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInventory {
