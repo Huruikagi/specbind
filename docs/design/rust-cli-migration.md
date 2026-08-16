@@ -12,6 +12,8 @@ The accepted v1 contract deliberately removes public manifests, profiles, operat
 
 The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. The preparatory directory move temporarily carries the current schema copies under `tools/cc-sdd/schemas/`; the first Rust scaffold increment adopts them at the authoritative `tools/specbind/schemas/` path required by Decisions 0015 and 0083 and embeds them into the matching binary. Typed Rust models follow them and share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
 
+[Decision 0084](./decisions/0084-rust-dependency-strategy.md) accepts a dependency-positive implementation strategy: focused crates own general-purpose mechanics behind SpecBind module boundaries, while SpecBind retains its exact format, lifecycle, diagnostics, and safety contracts. Git remains an installed-executable adapter so repository decisions agree with the Git implementation and configuration that v1 already requires.
+
 ## Repository and cutover layout
 
 The preparatory move establishes this repository layout:
@@ -46,7 +48,7 @@ Accepted named commands include `specbind milestone bind-release`, `specbind rel
 
 ## Suggested Rust boundaries
 
-The exact crates are not fixed, but the code should separate:
+The dependency direction is accepted by Decision 0084, and the code should separate:
 
 - `cli`: arguments, TTY prompting for installation, text rendering, stream routing, and exit mapping
 - `config`: `.specbind.json` loading and validation
@@ -142,6 +144,7 @@ The installers verify the selected archive against `SHA256SUMS`, install to the 
 ## Remaining implementation details
 
 - Minimum supported Windows and WSL2 Linux versions
+- Minimum supported Rust version
 - Exact archive names and installer-script URLs
-- Internal Rust crate layout and dependency choices
+- Exact internal Rust crate layout and dependency versions/features after the YAML and MSRV spikes
 - Cutover and rollback checklist for the first Rust-backed release
