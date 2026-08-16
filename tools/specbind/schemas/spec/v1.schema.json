@@ -151,13 +151,13 @@
     "RequirementsInputRevisions": {
       "type": "object",
       "properties": {
-        "requirements.md": {
+        "requirements": {
           "$ref": "#/$defs/Fingerprint"
         }
       },
       "additionalProperties": false,
       "required": [
-        "requirements.md"
+        "requirements"
       ]
     },
     "Fingerprint": {
@@ -222,7 +222,22 @@
           "$ref": "#/$defs/ExplicitApprovalMode"
         },
         "input_revisions": {
-          "$ref": "#/$defs/DesignInputRevisions"
+          "type": "object",
+          "properties": {
+            "contract": {
+              "$ref": "#/$defs/Fingerprint"
+            }
+          },
+          "patternProperties": {
+            "^design/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$": {
+              "$ref": "#/$defs/Fingerprint"
+            }
+          },
+          "required": [
+            "contract"
+          ],
+          "additionalProperties": false,
+          "minProperties": 2
         }
       },
       "additionalProperties": false,
@@ -230,22 +245,6 @@
         "passed_at",
         "approval_mode",
         "input_revisions"
-      ]
-    },
-    "DesignInputRevisions": {
-      "type": "object",
-      "properties": {
-        "design.md": {
-          "$ref": "#/$defs/Fingerprint"
-        },
-        "contract.md": {
-          "$ref": "#/$defs/Fingerprint"
-        }
-      },
-      "additionalProperties": false,
-      "required": [
-        "design.md",
-        "contract.md"
       ]
     },
     "DelegatedDesignGateEvidence": {
@@ -261,7 +260,22 @@
           "$ref": "#/$defs/NonEmptyString"
         },
         "input_revisions": {
-          "$ref": "#/$defs/DesignInputRevisions"
+          "type": "object",
+          "properties": {
+            "contract": {
+              "$ref": "#/$defs/Fingerprint"
+            }
+          },
+          "patternProperties": {
+            "^design/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$": {
+              "$ref": "#/$defs/Fingerprint"
+            }
+          },
+          "required": [
+            "contract"
+          ],
+          "additionalProperties": false,
+          "minProperties": 2
         }
       },
       "additionalProperties": false,

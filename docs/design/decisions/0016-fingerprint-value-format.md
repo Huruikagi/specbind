@@ -33,3 +33,7 @@ The `sha256:` tag makes the persisted algorithm explicit and leaves room for a f
 - Changing the accepted algorithm or representation requires an explicit schema evolution decision.
 
 Decision 0039 fixes `tasks.yaml#plan` as the tasks-gate evidence key for the normalized projection defined by Decision 0028. Decisions 0038 and 0057 fix the design gate's logical artifact-key set, and Decision 0037 fixes completion evidence without upstream artifact fingerprints.
+
+## Implementation status
+
+The Rust fingerprint boundary now emits tagged lowercase SHA-256 values for normalized Markdown bytes and validated typed task-plan projections. Persisted wire values retain strict schema validation, while runtime comparison remains exact after canonical production.

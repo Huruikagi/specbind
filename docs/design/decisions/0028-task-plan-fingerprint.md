@@ -28,3 +28,7 @@ All schema-defined plan fields participate. Field absence remains distinct from 
 - Reordering tasks, details, or completion criteria changes the fingerprint because it may change execution or interpretation.
 - Changing any string content, field presence, task structure, scheduling flag, or set membership changes the fingerprint.
 - Rust and other producers share an externally specified canonical JSON algorithm rather than relying on language-specific map iteration or ordinary JSON serialization.
+
+## Implementation status
+
+The Rust implementation uses `serde_json_canonicalizer` for RFC 8785 serialization after sorting each set-like array by unsigned UTF-16 code units. Its public producer requires the validated `Tasks` domain wrapper, so schema-invalid or artifact-local semantically invalid plans cannot be fingerprinted through the accepted path.

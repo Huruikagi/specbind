@@ -9,4 +9,4 @@ active_change:
       approval_mode: explicit
       approved_requirement_ids: [REQ-1]
       input_revisions:
-        requirements.md: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

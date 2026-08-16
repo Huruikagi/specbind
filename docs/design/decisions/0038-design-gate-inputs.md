@@ -27,3 +27,7 @@ Every active spec has one persistent `SpecBind Contract` artifact under Decision
 - An intentionally empty contract remains explicit, reviewable, and distinguishable from a missing file.
 - Design evidence stays local to direct gate inputs without duplicating requirements evidence.
 - Traceability failures block approval without adding another evidence field.
+
+## Implementation status
+
+The generated Rust-owned v1 schema now requires logical key `contract`, at least one `design/<artifact_id>` key, and no unrelated input key. This replaces the earlier scaffold's fixed default-filename keys and supports the complete discovered design set.

@@ -1,5 +1,6 @@
 pub mod v1 {
     use std::borrow::Cow;
+    use std::collections::BTreeMap;
 
     use schemars::{JsonSchema, Schema, SchemaGenerator, json_schema};
     use serde::{Deserialize, Serialize};
@@ -236,17 +237,37 @@ pub mod v1 {
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
     #[serde(deny_unknown_fields)]
     pub struct RequirementsInputRevisions {
-        #[serde(rename = "requirements.md")]
+        #[serde(rename = "requirements")]
         pub requirements: Fingerprint,
     }
 
-    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-    #[serde(deny_unknown_fields)]
-    pub struct DesignInputRevisions {
-        #[serde(rename = "design.md")]
-        pub design: Fingerprint,
-        #[serde(rename = "contract.md")]
-        pub contract: Fingerprint,
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+    #[serde(transparent)]
+    pub struct DesignInputRevisions(pub BTreeMap<String, Fingerprint>);
+
+    impl JsonSchema for DesignInputRevisions {
+        fn inline_schema() -> bool {
+            true
+        }
+
+        fn schema_name() -> Cow<'static, str> {
+            "DesignInputRevisions".into()
+        }
+
+        fn json_schema(generator: &mut SchemaGenerator) -> Schema {
+            json_schema!({
+                "type": "object",
+                "properties": {
+                    "contract": generator.subschema_for::<Fingerprint>()
+                },
+                "patternProperties": {
+                    "^design/[a-z][a-z0-9]*(?:-[a-z0-9]+)*$": generator.subschema_for::<Fingerprint>()
+                },
+                "required": ["contract"],
+                "additionalProperties": false,
+                "minProperties": 2
+            })
+        }
     }
 
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]

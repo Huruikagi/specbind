@@ -3,22 +3,22 @@ active_change:
   milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
   state: release_ready
   requirement_ids:
-    - REQ-1
+    - "1.1"
   gate_evidence:
     requirements:
       passed_at: 2026-08-16T10:00:00+09:00
       approval_mode: delegated
       delegation_workflow: specbind-approve-requirements
       approved_requirement_ids:
-        - REQ-1
+        - "1.1"
       input_revisions:
-        requirements.md: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     design:
       passed_at: 2026-08-16T11:00:00+09:00
       approval_mode: explicit
       input_revisions:
-        design.md: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-        contract.md: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        design/main: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        contract: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
     tasks:
       passed_at: 2026-08-16T12:00:00Z
       approval_mode: explicit

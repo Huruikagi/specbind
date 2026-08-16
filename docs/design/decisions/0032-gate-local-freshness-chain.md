@@ -28,3 +28,7 @@ Freshness is a comparison of the current gate-owned input projection with the pr
 - Completion evidence stays focused on implementation validation rather than duplicating earlier approval records.
 - Status can explain the earliest stale gate and derive downstream staleness without comparing redundant snapshots.
 - Reverting an out-of-band edit exactly can restore freshness while evidence remains; semantic workflow changes use the normal invalidation event and require new approval.
+
+## Implementation status
+
+The Rust read model now compares discovery-resolved current inputs against gate-owned requirements, design, and task-plan evidence. It distinguishes unreached gates from stale gates, reports design key-set changes separately from content changes, and cascades stale prerequisites downstream. Completion freshness remains deferred to the Git revision and task-completion integration.

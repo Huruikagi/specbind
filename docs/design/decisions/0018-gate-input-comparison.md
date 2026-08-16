@@ -40,3 +40,7 @@ Most Markdown gate inputs are authoritative prose documents. A content edit shou
 - Requirements evidence remains readable and shows exactly which ordered Requirement IDs were approved.
 - Normal implementation progress does not force task-plan reapproval.
 - Task comparison depends on typed schema projections rather than YAML key order, comments, or presentation formatting.
+
+## Implementation status
+
+The Rust fingerprint producer normalizes CRLF and bare CR to LF without changing any other Markdown byte. Task-plan production accepts only an artifact-local semantically validated domain document, excludes execution state, and preserves sequence-bearing arrays while sorting set-like arrays before JCS serialization.

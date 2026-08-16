@@ -1,0 +1,21 @@
+schema_version: 1
+active_change:
+  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
+  state: tasks
+  requirement_ids:
+    - "1.1"
+  gate_evidence:
+    requirements:
+      passed_at: 2026-08-16T10:00:00Z
+      approval_mode: explicit
+      approved_requirement_ids:
+        - "1.1"
+      input_revisions:
+        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    design:
+      passed_at: 2026-08-16T11:00:00Z
+      approval_mode: explicit
+      input_revisions:
+        contract: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        design/main: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        design/storage-layer: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

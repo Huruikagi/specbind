@@ -15,7 +15,7 @@ At the same time, some library defaults are broader than the accepted v1 interfa
 - `Cargo.lock` is committed for the distributed CLI. Direct dependencies use only the features needed by the accepted interface, especially where a crate can enable networking, color, asynchronous execution, or additional format support.
 - The initial implementation direction is:
   - `clap` with derive support for command and argument parsing;
-  - `serde` and `serde_json` for typed models and `.specbind.json`;
+  - `serde` and `serde_json` for typed models and `.specbind.json`, plus `serde_json_canonicalizer` for the RFC 8785 task-plan projection;
   - `saphyr-parser` for the YAML event layer and `serde-saphyr` where its serialization and deserialization behavior passes the shared conformance fixtures;
   - `schemars` for explicit Draft 2020-12 generation from versioned wire models and `jsonschema` for evaluating the embedded generated schemas;
   - `thiserror` for typed internal errors, with a SpecBind-owned renderer for stable outcomes, codes, stream routing, sanitization, and exit mapping;

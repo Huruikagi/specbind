@@ -89,7 +89,7 @@ fn reports_owned_schema_diagnostics() {
 #[test]
 fn validates_date_time_formats() {
     let error = runtime::load_spec(
-        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: design\n  requirement_ids: [REQ-1]\n  gate_evidence:\n    requirements:\n      passed_at: not-a-dateZ\n      approval_mode: explicit\n      approved_requirement_ids: [REQ-1]\n      input_revisions:\n        requirements.md: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: design\n  requirement_ids: [REQ-1]\n  gate_evidence:\n    requirements:\n      passed_at: not-a-dateZ\n      approval_mode: explicit\n      approved_requirement_ids: [REQ-1]\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
     )
     .expect_err("invalid RFC 3339 timestamps must fail schema validation");
 

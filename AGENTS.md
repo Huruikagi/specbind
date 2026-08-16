@@ -19,6 +19,8 @@
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
+- `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
+- `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification
