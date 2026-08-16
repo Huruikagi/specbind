@@ -4,6 +4,8 @@ This document adapts [pc-build-planner Issue #48](https://github.com/Huruikagi/p
 
 Status: Draft
 
+Implementation status: the Rust read model now parses every canonical Contract, enumerates every immediate persistent Spec, resolves valid Consumes edges, rejects unavailable or dangling targets, and returns structured cross-Spec File Ownership duplicate and overlap candidates plus representative dependency-cycle paths. Overlap and cycle findings remain warnings for agent judgment. Baseline diffs, review-input fingerprinting, and accepted review persistence remain later increments.
+
 ## Purpose
 
 The singleton `SpecBind Contract` artifact is the current manifest of a Spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating Requirements and Design document.

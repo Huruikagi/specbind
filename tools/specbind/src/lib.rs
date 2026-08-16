@@ -1,5 +1,6 @@
 pub mod artifacts;
 pub mod contract;
+pub mod contract_graph;
 pub mod design;
 pub mod domain;
 pub mod fingerprint;

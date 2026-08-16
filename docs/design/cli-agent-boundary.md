@@ -109,7 +109,7 @@ Stable result codes and exit behavior are part of the v1 contract. A JSON respon
 
 The Rust read model now implements the complete Requirements-to-Design-to-Tasks existence and active-coverage calculation behind this proposed command. It treats absent `tasks.yaml` as normal before the `tasks` state, requires it from `tasks` onward, and reports unknown Task mappings whenever a valid plan exists. The command vocabulary, concise text rendering, and exit-code exposure remain unimplemented.
 
-The artifact-local read model for `check contracts` now parses each canonical five-section Contract into typed entries and reports invalid headings, list structure, IDs, Consumes target shapes, and File Ownership paths. Loading every persistent Contract, resolving targets, and producing graph-level dangling-reference, overlap, and cycle findings remain unimplemented.
+The read model for `check contracts` now parses each canonical five-section Contract, loads every immediate persistent Spec, resolves valid Consumes edges, and reports unavailable Contracts, missing targets, cross-Spec File Ownership duplicate or overlap candidates, and deterministic dependency-cycle paths. The latter two remain warnings for agent judgment. Command rendering and the guarded cross-spec-review fingerprint and persistence handshake remain unimplemented.
 
 ## Lifecycle automation candidates
 

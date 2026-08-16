@@ -10,7 +10,8 @@ use serde_json::{Map, Value};
 use walkdir::WalkDir;
 
 use crate::{
-    contract, design,
+    contract::{self, ContractDocument},
+    design,
     domain::{self, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
@@ -322,6 +323,15 @@ fn resolve_design_projection(
         return None;
     }
     Some(ids)
+}
+
+pub(crate) fn resolve_contract_projection(
+    specbind_root: &Path,
+    artifact: &Artifact,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<ContractDocument> {
+    let (_, body) = read_traceability_concept(specbind_root, artifact, issues)?;
+    contract::parse(&body).ok()
 }
 
 fn read_traceability_concept(

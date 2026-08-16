@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Implementation status: `tools/specbind/src/contract.rs` now parses this profile from the Markdown syntax tree into typed Owns, Exports, Consumes, Invariants, and File Ownership entries. It validates the exact heading and flat-list structure, stable IDs, local Consumes target shape, path grammar, and section-local uniqueness, and artifact discovery surfaces its deterministic line-qualified diagnostics. Cross-spec target resolution, graph findings, and overlap or cycle analysis remain separate project-level validation increments.
+Implementation status: `tools/specbind/src/contract.rs` now parses this profile from the Markdown syntax tree into typed Owns, Exports, Consumes, Invariants, and File Ownership entries. It validates the exact heading and flat-list structure, stable IDs, local Consumes target shape, path grammar, and section-local uniqueness, and artifact discovery surfaces its deterministic line-qualified diagnostics. `contract_graph.rs` resolves the resulting cross-spec targets and produces ownership and cycle findings without weakening these artifact-local rules.
 
 ## Context
 

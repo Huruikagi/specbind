@@ -49,3 +49,7 @@ input_revisions:
 - Most accepted reviews contain only the roadmap projection and contract set.
 - Ambiguous cases remain reproducible because the particular deep documents used by the AI judgment become freshness inputs.
 - Spec-local gate evidence remains the authoritative owner of ordinary requirements, design, and task approval; cross-spec review duplicates a revision only when its own semantic conclusion directly depends on that content.
+
+## Implementation status
+
+The Rust Contract graph resolver now enumerates every immediate persistent Spec directory and requires one valid discovered singleton Contract from each. It retains each per-Spec partial inventory, resolves valid Consumes targets against the complete typed Contract set, and reports missing Specs, unavailable Contracts, and missing target entries mechanically. The required Contract fingerprint mapping, Roadmap scope projection, optional deep-input resolution, and guarded accepted-review write remain subsequent increments.

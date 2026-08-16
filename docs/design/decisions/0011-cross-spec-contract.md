@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: `tools/specbind/src/contract.rs` and `contract_graph.rs` now implement artifact-local parsing and the complete current persistent-Spec graph read model. The resolver distinguishes mechanical missing or dangling-reference errors from File Ownership and dependency-cycle warnings. Semantic compatibility judgment and accepted review persistence remain agent and guarded-workflow responsibilities.
+
 ## Context
 
 Cross-spec review currently tends to load every participating spec's complete requirements, design, and tasks. Most of that content is internal to one spec. The review cost grows with document size even though the cross-spec questions concern a much smaller set of dependencies, ownership boundaries, exported capabilities, and shared invariants.
