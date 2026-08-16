@@ -30,6 +30,8 @@ A project may customize template structure and template-local guidance wherever 
 
 ### Shared-rule responsibility
 
+Decision 0093 fixes the narrow v1 default rule set and its explicit skill consumers.
+
 Shared rules own user-customizable authoring policy that applies across templates, artifacts, or supported agents:
 
 - project terminology, tone, and level-of-detail preferences

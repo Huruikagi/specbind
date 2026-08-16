@@ -27,6 +27,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - `.specbind.json` is version-controlled and contains `schemaVersion`, `specDir`, `language`, `agents`, and optional `projectInstructions: true`. False project-instruction state may be represented by absence.
 - Product-managed agent skills are replaced with the current embedded versions when their target paths are Git-clean. Direct skill edits are not a supported customization API; Git remains recovery.
 - Existing project-owned settings are never overwritten. Missing embedded default settings are created automatically and left uncommitted for review; users may remove unwanted additions before committing.
+- Decision 0093 fixes the six default shared-rule paths; install and refresh treat them as project-owned settings rather than product-managed skill assets.
 - When project instructions are enabled, the installer maintains only a marked SpecBind block in the selected agents' root `AGENTS.md` or `CLAUDE.md`. Existing surrounding content is preserved, malformed or duplicate markers stop the operation, and the selection persists through `.specbind.json`.
 - Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and a clean repository first. The installer never commits project changes.
 
@@ -45,4 +46,3 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - Git replaces bespoke backup directories and overwrite prompts.
 - Project customization survives product updates, while generated agent resources can reliably advance.
 - Migration remains explicit, reviewable, and non-destructive toward the original `.kiro` artifacts.
-

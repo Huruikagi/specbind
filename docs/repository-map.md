@@ -153,3 +153,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0090](./design/decisions/0090-standalone-check-cli.md) | Accepted | Standalone traceability and contract check commands |
 | [0091](./design/decisions/0091-installed-template-surface.md) | Accepted | Embedded scaffold set separated from the installed customization surface |
 | [0092](./design/decisions/0092-template-skill-authoring-boundary.md) | Accepted | Artifact scaffold guidance separated from authoring workflow policy |
+| [0093](./design/decisions/0093-default-shared-rule-set.md) | Accepted | Narrow installed shared-rule set and explicit skill consumers |

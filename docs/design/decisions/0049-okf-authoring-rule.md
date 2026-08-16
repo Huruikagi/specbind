@@ -11,6 +11,7 @@ Copying the complete upstream OKF specification into each consumer project would
 ## Decision
 
 - SpecBind distributes `{{SPEC_DIR}}/settings/rules/okf-artifacts.md` as the shared, agent-readable OKF authoring rule.
+- Decision 0093 includes this file in the six-file default shared-rule set and defines the common installation, absence, and skill-loading behavior.
 - The rule is itself an OKF concept document with `type: SpecBind Rule`.
 - It identifies the targeted OKF version and links to the canonical upstream specification, but does not copy the complete specification.
 - The concise rule covers at least:

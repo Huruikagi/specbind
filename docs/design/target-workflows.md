@@ -28,6 +28,8 @@ Status: Draft
 
 Managed Markdown authoring loads the concise shared `{{SPEC_DIR}}/settings/rules/okf-artifacts.md` accepted by [Decision 0049](./decisions/0049-okf-authoring-rule.md). The rule keeps agents aligned with the targeted OKF version and SpecBind's profile boundary, while deterministic CLI validation remains authoritative.
 
+[Decision 0093](./decisions/0093-default-shared-rule-set.md) adds five phase-specific defaults and maps each known rule path to its owning skills. Workflows load only their applicable project files; they do not recursively consume every file below `settings/rules/`.
+
 ## Spec lifecycle
 
 Specs persist as active specifications while their represented capabilities remain part of the product. Completing implementation or shipping a release does not, by itself, make a spec historical or disposable.

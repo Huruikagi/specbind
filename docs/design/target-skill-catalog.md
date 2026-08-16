@@ -27,6 +27,7 @@ Related documents:
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 - [Decision 0075: v1 skill and orchestration scope](./decisions/0075-v1-skill-and-orchestration-scope.md)
 - [Decision 0092: template and skill authoring boundary](./decisions/0092-template-skill-authoring-boundary.md)
+- [Decision 0093: default shared-rule set](./decisions/0093-default-shared-rule-set.md)
 
 ## Status and change types
 
