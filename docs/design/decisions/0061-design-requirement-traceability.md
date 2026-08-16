@@ -70,3 +70,7 @@ The inherited cc-sdd task format already uses an italic `_Requirements: 1.1, 2.3
 - Projects can attach local metadata without forking the core profile, while the three required fields remain the only stable v1 Front Matter contract for bundled workflows.
 - Exact set equality prevents Front Matter from becoming a stale index that disagrees with visible design content.
 - Reusing the narrow italic marker keeps ordinary prose and examples from accidentally satisfying traceability checks.
+
+## Implementation status
+
+The Rust Design parser now recognizes only complete plain-text Markdown emphasis nodes matching the exact `Requirements: N.M, ...` grammar, unions repeated markers, and validates bidirectional set equality with the artifact's structurally valid Front Matter `requirement_ids`. Bare text, strong emphasis, code, comments, partial emphasis, and nested inline constructs do not create references. Discovery reports missing markers and both mismatch directions with complete document line numbers. Checking those IDs against the current Requirements artifact and checking collection-wide active-scope coverage remain cross-artifact validation work.

@@ -159,7 +159,7 @@ fn removes_ambiguous_duplicate_selectors_from_partial_inventory() {
     write(
         root.path(),
         "specs/example/design.md",
-        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\nBody\n",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n_Requirements: 1.1_\n",
     );
 
     let inventory = discover_spec(root.path(), "example");
@@ -217,6 +217,34 @@ fn reports_requirements_body_issues_with_document_lines() {
         Some("specs/example/requirements.md".into())
     );
     assert!(issue.message.starts_with("line 9:"), "{}", issue.message);
+}
+
+#[test]
+fn reports_design_marker_mismatches_with_document_lines() {
+    let root = root();
+    write(
+        root.path(),
+        "specs/example/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1', '2.1']\n---\n# Design\n\n_Requirements: 1.1, 3.1_\n",
+    );
+
+    let inventory = discover_spec(root.path(), "example");
+    let codes = inventory
+        .issues
+        .iter()
+        .map(|issue| issue.code)
+        .collect::<Vec<_>>();
+    assert!(codes.contains(&"DESIGN_BODY_REQUIREMENT_ID_MISSING"));
+    let body_only = inventory
+        .issues
+        .iter()
+        .find(|issue| issue.code == "DESIGN_FRONTMATTER_REQUIREMENT_ID_MISSING")
+        .expect("body-only Requirement ID");
+    assert!(
+        body_only.message.starts_with("line 8:"),
+        "{}",
+        body_only.message
+    );
 }
 
 #[test]

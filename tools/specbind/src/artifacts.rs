@@ -10,6 +10,7 @@ use serde_json::{Map, Value};
 use walkdir::WalkDir;
 
 use crate::{
+    design,
     domain::{self, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
@@ -464,8 +465,21 @@ fn validate_profile(
             )
         }));
     }
-    if kind == ArtifactKind::Design {
-        validate_design_requirement_ids(mapping, path, &mut issues);
+    if kind == ArtifactKind::Design
+        && let Some(declared_ids) = validate_design_requirement_ids(mapping, path, &mut issues)
+        && let Err(error) = design::validate(body, &declared_ids)
+    {
+        issues.extend(error.issues.into_iter().map(|body_issue| {
+            issue(
+                body_issue.code,
+                Some(path.clone()),
+                format!(
+                    "line {}: {}",
+                    body_start_line + body_issue.line - 1,
+                    body_issue.message
+                ),
+            )
+        }));
     }
     if kind == ArtifactKind::Research && body.trim().is_empty() {
         issues.push(issue(
@@ -534,14 +548,14 @@ fn validate_design_requirement_ids(
     mapping: &Map<String, Value>,
     path: &Utf8PathBuf,
     issues: &mut Vec<DiscoveryIssue>,
-) {
+) -> Option<Vec<String>> {
     let Some(ids) = mapping.get("requirement_ids").and_then(Value::as_array) else {
         issues.push(issue(
             "ARTIFACT_DESIGN_REQUIREMENT_IDS_INVALID",
             Some(path.clone()),
             "design requirement_ids must be a non-empty array",
         ));
-        return;
+        return None;
     };
     let values = ids.iter().filter_map(Value::as_str).collect::<Vec<_>>();
     let unique = values.iter().copied().collect::<BTreeSet<_>>();
@@ -557,7 +571,9 @@ fn validate_design_requirement_ids(
             Some(path.clone()),
             "design requirement_ids must contain unique canonical N.M strings",
         ));
+        return None;
     }
+    Some(values.into_iter().map(str::to_owned).collect())
 }
 
 fn split_frontmatter(content: &str) -> Result<(&str, &str), String> {
