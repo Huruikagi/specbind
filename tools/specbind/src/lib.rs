@@ -11,5 +11,6 @@ pub mod freshness;
 pub mod requirements;
 pub mod roadmap;
 pub mod schema;
+pub mod task_read_model;
 pub mod traceability;
 pub mod yaml;

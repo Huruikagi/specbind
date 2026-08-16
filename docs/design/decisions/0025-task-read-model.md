@@ -56,3 +56,7 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 - Exact command-specific success and no-change codes within the Decision 0067 result contract. Decision 0081 fixes process exit `0` for `OK`/`NO_CHANGE` and `1` for every v1 `ERROR`.
 
 Filters such as blocked-only, actionable-only, or group selection are optional future CLI ergonomics rather than required v1 read-model semantics.
+
+## Implementation status
+
+The Rust CLI now exposes `tasks list` and `tasks show` over a shared validated read model. It expands sparse execution state, derives conservative implicit and explicit prerequisites in plan order, identifies actionable pending tasks, preserves group hierarchy, and reports group progress without persisting derived labels. Corrupt or missing task artifacts fail without a partial projection. The broader `spec status` composition over lifecycle consistency, traceability, gate freshness, and this task model remains the next read-model increment.

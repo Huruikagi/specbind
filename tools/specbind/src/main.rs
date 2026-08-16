@@ -23,6 +23,11 @@ enum Command {
         #[command(subcommand)]
         command: ArtifactCommand,
     },
+    /// Inspect the validated task plan and derived execution state.
+    Tasks {
+        #[command(subcommand)]
+        command: TasksCommand,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -31,6 +36,14 @@ enum ArtifactCommand {
     List { spec: String },
     /// Read one logical artifact selector as raw UTF-8 Markdown.
     Read { spec: String, selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum TasksCommand {
+    /// List the ordered task hierarchy and derived progress.
+    List { spec: String },
+    /// Show one task's plan content and derived prerequisites.
+    Show { spec: String, task_id: String },
 }
 
 fn main() -> ExitCode {
@@ -49,6 +62,12 @@ fn main() -> ExitCode {
         Command::Artifact {
             command: ArtifactCommand::Read { spec, selector },
         } => specbind::cli::artifact_read(&start, &spec, &selector),
+        Command::Tasks {
+            command: TasksCommand::List { spec },
+        } => specbind::cli::tasks_list(&start, &spec),
+        Command::Tasks {
+            command: TasksCommand::Show { spec, task_id },
+        } => specbind::cli::tasks_show(&start, &spec, &task_id),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

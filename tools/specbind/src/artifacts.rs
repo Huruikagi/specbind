@@ -75,22 +75,29 @@ pub struct TraceabilityResolution {
     pub report: Option<TraceabilityReport>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TasksResolution {
+    pub tasks: Option<Tasks>,
+    pub issues: Vec<DiscoveryIssue>,
+}
+
 struct ActiveTraceabilityScope {
     requirement_ids: Option<Vec<String>>,
     tasks_required: bool,
 }
 
-/// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
-#[must_use]
-pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInventory {
-    let mut issues = Vec::new();
+fn validate_spec_directory(
+    specbind_root: &Path,
+    canonical_spec: &str,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<std::path::PathBuf> {
     if !is_kebab_id(canonical_spec) {
         issues.push(issue(
             "ARTIFACT_SPEC_ID_INVALID",
             None,
             format!("canonical spec ID is invalid: {canonical_spec}"),
         ));
-        return inventory(vec![], issues);
+        return None;
     }
 
     let specs_root = specbind_root.join("specs");
@@ -100,7 +107,7 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
             relative_utf8(specbind_root, &specs_root).ok(),
             "specs directory must not be a symbolic link",
         ));
-        return inventory(vec![], issues);
+        return None;
     }
     let active_spec_dir = specs_root.join(canonical_spec);
     match fs::symlink_metadata(&active_spec_dir) {
@@ -110,7 +117,7 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
                 relative_utf8(specbind_root, &active_spec_dir).ok(),
                 "spec directory must not be a symbolic link",
             ));
-            return inventory(vec![], issues);
+            None
         }
         Ok(metadata) if !metadata.is_dir() => {
             issues.push(issue(
@@ -118,7 +125,7 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
                 relative_utf8(specbind_root, &active_spec_dir).ok(),
                 "spec path is not a directory",
             ));
-            return inventory(vec![], issues);
+            None
         }
         Err(error) => {
             issues.push(issue(
@@ -126,10 +133,20 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
                 relative_utf8(specbind_root, &active_spec_dir).ok(),
                 format!("cannot read spec directory: {error}"),
             ));
-            return inventory(vec![], issues);
+            None
         }
-        Ok(_) => {}
+        Ok(_) => Some(active_spec_dir),
     }
+}
+
+/// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
+#[must_use]
+pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInventory {
+    let mut issues = Vec::new();
+    let Some(active_spec_dir) = validate_spec_directory(specbind_root, canonical_spec, &mut issues)
+    else {
+        return inventory(vec![], issues);
+    };
 
     let candidates = scan_concepts(specbind_root, &active_spec_dir, &mut issues);
     let mut by_selector = BTreeMap::<String, Vec<Artifact>>::new();
@@ -154,6 +171,35 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
         }
     }
     inventory(artifacts, issues)
+}
+
+/// Loads the current validated `tasks.yaml` without scanning unrelated Markdown artifacts.
+#[must_use]
+pub fn resolve_tasks(specbind_root: &Path, canonical_spec: &str) -> TasksResolution {
+    let mut issues = Vec::new();
+    if validate_spec_directory(specbind_root, canonical_spec, &mut issues).is_none() {
+        return TasksResolution {
+            tasks: None,
+            issues,
+        };
+    }
+    let tasks = match load_tasks_artifact(specbind_root, canonical_spec, &mut issues) {
+        Ok(Some(tasks)) => Some(tasks),
+        Ok(None) => {
+            issues.push(issue(
+                "ARTIFACT_TASKS_MISSING",
+                Some(Utf8PathBuf::from(format!(
+                    "specs/{canonical_spec}/tasks.yaml"
+                ))),
+                "tasks.yaml does not exist",
+            ));
+            None
+        }
+        Err(()) => None,
+    };
+    issues.sort();
+    issues.dedup();
+    TasksResolution { tasks, issues }
 }
 
 /// Re-discovers one spec and resolves the current gate-owned input projections.
