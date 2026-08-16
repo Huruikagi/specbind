@@ -13,6 +13,7 @@ use crate::{
     domain::{self, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
+    requirements,
     schema::runtime,
 };
 
@@ -381,7 +382,12 @@ fn inspect_concept(
     let Some(kind) = recognized_kind(artifact_type) else {
         return Ok((None, vec![]));
     };
-    let mut profile_issues = validate_profile(kind, mapping, body, path);
+    let body_start_line = content[..content.len() - body.len()]
+        .bytes()
+        .filter(|byte| *byte == b'\n')
+        .count()
+        + 1;
+    let mut profile_issues = validate_profile(kind, mapping, body, body_start_line, path);
     if contains_instruction(body) {
         profile_issues.push(issue(
             "ARTIFACT_TEMPLATE_INSTRUCTION_LEAK",
@@ -413,6 +419,7 @@ fn validate_profile(
     kind: ArtifactKind,
     mapping: &Map<String, Value>,
     body: &str,
+    body_start_line: usize,
     path: &Utf8PathBuf,
 ) -> Vec<DiscoveryIssue> {
     let mut issues = Vec::new();
@@ -440,8 +447,22 @@ fn validate_profile(
         }
     }
 
-    if kind == ArtifactKind::Requirements {
-        validate_heading_labels(mapping, path, &mut issues);
+    if kind == ArtifactKind::Requirements
+        && let Some((requirement_label, acceptance_criteria_label)) =
+            validate_heading_labels(mapping, path, &mut issues)
+        && let Err(error) = requirements::parse(body, requirement_label, acceptance_criteria_label)
+    {
+        issues.extend(error.issues.into_iter().map(|body_issue| {
+            issue(
+                body_issue.code,
+                Some(path.clone()),
+                format!(
+                    "line {}: {}",
+                    body_start_line + body_issue.line - 1,
+                    body_issue.message
+                ),
+            )
+        }));
     }
     if kind == ArtifactKind::Design {
         validate_design_requirement_ids(mapping, path, &mut issues);
@@ -463,33 +484,36 @@ fn validate_profile(
     issues
 }
 
-fn validate_heading_labels(
-    mapping: &Map<String, Value>,
+fn validate_heading_labels<'a>(
+    mapping: &'a Map<String, Value>,
     path: &Utf8PathBuf,
     issues: &mut Vec<DiscoveryIssue>,
-) {
+) -> Option<(&'a str, &'a str)> {
     let Some(labels) = mapping.get("heading_labels").and_then(Value::as_object) else {
         issues.push(issue(
             "ARTIFACT_HEADING_LABELS_INVALID",
             Some(path.clone()),
             "requirements heading_labels must be a mapping",
         ));
-        return;
+        return None;
     };
     let expected = BTreeSet::from(["acceptance_criteria", "requirement"]);
-    if labels.keys().map(String::as_str).collect::<BTreeSet<_>>() != expected {
+    let exact_keys = labels.keys().map(String::as_str).collect::<BTreeSet<_>>() == expected;
+    if !exact_keys {
         issues.push(issue(
             "ARTIFACT_HEADING_LABELS_INVALID",
             Some(path.clone()),
             "heading_labels must contain exactly requirement and acceptance_criteria",
         ));
     }
+    let mut valid_values = true;
     for key in expected {
         if !labels
             .get(key)
             .and_then(Value::as_str)
             .is_some_and(valid_label)
         {
+            valid_values = false;
             issues.push(issue(
                 "ARTIFACT_HEADING_LABEL_INVALID",
                 Some(path.clone()),
@@ -497,6 +521,13 @@ fn validate_heading_labels(
             ));
         }
     }
+    if !exact_keys || !valid_values {
+        return None;
+    }
+    Some((
+        labels.get("requirement")?.as_str()?,
+        labels.get("acceptance_criteria")?.as_str()?,
+    ))
 }
 
 fn validate_design_requirement_ids(

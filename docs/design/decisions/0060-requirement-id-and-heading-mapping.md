@@ -104,3 +104,7 @@ The canonical IDs are again `3.1` and `3.2`.
 - Requirement group identities survive document reordering and deletion gaps, while criterion editing retains the familiar positional behavior.
 - Requirement rationale can remain natural in either supported product language without expanding the deterministic parser contract.
 - Template authors can rename the two structural labels but cannot redefine heading levels, numeric capture, punctuation, or list semantics.
+
+## Implementation status
+
+The Rust Requirements parser now walks the Markdown syntax tree with source ranges, recognizes the literal Front Matter labels, validates the fixed level-three Requirement and level-four Acceptance Criteria structure, and derives canonical `N.M` IDs from direct ordered-list item positions. It ignores nested and out-of-section lists, requires the criteria list to begin at one, returns groups in numeric identity order, and reports stable diagnostics with source lines. Artifact discovery converts body-relative locations to complete document line numbers.

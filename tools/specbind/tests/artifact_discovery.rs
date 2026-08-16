@@ -23,7 +23,7 @@ fn discovers_recognized_artifacts_in_inventory_order() {
     write(
         root.path(),
         "specs/example/requirements.md",
-        "---\r\ntype: SpecBind Requirements\r\nheading_labels:\r\n  requirement: Requirement\r\n  acceptance_criteria: Acceptance Criteria\r\n---\r\n# Requirements\r\n",
+        "---\r\ntype: SpecBind Requirements\r\nheading_labels:\r\n  requirement: Requirement\r\n  acceptance_criteria: Acceptance Criteria\r\n---\r\n# Requirements\r\n\r\n### Requirement 1: Example\r\n\r\n#### Acceptance Criteria\r\n\r\n1. It works.\r\n",
     );
     write(
         root.path(),
@@ -153,7 +153,7 @@ fn removes_ambiguous_duplicate_selectors_from_partial_inventory() {
         write(
             root.path(),
             &format!("specs/example/{name}"),
-            "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n",
+            "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Example\n\n#### Acceptance Criteria\n\n1. It works.\n",
         );
     }
     write(
@@ -197,6 +197,29 @@ fn detects_live_template_instruction_leaks() {
 }
 
 #[test]
+fn reports_requirements_body_issues_with_document_lines() {
+    let root = root();
+    write(
+        root.path(),
+        "specs/example/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Missing criteria\n",
+    );
+
+    let inventory = discover_spec(root.path(), "example");
+    let issue = inventory
+        .issues
+        .iter()
+        .find(|issue| issue.code == "REQUIREMENTS_ACCEPTANCE_HEADING_MISSING")
+        .expect("body diagnostic");
+
+    assert_eq!(
+        issue.path.as_deref(),
+        Some("specs/example/requirements.md".into())
+    );
+    assert!(issue.message.starts_with("line 9:"), "{}", issue.message);
+}
+
+#[test]
 fn rejects_invalid_spec_ids_and_missing_directories() {
     let root = root();
 
@@ -210,7 +233,7 @@ fn rejects_invalid_spec_ids_and_missing_directories() {
 #[test]
 fn resolves_discovered_markdown_and_fixed_task_plan_inputs() {
     let root = root();
-    let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n";
+    let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Example\n\n#### Acceptance Criteria\n\n1. It works.\n";
     let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n";
     let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n_Requirements: 1.1_\n";
     write(root.path(), "specs/example/requirements.md", requirements);
