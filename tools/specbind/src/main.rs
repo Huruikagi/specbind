@@ -140,6 +140,21 @@ enum MilestoneCommand {
         #[command(subcommand)]
         command: ReviewCommand,
     },
+    /// Create the one active milestone from a confirmed scope.
+    Create {
+        #[arg(long)]
+        scope: String,
+    },
+    /// Replace the active milestone's confirmed scope and body.
+    UpdateScope {
+        #[arg(long)]
+        scope: String,
+    },
+    /// Replace the milestone baseline with an explicit ancestor revision.
+    Rebaseline {
+        #[arg(long)]
+        revision: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -252,6 +267,13 @@ fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
         MilestoneCommand::Review {
             command: ReviewCommand::Accept { candidate },
         } => specbind::cli::milestone_review_accept(start, &candidate),
+        MilestoneCommand::Create { scope } => specbind::cli::milestone_create(start, &scope),
+        MilestoneCommand::UpdateScope { scope } => {
+            specbind::cli::milestone_update_scope(start, &scope)
+        }
+        MilestoneCommand::Rebaseline { revision } => {
+            specbind::cli::milestone_rebaseline(start, &revision)
+        }
     }
 }
 

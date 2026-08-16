@@ -6,6 +6,16 @@ use crate::{
     guarded_fs, release, release::ArchiveTargets, repository, roadmap, roadmap::ReleaseBindingEdit,
 };
 
+mod candidate;
+mod scope;
+
+pub use scope::{
+    CreateOutcome, RebaselineOutcome, ScopeCounts, ScopeUpdateOutcome, create, rebaseline,
+    update_scope,
+};
+
+pub(crate) const ROADMAP_RELATIVE: &str = "steering/roadmap.md";
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BindReleaseOutcome {
     Bound {
@@ -68,9 +78,9 @@ pub fn bind_release(
             "release version must match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
         ));
     }
-    let relative = "steering/roadmap.md";
+    let relative = ROADMAP_RELATIVE;
     let path = specbind_root.join(relative);
-    let initial_source = read_roadmap(&path, relative)?;
+    let initial_source = read_roadmap(specbind_root, "release binding")?;
     let initial = roadmap::parse(&initial_source).map_err(roadmap_failure)?;
     if initial.target_release.as_deref() == Some(requested) {
         return Ok(BindReleaseOutcome::AlreadyBound {
@@ -91,9 +101,15 @@ pub fn bind_release(
     }
     let targets = release::resolve_available_archive_targets(specbind_root, requested)
         .map_err(release_failure)?;
-    ensure_roadmap_clean(project_root, specbind_root, relative)?;
+    ensure_target_clean(
+        project_root,
+        specbind_root,
+        relative,
+        "MILESTONE_ROADMAP_DIRTY",
+        "release binding",
+    )?;
 
-    let current_source = read_roadmap(&path, relative)?;
+    let current_source = read_roadmap(specbind_root, "release binding")?;
     if current_source != initial_source {
         return Err(one_issue(
             "MILESTONE_INPUTS_CHANGED",
@@ -136,7 +152,9 @@ pub fn bind_release(
     }
 }
 
-fn read_roadmap(path: &Path, relative: &str) -> Result<String, MilestoneIssues> {
+fn read_roadmap(specbind_root: &Path, operation: &str) -> Result<String, MilestoneIssues> {
+    let relative = ROADMAP_RELATIVE;
+    let path = &specbind_root.join(relative);
     let parent = path.parent().ok_or_else(|| {
         one_issue(
             "MILESTONE_ROADMAP_TARGET_INVALID",
@@ -162,7 +180,7 @@ fn read_roadmap(path: &Path, relative: &str) -> Result<String, MilestoneIssues> 
         let (code, message) = if error.kind() == std::io::ErrorKind::NotFound {
             (
                 "NO_ACTIVE_MILESTONE",
-                "release binding requires an active Roadmap".to_owned(),
+                format!("{operation} requires an active Roadmap"),
             )
         } else {
             (
@@ -188,10 +206,12 @@ fn read_roadmap(path: &Path, relative: &str) -> Result<String, MilestoneIssues> 
     })
 }
 
-fn ensure_roadmap_clean(
+fn ensure_target_clean(
     project_root: &Path,
     specbind_root: &Path,
     relative: &str,
+    code: &'static str,
+    operation: &str,
 ) -> Result<(), MilestoneIssues> {
     let root_relative = specbind_root.strip_prefix(project_root).map_err(|error| {
         one_issue(
@@ -204,18 +224,7 @@ fn ensure_roadmap_clean(
         .join(relative)
         .to_string_lossy()
         .replace('\\', "/");
-    let status = repository::output_bytes(
-        project_root,
-        &[
-            "status",
-            "--porcelain=v1",
-            "-z",
-            "--untracked-files=all",
-            "--",
-            &git_path,
-        ],
-    )
-    .map_err(|error| {
+    let status = repository::path_status(project_root, &git_path).map_err(|error| {
         one_issue(
             "MILESTONE_GIT_FAILED",
             Some(relative.to_owned()),
@@ -226,10 +235,20 @@ fn ensure_roadmap_clean(
         Ok(())
     } else {
         Err(one_issue(
-            "MILESTONE_ROADMAP_DIRTY",
+            code,
             Some(relative.to_owned()),
-            "release binding refuses to overwrite a dirty, staged, or untracked Roadmap",
+            format!("{operation} refuses to overwrite a dirty, staged, or untracked target"),
         ))
+    }
+}
+
+fn finish_issues(mut issues: Vec<MilestoneIssue>) -> Result<(), MilestoneIssues> {
+    issues.sort();
+    issues.dedup();
+    if issues.is_empty() {
+        Ok(())
+    } else {
+        Err(MilestoneIssues { issues })
     }
 }
 

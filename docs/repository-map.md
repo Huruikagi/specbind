@@ -33,7 +33,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
 - `tools/specbind/src/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
 - `tools/specbind/src/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state
-- `tools/specbind/src/milestone.rs` — guarded active-Roadmap metadata mutations such as release binding
+- `tools/specbind/src/milestone/` — guarded active-Roadmap creation, scope replacement, rebaseline, and release binding
 - `tools/specbind/src/release.rs` — portable release labels and case-insensitive archive-target collision resolution
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests

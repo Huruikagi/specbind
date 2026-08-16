@@ -131,8 +131,8 @@ The read model for `check contracts` now parses each canonical five-section Cont
 
 The same boundary can prevent `specbind-discovery` from becoming a general-purpose state manager. Candidate CLI command families include:
 
-- capture a clean Decision 0054 Git baseline, generate a branch-safe UUID v7, and create an active roadmap with both its stable milestone ID and baseline revision
-- apply an explicitly confirmed roadmap scope update
+- capture a clean Decision 0054 Git baseline, generate a branch-safe UUID v7, and create an active roadmap with both its stable milestone ID and baseline revision, through the Decision 0089 `specbind milestone create`
+- apply an explicitly confirmed roadmap scope update through `specbind milestone update-scope`, or replace the baseline through `specbind milestone rebaseline`
 - mark or reopen a direct roadmap change through its sparse completed-state mutation
 - bind the target release through `specbind milestone bind-release <version>`, or replace a non-null binding only through its explicitly confirmed `--rebind` form
 - check milestone and per-spec lifecycle consistency

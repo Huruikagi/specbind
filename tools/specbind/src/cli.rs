@@ -451,6 +451,15 @@ const LOG_ENTRIES_INPUT: ExternalInputSpec = ExternalInputSpec {
     require_external: false,
 };
 
+const SCOPE_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "MILESTONE_SCOPE_READ_FAILED",
+    target_invalid: "MILESTONE_SCOPE_TARGET_INVALID",
+    stdin_subject: "milestone scope",
+    subject: "milestone scope",
+    capitalized: "Milestone scope",
+    require_external: true,
+};
+
 const REVIEW_CANDIDATE_INPUT: ExternalInputSpec = ExternalInputSpec {
     read_failed: "MILESTONE_REVIEW_CANDIDATE_READ_FAILED",
     target_invalid: "MILESTONE_REVIEW_CANDIDATE_TARGET_INVALID",
@@ -598,6 +607,172 @@ pub fn milestone_bind_release(start: &Path, version: &str, rebind: bool) -> Comm
         ),
         Err(error) => render_milestone_mutation_failure("Cannot bind milestone release.", error),
     }
+}
+
+#[must_use]
+pub fn milestone_create(start: &Path, scope_source: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let scope = match read_scope_document(start, &paths.project_root, scope_source) {
+        Ok(scope) => scope,
+        Err(error) => {
+            return CommandOutput::failure(
+                "MILESTONE_CREATE_FAILED",
+                "Cannot create the active milestone.",
+                vec![format!("{} {}", error.code, escape(&error.message))],
+            );
+        }
+    };
+    match milestone::create(&paths.project_root, &paths.specbind_root, &scope) {
+        Ok(milestone::CreateOutcome::Created {
+            milestone_id,
+            baseline_revision,
+            counts,
+        }) => {
+            let mut output = format!(
+                "OK MILESTONE_CREATED: Created milestone {}.\n",
+                escape(&milestone_id)
+            );
+            push_field(&mut output, "Baseline revision", &baseline_revision);
+            push_scope_counts(&mut output, &counts);
+            CommandOutput::success(output.into_bytes())
+        }
+        Err(error) => render_milestone_failure(
+            "MILESTONE_CREATE_FAILED",
+            "Cannot create the active milestone.",
+            &error,
+        ),
+    }
+}
+
+#[must_use]
+pub fn milestone_update_scope(start: &Path, scope_source: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let scope = match read_scope_document(start, &paths.project_root, scope_source) {
+        Ok(scope) => scope,
+        Err(error) => {
+            return CommandOutput::failure(
+                "MILESTONE_SCOPE_UPDATE_FAILED",
+                "Cannot update the milestone scope.",
+                vec![format!("{} {}", error.code, escape(&error.message))],
+            );
+        }
+    };
+    match milestone::update_scope(&paths.project_root, &paths.specbind_root, &scope) {
+        Ok(milestone::ScopeUpdateOutcome::Updated {
+            milestone_id,
+            counts,
+            review_removed,
+        }) => {
+            let mut output = format!(
+                "OK MILESTONE_SCOPE_UPDATED: Updated scope for milestone {}.\n",
+                escape(&milestone_id)
+            );
+            push_scope_counts(&mut output, &counts);
+            push_field(
+                &mut output,
+                "Accepted review",
+                if review_removed {
+                    "removed"
+                } else {
+                    "unchanged"
+                },
+            );
+            CommandOutput::success(output.into_bytes())
+        }
+        Ok(milestone::ScopeUpdateOutcome::NoChange { milestone_id }) => CommandOutput::no_change(
+            "MILESTONE_SCOPE_UNCHANGED",
+            &format!(
+                "Milestone {} already has the submitted scope.",
+                escape(&milestone_id)
+            ),
+        ),
+        Err(error) => render_milestone_failure(
+            "MILESTONE_SCOPE_UPDATE_FAILED",
+            "Cannot update the milestone scope.",
+            &error,
+        ),
+    }
+}
+
+#[must_use]
+pub fn milestone_rebaseline(start: &Path, revision: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match milestone::rebaseline(&paths.project_root, &paths.specbind_root, revision) {
+        Ok(milestone::RebaselineOutcome::Rebaselined {
+            milestone_id,
+            previous,
+            baseline_revision,
+            review_removed,
+        }) => {
+            let mut output = format!(
+                "OK MILESTONE_REBASELINED: Rebaselined milestone {}.\n",
+                escape(&milestone_id)
+            );
+            push_field(&mut output, "Previous baseline", &previous);
+            push_field(&mut output, "Baseline revision", &baseline_revision);
+            push_field(
+                &mut output,
+                "Accepted review",
+                if review_removed {
+                    "removed"
+                } else {
+                    "unchanged"
+                },
+            );
+            CommandOutput::success(output.into_bytes())
+        }
+        Ok(milestone::RebaselineOutcome::NoChange {
+            milestone_id,
+            baseline_revision,
+        }) => CommandOutput::no_change(
+            "MILESTONE_BASELINE_UNCHANGED",
+            &format!(
+                "Milestone {} is already based on {}.",
+                escape(&milestone_id),
+                escape(&baseline_revision)
+            ),
+        ),
+        Err(error) => render_milestone_failure(
+            "MILESTONE_REBASELINE_FAILED",
+            "Cannot rebaseline the active milestone.",
+            &error,
+        ),
+    }
+}
+
+fn push_scope_counts(output: &mut String, counts: &milestone::ScopeCounts) {
+    push_field(output, "New specs", &counts.new_specs.to_string());
+    push_field(output, "Spec updates", &counts.spec_updates.to_string());
+    push_field(output, "Direct changes", &counts.direct_changes.to_string());
+}
+
+fn read_scope_document(
+    start: &Path,
+    project_root: &Path,
+    source: &str,
+) -> Result<String, ExternalInputError> {
+    read_external_input(&SCOPE_INPUT, start, project_root, source)
+}
+
+fn render_milestone_failure(
+    code: &'static str,
+    message: &str,
+    error: &milestone::MilestoneIssues,
+) -> CommandOutput {
+    CommandOutput::failure(
+        code,
+        message,
+        error.issues.iter().map(render_milestone_issue).collect(),
+    )
 }
 
 fn render_milestone_mutation_failure(

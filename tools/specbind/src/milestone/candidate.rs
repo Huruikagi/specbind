@@ -1,0 +1,98 @@
+use serde::Deserialize;
+
+use crate::roadmap::{Dependency, DirectItem, SpecItem};
+
+use super::{MilestoneIssues, one_issue};
+
+/// One transient milestone scope document. Identity, baseline, release binding,
+/// and Direct completion status are never accepted from the caller.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) struct ValidatedScope {
+    pub(super) new_specs: Vec<SpecItem>,
+    pub(super) spec_updates: Vec<SpecItem>,
+    pub(super) direct_changes: Vec<DirectItem>,
+    pub(super) body: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct ScopeDocument {
+    schema_version: u64,
+    work_items: WorkItemsDocument,
+    #[serde(default)]
+    body: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct WorkItemsDocument {
+    #[serde(default)]
+    new_specs: Option<Vec<SpecDocument>>,
+    #[serde(default)]
+    spec_updates: Option<Vec<SpecDocument>>,
+    #[serde(default)]
+    direct_changes: Option<Vec<DirectDocument>>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct SpecDocument {
+    spec: String,
+    summary: String,
+    #[serde(default)]
+    depends_on: Vec<Dependency>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct DirectDocument {
+    id: String,
+    summary: String,
+    #[serde(default)]
+    depends_on: Vec<Dependency>,
+}
+
+/// Decodes one strict version-1 scope document.
+///
+/// Every accepted work-item rule is enforced later by the authoritative Roadmap
+/// parser, so this boundary owns only transport shape and version.
+pub(super) fn parse(json: &str, code: &'static str) -> Result<ValidatedScope, MilestoneIssues> {
+    let document = serde_json::from_str::<ScopeDocument>(json)
+        .map_err(|error| one_issue(code, None, format!("scope document is invalid: {error}")))?;
+    if document.schema_version != 1 {
+        return Err(one_issue(
+            code,
+            Some("/schemaVersion".to_owned()),
+            "scope document schemaVersion must be 1",
+        ));
+    }
+    Ok(ValidatedScope {
+        new_specs: spec_items(document.work_items.new_specs),
+        spec_updates: spec_items(document.work_items.spec_updates),
+        direct_changes: document
+            .work_items
+            .direct_changes
+            .unwrap_or_default()
+            .into_iter()
+            .map(|item| DirectItem {
+                id: item.id,
+                summary: item.summary,
+                depends_on: item.depends_on,
+                status: None,
+            })
+            .collect(),
+        body: document.body,
+    })
+}
+
+fn spec_items(items: Option<Vec<SpecDocument>>) -> Vec<SpecItem> {
+    items
+        .unwrap_or_default()
+        .into_iter()
+        .map(|item| SpecItem {
+            spec: item.spec,
+            summary: item.summary,
+            depends_on: item.depends_on,
+        })
+        .collect()
+}

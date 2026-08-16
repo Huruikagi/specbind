@@ -58,7 +58,7 @@ The version-1 document contains exactly:
 - The root permits only `schemaVersion`, `workItems`, and `body`; `schemaVersion` and `workItems` are required and `body` is optional.
 - `schemaVersion` is the integer `1`.
 - `workItems` uses the exact Decision 0046 grammar in transient camelCase form. Every accepted rule applies unchanged: a category appears only when non-empty, at least one category is present, identities are unique across `newSpecs` and `specUpdates`, dependency targets exist, and self-references and cycles are invalid.
-- `body` is the free-form Markdown Roadmap body. The agent owns that prose under Decision 0046, so the candidate carries it exactly as Decision 0087 carries the review assessment. When `body` is omitted, the CLI writes a minimal deterministic body.
+- `body` is the free-form Markdown Roadmap body. The agent owns that prose under Decision 0046, so the candidate carries it exactly as Decision 0087 carries the review assessment. When `body` is omitted, creation writes a minimal deterministic body and a scope update preserves the current body rather than discarding authored prose.
 - The candidate cannot supply `milestoneId`, `baselineRevision`, `targetRelease`, per-item `status`, or any timestamp. The CLI derives identity and baseline itself, and the target release is bound only through the Decision 0072 command.
 - Invalid JSON, unknown fields, unsupported versions, and grammar violations return the command's failure code without mutation.
 
@@ -88,7 +88,7 @@ OK MILESTONE_CREATED: Created milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
 
 ### Scope update
 
-`update-scope` replaces the current `work_items` and Markdown body with the submitted scope. It requires an existing active Roadmap, the same Decision 0046 grammar, and a valid DAG. It never changes `milestone_id`, `baseline_revision`, or `target_release`.
+`update-scope` replaces the current `work_items`, and replaces the Markdown body only when the candidate supplies one. It requires an existing active Roadmap, the same Decision 0046 grammar, and a valid DAG. It never changes `milestone_id`, `baseline_revision`, or `target_release`.
 
 - Items added by the update are initialized exactly as creation initializes them.
 - Completed Direct status accepted under Decision 0047 is preserved for any Direct item retained by identity, so a scope edit cannot silently reopen finished work.
@@ -122,4 +122,4 @@ It replaces `baseline_revision`, changes nothing else in the Roadmap, and remove
 
 ## Implementation status
 
-Not implemented. The Roadmap parser, DAG validation, normalized scope projection, guarded Roadmap mutations for release binding and Direct completion, atomic replacement, and Git adapter already exist. Clap routing, the scope candidate loader, UUID v7 generation, baseline capture, ordered multi-file creation, scope reconciliation, rebaseline, concise rendering, stable exit behavior, and CLI integration tests remain to be implemented.
+Implemented. `tools/specbind/src/milestone/` owns the three transitions. The scope candidate loader decodes the strict version-1 camelCase document, and every work-item rule is enforced by rendering the Roadmap and validating it through the authoritative parser, so a written Roadmap is exactly what the parser accepts. Creation requires a clean committed repository and no active Roadmap, generates the UUID v7, captures `HEAD` as the baseline, initializes each participating `spec.yaml` in `requirements` state, and writes the Roadmap last. Scope update preserves the body when the candidate omits it, carries completed Direct status across retained identities, refuses to drop an active Spec or a completed Direct item, initializes added participants, and removes the accepted review only when the Spec-backed projection changes. Rebaseline validates an explicit full ancestor revision against a clean repository, preserves the body and scope, and always removes the accepted review. No command materializes Brief, Requirements, Contract, Design, or Research Markdown.
