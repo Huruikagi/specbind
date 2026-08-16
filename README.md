@@ -10,6 +10,8 @@ The Rust CLI currently provides structured artifact loading and semantic validat
 
 For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md), [target artifact catalog](./docs/design/target-artifact-catalog.md), and [target workflows](./docs/design/target-workflows.md).
 
+The [repository map](./docs/repository-map.md) indexes this repository's own source layout, design documents, and complete decision record.
+
 ## Direction
 
 - Define a command system with its own naming and workflow conventions.

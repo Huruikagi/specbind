@@ -1,0 +1,147 @@
+# Repository map
+
+This page is the single index of how this repository is organized to develop SpecBind itself. [CLAUDE.md](../CLAUDE.md) and [AGENTS.md](../AGENTS.md) link here instead of duplicating it, so one edit keeps every agent's map current.
+
+For the files the CLI installs into consumer projects, see the [current generated artifact index](./current-artifact-index.md) and the [current generated skill index](./current-skill-index.md).
+
+## Source layout
+
+- `tools/cc-sdd/src/` — inherited TypeScript CLI retained as a migration and comparison oracle
+- `tools/cc-sdd/test/` — inherited TypeScript automated tests
+- `tools/cc-sdd/schemas/` — inherited hand-authored schema snapshots retained as migration inputs
+- `tools/cc-sdd/templates/` — current files installed into consumer projects
+- `tools/specbind/` — canonical Rust CLI workspace
+- `tools/specbind/src/` — Rust CLI implementation
+- `tools/specbind/src/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
+- `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
+- `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
+- `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
+- `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
+- `tools/specbind/src/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
+- `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
+- `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage
+- `tools/specbind/src/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
+- `tools/specbind/src/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
+- `tools/specbind/src/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
+- `tools/specbind/src/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
+- `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
+- `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
+- `tools/specbind/src/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
+- `tools/specbind/src/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
+- `tools/specbind/src/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization
+- `tools/specbind/src/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
+- `tools/specbind/src/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
+- `tools/specbind/src/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state
+- `tools/specbind/src/milestone.rs` — guarded active-Roadmap metadata mutations such as release binding
+- `tools/specbind/src/release.rs` — portable release labels and case-insensitive archive-target collision resolution
+- `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
+- `tools/specbind/tests/` — Rust CLI integration tests
+- `.github/workflows/rust.yml` — Windows and Linux Rust verification
+
+## Design documents
+
+| Document | Role |
+| --- | --- |
+| [Target skill catalog](./design/target-skill-catalog.md) | Working catalog for proposed skill names and responsibilities |
+| [Target artifact catalog](./design/target-artifact-catalog.md) | Proposed artifact ownership and lifecycle |
+| [Target workflows](./design/target-workflows.md) | Proposed user journeys and responsibility boundaries |
+| [Active spec lifecycle](./design/active-spec-lifecycle.md) | Detailed draft for active specs and milestone finalization |
+| [Spec state machine](./design/spec-state-machine.md) | Draft per-spec states, events, invalidation rules, and transition diagram |
+| [Milestone state machine](./design/milestone-state-machine.md) | Derived milestone stage, phase-relative dependency waves, and aggregate read model |
+| [CLI and agent boundary](./design/cli-agent-boundary.md) | Proposed boundary between bundled deterministic CLI operations and agent skills |
+| [Cross-spec contracts](./design/cross-spec-contracts.md) | Detailed draft for persistent cross-spec seam manifests and contract-first review |
+| [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
+
+## Decision records
+
+Accepted decisions are authoritative. A superseded decision is retained for history; follow the decision that replaced it.
+
+| Decision | Status | Summary |
+| --- | --- | --- |
+| [0001](./design/decisions/0001-skill-naming.md) | Superseded by 0075 | Replacement of inherited skill naming |
+| [0002](./design/decisions/0002-project-release-adapter.md) | Accepted | Core-plus-project-adapter release direction |
+| [0003](./design/decisions/0003-active-requirement-set.md) | Accepted | Storage contract for current milestone Requirement IDs |
+| [0004](./design/decisions/0004-release-history-layout.md) | Accepted | Per-spec changelog and roadmap archive layout |
+| [0005](./design/decisions/0005-active-change-abandonment.md) | Accepted | Scope removal, abandonment, and rollback boundaries |
+| [0006](./design/decisions/0006-rust-cli.md) | Accepted | Direction to reimplement the complete SpecBind CLI in Rust |
+| [0007](./design/decisions/0007-spec-root.md) | Accepted | Configurable spec root with `.specbind` as the new-project default |
+| [0008](./design/decisions/0008-customization-surface.md) | Accepted | Shared templates and rules as the stable project customization surface |
+| [0009](./design/decisions/0009-milestone-cli-boundary.md) | Accepted | Discovery-plus-Rust-CLI milestone responsibility boundary |
+| [0010](./design/decisions/0010-release-execution-boundary.md) | Accepted | AI adapter execution and Rust CLI release-finalization boundary |
+| [0011](./design/decisions/0011-cross-spec-contract.md) | Accepted | Persistent contract manifest and contract-first cross-spec review direction |
+| [0012](./design/decisions/0012-delegated-approval.md) | Accepted | Explicit-versus-delegated gate approval and non-interactive execution boundary |
+| [0013](./design/decisions/0013-structured-task-artifact.md) | Accepted | Structured `tasks.yaml` source-of-truth direction |
+| [0014](./design/decisions/0014-structured-spec-metadata.md) | Accepted | Structured `spec.yaml` source-of-truth direction |
+| [0015](./design/decisions/0015-runtime-schema-layout.md) | Accepted | Versioned runtime-schema location and validation layers |
+| [0016](./design/decisions/0016-fingerprint-value-format.md) | Accepted | Tagged lowercase SHA-256 fingerprint representation |
+| [0017](./design/decisions/0017-requirements-gate-inputs.md) | Accepted | Requirements-gate fingerprint boundary excluding `brief.md` |
+| [0018](./design/decisions/0018-gate-input-comparison.md) | Accepted | Markdown normalization, Requirement ID snapshot, and task-plan projection boundaries |
+| [0019](./design/decisions/0019-task-ordering-and-dependencies.md) | Accepted | Ordered task execution with sparse dependency exceptions |
+| [0020](./design/decisions/0020-positional-task-ids.md) | Accepted | cc-sdd-style positional numeric Task IDs |
+| [0021](./design/decisions/0021-optional-completion-criteria.md) | Accepted | Dedicated, conditionally optional task completion criteria |
+| [0022](./design/decisions/0022-no-optional-tasks.md) | Accepted | Removal of inherited optional tasks from `tasks.yaml` v1 |
+| [0023](./design/decisions/0023-sparse-task-plan-shape.md) | Accepted | Strict sparse group and executable-task plan objects |
+| [0024](./design/decisions/0024-sparse-task-execution-state.md) | Accepted | Sparse persisted completed and blocked task states |
+| [0025](./design/decisions/0025-task-read-model.md) | Accepted | Human and JSON CLI projections for task status and detail |
+| [0026](./design/decisions/0026-runtime-implementation-notes.md) | Accepted | Persistent free-form implementation memory for later agents |
+| [0027](./design/decisions/0027-spec-local-task-dependencies.md) | Accepted | Local-only Task IDs with roadmap and contract routing for cross-spec dependencies |
+| [0028](./design/decisions/0028-task-plan-fingerprint.md) | Accepted | Normalized typed-plan projection and canonical fingerprint algorithm |
+| [0029](./design/decisions/0029-completion-validation-handshake.md) | Accepted | Clean Git revision handshake for guarded completion validation |
+| [0030](./design/decisions/0030-persist-only-accepted-completion-evidence.md) | Accepted | Current-state-only storage for successful completion evidence |
+| [0031](./design/decisions/0031-project-scoped-revision-format.md) | Accepted | Scalar Git implementation revision interpreted from project context |
+| [0032](./design/decisions/0032-gate-local-freshness-chain.md) | Accepted | Gate-local revision ownership and cascading freshness semantics |
+| [0033](./design/decisions/0033-completion-mechanical-checks.md) | Accepted | Concise categorized command evidence for successful completion validation |
+| [0034](./design/decisions/0034-do-not-persist-semantic-pass-flags.md) | Accepted | Semantic validation protocol without redundant persisted pass flags |
+| [0035](./design/decisions/0035-roadmap-owned-cross-spec-review.md) | Superseded by 0078 | Roadmap ownership for contract-impact and downstream-review evidence |
+| [0036](./design/decisions/0036-rfc3339-gate-timestamps.md) | Accepted | Timezone-qualified RFC 3339 format for gate timestamps |
+| [0037](./design/decisions/0037-minimal-completion-evidence-shape.md) | Accepted | Strict three-field completion evidence object |
+| [0038](./design/decisions/0038-design-gate-inputs.md) | Accepted | Design and contract fingerprint inputs for the design gate |
+| [0039](./design/decisions/0039-minimal-tasks-gate-evidence.md) | Accepted | Minimal approval evidence for the normalized task-plan projection |
+| [0040](./design/decisions/0040-state-gate-evidence-invariants.md) | Accepted | Sparse cumulative evidence and semantic state-to-gate invariants |
+| [0041](./design/decisions/0041-no-per-spec-change-id.md) | Accepted | Milestone-plus-spec identity without a separate per-spec change ID |
+| [0042](./design/decisions/0042-sequential-milestone-id.md) | Superseded by 0043 | Project-sequential milestone ID |
+| [0043](./design/decisions/0043-uuidv7-milestone-id.md) | Accepted | Branch-safe UUID v7 milestone IDs |
+| [0044](./design/decisions/0044-minimal-spec-root.md) | Accepted | Minimal strict `spec.yaml` root and active-change object |
+| [0045](./design/decisions/0045-okf-markdown-artifacts.md) | Accepted | OKF Front Matter profile for every managed Markdown artifact |
+| [0046](./design/decisions/0046-roadmap-work-items.md) | Accepted | Grouped Roadmap work items for new Specs, Spec updates, and Direct changes |
+| [0047](./design/decisions/0047-sparse-direct-change-status.md) | Accepted | Sparse persisted completed status for Direct changes |
+| [0048](./design/decisions/0048-okf-spec-log.md) | Accepted | Canonical OKF `log.md` for per-spec release history |
+| [0049](./design/decisions/0049-okf-authoring-rule.md) | Accepted | Concise distributed OKF authoring rule |
+| [0050](./design/decisions/0050-global-cross-spec-review.md) | Accepted | One global accepted cross-spec review per milestone |
+| [0051](./design/decisions/0051-current-state-roadmap.md) | Accepted | Current-state-only active Roadmap |
+| [0052](./design/decisions/0052-project-state-artifacts.md) | Accepted | Project-wide machine state separated from steering |
+| [0053](./design/decisions/0053-minimal-cross-spec-review-state.md) | Superseded by 0078 | Structured classifications paired with an AI-authored review |
+| [0054](./design/decisions/0054-milestone-baseline-revision.md) | Accepted | Milestone baseline revision as the contract-diff anchor |
+| [0055](./design/decisions/0055-cross-spec-review-inputs.md) | Accepted | Contract-first cross-spec review inputs |
+| [0056](./design/decisions/0056-canonical-contract-markdown.md) | Accepted | Canonical five-section Markdown contract manifests |
+| [0057](./design/decisions/0057-type-based-artifact-discovery.md) | Accepted | Type-based OKF artifact discovery |
+| [0058](./design/decisions/0058-artifact-inventory-read-model.md) | Accepted | Artifact inventory separated from raw content reads |
+| [0059](./design/decisions/0059-okf-artifact-templates.md) | Accepted | Final-form OKF documents as artifact templates |
+| [0060](./design/decisions/0060-requirement-id-and-heading-mapping.md) | Accepted | Requirement IDs derived from mapped headings and list position |
+| [0061](./design/decisions/0061-design-requirement-traceability.md) | Accepted | Explicit Design traceability in Front Matter and body markers |
+| [0062](./design/decisions/0062-minimal-active-brief-profile.md) | Accepted | Minimal free-form active brief profile |
+| [0063](./design/decisions/0063-free-form-release-adapter-profile.md) | Accepted | Free-form agent-interpreted release adapter profile |
+| [0064](./design/decisions/0064-path-scoped-release-finalization-guard.md) | Accepted | Path-scoped release finalization Git guard |
+| [0065](./design/decisions/0065-forceable-release-target-check.md) | Superseded by 0081 | Guarded release finalization with a narrow force override |
+| [0066](./design/decisions/0066-agent-judged-release-and-cli-log-insertion.md) | Accepted | Agent-judged release success with CLI-inserted spec logs |
+| [0067](./design/decisions/0067-text-first-english-cli-results.md) | Accepted | Concise, text-first, English-only CLI results |
+| [0068](./design/decisions/0068-release-log-summary-input.md) | Accepted | Strict JSON per-spec summaries as release-finalization input |
+| [0069](./design/decisions/0069-stateless-release-preflight.md) | Accepted | Stateless read-only release preflight |
+| [0070](./design/decisions/0070-derived-release-readiness.md) | Accepted | Derived release readiness without a new evidence artifact |
+| [0071](./design/decisions/0071-no-partial-milestone-release.md) | Accepted | No partially released milestone representation |
+| [0072](./design/decisions/0072-explicit-release-rebinding.md) | Accepted | Explicit operation required for release rebinding |
+| [0073](./design/decisions/0073-portable-release-version.md) | Accepted | Opaque portable release-version label |
+| [0074](./design/decisions/0074-defer-json-cli-output.md) | Accepted | JSON CLI output deferred until after v1 |
+| [0075](./design/decisions/0075-v1-skill-and-orchestration-scope.md) | Accepted | Fixed v1 skill and orchestration scope |
+| [0076](./design/decisions/0076-project-global-artifact-language.md) | Accepted | One project-global artifact language |
+| [0077](./design/decisions/0077-v1-installation-distribution-and-migration.md) | Accepted | v1 installation, distribution, and cc-sdd migration contract |
+| [0078](./design/decisions/0078-contract-first-review-between-design-and-tasks.md) | Accepted | One free-form contract-first review between Design and Tasks |
+| [0079](./design/decisions/0079-milestone-local-research.md) | Accepted | Optional research as a milestone-local singleton |
+| [0080](./design/decisions/0080-v1-task-contract-and-completion-details.md) | Accepted | Fixed v1 Task, Contract, and completion details |
+| [0081](./design/decisions/0081-v1-release-git-path-and-cli-safety.md) | Accepted | Tightened v1 release, Git, path, and CLI safety |
+| [0082](./design/decisions/0082-derived-milestone-state-machine.md) | Accepted | Derived milestone state and phase-relative dependency waves |
+| [0083](./design/decisions/0083-json-schema-structural-authority.md) | Superseded by 0085 | JSON Schema authoritative over Rust artifact models |
+| [0084](./design/decisions/0084-rust-dependency-strategy.md) | Accepted | Focused Rust dependencies behind SpecBind-owned boundaries |
+| [0085](./design/decisions/0085-rust-wire-model-schema-generation.md) | Accepted | JSON Schema generated from versioned Rust wire models |
+| [0086](./design/decisions/0086-completion-cli-handshake.md) | Accepted | Spec and Direct completion CLI handshake |
+| [0087](./design/decisions/0087-milestone-review-cli.md) | Accepted | Milestone-owned cross-spec review commands |
