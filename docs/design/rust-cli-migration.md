@@ -44,7 +44,7 @@ specbind
 
 There is no option-only compatibility alias. `specbind install` performs initial installation and idempotent agent-asset refresh; the command name `update` remains available for a future binary-update workflow. Lifecycle commands are non-interactive. The installer may prompt only in a TTY; non-TTY execution supplies its choices explicitly.
 
-Accepted named commands include `specbind milestone bind-release`, `specbind release preflight`, and `specbind release finalize`. Finalization has no `--force` bypass.
+Accepted named commands include the Decision 0086 Spec and Direct completion handshakes, `specbind milestone bind-release`, `specbind release preflight`, and `specbind release finalize`. Finalization has no `--force` bypass.
 
 ## Suggested Rust boundaries
 
@@ -113,7 +113,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 - Implement structured artifact loading, traceability, status, and task read models.
 - Enforce accepted-review freshness at Tasks approval, completion, and release boundaries.
-- Implement the completion preflight and guarded acceptance handshake.
+- Implement the Decision 0086 Spec and Direct completion preflight, acceptance, invalidation, and guarded Roadmap mutation commands.
 - Add milestone and release mutations incrementally, including Git-clean finalization targets and idempotent retry.
 - Update generated skills to call stable CLI contracts instead of shell-specific inspection.
 

@@ -123,7 +123,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - perform the deterministic portion of confirmed abandonment cleanup
 - run the stateless `specbind release preflight` readiness check and idempotent finalization mutations
 
-These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
+These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for the Spec and Direct completion handshakes accepted by Decision 0086, `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
 The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). The aggregate read model and phase-relative dependency waves are defined in [Milestone state machine](./milestone-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
 
@@ -172,7 +172,7 @@ Decision 0032 makes freshness a gate-local chain. The CLI compares each gate's c
 
 Under Decision 0030, only successfully accepted evidence is persisted. `NO-GO`, `MANUAL_VERIFY_REQUIRED`, preflight failures, and rejected candidates return diagnostics without a `spec.yaml` mutation or a separate evidence-recording event.
 
-The exact command names remain a follow-up detail; Decision 0037 fixes the accepted structured completion evidence shape. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` edit.
+Decision 0086 fixes the exact Spec and Direct completion command names, strict transient candidate JSON, stable success codes, and explicit completion invalidation path. Decision 0037 fixes the accepted persisted completion evidence shape. A generated skill must not replace either CLI call with its own `git rev-parse`, status interpretation, or direct `spec.yaml` or Roadmap edit.
 
 For accepted mechanical evidence, Decision 0033 requires an ordered list of categorized, display-safe commands with successful exit codes. The agent discovers and executes the project-appropriate set; the CLI validates its strict shape and rejects non-success entries without storing raw output.
 

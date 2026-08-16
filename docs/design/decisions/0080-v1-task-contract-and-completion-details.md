@@ -34,6 +34,7 @@ The accepted structured Task plan leaves `boundaries` and `contracts` as unconst
 - Completion evidence remains project-revision-scoped. A later non-metadata project commit makes earlier per-Spec completion evidence stale even if changed paths appear unrelated. V1 does not infer semantic non-impact from path boundaries.
 - A milestone therefore converges by implementing all items and rerunning `specbind-validate-implementation` only for Specs whose evidence is stale at the final code revision. A future milestone orchestrator may schedule these validations more efficiently.
 - Direct completion reuses the same run-scoped clean-revision handshake. After verification, the CLI rechecks the revision, cleanliness, Roadmap identity, and dependency readiness, then persists only `status: completed`; it stores no Direct revision or command evidence.
+- Decision 0086 fixes the public Direct handshake as `specbind milestone direct preflight <direct>` followed by `specbind milestone direct complete <direct> --implementation-revision <revision>`.
 - For implementation ordering, a Direct dependency is satisfied by `status: completed`. A Spec-backed dependency is satisfied when all its Tasks are completed and the implementation is clean and committed; `release_ready` is not required. Decision 0082 defines the complete phase-relative semantics and final validation convergence barrier.
 
 ## Consequences

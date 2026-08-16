@@ -10,7 +10,7 @@ The validation agent can orchestrate tests and judgment, but the Rust CLI owns d
 
 ## Decision
 
-Completion validation uses a two-call CLI handshake. Exact command names remain a CLI-surface decision.
+Completion validation uses the Decision 0086 `specbind spec completion preflight <spec>` and `specbind spec completion accept <spec> --evidence <path|->` handshake. Stale accepted completion is first cleared through `specbind spec completion invalidate <spec>`.
 
 ### Preflight
 

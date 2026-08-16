@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Decision 0086 accepts the exact Spec and Direct completion-command subset; other command names covered by this earlier boundary remain Draft unless a later decision fixes them.
+
 Decision 0082 defines the derived milestone stage, phase-relative dependency waves, and aggregate readiness without adding a persisted Roadmap status.
 
 ## Context

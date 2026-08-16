@@ -56,7 +56,7 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Accepted | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
 | `kiro-validate-design` | `specbind-validate-design` | Change | Accepted | Review technical design quality and design-to-contract consistency. |
 | `kiro-validate-gap` | `specbind-gap-analysis` | Change | Accepted | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
-| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Accepted | Validate one Spec's complete implementation and active-requirement coverage. |
+| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Accepted | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Accepted | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
 | None | `specbind-cross-spec-review` | New | Accepted | Review the complete current contract graph after Design approval and before Tasks authoring. |
 | None | `specbind-release` | New | Accepted | Complete a release and close its active milestone. |
