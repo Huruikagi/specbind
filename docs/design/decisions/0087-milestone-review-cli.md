@@ -88,7 +88,7 @@ Every candidate, guard, race, or filesystem failure returns `ERROR MILESTONE_REV
 - `specbind-cross-spec-review` owns semantic compatibility judgment, selection of material deep inputs, user-facing explanation, and bounded remediation. It invokes `accept` only after reaching an accepted conclusion.
 - The CLI owns deterministic discovery, validation, fingerprinting, Git and lifecycle guards, timestamping, persistence, freshness evaluation, concise English results, and process exit status.
 - V1 returns no general JSON response. Results follow Decisions 0067 and 0074 with stable `OK` or `ERROR` codes.
-- The proposed standalone `specbind check contracts` and `specbind check traceability` vocabulary remains separate and unaccepted. This decision does not block exposing those read-only checks later.
+- The standalone `specbind check contracts` and `specbind check traceability` vocabulary is fixed separately by [Decision 0090](./0090-standalone-check-cli.md).
 
 ## Consequences
 
