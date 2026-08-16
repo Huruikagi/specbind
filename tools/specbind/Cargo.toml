@@ -49,6 +49,7 @@ serde_json_canonicalizer = "0.3.2"
 sha2 = "0.11.0"
 thiserror = "2.0.20"
 time = { version = "0.3.55", features = ["formatting", "parsing", "serde"] }
+tempfile = "3.27.0"
 uuid = { version = "1.24.1", features = ["rng-getrandom", "serde", "v7"] }
 walkdir = "2.5.0"
 
@@ -57,4 +58,3 @@ assert_cmd = "2.2.2"
 insta = { version = "1.48.0", features = ["json"] }
 predicates = "3.1.4"
 proptest = "1.11.0"
-tempfile = "3.27.0"

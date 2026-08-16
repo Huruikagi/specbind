@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Implementation status: the Rust read model now validates strict version-1 candidate JSON, non-empty assessment Markdown, canonical optional deep selectors, the complete Contract graph, and the exact current input revision map. Direct-only Roadmaps are rejected from this flow. Guarded persistence still needs to enforce Git baseline ancestry, participating-Spec state and Design freshness, input re-resolution, timestamp ownership, and atomic replacement of the accepted artifact.
+Implementation status: the Rust acceptance operation validates strict version-1 candidate JSON, non-empty assessment Markdown, canonical optional deep selectors, the complete Contract graph, and the exact current input revision map. Direct-only Roadmaps are rejected. It then verifies the full baseline commit and ancestry, matching participating-Spec `tasks` state, fresh Design gates, and absence of `tasks.yaml`; re-resolves all inputs; owns the RFC 3339 timestamp; and atomically replaces the four-field accepted artifact. CLI command rendering and later freshness consumption remain subsequent increments.
 
 ## Context
 

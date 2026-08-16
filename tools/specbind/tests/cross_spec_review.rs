@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::Path;
+use std::process::Command;
 
 use specbind::{cross_spec_review, fingerprint::Fingerprint};
 use tempfile::TempDir;
@@ -40,6 +41,63 @@ fn fixture() -> TempDir {
         root.path(),
         "specs/consumer/design.md",
         "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n",
+    );
+    root
+}
+
+fn git(root: &Path, arguments: &[&str]) -> String {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(arguments)
+        .output()
+        .expect("start Git");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    String::from_utf8(output.stdout)
+        .expect("UTF-8 Git output")
+        .trim()
+        .to_owned()
+}
+
+fn acceptance_fixture() -> TempDir {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init", "--quiet"]);
+    git(
+        root.path(),
+        &["config", "user.email", "specbind@example.com"],
+    );
+    git(root.path(), &["config", "user.name", "SpecBind Tests"]);
+    write(root.path(), "baseline.txt", "baseline\n");
+    git(root.path(), &["add", "baseline.txt"]);
+    git(root.path(), &["commit", "--quiet", "-m", "baseline"]);
+    let baseline = git(root.path(), &["rev-parse", "HEAD"]);
+
+    write(
+        root.path(),
+        "steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+        ),
+    );
+    let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n";
+    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
+    let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n";
+    write(root.path(), "specs/checkout/requirements.md", requirements);
+    write(root.path(), "specs/checkout/contract.md", contract);
+    write(root.path(), "specs/checkout/design.md", design);
+    write(
+        root.path(),
+        "specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {MILESTONE}\n  state: tasks\n  requirement_ids: ['1.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1']\n      input_revisions:\n        requirements: {}\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: {}\n        design/main: {}\n",
+            Fingerprint::markdown(requirements.as_bytes()),
+            Fingerprint::markdown(contract.as_bytes()),
+            Fingerprint::markdown(design.as_bytes()),
+        ),
     );
     root
 }
@@ -147,5 +205,55 @@ fn blocks_input_resolution_on_contract_graph_errors() {
             .issues
             .iter()
             .any(|issue| issue.code == "CONTRACT_GRAPH_TARGET_ENTRY_MISSING")
+    );
+}
+
+#[test]
+fn atomically_accepts_and_replaces_a_guarded_review() {
+    let root = acceptance_fixture();
+    let first =
+        r##"{"schemaVersion":1,"assessment":"# Assessment\n\nCompatible.","deepInputs":[]}"##;
+    let accepted =
+        cross_spec_review::accept(root.path(), root.path(), first).expect("accepted review");
+    assert_eq!(accepted.path, "state/cross-spec-review.md");
+    let path = root.path().join(&accepted.path);
+    let content = fs::read_to_string(&path).expect("accepted review content");
+    assert!(content.contains("type: SpecBind Cross-Spec Review"));
+    assert!(content.contains("steering/roadmap.md#cross-spec-scope"));
+    assert!(content.ends_with("Compatible.\n"));
+
+    let second = r#"{"schemaVersion":1,"assessment":"Replacement assessment.","deepInputs":[]}"#;
+    cross_spec_review::accept(root.path(), root.path(), second).expect("replacement review");
+    let replaced = fs::read_to_string(path).expect("replaced review content");
+    assert!(replaced.ends_with("Replacement assessment.\n"));
+    assert!(!replaced.contains("Compatible."));
+}
+
+#[test]
+fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
+    let root = acceptance_fixture();
+    let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;
+    write(root.path(), "specs/checkout/tasks.yaml", "invalid\n");
+    let tasks = cross_spec_review::accept(root.path(), root.path(), candidate)
+        .expect_err("tasks must not exist");
+    assert!(
+        tasks
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST")
+    );
+    fs::remove_file(root.path().join("specs/checkout/tasks.yaml")).expect("remove fixture task");
+    write(
+        root.path(),
+        "specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Changed Design\n\n_Requirements: 1.1_\n",
+    );
+    let stale = cross_spec_review::accept(root.path(), root.path(), candidate)
+        .expect_err("Design must be fresh");
+    assert!(
+        stale
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_DESIGN_NOT_FRESH")
     );
 }
