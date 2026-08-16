@@ -52,7 +52,19 @@ pub struct ArtifactFreshnessReport {
 /// Compares current gate-owned input projections with persisted approval evidence.
 #[must_use]
 pub fn evaluate(spec: &Spec, current: &CurrentGateInputs) -> ArtifactFreshnessReport {
-    let active = spec.as_wire().active_change.0.as_ref();
+    evaluate_wire(spec.as_wire(), current)
+}
+
+/// Compares current inputs with the evidence in a structurally valid wire document.
+///
+/// This preserves gate diagnostics for `spec status` even when artifact-local semantic
+/// contradictions prevent conversion to the validated domain wrapper.
+#[must_use]
+pub fn evaluate_wire(
+    spec: &wire::SpecDocument,
+    current: &CurrentGateInputs,
+) -> ArtifactFreshnessReport {
+    let active = spec.active_change.0.as_ref();
     let evidence = active.and_then(|active| active.gate_evidence.as_ref());
 
     let requirements = evaluate_requirements(evidence, current.requirements);

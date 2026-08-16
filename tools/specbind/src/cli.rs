@@ -5,6 +5,7 @@ use std::{fmt::Write as _, fs, path::Path};
 use crate::{
     artifacts::{self, Artifact, DiscoveryIssue},
     config,
+    spec_status::{self, ConsistencyHealth, SpecStatusModel},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
 };
 
@@ -216,6 +217,144 @@ pub fn tasks_show(start: &Path, canonical_spec: &str, task_id: &str) -> CommandO
         &task.completion_criteria,
     );
     CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn spec_status(start: &Path, canonical_spec: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let model =
+        match spec_status::resolve(&paths.project_root, &paths.specbind_root, canonical_spec) {
+            Ok(model) => model,
+            Err(error) => {
+                return CommandOutput::failure(
+                    "SPEC_STATUS_FAILED",
+                    format!("Cannot report status for spec {canonical_spec}."),
+                    error.issues.iter().map(render_issue).collect(),
+                );
+            }
+        };
+    render_spec_status(canonical_spec, &model)
+}
+
+fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandOutput {
+    let mut output = format!(
+        "OK SPEC_STATUS_REPORTED: Reported status for spec {}.\n",
+        escape(canonical_spec)
+    );
+    push_field(
+        &mut output,
+        "State",
+        spec_status::state_name(model.declared_state),
+    );
+    push_field(
+        &mut output,
+        "Milestone",
+        model.milestone_id.as_deref().unwrap_or("none"),
+    );
+    push_field(
+        &mut output,
+        "Health",
+        match model.health {
+            ConsistencyHealth::Consistent => "consistent",
+            ConsistencyHealth::Inconsistent => "inconsistent",
+        },
+    );
+    push_field(
+        &mut output,
+        "Gates",
+        &format!(
+            "requirements={}, design={}, tasks={}, completion={}",
+            spec_status::freshness_name(model.freshness.requirements.status),
+            spec_status::freshness_name(model.freshness.design.status),
+            spec_status::freshness_name(model.freshness.tasks.status),
+            spec_status::freshness_name(model.freshness.completion.status),
+        ),
+    );
+    render_status_tasks(model, &mut output);
+    render_status_coverage(model, &mut output);
+    render_status_diagnostics(model, &mut output);
+    CommandOutput::success(output.into_bytes())
+}
+
+fn render_status_tasks(model: &SpecStatusModel, output: &mut String) {
+    if let Some(tasks) = &model.task_model {
+        push_field(
+            output,
+            "Task progress",
+            &format!(
+                "{} total, {} completed, {} pending, {} blocked",
+                tasks.total(),
+                tasks.completed,
+                tasks.pending,
+                tasks.blocked
+            ),
+        );
+        push_inline_list(output, "Next actionable", &tasks.actionable_ids);
+    } else {
+        push_field(output, "Task progress", "unavailable");
+        push_field(output, "Next actionable", "none");
+    }
+    if model.blockers.is_empty() {
+        push_field(output, "Blockers", "none");
+    } else {
+        output.push_str("  Blockers:\n");
+        for blocker in &model.blockers {
+            writeln!(
+                output,
+                "    - {}: {}",
+                escape(&blocker.task_id),
+                escape(&blocker.reason)
+            )
+            .expect("writing to a String cannot fail");
+        }
+    }
+}
+
+fn render_status_coverage(model: &SpecStatusModel, output: &mut String) {
+    if let Some(coverage) = &model.coverage {
+        push_field(
+            output,
+            "Requirement coverage",
+            &format!(
+                "design {}/{}, tasks {}/{}{}",
+                coverage.design,
+                coverage.active,
+                coverage.tasks,
+                coverage.active,
+                if coverage.tasks_required {
+                    " (required)"
+                } else {
+                    " (not required)"
+                }
+            ),
+        );
+    } else {
+        push_field(output, "Requirement coverage", "inactive");
+    }
+}
+
+fn render_status_diagnostics(model: &SpecStatusModel, output: &mut String) {
+    if model.diagnostics.is_empty() {
+        push_field(output, "Diagnostics", "none");
+    } else {
+        output.push_str("  Diagnostics:\n");
+        for diagnostic in &model.diagnostics {
+            let path = diagnostic
+                .path
+                .as_ref()
+                .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+            writeln!(
+                output,
+                "    - {}{path} {}",
+                diagnostic.code,
+                escape(&diagnostic.message)
+            )
+            .expect("writing to a String cannot fail");
+        }
+    }
 }
 
 fn load_task_model(start: &Path, canonical_spec: &str) -> Result<TaskReadModel, CommandOutput> {

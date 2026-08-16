@@ -28,6 +28,11 @@ enum Command {
         #[command(subcommand)]
         command: TasksCommand,
     },
+    /// Inspect Spec lifecycle and consistency.
+    Spec {
+        #[command(subcommand)]
+        command: SpecCommand,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -44,6 +49,12 @@ enum TasksCommand {
     List { spec: String },
     /// Show one task's plan content and derived prerequisites.
     Show { spec: String, task_id: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum SpecCommand {
+    /// Report lifecycle, freshness, coverage, and task progress.
+    Status { spec: String },
 }
 
 fn main() -> ExitCode {
@@ -68,6 +79,9 @@ fn main() -> ExitCode {
         Command::Tasks {
             command: TasksCommand::Show { spec, task_id },
         } => specbind::cli::tasks_show(&start, &spec, &task_id),
+        Command::Spec {
+            command: SpecCommand::Status { spec },
+        } => specbind::cli::spec_status(&start, &spec),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

@@ -18,7 +18,7 @@ use crate::{
     requirements,
     schema::{
         runtime,
-        spec::v1::WorkflowState,
+        spec::v1::{SpecDocument, WorkflowState},
         tasks::v1::{ExecutableTask, PlanItem},
     },
     traceability::{self, DesignRequirementSet, TaskRequirementSet, TraceabilityReport},
@@ -78,6 +78,13 @@ pub struct TraceabilityResolution {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TasksResolution {
     pub tasks: Option<Tasks>,
+    pub issues: Vec<DiscoveryIssue>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SpecResolution {
+    pub wire: Option<SpecDocument>,
+    pub spec: Option<Spec>,
     pub issues: Vec<DiscoveryIssue>,
 }
 
@@ -200,6 +207,98 @@ pub fn resolve_tasks(specbind_root: &Path, canonical_spec: &str) -> TasksResolut
     issues.sort();
     issues.dedup();
     TasksResolution { tasks, issues }
+}
+
+/// Loads `spec.yaml` while retaining a structurally valid but semantically inconsistent wire model.
+#[must_use]
+pub fn resolve_spec(specbind_root: &Path, canonical_spec: &str) -> SpecResolution {
+    let mut issues = Vec::new();
+    if validate_spec_directory(specbind_root, canonical_spec, &mut issues).is_none() {
+        return SpecResolution {
+            wire: None,
+            spec: None,
+            issues,
+        };
+    }
+    let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
+    let native_path = specbind_root.join(relative.as_std_path());
+    let metadata = match fs::symlink_metadata(&native_path) {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_SPEC_READ_FAILED",
+                Some(relative),
+                format!("cannot inspect spec.yaml: {error}"),
+            ));
+            return SpecResolution {
+                wire: None,
+                spec: None,
+                issues,
+            };
+        }
+    };
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        issues.push(issue(
+            "ARTIFACT_SPEC_NOT_REGULAR",
+            Some(relative),
+            "spec.yaml must be a regular non-symlink file",
+        ));
+        return SpecResolution {
+            wire: None,
+            spec: None,
+            issues,
+        };
+    }
+    let input = match fs::read_to_string(&native_path) {
+        Ok(input) => input,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_SPEC_READ_FAILED",
+                Some(relative),
+                format!("cannot read spec.yaml as UTF-8: {error}"),
+            ));
+            return SpecResolution {
+                wire: None,
+                spec: None,
+                issues,
+            };
+        }
+    };
+    let wire = match runtime::load_spec(&input) {
+        Ok(wire) => wire,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_SPEC_STRUCTURAL_INVALID",
+                Some(relative),
+                error.to_string(),
+            ));
+            return SpecResolution {
+                wire: None,
+                spec: None,
+                issues,
+            };
+        }
+    };
+    let spec = match Spec::try_from(wire.clone()) {
+        Ok(spec) => Some(spec),
+        Err(error) => {
+            for semantic in error.issues {
+                issues.push(issue(
+                    semantic.code,
+                    Some(relative.clone()),
+                    semantic.message,
+                ));
+            }
+            None
+        }
+    };
+    issues.sort();
+    issues.dedup();
+    SpecResolution {
+        wire: Some(wire),
+        spec,
+        issues,
+    }
 }
 
 /// Re-discovers one spec and resolves the current gate-owned input projections.
