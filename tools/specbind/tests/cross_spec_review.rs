@@ -3,7 +3,7 @@ use std::path::Path;
 use std::process::Command;
 
 use specbind::{
-    cross_spec_review::{self, ReviewFreshnessStatus},
+    cross_spec_review::{self, ReviewBoundary, ReviewFreshnessStatus},
     fingerprint::Fingerprint,
 };
 use tempfile::TempDir;
@@ -383,4 +383,101 @@ fn reports_malformed_accepted_review_as_invalid() {
     assert!(codes.contains(&"CROSS_SPEC_REVIEW_PASSED_AT_INVALID"));
     assert!(codes.contains(&"CROSS_SPEC_REVIEW_FINGERPRINT_INVALID"));
     assert!(codes.contains(&"CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY"));
+}
+
+#[test]
+fn enforces_fresh_review_for_spec_local_later_boundaries() {
+    let root = acceptance_fixture();
+    let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;
+    cross_spec_review::accept(root.path(), root.path(), candidate).expect("accepted review");
+
+    for boundary in [
+        ReviewBoundary::TasksApproval {
+            canonical_spec: "checkout",
+        },
+        ReviewBoundary::ImplementationValidation {
+            canonical_spec: "checkout",
+        },
+    ] {
+        let report = cross_spec_review::require_for_boundary(root.path(), root.path(), boundary)
+            .expect("fresh participating review");
+        assert_eq!(report.status, ReviewFreshnessStatus::Fresh);
+    }
+    let release = cross_spec_review::require_for_boundary(
+        root.path(),
+        root.path(),
+        ReviewBoundary::ReleasePreflight,
+    )
+    .expect("Spec-backed release requires and accepts the fresh review");
+    assert_eq!(release.status, ReviewFreshnessStatus::Fresh);
+
+    let unrelated = cross_spec_review::require_for_boundary(
+        root.path(),
+        root.path(),
+        ReviewBoundary::TasksApproval {
+            canonical_spec: "unrelated",
+        },
+    )
+    .expect_err("non-participant must be rejected");
+    assert!(
+        unrelated
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_SPEC_NOT_IN_MILESTONE")
+    );
+
+    write(
+        root.path(),
+        "specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n",
+    );
+    let stale = cross_spec_review::require_for_boundary(
+        root.path(),
+        root.path(),
+        ReviewBoundary::ImplementationValidation {
+            canonical_spec: "checkout",
+        },
+    )
+    .expect_err("stale review must block validation");
+    assert!(
+        stale
+            .issues
+            .iter()
+            .any(|issue| { issue.code == "CROSS_SPEC_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED" })
+    );
+}
+
+#[test]
+fn release_review_guard_accepts_direct_only_without_review() {
+    let root = fixture();
+    write(
+        root.path(),
+        "steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
+        ),
+    );
+
+    let report = cross_spec_review::require_for_boundary(
+        root.path(),
+        root.path(),
+        ReviewBoundary::ReleasePreflight,
+    )
+    .expect("Direct-only release does not require a review");
+    assert_eq!(report.status, ReviewFreshnessStatus::NotRequired);
+
+    let invalid_target = cross_spec_review::require_for_boundary(
+        root.path(),
+        root.path(),
+        ReviewBoundary::TasksApproval {
+            canonical_spec: "Not-Canonical",
+        },
+    )
+    .expect_err("Spec target must be canonical");
+    assert!(
+        invalid_target
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_SPEC_TARGET_INVALID")
+    );
 }

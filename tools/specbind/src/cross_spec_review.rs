@@ -57,6 +57,14 @@ pub enum ReviewFreshnessStatus {
     Invalid,
 }
 
+/// Later lifecycle boundaries that must recheck the accepted cross-spec review.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReviewBoundary<'a> {
+    TasksApproval { canonical_spec: &'a str },
+    ImplementationValidation { canonical_spec: &'a str },
+    ReleasePreflight,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AcceptedReviewRecord {
     pub milestone_id: String,
@@ -364,6 +372,111 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         ReviewFreshnessStatus::Stale
     };
     freshness_report(status, Some(accepted), Some(current_revisions), issues)
+}
+
+/// Requires the accepted cross-spec review state for a later lifecycle boundary.
+///
+/// Tasks approval and implementation validation require a canonical participating
+/// Spec ID and a fresh review. Release preflight accepts `NotRequired` only for a
+/// Direct-only Roadmap.
+///
+/// # Errors
+///
+/// Returns the authoritative freshness diagnostics plus a stable boundary code
+/// when the requested lifecycle boundary is blocked.
+pub fn require_for_boundary(
+    project_root: &Path,
+    specbind_root: &Path,
+    boundary: ReviewBoundary<'_>,
+) -> Result<ReviewFreshnessReport, ReviewIssues> {
+    let canonical_spec = boundary.canonical_spec();
+    let mut issues = canonical_spec
+        .filter(|spec| !valid_id(spec))
+        .map(|spec| {
+            review_issue(
+                "CROSS_SPEC_REVIEW_SPEC_TARGET_INVALID",
+                Some(format!("specs/{spec}")),
+                "later lifecycle review guard requires a canonical Spec ID",
+            )
+        })
+        .into_iter()
+        .collect::<Vec<_>>();
+    let report = evaluate_freshness(project_root, specbind_root);
+    issues.extend(report.issues.iter().cloned());
+
+    if issues.is_empty()
+        && let Some(canonical_spec) = canonical_spec
+    {
+        match read_current_roadmap(specbind_root) {
+            Ok(roadmap) if !roadmap.spec_ids().iter().any(|spec| spec == canonical_spec) => {
+                issues.push(review_issue(
+                    "CROSS_SPEC_REVIEW_SPEC_NOT_IN_MILESTONE",
+                    Some(format!("specs/{canonical_spec}")),
+                    "later lifecycle review guard requires a current Spec-backed Roadmap participant",
+                ));
+            }
+            Ok(_) => {}
+            Err(error) => issues.extend(error.issues),
+        }
+    }
+
+    let accepted = match boundary {
+        ReviewBoundary::TasksApproval { .. } | ReviewBoundary::ImplementationValidation { .. } => {
+            report.status == ReviewFreshnessStatus::Fresh
+        }
+        ReviewBoundary::ReleasePreflight => matches!(
+            report.status,
+            ReviewFreshnessStatus::Fresh | ReviewFreshnessStatus::NotRequired
+        ),
+    };
+    if !accepted {
+        issues.push(review_issue(
+            boundary.blocked_code(),
+            canonical_spec.map(|spec| format!("specs/{spec}")),
+            boundary.blocked_message(),
+        ));
+    }
+    issues.sort();
+    issues.dedup();
+    if issues.is_empty() {
+        Ok(report)
+    } else {
+        Err(ReviewIssues { issues })
+    }
+}
+
+impl<'a> ReviewBoundary<'a> {
+    fn canonical_spec(self) -> Option<&'a str> {
+        match self {
+            Self::TasksApproval { canonical_spec }
+            | Self::ImplementationValidation { canonical_spec } => Some(canonical_spec),
+            Self::ReleasePreflight => None,
+        }
+    }
+
+    fn blocked_code(self) -> &'static str {
+        match self {
+            Self::TasksApproval { .. } => "CROSS_SPEC_REVIEW_TASKS_APPROVAL_BLOCKED",
+            Self::ImplementationValidation { .. } => {
+                "CROSS_SPEC_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED"
+            }
+            Self::ReleasePreflight => "CROSS_SPEC_REVIEW_RELEASE_PREFLIGHT_BLOCKED",
+        }
+    }
+
+    fn blocked_message(self) -> &'static str {
+        match self {
+            Self::TasksApproval { .. } => {
+                "Tasks approval requires a fresh accepted cross-spec review"
+            }
+            Self::ImplementationValidation { .. } => {
+                "implementation validation requires a fresh accepted cross-spec review"
+            }
+            Self::ReleasePreflight => {
+                "release preflight requires a fresh review for Spec-backed work or no review for Direct-only work"
+            }
+        }
+    }
 }
 
 fn read_accepted_review(
