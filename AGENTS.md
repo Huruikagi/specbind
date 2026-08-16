@@ -17,6 +17,7 @@
 - `tools/specbind/src/` — Rust CLI implementation
 - `tools/specbind/src/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
+- `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification

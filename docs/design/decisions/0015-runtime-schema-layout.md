@@ -31,7 +31,7 @@ The schemas are product-managed runtime contracts. They are not consumer customi
 
 ## Implemented scaffold
 
-The Rust workspace owns complete v1 structural wire models for the accepted `spec.yaml` and `tasks.yaml` fields. Its restricted parser rejects duplicate keys, anchors, aliases, merge keys, custom tags, multiple documents, and values that cannot be represented as neutral JSON before schema validation. The workspace generates and embeds the checked-in schemas and verifies parser-invalid, schema-invalid, and valid fixtures at their declared layers. The inherited TypeScript artifact generation and validation remain unchanged migration inputs.
+The Rust workspace owns the complete structural load pipeline and v1 wire models for the accepted `spec.yaml` and `tasks.yaml` fields. Its restricted parser rejects duplicate keys, anchors, aliases, merge keys, custom tags, multiple documents, and values that cannot be represented as neutral JSON. The runtime loader then selects `schema_version`, evaluates the matching embedded artifact schema with format assertions enabled, and deserializes schema-valid values into the matching wire model. Parser, version-selection, schema, and wire failures remain distinct internal error layers. Rust-owned fixtures exercise each implemented layer; the inherited TypeScript artifact generation and validation remain unchanged migration inputs.
 
 New fields are added as their decisions become accepted. A structural change must update:
 
