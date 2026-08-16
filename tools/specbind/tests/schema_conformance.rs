@@ -5,6 +5,7 @@ use std::{
 
 use serde::de::DeserializeOwned;
 use specbind::schema::{SPEC_V1_SCHEMA_JSON, TASKS_V1_SCHEMA_JSON, generate, spec, tasks};
+use specbind::yaml;
 
 #[test]
 fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
@@ -32,6 +33,22 @@ fn spec_v1_fixtures_conform() {
 #[test]
 fn tasks_v1_fixtures_conform() {
     assert_fixture_set::<tasks::v1::TasksDocument>("tasks/v1", TASKS_V1_SCHEMA_JSON);
+}
+
+#[test]
+fn parser_invalid_fixtures_are_rejected_before_schema_validation() {
+    let fixture_root =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/schemas/parser/invalid");
+
+    for path in fixture_paths(&fixture_root) {
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("failed to read {}: {error}", path.display()));
+        assert!(
+            yaml::parse(&source).is_err(),
+            "parser-invalid fixture {} unexpectedly parsed",
+            path.display()
+        );
+    }
 }
 
 fn assert_fixture_set<T: DeserializeOwned>(artifact: &str, schema_json: &str) {
@@ -96,6 +113,5 @@ fn fixture_paths(directory: &Path) -> Vec<PathBuf> {
 fn parse_fixture(path: &Path) -> serde_json::Value {
     let yaml = fs::read_to_string(path)
         .unwrap_or_else(|error| panic!("failed to read {}: {error}", path.display()));
-    serde_saphyr::from_str(&yaml)
-        .unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
+    yaml::parse(&yaml).unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
 }

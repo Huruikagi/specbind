@@ -31,7 +31,7 @@ The current `spec.yaml` and `tasks.yaml` contracts contain patterns, tagged alte
 
 ## Implementation status
 
-The first Rust schema increment implements the v1 `spec.yaml` and `tasks.yaml` wire models, explicit Draft 2020-12 generation, embedded checked-in schemas, deterministic regeneration checks, and Rust-owned conformance fixtures. YAML feature restrictions, wire-to-domain conversion, and semantic lifecycle validation remain subsequent runtime-validation increments.
+The Rust schema implementation now includes the v1 `spec.yaml` and `tasks.yaml` wire models, explicit Draft 2020-12 generation, embedded checked-in schemas, deterministic regeneration checks, a restricted YAML-to-neutral-JSON parser, and Rust-owned conformance fixtures. Wire-to-domain conversion and semantic lifecycle validation remain subsequent runtime-validation increments.
 
 ## Consequences
 

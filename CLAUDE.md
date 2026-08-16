@@ -14,6 +14,7 @@
 - `tools/cc-sdd/templates/` — current files installed into consumer projects
 - `tools/specbind/` — canonical Rust CLI workspace
 - `tools/specbind/src/` — Rust CLI implementation
+- `tools/specbind/src/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
