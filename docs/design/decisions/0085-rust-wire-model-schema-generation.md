@@ -26,7 +26,7 @@ The current `spec.yaml` and `tasks.yaml` contracts contain patterns, tagged alte
   - every parser-invalid or schema-invalid fixture fails at its declared layer;
   - structurally valid but semantically invalid fixtures deserialize before domain validation rejects them.
 - A structural contract change lands the accepted design, versioned wire-model change, regenerated checked-in schema, conformance fixtures, and runtime tests together. A breaking representation change requires the applicable artifact schema-version decision rather than an unversioned Rust type edit.
-- The existing hand-authored schema files are migration inputs for the first Rust scaffold. The initial wire models must preserve their intended accepted and rejected fixture sets; byte-for-byte reproduction of incidental hand-authored layout is not required.
+- The existing hand-authored schema files are migration inputs for the first schema implementation increment after workspace bootstrap. The initial wire models must preserve their intended accepted and rejected fixture sets; byte-for-byte reproduction of incidental hand-authored layout is not required.
 - Consumer projects cannot override runtime schemas through settings. Schema generation is a maintainer build operation, not an end-user CLI command in v1.
 
 ## Consequences

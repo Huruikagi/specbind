@@ -1,14 +1,12 @@
 # SpecBind
 
-SpecBind is an experimental project for building an independent command system for spec-driven development with AI coding agents.
+SpecBind is an experimental command system for binding durable specifications to agent-assisted software delivery.
 
 ## Project status
 
-This repository was bootstrapped from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd). It is currently at the starting point: much of the code and documentation still reflects the upstream project.
+This repository was bootstrapped from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) and has been detached from the GitHub fork network. The canonical SpecBind CLI is now being implemented in Rust under [`tools/specbind/`](./tools/specbind/). The inherited TypeScript implementation remains under [`tools/cc-sdd/`](./tools/cc-sdd/) as a temporary migration and comparison oracle.
 
-The plan is to detach this repository from the GitHub fork network and evolve it independently. Future commands, workflows, terminology, and release policies may diverge from cc-sdd and will be designed specifically for SpecBind.
-
-Until that transition is complete, do not assume that the existing commands or documentation represent the final SpecBind interface.
+The Rust CLI currently provides only its initial executable scaffold. Commands, workflows, artifact formats, and release behavior are being implemented incrementally from the accepted design decisions. Until that transition is complete, do not treat inherited cc-sdd behavior as the final SpecBind interface.
 
 For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md), [target artifact catalog](./docs/design/target-artifact-catalog.md), and [target workflows](./docs/design/target-workflows.md).
 
@@ -18,6 +16,42 @@ For concise snapshots of the current interface, see the [generated skill index](
 - Keep spec-driven development practical for agentic software delivery.
 - Rework inherited components deliberately instead of maintaining drop-in compatibility with cc-sdd.
 - Stabilize migration and compatibility behavior before creating maintained documentation.
+
+## Repository layout
+
+- `tools/specbind/` — canonical Rust workspace and future distributed `specbind` executable
+- `tools/cc-sdd/` — inherited TypeScript migration oracle
+- `docs/design/` — target workflows, lifecycle models, and accepted design decisions
+
+## Development
+
+The workspace pins Rust 1.97.1, Rustfmt, and Clippy through [`rust-toolchain.toml`](./tools/specbind/rust-toolchain.toml). Install [Rustup](https://rustup.rs/) before running Cargo commands. Windows development with the default MSVC target also requires Visual Studio Build Tools with the **Desktop development with C++** workload and a Windows SDK.
+
+Run the current CLI scaffold from the Rust workspace:
+
+```sh
+cd tools/specbind
+cargo run -- --help
+```
+
+Run the complete Rust verification set before committing Rust changes:
+
+```sh
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+cargo build --workspace --release
+```
+
+`Cargo.lock` is committed because SpecBind distributes an application binary. The same checks run on Windows and Linux in [the Rust workflow](./.github/workflows/rust.yml).
+
+The inherited TypeScript oracle retains its own verification commands:
+
+```sh
+cd tools/cc-sdd
+npm test
+npm run build
+```
 
 ## Language support
 

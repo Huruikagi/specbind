@@ -39,6 +39,7 @@ venv/
 # Build outputs
 dist/
 build/
+target/
 *.egg-info/
 
 # Dependencies

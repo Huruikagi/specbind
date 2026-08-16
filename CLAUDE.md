@@ -12,7 +12,10 @@
 - `tools/cc-sdd/src/` — inherited TypeScript CLI retained as a migration and comparison oracle
 - `tools/cc-sdd/test/` — inherited TypeScript automated tests
 - `tools/cc-sdd/templates/` — current files installed into consumer projects
-- `tools/specbind/` — canonical Rust CLI workspace once scaffolded
+- `tools/specbind/` — canonical Rust CLI workspace
+- `tools/specbind/src/` — Rust CLI implementation
+- `tools/specbind/tests/` — Rust CLI integration tests
+- `.github/workflows/rust.yml` — Windows and Linux Rust verification
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Current consumer-facing `.kiro/` files must be maintained under `tools/cc-sdd/templates/shared/settings/` until the Rust templates replace them. Do not require `/kiro-*` workflows for this repository unless the user explicitly requests one.
 
@@ -23,7 +26,23 @@ The root `.kiro/` directory is not used to develop SpecBind and is intentionally
 - When changing installed behavior, update the relevant source, templates, tests, and documentation together.
 - Keep Claude Code and Codex templates aligned where they implement the same contract, while preserving platform-specific invocation syntax and capabilities.
 
+## Rust Toolchain and Dependencies
+
+- Use the toolchain and `rustfmt`/`clippy` components pinned by `tools/specbind/rust-toolchain.toml`.
+- Windows MSVC validation requires Visual Studio Build Tools with the C++ workload and a Windows SDK.
+- Commit `tools/specbind/Cargo.lock` and keep dependency versions and features centralized in `tools/specbind/Cargo.toml`.
+- Prefer focused external crates behind SpecBind-owned module boundaries; third-party types do not define public artifact or CLI contracts.
+
 ## Validation
+
+Run Rust verification from `tools/specbind/`:
+
+```sh
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-features
+cargo build --workspace --release
+```
 
 Run inherited TypeScript verification from `tools/cc-sdd/`:
 

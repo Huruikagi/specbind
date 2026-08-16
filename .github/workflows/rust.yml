@@ -1,0 +1,48 @@
+name: Rust
+
+on:
+  push:
+    paths:
+      - ".github/workflows/rust.yml"
+      - "tools/specbind/**"
+  pull_request:
+    paths:
+      - ".github/workflows/rust.yml"
+      - "tools/specbind/**"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: tools/specbind
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Show Rust toolchain
+        run: rustup show active-toolchain
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test --workspace --all-features
+
+      - name: Build release binary
+        run: cargo build --workspace --release
