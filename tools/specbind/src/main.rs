@@ -38,6 +38,11 @@ enum Command {
         #[command(subcommand)]
         command: MilestoneCommand,
     },
+    /// Check or finalize the active milestone release.
+    Release {
+        #[command(subcommand)]
+        command: ReleaseCommand,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -110,6 +115,12 @@ enum DirectCommand {
     },
 }
 
+#[derive(Debug, Subcommand)]
+enum ReleaseCommand {
+    /// Derive current release readiness without persisting authority.
+    Preflight,
+}
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let start = match std::env::current_dir() {
@@ -175,6 +186,9 @@ fn main() -> ExitCode {
                         },
                 },
         } => specbind::cli::direct_completion_complete(&start, &direct, &implementation_revision),
+        Command::Release {
+            command: ReleaseCommand::Preflight,
+        } => specbind::cli::release_preflight(&start),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

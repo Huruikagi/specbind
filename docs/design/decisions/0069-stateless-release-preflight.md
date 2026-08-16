@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: the Rust CLI exposes the read-only command, aggregates lifecycle, scope, review, gate, task, archive, managed-path, and target-only Git diagnostics, and shares the resulting readiness judgment with `milestone status`. No readiness evidence or mutation authority is persisted.
+
 ## Context
 
 Release orchestration needs a deterministic check before an agent begins project-specific preparation, publication, or verification work. That check should catch lifecycle and target-path problems early, but project release work may legitimately advance `HEAD`, alter unrelated files, or take enough time that any earlier snapshot becomes stale. Finalization must therefore re-evaluate current state rather than trust a preflight token.

@@ -9,12 +9,58 @@ use specbind::{
     cross_spec_review,
     fingerprint::Fingerprint,
     milestone_status::{self, DeliveryStage},
+    release_readiness,
     roadmap::{self, DirectStatus},
     schema::{runtime, spec::v1::WorkflowState},
 };
 use tempfile::TempDir;
 
 const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
+
+#[test]
+fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed() {
+    let root = spec_fixture();
+    let specbind = root.path().join(".specbind");
+    let preflight = completion::spec_preflight(root.path(), &specbind, "checkout")
+        .expect("completion preflight");
+    let SpecPreflightOutcome::Ready {
+        implementation_revision,
+    } = preflight
+    else {
+        panic!("implementation should require validation");
+    };
+    completion::spec_accept(
+        root.path(),
+        &specbind,
+        "checkout",
+        &candidate(&implementation_revision),
+    )
+    .expect("accept completion");
+    commit_all(root.path(), "accept completion");
+
+    let readiness = release_readiness::resolve(root.path(), &specbind)
+        .expect("Spec-backed milestone should be release-ready");
+    assert_eq!(readiness.version, "v1.4.0");
+    assert_eq!(readiness.specs, vec!["checkout"]);
+    assert!(
+        readiness
+            .mutation_targets
+            .iter()
+            .any(|target| target.path == "state/cross-spec-review.md")
+    );
+    assert!(
+        readiness
+            .mutation_targets
+            .iter()
+            .any(|target| target.path == "releases/v1.4.0-cross-spec-review.md")
+    );
+
+    let milestone = milestone_status::resolve(root.path(), &specbind)
+        .expect("milestone status")
+        .expect("active milestone");
+    assert_eq!(milestone.stage, DeliveryStage::ReleaseReady);
+    assert!(milestone.release_blockers.is_empty());
+}
 
 #[test]
 fn accepts_invalidates_and_idempotently_reports_spec_completion() {
@@ -62,7 +108,7 @@ fn accepts_invalidates_and_idempotently_reports_spec_completion() {
         milestone
             .release_blockers
             .iter()
-            .any(|blocker| blocker == "WORKTREE_NOT_CLEAN")
+            .any(|blocker| blocker == "RELEASE_TARGET_DIRTY")
     );
     assert!(matches!(
         completion::spec_accept(root.path(), &specbind, "checkout", &candidate)
@@ -168,8 +214,18 @@ fn spec_fixture() -> TempDir {
         root.path(),
         ".specbind/steering/roadmap.md",
         &format!(
-            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: v1.4.0\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
         ),
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/brief.md",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/log.md",
+        "# Checkout change log\n",
     );
     let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n";
     let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";

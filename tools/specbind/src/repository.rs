@@ -59,15 +59,15 @@ pub fn output(project_root: &Path, arguments: &[&str]) -> Result<String, Reposit
 ///
 /// Returns a start failure or an unexpected Git exit status.
 pub fn predicate(project_root: &Path, arguments: &[&str]) -> Result<bool, RepositoryError> {
-    let status = Command::new("git")
+    let output = Command::new("git")
         .arg("-C")
         .arg(project_root)
         .args(arguments)
-        .status()
+        .output()
         .map_err(RepositoryError::Start)?;
-    match status.code() {
+    match output.status.code() {
         Some(0) => Ok(true),
         Some(1) => Ok(false),
-        _ => Err(RepositoryError::UnexpectedStatus(status)),
+        _ => Err(RepositoryError::UnexpectedStatus(output.status)),
     }
 }

@@ -53,17 +53,7 @@ pub fn resolve_available_archive_targets(
     specbind_root: &Path,
     version: &str,
 ) -> Result<ArchiveTargets, ReleaseIssues> {
-    if !valid_version(version) {
-        return Err(one_issue(
-            "INVALID_RELEASE_VERSION",
-            None,
-            "release version must match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
-        ));
-    }
-    let targets = ArchiveTargets {
-        roadmap: format!("releases/{version}-roadmap.md"),
-        cross_spec_review: format!("releases/{version}-cross-spec-review.md"),
-    };
+    let targets = archive_targets(version)?;
     let releases = specbind_root.join("releases");
     let metadata = match fs::symlink_metadata(&releases) {
         Ok(metadata) => metadata,
@@ -125,6 +115,25 @@ pub fn resolve_available_archive_targets(
     }
     finish_issues(issues)?;
     Ok(targets)
+}
+
+/// Derives the two portable release archive paths without inspecting the filesystem.
+///
+/// # Errors
+///
+/// Returns `INVALID_RELEASE_VERSION` when the opaque label is not portable.
+pub fn archive_targets(version: &str) -> Result<ArchiveTargets, ReleaseIssues> {
+    if !valid_version(version) {
+        return Err(one_issue(
+            "INVALID_RELEASE_VERSION",
+            None,
+            "release version must match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+        ));
+    }
+    Ok(ArchiveTargets {
+        roadmap: format!("releases/{version}-roadmap.md"),
+        cross_spec_review: format!("releases/{version}-cross-spec-review.md"),
+    })
 }
 
 fn finish_issues(mut issues: Vec<ReleaseIssue>) -> Result<(), ReleaseIssues> {

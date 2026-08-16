@@ -174,6 +174,8 @@ pub fn resolve(
         health,
         all_specs_validated,
     );
+    let (stage, release_blockers) =
+        derive_release_readiness(project_root, specbind_root, stage, release_blockers);
     let spec_state_counts = spec_state_counts(&facts);
     let direct_total = roadmap.direct_changes.len();
     let direct_completed = roadmap
@@ -507,8 +509,31 @@ fn release_blockers(
     if health == MilestoneHealth::Inconsistent {
         blockers.push("MILESTONE_INCONSISTENT".to_owned());
     }
-    blockers.push("RELEASE_PREFLIGHT_NOT_IMPLEMENTED".to_owned());
     blockers
+}
+
+fn derive_release_readiness(
+    project_root: &Path,
+    specbind_root: &Path,
+    stage: DeliveryStage,
+    blockers: Vec<String>,
+) -> (DeliveryStage, Vec<String>) {
+    if stage != DeliveryStage::ReleasePending {
+        return (stage, blockers);
+    }
+    match crate::release_readiness::resolve(project_root, specbind_root) {
+        Ok(_) => (DeliveryStage::ReleaseReady, Vec::new()),
+        Err(error) => (
+            stage,
+            error
+                .diagnostics
+                .into_iter()
+                .map(|diagnostic| diagnostic.code.to_owned())
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect(),
+        ),
+    }
 }
 
 fn spec_state_counts(facts: &[ItemFacts]) -> BTreeMap<String, usize> {

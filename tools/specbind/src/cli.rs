@@ -13,6 +13,7 @@ use crate::{
     config,
     milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
+    release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
 };
@@ -563,6 +564,61 @@ fn render_milestone_issue(issue: &MilestoneIssue) -> String {
         .as_ref()
         .map_or_else(String::new, |path| format!(" {}:", escape(path)));
     format!("{}{path} {}", issue.code, escape(&issue.message))
+}
+
+#[must_use]
+pub fn release_preflight(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match release_readiness::resolve(&paths.project_root, &paths.specbind_root) {
+        Ok(readiness) => {
+            let mut output = format!(
+                "OK RELEASE_READY: Release {} is ready for project release work across {} specs.\n  Milestone ID: {}\n  Specs: {}\n  Direct changes: {}\n  Mutation targets:\n",
+                escape(&readiness.version),
+                readiness.specs.len(),
+                escape(&readiness.milestone_id),
+                if readiness.specs.is_empty() {
+                    "none".to_owned()
+                } else {
+                    readiness
+                        .specs
+                        .iter()
+                        .map(|spec| escape(spec))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                },
+                readiness.direct_changes,
+            );
+            for target in readiness.mutation_targets {
+                let state = match target.state {
+                    MutationTargetState::Existing => "existing",
+                    MutationTargetState::Absent => "absent",
+                };
+                writeln!(output, "    - {state} {}", escape(&target.path))
+                    .expect("write to String");
+            }
+            CommandOutput::success(output.into_bytes())
+        }
+        Err(error) => CommandOutput::failure(
+            error.code,
+            "Release preflight failed.",
+            error
+                .diagnostics
+                .iter()
+                .map(render_release_diagnostic)
+                .collect(),
+        ),
+    }
+}
+
+fn render_release_diagnostic(diagnostic: &ReleaseDiagnostic) -> String {
+    let path = diagnostic
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", diagnostic.code, escape(&diagnostic.message))
 }
 
 #[must_use]
