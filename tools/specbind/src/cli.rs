@@ -11,6 +11,7 @@ use crate::{
     artifacts::{self, Artifact, DiscoveryIssue},
     completion::{self, CompletionIssue},
     config,
+    cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
     milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
     release_finalize::{self, FinalizeIssue},
@@ -408,67 +409,119 @@ pub fn direct_completion_complete(
     }
 }
 
-fn read_external_json(
+/// One transient external command input and its stable diagnostic vocabulary.
+///
+/// Every caller shares the same safety boundary: `-` reads standard input, a
+/// path must be an ordinary non-symlink file, and the content must be UTF-8.
+/// Inputs that carry authority over persisted state additionally require a
+/// repository-external path so the worktree cannot supply its own evidence.
+struct ExternalInputSpec {
+    read_failed: &'static str,
+    target_invalid: &'static str,
+    /// Subject phrase used for the standard-input diagnostic.
+    stdin_subject: &'static str,
+    /// Subject phrase used inside a sentence.
+    subject: &'static str,
+    /// Subject phrase used to start a sentence.
+    capitalized: &'static str,
+    require_external: bool,
+}
+
+struct ExternalInputError {
+    code: &'static str,
+    message: String,
+}
+
+const COMPLETION_EVIDENCE_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "COMPLETION_EVIDENCE_READ_FAILED",
+    target_invalid: "COMPLETION_EVIDENCE_TARGET_INVALID",
+    stdin_subject: "completion evidence",
+    subject: "completion evidence",
+    capitalized: "Completion evidence",
+    require_external: true,
+};
+
+const LOG_ENTRIES_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "LOG_INPUT_READ_FAILED",
+    target_invalid: "LOG_INPUT_TARGET_INVALID",
+    stdin_subject: "log entries",
+    subject: "log-entry input",
+    capitalized: "Log-entry input",
+    require_external: false,
+};
+
+const REVIEW_CANDIDATE_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "MILESTONE_REVIEW_CANDIDATE_READ_FAILED",
+    target_invalid: "MILESTONE_REVIEW_CANDIDATE_TARGET_INVALID",
+    stdin_subject: "review candidate",
+    subject: "review candidate",
+    capitalized: "Review candidate",
+    require_external: true,
+};
+
+fn read_external_input(
+    spec: &ExternalInputSpec,
     start: &Path,
     project_root: &Path,
     source: &str,
-) -> Result<String, CommandOutput> {
+) -> Result<String, ExternalInputError> {
+    let read_failed = |message: String| ExternalInputError {
+        code: spec.read_failed,
+        message,
+    };
+    let target_invalid = |message: String| ExternalInputError {
+        code: spec.target_invalid,
+        message,
+    };
     if source == "-" {
         let mut input = String::new();
         return io::stdin()
             .read_to_string(&mut input)
             .map(|_| input)
             .map_err(|error| {
-                CommandOutput::failure(
-                    "COMPLETION_EVIDENCE_READ_FAILED",
-                    format!("Cannot read completion evidence from stdin: {error}"),
-                    vec![],
-                )
+                read_failed(format!(
+                    "Cannot read {} from stdin: {error}",
+                    spec.stdin_subject
+                ))
             });
     }
     let requested = start.join(source);
-    let metadata = fs::symlink_metadata(&requested).map_err(|error| {
-        CommandOutput::failure(
-            "COMPLETION_EVIDENCE_READ_FAILED",
-            format!("Cannot inspect completion evidence: {error}"),
-            vec![],
-        )
-    })?;
+    let metadata = fs::symlink_metadata(&requested)
+        .map_err(|error| read_failed(format!("Cannot inspect {}: {error}", spec.subject)))?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
-        return Err(CommandOutput::failure(
-            "COMPLETION_EVIDENCE_TARGET_INVALID",
-            "Completion evidence must be a regular non-symlink file.",
-            vec![],
-        ));
+        return Err(target_invalid(format!(
+            "{} must be a regular non-symlink file.",
+            spec.capitalized
+        )));
     }
-    let canonical = requested.canonicalize().map_err(|error| {
-        CommandOutput::failure(
-            "COMPLETION_EVIDENCE_READ_FAILED",
-            format!("Cannot resolve completion evidence: {error}"),
-            vec![],
-        )
-    })?;
-    let canonical_project = project_root.canonicalize().map_err(|error| {
-        CommandOutput::failure(
-            "COMPLETION_EVIDENCE_READ_FAILED",
-            format!("Cannot resolve project root: {error}"),
-            vec![],
-        )
-    })?;
-    if canonical.starts_with(canonical_project) {
-        return Err(CommandOutput::failure(
-            "COMPLETION_EVIDENCE_TARGET_INVALID",
-            "Completion evidence file must be outside the project worktree.",
-            vec![],
-        ));
-    }
-    fs::read_to_string(canonical).map_err(|error| {
-        CommandOutput::failure(
-            "COMPLETION_EVIDENCE_READ_FAILED",
-            format!("Cannot read completion evidence as UTF-8: {error}"),
-            vec![],
-        )
-    })
+    let source_path = if spec.require_external {
+        let canonical = requested
+            .canonicalize()
+            .map_err(|error| read_failed(format!("Cannot resolve {}: {error}", spec.subject)))?;
+        let canonical_project = project_root
+            .canonicalize()
+            .map_err(|error| read_failed(format!("Cannot resolve project root: {error}")))?;
+        if canonical.starts_with(canonical_project) {
+            return Err(target_invalid(format!(
+                "{} file must be outside the project worktree.",
+                spec.capitalized
+            )));
+        }
+        canonical
+    } else {
+        requested
+    };
+    fs::read_to_string(source_path)
+        .map_err(|error| read_failed(format!("Cannot read {} as UTF-8: {error}", spec.subject)))
+}
+
+fn read_external_json(
+    start: &Path,
+    project_root: &Path,
+    source: &str,
+) -> Result<String, CommandOutput> {
+    read_external_input(&COMPLETION_EVIDENCE_INPUT, start, project_root, source)
+        .map_err(|error| CommandOutput::failure(error.code, error.message, vec![]))
 }
 
 fn render_completion_failure(message: &str, error: completion::CompletionIssues) -> CommandOutput {
@@ -621,7 +674,7 @@ pub fn release_finalize(start: &Path, log_entries_source: Option<&str>) -> Comma
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     let log_entries = match log_entries_source {
-        Some(source) => match read_release_log_entries(start, source) {
+        Some(source) => match read_release_log_entries(start, &paths.project_root, source) {
             Ok(input) => Some(input),
             Err(output) => return output,
         },
@@ -665,42 +718,13 @@ pub fn release_finalize(start: &Path, log_entries_source: Option<&str>) -> Comma
     }
 }
 
-fn read_release_log_entries(start: &Path, source: &str) -> Result<String, CommandOutput> {
-    if source == "-" {
-        let mut input = String::new();
-        return io::stdin()
-            .read_to_string(&mut input)
-            .map(|_| input)
-            .map_err(|error| {
-                CommandOutput::failure(
-                    "LOG_INPUT_READ_FAILED",
-                    format!("Cannot read log entries from stdin: {error}"),
-                    vec![],
-                )
-            });
-    }
-    let requested = start.join(source);
-    let metadata = fs::symlink_metadata(&requested).map_err(|error| {
-        CommandOutput::failure(
-            "LOG_INPUT_READ_FAILED",
-            format!("Cannot inspect log-entry input: {error}"),
-            vec![],
-        )
-    })?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
-        return Err(CommandOutput::failure(
-            "LOG_INPUT_TARGET_INVALID",
-            "Log-entry input must be a regular non-symlink file.",
-            vec![],
-        ));
-    }
-    fs::read_to_string(requested).map_err(|error| {
-        CommandOutput::failure(
-            "LOG_INPUT_READ_FAILED",
-            format!("Cannot read log-entry input as UTF-8: {error}"),
-            vec![],
-        )
-    })
+fn read_release_log_entries(
+    start: &Path,
+    project_root: &Path,
+    source: &str,
+) -> Result<String, CommandOutput> {
+    read_external_input(&LOG_ENTRIES_INPUT, start, project_root, source)
+        .map_err(|error| CommandOutput::failure(error.code, error.message, vec![]))
 }
 
 fn render_finalize_issue(issue: &FinalizeIssue) -> String {
@@ -717,6 +741,101 @@ fn render_release_diagnostic(diagnostic: &ReleaseDiagnostic) -> String {
         .as_ref()
         .map_or_else(String::new, |path| format!(" {}:", escape(path)));
     format!("{}{path} {}", diagnostic.code, escape(&diagnostic.message))
+}
+
+#[must_use]
+pub fn milestone_review_status(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let report = cross_spec_review::evaluate_freshness(&paths.project_root, &paths.specbind_root);
+    let details = report.issues.iter().map(render_review_issue).collect();
+    let reportable = matches!(
+        report.status,
+        ReviewFreshnessStatus::NotRequired
+            | ReviewFreshnessStatus::Missing
+            | ReviewFreshnessStatus::Fresh
+            | ReviewFreshnessStatus::Stale
+    );
+    let Some(milestone_id) = report.milestone_id.as_deref().filter(|_| reportable) else {
+        return CommandOutput::failure(
+            "MILESTONE_REVIEW_STATUS_FAILED",
+            "Cannot report the cross-spec review status.",
+            details,
+        );
+    };
+    let mut output = format!(
+        "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {}.\n",
+        escape(milestone_id)
+    );
+    push_field(
+        &mut output,
+        "Status",
+        milestone_status::review_name(report.status),
+    );
+    if let Some(accepted) = &report.accepted {
+        push_field(&mut output, "Passed at", &accepted.passed_at);
+        push_field(
+            &mut output,
+            "Inputs",
+            &accepted.input_revisions.len().to_string(),
+        );
+    }
+    if !details.is_empty() {
+        output.push_str("  Diagnostics:\n");
+        for detail in details {
+            writeln!(output, "    - {detail}").expect("writing to a String cannot fail");
+        }
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn milestone_review_accept(start: &Path, candidate_source: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let candidate = match read_external_input(
+        &REVIEW_CANDIDATE_INPUT,
+        start,
+        &paths.project_root,
+        candidate_source,
+    ) {
+        Ok(candidate) => candidate,
+        Err(error) => {
+            return CommandOutput::failure(
+                "MILESTONE_REVIEW_ACCEPT_FAILED",
+                "Cannot accept the cross-spec review.",
+                vec![format!("{} {}", error.code, escape(&error.message))],
+            );
+        }
+    };
+    match cross_spec_review::accept(&paths.project_root, &paths.specbind_root, &candidate) {
+        Ok(accepted) => CommandOutput::success(
+            format!(
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone {}.\n  Passed at: {}\n  Inputs: {}\n",
+                escape(&accepted.milestone_id),
+                escape(&accepted.passed_at),
+                accepted.input_revisions.len()
+            )
+            .into_bytes(),
+        ),
+        Err(error) => CommandOutput::failure(
+            "MILESTONE_REVIEW_ACCEPT_FAILED",
+            "Cannot accept the cross-spec review.",
+            error.issues.iter().map(render_review_issue).collect(),
+        ),
+    }
+}
+
+fn render_review_issue(issue: &ReviewIssue) -> String {
+    let path = issue
+        .source
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", issue.code, escape(&issue.message))
 }
 
 #[must_use]

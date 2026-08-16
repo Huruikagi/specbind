@@ -75,9 +75,19 @@ pub struct AcceptedReviewRecord {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReviewFreshnessReport {
     pub status: ReviewFreshnessStatus,
+    /// Current Roadmap milestone identity, absent only when no trustworthy
+    /// active Roadmap could be parsed.
+    pub milestone_id: Option<String>,
     pub accepted: Option<AcceptedReviewRecord>,
     pub current_input_revisions: Option<BTreeMap<String, Fingerprint>>,
     pub issues: Vec<ReviewIssue>,
+}
+
+impl ReviewFreshnessReport {
+    fn with_milestone(mut self, milestone_id: String) -> Self {
+        self.milestone_id = Some(milestone_id);
+        self
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -312,10 +322,11 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
             return freshness_report(ReviewFreshnessStatus::Invalid, None, None, error.issues);
         }
     };
+    let milestone_id = roadmap.milestone_id.clone();
     let relative = "state/cross-spec-review.md";
     let accepted = match read_accepted_review(specbind_root, &roadmap, relative) {
         Ok(accepted) => accepted,
-        Err(report) => return *report,
+        Err(report) => return (*report).with_milestone(milestone_id),
     };
 
     let deep_inputs = accepted
@@ -337,7 +348,8 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
                 Some(accepted),
                 None,
                 error.issues,
-            );
+            )
+            .with_milestone(milestone_id);
         }
     };
     let current_revisions = current.input_revisions;
@@ -371,6 +383,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         ReviewFreshnessStatus::Stale
     };
     freshness_report(status, Some(accepted), Some(current_revisions), issues)
+        .with_milestone(milestone_id)
 }
 
 /// Requires the accepted cross-spec review state for a later lifecycle boundary.
@@ -565,6 +578,7 @@ fn freshness_report(
 ) -> ReviewFreshnessReport {
     ReviewFreshnessReport {
         status,
+        milestone_id: None,
         accepted,
         current_input_revisions,
         issues,

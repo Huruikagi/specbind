@@ -574,6 +574,387 @@ fn reports_tasks_authored_before_the_required_milestone_review() {
         );
 }
 
+#[test]
+fn accepts_a_stdin_review_candidate_and_reports_fresh_status() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(format!(
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone {REVIEW_MILESTONE}.\n  Passed at: "
+            ))
+            .and(predicate::str::contains("\n  Inputs: 2\n")),
+        )
+        .stderr("");
+
+    let mut status = Command::cargo_bin("specbind").expect("specbind binary should build");
+    status
+        .current_dir(root.path())
+        .args(["milestone", "review", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(format!(
+                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: fresh\n  Passed at: "
+            ))
+            .and(predicate::str::contains("\n  Inputs: 2\n"))
+            .and(predicate::str::contains("Compatible.").not())
+            .and(predicate::str::contains("sha256:").not())
+            .and(predicate::str::contains("Diagnostics").not()),
+        )
+        .stderr("");
+}
+
+#[test]
+fn accepts_a_repository_external_candidate_file() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    let outside = tempfile::tempdir().expect("temporary external directory");
+    let candidate = outside.path().join("candidate.json");
+    fs::write(&candidate, review_candidate("Externally reviewed.")).expect("write candidate");
+
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "review",
+            "accept",
+            "--candidate",
+            candidate.to_str().expect("UTF-8 candidate path"),
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone",
+        ))
+        .stderr("");
+
+    let accepted = fs::read_to_string(root.path().join(".specbind/state/cross-spec-review.md"))
+        .expect("accepted review content");
+    assert!(accepted.ends_with("Externally reviewed.\n"));
+}
+
+#[test]
+fn reports_not_applicable_and_absent_review_state_as_success() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n# Roadmap\n"
+        ),
+    );
+
+    let mut direct_only = Command::cargo_bin("specbind").expect("specbind binary should build");
+    direct_only
+        .current_dir(root.path())
+        .args(["milestone", "review", "status"])
+        .assert()
+        .success()
+        .stdout(format!(
+            "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: not_applicable\n"
+        ))
+        .stderr("");
+
+    write_review_fixture(root.path());
+    let mut absent = Command::cargo_bin("specbind").expect("specbind binary should build");
+    absent
+        .current_dir(root.path())
+        .args(["milestone", "review", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(format!(
+                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: absent\n"
+            ))
+            .and(predicate::str::contains("Passed at:").not())
+            .and(predicate::str::contains("\n  Inputs:").not())
+            .and(predicate::str::contains("CROSS_SPEC_REVIEW_MISSING")),
+        )
+        .stderr("");
+}
+
+#[test]
+fn reports_stale_review_state_as_success_and_invalid_state_as_failure() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+    let mut stale = Command::cargo_bin("specbind").expect("specbind binary should build");
+    stale
+        .current_dir(root.path())
+        .args(["milestone", "review", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("\n  Status: stale\n")
+                .and(predicate::str::contains("\n  Passed at: "))
+                .and(predicate::str::contains(
+                    "    - CROSS_SPEC_REVIEW_INPUTS_STALE",
+                )),
+        )
+        .stderr("");
+
+    write(
+        root.path(),
+        ".specbind/state/cross-spec-review.md",
+        &format!(
+            "---\ntype: Wrong Type\nmilestone_id: {REVIEW_MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\n---\n"
+        ),
+    );
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(root.path())
+        .args(["milestone", "review", "status"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR MILESTONE_REVIEW_STATUS_FAILED: Cannot report the cross-spec review status.",
+            )
+            .and(predicate::str::contains("CROSS_SPEC_REVIEW_TYPE_INVALID")),
+        );
+}
+
+#[test]
+fn rejects_unsafe_and_unreadable_review_candidates() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    let outside = tempfile::tempdir().expect("temporary external directory");
+
+    write(root.path(), "candidate.json", &review_candidate("Inside."));
+    let mut internal = Command::cargo_bin("specbind").expect("specbind binary should build");
+    internal
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "review",
+            "accept",
+            "--candidate",
+            "candidate.json",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+            )
+            .and(predicate::str::contains(
+                "MILESTONE_REVIEW_CANDIDATE_TARGET_INVALID Review candidate file must be outside the project worktree.",
+            )),
+        );
+
+    let directory = outside.path().join("candidate-directory");
+    fs::create_dir(&directory).expect("create candidate directory");
+    let mut not_a_file = Command::cargo_bin("specbind").expect("specbind binary should build");
+    not_a_file
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "review",
+            "accept",
+            "--candidate",
+            directory.to_str().expect("UTF-8 candidate path"),
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "MILESTONE_REVIEW_CANDIDATE_TARGET_INVALID Review candidate must be a regular non-symlink file.",
+        ));
+
+    let not_utf8 = outside.path().join("candidate.bin");
+    fs::write(&not_utf8, [0x7b, 0xff, 0xfe, 0x7d]).expect("write non-UTF-8 candidate");
+    let mut invalid_encoding =
+        Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid_encoding
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "review",
+            "accept",
+            "--candidate",
+            not_utf8.to_str().expect("UTF-8 candidate path"),
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "MILESTONE_REVIEW_CANDIDATE_READ_FAILED",
+        ));
+
+    let mut invalid_json = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid_json
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin("{\"schemaVersion\":1}")
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+            )
+            .and(predicate::str::contains("CROSS_SPEC_REVIEW_CANDIDATE_")),
+        );
+
+    assert!(
+        !root
+            .path()
+            .join(".specbind/state/cross-spec-review.md")
+            .exists(),
+        "rejected candidates must not create accepted state"
+    );
+}
+
+#[test]
+fn keeps_the_accepted_review_unchanged_when_a_guard_fails() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Originally reviewed."))
+        .assert()
+        .success();
+    let path = root.path().join(".specbind/state/cross-spec-review.md");
+    let original = fs::read_to_string(&path).expect("accepted review content");
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        task_fixture(),
+    );
+    let mut blocked = Command::cargo_bin("specbind").expect("specbind binary should build");
+    blocked
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Replacement assessment."))
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+            )
+            .and(predicate::str::contains(
+                "CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST",
+            )),
+        );
+
+    assert_eq!(
+        fs::read_to_string(&path).expect("preserved review content"),
+        original
+    );
+}
+
+#[test]
+fn reaccepts_a_currently_fresh_review() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    for assessment in ["First assessment.", "Revised assessment."] {
+        let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+        accept
+            .current_dir(root.path())
+            .args(["milestone", "review", "accept", "--candidate", "-"])
+            .write_stdin(review_candidate(assessment))
+            .assert()
+            .success()
+            .stdout(predicate::str::starts_with(
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone",
+            ));
+    }
+
+    let accepted = fs::read_to_string(root.path().join(".specbind/state/cross-spec-review.md"))
+        .expect("accepted review content");
+    assert!(accepted.ends_with("Revised assessment.\n"));
+    assert!(!accepted.contains("First assessment."));
+}
+
+const REVIEW_MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
+
+fn review_candidate(assessment: &str) -> String {
+    format!(r#"{{"schemaVersion":1,"assessment":"{assessment}","deepInputs":[]}}"#)
+}
+
+/// Writes a Spec-backed milestone whose one participating Spec sits in `tasks`
+/// state with a fresh Design gate and no current `tasks.yaml`.
+fn write_review_fixture(root: &Path) {
+    write(root, "baseline.txt", "baseline\n");
+    commit_all(root);
+    let baseline = git_stdout(root, &["rev-parse", "HEAD"]);
+    write(
+        root,
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+        ),
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n",
+    );
+    let inputs = resolve_gate_inputs(&root.join(".specbind"), "checkout");
+    assert!(
+        inputs.inventory.issues.is_empty(),
+        "{:?}",
+        inputs.inventory.issues
+    );
+    let requirements = inputs
+        .inputs
+        .requirements
+        .expect("requirements fingerprint");
+    let design_yaml = inputs
+        .inputs
+        .design
+        .expect("design fingerprints")
+        .iter()
+        .fold(String::new(), |mut output, (key, value)| {
+            writeln!(output, "        {key}: {value}").expect("writing to a String cannot fail");
+            output
+        });
+    write(
+        root,
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {REVIEW_MILESTONE}\n  state: tasks\n  requirement_ids: ['1.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1']\n      input_revisions:\n        requirements: {requirements}\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n{design_yaml}"
+        ),
+    );
+}
+
 fn project_fixture() -> TempDir {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);

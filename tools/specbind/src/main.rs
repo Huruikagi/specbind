@@ -101,6 +101,22 @@ enum MilestoneCommand {
         #[command(subcommand)]
         command: DirectCommand,
     },
+    /// Report or accept the milestone-owned cross-spec review.
+    Review {
+        #[command(subcommand)]
+        command: ReviewCommand,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+enum ReviewCommand {
+    /// Report the focused cross-spec review status for the active milestone.
+    Status,
+    /// Accept one strict cross-spec review candidate document.
+    Accept {
+        #[arg(long)]
+        candidate: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -191,6 +207,18 @@ fn main() -> ExitCode {
                         },
                 },
         } => specbind::cli::direct_completion_complete(&start, &direct, &implementation_revision),
+        Command::Milestone {
+            command:
+                MilestoneCommand::Review {
+                    command: ReviewCommand::Status,
+                },
+        } => specbind::cli::milestone_review_status(&start),
+        Command::Milestone {
+            command:
+                MilestoneCommand::Review {
+                    command: ReviewCommand::Accept { candidate },
+                },
+        } => specbind::cli::milestone_review_accept(&start, &candidate),
         Command::Release {
             command: ReleaseCommand::Preflight,
         } => specbind::cli::release_preflight(&start),
