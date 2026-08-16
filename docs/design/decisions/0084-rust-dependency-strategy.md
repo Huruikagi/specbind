@@ -17,7 +17,7 @@ At the same time, some library defaults are broader than the accepted v1 interfa
   - `clap` with derive support for command and argument parsing;
   - `serde` and `serde_json` for typed models and `.specbind.json`;
   - `saphyr-parser` for the YAML event layer and `serde-saphyr` where its serialization and deserialization behavior passes the shared conformance fixtures;
-  - `jsonschema` for the embedded authoritative Draft 2020-12 schemas;
+  - `schemars` for explicit Draft 2020-12 generation from versioned wire models and `jsonschema` for evaluating the embedded generated schemas;
   - `thiserror` for typed internal errors, with a SpecBind-owned renderer for stable outcomes, codes, stream routing, sanitization, and exit mapping;
   - `camino` for validated UTF-8 managed paths, while native repository and process paths remain ordinary platform paths where necessary;
   - `walkdir` for non-symlink-following discovery;
@@ -27,7 +27,7 @@ At the same time, some library defaults are broader than the accepted v1 interfa
   - `uuid`, `time`, `sha2`, and `hex` for UUID v7, RFC 3339 values, and tagged lowercase SHA-256 fingerprints;
   - `dialoguer` only for the initial installer's allowed TTY interaction.
 - Initial CLI and conformance testing use focused development dependencies such as `assert_cmd`, `predicates`, `tempfile`, `insta`, and `proptest`. Snapshot approval does not replace assertions tied to accepted decisions.
-- YAML is the first dependency spike. Fixtures must prove rejection of prohibited aliases, anchors, tags, duplicate keys, unsupported document shapes, and parser-layer invalid input before the YAML stack becomes a stable implementation dependency. Schema-valid values must then deserialize into the typed Rust model as required by Decision 0083.
+- YAML is the first dependency spike. Fixtures must prove rejection of prohibited aliases, anchors, tags, duplicate keys, unsupported document shapes, and parser-layer invalid input before the YAML stack becomes a stable implementation dependency. Schema-valid values must then deserialize into the versioned wire model as required by Decision 0085.
 - Minimum supported Rust version is decided before locking versions whose current releases impose a newer compiler requirement.
 
 ## Deliberate exceptions
@@ -35,7 +35,7 @@ At the same time, some library defaults are broader than the accepted v1 interfa
 - Git repository discovery, cleanliness, ignored-path checks, submodule state, revision identity, and object-format queries use the installed `git` executable through stable machine-readable commands. V1 already requires Git, and the CLI must agree with that Git installation's configuration and semantics. A Rust Git implementation is not added merely to avoid subprocesses.
 - V1 does not add a general template engine. Decision 0059 keeps managed Markdown templates in final artifact form and does not define `{{...}}` as a deterministic rendering language.
 - V1 does not add a SemVer parser for `target_release`. Decision 0073 defines it as an opaque portable label and explicitly rejects SemVer interpretation.
-- V1 does not generate authoritative schemas from Rust models. Schema-generation crates may be development comparison aids only under Decision 0083.
+- V1 generates checked-in runtime schemas only from dedicated versioned Rust wire models under Decision 0085. It does not generate public schemas from lifecycle or domain models.
 - V1 does not use a general glob language for Task boundaries or Contract ownership. The accepted exact-path and terminal-`/**` grammar remains a small SpecBind-owned matcher.
 - Third-party diagnostic renderers do not control public output. Rich internal errors are mapped into the exact text, sanitization, stdout/stderr, and exit behavior accepted by Decision 0081.
 

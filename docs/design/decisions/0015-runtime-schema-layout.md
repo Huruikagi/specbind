@@ -21,9 +21,9 @@ The schemas are product-managed runtime contracts. They are not consumer customi
       └── v1.schema.json
   ```
 
-- YAML artifacts are parsed into a data model and then validated against the applicable JSON Schema selected by `schema_version`.
+- YAML artifacts are parsed into a neutral value and then validated against the applicable JSON Schema selected by `schema_version`.
 - YAML-specific restrictions such as duplicate keys, anchors, aliases, merge keys, and custom tags are rejected during parsing before JSON Schema validation.
-- The checked-in JSON Schema is the authoritative structural contract under Decision 0083. After it passes, the CLI deserializes the value into a typed Rust execution model and applies semantic validation.
+- Under Decision 0085, a dedicated versioned Rust wire model is the authoritative structural contract. Schemars generates the checked-in JSON Schema from that model; after schema validation passes, the CLI deserializes the value into the same wire model, converts it to domain types, and applies semantic validation.
 - Cross-artifact references, lifecycle transitions, dependency graphs, fingerprints, and other semantic invariants remain Rust validation responsibilities after structural schema validation and typed deserialization.
 - Schema files are embedded in the CLI version that supports them. Runtime resolution does not depend on project-owned settings.
 - The current TypeScript package includes `schemas/` in its package surface so migration tooling and tests can reference the same source files.
@@ -33,9 +33,10 @@ The schemas are product-managed runtime contracts. They are not consumer customi
 
 The first checked-in schemas intentionally contain only fields already accepted for the common envelope. They are not wired into current TypeScript artifact generation or validation.
 
-New fields are added as their decisions become accepted. A schema change must update:
+New fields are added as their decisions become accepted. A structural change must update:
 
-- the applicable JSON Schema
+- the applicable versioned Rust wire model
+- the generated JSON Schema
 - valid and invalid conformance fixtures
 - runtime validation tests when implemented
 - relevant target design or ADR references
@@ -46,9 +47,9 @@ Schema documents remain self-contained initially. Shared `$ref` documents should
 
 - Runtime-owned schemas stay near CLI implementation and packaging rather than appearing user-customizable.
 - `spec.yaml` and `tasks.yaml` may evolve their schema versions independently.
-- Design discussions can land one accepted field at a time in executable contract files.
+- Design discussions can land one accepted field at a time in versioned wire models and their generated contract files.
 - JSON Schema covers structural validation without pretending to replace YAML parser checks or semantic Rust validation.
-- Shared conformance fixtures require schema-valid values to deserialize into Rust models and keep layer ownership aligned.
+- Shared conformance fixtures require schema-valid values to deserialize into the matching Rust wire models and keep layer ownership aligned.
 - Distribution tests must ensure supported schemas are present or embedded in every CLI artifact.
 
 ## Open questions

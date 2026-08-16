@@ -44,7 +44,7 @@ Related documents:
 - [Decision 0080: v1 Task, Contract, and completion details](./decisions/0080-v1-task-contract-and-completion-details.md)
 - [Decision 0081: v1 release, Git, path, and CLI safety](./decisions/0081-v1-release-git-path-and-cli-safety.md)
 - [Decision 0082: derived milestone state machine](./decisions/0082-derived-milestone-state-machine.md)
-- [Decision 0083: JSON Schema structural authority](./decisions/0083-json-schema-structural-authority.md)
+- [Decision 0085: Rust wire-model schema generation](./decisions/0085-rust-wire-model-schema-generation.md)
 - [Decision 0069: stateless release preflight](./decisions/0069-stateless-release-preflight.md)
 - [Decision 0070: derived release readiness](./decisions/0070-derived-release-readiness.md)
 - [Decision 0071: no partial milestone release](./decisions/0071-no-partial-milestone-release.md)

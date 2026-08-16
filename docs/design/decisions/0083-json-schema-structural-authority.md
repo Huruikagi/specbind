@@ -1,6 +1,6 @@
 # 0083: Keep JSON Schema authoritative over Rust artifact models
 
-Status: Accepted
+Status: Superseded by [Decision 0085](./0085-rust-wire-model-schema-generation.md)
 
 ## Context
 
@@ -28,4 +28,3 @@ Decision 0015 places versioned runtime JSON Schemas beside the CLI and separates
 - Rust gains typed internal models without creating a second public structural contract.
 - Parser, schema, deserialization, and semantic failures have distinct owners and diagnostics.
 - Schema and model drift becomes a test failure before release.
-

@@ -10,7 +10,7 @@ The inherited TypeScript implementation under `tools/cc-sdd/` remains useful as 
 
 The accepted v1 contract deliberately removes public manifests, profiles, operating-system selectors, overwrite and backup modes, `--yes`, and inherited compatibility aliases. [Decision 0077](./decisions/0077-v1-installation-distribution-and-migration.md) defines the smaller installation and migration surface. [Decision 0081](./decisions/0081-v1-release-git-path-and-cli-safety.md) makes Git, guarded target paths, and deterministic retry the safety model.
 
-The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. The preparatory directory move temporarily carries the current schema copies under `tools/cc-sdd/schemas/`; the first Rust scaffold increment adopts them at the authoritative `tools/specbind/schemas/` path required by Decisions 0015 and 0083 and embeds them into the matching binary. Typed Rust models follow them and share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
+The target structured artifacts remain `spec.yaml` and `tasks.yaml` under Decisions 0013 and 0014. The preparatory directory move temporarily carries the current hand-authored schema copies under `tools/cc-sdd/schemas/`; the first Rust scaffold increment introduces the authoritative versioned wire models accepted by Decision 0085, generates their distribution schemas at `tools/specbind/schemas/`, and embeds them into the matching binary. Wire models, generated schemas, and domain conversion share conformance fixtures. Shared `settings/templates/` and `settings/rules/` are user-owned customization surfaces; generated agent assets are product-managed.
 
 [Decision 0084](./decisions/0084-rust-dependency-strategy.md) accepts a dependency-positive implementation strategy: focused crates own general-purpose mechanics behind SpecBind module boundaries, while SpecBind retains its exact format, lifecycle, diagnostics, and safety contracts. Git remains an installed-executable adapter so repository decisions agree with the Git implementation and configuration that v1 already requires.
 
@@ -57,7 +57,7 @@ The dependency direction is accepted by Decision 0084, and the code should separ
 - `fs`: path validation, Git-aware guards, semantic reads, and guarded writes
 - `check`: read-only artifact parsers and diagnostics
 - `lifecycle`: explicit milestone, task, and release transitions
-- `schema`: embedded authoritative schema lookup, structural validation, typed-model conversion, and shared conformance fixtures
+- `schema`: versioned wire models, deterministic schema generation, embedded generated-schema lookup, structural validation, domain conversion, and shared conformance fixtures
 - `migration`: read-only cc-sdd planning and explicit `--apply`
 
 Core modules return structured internal results. V1 exposes concise English text with stable codes, not a public JSON result envelope. Project-specific release instructions remain agent-executed natural language and never become unrestricted CLI hooks.
