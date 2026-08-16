@@ -13,6 +13,8 @@ pub(crate) mod guarded_fs;
 pub mod milestone;
 pub mod milestone_status;
 pub mod release;
+pub mod release_finalize;
+pub mod release_log;
 pub mod release_readiness;
 pub(crate) mod repository;
 pub mod requirements;

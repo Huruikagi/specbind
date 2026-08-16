@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: `release preflight` resolves and checks only finalization targets, while `release finalize` reruns readiness, applies localized log, cleanup, idle-state, review-archive, and Roadmap-last mutations, resumes recognized partial output, and reports an exact completed retry as `RELEASE_ALREADY_FINALIZED`. Git-assisted recovery remains the fallback for states that do not match either safe source or canonical output.
+
 ## Context
 
 Earlier decisions allow release finalization to overwrite dirty target paths with `--force`, describe multi-file finalization as atomic, and require an empty log-entry JSON document for Direct-only milestones. Git is now mandatory and is the recovery mechanism, so destructive bypasses and bespoke backups are unnecessary. The text-only CLI also needs explicit warning, stream, and terminal-safety rules.
@@ -55,4 +57,3 @@ Earlier decisions allow release finalization to overwrite dirty target paths wit
 - Git-clean targets and deterministic retry replace destructive force and backup machinery.
 - The release contract is implementable on ordinary filesystems without making an untrue atomicity claim.
 - Text-only CLI output remains compact while supporting warnings, safe piping, and stable agent branching.
-

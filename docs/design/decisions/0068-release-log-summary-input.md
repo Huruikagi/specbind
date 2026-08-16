@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: the Rust CLI validates the strict conditional JSON input, preserves or creates the project-language `log.md`, verifies the generated Markdown shape, inserts newest-first local-date entries, detects milestone conflicts, and reuses exact entries during finalization retry.
+
 Decisions 0076 and 0081 localize artifact display prose, remove `--force`, and make log-entry input conditional for Direct-only milestones.
 
 ## Context
@@ -52,6 +54,13 @@ Decision 0066 assigns semantic release-summary authoring to the agent and struct
   ```
 
 - The visible wrapper tokens are localized from `.specbind.json.language` under Decision 0076. The version, link target, milestone ID, and other machine values remain unchanged.
+- The v1 Japanese wrapper is:
+
+  ```markdown
+  * **リリース <version>** — <summary> ([ロードマップ](<relative-roadmap-path>), マイルストーン `<milestone_id>`)
+  ```
+
+  A newly created Japanese log title is `# スペック更新ログ`. English uses the form above and `# Spec Update Log`.
 - Before mutation, the CLI parses the generated Markdown and requires one top-level unordered-list item with one paragraph while retaining the generated release label, roadmap link, and milestone code span. A summary that escapes or corrupts that structure returns `LOG_INPUT_INVALID`.
 - On the first successful finalization attempt, the CLI uses the host's local calendar date in `YYYY-MM-DD` form. If that date heading exists, the new entry is inserted first in its flat list; otherwise the CLI creates the heading in newest-first date order.
 - If `log.md` does not exist, the CLI creates it with the project-language default title. If it exists, its single current document title is preserved.

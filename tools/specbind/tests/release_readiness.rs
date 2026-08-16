@@ -3,7 +3,9 @@ use std::{fs, path::Path, process::Command as ProcessCommand};
 use assert_cmd::Command;
 use predicates::prelude::*;
 use specbind::{
+    config::ProjectLanguage,
     milestone_status::{self, DeliveryStage},
+    release_finalize::{self, FinalizeOutcome},
     release_readiness::{self, MutationTargetState},
 };
 use tempfile::TempDir;
@@ -84,6 +86,58 @@ fn accepts_a_complete_direct_only_milestone_and_ignores_unrelated_dirt() {
         .expect("active milestone");
     assert_eq!(status.stage, DeliveryStage::ReleaseReady);
     assert!(status.release_blockers.is_empty());
+}
+
+#[test]
+fn finalizes_a_direct_only_release_without_log_input_or_review_archive() {
+    let root = direct_fixture("v1.4.0", true);
+    let specbind = root.path().join(".specbind");
+
+    assert_eq!(
+        release_finalize::finalize(root.path(), &specbind, ProjectLanguage::En, None)
+            .expect("finalize Direct-only release"),
+        FinalizeOutcome::Finalized {
+            version: "v1.4.0".to_owned(),
+            specs: 0,
+        }
+    );
+    assert!(!specbind.join("steering/roadmap.md").exists());
+    assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
+    assert!(
+        !specbind
+            .join("releases/v1.4.0-cross-spec-review.md")
+            .exists()
+    );
+    assert_eq!(
+        release_finalize::finalize(root.path(), &specbind, ProjectLanguage::En, None)
+            .expect("idempotent Direct-only finalize retry"),
+        FinalizeOutcome::AlreadyFinalized {
+            version: "v1.4.0".to_owned(),
+            specs: 0,
+        }
+    );
+}
+
+#[test]
+fn exposes_direct_only_release_finalization_through_the_cli() {
+    let root = direct_fixture("v1.4.0", true);
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["release", "finalize"])
+        .assert()
+        .success()
+        .stdout("OK RELEASE_FINALIZED: Finalized v1.4.0 for 0 specs.\n")
+        .stderr("");
+
+    let mut retry = Command::cargo_bin("specbind").expect("specbind binary should build");
+    retry
+        .current_dir(root.path())
+        .args(["release", "finalize"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE RELEASE_ALREADY_FINALIZED: Release v1.4.0 is already finalized.\n")
+        .stderr("");
 }
 
 #[test]

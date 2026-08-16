@@ -6,7 +6,7 @@ use crate::{
     artifacts::{self, ArtifactKind, DiscoveryIssue},
     cross_spec_review::{self, ReviewBoundary},
     freshness::FreshnessStatus,
-    guarded_fs, release, repository, roadmap,
+    guarded_fs, release, release_log, repository, roadmap,
     roadmap::{DirectStatus, RoadmapDocument},
     schema::spec::v1::WorkflowState,
     spec_status::{self, ConsistencyHealth},
@@ -240,7 +240,9 @@ fn collect_spec_readiness(
     let spec_yaml = format!("specs/{spec}/spec.yaml");
     let tasks_yaml = format!("specs/{spec}/tasks.yaml");
     targets.insert(existing(&spec_yaml));
-    targets.insert(existing(format!("specs/{spec}/log.md")));
+    let log_path = format!("specs/{spec}/log.md");
+    targets.insert(target_for_optional_file(specbind_root, &log_path));
+    validate_existing_log(specbind_root, &log_path, diagnostics);
     targets.insert(existing(&tasks_yaml));
 
     match spec_status::resolve(project_root, specbind_root, spec) {
@@ -581,6 +583,50 @@ fn absent(path: impl Into<String>) -> ReleaseMutationTarget {
     ReleaseMutationTarget {
         path: path.into(),
         state: MutationTargetState::Absent,
+    }
+}
+
+fn target_for_optional_file(
+    specbind_root: &Path,
+    path: impl Into<String>,
+) -> ReleaseMutationTarget {
+    let path = path.into();
+    if fs::symlink_metadata(specbind_root.join(&path)).is_ok() {
+        existing(path)
+    } else {
+        absent(path)
+    }
+}
+
+fn validate_existing_log(
+    specbind_root: &Path,
+    path: &str,
+    diagnostics: &mut BTreeSet<ReleaseDiagnostic>,
+) {
+    let native = specbind_root.join(path);
+    let Ok(metadata) = fs::symlink_metadata(&native) else {
+        return;
+    };
+    if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
+        return;
+    }
+    match fs::read_to_string(native) {
+        Ok(input) => {
+            if let Err(issues) = release_log::validate_existing(&input, path) {
+                diagnostics.extend(
+                    issues
+                        .into_iter()
+                        .map(|value| diagnostic(value.code, value.path, value.message)),
+                );
+            }
+        }
+        Err(error) => {
+            diagnostics.insert(diagnostic(
+                "RELEASE_LOG_READ_FAILED",
+                Some(path.to_owned()),
+                error.to_string(),
+            ));
+        }
     }
 }
 

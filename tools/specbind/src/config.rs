@@ -13,6 +13,14 @@ use crate::repository::{self, RepositoryError};
 pub struct ProjectPaths {
     pub project_root: PathBuf,
     pub specbind_root: PathBuf,
+    pub language: ProjectLanguage,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ProjectLanguage {
+    En,
+    Ja,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -34,13 +42,14 @@ impl std::error::Error for ConfigError {}
 struct RootConfig {
     schema_version: u64,
     spec_dir: String,
+    language: ProjectLanguage,
 }
 
 /// Resolves the containing Git project and its configured `SpecBind` root.
 ///
-/// This read-only projection validates only the configuration fields required by
-/// existing project commands. Installer-owned language and agent validation stays
-/// with the later complete installation configuration boundary.
+/// This read-only projection validates the configuration fields required by
+/// current project commands, including the language used for CLI-authored artifacts.
+/// Agent-list validation stays with the later complete installation boundary.
 ///
 /// # Errors
 ///
@@ -91,6 +100,7 @@ pub fn resolve_from(start: &Path) -> Result<ProjectPaths, ConfigError> {
     Ok(ProjectPaths {
         project_root,
         specbind_root,
+        language: config.language,
     })
 }
 

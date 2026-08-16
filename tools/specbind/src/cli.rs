@@ -13,6 +13,7 @@ use crate::{
     config,
     milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
+    release_finalize::{self, FinalizeIssue},
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
@@ -611,6 +612,103 @@ pub fn release_preflight(start: &Path) -> CommandOutput {
                 .collect(),
         ),
     }
+}
+
+#[must_use]
+pub fn release_finalize(start: &Path, log_entries_source: Option<&str>) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let log_entries = match log_entries_source {
+        Some(source) => match read_release_log_entries(start, source) {
+            Ok(input) => Some(input),
+            Err(output) => return output,
+        },
+        None => None,
+    };
+    match release_finalize::finalize(
+        &paths.project_root,
+        &paths.specbind_root,
+        paths.language,
+        log_entries.as_deref(),
+    ) {
+        Ok(release_finalize::FinalizeOutcome::Finalized { version, specs }) => {
+            CommandOutput::success(
+                format!(
+                    "OK RELEASE_FINALIZED: Finalized {} for {} specs.\n",
+                    escape(&version),
+                    specs
+                )
+                .into_bytes(),
+            )
+        }
+        Ok(release_finalize::FinalizeOutcome::AlreadyFinalized { version, .. }) => {
+            CommandOutput::no_change(
+                "RELEASE_ALREADY_FINALIZED",
+                &format!("Release {} is already finalized.", escape(&version)),
+            )
+        }
+        Err(error) => {
+            let mut issues = error.issues.into_iter();
+            let Some(first) = issues.next() else {
+                return CommandOutput::failure(
+                    "RELEASE_FINALIZE_FAILED",
+                    "Release finalization failed.",
+                    vec![],
+                );
+            };
+            let mut details = vec![render_finalize_issue(&first)];
+            details.extend(issues.map(|issue| render_finalize_issue(&issue)));
+            CommandOutput::failure(first.code, "Release finalization failed.", details)
+        }
+    }
+}
+
+fn read_release_log_entries(start: &Path, source: &str) -> Result<String, CommandOutput> {
+    if source == "-" {
+        let mut input = String::new();
+        return io::stdin()
+            .read_to_string(&mut input)
+            .map(|_| input)
+            .map_err(|error| {
+                CommandOutput::failure(
+                    "LOG_INPUT_READ_FAILED",
+                    format!("Cannot read log entries from stdin: {error}"),
+                    vec![],
+                )
+            });
+    }
+    let requested = start.join(source);
+    let metadata = fs::symlink_metadata(&requested).map_err(|error| {
+        CommandOutput::failure(
+            "LOG_INPUT_READ_FAILED",
+            format!("Cannot inspect log-entry input: {error}"),
+            vec![],
+        )
+    })?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err(CommandOutput::failure(
+            "LOG_INPUT_TARGET_INVALID",
+            "Log-entry input must be a regular non-symlink file.",
+            vec![],
+        ));
+    }
+    fs::read_to_string(requested).map_err(|error| {
+        CommandOutput::failure(
+            "LOG_INPUT_READ_FAILED",
+            format!("Cannot read log-entry input as UTF-8: {error}"),
+            vec![],
+        )
+    })
+}
+
+fn render_finalize_issue(issue: &FinalizeIssue) -> String {
+    let path = issue
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", issue.code, escape(&issue.message))
 }
 
 fn render_release_diagnostic(diagnostic: &ReleaseDiagnostic) -> String {

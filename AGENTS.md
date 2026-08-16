@@ -30,6 +30,8 @@
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
 - `tools/specbind/src/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
+- `tools/specbind/src/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
+- `tools/specbind/src/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization
 - `tools/specbind/src/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
 - `tools/specbind/src/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
 - `tools/specbind/src/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state

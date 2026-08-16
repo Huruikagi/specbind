@@ -119,6 +119,11 @@ enum DirectCommand {
 enum ReleaseCommand {
     /// Derive current release readiness without persisting authority.
     Preflight,
+    /// Finalize the complete active milestone after project release work succeeds.
+    Finalize {
+        #[arg(long)]
+        log_entries: Option<String>,
+    },
 }
 
 fn main() -> ExitCode {
@@ -189,6 +194,9 @@ fn main() -> ExitCode {
         Command::Release {
             command: ReleaseCommand::Preflight,
         } => specbind::cli::release_preflight(&start),
+        Command::Release {
+            command: ReleaseCommand::Finalize { log_entries },
+        } => specbind::cli::release_finalize(&start, log_entries.as_deref()),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

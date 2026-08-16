@@ -9,34 +9,21 @@ use specbind::{
     cross_spec_review,
     fingerprint::Fingerprint,
     milestone_status::{self, DeliveryStage},
+    release_finalize::{self, FinalizeOutcome},
+    release_log::{self, LogUpdate},
     release_readiness,
     roadmap::{self, DirectStatus},
     schema::{runtime, spec::v1::WorkflowState},
 };
 use tempfile::TempDir;
+use time::OffsetDateTime;
 
 const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
 
 #[test]
 fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed() {
-    let root = spec_fixture();
+    let root = accepted_spec_fixture();
     let specbind = root.path().join(".specbind");
-    let preflight = completion::spec_preflight(root.path(), &specbind, "checkout")
-        .expect("completion preflight");
-    let SpecPreflightOutcome::Ready {
-        implementation_revision,
-    } = preflight
-    else {
-        panic!("implementation should require validation");
-    };
-    completion::spec_accept(
-        root.path(),
-        &specbind,
-        "checkout",
-        &candidate(&implementation_revision),
-    )
-    .expect("accept completion");
-    commit_all(root.path(), "accept completion");
 
     let readiness = release_readiness::resolve(root.path(), &specbind)
         .expect("Spec-backed milestone should be release-ready");
@@ -60,6 +47,183 @@ fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed(
         .expect("active milestone");
     assert_eq!(milestone.stage, DeliveryStage::ReleaseReady);
     assert!(milestone.release_blockers.is_empty());
+}
+
+#[test]
+fn finalizes_a_spec_backed_release_with_log_cleanup_and_archives() {
+    let root = accepted_spec_fixture();
+    let specbind = root.path().join(".specbind");
+
+    let input =
+        r#"{"log_entries":[{"spec":"checkout","summary":"Added authenticated checkout."}]}"#;
+    assert_eq!(
+        release_finalize::finalize(
+            root.path(),
+            &specbind,
+            specbind::config::ProjectLanguage::En,
+            Some(input),
+        )
+        .expect("finalize release"),
+        FinalizeOutcome::Finalized {
+            version: "v1.4.0".to_owned(),
+            specs: 1,
+        }
+    );
+    assert!(!specbind.join("steering/roadmap.md").exists());
+    assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
+    assert!(
+        specbind
+            .join("releases/v1.4.0-cross-spec-review.md")
+            .is_file()
+    );
+    assert!(!specbind.join("state/cross-spec-review.md").exists());
+    assert!(!specbind.join("specs/checkout/brief.md").exists());
+    assert!(!specbind.join("specs/checkout/research.md").exists());
+    assert!(!specbind.join("specs/checkout/tasks.yaml").exists());
+    assert!(read_spec(&specbind).active_change.0.is_none());
+    let log = fs::read_to_string(specbind.join("specs/checkout/log.md")).expect("log");
+    assert!(log.starts_with("# Checkout change log\n\n## "));
+    assert!(log.contains(
+        "* **Release v1.4.0** — Added authenticated checkout. ([roadmap](../../releases/v1.4.0-roadmap.md), milestone `0198b2d1-7c4a-7e31-9f42-8e7c3a110d62`)"
+    ));
+    assert_eq!(
+        release_finalize::finalize(
+            root.path(),
+            &specbind,
+            specbind::config::ProjectLanguage::En,
+            Some(input),
+        )
+        .expect("idempotent finalize retry"),
+        FinalizeOutcome::AlreadyFinalized {
+            version: "v1.4.0".to_owned(),
+            specs: 1,
+        }
+    );
+}
+
+#[test]
+fn resumes_an_interrupted_spec_finalization_before_the_roadmap_marker_moves() {
+    let root = accepted_spec_fixture();
+    let specbind = root.path().join(".specbind");
+
+    let input =
+        r#"{"log_entries":[{"spec":"checkout","summary":"Added authenticated checkout."}]}"#;
+    let log_path = specbind.join("specs/checkout/log.md");
+    let existing = fs::read_to_string(&log_path).expect("log");
+    let LogUpdate::Updated(log) = release_log::update_log(
+        &existing,
+        specbind::config::ProjectLanguage::En,
+        OffsetDateTime::now_local().expect("local date").date(),
+        "v1.4.0",
+        MILESTONE,
+        "../../releases/v1.4.0-roadmap.md",
+        "Added authenticated checkout.",
+        "specs/checkout/log.md",
+    )
+    .expect("render log") else {
+        panic!("new milestone should update log");
+    };
+    fs::write(log_path, log).expect("simulate completed log step");
+    let mut wire = read_spec(&specbind);
+    wire.active_change.0 = None;
+    let mut idle = serde_saphyr::to_string(&wire).expect("render idle Spec");
+    if !idle.ends_with('\n') {
+        idle.push('\n');
+    }
+    fs::write(specbind.join("specs/checkout/spec.yaml"), idle)
+        .expect("simulate completed Spec step");
+    fs::remove_file(specbind.join("specs/checkout/brief.md")).expect("remove Brief");
+    fs::remove_file(specbind.join("specs/checkout/research.md")).expect("remove Research");
+    fs::remove_file(specbind.join("specs/checkout/tasks.yaml")).expect("remove Tasks");
+    fs::create_dir(specbind.join("releases")).expect("create releases");
+    fs::rename(
+        specbind.join("state/cross-spec-review.md"),
+        specbind.join("releases/v1.4.0-cross-spec-review.md"),
+    )
+    .expect("simulate completed review archive step");
+
+    assert_eq!(
+        release_finalize::finalize(
+            root.path(),
+            &specbind,
+            specbind::config::ProjectLanguage::En,
+            Some(input),
+        )
+        .expect("resume interrupted finalization"),
+        FinalizeOutcome::Finalized {
+            version: "v1.4.0".to_owned(),
+            specs: 1,
+        }
+    );
+    assert!(!specbind.join("steering/roadmap.md").exists());
+    assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
+}
+
+#[test]
+fn rejects_missing_spec_log_entries_without_mutation() {
+    let root = accepted_spec_fixture();
+    let specbind = root.path().join(".specbind");
+    let before = fs::read_to_string(specbind.join("steering/roadmap.md")).expect("Roadmap");
+
+    let error = release_finalize::finalize(
+        root.path(),
+        &specbind,
+        specbind::config::ProjectLanguage::En,
+        None,
+    )
+    .expect_err("Spec-backed finalization requires log entries");
+    assert_eq!(error.issues[0].code, "LOG_ENTRIES_REQUIRED");
+    assert_eq!(
+        fs::read_to_string(specbind.join("steering/roadmap.md")).expect("Roadmap"),
+        before
+    );
+    assert!(specbind.join("specs/checkout/brief.md").exists());
+    assert!(specbind.join("specs/checkout/tasks.yaml").exists());
+}
+
+#[test]
+fn release_preflight_reports_an_invalid_existing_log_profile() {
+    let root = spec_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/log.md",
+        "# Log\n\n## not-a-date\n\n* Entry.\n",
+    );
+    commit_all(root.path(), "malformed existing log");
+    accept_spec_completion(&root);
+    let specbind = root.path().join(".specbind");
+
+    let error = release_readiness::resolve(root.path(), &specbind)
+        .expect_err("invalid log profile must block preflight");
+    assert!(
+        error
+            .diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "LOG_PROFILE_INVALID")
+    );
+}
+
+#[test]
+fn creates_a_missing_log_with_the_project_language_wrapper() {
+    let root = spec_fixture();
+    let specbind = root.path().join(".specbind");
+    fs::remove_file(specbind.join("specs/checkout/log.md")).expect("remove initial log");
+    commit_all(root.path(), "leave log for release finalization");
+    accept_spec_completion(&root);
+
+    let input =
+        r#"{"log_entries":[{"spec":"checkout","summary":"認証済みチェックアウトを追加した。"}]}"#;
+    release_finalize::finalize(
+        root.path(),
+        &specbind,
+        specbind::config::ProjectLanguage::Ja,
+        Some(input),
+    )
+    .expect("finalize release with a newly created Japanese log");
+    let log = fs::read_to_string(specbind.join("specs/checkout/log.md")).expect("log");
+    assert!(log.starts_with("# スペック更新ログ\n\n## "));
+    assert!(log.contains("**リリース v1.4.0**"));
+    assert!(log.contains("[ロードマップ]"));
 }
 
 #[test]
@@ -206,6 +370,32 @@ fn preflights_completes_and_idempotently_reports_a_direct_item() {
     );
 }
 
+fn accepted_spec_fixture() -> TempDir {
+    let root = spec_fixture();
+    accept_spec_completion(&root);
+    root
+}
+
+fn accept_spec_completion(root: &TempDir) {
+    let specbind = root.path().join(".specbind");
+    let preflight = completion::spec_preflight(root.path(), &specbind, "checkout")
+        .expect("completion preflight");
+    let SpecPreflightOutcome::Ready {
+        implementation_revision,
+    } = preflight
+    else {
+        panic!("implementation should require validation");
+    };
+    completion::spec_accept(
+        root.path(),
+        &specbind,
+        "checkout",
+        &candidate(&implementation_revision),
+    )
+    .expect("accept completion");
+    commit_all(root.path(), "accept completion");
+}
+
 fn spec_fixture() -> TempDir {
     let root = git_fixture();
     let specbind = root.path().join(".specbind");
@@ -221,6 +411,11 @@ fn spec_fixture() -> TempDir {
         root.path(),
         ".specbind/specs/checkout/brief.md",
         "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/research.md",
+        "---\ntype: SpecBind Research\n---\n# Checkout research\n",
     );
     write(
         root.path(),

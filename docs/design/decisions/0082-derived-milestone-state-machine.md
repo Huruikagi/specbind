@@ -43,4 +43,4 @@ Roadmap dependencies still need precise phase semantics. Applying every edge to 
 
 ## Implementation status
 
-The Rust CLI exposes the accepted per-Spec and task read models. The current implementation increment adds `milestone status` over the active Roadmap, participating Spec status models, sparse Direct completion, review freshness, Git cleanliness, dependency readiness, actionable items, and release blockers. Release archive and finalization-target guards remain owned by the later release-preflight implementation and must not be inferred as passing before that boundary exists.
+The Rust CLI exposes the accepted per-Spec, task, and milestone read models. `milestone status` projects the active Roadmap, participating Spec status models, sparse Direct completion, review freshness, Git state, dependency readiness, actionable items, and release blockers. The shared release-readiness resolver now owns archive and target-path guards, so `release_ready` is derived only when `release preflight` would pass; successful `release finalize` archives the Roadmap last and leaves no active milestone.

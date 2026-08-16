@@ -146,12 +146,7 @@ pub fn resolve(
     let implementation_complete = implementation_completion(&facts, validation_checkout_ready);
     let all_items_implemented = implementation_complete.values().all(|complete| *complete);
     let all_specs_validated = spec_predicate(&facts, validated);
-    let stage = derive_stage(
-        &facts,
-        review.status,
-        &implementation_complete,
-        roadmap.target_release.as_deref(),
-    );
+    let stage = derive_stage(&facts, review.status, &implementation_complete);
     let health = if diagnostics.is_empty() {
         MilestoneHealth::Consistent
     } else {
@@ -342,7 +337,6 @@ fn derive_stage(
     facts: &[ItemFacts],
     review: ReviewFreshnessStatus,
     completion: &BTreeMap<String, bool>,
-    target_release: Option<&str>,
 ) -> DeliveryStage {
     let has_specs = has_specs(facts);
     if has_specs && !spec_predicate(facts, requirements_approved) {
@@ -357,10 +351,7 @@ fn derive_stage(
         DeliveryStage::Implementation
     } else if has_specs && !spec_predicate(facts, validated) {
         DeliveryStage::Validation
-    } else if target_release.is_none() {
-        DeliveryStage::ReleasePending
     } else {
-        // Full archive and finalization-target guards are not implemented yet.
         DeliveryStage::ReleasePending
     }
 }
