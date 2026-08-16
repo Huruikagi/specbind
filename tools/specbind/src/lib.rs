@@ -1,3 +1,4 @@
+pub mod artifacts;
 pub mod domain;
 pub mod fingerprint;
 pub mod freshness;

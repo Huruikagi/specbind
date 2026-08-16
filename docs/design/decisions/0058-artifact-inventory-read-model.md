@@ -59,3 +59,7 @@ A single command that always returns every body would defeat the context-saving 
 - Raw single-document reads remain natural Markdown; workflows issue separate reads when they need several bodies.
 - Discovery races cannot turn an earlier path into mutation authority; guarded operations always resolve and fingerprint current artifacts again.
 - Project-wide inventory and unknown-type extension discovery remain separate follow-up capabilities rather than expanding the v1 spec-local command contract.
+
+## Implementation status
+
+The Rust read model now produces the deterministic recognized-artifact inventory with partial results and owned diagnostics. Its internal gate-input resolver re-runs discovery from a canonical Spec ID, reads current Markdown through resolved root-relative paths, validates fixed `tasks.yaml`, and produces the current requirements, design, contract, and typed task-plan fingerprints without accepting caller-supplied paths or hashes. CLI rendering and raw `artifact read` command exposure remain subsequent increments.

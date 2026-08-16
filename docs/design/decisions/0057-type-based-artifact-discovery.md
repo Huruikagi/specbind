@@ -57,3 +57,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 - Human organization and machine identity are decoupled, while duplicate or missing authoritative artifacts remain deterministic errors.
 - The Decision 0058 CLI read model presents a small typed artifact index before an agent spends context on document bodies.
 - Existing path-keyed gate evidence and accepted cross-spec review state require explicit migration or regeneration; logical-key and path-key representations are not mixed in one evidence record.
+
+## Implementation status
+
+The Rust discovery boundary recursively scans regular lowercase `.md` files without following symbolic links, validates recognized singleton and collection metadata profiles, assigns logical selectors, removes ambiguous duplicates from the usable partial inventory, and orders results by the accepted inventory sequence. It also diagnoses empty Research and Implementation Notes bodies and leaked live `specbind:instruction` comments. Requirements heading/body extraction, Design body-marker equality, and Contract body parsing remain dedicated semantic-parser increments.

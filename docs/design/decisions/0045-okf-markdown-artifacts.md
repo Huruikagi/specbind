@@ -48,3 +48,7 @@ The Open Knowledge Format (OKF) v0.2 already defines a minimal, vendor-neutral m
 ## Reference
 
 - [Open Knowledge Format v0.2 specification](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
+
+## Implementation status
+
+The Rust discovery boundary now recognizes UTF-8 concept documents with first-line YAML Front Matter delimiters, requires a non-empty `type`, preserves tolerance for unknown valid OKF types and extension fields, and excludes reserved `index.md` and `log.md` files from concept routing. Front Matter uses the ordinary YAML deserialization boundary rather than inheriting the narrower parser restrictions owned by versioned `spec.yaml` and `tasks.yaml`.

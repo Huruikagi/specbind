@@ -6,7 +6,7 @@ pub mod tasks;
 
 pub use diagnostics::{SemanticIssue, SemanticIssues};
 
-fn parse_requirement_id(value: &str) -> Option<(u64, u64)> {
+pub(crate) fn parse_requirement_id(value: &str) -> Option<(u64, u64)> {
     let (group, criterion) = value.split_once('.')?;
     if group.starts_with('0') || criterion.starts_with('0') || criterion.contains('.') {
         return None;
