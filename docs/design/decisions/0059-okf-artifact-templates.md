@@ -62,6 +62,7 @@ SpecBind needs customizable template sets that can create several design artifac
 
 ## CLI and agent access
 
+- [Decision 0091](./0091-installed-template-surface.md) narrows which of these templates `specbind install` writes into the project customization surface; every type stays available as an embedded scaffold.
 - Templates use a separate read-only command family so agents cannot confuse a scaffold with current authoritative state:
 
   ```text

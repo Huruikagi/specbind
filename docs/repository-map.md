@@ -151,3 +151,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0088](./design/decisions/0088-gate-approval-cli.md) | Accepted | Spec gate approval and invalidation commands |
 | [0089](./design/decisions/0089-milestone-creation-cli.md) | Accepted | Milestone creation, scope, and rebaseline commands |
 | [0090](./design/decisions/0090-standalone-check-cli.md) | Accepted | Standalone traceability and contract check commands |
+| [0091](./design/decisions/0091-installed-template-surface.md) | Accepted | Embedded scaffold set separated from the installed customization surface |
