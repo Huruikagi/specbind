@@ -115,6 +115,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 - Implement structured artifact loading, traceability, status, and task read models.
 - Enforce accepted-review freshness at Tasks approval, completion, and release boundaries.
+- Expose the Decision 0088 Spec gate approval and invalidation commands, which complete the public path from `requirements` to `release_ready`.
 - Implemented: the Decision 0086 Spec and Direct completion handshakes, same-revision multi-Spec metadata convergence, Decision 0072 guarded milestone release binding with portable archive-target collision resolution, and the Decision 0087 milestone review status and guarded acceptance commands.
 - Add milestone and release mutations incrementally, including Git-clean finalization targets and idempotent retry.
 - Update generated skills to call stable CLI contracts instead of shell-specific inspection.

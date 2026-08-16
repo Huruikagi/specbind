@@ -89,6 +89,15 @@ specbind milestone review status
 specbind milestone review accept --candidate <path|->
 ```
 
+[Decision 0088](./decisions/0088-gate-approval-cli.md) completes the per-Spec lifecycle surface with the gate approval and invalidation commands:
+
+```sh
+specbind spec requirements approve <spec> --approval-mode <explicit|delegated> --requirement-ids <ids>
+specbind spec design approve <spec> --approval-mode <explicit|delegated>
+specbind spec tasks approve <spec> --approval-mode <explicit|delegated>
+specbind spec <requirements|design|tasks> invalidate <spec>
+```
+
 The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/cross-spec-review.md`. The exact command vocabulary for standalone deterministic checks remains unaccepted. Its initial shape should remain within the existing `specbind` executable, for example:
 
 ```sh
@@ -130,7 +139,7 @@ The same boundary can prevent `specbind-discovery` from becoming a general-purpo
 - perform the deterministic portion of confirmed abandonment cleanup
 - run the stateless `specbind release preflight` readiness check and idempotent finalization mutations
 
-These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for the Spec and Direct completion handshakes accepted by Decision 0086, `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
+These are accepted CLI responsibilities under [Decision 0009](./decisions/0009-milestone-cli-boundary.md). Their exact command names remain Draft except for the Spec and Direct completion handshakes accepted by Decision 0086, the Spec gate approval and invalidation commands accepted by [Decision 0088](./decisions/0088-gate-approval-cli.md), `specbind milestone bind-release`, accepted by Decision 0072, `specbind release preflight`, accepted by Decision 0069, and `specbind release finalize`. Decision 0081 removes the former finalization `--force` bypass. Discovery remains the user-facing entry point for understanding and routing a request, while CLI commands own the resulting mechanical writes. SpecBind does not expose a separate `specbind-milestone` agent skill.
 
 The draft event names, expected states, guards, invalidation effects, and consistency-health model for per-spec mutations are defined in [Spec state machine](./spec-state-machine.md). The aggregate read model and phase-relative dependency waves are defined in [Milestone state machine](./milestone-state-machine.md). Stable CLI commands may rename those events, but must preserve the accepted transition semantics once finalized.
 

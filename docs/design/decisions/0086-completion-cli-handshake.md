@@ -80,7 +80,7 @@ specbind milestone direct complete <direct> --implementation-revision <revision>
 - Every guard failure follows the Decision 0067 English text result contract, exits nonzero, and performs no partial mutation. Specific diagnostics identify state, milestone membership, dependency, review, task, Git, evidence, or target-path failures; the top-level failure does not collapse those categories into semantic agent judgment.
 - Neither preflight command runs project tests, accepts `GO`, or creates durable candidate state. Neither acceptance command claims that command text proves execution; the invoking skill owns that judgment.
 - `specbind-validate-implementation` routes Spec-backed work through the three Spec completion commands. Direct implementation uses the milestone Direct handshake and does not create a synthetic Spec.
-- Decision 0087 fixes the stable public cross-spec review acceptance and status commands. Requirements, Design, and Tasks lifecycle gate operations must still be exposed before the complete generated validation workflow can rely only on public Rust CLI surfaces.
+- Decision 0087 fixes the stable public cross-spec review acceptance and status commands, and [Decision 0088](./0088-gate-approval-cli.md) fixes the Requirements, Design, and Tasks gate approval and invalidation commands, so the complete generated validation workflow can rely only on public Rust CLI surfaces.
 
 ## Consequences
 

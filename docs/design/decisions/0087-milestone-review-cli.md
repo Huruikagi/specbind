@@ -96,7 +96,7 @@ Every candidate, guard, race, or filesystem failure returns `ERROR MILESTONE_REV
 - Milestone ownership is visible in the command hierarchy and consistent with `milestone status`, Direct completion, and release readiness.
 - A focused status command supports repair while aggregate milestone status remains compact.
 - Missing or stale review state can be inspected without treating the read itself as a failed command, while invalid state still fails closed.
-- Requirements, Design, and Tasks approval commands remain a separate lifecycle CLI decision.
+- Requirements, Design, and Tasks approval commands are fixed separately by [Decision 0088](./0088-gate-approval-cli.md).
 
 ## Implementation status
 
