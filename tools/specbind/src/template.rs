@@ -1,24 +1,51 @@
-//! Read-only discovery and raw reads for project-owned OKF artifact templates.
+//! Discovery and raw reads for OKF artifact templates.
+//!
+//! A project-owned copy below `settings/templates/` overrides the official
+//! default embedded in this binary, one selector at a time.
 
 use std::{fs, path::Path};
 
 use camino::Utf8PathBuf;
+use include_dir::{Dir, include_dir};
 use serde_json::{Map, Value};
 use walkdir::WalkDir;
 
 use crate::artifacts::{
     ArtifactKind, DiscoveryIssue, collection_id, recognized_kind, selector, split_frontmatter,
 };
+use crate::config::ProjectLanguage;
 
-/// The template tree that scaffolds one Spec's artifacts.
+/// The project tree that scaffolds one Spec's artifacts.
 pub const SPEC_TEMPLATE_ROOT: &str = "settings/templates/specs";
+
+static EMBEDDED_TEMPLATES: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/assets/templates");
+
+/// Where one resolved template came from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TemplateSource {
+    /// A user-owned copy below the project `SpecBind` root.
+    Project,
+    /// The official default embedded in this binary.
+    Embedded,
+}
+
+impl TemplateSource {
+    #[must_use]
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Project => "project",
+            Self::Embedded => "embedded",
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Template {
+    pub source: TemplateSource,
     pub selector: String,
     pub artifact_type: String,
     pub artifact_id: Option<String>,
-    /// Location below the `SpecBind` root.
+    /// Location below the `SpecBind` root, or below the embedded asset tree.
     pub template_path: Utf8PathBuf,
     /// Materialization target relative to the destination Spec directory.
     pub output_path: Utf8PathBuf,
@@ -31,15 +58,73 @@ pub struct TemplateInventory {
     pub issues: Vec<DiscoveryIssue>,
 }
 
-/// Discovers every recognized Spec artifact template below a `SpecBind` root.
+/// Resolves every recognized Spec artifact template for one project.
 ///
-/// Templates are user-owned under Decision 0008, so an absent tree is a normal
-/// empty inventory rather than a failure.
+/// Project-owned templates are user-owned under Decision 0008, so an absent tree
+/// is normal: the embedded official defaults for the configured language answer
+/// every selector the project does not override.
 #[must_use]
-pub fn discover_spec_templates(specbind_root: &Path) -> TemplateInventory {
+pub fn discover_spec_templates(
+    specbind_root: &Path,
+    language: ProjectLanguage,
+) -> TemplateInventory {
+    let (mut templates, mut issues) = discover_project_templates(specbind_root);
+    for embedded in embedded_spec_templates(language) {
+        if templates
+            .iter()
+            .any(|template| template.selector == embedded.selector)
+        {
+            continue;
+        }
+        templates.push(embedded);
+    }
+    issues.sort();
+    issues.dedup();
+    inventory(templates, issues)
+}
+
+/// Resolves only the official defaults embedded in this binary.
+#[must_use]
+pub fn embedded_spec_templates(language: ProjectLanguage) -> Vec<Template> {
+    let root = match language {
+        ProjectLanguage::En => "en/specs",
+        ProjectLanguage::Ja => "ja/specs",
+    };
+    let Some(directory) = EMBEDDED_TEMPLATES.get_dir(root) else {
+        return vec![];
+    };
+    let mut templates = Vec::new();
+    for file in directory.files() {
+        let Some(path) = file.path().to_str() else {
+            continue;
+        };
+        let template_path = Utf8PathBuf::from(path.replace('\\', "/"));
+        let Some(output_path) = template_path
+            .as_str()
+            .strip_prefix(&format!("{root}/"))
+            .map(Utf8PathBuf::from)
+        else {
+            continue;
+        };
+        let Some(content) = file.contents_utf8() else {
+            continue;
+        };
+        if let Ok((Some(template), _)) = resolve_template(
+            content,
+            TemplateSource::Embedded,
+            &template_path,
+            output_path,
+        ) {
+            templates.push(template);
+        }
+    }
+    templates
+}
+
+fn discover_project_templates(specbind_root: &Path) -> (Vec<Template>, Vec<DiscoveryIssue>) {
     let root = specbind_root.join(SPEC_TEMPLATE_ROOT);
     if let Err(issues) = validate_template_root(&root) {
-        return inventory(vec![], issues);
+        return (vec![], issues);
     }
     let mut issues = Vec::new();
     let mut templates = Vec::new();
@@ -72,7 +157,10 @@ pub fn discover_spec_templates(specbind_root: &Path) -> TemplateInventory {
         {
             continue;
         }
-        let Some(template_path) = relative(specbind_root, entry.path()) else {
+        let (Some(template_path), Some(output_path)) = (
+            relative(specbind_root, entry.path()),
+            relative(&root, entry.path()),
+        ) else {
             issues.push(issue(
                 "TEMPLATE_PATH_NOT_UTF8",
                 None,
@@ -80,15 +168,31 @@ pub fn discover_spec_templates(specbind_root: &Path) -> TemplateInventory {
             ));
             continue;
         };
-        let Some(output_path) = relative(&root, entry.path()) else {
-            issues.push(issue(
-                "TEMPLATE_PATH_NOT_UTF8",
-                Some(template_path.clone()),
-                "template output path must be UTF-8",
-            ));
-            continue;
+        let content = match fs::read(entry.path()).map(String::from_utf8) {
+            Ok(Ok(content)) => content,
+            Ok(Err(error)) => {
+                issues.push(issue(
+                    "TEMPLATE_NOT_UTF8",
+                    Some(template_path),
+                    format!("template must be UTF-8: {error}"),
+                ));
+                continue;
+            }
+            Err(error) => {
+                issues.push(issue(
+                    "TEMPLATE_READ_FAILED",
+                    Some(template_path),
+                    format!("cannot read template: {error}"),
+                ));
+                continue;
+            }
         };
-        match resolve_template(entry.path(), &template_path, output_path) {
+        match resolve_template(
+            &content,
+            TemplateSource::Project,
+            &template_path,
+            output_path,
+        ) {
             Ok((Some(template), mut found)) => {
                 templates.push(template);
                 issues.append(&mut found);
@@ -97,12 +201,12 @@ pub fn discover_spec_templates(specbind_root: &Path) -> TemplateInventory {
         }
     }
 
-    let mut deduplicated = Vec::new();
+    let mut deduplicated: Vec<Template> = Vec::new();
     for template in templates {
-        let duplicate = deduplicated
+        if deduplicated
             .iter()
-            .any(|existing: &Template| existing.selector == template.selector);
-        if duplicate {
+            .any(|existing| existing.selector == template.selector)
+        {
             issues.push(issue(
                 "TEMPLATE_SELECTOR_DUPLICATE",
                 Some(template.template_path.clone()),
@@ -112,7 +216,7 @@ pub fn discover_spec_templates(specbind_root: &Path) -> TemplateInventory {
         }
         deduplicated.push(template);
     }
-    inventory(deduplicated, issues)
+    (deduplicated, issues)
 }
 
 /// Accepts an absent tree and rejects any root that cannot be scanned safely.
@@ -140,26 +244,13 @@ fn validate_template_root(root: &Path) -> Result<(), Vec<DiscoveryIssue>> {
 }
 
 fn resolve_template(
-    native_path: &Path,
+    content: &str,
+    source: TemplateSource,
     template_path: &Utf8PathBuf,
     output_path: Utf8PathBuf,
 ) -> Result<(Option<Template>, Vec<DiscoveryIssue>), Vec<DiscoveryIssue>> {
     let mut issues = validate_output_path(&output_path, template_path);
-    let bytes = fs::read(native_path).map_err(|error| {
-        vec![issue(
-            "TEMPLATE_READ_FAILED",
-            Some(template_path.clone()),
-            format!("cannot read template: {error}"),
-        )]
-    })?;
-    let content = std::str::from_utf8(&bytes).map_err(|error| {
-        vec![issue(
-            "TEMPLATE_NOT_UTF8",
-            Some(template_path.clone()),
-            format!("template must be UTF-8: {error}"),
-        )]
-    })?;
-    let (frontmatter, body) = split_frontmatter(content).map_err(|message| {
+    let (frontmatter, _body) = split_frontmatter(content).map_err(|message| {
         vec![issue(
             "TEMPLATE_FRONTMATTER_INVALID",
             Some(template_path.clone()),
@@ -191,9 +282,6 @@ fn resolve_template(
                 "frontmatter type must be a non-empty string",
             )]
         })?;
-    // The body is free-form scaffold content and keeps its instruction comments;
-    // only machine identity and the derived output path are validated here.
-    let _ = body;
     let Some(kind) = recognized_kind(artifact_type) else {
         return Ok((None, issues));
     };
@@ -214,6 +302,7 @@ fn resolve_template(
     }
     Ok((
         Some(Template {
+            source,
             selector: selector(kind, artifact_id.as_deref()),
             artifact_type: artifact_type.to_owned(),
             artifact_id,
@@ -288,59 +377,80 @@ fn validate_output_path(
 /// Returns the resolution or read diagnostics that prevent a trustworthy read.
 pub fn read_spec_template(
     specbind_root: &Path,
+    language: ProjectLanguage,
     requested: &str,
 ) -> Result<(String, TemplateInventory), TemplateInventory> {
-    let inventory = discover_spec_templates(specbind_root);
+    let inventory = discover_spec_templates(specbind_root, language);
     let Some(template) = inventory
         .templates
         .iter()
         .find(|template| template.selector == requested)
+        .cloned()
     else {
         return Err(inventory);
     };
-    let path = specbind_root.join(template.template_path.as_std_path());
-    if !fs::symlink_metadata(&path)
-        .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
-    {
-        let mut issues = inventory.issues;
-        issues.push(issue(
-            "TEMPLATE_TARGET_INVALID",
-            Some(template.template_path.clone()),
-            "resolved template is no longer a regular non-symlink file",
-        ));
-        return Err(TemplateInventory {
-            templates: inventory.templates,
-            issues,
-        });
-    }
-    match fs::read(&path) {
-        Ok(bytes) => match String::from_utf8(bytes) {
-            Ok(content) => Ok((content, inventory)),
-            Err(error) => {
-                let mut issues = inventory.issues;
-                issues.push(issue(
-                    "TEMPLATE_NOT_UTF8",
-                    Some(template.template_path.clone()),
-                    error.to_string(),
-                ));
-                Err(TemplateInventory {
-                    templates: inventory.templates,
-                    issues,
-                })
-            }
-        },
-        Err(error) => {
-            let mut issues = inventory.issues;
-            issues.push(issue(
+    match template.source {
+        TemplateSource::Embedded => match EMBEDDED_TEMPLATES
+            .get_file(template.template_path.as_str())
+            .and_then(include_dir::File::contents_utf8)
+        {
+            Some(content) => Ok((content.to_owned(), inventory)),
+            None => Err(with_issue(
+                inventory,
                 "TEMPLATE_READ_FAILED",
-                Some(template.template_path.clone()),
-                error.to_string(),
-            ));
-            Err(TemplateInventory {
-                templates: inventory.templates,
-                issues,
-            })
+                &template.template_path.clone(),
+                "embedded template is unavailable",
+            )),
+        },
+        TemplateSource::Project => {
+            let path = specbind_root.join(template.template_path.as_std_path());
+            if !fs::symlink_metadata(&path)
+                .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+            {
+                let template_path = template.template_path.clone();
+                return Err(with_issue(
+                    inventory,
+                    "TEMPLATE_TARGET_INVALID",
+                    &template_path,
+                    "resolved template is no longer a regular non-symlink file",
+                ));
+            }
+            match fs::read(&path).map(String::from_utf8) {
+                Ok(Ok(content)) => Ok((content, inventory)),
+                Ok(Err(error)) => {
+                    let template_path = template.template_path.clone();
+                    Err(with_issue(
+                        inventory,
+                        "TEMPLATE_NOT_UTF8",
+                        &template_path,
+                        error.to_string(),
+                    ))
+                }
+                Err(error) => {
+                    let template_path = template.template_path.clone();
+                    Err(with_issue(
+                        inventory,
+                        "TEMPLATE_READ_FAILED",
+                        &template_path,
+                        error.to_string(),
+                    ))
+                }
+            }
         }
+    }
+}
+
+fn with_issue(
+    inventory: TemplateInventory,
+    code: &'static str,
+    path: &Utf8PathBuf,
+    message: impl Into<String>,
+) -> TemplateInventory {
+    let mut issues = inventory.issues;
+    issues.push(issue(code, Some(path.clone()), message));
+    TemplateInventory {
+        templates: inventory.templates,
+        issues,
     }
 }
 

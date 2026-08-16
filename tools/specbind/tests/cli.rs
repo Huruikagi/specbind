@@ -1025,7 +1025,19 @@ fn lists_and_reads_project_owned_spec_templates() {
         .assert()
         .success()
         .stdout(
-            "OK TEMPLATE_LISTED: Found 3 recognized spec template(s).\n  selector=brief type=\"SpecBind Brief\" template_path=settings/templates/specs/brief.md output_path=brief.md\n  selector=design/main type=\"SpecBind Design\" artifact_id=main template_path=settings/templates/specs/technical-design/main.md output_path=technical-design/main.md\n  selector=contract type=\"SpecBind Contract\" template_path=settings/templates/specs/contract.md output_path=contract.md\n",
+            predicate::str::starts_with("OK TEMPLATE_LISTED: Found 6 recognized spec template(s).\n")
+                .and(predicate::str::contains(
+                    "selector=brief source=project type=\"SpecBind Brief\" template_path=settings/templates/specs/brief.md output_path=brief.md\n",
+                ))
+                .and(predicate::str::contains(
+                    "selector=design/main source=project type=\"SpecBind Design\" artifact_id=main template_path=settings/templates/specs/technical-design/main.md output_path=technical-design/main.md\n",
+                ))
+                .and(predicate::str::contains(
+                    "selector=requirements source=embedded type=\"SpecBind Requirements\"",
+                ))
+                .and(predicate::str::contains(
+                    "selector=implementation-notes/main source=embedded",
+                )),
         )
         .stderr("");
 
@@ -1041,6 +1053,55 @@ fn lists_and_reads_project_owned_spec_templates() {
 }
 
 #[test]
+fn falls_back_to_embedded_defaults_in_the_configured_language() {
+    let root = project_fixture();
+
+    let mut english = Command::cargo_bin("specbind").expect("specbind binary should build");
+    english
+        .current_dir(root.path())
+        .args(["template", "list", "spec"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK TEMPLATE_LISTED: Found 6 recognized spec template(s).\n",
+            )
+            .and(predicate::str::contains("template_path=en/specs/brief.md"))
+            .and(predicate::str::contains("source=project").not()),
+        )
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(root.path())
+        .args(["template", "read", "spec", "requirements"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("type: SpecBind Requirements")
+                .and(predicate::str::contains("requirement: Requirement"))
+                .and(predicate::str::contains("### Requirement 1:"))
+                .and(predicate::str::contains("specbind:instruction")),
+        );
+
+    write(
+        root.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"ja","agents":["codex"]}"#,
+    );
+    let mut japanese = Command::cargo_bin("specbind").expect("specbind binary should build");
+    japanese
+        .current_dir(root.path())
+        .args(["template", "read", "spec", "requirements"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("requirement: 要件")
+                .and(predicate::str::contains("### 要件 1:"))
+                .and(predicate::str::contains("#### 受け入れ基準")),
+        );
+}
+
+#[test]
 fn rejects_unknown_template_selectors_and_invalid_template_profiles() {
     let root = project_fixture();
     write_template_fixture(root.path());
@@ -1048,7 +1109,7 @@ fn rejects_unknown_template_selectors_and_invalid_template_profiles() {
     let mut missing = Command::cargo_bin("specbind").expect("specbind binary should build");
     missing
         .current_dir(root.path())
-        .args(["template", "read", "spec", "requirements"])
+        .args(["template", "read", "spec", "design/absent"])
         .assert()
         .failure()
         .stdout("")
@@ -1076,17 +1137,25 @@ fn rejects_unknown_template_selectors_and_invalid_template_profiles() {
 }
 
 #[test]
-fn reports_an_absent_template_tree_as_an_empty_inventory() {
+fn reports_an_unreadable_template_root_without_falling_back_silently() {
     let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/settings/templates/specs",
+        "not a directory\n",
+    );
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
     command
         .current_dir(root.path())
         .args(["template", "list", "spec"])
         .assert()
-        .success()
-        .stdout("OK TEMPLATE_LISTED: Found 0 recognized spec template(s).\n")
-        .stderr("");
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR TEMPLATE_LIST_FAILED:")
+                .and(predicate::str::contains("TEMPLATE_ROOT_NOT_DIRECTORY")),
+        );
 }
 
 fn write_template_fixture(root: &Path) {

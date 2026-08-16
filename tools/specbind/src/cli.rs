@@ -324,7 +324,7 @@ pub fn template_list_spec(start: &Path) -> CommandOutput {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    let inventory = template::discover_spec_templates(&paths.specbind_root);
+    let inventory = template::discover_spec_templates(&paths.specbind_root, paths.language);
     if !inventory.issues.is_empty() {
         let mut details = inventory
             .templates
@@ -356,7 +356,7 @@ pub fn template_read_spec(start: &Path, selector: &str) -> CommandOutput {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    match template::read_spec_template(&paths.specbind_root, selector) {
+    match template::read_spec_template(&paths.specbind_root, paths.language, selector) {
         Ok((content, inventory)) => {
             let mut stderr = String::new();
             for issue in &inventory.issues {
@@ -391,8 +391,9 @@ pub fn template_read_spec(start: &Path, selector: &str) -> CommandOutput {
 
 fn render_template(template: &template::Template) -> String {
     let mut output = format!(
-        "selector={} type=\"{}\"",
+        "selector={} source={} type=\"{}\"",
         escape(&template.selector),
+        template.source.name(),
         escape(&template.artifact_type)
     );
     if let Some(artifact_id) = &template.artifact_id {
