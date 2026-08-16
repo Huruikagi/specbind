@@ -1,4 +1,6 @@
 pub mod artifacts;
+pub mod cli;
+pub mod config;
 pub mod contract;
 pub mod contract_graph;
 pub mod cross_spec_review;
