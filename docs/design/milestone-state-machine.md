@@ -144,6 +144,8 @@ Milestone-level final validation has one convergence barrier:
 
 Validations may run in parallel when tools and project boundaries allow it. They must not modify project content. If any project-content commit occurs, completion evidence accepted at an earlier revision becomes stale and the affected Specs re-enter the validation candidate set.
 
+Decision 0086 permits the per-Spec acceptance calls for that common revision to run sequentially before commit. After the first call, only Rust-validated completion metadata transitions for other participating Specs at the same revision may be dirty; the accepted metadata set is then committed together. This is not a general dirty-worktree exception.
+
 This barrier does not prevent task-level review or implementation checks earlier in the workflow. It only controls the final `IMPLEMENTATION_VALIDATED` transitions used for release readiness.
 
 ## Aggregate readiness

@@ -44,6 +44,12 @@ pub enum DirectStatus {
     Completed,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DirectCompletionEdit {
+    Updated(String),
+    NoChange,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Dependency {
@@ -253,6 +259,70 @@ impl RoadmapDocument {
     }
 }
 
+/// Marks one pending Direct item completed while preserving the Roadmap body.
+///
+/// # Errors
+///
+/// Returns Roadmap diagnostics when the current document is invalid, the target
+/// does not exist, or the mutated frontmatter cannot be rendered and revalidated.
+pub fn complete_direct(
+    content: &str,
+    canonical_direct: &str,
+) -> Result<DirectCompletionEdit, RoadmapIssues> {
+    let roadmap = parse(content)?;
+    let Some(item) = roadmap
+        .direct_changes
+        .iter()
+        .find(|item| item.id == canonical_direct)
+    else {
+        return Err(RoadmapIssues {
+            issues: vec![issue(
+                "ROADMAP_DIRECT_NOT_FOUND",
+                "/work_items/direct_changes",
+                format!("direct item {canonical_direct} does not exist"),
+            )],
+        });
+    };
+    if item.status == Some(DirectStatus::Completed) {
+        return Ok(DirectCompletionEdit::NoChange);
+    }
+
+    let (frontmatter, body) = split_frontmatter_parts(content).map_err(single_issue)?;
+    let mut value = serde_saphyr::from_str::<Value>(frontmatter)
+        .map_err(|error| single_issue(format!("ROADMAP_FRONTMATTER_INVALID: {error}")))?;
+    let direct_changes = value
+        .get_mut("work_items")
+        .and_then(|value| value.get_mut("direct_changes"))
+        .and_then(Value::as_array_mut)
+        .ok_or_else(|| {
+            single_issue(
+                "ROADMAP_DIRECT_MUTATION_FAILED: direct_changes is not an array".to_owned(),
+            )
+        })?;
+    let target = direct_changes
+        .iter_mut()
+        .find(|value| value.get("id").and_then(Value::as_str) == Some(canonical_direct))
+        .and_then(Value::as_object_mut)
+        .ok_or_else(|| {
+            single_issue("ROADMAP_DIRECT_MUTATION_FAILED: target item disappeared".to_owned())
+        })?;
+    target.insert("status".to_owned(), Value::String("completed".to_owned()));
+    let yaml = serde_saphyr::to_string(&value)
+        .map_err(|error| single_issue(format!("ROADMAP_DIRECT_SERIALIZE_FAILED: {error}")))?;
+    let rendered = format!("---\n{yaml}---\n{body}");
+    let validated = parse(&rendered)?;
+    if !validated
+        .direct_changes
+        .iter()
+        .any(|item| item.id == canonical_direct && item.status == Some(DirectStatus::Completed))
+    {
+        return Err(single_issue(
+            "ROADMAP_DIRECT_MUTATION_FAILED: completed status was not preserved".to_owned(),
+        ));
+    }
+    Ok(DirectCompletionEdit::Updated(rendered))
+}
+
 fn validate_items(
     new_specs: &[SpecItem],
     spec_updates: &[SpecItem],
@@ -403,16 +473,24 @@ fn valid_revision(value: &str) -> bool {
 }
 
 fn split_frontmatter(content: &str) -> Result<&str, String> {
+    split_frontmatter_parts(content).map(|(frontmatter, _)| frontmatter)
+}
+
+fn split_frontmatter_parts(content: &str) -> Result<(&str, &str), String> {
     let normalized = content.strip_prefix('\u{feff}').unwrap_or(content);
     let rest = normalized
         .strip_prefix("---\n")
         .or_else(|| normalized.strip_prefix("---\r\n"))
         .ok_or_else(|| "ROADMAP_FRONTMATTER_MISSING: expected opening ---".to_owned())?;
-    let end = rest
+    let (end, marker_len) = rest
         .find("\n---\n")
-        .or_else(|| rest.find("\r\n---\r\n"))
+        .map(|end| (end, "\n---\n".len()))
+        .or_else(|| {
+            rest.find("\r\n---\r\n")
+                .map(|end| (end, "\r\n---\r\n".len()))
+        })
         .ok_or_else(|| "ROADMAP_FRONTMATTER_MISSING: expected closing ---".to_owned())?;
-    Ok(&rest[..end])
+    Ok((&rest[..end], &rest[end + marker_len..]))
 }
 
 fn single_issue(message: String) -> RoadmapIssues {

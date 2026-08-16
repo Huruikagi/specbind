@@ -1,6 +1,11 @@
 //! Gate-local artifact and completion freshness with prerequisite cascading.
 
-use std::{collections::BTreeMap, fs, path::Path, process::Command};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    path::Path,
+    process::Command,
+};
 
 use crate::{
     domain::{SemanticIssue, spec::Spec, tasks::Tasks},
@@ -26,6 +31,12 @@ pub struct CurrentGateInputs {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CompletionRevisionAssessment {
     pub issues: Vec<SemanticIssue>,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct CompletionPathFailure {
+    code: &'static str,
+    message: &'static str,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -159,7 +170,7 @@ pub fn assess_completion_revision(
         return completion_assessment(issues);
     }
 
-    validate_commit_history(project_root, revision, &relative_spec, &mut issues);
+    validate_commit_history(project_root, specbind_root, revision, &mut issues);
     let changed =
         match git_output_bytes(project_root, &["diff", "--name-only", "-z", revision, "--"]) {
             Ok(output) => nul_paths(&output),
@@ -173,20 +184,42 @@ pub fn assess_completion_revision(
             }
         };
     match changed {
-        Ok(paths) if paths == [relative_spec.as_str()] => {}
-        Ok(_) => issues.push(freshness_issue(
-            "FRESHNESS_COMPLETION_PROJECT_CHANGED",
-            "/completion/implementation_revision",
-            "project content since implementation_revision is not limited to the expected completion metadata mutation",
-        )),
+        Ok(paths) => validate_completion_paths(
+            project_root,
+            specbind_root,
+            revision,
+            &paths,
+            Some(&relative_spec),
+            CompletionPathFailure {
+                code: "FRESHNESS_COMPLETION_PROJECT_CHANGED",
+                message: "project content since implementation_revision is not limited to expected completion metadata mutations",
+            },
+            &mut issues,
+        ),
         Err(message) => issues.push(freshness_issue(
             "FRESHNESS_COMPLETION_GIT_OUTPUT_INVALID",
             "/completion/implementation_revision",
             message,
         )),
     }
-    validate_worktree_status(project_root, &relative_spec, &mut issues);
-    validate_completion_transition(project_root, revision, &relative_spec, spec, &mut issues);
+    validate_worktree_status(project_root, specbind_root, revision, &mut issues);
+    completion_assessment(issues)
+}
+
+/// Validates that every current worktree change is a SpecBind-owned completion
+/// metadata transition bound to the supplied implementation revision.
+///
+/// This is the guarded-acceptance exception that permits several participating
+/// Specs validated at one clean revision to be accepted before their metadata
+/// mutations are committed together.
+#[must_use]
+pub fn assess_pending_completion_mutations(
+    project_root: &Path,
+    specbind_root: &Path,
+    revision: &str,
+) -> CompletionRevisionAssessment {
+    let mut issues = Vec::new();
+    validate_worktree_status(project_root, specbind_root, revision, &mut issues);
     completion_assessment(issues)
 }
 
@@ -369,7 +402,8 @@ fn task_id(task: &ExecutableTask) -> &str {
 
 fn validate_worktree_status(
     project_root: &Path,
-    relative_spec: &str,
+    specbind_root: &Path,
+    revision: &str,
     issues: &mut Vec<SemanticIssue>,
 ) {
     let output = match git_output_bytes(
@@ -386,6 +420,7 @@ fn validate_worktree_status(
             return;
         }
     };
+    let mut paths = Vec::new();
     for record in output
         .split(|byte| *byte == 0)
         .filter(|record| !record.is_empty())
@@ -394,7 +429,9 @@ fn validate_worktree_status(
             && record[0..2]
                 .iter()
                 .all(|byte| *byte == b' ' || *byte == b'M')
-            && std::str::from_utf8(&record[3..]).is_ok_and(|path| path == relative_spec);
+            && std::str::from_utf8(&record[3..])
+                .map(|path| paths.push(path.to_owned()))
+                .is_ok();
         if !accepted {
             issues.push(freshness_issue(
                 "FRESHNESS_COMPLETION_WORKTREE_DIRTY",
@@ -404,12 +441,26 @@ fn validate_worktree_status(
             break;
         }
     }
+    if issues.is_empty() {
+        validate_completion_paths(
+            project_root,
+            specbind_root,
+            revision,
+            &paths,
+            None,
+            CompletionPathFailure {
+                code: "FRESHNESS_COMPLETION_WORKTREE_DIRTY",
+                message: "working tree contains changes other than expected completion metadata mutations",
+            },
+            issues,
+        );
+    }
 }
 
 fn validate_commit_history(
     project_root: &Path,
+    specbind_root: &Path,
     revision: &str,
-    relative_spec: &str,
     issues: &mut Vec<SemanticIssue>,
 ) {
     let range = format!("{revision}..HEAD");
@@ -428,12 +479,18 @@ fn validate_commit_history(
         }
     };
     match nul_paths(&output) {
-        Ok(paths) if paths.iter().all(|path| path == relative_spec) => {}
-        Ok(_) => issues.push(freshness_issue(
-            "FRESHNESS_COMPLETION_PROJECT_CHANGED",
-            "/completion/implementation_revision",
-            "commit history since implementation_revision contains a non-metadata project change",
-        )),
+        Ok(paths) => validate_completion_paths(
+            project_root,
+            specbind_root,
+            revision,
+            &paths,
+            None,
+            CompletionPathFailure {
+                code: "FRESHNESS_COMPLETION_PROJECT_CHANGED",
+                message: "commit history since implementation_revision contains a non-metadata project change",
+            },
+            issues,
+        ),
         Err(message) => issues.push(freshness_issue(
             "FRESHNESS_COMPLETION_GIT_OUTPUT_INVALID",
             "/completion/implementation_revision",
@@ -475,54 +532,112 @@ fn validate_current_spec(
     }
 }
 
-fn validate_completion_transition(
+fn validate_completion_paths(
     project_root: &Path,
+    specbind_root: &Path,
     revision: &str,
-    relative_spec: &str,
-    current: &Spec,
+    paths: &[String],
+    required_path: Option<&str>,
+    failure: CompletionPathFailure,
     issues: &mut Vec<SemanticIssue>,
 ) {
-    let baseline = match git_output_bytes(
-        project_root,
-        &["show", &format!("{revision}:{relative_spec}")],
-    ) {
-        Ok(bytes) => bytes,
-        Err(message) => {
+    let paths = paths.iter().collect::<BTreeSet<_>>();
+    if required_path.is_some_and(|required| !paths.iter().any(|path| path.as_str() == required)) {
+        issues.push(freshness_issue(
+            failure.code,
+            "/completion/implementation_revision",
+            failure.message,
+        ));
+        return;
+    }
+    for relative_spec in paths {
+        if !validate_completion_transition_path(
+            project_root,
+            specbind_root,
+            revision,
+            relative_spec,
+        ) {
             issues.push(freshness_issue(
-                "FRESHNESS_COMPLETION_BASELINE_SPEC_MISSING",
+                failure.code,
                 "/completion/implementation_revision",
-                message,
+                failure.message,
             ));
             return;
         }
+    }
+}
+
+fn validate_completion_transition_path(
+    project_root: &Path,
+    specbind_root: &Path,
+    revision: &str,
+    relative_spec: &str,
+) -> bool {
+    let Some(_canonical_spec) = completion_path_spec_id(project_root, specbind_root, relative_spec)
+    else {
+        return false;
+    };
+    let current = fs::read_to_string(project_root.join(relative_spec))
+        .map_err(|error| error.to_string())
+        .and_then(|input| runtime::load_spec(&input).map_err(|error| error.to_string()))
+        .and_then(|wire| Spec::try_from(wire).map_err(|error| error.to_string()));
+    let Ok(current) = current else {
+        return false;
+    };
+    let current_revision = current
+        .as_wire()
+        .active_change
+        .0
+        .as_ref()
+        .and_then(|active| active.gate_evidence.as_ref())
+        .and_then(|evidence| evidence.completion.as_ref())
+        .map(|completion| completion.implementation_revision.0.as_str());
+    if current_revision != Some(revision) {
+        return false;
+    }
+    let Ok(baseline) = git_output_bytes(
+        project_root,
+        &["show", &format!("{revision}:{relative_spec}")],
+    ) else {
+        return false;
     };
     let baseline = std::str::from_utf8(&baseline)
         .map_err(|error| error.to_string())
         .and_then(|input| runtime::load_spec(input).map_err(|error| error.to_string()))
         .and_then(|wire| Spec::try_from(wire).map_err(|error| error.to_string()));
     let Ok(baseline) = baseline else {
-        issues.push(freshness_issue(
-            "FRESHNESS_COMPLETION_BASELINE_SPEC_INVALID",
-            "/completion/implementation_revision",
-            "implementation_revision does not contain a valid baseline spec.yaml",
-        ));
-        return;
+        return false;
     };
     let mut expected = current.as_wire().clone();
     let Some(active) = expected.active_change.0.as_mut() else {
-        return;
+        return false;
     };
     active.state = wire::WorkflowState::Implementation;
     if let Some(evidence) = active.gate_evidence.as_mut() {
         evidence.completion = None;
     }
-    if baseline.as_wire() != &expected {
-        issues.push(freshness_issue(
-            "FRESHNESS_COMPLETION_METADATA_CHANGED",
-            "/completion/implementation_revision",
-            "spec.yaml changes are not limited to the expected completion evidence and lifecycle transition",
-        ));
-    }
+    baseline.as_wire() == &expected
+}
+
+fn completion_path_spec_id<'a>(
+    project_root: &Path,
+    specbind_root: &Path,
+    relative_spec: &'a str,
+) -> Option<&'a str> {
+    let root = specbind_root
+        .strip_prefix(project_root)
+        .ok()?
+        .to_string_lossy()
+        .replace('\\', "/");
+    let prefix = if root.is_empty() {
+        "specs/".to_owned()
+    } else {
+        format!("{root}/specs/")
+    };
+    let canonical_spec = relative_spec
+        .strip_prefix(&prefix)?
+        .strip_suffix("/spec.yaml")?;
+    (!canonical_spec.contains('/') && valid_id(canonical_spec)).then_some(canonical_spec)
 }
 
 fn nul_paths(output: &[u8]) -> Result<Vec<String>, String> {

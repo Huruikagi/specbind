@@ -10,7 +10,7 @@ use std::{
 use crate::{
     artifacts::{self, DiscoveryIssue},
     cross_spec_review::{self, ReviewFreshnessStatus},
-    freshness::FreshnessStatus,
+    freshness::{self, FreshnessStatus},
     roadmap::{self, Dependency, DirectStatus, RoadmapDocument},
     schema::spec::v1::WorkflowState,
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
@@ -137,7 +137,13 @@ pub fn resolve(
                 .to_owned(),
         });
     }
-    let implementation_complete = implementation_completion(&facts, git.clean);
+    let validation_checkout_ready = git.clean
+        || git.revision.as_deref().is_some_and(|revision| {
+            freshness::assess_pending_completion_mutations(project_root, specbind_root, revision)
+                .issues
+                .is_empty()
+        });
+    let implementation_complete = implementation_completion(&facts, validation_checkout_ready);
     let all_items_implemented = implementation_complete.values().all(|complete| *complete);
     let all_specs_validated = spec_predicate(&facts, validated);
     let stage = derive_stage(
@@ -156,7 +162,7 @@ pub fn resolve(
         review.status,
         &implementation_complete,
         all_items_implemented,
-        git.clean,
+        validation_checkout_ready,
         roadmap.target_release.is_some(),
     );
     let items = item_views(&facts, &implementation_complete);
@@ -185,7 +191,7 @@ pub fn resolve(
         spec_state_counts,
         direct_completed,
         direct_total,
-        current_revision: git.clean.then_some(git.revision).flatten(),
+        current_revision: validation_checkout_ready.then_some(git.revision).flatten(),
         items,
         actionable,
         release_blockers,

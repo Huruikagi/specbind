@@ -375,6 +375,89 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
 }
 
 #[test]
+fn exposes_the_direct_completion_handshake_with_stable_results() {
+    let root = project_fixture();
+    write(root.path(), "baseline.txt", "baseline\n");
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n# Roadmap\n"
+        ),
+    );
+    commit_all(root.path());
+    let revision = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+
+    let mut preflight = Command::cargo_bin("specbind").expect("specbind binary should build");
+    preflight
+        .current_dir(root.path())
+        .args(["milestone", "direct", "preflight", "docs"])
+        .assert()
+        .success()
+        .stdout(format!(
+            "OK DIRECT_COMPLETION_PREFLIGHT_READY: Direct item docs is ready for completion validation.\n  Implementation revision: {revision}\n"
+        ));
+
+    let mut complete = Command::cargo_bin("specbind").expect("specbind binary should build");
+    complete
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "direct",
+            "complete",
+            "docs",
+            "--implementation-revision",
+            &revision,
+        ])
+        .assert()
+        .success()
+        .stdout("OK DIRECT_COMPLETION_RECORDED: Recorded completion for Direct item docs.\n");
+
+    let mut retry = Command::cargo_bin("specbind").expect("specbind binary should build");
+    retry
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "direct",
+            "complete",
+            "docs",
+            "--implementation-revision",
+            &revision,
+        ])
+        .assert()
+        .success()
+        .stdout(
+            "NO_CHANGE DIRECT_COMPLETION_ALREADY_RECORDED: Direct item docs is already completed.\n",
+        );
+}
+
+#[test]
+fn reads_spec_completion_evidence_from_explicit_stdin() {
+    let root = project_fixture();
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+
+    command
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "completion",
+            "accept",
+            "checkout",
+            "--evidence",
+            "-",
+        ])
+        .write_stdin("{}")
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR COMPLETION_EVIDENCE_INVALID: Cannot accept Spec completion evidence.",
+        ));
+}
+
+#[test]
 fn reports_tasks_authored_before_the_required_milestone_review() {
     let root = project_fixture();
     write_status_fixture(root.path());
@@ -433,6 +516,24 @@ fn git(root: &Path, arguments: &[&str]) {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+}
+
+fn git_stdout(root: &Path, arguments: &[&str]) -> String {
+    let output = ProcessCommand::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(arguments)
+        .output()
+        .expect("start Git");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    String::from_utf8(output.stdout)
+        .expect("UTF-8 Git output")
+        .trim()
+        .to_owned()
 }
 
 fn commit_all(root: &Path) {

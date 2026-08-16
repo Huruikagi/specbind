@@ -239,6 +239,62 @@ fn accepts_only_the_expected_completion_metadata_successor() {
     );
 }
 
+#[test]
+fn accepts_multiple_completion_metadata_transitions_at_one_revision() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    let specbind = root.path().join(".specbind");
+    let checkout = specbind.join("specs/checkout");
+    let account = specbind.join("specs/account");
+    fs::create_dir_all(&checkout).expect("create checkout directory");
+    fs::create_dir_all(&account).expect("create account directory");
+    git(root.path(), &["init"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "SpecBind Test"]);
+
+    let inputs = current_inputs();
+    let baseline = implementation_spec(&inputs);
+    write_spec(&checkout, &baseline);
+    write_spec(&account, &baseline);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "implementation"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+
+    let checkout_current = release_ready_spec(&inputs, &revision);
+    let account_current = release_ready_spec(&inputs, &revision);
+    write_spec(&checkout, &checkout_current);
+    write_spec(&account, &account_current);
+    for (spec, current) in [
+        ("checkout", &checkout_current),
+        ("account", &account_current),
+    ] {
+        let assessment =
+            freshness::assess_completion_revision(root.path(), &specbind, spec, current);
+        assert!(
+            assessment.issues.is_empty(),
+            "{spec}: {:?}",
+            assessment.issues
+        );
+    }
+
+    git(root.path(), &["add", "."]);
+    git(
+        root.path(),
+        &["commit", "-m", "accept milestone completion"],
+    );
+    for (spec, current) in [
+        ("checkout", &checkout_current),
+        ("account", &account_current),
+    ] {
+        let assessment =
+            freshness::assess_completion_revision(root.path(), &specbind, spec, current);
+        assert!(
+            assessment.issues.is_empty(),
+            "{spec}: {:?}",
+            assessment.issues
+        );
+    }
+}
+
 fn write_spec(directory: &Path, spec: &Spec) {
     let yaml = serde_saphyr::to_string(spec.as_wire()).expect("serialize spec fixture");
     fs::write(directory.join("spec.yaml"), yaml).expect("write spec fixture");

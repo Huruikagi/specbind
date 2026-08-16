@@ -29,10 +29,10 @@ Completion validation uses the Decision 0086 `specbind spec completion preflight
 ### Guarded acceptance
 
 - For `GO`, the skill submits the preflight `implementation_revision` and structured candidate validation evidence to the CLI.
-- Immediately before mutation, the CLI independently requires the same `HEAD`, a clean repository, unchanged task-plan and lifecycle input revisions, current prior gates, and zero pending or blocked executable tasks.
+- Immediately before mutation, the CLI independently requires the same `HEAD`, unchanged task-plan and lifecycle input revisions, current prior gates, and zero pending or blocked executable tasks. The first acceptance requires a clean repository. Later acceptances at that same revision may coexist only with already-validated, CLI-shaped completion metadata mutations for other participating Specs; any other staged, tracked, untracked, or submodule change rejects the candidate.
 - Any mismatch rejects the candidate without partially recording completion evidence or changing lifecycle state.
 - On success, the CLI atomically records completion evidence and transitions the spec from `implementation` to `release_ready`.
-- The CLI's own `spec.yaml` evidence mutation occurs only after the clean-state check and is therefore the expected first post-validation worktree change.
+- The CLI's own `spec.yaml` evidence mutation occurs only after the clean-state check. Multiple Specs validated at one revision may be accepted sequentially before their completion-only metadata changes are committed together.
 
 ### After acceptance
 

@@ -113,7 +113,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 - Implement structured artifact loading, traceability, status, and task read models.
 - Enforce accepted-review freshness at Tasks approval, completion, and release boundaries.
-- Implement the Decision 0086 Spec and Direct completion preflight, acceptance, invalidation, and guarded Roadmap mutation commands.
+- Implemented: the Decision 0086 Spec and Direct completion preflight, acceptance, invalidation, same-revision multi-Spec metadata convergence, and guarded Roadmap mutation commands.
 - Add milestone and release mutations incrementally, including Git-clean finalization targets and idempotent retry.
 - Update generated skills to call stable CLI contracts instead of shell-specific inspection.
 

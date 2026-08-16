@@ -68,3 +68,25 @@ fn rejects_direct_only_empty_and_invalid_root_metadata() {
     assert!(codes.contains(&"ROADMAP_TARGET_RELEASE_INVALID"));
     assert!(codes.contains(&"ROADMAP_WORK_ITEMS_EMPTY"));
 }
+
+#[test]
+fn marks_one_direct_item_completed_and_preserves_the_body() {
+    let input = roadmap(
+        "  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: release-notes\n      summary: Write notes\n      depends_on:\n        - direct: docs\n",
+    );
+    let updated = roadmap::complete_direct(&input, "docs").expect("complete Direct item");
+    let roadmap::DirectCompletionEdit::Updated(updated) = updated else {
+        panic!("pending item should be updated");
+    };
+
+    assert!(updated.ends_with("# Roadmap\n"));
+    let parsed = roadmap::parse(&updated).expect("mutated Roadmap remains valid");
+    assert_eq!(
+        parsed.direct_changes[0].status,
+        Some(roadmap::DirectStatus::Completed)
+    );
+    assert_eq!(
+        roadmap::complete_direct(&updated, "docs").expect("idempotent completion"),
+        roadmap::DirectCompletionEdit::NoChange
+    );
+}
