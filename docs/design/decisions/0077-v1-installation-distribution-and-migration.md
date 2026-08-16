@@ -16,7 +16,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - PowerShell and shell installer scripts download the selected binary. `--version` pins an explicit release; omission selects the latest stable release, and prereleases require an explicit version.
 - Every binary has an entry in `SHA256SUMS`, and installer scripts fail closed when the checksum manifest is absent or verification fails. Platform code signing and notarization are post-v1.
 - Default binary locations are `%LOCALAPPDATA%\SpecBind\bin\specbind.exe` on Windows and `$HOME/.local/bin/specbind` on Linux. `--install-dir` may override them. Scripts do not edit shell profiles or user PATH automatically; they print an exact follow-up command when the directory is not on PATH.
-- The Rust binary embeds official schemas, templates, rules, skill assets, and defaults.
+- The Rust binary embeds official schemas, templates, read-only product protocols, installable rules, skill assets, and defaults.
 
 ### Project installation
 
@@ -27,7 +27,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - `.specbind.json` is version-controlled and contains `schemaVersion`, `specDir`, `language`, `agents`, and optional `projectInstructions: true`. False project-instruction state may be represented by absence.
 - Product-managed agent skills are replaced with the current embedded versions when their target paths are Git-clean. Direct skill edits are not a supported customization API; Git remains recovery.
 - Existing project-owned settings are never overwritten. Missing embedded default settings are created automatically and left uncommitted for review; users may remove unwanted additions before committing.
-- Decision 0093 fixes the six default shared-rule paths; install and refresh treat them as project-owned settings rather than product-managed skill assets.
+- Decision 0093 fixes the five default shared-rule paths; install and refresh treat them as project-owned settings rather than product-managed skill assets. Decision 0094 protocols remain binary-owned and are never installed as project files.
 - When project instructions are enabled, the installer maintains only a marked SpecBind block in the selected agents' root `AGENTS.md` or `CLAUDE.md`. Existing surrounding content is preserved, malformed or duplicate markers stop the operation, and the selection persists through `.specbind.json`.
 - Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and a clean repository first. The installer never commits project changes.
 

@@ -26,7 +26,7 @@ Repeated grep, PowerShell, or shell-specific inspection consumes agent context a
 - stable result codes and exit behavior for agents and CI
 - stable exit semantics
 - one implementation shared by every supported agent
-- version alignment between installed templates and the rules they invoke
+- version alignment between the executing CLI and the immutable product protocols skills invoke
 
 Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands return an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decision 0074 makes text the sole non-raw v1 result surface; agent skills consume it directly and translate or explain results for the user when needed.
 
@@ -36,8 +36,11 @@ The goal is not to replace agent judgment. It is to remove mechanical work from 
 
 | Layer | Owns | Does not own |
 | --- | --- | --- |
-| Agent skills | Interpret user intent, choose a workflow, author prose, review meaning, explain failures, and obtain approval where needed. | Reimplement deterministic parsers or infer lifecycle state from ad hoc searches. |
-| SpecBind CLI | Parse owned formats, check identifiers and references, enforce lifecycle invariants, and perform explicit idempotent state mutations. | Decide whether requirements or design are substantively correct, or silently choose product scope. |
+| Agent skills | Interpret user intent, orchestrate protocols and commands, author prose, explain failures, and obtain approval where needed. | Reimplement deterministic parsers, duplicate shared protocols, or infer lifecycle state from ad hoc searches. |
+| Embedded product protocols | Supply immutable semantic authoring and review baselines shared across agents and skills. | Prove that prose was followed, own workflow control, or act as project customization. |
+| Project rules | Supply repository-specific authoring and judgment preferences that may strengthen the product baseline. | Weaken product protocols, skill obligations, or CLI invariants. |
+| Templates | Supply customizable artifact structure, presentation, and scaffold-local guidance. | Define lifecycle, approval, or semantic minimums. |
+| SpecBind CLI | Parse owned formats, expose read-only protocols, check identifiers and references, enforce lifecycle invariants, and perform explicit idempotent state mutations. | Treat a protocol read as proof of compliance, decide whether requirements or design are substantively correct, or silently choose product scope. |
 | Project release adapter | Supply project-specific Prepare, Publish, Verify, and optional After finalize instructions. | Weaken SpecBind core gates or redefine artifact lifecycle. |
 
 A skill may orchestrate a CLI operation, but the operation's contract belongs to the CLI rather than being duplicated in each agent template.
@@ -175,6 +178,12 @@ These commands replace routine raw-YAML interpretation but do not create a gener
 [Decision 0058](./decisions/0058-artifact-inventory-read-model.md) accepts `specbind artifact list <spec>` and `specbind artifact read <spec> <selector>` as the read-only boundary over Decision 0057 type-based discovery. The list command returns a compact deterministic text inventory without bodies or hashes. The read command resolves one logical selector rather than an agent-supplied path and returns untouched Markdown; workflows issue separate reads for multiple bodies in v1.
 
 Agent skills directly read a known singleton or authoritative collection selector. They list first only when they need collection membership, optional-artifact discovery, selector choice, or structural diagnostics. They do not reproduce recursive searches or bind workflow behavior to default filenames. Gate and review mutations independently rediscover and fingerprint current inputs, so list and read outputs never become mutation authority.
+
+## Product protocol read model
+
+[Decision 0094](./decisions/0094-embedded-product-protocols.md) accepts `specbind protocol list` and `specbind protocol read <selector>` as the read-only boundary over immutable semantic guidance embedded in the binary. Protocol reads require no project root or configuration, accept no override, and never write or materialize content.
+
+Skills read required selectors directly and use protocols as non-waivable semantic context. They do not treat a successful read as proof that the protocol was followed, and deterministic checks remain CLI operations. Project-owned rules may strengthen protocol guidance but cannot replace it.
 
 ## Template read and validation model
 

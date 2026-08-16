@@ -53,6 +53,7 @@ Related documents:
 - [Decision 0074: defer JSON CLI output](./decisions/0074-defer-json-cli-output.md)
 - [Decision 0092: template and skill authoring boundary](./decisions/0092-template-skill-authoring-boundary.md)
 - [Decision 0093: default shared-rule set](./decisions/0093-default-shared-rule-set.md)
+- [Decision 0094: embedded product protocols](./decisions/0094-embedded-product-protocols.md)
 
 Status: Draft
 
@@ -86,7 +87,7 @@ Status: Draft
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
 | `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Spec Markdown templates are final-form OKF prototypes under Decision 0059; their relative paths define initial output paths and instruction comments are removed from materialized artifacts. Updates must not silently overwrite local changes or reconcile existing specs. |
-| `{{SPEC_DIR}}/settings/rules/` | Six known files are installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by the explicit owning skills. | Accepted | Supported customization surface for shared judgment criteria and generation principles. Decision 0093 fixes the default paths, skill consumers, absence behavior, and cc-sdd disposition; v1 does not recursively auto-load additional rule files. |
+| `{{SPEC_DIR}}/settings/rules/` | Five known files are installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by the explicit owning skills. | Accepted | Supported customization surface for shared judgment criteria and generation principles. Decision 0093 fixes the default paths, skill consumers, absence behavior, and cc-sdd disposition; v1 does not recursively auto-load additional rule files. Non-customizable product protocols remain embedded under Decision 0094. |
 | `{{SPEC_DIR}}/settings/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Accepted | Free-form OKF project guidance under Decision 0063. Its only known field is `type`; headings are not machine syntax and an empty body means no adapter-specific actions. It cannot override core release gates or evidence requirements. |
 
 ## Spec artifacts

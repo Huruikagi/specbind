@@ -4,23 +4,22 @@ Status: Accepted
 
 ## Context
 
-Decision 0008 preserves cc-sdd's project-owned `settings/rules/` customization surface, and Decision 0049 already requires the SpecBind-specific `okf-artifacts.md` rule. Decision 0092 then separates user-customizable rules from non-waivable skill behavior and deterministic CLI contracts. The exact default rule set is still undefined.
+Decision 0008 preserves cc-sdd's project-owned `settings/rules/` customization surface. Decision 0092 separates user-customizable rules from non-waivable product behavior, and Decision 0094 exposes shared immutable semantic baselines as CLI-readable product protocols. The exact project-owned default rule set still needs to exclude that protocol content.
 
 The inherited cc-sdd tree contains twelve rule files. Some are genuine project-wide authoring principles, but others are product workflow procedures, review loops, output protocols, or restatements of machine structure. Installing all twelve would expose product behavior as if it were user policy, duplicate the future SpecBind skills, and invite unsupported weakening through customization.
 
-Installing only `okf-artifacts.md` would move too far in the other direction. Requirements style, design preferences, task decomposition, and steering granularity are useful repository-level choices that should remain consistent across Codex and Claude Code and survive replacement of product-managed skills.
+Installing no project rules would move too far in the other direction. Requirements style, design preferences, task decomposition, and steering granularity are useful repository-level choices that should remain consistent across Codex and Claude Code and survive replacement of product-managed skills.
 
-SpecBind therefore needs a narrow default set that follows cc-sdd where the rule responsibility remains valid, adds the new cross-spec contract concern, and moves procedural content into the owning skills.
+SpecBind therefore needs a narrow default set that follows cc-sdd where the rule responsibility remains valid, adds the new cross-spec contract concern, and moves non-customizable content into product protocols and owning skills.
 
 ## Decision
 
 ### Installed defaults
 
-`specbind install` provides exactly these six default files under `{{SPEC_DIR}}/settings/rules/`:
+`specbind install` provides exactly these five default files under `{{SPEC_DIR}}/settings/rules/`:
 
 | Default file | Origin | Customizable responsibility |
 | --- | --- | --- |
-| `okf-artifacts.md` | SpecBind | Concise OKF v0.2 authoring reminders, relationship style, extension-field preservation, and the boundary between OKF metadata and SpecBind lifecycle authority accepted by Decision 0049. |
 | `ears-format.md` | Retained from cc-sdd | Preferred EARS patterns, subject choice, localization-aware phrasing, and testability style for Requirements. It does not define Requirement heading grammar, IDs, approval, or active-scope selection. |
 | `design-principles.md` | Retained from cc-sdd | Project-adjustable architecture, interface, data-model, error-handling, diagram, documentation, and level-of-detail preferences. It does not define discovery modes, mandatory review loops, Design traceability syntax, or gate behavior. |
 | `contract-principles.md` | New for SpecBind | Project policy for shared ownership, public seams, compatibility posture, generated boundaries, dependency direction, and when warnings deserve stricter review. It does not define canonical Contract syntax, required graph validity, or cross-spec-review lifecycle. |
@@ -37,7 +36,7 @@ An installed rule expresses a preference that a project may reasonably strengthe
 
 Exact CLI contracts may be summarized in a rule only to explain the boundary around a preference. Such summaries are non-authoritative and should link to or name the owning contract instead of duplicating a complete schema or protocol.
 
-Product-managed skills retain the semantic minimum even if every rule is absent. A customized rule can strengthen review or authoring policy, but cannot make a skill skip its baseline checks. The CLI remains authoritative for every deterministic invariant.
+Product protocols and product-managed skills retain the semantic minimum even if every rule is absent. A customized rule can strengthen review or authoring policy, but cannot make a skill skip the product baseline. The CLI remains authoritative for every deterministic invariant.
 
 ### Skill loading
 
@@ -45,7 +44,6 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 
 | Rule | Owning consumers |
 | --- | --- |
-| `okf-artifacts.md` | Every skill that creates or rewrites managed Markdown. Read-only skills load it only when their review checks OKF authoring quality beyond CLI diagnostics. |
 | `ears-format.md` | `specbind-requirements`. |
 | `design-principles.md` | `specbind-design`, `specbind-validate-design`, and `specbind-gap-analysis`. |
 | `contract-principles.md` | `specbind-design`, `specbind-validate-design`, `specbind-gap-analysis` when boundaries are relevant, and `specbind-cross-spec-review`. |
@@ -54,9 +52,9 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 
 `specbind-quick` and `specbind-batch` use the same phase contracts and therefore the same applicable rules when they perform Requirements, Design, and Tasks work. They do not define separate quick or batch rule variants. Implementation, task review, completion validation, release, status, and debug use their product-managed contracts plus current project artifacts and steering; v1 installs no extra shared rule merely because one of those skills exists.
 
-A skill reads each applicable file at most once per invocation. It does not silently substitute an embedded rule when a project file is absent, because the installed file is the user-owned policy source. Absence means that no project customization from that rule is applied; core skill and CLI behavior remains intact.
+A skill reads each applicable file at most once per invocation. It does not silently substitute an embedded rule when a project file is absent, because the installed file is the user-owned policy source. Absence means that no project customization from that rule is applied; core protocol, skill, and CLI behavior remains intact.
 
-V1 does not recursively load additional `settings/rules/**/*.md` files. Arbitrary automatic loading would make relevance and conflict precedence depend on filenames or directory order. A future extensible rule profile may add stable IDs, applicability selectors, and deterministic ordering through a separate decision. Until then, projects customize the six known files and use ordinary steering artifacts for additional durable project guidance.
+V1 does not recursively load additional `settings/rules/**/*.md` files. Arbitrary automatic loading would make relevance and conflict precedence depend on filenames or directory order. A future extensible rule profile may add stable IDs, applicability selectors, and deterministic ordering through a separate decision. Until then, projects customize the five known files and use ordinary steering artifacts for additional durable project guidance.
 
 ### Installation and refresh
 
@@ -74,31 +72,31 @@ The inherited files are classified as follows:
 | cc-sdd file | SpecBind v1 disposition | Reason |
 | --- | --- | --- |
 | `ears-format.md` | Retain and rewrite as a default rule. | User-customizable Requirements writing style. |
-| `design-principles.md` | Retain and rewrite as a default rule. | User-customizable technical and documentation preferences. |
-| `tasks-generation.md` | Retain and rewrite as a default rule. | User-customizable task decomposition preferences after removing schema and gate behavior. |
+| `design-principles.md` | Retain and rewrite as a default rule. | User-customizable technical and documentation preferences after moving the product baseline to `design-authoring`. |
+| `tasks-generation.md` | Retain and rewrite as a default rule. | User-customizable task decomposition preferences after moving the product baseline to `task-planning` and removing schema and gate behavior. |
 | `steering-principles.md` | Retain and rewrite as a default rule. | User-customizable durable-guidance preferences. |
-| `design-discovery-full.md` | Move to `specbind-design`. | Workflow branching and required investigation procedure. |
-| `design-discovery-light.md` | Move to `specbind-design`. | Workflow branching and escalation behavior. |
-| `design-synthesis.md` | Move its semantic baseline to `specbind-design`. | Required design reasoning, not a standalone customization surface. |
-| `design-review-gate.md` | Move to `specbind-design`. | Product-owned pre-approval review behavior. |
-| `design-review.md` | Move to `specbind-validate-design`. | Product-owned validation protocol and result semantics. |
-| `requirements-review-gate.md` | Move to `specbind-requirements`. | Product-owned semantic minimum before approval. |
-| `gap-analysis.md` | Move to `specbind-gap-analysis`. | Investigation workflow and output lifecycle. |
-| `tasks-parallel-analysis.md` | Move to `specbind-tasks`. | Product baseline for safe parallel judgment over structured task semantics. |
+| `design-discovery-full.md` | Merge its semantic criteria into `design-discovery`; keep branching in `specbind-design`. | Shared investigation baseline separated from workflow control. |
+| `design-discovery-light.md` | Merge its semantic criteria into `design-discovery`; keep escalation in `specbind-design`. | Shared investigation baseline separated from workflow control. |
+| `design-synthesis.md` | Move to `design-authoring`. | Required shared design reasoning, not a customization surface. |
+| `design-review-gate.md` | Move semantic criteria to `design-validation`; keep approval orchestration in `specbind-design`. | Shared review baseline separated from gate control. |
+| `design-review.md` | Move semantic criteria to `design-validation`; keep result orchestration in `specbind-validate-design`. | One validation baseline shared across agents and skills. |
+| `requirements-review-gate.md` | Move semantic criteria to `requirements-review`; keep approval and repair flow in `specbind-requirements`. | Shared minimum separated from workflow control. |
+| `gap-analysis.md` | Move semantic criteria to `gap-analysis`; keep artifact lifecycle in `specbind-gap-analysis`. | Shared investigation baseline separated from workflow control. |
+| `tasks-parallel-analysis.md` | Move to `task-planning`. | Product baseline for safe parallel judgment over structured task semantics. |
 
-`contract-principles.md` and `okf-artifacts.md` have no direct cc-sdd counterpart. They exist because SpecBind adds persistent typed Contracts and an OKF bundle contract.
+`contract-principles.md` has no direct cc-sdd counterpart because SpecBind adds persistent typed Contracts. The former `okf-artifacts.md` installed rule is replaced by Decision 0094's immutable `okf-authoring` protocol.
 
 `specbind migrate cc-sdd` does not copy inherited rule files verbatim into the SpecBind default paths. The migration plan identifies legacy rule files that differ from their known cc-sdd defaults and reports them for manual policy review. The original `.kiro` tree remains intact. New SpecBind defaults are written only through the ordinary absent-target settings behavior, so a procedural cc-sdd file never silently becomes user-owned SpecBind policy.
 
 ## Consequences
 
-- A new project receives six purposeful rule files rather than the complete inherited process library.
+- A new project receives five purposeful rule files rather than the complete inherited process library.
 - Four familiar cc-sdd customization topics remain available under familiar filenames.
-- Contract and OKF authoring receive explicit SpecBind-native policy surfaces.
-- Skill implementations have a concrete destination for the workflow guidance removed from templates and inherited rules.
+- Contract authoring receives a SpecBind-native project-policy surface, while OKF authoring uses an immutable product protocol.
+- Product protocols and skill implementations have concrete, separate destinations for semantic guidance and workflow control removed from templates and inherited rules.
 - Rule loading is predictable and bounded without a premature manifest or applicability schema.
 - Adding another official default later is a visible installation-surface decision because refresh creates that file in existing projects.
 
 ## Implementation status
 
-This decision defines the target installed set and loading contract. The Rust installer and v1 SpecBind skills do not yet install or consume these six rules. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs until the rewritten embedded defaults, skill-owned procedures, installation planning, and absence/customization tests are implemented together.
+This decision defines the target installed set and loading contract. The Rust installer and v1 SpecBind skills do not yet install or consume these five rules. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs until the rewritten embedded defaults, Decision 0094 protocols, skill-owned procedures, installation planning, and absence/customization tests are implemented together.

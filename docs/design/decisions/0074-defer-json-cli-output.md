@@ -15,7 +15,7 @@ Structured JSON remains appropriate for owned artifact schemas and for the Decis
 - Skills consume that text directly and translate or explain it to the user when useful. CI may branch on exit status and stable result codes without a structured output guarantee.
 - Commands may still accept JSON as mutation input when a separate decision defines it. In particular, `specbind release finalize --log-entries <path|->` consumes the strict Decision 0068 document, `specbind spec completion accept <spec> --evidence <path|->` consumes the strict Decision 0086 completion candidate, and `specbind milestone review accept --candidate <path|->` consumes the strict Decision 0078 candidate through Decision 0087.
 - Runtime JSON Schemas under `tools/specbind/schemas/` continue to validate structured YAML/JSON-compatible SpecBind artifacts under Decision 0015. They are not CLI response schemas.
-- Raw single-artifact and single-template reads remain wrapper-free content output. V1 read commands accept exactly one selector per content invocation; provenance-preserving multi-content JSON output is deferred with the general JSON surface.
+- Raw single-artifact, single-template, and single-protocol reads remain wrapper-free content output. V1 read commands accept exactly one selector per content invocation; provenance-preserving multi-content JSON output is deferred with the general JSON surface.
 - A future JSON output design must make a new explicit decision covering its common envelope, command-specific typed payloads, schema versioning, stdout/stderr behavior, compatibility rules, and exit-category relationship. V1 commands reserve no partial response shape for that future design.
 
 ## Consequences

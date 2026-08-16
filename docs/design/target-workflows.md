@@ -26,9 +26,9 @@ Status: Draft
 - Keep document formats and project-wide AI rules customizable through shared settings consumed consistently by every supported agent.
 - Make cross-spec review contract-first so context follows affected boundaries rather than total document volume.
 
-Managed Markdown authoring loads the concise shared `{{SPEC_DIR}}/settings/rules/okf-artifacts.md` accepted by [Decision 0049](./decisions/0049-okf-authoring-rule.md). The rule keeps agents aligned with the targeted OKF version and SpecBind's profile boundary, while deterministic CLI validation remains authoritative.
+Managed Markdown authoring reads the immutable `okf-authoring` protocol accepted by [Decision 0094](./decisions/0094-embedded-product-protocols.md). The protocol keeps agents aligned with the targeted OKF version and SpecBind's profile boundary, while deterministic CLI validation remains authoritative.
 
-[Decision 0093](./decisions/0093-default-shared-rule-set.md) adds five phase-specific defaults and maps each known rule path to its owning skills. Workflows load only their applicable project files; they do not recursively consume every file below `settings/rules/`.
+[Decision 0093](./decisions/0093-default-shared-rule-set.md) installs five project-customizable defaults and maps each known rule path to its owning skills. Workflows load only their applicable project files; they do not recursively consume every file below `settings/rules/`. Shared non-customizable semantic baselines are read from the explicit Decision 0094 protocol selectors.
 
 ## Spec lifecycle
 

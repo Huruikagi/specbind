@@ -27,7 +27,7 @@ The generated skills already mediate most user interaction and can translate con
 - `<STABLE_CODE>` is uppercase ASCII snake case and language-neutral. Success and no-change outcomes have stable codes as well as errors.
 - The message states the outcome or blocking reason in one short English sentence. It includes only immediately useful identifiers, counts, and resulting state.
 - When details are necessary, compact indented lines follow the outcome line. A deterministic recovery action may add one `Hint:` line. The CLI does not emit speculative advice.
-- Data-oriented list, status, and check commands may follow the outcome line with their compact primary output. Commands whose contract is raw byte/content output, especially single-selector `artifact read`, emit no success wrapper because that would corrupt the payload; their errors still follow the English result contract.
+- Data-oriented list, status, and check commands may follow the outcome line with their compact primary output. Commands whose contract is raw byte/content output, including single-selector `artifact read`, `template read`, and Decision 0094 `protocol read`, emit no success wrapper because that would corrupt the payload; their errors still follow the English result contract.
 
 Examples:
 

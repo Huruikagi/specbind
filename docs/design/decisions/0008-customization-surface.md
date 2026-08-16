@@ -37,7 +37,9 @@ The bundled CLI should report incompatible customizations with focused diagnosti
 
 [Decision 0092](./0092-template-skill-authoring-boundary.md) ensures that user-owned templates and rules can customize structure and authoring policy without becoming the sole authority for non-waivable skill behavior or deterministic CLI contracts.
 
-[Decision 0093](./0093-default-shared-rule-set.md) narrows the installed shared-rule set to six explicit files and defines their skill-loading and cc-sdd migration boundaries.
+[Decision 0093](./0093-default-shared-rule-set.md) narrows the installed shared-rule set to five explicit files and defines their skill-loading and cc-sdd migration boundaries.
+
+[Decision 0094](./0094-embedded-product-protocols.md) keeps non-customizable shared semantic baselines out of project settings and exposes them as read-only CLI protocols.
 
 ## Consequences
 

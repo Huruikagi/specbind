@@ -109,7 +109,7 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0046](./design/decisions/0046-roadmap-work-items.md) | Accepted | Grouped Roadmap work items for new Specs, Spec updates, and Direct changes |
 | [0047](./design/decisions/0047-sparse-direct-change-status.md) | Accepted | Sparse persisted completed status for Direct changes |
 | [0048](./design/decisions/0048-okf-spec-log.md) | Accepted | Canonical OKF `log.md` for per-spec release history |
-| [0049](./design/decisions/0049-okf-authoring-rule.md) | Accepted | Concise distributed OKF authoring rule |
+| [0049](./design/decisions/0049-okf-authoring-rule.md) | Superseded by 0094 | Concise installed OKF authoring rule |
 | [0050](./design/decisions/0050-global-cross-spec-review.md) | Accepted | One global accepted cross-spec review per milestone |
 | [0051](./design/decisions/0051-current-state-roadmap.md) | Accepted | Current-state-only active Roadmap |
 | [0052](./design/decisions/0052-project-state-artifacts.md) | Accepted | Project-wide machine state separated from steering |
@@ -154,3 +154,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0091](./design/decisions/0091-installed-template-surface.md) | Accepted | Embedded scaffold set separated from the installed customization surface |
 | [0092](./design/decisions/0092-template-skill-authoring-boundary.md) | Accepted | Artifact scaffold guidance separated from authoring workflow policy |
 | [0093](./design/decisions/0093-default-shared-rule-set.md) | Accepted | Narrow installed shared-rule set and explicit skill consumers |
+| [0094](./design/decisions/0094-embedded-product-protocols.md) | Accepted | Immutable shared semantic protocols exposed through the CLI |
