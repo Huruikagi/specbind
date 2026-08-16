@@ -7,6 +7,7 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     domain::tasks::Tasks,
+    roadmap::RoadmapDocument,
     schema::{spec, tasks},
 };
 
@@ -41,6 +42,16 @@ impl Fingerprint {
         let mut normalized = document.as_wire().plan.clone();
         normalize_task_plan(&mut normalized);
         serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
+    }
+
+    /// Fingerprints the normalized `steering/roadmap.md#cross-spec-scope` projection using JCS.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the typed projection cannot be serialized to JCS.
+    pub fn roadmap_cross_spec_scope(document: &RoadmapDocument) -> Result<Self, serde_json::Error> {
+        serde_json_canonicalizer::to_vec(&document.cross_spec_scope())
+            .map(|bytes| Self::digest(&bytes))
     }
 
     #[must_use]

@@ -25,6 +25,8 @@
 - `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage
 - `tools/specbind/src/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
 - `tools/specbind/src/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
+- `tools/specbind/src/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
+- `tools/specbind/src/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas

@@ -183,6 +183,11 @@ fn resolves_every_immediate_persistent_spec_and_keeps_partial_inventories() {
         "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `stock` → `catalog/exports/stock`\n\n## Invariants\n\n## File Ownership\n",
     );
     write(root.path(), "specs/missing/index.md", "# Reserved index\n");
+    write(
+        root.path(),
+        "specs/invalid/contract.md",
+        "---\ntype: SpecBind Contract\nartifact_id: forbidden\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
     write(root.path(), "specs/not-a-directory", "invalid\n");
 
     let resolution = contract_graph::resolve(root.path());
@@ -193,12 +198,16 @@ fn resolves_every_immediate_persistent_spec_and_keeps_partial_inventories() {
             .keys()
             .map(String::as_str)
             .collect::<Vec<_>>(),
-        ["catalog", "checkout", "missing"]
+        ["catalog", "checkout", "invalid", "missing"]
     );
     assert_eq!(resolution.report.dependencies.len(), 1);
     assert!(resolution.report.issues.iter().any(|issue| {
         issue.code == "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE"
             && issue.source.as_deref() == Some("specs/missing#contract")
+    }));
+    assert!(resolution.report.issues.iter().any(|issue| {
+        issue.code == "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE"
+            && issue.source.as_deref() == Some("specs/invalid#contract")
     }));
     assert!(
         resolution

@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+Implementation status: the Rust read model now validates strict version-1 candidate JSON, non-empty assessment Markdown, canonical optional deep selectors, the complete Contract graph, and the exact current input revision map. Direct-only Roadmaps are rejected from this flow. Guarded persistence still needs to enforce Git baseline ancestry, participating-Spec state and Design freshness, input re-resolution, timestamp ownership, and atomic replacement of the accepted artifact.
+
 ## Context
 
 Decisions 0050 through 0055 introduced one milestone-wide cross-spec review, but Decision 0053 also required a closed classification enum for every Roadmap item and Decision 0055 allowed Tasks as review input. Contract compatibility and external-consumer impact are open-ended semantic judgments, while Direct items are defined by the absence of canonical Contract change.
@@ -48,4 +50,3 @@ Decisions 0050 through 0055 introduced one milestone-wide cross-spec review, but
 - The durable record preserves the exact inputs and useful reasoning without pretending that three enum values model every compatibility case.
 - Design correction happens before Task authoring, reducing discarded plans.
 - Per-Spec implementation completion and milestone-wide consistency remain distinct state dimensions.
-

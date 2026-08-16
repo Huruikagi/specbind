@@ -94,6 +94,10 @@ pub fn resolve(specbind_root: &Path) -> ContractGraphResolution {
             .find(|artifact| artifact.kind == ArtifactKind::Contract)
             .cloned();
         if let Some(artifact) = contract
+            && !inventory
+                .issues
+                .iter()
+                .any(|issue| issue.path.as_ref() == Some(&artifact.path))
             && let Some(document) =
                 resolve_contract_projection(specbind_root, &artifact, &mut inventory.issues)
         {
