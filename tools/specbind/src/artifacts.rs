@@ -1114,7 +1114,7 @@ fn validate_design_requirement_ids(
     Some(values.into_iter().map(str::to_owned).collect())
 }
 
-fn split_frontmatter(content: &str) -> Result<(&str, &str), String> {
+pub(crate) fn split_frontmatter(content: &str) -> Result<(&str, &str), String> {
     let mut offset = 0;
     let mut lines = content.split_inclusive('\n');
     let first = lines.next().ok_or_else(|| "artifact is empty".to_owned())?;
@@ -1147,7 +1147,7 @@ fn is_concept_path(path: &Path) -> bool {
         )
 }
 
-fn recognized_kind(value: &str) -> Option<ArtifactKind> {
+pub(crate) fn recognized_kind(value: &str) -> Option<ArtifactKind> {
     match value {
         TYPE_BRIEF => Some(ArtifactKind::Brief),
         TYPE_RESEARCH => Some(ArtifactKind::Research),
@@ -1159,7 +1159,7 @@ fn recognized_kind(value: &str) -> Option<ArtifactKind> {
     }
 }
 
-fn collection_id(kind: ArtifactKind, mapping: &Map<String, Value>) -> Option<&str> {
+pub(crate) fn collection_id(kind: ArtifactKind, mapping: &Map<String, Value>) -> Option<&str> {
     matches!(
         kind,
         ArtifactKind::Design | ArtifactKind::ImplementationNotes
@@ -1199,7 +1199,7 @@ fn valid_label(value: &str) -> bool {
         && !value.bytes().any(|byte| matches!(byte, b'\r' | b'\n'))
 }
 
-fn selector(kind: ArtifactKind, artifact_id: Option<&str>) -> String {
+pub(crate) fn selector(kind: ArtifactKind, artifact_id: Option<&str>) -> String {
     match kind {
         ArtifactKind::Brief => "brief".to_owned(),
         ArtifactKind::Research => "research".to_owned(),
@@ -1232,7 +1232,7 @@ fn artifact_order(artifact: &Artifact) -> (u8, &str) {
     (rank, artifact.artifact_id.as_deref().unwrap_or(""))
 }
 
-fn contains_instruction(body: &str) -> bool {
+pub(crate) fn contains_instruction(body: &str) -> bool {
     Parser::new(body).any(|event| match event {
         Event::Html(value) | Event::InlineHtml(value) => is_instruction_comment(&value),
         _ => false,

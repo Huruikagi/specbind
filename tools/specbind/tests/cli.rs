@@ -894,6 +894,99 @@ fn reaccepts_a_currently_fresh_review() {
 }
 
 #[test]
+fn lists_and_reads_project_owned_spec_templates() {
+    let root = project_fixture();
+    write_template_fixture(root.path());
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(root.path())
+        .args(["template", "list", "spec"])
+        .assert()
+        .success()
+        .stdout(
+            "OK TEMPLATE_LISTED: Found 3 recognized spec template(s).\n  selector=brief type=\"SpecBind Brief\" template_path=settings/templates/specs/brief.md output_path=brief.md\n  selector=design/main type=\"SpecBind Design\" artifact_id=main template_path=settings/templates/specs/technical-design/main.md output_path=technical-design/main.md\n  selector=contract type=\"SpecBind Contract\" template_path=settings/templates/specs/contract.md output_path=contract.md\n",
+        )
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(root.path())
+        .args(["template", "read", "spec", "design/main"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "<!-- specbind:instruction Describe one owned decision. -->",
+        ))
+        .stderr("");
+}
+
+#[test]
+fn rejects_unknown_template_selectors_and_invalid_template_profiles() {
+    let root = project_fixture();
+    write_template_fixture(root.path());
+
+    let mut missing = Command::cargo_bin("specbind").expect("specbind binary should build");
+    missing
+        .current_dir(root.path())
+        .args(["template", "read", "spec", "requirements"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR TEMPLATE_SELECTOR_NOT_FOUND:",
+        ));
+
+    write(
+        root.path(),
+        ".specbind/settings/templates/specs/design-live.md",
+        "---\ntype: SpecBind Design\nartifact_id: live\nrequirement_ids: ['1.1']\n---\n# Design\n",
+    );
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(root.path())
+        .args(["template", "list", "spec"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR TEMPLATE_LIST_FAILED:").and(
+                predicate::str::contains("TEMPLATE_DESIGN_REQUIREMENT_IDS_FORBIDDEN"),
+            ),
+        );
+}
+
+#[test]
+fn reports_an_absent_template_tree_as_an_empty_inventory() {
+    let root = project_fixture();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["template", "list", "spec"])
+        .assert()
+        .success()
+        .stdout("OK TEMPLATE_LISTED: Found 0 recognized spec template(s).\n")
+        .stderr("");
+}
+
+fn write_template_fixture(root: &Path) {
+    write(
+        root,
+        ".specbind/settings/templates/specs/brief.md",
+        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction State the requested outcome. -->\n",
+    );
+    write(
+        root,
+        ".specbind/settings/templates/specs/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+    );
+    write(
+        root,
+        ".specbind/settings/templates/specs/technical-design/main.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\n---\n# Design\n\n<!-- specbind:instruction Describe one owned decision. -->\n",
+    );
+}
+
+#[test]
 fn creates_the_active_milestone_from_a_confirmed_scope() {
     let root = project_fixture();
     commit_all(root.path());

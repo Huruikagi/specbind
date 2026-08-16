@@ -118,7 +118,7 @@ It replaces `baseline_revision`, changes nothing else in the Roadmap, and remove
 - The clean-repository rule keeps its meaning, because creation writes only machine state and never competes with agent-authored prose.
 - Scope edits become safe by construction: additions initialize correctly, completed Direct work survives, and removals that need content reconciliation are refused rather than silently applied.
 - Rebaseline gains the explicit command Decision 0054 assumed, with its review-invalidating effect visible in one place.
-- The Spec state machine's `SPEC_CREATED` guard wording needs a follow-up correction so that Brief availability reads as an agent-workflow obligation rather than a CLI precondition.
+- The Spec state machine's `SPEC_CREATED` and `CHANGE_STARTED` guard wording now reads Brief availability as an agent-workflow obligation after the guarded mutation rather than a CLI precondition.
 
 ## Implementation status
 

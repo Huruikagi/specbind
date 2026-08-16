@@ -25,6 +25,11 @@ enum Command {
         #[command(subcommand)]
         command: ArtifactCommand,
     },
+    /// Read the project-owned OKF artifact templates.
+    Template {
+        #[command(subcommand)]
+        command: TemplateCommand,
+    },
     /// Inspect the validated task plan and derived execution state.
     Tasks {
         #[command(subcommand)]
@@ -53,6 +58,21 @@ enum ArtifactCommand {
     List { spec: String },
     /// Read one logical artifact selector as raw UTF-8 Markdown.
     Read { spec: String, selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum TemplateCommand {
+    /// List recognized Spec artifact templates.
+    List {
+        #[arg(value_parser = ["spec"])]
+        scope: String,
+    },
+    /// Read one Spec template selector as raw UTF-8 Markdown.
+    Read {
+        #[arg(value_parser = ["spec"])]
+        scope: String,
+        selector: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -219,6 +239,15 @@ fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
     }
 }
 
+fn run_template(start: &Path, command: TemplateCommand) -> CommandOutput {
+    match command {
+        TemplateCommand::List { scope: _ } => specbind::cli::template_list_spec(start),
+        TemplateCommand::Read { scope: _, selector } => {
+            specbind::cli::template_read_spec(start, &selector)
+        }
+    }
+}
+
 fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
     match command {
         TasksCommand::List { spec } => specbind::cli::tasks_list(start, &spec),
@@ -309,6 +338,7 @@ fn main() -> ExitCode {
     };
     let output = match cli.command {
         Command::Artifact { command } => run_artifact(&start, command),
+        Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
         Command::Spec { command } => run_spec(&start, command),
         Command::Milestone { command } => run_milestone(&start, command),

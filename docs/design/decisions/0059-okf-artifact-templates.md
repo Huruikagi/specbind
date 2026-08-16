@@ -73,6 +73,10 @@ SpecBind needs customizable template sets that can create several design artifac
 - Direct reads of known selectors and list-then-read collection discovery follow the Decision 0058 behavior. A raw read includes instruction comments and accepts one selector; workflows issue separate reads for multiple templates in v1.
 - Artifact authoring and lifecycle operations independently validate the current template set and materialize output. Read commands never write live artifacts, and template-read results are not mutation authority.
 
+## Implementation status
+
+The Rust CLI exposes the accepted read-only `template list spec` and `template read spec <selector>` commands over the project-owned `settings/templates/specs/` tree. Discovery recognizes templates by OKF type, derives the live-artifact selector form, reports `selector`, `type`, conditional `artifact_id`, `template_path`, and derived `output_path` without a body or fingerprint, and enforces the template-only profile rules including the forbidden `requirement_ids` mapping on a Design template. Output paths that would escape the target Spec directory, duplicate selectors, symbolic links, and unreadable or non-UTF-8 templates are reported as diagnostics. A raw read returns the template unchanged with its `specbind:instruction` comments intact. An absent template tree is a normal empty inventory. Embedded official defaults arrive with the Decision 0077 installer increment; until then only installed project-owned templates resolve.
+
 ## Consequences
 
 - A project can customize filenames, directories, document structure, design decomposition, and artifact-specific AI guidance using one visible template tree.
