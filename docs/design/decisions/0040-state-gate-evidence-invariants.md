@@ -33,3 +33,7 @@ The schema and lifecycle validator already have separate responsibilities under 
 - Status can identify a missing, premature, or stale gate instead of returning only a generic schema-union failure.
 - The declared state stays authoritative, while health is derived from evidence, artifacts, and freshness.
 - Approved spec-backed changes always contain at least one active Requirement ID.
+
+## Implementation status
+
+The Rust domain conversion now validates the exact cumulative evidence-key set for every declared state, the null-versus-present Requirement ID rule, canonical numeric Requirement ID format and ordering, and exact equality with requirements approval evidence. Artifact existence and fingerprint freshness remain project-context checks and are intentionally outside this artifact-local conversion.
