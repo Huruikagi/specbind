@@ -26,6 +26,7 @@ Related documents:
 - [Decision 0013: structured task artifact](./decisions/0013-structured-task-artifact.md)
 - [Decision 0014: structured spec metadata](./decisions/0014-structured-spec-metadata.md)
 - [Decision 0075: v1 skill and orchestration scope](./decisions/0075-v1-skill-and-orchestration-scope.md)
+- [Decision 0092: template and skill authoring boundary](./decisions/0092-template-skill-authoring-boundary.md)
 
 ## Status and change types
 

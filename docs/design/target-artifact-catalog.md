@@ -51,6 +51,7 @@ Related documents:
 - [Decision 0072: explicit release rebinding](./decisions/0072-explicit-release-rebinding.md)
 - [Decision 0073: portable release version](./decisions/0073-portable-release-version.md)
 - [Decision 0074: defer JSON CLI output](./decisions/0074-defer-json-cli-output.md)
+- [Decision 0092: template and skill authoring boundary](./decisions/0092-template-skill-authoring-boundary.md)
 
 Status: Draft
 

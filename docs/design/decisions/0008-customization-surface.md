@@ -35,6 +35,8 @@ The bundled CLI should report incompatible customizations with focused diagnosti
 
 [Decision 0059](./0059-okf-artifact-templates.md) defines spec Markdown templates as final-form OKF artifact prototypes: relative template paths determine initial output paths, literal frontmatter determines machine identity, and explicit `specbind:instruction` HTML comments carry template-only AI guidance. Existing artifacts are never silently reconciled to later template edits.
 
+[Decision 0092](./0092-template-skill-authoring-boundary.md) ensures that user-owned templates and rules can customize structure and authoring policy without becoming the sole authority for non-waivable skill behavior or deterministic CLI contracts.
+
 ## Consequences
 
 - Project customization survives changes of coding agent.

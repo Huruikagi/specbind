@@ -45,6 +45,8 @@ SpecBind needs customizable template sets that can create several design artifac
 
 ## Template and rule boundary
 
+Decision 0092 refines this boundary by separating user-owned scaffold guidance and shared policy from non-waivable product-managed skill obligations and deterministic CLI contracts.
+
 - A template contains:
   - final OKF Front Matter
   - final-form Markdown headings and durable scaffold content
