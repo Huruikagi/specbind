@@ -176,7 +176,13 @@ pub fn resolve_gate_inputs(specbind_root: &Path, canonical_spec: &str) -> GateIn
         }
     }
     inputs.design = Some(design);
-    inputs.task_plan = resolve_task_plan(specbind_root, canonical_spec, &mut inventory.issues);
+    inputs.tasks = load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues)
+        .ok()
+        .flatten();
+    inputs.task_plan = inputs
+        .tasks
+        .as_ref()
+        .and_then(|tasks| resolve_task_plan(tasks, canonical_spec, &mut inventory.issues));
     inventory.issues.sort();
     inventory.issues.dedup();
 
@@ -531,15 +537,12 @@ fn fingerprint_artifact(
 }
 
 fn resolve_task_plan(
-    specbind_root: &Path,
+    tasks: &Tasks,
     canonical_spec: &str,
     issues: &mut Vec<DiscoveryIssue>,
 ) -> Option<Fingerprint> {
-    let tasks = load_tasks_artifact(specbind_root, canonical_spec, issues)
-        .ok()
-        .flatten()?;
     let relative = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
-    match Fingerprint::task_plan(&tasks) {
+    match Fingerprint::task_plan(tasks) {
         Ok(fingerprint) => Some(fingerprint),
         Err(error) => {
             issues.push(issue(

@@ -31,4 +31,4 @@ Freshness is a comparison of the current gate-owned input projection with the pr
 
 ## Implementation status
 
-The Rust read model now compares discovery-resolved current inputs against gate-owned requirements, design, and task-plan evidence. It distinguishes unreached gates from stale gates, reports design key-set changes separately from content changes, and cascades stale prerequisites downstream. Completion freshness remains deferred to the Git revision and task-completion integration.
+The Rust read model now compares discovery-resolved current inputs against gate-owned requirements, design, and task-plan evidence. It distinguishes unreached gates from stale gates, reports design key-set changes separately from content changes, and cascades stale prerequisites downstream. Completion freshness additionally requires every executable Task to be completed and unblocked, resolves the exact accepted Git commit, rejects any non-metadata project change, and accepts only the expected `implementation` to `release_ready` `spec.yaml` evidence transition.
