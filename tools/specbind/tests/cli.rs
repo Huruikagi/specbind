@@ -325,6 +325,81 @@ fn fails_status_when_spec_metadata_is_not_structurally_readable() {
         .stderr(predicate::str::starts_with("ERROR SPEC_STATUS_FAILED:"));
 }
 
+#[test]
+fn reports_no_active_milestone_as_no_change() {
+    let root = project_fixture();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE NO_ACTIVE_MILESTONE: No active milestone exists.\n")
+        .stderr("");
+}
+
+#[test]
+fn reports_direct_milestone_dependencies_and_actionable_work() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: publish\n      summary: Publish site\n      depends_on:\n        - direct: docs\n---\n# Roadmap\n",
+    );
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: implementation\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains(
+                    "  Cross-spec review: not_applicable\n",
+                ))
+                .and(predicate::str::contains(
+                    "  Direct progress: 0/2 completed\n",
+                ))
+                .and(predicate::str::contains(
+                    "direct:publish status=pending waiting_for=direct:docs",
+                ))
+                .and(predicate::str::contains(
+                    "direct:docs action=implementation",
+                )),
+        )
+        .stderr("");
+}
+
+#[test]
+fn reports_tasks_authored_before_the_required_milestone_review() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: cross_spec_review\n")
+                .and(predicate::str::contains("  Health: inconsistent\n"))
+                .and(predicate::str::contains(
+                    "  Spec states: implementation=1\n",
+                ))
+                .and(predicate::str::contains("MILESTONE_TASKS_BEFORE_REVIEW")),
+        );
+}
+
 fn project_fixture() -> TempDir {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
@@ -357,6 +432,22 @@ fn git(root: &Path, arguments: &[&str]) {
         output.status.success(),
         "{}",
         String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+fn commit_all(root: &Path) {
+    git(root, &["add", "."]);
+    git(
+        root,
+        &[
+            "-c",
+            "user.name=SpecBind Test",
+            "-c",
+            "user.email=specbind@example.invalid",
+            "commit",
+            "-m",
+            "fixture",
+        ],
     );
 }
 

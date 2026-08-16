@@ -8,6 +8,7 @@ pub mod design;
 pub mod domain;
 pub mod fingerprint;
 pub mod freshness;
+pub mod milestone_status;
 pub mod requirements;
 pub mod roadmap;
 pub mod schema;

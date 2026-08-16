@@ -12,6 +12,7 @@ use uuid::Uuid;
 pub struct RoadmapDocument {
     pub milestone_id: String,
     pub baseline_revision: String,
+    pub target_release: Option<String>,
     pub new_specs: Vec<SpecItem>,
     pub spec_updates: Vec<SpecItem>,
     pub direct_changes: Vec<DirectItem>,
@@ -214,6 +215,7 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
         Ok(RoadmapDocument {
             milestone_id: raw.milestone_id,
             baseline_revision: raw.baseline_revision,
+            target_release: raw.target_release.as_str().map(str::to_owned),
             new_specs,
             spec_updates,
             direct_changes,

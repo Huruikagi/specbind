@@ -102,7 +102,7 @@ fn validates_task_references_and_required_active_coverage() {
 }
 
 #[test]
-fn requires_tasks_only_after_the_workflow_reaches_tasks() {
+fn requires_tasks_only_at_the_task_required_boundary() {
     let not_required = traceability::evaluate(
         &strings(&["1.1"]),
         vec![design("design/main", &["1.1"])],
@@ -148,7 +148,7 @@ fn resolves_current_artifacts_and_active_scope_with_owned_paths() {
     write(
         root.path(),
         "specs/example/spec.yaml",
-        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: tasks\n  requirement_ids: ['1.1', '2.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1', '2.1']\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n        design/main: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n",
+        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: implementation\n  requirement_ids: ['1.1', '2.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1', '2.1']\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n        design/main: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n    tasks:\n      passed_at: 2026-08-16T12:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        tasks.yaml#plan: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\n",
     );
     write(
         root.path(),

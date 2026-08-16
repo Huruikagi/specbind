@@ -5,6 +5,7 @@ use std::{fmt::Write as _, fs, path::Path};
 use crate::{
     artifacts::{self, Artifact, DiscoveryIssue},
     config,
+    milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
 };
@@ -37,6 +38,10 @@ impl CommandOutput {
             stderr: stderr.into_bytes(),
             success: false,
         }
+    }
+
+    fn no_change(code: &str, message: &str) -> Self {
+        Self::success(format!("NO_CHANGE {code}: {message}\n").into_bytes())
     }
 }
 
@@ -237,6 +242,143 @@ pub fn spec_status(start: &Path, canonical_spec: &str) -> CommandOutput {
             }
         };
     render_spec_status(canonical_spec, &model)
+}
+
+#[must_use]
+pub fn milestone_status(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match milestone_status::resolve(&paths.project_root, &paths.specbind_root) {
+        Ok(Some(model)) => render_milestone_status(&model),
+        Ok(None) => CommandOutput::no_change("NO_ACTIVE_MILESTONE", "No active milestone exists."),
+        Err(error) => CommandOutput::failure(
+            "MILESTONE_STATUS_FAILED",
+            "Cannot report the active milestone.",
+            error
+                .diagnostics
+                .iter()
+                .map(render_milestone_diagnostic)
+                .collect(),
+        ),
+    }
+}
+
+fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
+    let mut output = format!(
+        "OK MILESTONE_STATUS_REPORTED: Reported the active milestone.\n  Milestone: {}\n",
+        escape(&model.milestone_id)
+    );
+    push_field(
+        &mut output,
+        "Target release",
+        model.target_release.as_deref().unwrap_or("none"),
+    );
+    push_field(
+        &mut output,
+        "Stage",
+        milestone_status::stage_name(model.stage),
+    );
+    push_field(
+        &mut output,
+        "Health",
+        match model.health {
+            MilestoneHealth::Consistent => "consistent",
+            MilestoneHealth::Inconsistent => "inconsistent",
+        },
+    );
+    push_field(
+        &mut output,
+        "Cross-spec review",
+        milestone_status::review_name(model.review_status),
+    );
+    let spec_counts = if model.spec_state_counts.is_empty() {
+        "none".to_owned()
+    } else {
+        model
+            .spec_state_counts
+            .iter()
+            .map(|(state, count)| format!("{state}={count}"))
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    push_field(&mut output, "Spec states", &spec_counts);
+    push_field(
+        &mut output,
+        "Direct progress",
+        &format!(
+            "{}/{} completed",
+            model.direct_completed, model.direct_total
+        ),
+    );
+    push_field(
+        &mut output,
+        "Revision",
+        model.current_revision.as_deref().unwrap_or("unavailable"),
+    );
+    render_milestone_items(model, &mut output);
+    render_milestone_actions(model, &mut output);
+    push_inline_list(&mut output, "Release blockers", &model.release_blockers);
+    render_milestone_diagnostics(model, &mut output);
+    CommandOutput::success(output.into_bytes())
+}
+
+fn render_milestone_items(model: &MilestoneStatusModel, output: &mut String) {
+    output.push_str("  Items:\n");
+    for item in &model.items {
+        let waiting = if item.waiting_for.is_empty() {
+            String::new()
+        } else {
+            format!(" waiting_for={}", item.waiting_for.join(","))
+        };
+        writeln!(
+            output,
+            "    - {} status={}{} summary={}",
+            escape(&item.id),
+            escape(&item.status),
+            escape(&waiting),
+            escape(&item.summary)
+        )
+        .expect("writing to a String cannot fail");
+    }
+}
+
+fn render_milestone_actions(model: &MilestoneStatusModel, output: &mut String) {
+    if model.actionable.is_empty() {
+        push_field(output, "Actionable", "none");
+        return;
+    }
+    output.push_str("  Actionable:\n");
+    for action in &model.actionable {
+        writeln!(
+            output,
+            "    - {} action={}",
+            escape(&action.item),
+            action.action
+        )
+        .expect("writing to a String cannot fail");
+    }
+}
+
+fn render_milestone_diagnostics(model: &MilestoneStatusModel, output: &mut String) {
+    if model.diagnostics.is_empty() {
+        push_field(output, "Diagnostics", "none");
+        return;
+    }
+    output.push_str("  Diagnostics:\n");
+    for diagnostic in &model.diagnostics {
+        writeln!(output, "    - {}", render_milestone_diagnostic(diagnostic))
+            .expect("writing to a String cannot fail");
+    }
+}
+
+fn render_milestone_diagnostic(diagnostic: &milestone_status::MilestoneDiagnostic) -> String {
+    let path = diagnostic
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", diagnostic.code, escape(&diagnostic.message))
 }
 
 fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandOutput {

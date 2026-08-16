@@ -238,7 +238,7 @@ A milestone status projection should remain concise while exposing enough struct
 - validation candidates and the common current revision
 - release blockers
 
-Exact public command names and result codes remain part of the CLI command-contract work. The read model must not imply that a later wave is globally blocked when an independent item is currently actionable.
+The public command is `specbind milestone status`. It returns `OK MILESTONE_STATUS_REPORTED` for an active projection and `NO_CHANGE NO_ACTIVE_MILESTONE` when the active Roadmap is absent. The read model must not imply that a later wave is globally blocked when an independent item is currently actionable.
 
 ## Consistency failures
 

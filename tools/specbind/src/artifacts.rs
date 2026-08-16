@@ -634,7 +634,7 @@ fn resolve_active_traceability_scope(
     let tasks_required = active.is_some_and(|active| {
         matches!(
             active.state,
-            WorkflowState::Tasks | WorkflowState::Implementation | WorkflowState::ReleaseReady
+            WorkflowState::Implementation | WorkflowState::ReleaseReady
         )
     });
     Ok(ActiveTraceabilityScope {

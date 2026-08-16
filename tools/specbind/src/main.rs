@@ -33,6 +33,11 @@ enum Command {
         #[command(subcommand)]
         command: SpecCommand,
     },
+    /// Inspect the active milestone and its derived delivery state.
+    Milestone {
+        #[command(subcommand)]
+        command: MilestoneCommand,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -55,6 +60,12 @@ enum TasksCommand {
 enum SpecCommand {
     /// Report lifecycle, freshness, coverage, and task progress.
     Status { spec: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum MilestoneCommand {
+    /// Report stage, progress, actions, dependencies, and release blockers.
+    Status,
 }
 
 fn main() -> ExitCode {
@@ -82,6 +93,9 @@ fn main() -> ExitCode {
         Command::Spec {
             command: SpecCommand::Status { spec },
         } => specbind::cli::spec_status(&start, &spec),
+        Command::Milestone {
+            command: MilestoneCommand::Status,
+        } => specbind::cli::milestone_status(&start),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");

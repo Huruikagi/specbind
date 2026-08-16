@@ -26,9 +26,21 @@ Roadmap dependencies still need precise phase semantics. Applying every edge to 
 - Release execution states are run-scoped. Preflight, project Prepare/Publish/Verify work, and core finalization do not add a persisted Roadmap status. Failure before finalization leaves the milestone active; successful finalization archives the Roadmap last and returns the project to no active milestone.
 - A crash-interrupted finalization is an invalid recoverable mutation state, not a supported partial-release milestone state. The CLI diagnoses and idempotently resumes or stops for Git-assisted recovery.
 
+### Status command surface
+
+- `specbind milestone status` is the canonical current-milestone read command. It takes no Spec argument and reports only the active Roadmap scope, including both Spec-backed and Direct items.
+- When no active Roadmap exists, the command returns `NO_CHANGE NO_ACTIVE_MILESTONE` rather than treating every persistent Spec as one implicit milestone.
+- A successful active projection returns `OK MILESTONE_STATUS_REPORTED`. A derived `inconsistent` health result is still a successful read with diagnostics; an unreadable Roadmap fails because no authoritative scope can be projected.
+- `specbind spec status <spec>` remains the per-Spec drilldown, while `specbind tasks list/show` remains the task drilldown. Listing every persistent Spec is a separate future inventory concern and is not overloaded onto milestone status.
+- The `specbind-status` skill is the convenience router: no argument requests current milestone status, an explicit Spec identity requests per-Spec status, and task-specific questions use the task read commands.
+
 ## Consequences
 
 - Roadmap, Spec, review, and Git artifacts each remain authoritative only for facts they already own.
 - Requirements and Tasks retain useful parallelism, while Design and Implementation respect dependencies where unfinished upstream work changes their meaning.
 - The global validation barrier makes the whole-project revision handshake explicit instead of repeatedly invalidating supposedly final evidence during normal implementation.
 - Status tooling can explain current stage, blockers, actionable items, and waves without introducing a new lifecycle artifact.
+
+## Implementation status
+
+The Rust CLI exposes the accepted per-Spec and task read models. The current implementation increment adds `milestone status` over the active Roadmap, participating Spec status models, sparse Direct completion, review freshness, Git cleanliness, dependency readiness, actionable items, and release blockers. Release archive and finalization-target guards remain owned by the later release-preflight implementation and must not be inferred as passing before that boundary exists.

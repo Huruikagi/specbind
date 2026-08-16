@@ -21,6 +21,7 @@ fn parses_and_normalizes_the_cross_spec_scope() {
     let second = roadmap::parse(&second).expect("valid Roadmap");
 
     assert_eq!(first.spec_ids(), ["account-auth", "checkout"]);
+    assert_eq!(first.target_release, None);
     assert_eq!(first.cross_spec_scope(), second.cross_spec_scope());
     assert_eq!(
         Fingerprint::roadmap_cross_spec_scope(&first).expect("fingerprint"),

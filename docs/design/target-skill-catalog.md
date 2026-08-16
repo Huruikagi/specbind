@@ -51,7 +51,7 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-spec-init` | None | Remove | Accepted | Initialization is a deterministic Rust CLI operation invoked by discovery. |
 | `kiro-spec-quick` | `specbind-quick` | Change | Accepted | Bring one Spec-backed item through Tasks approval using delegated gates. |
 | `kiro-spec-requirements` | `specbind-requirements` | Change | Accepted | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
-| `kiro-spec-status` | `specbind-status` | Change | Accepted | Explain project, milestone, Spec, task, and history state from CLI read models. |
+| `kiro-spec-status` | `specbind-status` | Change | Accepted | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
 | `kiro-spec-tasks` | `specbind-tasks` | Change | Accepted | Create a milestone-local plan covering the active requirement set after cross-spec review. |
 | `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Accepted | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
 | `kiro-validate-design` | `specbind-validate-design` | Change | Accepted | Review technical design quality and design-to-contract consistency. |
