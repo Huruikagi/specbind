@@ -29,6 +29,7 @@ pub mod schema;
 pub mod skill;
 pub mod spec_list;
 pub mod spec_status;
+pub mod steering;
 pub mod task_progress;
 pub mod task_read_model;
 pub mod template;

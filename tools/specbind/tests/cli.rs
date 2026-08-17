@@ -3096,3 +3096,210 @@ fn emits_the_complete_body_only_when_deliberately_requested() {
         .stdout(predicate::str::contains("\"body\"").not())
         .stderr("");
 }
+
+fn steering_document(id: &str, title: &str) -> String {
+    format!(
+        "---
+type: SpecBind Steering
+artifact_id: {id}
+---
+# {title}
+"
+    )
+}
+
+#[test]
+fn lists_no_steering_before_any_is_authored() {
+    let root = project_fixture();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "list"])
+        // An absent steering directory is an empty inventory, not a fault.
+        .assert()
+        .success()
+        .stdout(
+            "OK STEERING_LISTED: Found 0 steering document(s).
+",
+        )
+        .stderr("");
+}
+
+#[test]
+fn lists_steering_by_artifact_id_and_excludes_other_types() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        &steering_document("product", "Product"),
+    );
+    write(
+        root.path(),
+        ".specbind/steering/nested/conventions.md",
+        &steering_document("naming", "Naming"),
+    );
+    commit_all(root.path());
+    let mut create = Command::cargo_bin("specbind").expect("specbind binary should build");
+    create
+        .current_dir(root.path())
+        .args(["milestone", "create", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"workItems":{"directChanges":[{"id":"docs","summary":"Update docs"}]}}"#,
+        )
+        .assert()
+        .success();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "list"])
+        .assert()
+        .success()
+        // Ordered by artifact_id, discovered recursively, and the active Roadmap
+        // in the same directory is excluded by type without being an anomaly.
+        .stdout(concat!(
+            "OK STEERING_LISTED: Found 2 steering document(s).
+",
+            "  selector=naming type=\"SpecBind Steering\" path=steering/nested/conventions.md
+",
+            "  selector=product type=\"SpecBind Steering\" path=steering/product.md
+",
+        ))
+        .stderr("");
+}
+
+#[test]
+fn reads_one_steering_selector_as_raw_markdown() {
+    let root = project_fixture();
+    let content = steering_document("product", "Product");
+    write(root.path(), ".specbind/steering/product.md", &content);
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "read", "product"])
+        .assert()
+        .success()
+        .stdout(content)
+        .stderr("");
+}
+
+#[test]
+fn reports_an_unknown_steering_selector_without_touching_stdout() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        &steering_document("product", "Product"),
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "read", "missing"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR STEERING_READ_INVALID: unknown steering selector: missing
+",
+        ));
+}
+
+#[test]
+fn drops_both_documents_sharing_one_artifact_id() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/one.md",
+        &steering_document("product", "One"),
+    );
+    write(
+        root.path(),
+        ".specbind/steering/two.md",
+        &steering_document("product", "Two"),
+    );
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(root.path())
+        .args(["steering", "list"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::contains("STEERING_ARTIFACT_ID_DUPLICATE steering/one.md")
+                .and(predicate::str::contains(
+                    "STEERING_ARTIFACT_ID_DUPLICATE steering/two.md",
+                ))
+                // Neither is offered as a usable selector.
+                .and(predicate::str::contains("selector=product").not()),
+        );
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(root.path())
+        .args(["steering", "read", "product"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR STEERING_READ_INVALID: steering selector is ambiguous: product
+",
+        ));
+}
+
+#[test]
+fn refuses_to_read_valid_guidance_while_the_collection_is_incomplete() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        &steering_document("product", "Product"),
+    );
+    write(
+        root.path(),
+        ".specbind/steering/broken.md",
+        "no front matter
+",
+    );
+
+    // Unlike a spec-local artifact read, an unrelated fault fails this read:
+    // guidance known to be incomplete cannot be safely acted on.
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "read", "product"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR STEERING_READ_FAILED: ").and(
+                predicate::str::contains("STEERING_FRONTMATTER_INVALID steering/broken.md"),
+            ),
+        );
+}
+
+#[test]
+fn rejects_steering_without_a_usable_artifact_id() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        "---
+type: SpecBind Steering
+---
+# Product
+",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["steering", "list"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "STEERING_ARTIFACT_ID_INVALID steering/product.md",
+        ));
+}

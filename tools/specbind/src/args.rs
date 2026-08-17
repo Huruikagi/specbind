@@ -61,6 +61,11 @@ pub enum Command {
         #[command(subcommand)]
         command: TasksCommand,
     },
+    /// List or read project-level steering documents.
+    Steering {
+        #[command(subcommand)]
+        command: SteeringCommand,
+    },
     /// Inspect Spec lifecycle and consistency.
     Spec {
         #[command(subcommand)]
@@ -134,6 +139,14 @@ pub enum TasksCommand {
     },
     /// Return one executable task to pending.
     Reopen { spec: String, task_id: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum SteeringCommand {
+    /// List every recognized steering document.
+    List,
+    /// Read one steering selector as raw UTF-8 Markdown.
+    Read { selector: String },
 }
 
 #[derive(Debug, Subcommand)]

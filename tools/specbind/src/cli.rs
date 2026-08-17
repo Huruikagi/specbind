@@ -23,6 +23,7 @@ use crate::{
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
     spec_list::{self, SpecHealth},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
+    steering,
     task_progress::{self, ProgressReport},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
     template,
@@ -795,6 +796,78 @@ fn render_progress_failure(
                 format!("{}{path} {}", issue.code, escape(&issue.message))
             })
             .collect(),
+    )
+}
+
+/// Lists every recognized steering document.
+///
+/// Any per-document fault returns the unambiguously discovered documents as
+/// diagnostic detail and exits nonzero, so a caller never mistakes a partial
+/// view of the project's guidance for the whole of it.
+#[must_use]
+pub fn steering_list(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let inventory = match steering::discover(&paths.specbind_root) {
+        Ok(inventory) => inventory,
+        Err(message) => {
+            return CommandOutput::failure(
+                "STEERING_LIST_FAILED",
+                "Cannot enumerate steering documents.",
+                vec![message],
+            );
+        }
+    };
+    if !inventory.issues.is_empty() {
+        let mut details = inventory
+            .documents
+            .iter()
+            .map(render_steering)
+            .collect::<Vec<_>>();
+        details.extend(inventory.issues.iter().map(render_issue));
+        return CommandOutput::failure(
+            "STEERING_LIST_FAILED",
+            "Steering inventory has diagnostics.",
+            details,
+        );
+    }
+    let mut output = format!(
+        "OK STEERING_LISTED: Found {} steering document(s).\n",
+        inventory.documents.len()
+    );
+    for document in &inventory.documents {
+        output.push_str("  ");
+        output.push_str(&render_steering(document));
+        output.push('\n');
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+/// Reads one steering selector as raw UTF-8 Markdown.
+#[must_use]
+pub fn steering_read(start: &Path, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match steering::read(&paths.specbind_root, selector) {
+        Ok(content) => CommandOutput::success(content.into_bytes()),
+        Err(failure) => CommandOutput::failure(
+            failure.code,
+            failure.message,
+            failure.issues.iter().map(render_issue).collect(),
+        ),
+    }
+}
+
+fn render_steering(document: &steering::SteeringDocument) -> String {
+    format!(
+        "selector={} type=\"{}\" path={}",
+        escape(&document.selector),
+        escape(&document.artifact_type),
+        escape(document.path.as_str())
     )
 }
 

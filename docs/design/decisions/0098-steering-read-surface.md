@@ -278,6 +278,24 @@ it.
 
 ## Implementation status
 
-Not implemented. No `steering` command route exists, no `SpecBind Steering`
-profile is registered in artifact discovery, and `specbind-discovery` names no
-steering read.
+Implemented for the read surface. `tools/specbind/src/steering.rs` discovers the
+collection recursively below `steering/`, keeping its own narrow profile rather
+than joining the spec-local `ArtifactKind` set, whose ordering and multiplicity
+rules do not apply to a project-level collection. It shares the Front Matter
+splitter and the `artifact_id` validator with artifact discovery, so identity
+follows the same rule everywhere.
+
+An absent `steering/` is an empty inventory; an unusable one fails. A duplicate
+`artifact_id` drops both documents and reports each, so no selector resolves to
+two files. A valid OKF document of another type is skipped silently, which is how
+the active Roadmap is excluded without a special case.
+
+`steering read` resolves the requested selector before considering
+collection-wide diagnostics, then refuses the read if any diagnostic remains.
+Tests cover the empty project, recursive discovery ordered by `artifact_id`
+alongside a live Roadmap, the raw read, an unknown selector, the duplicate case
+from both commands, the refusal to read valid guidance beside a broken document,
+and a missing `artifact_id`.
+
+`specbind-discovery` does not yet name these reads; that skill revision is
+outstanding along with its forward tests.

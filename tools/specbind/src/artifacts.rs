@@ -1245,7 +1245,7 @@ pub(crate) fn collection_id(kind: ArtifactKind, mapping: &Map<String, Value>) ->
     .flatten()
 }
 
-fn is_kebab_id(value: &str) -> bool {
+pub(crate) fn is_kebab_id(value: &str) -> bool {
     if value.is_empty() || value.len() > 64 {
         return false;
     }

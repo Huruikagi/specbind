@@ -8,7 +8,7 @@ use clap::Parser as _;
 use specbind::args::{
     ArtifactCommand, CheckCommand, Cli, Command, DirectCommand, GateCommand, MilestoneCommand,
     ProtocolCommand, ReleaseCommand, ReviewCommand, SpecCommand, SpecCompletionCommand,
-    TasksCommand, TemplateCommand,
+    SteeringCommand, TasksCommand, TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -99,6 +99,13 @@ fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
         TasksCommand::Reopen { spec, task_id } => {
             specbind::cli::tasks_reopen(start, &spec, &task_id)
         }
+    }
+}
+
+fn run_steering(start: &Path, command: SteeringCommand) -> CommandOutput {
+    match command {
+        SteeringCommand::List => specbind::cli::steering_list(start),
+        SteeringCommand::Read { selector } => specbind::cli::steering_read(start, &selector),
     }
 }
 
@@ -210,6 +217,7 @@ fn main() -> ExitCode {
         Command::Check { command } => run_check(&start, command),
         Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
+        Command::Steering { command } => run_steering(&start, command),
         Command::Spec { command } => run_spec(&start, command),
         Command::Milestone { command } => run_milestone(&start, command),
         Command::Release { command } => run_release(&start, command),
