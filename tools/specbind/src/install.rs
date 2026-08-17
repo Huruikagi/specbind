@@ -9,7 +9,7 @@ use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
-use crate::{config::ProjectLanguage, guarded_fs, repository, rule, template};
+use crate::{config::ProjectLanguage, guarded_fs, repository, rule, skill, template};
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
 const DEFAULT_SPEC_DIR: &str = ".specbind";
@@ -164,6 +164,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     let mut entries = vec![config_entry(existing.as_ref(), &resolved)];
     entries.extend(template_entries(project_root, &resolved)?);
     entries.extend(rule_entries(project_root, &resolved)?);
+    entries.extend(skill_entries(project_root, &resolved)?);
     if entries
         .iter()
         .any(|entry| entry.action == PlanAction::Replace)
@@ -459,6 +460,52 @@ fn rule_entries(
                 .then(|| "project-owned settings are never overwritten".to_owned()),
             content: (action == PlanAction::Create).then(|| default.content().to_owned()),
         });
+    }
+    Ok(entries)
+}
+
+/// Plans the product-managed skill assets for every selected agent.
+///
+/// Skills are replaced rather than kept: a local edit is not a supported
+/// customization path, and the repository guard below refuses the replacement
+/// while that edit is uncommitted.
+fn skill_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    let mut entries = Vec::new();
+    for agent in &resolved.agents {
+        for skill in skill::all() {
+            let relative = skill.target(*agent);
+            let rendered = skill.render(*agent).map_err(|error| {
+                one_issue(
+                    "INSTALL_ASSET_UNAVAILABLE",
+                    Some(relative.clone()),
+                    error.message,
+                )
+            })?;
+            let target = project_root.join(&relative);
+            let action = match fs::read(&target) {
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+                Ok(current) if current == rendered.as_bytes() => PlanAction::Keep,
+                Ok(_) => PlanAction::Replace,
+                Err(error) => {
+                    return Err(one_issue(
+                        "INSTALL_TARGET_UNREADABLE",
+                        Some(relative),
+                        error.to_string(),
+                    ));
+                }
+            };
+            entries.push(PlanEntry {
+                action,
+                path: relative,
+                category: "skill",
+                detail: (action == PlanAction::Keep)
+                    .then(|| "already matches the current product asset".to_owned()),
+                content: (action != PlanAction::Keep).then_some(rendered),
+            });
+        }
     }
     Ok(entries)
 }

@@ -1,4 +1,5 @@
 pub mod approval;
+pub mod args;
 pub mod artifacts;
 pub mod cli;
 pub mod completion;
@@ -24,6 +25,7 @@ pub mod requirements;
 pub mod roadmap;
 pub mod rule;
 pub mod schema;
+pub mod skill;
 pub mod spec_status;
 pub mod task_progress;
 pub mod task_read_model;

@@ -149,12 +149,20 @@ installation surfaces that this decision does not define.
 
 ## Implementation status
 
-Not implemented. Nothing exists under `tools/specbind/assets/skills/`, the
-installer plans no agent assets, and no skill invokes the CLI. The first
-increment adds the source layout, the per-agent renderer, installation planning
-and application for skill targets, the applicable conformance tests above, and
-the read-only `specbind-status` skill. That skill exercises the complete
-source-render-install-command-reference path without introducing mutation risk.
-Protocol-selector and shared-rule reference checks become exercised when the
-first skill that consumes those surfaces is added; `specbind-status` does not
-pretend to depend on either.
+Implemented for the first skill. `tools/specbind/assets/skills/specbind-status/SKILL.md`
+is the single agent-neutral source, and `specbind install` renders and writes it
+to `.claude/skills/` and `.agents/skills/` for each selected agent. The renderer
+emits `name`, `description`, and Claude Code's `argument-hint`, writes the body
+unchanged for both agents, and emits no permission grant or invocation
+restriction.
+
+The clap definitions moved to `tools/specbind/src/args.rs` so conformance can
+walk the real command graph. Tests verify that every documented invocation
+resolves to an existing route with only options that route accepts, that Front
+Matter is complete and matches the directory, that both renderings share one
+body, and that installation targets and refresh behavior hold. The drift check
+was confirmed to fail on both a renamed command and an unknown option.
+
+Protocol-selector and shared-rule checks are implemented but currently match
+nothing, because `specbind-status` consumes neither surface. They become
+exercised with the first skill that does.

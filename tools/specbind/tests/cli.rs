@@ -1093,7 +1093,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 8 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 10 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1108,7 +1108,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 8 create, 0 replace, 0 keep\n",
+                "\n  Summary: 10 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1177,7 +1177,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 6 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 7 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1226,10 +1226,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 8 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 9 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 8 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 9 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1269,6 +1269,93 @@ fn applies_an_initial_installation_and_is_idempotent() {
 }
 
 #[test]
+fn installs_product_managed_skills_for_each_selected_agent() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "codex",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("- create .claude/skills/specbind-status/SKILL.md [skill]\n")
+                .and(predicate::str::contains(
+                    "- create .agents/skills/specbind-status/SKILL.md [skill]\n",
+                )),
+        );
+
+    let claude = fs::read_to_string(root.path().join(".claude/skills/specbind-status/SKILL.md"))
+        .expect("rendered Claude Code skill");
+    let codex = fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
+        .expect("rendered Codex skill");
+    assert!(
+        claude.starts_with("---\nname: specbind-status\n"),
+        "{claude}"
+    );
+    assert!(claude.contains("argument-hint:"), "{claude}");
+    assert!(!codex.contains("argument-hint:"), "{codex}");
+    for forbidden in ["allowed-tools", "disable-model-invocation"] {
+        assert!(!claude.contains(forbidden), "{claude}");
+        assert!(!codex.contains(forbidden), "{codex}");
+    }
+    let body = |rendered: &str| {
+        rendered
+            .split_once("\n---\n")
+            .and_then(|(_, rest)| rest.split_once("\n---\n"))
+            .map_or_else(|| rendered.to_owned(), |(_, body)| body.to_owned())
+    };
+    assert_eq!(
+        claude.rsplit_once("\n---\n").expect("body").1,
+        codex.rsplit_once("\n---\n").expect("body").1,
+        "both agents receive the same body"
+    );
+    let _ = body;
+
+    // A local edit is not a customization path, and the repository guard refuses
+    // to overwrite it while it is uncommitted.
+    write(
+        root.path(),
+        ".agents/skills/specbind-status/SKILL.md",
+        "---\nname: specbind-status\ndescription: edited\n---\n# Local\n",
+    );
+    let mut refresh = Command::cargo_bin("specbind").expect("specbind binary should build");
+    refresh
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_COMMIT_REQUIRED"));
+
+    commit_all(root.path());
+    let mut restored = Command::cargo_bin("specbind").expect("specbind binary should build");
+    restored
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- replace .agents/skills/specbind-status/SKILL.md [skill]\n",
+        ));
+    assert_eq!(
+        fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
+            .expect("refreshed skill"),
+        codex,
+        "a refresh restores the product asset"
+    );
+}
+
+#[test]
 fn never_overwrites_project_owned_settings_when_applying() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
@@ -1285,7 +1372,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 7 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 8 created, 0 replaced, 1 kept\n",
         ));
 
     assert_eq!(
