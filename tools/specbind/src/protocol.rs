@@ -23,11 +23,18 @@ impl Protocol {
 }
 
 /// The complete embedded registry, ordered for stable listing.
-static PROTOCOLS: &[Protocol] = &[Protocol {
-    selector: "okf-authoring",
-    purpose: "OKF v0.2 authoring baseline, reserved-file behavior, extension preservation, and the boundary between OKF metadata and SpecBind authority.",
-    content: include_str!("../assets/protocols/okf-authoring.md"),
-}];
+static PROTOCOLS: &[Protocol] = &[
+    Protocol {
+        selector: "okf-authoring",
+        purpose: "OKF v0.2 authoring baseline, reserved-file behavior, extension preservation, and the boundary between OKF metadata and SpecBind authority.",
+        content: include_str!("../assets/protocols/okf-authoring.md"),
+    },
+    Protocol {
+        selector: "requirements-review",
+        purpose: "Complete-current-contract quality, observable scope, testability, ambiguity handling, and semantic readiness before Requirements approval.",
+        content: include_str!("../assets/protocols/requirements-review.md"),
+    },
+];
 
 /// Lists every embedded protocol.
 #[must_use]
