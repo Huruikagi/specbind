@@ -34,6 +34,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Complete-current-contract quality, observable scope, testability, ambiguity handling, and semantic readiness before Requirements approval.",
         content: include_str!("../assets/protocols/requirements-review.md"),
     },
+    Protocol {
+        selector: "design-discovery",
+        purpose: "Selection and escalation of repository investigation needed before a self-contained Design can be authored.",
+        content: include_str!("../assets/protocols/design-discovery.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
