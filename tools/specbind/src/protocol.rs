@@ -49,6 +49,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Semantic Design review baseline shared by pre-approval authoring review and independent validation.",
         content: include_str!("../assets/protocols/design-validation.md"),
     },
+    Protocol {
+        selector: "gap-analysis",
+        purpose: "Evidence gathering, option analysis, uncertainty handling, and the boundary between milestone-local Research and authoritative artifacts.",
+        content: include_str!("../assets/protocols/gap-analysis.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
