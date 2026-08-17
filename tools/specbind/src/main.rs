@@ -125,6 +125,17 @@ enum TasksCommand {
     List { spec: String },
     /// Show one task's plan content and derived prerequisites.
     Show { spec: String, task_id: String },
+    /// Record one executable task as completed.
+    Complete { spec: String, task_id: String },
+    /// Record one executable task as blocked with an explicit reason.
+    Block {
+        spec: String,
+        task_id: String,
+        #[arg(long)]
+        reason: String,
+    },
+    /// Return one executable task to pending.
+    Reopen { spec: String, task_id: String },
 }
 
 #[derive(Debug, Subcommand)]
@@ -331,6 +342,17 @@ fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
     match command {
         TasksCommand::List { spec } => specbind::cli::tasks_list(start, &spec),
         TasksCommand::Show { spec, task_id } => specbind::cli::tasks_show(start, &spec, &task_id),
+        TasksCommand::Complete { spec, task_id } => {
+            specbind::cli::tasks_complete(start, &spec, &task_id)
+        }
+        TasksCommand::Block {
+            spec,
+            task_id,
+            reason,
+        } => specbind::cli::tasks_block(start, &spec, &task_id, &reason),
+        TasksCommand::Reopen { spec, task_id } => {
+            specbind::cli::tasks_reopen(start, &spec, &task_id)
+        }
     }
 }
 

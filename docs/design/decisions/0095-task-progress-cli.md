@@ -185,7 +185,12 @@ that skill's contract; the CLI reports only the single record it made.
 
 ## Implementation status
 
-Not implemented. The task plan loader, derived read model, prerequisite
-computation, and guarded atomic writes already exist. Clap routing, the three
-guarded mutations, concise rendering, stable exit behavior, and CLI integration
-tests remain to be implemented.
+Implemented. `tasks complete`, `tasks block --reason`, and `tasks reopen` mutate
+only `execution.tasks`, require the Spec in `implementation`, and reject a group
+identifier because it resolves to no executable task. Completion reuses the same
+derivation as the read model's actionable set and refuses while any effective
+prerequisite is incomplete, naming the unmet identifiers. Blocking requires a
+non-empty single-line reason and refuses a completed task. Reopening removes the
+entry and drops the `execution` container when it becomes empty. Every mutation
+revalidates the document through domain conversion before an atomic guarded
+write, and no Git state is inspected.

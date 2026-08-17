@@ -19,6 +19,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
 - `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
+- `tools/specbind/src/task_progress.rs` — guarded task execution progress records
 - `tools/specbind/src/rule.rs` — embedded default shared-rule installation assets
 - `tools/specbind/src/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language

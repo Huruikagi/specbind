@@ -21,6 +21,7 @@ use crate::{
     release_finalize::{self, FinalizeIssue},
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
+    task_progress::{self, ProgressReport},
     task_read_model::{GroupView, TaskPlanItemView, TaskReadModel, TaskStatus, TaskView},
     template,
 };
@@ -661,6 +662,138 @@ pub fn tasks_show(start: &Path, canonical_spec: &str, task_id: &str) -> CommandO
         &task.completion_criteria,
     );
     CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn tasks_complete(start: &Path, canonical_spec: &str, task_id: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match task_progress::complete(&paths.specbind_root, canonical_spec, task_id) {
+        Ok(task_progress::CompleteOutcome::Completed(report)) => CommandOutput::success(
+            render_progress("TASK_COMPLETED", "Completed", canonical_spec, &report).into_bytes(),
+        ),
+        Ok(task_progress::CompleteOutcome::AlreadyCompleted) => CommandOutput::no_change(
+            "TASK_ALREADY_COMPLETED",
+            &format!(
+                "Task {} in spec {} is already completed.",
+                escape(task_id),
+                escape(canonical_spec)
+            ),
+        ),
+        Err(error) => render_progress_failure(
+            "TASK_COMPLETE_FAILED",
+            &format!("Cannot complete task {task_id} in spec {canonical_spec}."),
+            &error,
+        ),
+    }
+}
+
+#[must_use]
+pub fn tasks_block(
+    start: &Path,
+    canonical_spec: &str,
+    task_id: &str,
+    reason: &str,
+) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match task_progress::block(&paths.specbind_root, canonical_spec, task_id, reason) {
+        Ok(task_progress::BlockOutcome::Blocked(report)) => CommandOutput::success(
+            render_progress("TASK_BLOCKED", "Blocked", canonical_spec, &report).into_bytes(),
+        ),
+        Ok(task_progress::BlockOutcome::AlreadyBlocked) => CommandOutput::no_change(
+            "TASK_ALREADY_BLOCKED",
+            &format!(
+                "Task {} in spec {} already records that blocker.",
+                escape(task_id),
+                escape(canonical_spec)
+            ),
+        ),
+        Err(error) => render_progress_failure(
+            "TASK_BLOCK_FAILED",
+            &format!("Cannot block task {task_id} in spec {canonical_spec}."),
+            &error,
+        ),
+    }
+}
+
+#[must_use]
+pub fn tasks_reopen(start: &Path, canonical_spec: &str, task_id: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match task_progress::reopen(&paths.specbind_root, canonical_spec, task_id) {
+        Ok(task_progress::ReopenOutcome::Reopened(report)) => CommandOutput::success(
+            render_progress("TASK_REOPENED", "Reopened", canonical_spec, &report).into_bytes(),
+        ),
+        Ok(task_progress::ReopenOutcome::NotRecorded) => CommandOutput::no_change(
+            "TASK_NOT_RECORDED",
+            &format!(
+                "Task {} in spec {} has no recorded execution state.",
+                escape(task_id),
+                escape(canonical_spec)
+            ),
+        ),
+        Err(error) => render_progress_failure(
+            "TASK_REOPEN_FAILED",
+            &format!("Cannot reopen task {task_id} in spec {canonical_spec}."),
+            &error,
+        ),
+    }
+}
+
+fn render_progress(
+    code: &str,
+    verb: &str,
+    canonical_spec: &str,
+    report: &ProgressReport,
+) -> String {
+    let mut output = format!(
+        "OK {code}: {verb} task {} in spec {}.
+",
+        escape(&report.task_id),
+        escape(canonical_spec)
+    );
+    if let Some(reason) = &report.blocked_reason {
+        push_field(&mut output, "Blocker", reason);
+    }
+    push_field(
+        &mut output,
+        "Progress",
+        &format!(
+            "{}/{} completed, {} pending, {} blocked",
+            report.completed, report.total, report.pending, report.blocked
+        ),
+    );
+    push_inline_list(&mut output, "Next actionable", &report.actionable_ids);
+    output
+}
+
+fn render_progress_failure(
+    code: &'static str,
+    message: &str,
+    error: &task_progress::ProgressIssues,
+) -> CommandOutput {
+    CommandOutput::failure(
+        code,
+        message,
+        error
+            .issues
+            .iter()
+            .map(|issue| {
+                let path = issue
+                    .path
+                    .as_ref()
+                    .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+                format!("{}{path} {}", issue.code, escape(&issue.message))
+            })
+            .collect(),
+    )
 }
 
 #[must_use]

@@ -25,6 +25,7 @@ pub mod roadmap;
 pub mod rule;
 pub mod schema;
 pub mod spec_status;
+pub mod task_progress;
 pub mod task_read_model;
 pub mod template;
 pub mod traceability;

@@ -230,6 +230,184 @@ fn rejects_untrustworthy_task_projections_and_unknown_task_ids() {
 }
 
 #[test]
+fn records_task_progress_in_plan_order() {
+    let root = project_fixture();
+    write_progress_fixture(root.path());
+
+    let mut out_of_order = Command::cargo_bin("specbind").expect("specbind binary should build");
+    out_of_order
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "2"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR TASK_COMPLETE_FAILED: Cannot complete task 2 in spec checkout.",
+            )
+            .and(predicate::str::contains(
+                "TASK_PREREQUISITES_INCOMPLETE specs/checkout/tasks.yaml: task 2 cannot complete before its prerequisites: 1",
+            )),
+        );
+
+    let mut first = Command::cargo_bin("specbind").expect("specbind binary should build");
+    first
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1"])
+        .assert()
+        .success()
+        .stdout(
+            "OK TASK_COMPLETED: Completed task 1 in spec checkout.\n  Progress: 1/2 completed, 1 pending, 0 blocked\n  Next actionable: 2\n",
+        )
+        .stderr("");
+
+    let mut repeat = Command::cargo_bin("specbind").expect("specbind binary should build");
+    repeat
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1"])
+        .assert()
+        .success()
+        .stdout(
+            "NO_CHANGE TASK_ALREADY_COMPLETED: Task 1 in spec checkout is already completed.\n",
+        );
+
+    let tasks = fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml"))
+        .expect("recorded plan");
+    assert!(tasks.contains("execution:"), "{tasks}");
+    assert!(tasks.contains("status: completed"), "{tasks}");
+}
+
+#[test]
+fn records_and_clears_a_task_blocker() {
+    let root = project_fixture();
+    write_progress_fixture(root.path());
+
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(root.path())
+        .args(["tasks", "block", "checkout", "2", "--reason", "   "])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("TASK_BLOCKED_REASON_INVALID"));
+
+    let mut block = Command::cargo_bin("specbind").expect("specbind binary should build");
+    block
+        .current_dir(root.path())
+        .args([
+            "tasks",
+            "block",
+            "checkout",
+            "2",
+            "--reason",
+            "Waiting on the upstream API",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with("OK TASK_BLOCKED: Blocked task 2 in spec checkout.\n")
+                .and(predicate::str::contains(
+                    "\n  Blocker: Waiting on the upstream API\n",
+                ))
+                .and(predicate::str::contains(
+                    "\n  Progress: 0/2 completed, 1 pending, 1 blocked\n",
+                )),
+        );
+
+    let mut same = Command::cargo_bin("specbind").expect("specbind binary should build");
+    same.current_dir(root.path())
+        .args([
+            "tasks",
+            "block",
+            "checkout",
+            "2",
+            "--reason",
+            "Waiting on the upstream API",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "NO_CHANGE TASK_ALREADY_BLOCKED:",
+        ));
+
+    let mut reopen = Command::cargo_bin("specbind").expect("specbind binary should build");
+    reopen
+        .current_dir(root.path())
+        .args(["tasks", "reopen", "checkout", "2"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "OK TASK_REOPENED: Reopened task 2 in spec checkout.\n",
+        ));
+
+    let tasks = fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml"))
+        .expect("reopened plan");
+    assert!(
+        !tasks.contains("execution:"),
+        "an emptied execution container is removed: {tasks}"
+    );
+
+    let mut absent = Command::cargo_bin("specbind").expect("specbind binary should build");
+    absent
+        .current_dir(root.path())
+        .args(["tasks", "reopen", "checkout", "2"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with("NO_CHANGE TASK_NOT_RECORDED:"));
+}
+
+#[test]
+fn refuses_task_progress_outside_implementation_and_for_groups() {
+    let root = project_fixture();
+    write_progress_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: group\n      title: Build\n      tasks:\n        - id: '1.1'\n          kind: task\n          title: A\n          requirement_ids: ['1.1']\n        - id: '1.2'\n          kind: task\n          title: B\n          requirement_ids: ['1.1']\n",
+    );
+
+    let mut group = Command::cargo_bin("specbind").expect("specbind binary should build");
+    group
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("TASK_NOT_FOUND"));
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    let mut idle = Command::cargo_bin("specbind").expect("specbind binary should build");
+    idle.current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1.1"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "TASK_SPEC_STATE_INVALID specs/checkout/spec.yaml: task progress requires the Spec in implementation state",
+        ));
+}
+
+/// Writes a Spec in `implementation` state with a two-task ordered plan.
+fn write_progress_fixture(root: &Path) {
+    write(
+        root,
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {REVIEW_MILESTONE}\n  state: implementation\n  requirement_ids: ['1.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1']\n      input_revisions:\n        requirements: sha256:0000000000000000000000000000000000000000000000000000000000000000\n"
+        ),
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: First\n      requirement_ids: ['1.1']\n    - id: '2'\n      kind: task\n      title: Second\n      requirement_ids: ['1.1']\n",
+    );
+}
+
+#[test]
 fn reports_composed_spec_status_with_freshness_coverage_and_progress() {
     let root = project_fixture();
     write_status_fixture(root.path());
