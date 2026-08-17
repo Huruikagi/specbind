@@ -149,9 +149,11 @@ installation surfaces that this decision does not define.
 
 ## Implementation status
 
-Implemented for the first skill. `tools/specbind/assets/skills/specbind-status/SKILL.md`
-is the single agent-neutral source, and `specbind install` renders and writes it
-to `.claude/skills/` and `.agents/skills/` for each selected agent. The renderer
+Implemented for the skills embedded so far. Each of
+`tools/specbind/assets/skills/specbind-status/SKILL.md` and
+`tools/specbind/assets/skills/specbind-discovery/SKILL.md` is a single
+agent-neutral source, and `specbind install` renders and writes each one to
+`.claude/skills/` and `.agents/skills/` for every selected agent. The renderer
 emits `name`, `description`, and Claude Code's `argument-hint`, writes the body
 unchanged for both agents, and emits no permission grant or invocation
 restriction.
@@ -162,6 +164,11 @@ resolves to an existing route with only options that route accepts, that Front
 Matter is complete and matches the directory, that both renderings share one
 body, and that installation targets and refresh behavior hold. The drift check
 was confirmed to fail on both a renamed command and an unknown option.
+
+Adding the second skill exercised the check immediately: it rejected
+`specbind template read spec brief`, whose `spec` scope is a literal positional
+value rather than a subcommand. The resolver now stops walking at a leaf route,
+and both drift cases were re-confirmed to fail afterwards.
 
 Protocol-selector and shared-rule checks are implemented but currently match
 nothing, because `specbind-status` consumes neither surface. They become

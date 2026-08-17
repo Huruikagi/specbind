@@ -1,7 +1,7 @@
 use clap::CommandFactory as _;
 use specbind::{args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 1] = ["specbind-status"];
+const ACCEPTED_SKILLS: [&str; 2] = ["specbind-discovery", "specbind-status"];
 
 #[test]
 fn embeds_the_accepted_skill_set_with_valid_metadata() {
@@ -163,6 +163,11 @@ fn resolve(root: &clap::Command, skill: &str, invocation: &[String]) {
     while index < invocation.len() {
         let token = invocation[index].as_str();
         if token.starts_with('-') || is_metavariable(token) {
+            break;
+        }
+        // A leaf route takes positional values, and a literal one such as the
+        // `spec` scope of `template read` is a value, not a missing command.
+        if command.get_subcommands().next().is_none() {
             break;
         }
         let Some(next) = command

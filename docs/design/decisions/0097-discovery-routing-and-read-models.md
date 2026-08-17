@@ -260,8 +260,11 @@ dirty repository, and a refused reclassification of a completed Direct item.
 
 ## Implementation status
 
-Partially implemented. Both read commands exist; no discovery skill is embedded
-yet.
+Implemented. Both read commands exist and
+`tools/specbind/assets/skills/specbind-discovery/SKILL.md` is embedded and
+installed, carrying the seven stages, the reading discipline, the
+rewind-before-scope ordering, the Brief authoring and retry rules, and the stop
+conditions. Its forward tests remain outstanding, pending the fixture project.
 
 `tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which

@@ -44,10 +44,16 @@ impl fmt::Display for SkillError {
 impl std::error::Error for SkillError {}
 
 /// The complete embedded skill set.
-static SKILLS: &[Skill] = &[Skill {
-    name: "specbind-status",
-    source: include_str!("../assets/skills/specbind-status/SKILL.md"),
-}];
+static SKILLS: &[Skill] = &[
+    Skill {
+        name: "specbind-discovery",
+        source: include_str!("../assets/skills/specbind-discovery/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-status",
+        source: include_str!("../assets/skills/specbind-status/SKILL.md"),
+    },
+];
 
 /// Lists every embedded skill.
 #[must_use]
