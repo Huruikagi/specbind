@@ -54,15 +54,16 @@ reader can group them without reconstructing your naming.
 
 ## Writing in the project language
 
-Artifacts are authored in the project's configured language. When that language
-is not English, keep the pattern keywords and fixed phrases in English and
-translate only the variable parts:
+Artifacts are authored in the project's configured language. The patterns above
+describe logical roles, not fixed machine syntax. Translate trigger keywords,
+obligation phrases, subjects, conditions, and responses together so the complete
+criterion reads naturally in that language:
 
-> While `<状態>`, when `<イベント>`, the `<システム>` shall `<応答>`.
+> `<状態>`の間に`<イベント>`が発生したとき、`<システム>`は`<応答>`する。
 
-Do not interleave translated text inside a keyword or fixed phrase. The pattern
-is a structural marker, and mixing languages inside it makes the structure
-harder to see rather than easier to read.
+Preserve the condition, subject, and response roles after translation. Do not
+mix fixed English phrases into otherwise localized prose merely to make the EARS
+shape visible.
 
 ## Review questions
 
