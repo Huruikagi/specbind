@@ -176,13 +176,26 @@ type: SpecBind Contract
 - `cart-module` — `src/cart.py`
 EOF
 
+# The skills invoke `specbind` as a bare command, because a real installed
+# project has it on PATH. A fixture that does not is testing whether the agent
+# can guess an install location, which is not the thing under test.
+mkdir -p "$spec_dir/bin"
+cp "$specbind" "$spec_dir/bin/"
+printf '%s
+' "bin/" > "$spec_dir/.gitignore"
+
 git add -A
 git commit --quiet -m "Install SpecBind and seed project state"
+
+bin_dir=$(CDPATH= cd -- "$spec_dir/bin" && pwd)
 
 echo
 echo "Fixture ready at $target"
 echo "  language: $language"
-echo "  specbind: $specbind"
 echo
-echo "Start an agent session with no prior context in that directory and run the"
-echo "scenarios in docs/skill-forward-tests.md."
+echo "Put the CLI on PATH before starting the session:"
+echo
+echo "    export PATH=\"$bin_dir:\$PATH\""
+echo
+echo "Then start an agent session with no prior context in that directory and run"
+echo "the scenarios in docs/skill-forward-tests.md."

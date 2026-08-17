@@ -42,9 +42,30 @@ Use a target path the agent session can address directly. On Windows a `/tmp`
 path is a shell alias that some tools cannot resolve, and an agent that has to
 guess at the real location is being tested on something other than the skill.
 
+The script ships the release binary inside the fixture and prints the `export
+PATH=` line for it. **Run that line before starting the session.** The skills
+invoke `specbind` as a bare command because a real installed project has it on
+PATH; a fixture without it tests whether the agent can guess an install location,
+which is not what is under test. Two of the first runs stopped there and produced
+no result at all.
+
 Then start an agent session **with no prior context** in that directory. Context
 carried from developing the skill is the most common way a forward test passes
 for the wrong reason: the agent already knows what you meant.
+
+## Driving a run with a subagent
+
+A subagent works, and lets you pin the model. Two rules keep it honest.
+
+**Give the request, never the method.** State the working directory, state that
+`specbind` is on PATH, and then give the maintainer's request as a maintainer
+would phrase it. Naming a skill or a command teaches the answer.
+
+**Do not ask the agent to justify its classification.** Ask what it changed and
+what it ran. An expectation about what the agent told the user cannot be measured
+from a report you prompted for — you get the sentence because you asked, not
+because the skill produced it. Read those expectations from the run's own output
+instead.
 
 Rebuild the fixture between scenarios. Several scenarios depend on the starting
 state, and a leftover milestone from the previous one silently changes what is
@@ -79,9 +100,10 @@ delivery. It does not enter.
 - **No milestone exists.** `milestone status` still reports
   `NO_CHANGE NO_ACTIVE_MILESTONE`.
 - No brief, no Roadmap item, no Spec directory.
-- The agent said in the run that the work needed no Spec. Doing it silently is a
-  failure even though the files are right: the user never got the chance to say
-  "actually, track that."
+- The agent stated, unprompted, that the work needed no Spec. Doing it silently
+  is a failure even though the files are right: the user never got the chance to
+  say "actually, track that." Read this from what the run said on its own, not
+  from an answer you asked for.
 
 ### D2 — A Direct item that does enter
 
