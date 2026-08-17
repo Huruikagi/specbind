@@ -20,8 +20,14 @@ contract**, not the delta requested by the active milestone.
 - When a change alters behavior, revise the affected requirement in place rather
   than appending a contradicting one. Two requirements that disagree are a
   defect even if the newer one is correct.
-- When a change removes behavior, remove the requirement rather than marking it
-  obsolete in prose.
+- Do not leave obsolete or contradictory behavior in the current contract. The
+  requirements skill currently defers Requirement retirement, so when the
+  intended result requires a Requirement group or Acceptance Criterion to
+  disappear, stop instead of deleting it or marking it obsolete in prose.
+- Revising an obligation in place is ordinary requirements work when the Spec
+  retains the responsibility and the same Requirement ID still names the
+  changed obligation. Retirement is the removal of that obligation without a
+  live identity for downstream coverage.
 - Behavior that exists and is still owned by this Spec stays in the document
   even when the current milestone does not touch it.
 
