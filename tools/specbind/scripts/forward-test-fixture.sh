@@ -38,7 +38,7 @@ git config user.email "fixture@example.invalid"
 # about; an empty repository makes every boundary decision arbitrary.
 mkdir -p src
 cat > README.md <<'EOF'
-# Bookshop
+# Bookshp
 
 A small order service. Carts hold items, and checkout turns a cart into an order.
 EOF

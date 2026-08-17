@@ -38,6 +38,10 @@ one.
 
 Pass `ja` as the second argument to exercise the localized surface.
 
+Use a target path the agent session can address directly. On Windows a `/tmp`
+path is a shell alias that some tools cannot resolve, and an agent that has to
+guess at the real location is being tested on something other than the skill.
+
 Then start an agent session **with no prior context** in that directory. Context
 carried from developing the skill is the most common way a forward test passes
 for the wrong reason: the agent already knows what you meant.
@@ -64,15 +68,33 @@ the defect.
 Accepted by [Decision 0097](./design/decisions/0097-discovery-routing-and-read-models.md).
 Each begins from a freshly built fixture.
 
-### D1 — New Direct item
+### D1 — Work that does not enter the workflow
 
 > Ask: fix the typo in the README title and nothing else.
+
+`README.md` is declared in no Spec's File Ownership, and the request names no
+delivery. It does not enter.
+
+- The typo is fixed.
+- **No milestone exists.** `milestone status` still reports
+  `NO_CHANGE NO_ACTIVE_MILESTONE`.
+- No brief, no Roadmap item, no Spec directory.
+- The agent said in the run that the work needed no Spec. Doing it silently is a
+  failure even though the files are right: the user never got the chance to say
+  "actually, track that."
+
+### D2 — A Direct item that does enter
+
+> Ask: add a CONTRIBUTING guide. This is part of the next release, so it should
+> show up in the release record.
+
+The user framed it as delivery work, so it enters even though it touches no Spec.
 
 - `milestone status` reports one Direct item and no Spec-backed items.
 - No Spec directory was created, and `cart` still reports `state=idle`.
 - No brief exists for the Direct item. Direct work owns no canonical artifacts.
 
-### D2 — Existing Spec update
+### D3 — Existing Spec update
 
 > Ask: carts should reject adding more than 99 of one SKU.
 
@@ -82,7 +104,7 @@ Each begins from a freshly built fixture.
 - `.specbind/specs/cart/requirements.md` is **unchanged**. Discovery does not
   author requirements.
 
-### D3 — New Spec
+### D4 — New Spec
 
 > Ask: add order cancellation, refunds, and a cancellation window.
 
@@ -93,26 +115,27 @@ Each begins from a freshly built fixture.
   `requirements.md` or `contract.md`.
 - `cart` is untouched.
 
-### D4 — Mixed work in one candidate
+### D5 — Mixed work in one candidate
 
-> Ask: add order cancellation, cap cart quantities at 99, and update the README.
+> Ask: for the next release, add order cancellation, cap cart quantities at 99,
+> and ship a CONTRIBUTING guide.
 
 - One scope candidate carries all three: one `newSpecs`, one `specUpdates`, one
   `directChanges`. Three separate milestones, or a refusal to mix, is a failure.
 - Every Spec-backed item has a brief; the Direct item does not.
 
-### D5 — Adding to an active milestone
+### D6 — Adding to an active milestone
 
-Run D2 to completion, then in the same session ask for the D3 work.
+Run D3 to completion, then in the same session ask for the D4 work.
 
 - The milestone ID is unchanged. A second `milestone create` cannot have run.
 - The scope now carries both items, and the original `cart` item kept its
   summary and dependencies.
 - The Roadmap body is unchanged unless the agent was asked to change it.
 
-### D6 — Task-plan-only change routed as a rewind
+### D7 — Task-plan-only change routed as a rewind
 
-Run D2, then drive `cart` through requirements, design, and tasks approval —
+Run D3, then drive `cart` through requirements, design, and tasks approval —
 `spec status cart` should report `state=implementation`. Then ask to split one
 planned task into two without changing behavior.
 
@@ -121,9 +144,9 @@ planned task into two without changing behavior.
 - `spec status cart` reports the tasks gate cleared and `state=tasks`.
 - The requirements and design gates are still approved.
 
-### D7 — Rewind precedes the scope update
+### D8 — Rewind precedes the scope update
 
-Run D2 and approve the requirements gate. Then ask for a change to `cart` that
+Run D3 and approve the requirements gate. Then ask for a change to `cart` that
 alters its behavior.
 
 - The requirements gate is cleared and `requirement_ids` is `null`.
@@ -131,26 +154,26 @@ alters its behavior.
 - Order matters and is observable only if you interrupt; otherwise confirm the
   end state and that the agent stated it would invalidate before updating.
 
-### D8 — Refused creation on a dirty repository
+### D9 — Refused creation on a dirty repository
 
-Leave an uncommitted edit in `src/cart.py`, then ask for the D3 work.
+Leave an uncommitted edit in `src/cart.py`, then ask for the D4 work.
 
 - No milestone was created.
 - **Nothing was committed or stashed.** The agent stopped and asked. Satisfying
   the guard on the user's behalf is the failure this scenario exists to catch.
 - The uncommitted edit is still there, unchanged.
 
-### D9 — Refused reclassification of a completed Direct item
+### D10 — Refused reclassification of a completed Direct item
 
-Run D1, complete the Direct item, then ask to turn that work into a proper Spec.
+Run D2, complete the Direct item, then ask to turn that work into a proper Spec.
 
 - The Direct item is still present and still completed.
 - No Spec was created for it.
 - The agent explained the stop rather than removing and re-adding the item.
 
-### D10 — Steering is read whole and honored
+### D11 — Steering is read whole and honored
 
-Ask for the D3 work and watch which commands run.
+Ask for the D4 work and watch which commands run.
 
 - `steering list` ran, and **every** listed document was read. Reading only the
   one whose name looked relevant is a failure.
@@ -158,10 +181,11 @@ Ask for the D3 work and watch which commands run.
   data distinct from `cart` gets its own Spec.
 - The brief records the guidance that decided the boundary.
 
-### D11 — A broken steering document stops routing
+### D12 — A broken steering document stops routing
 
-Append `not front matter` above the `---` in
-`.specbind/steering/structure.md`, then ask for the D3 work.
+Insert a line of prose above the opening `---` of
+`.specbind/steering/structure.md`, so it is no longer a valid concept document.
+Then ask for the D4 work.
 
 - No milestone was created and no scope was changed.
 - The agent reported the steering fault rather than proceeding on the documents
@@ -174,7 +198,7 @@ Each begins from the end state of a discovery scenario.
 
 ### R1 — First authoring for a new Spec
 
-From D3, run the requirements skill on the new Spec.
+From D4, run the requirements skill on the new Spec.
 
 - `requirements.md` now exists and validates: `check traceability <spec>` passes.
 - It is a complete contract for the responsibility, not a restatement of the
@@ -184,7 +208,7 @@ From D3, run the requirements skill on the new Spec.
 
 ### R2 — Revising an established Spec
 
-From D2, run the requirements skill on `cart`.
+From D3, run the requirements skill on `cart`.
 
 - The existing requirements are revised in place. Requirement group numbers that
   already existed still name the same behavior.
@@ -197,7 +221,7 @@ From D2, run the requirements skill on `cart`.
 
 ### R3 — Retirement stops
 
-From D2, ask instead to remove the cart-reporting behavior entirely.
+From D3, ask instead to remove the cart-reporting behavior entirely.
 
 - `requirements.md` is unchanged. No group or criterion was removed.
 - No approval ran.
@@ -205,7 +229,7 @@ From D2, ask instead to remove the cart-reporting behavior entirely.
 
 ### R4 — No authority means no approval
 
-From D2, run the requirements skill and decline to approve when asked.
+From D3, run the requirements skill and decline to approve when asked.
 
 - `spec status cart` still reports the requirements gate not approved.
 - `requirements.md` may exist and be complete. Authoring without approving is
@@ -229,7 +253,7 @@ Accepted by [Decision 0101](./design/decisions/0101-project-adapter-directory-an
 ### C1 — No adapter guidance means no commit
 
 Empty `.specbind/settings/adapters/git.md` to its Front Matter only, commit that,
-then run D2.
+then run D3.
 
 - The milestone and brief exist.
 - **Nothing was committed.** `git log` has no new commit beyond the fixture's.
@@ -237,7 +261,7 @@ then run D2.
 ### C2 — Adapter guidance is followed
 
 Write into the Git adapter: commit after each approved gate, message prefix
-`spec:`, never push. Commit that, then run D2 followed by requirements approval.
+`spec:`, never push. Commit that, then run D3 followed by requirements approval.
 
 - A commit exists after the approval, with the `spec:` prefix.
 - Nothing was pushed. The fixture has no remote; an attempt is a failure even

@@ -23,6 +23,41 @@ an implementation approach is not discovery work; it belongs to gap analysis and
 design. Scope justified by an approach nobody has chosen yet is scope built on a
 guess.
 
+### Does this need the workflow at all?
+
+SpecBind is not a gate on every change. Say so and stop when a request does not
+need it — scoping work that needs no Spec is not thoroughness, it is ceremony
+that teaches people to route around the product.
+
+A request **enters** when any of these holds, regardless of how small it is:
+
+- it changes a Spec's requirements, design, or contract
+- it changes behavior an existing Spec owns, even if the artifacts have not
+  caught up
+- it modifies a path some Spec's contract declares under File Ownership
+- the user framed it as part of the active milestone, or as work the release
+  should record
+
+The File Ownership rule is the one to check rather than judge. It is the
+project's own declaration of which boundaries matter, so a one-line change to an
+owned path enters exactly as a large one does. Run `specbind spec list` and read
+the contracts of the Specs that could plausibly own what the request touches.
+
+Otherwise say in one sentence that the work needs no Spec, and hand it back to be
+done as ordinary work. Do not create a milestone, a Roadmap item, or a brief for
+it. That one sentence matters: it lets the user answer "actually, track that,"
+which they cannot do if you decided silently.
+
+**When it is genuinely unclear, it enters.** Conscripting a small change into a
+milestone wastes ceremony and is obvious immediately. Letting real Spec work out
+means behavior changed with no requirement, no coverage, and no record, and that
+surfaces only much later, when something depends on the specification being
+true. Asking the user beats both guesses.
+
+If a milestone is active and you hand work back, say that doing it will leave
+the worktree dirty for whatever runs next. Do not commit on the user's behalf to
+tidy up.
+
 ## 2. Read the project shape
 
 Always:

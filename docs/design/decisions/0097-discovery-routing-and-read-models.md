@@ -303,7 +303,7 @@ Implemented. Both read commands exist and
 `tools/specbind/assets/skills/specbind-discovery/SKILL.md` is embedded and
 installed, carrying the seven stages, the reading discipline, the
 rewind-before-scope ordering, the Brief authoring and retry rules, and the stop
-conditions. Its forward tests are specified as scenarios D1 through D11 in
+conditions. Its forward tests are specified as scenarios D1 through D12 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.
 
 The skill carries the Decision 0098 steering reads and the deliberate

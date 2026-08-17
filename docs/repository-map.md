@@ -172,3 +172,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0099](./design/decisions/0099-project-instruction-block.md) | Accepted | Marked SpecBind block maintained in root agent instruction files |
 | [0100](./design/decisions/0100-requirements-skill-contract.md) | Accepted | Active selection, approval, review loop, and invalidation for the requirements skill |
 | [0101](./design/decisions/0101-project-adapter-directory-and-git-workflow.md) | Accepted | Project adapter directory and free-form Git workflow guidance |
+| [0102](./design/decisions/0102-workflow-entry-condition.md) | Accepted | When a request enters the SpecBind workflow at all |
