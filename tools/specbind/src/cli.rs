@@ -14,6 +14,7 @@ use crate::{
     config,
     contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
+    install,
     milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
     protocol,
@@ -317,6 +318,106 @@ fn render_graph_issue(issue: &contract_graph::ContractGraphIssue) -> String {
         .as_ref()
         .map_or_else(String::new, |source| format!(" {}:", escape(source)));
     format!("{}{source} {}", issue.code, escape(&issue.message))
+}
+
+/// Reports the installation plan without touching the filesystem.
+#[must_use]
+pub fn install_dry_run(start: &Path, inputs: &install::InstallInputs) -> CommandOutput {
+    let project_root = match config::project_root_from(start) {
+        Ok(root) => root,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match install::plan(&project_root, inputs) {
+        Ok(plan) => {
+            let (create, replace, keep) = plan.counts();
+            let mut output = format!(
+                "OK INSTALL_PLANNED: Planned {} action(s) for {} agent(s).
+",
+                plan.entries.len(),
+                plan.agents.len()
+            );
+            push_field(
+                &mut output,
+                "Mode",
+                if plan.initial { "initial" } else { "refresh" },
+            );
+            push_field(&mut output, "Spec directory", &plan.spec_dir);
+            push_field(
+                &mut output,
+                "Language",
+                match plan.language {
+                    crate::config::ProjectLanguage::En => "en",
+                    crate::config::ProjectLanguage::Ja => "ja",
+                },
+            );
+            push_field(
+                &mut output,
+                "Agents",
+                &plan
+                    .agents
+                    .iter()
+                    .map(|agent| agent.name())
+                    .collect::<Vec<_>>()
+                    .join(", "),
+            );
+            push_field(
+                &mut output,
+                "Project instructions",
+                if plan.project_instructions {
+                    "enabled"
+                } else {
+                    "disabled"
+                },
+            );
+            output.push_str(
+                "  Actions:
+",
+            );
+            for entry in &plan.entries {
+                let detail = entry
+                    .detail
+                    .as_ref()
+                    .map_or_else(String::new, |detail| format!(" ({})", escape(detail)));
+                writeln!(
+                    output,
+                    "    - {} {} [{}]{detail}",
+                    entry.action.name(),
+                    escape(&entry.path),
+                    entry.category
+                )
+                .expect("writing to a String cannot fail");
+            }
+            push_field(
+                &mut output,
+                "Summary",
+                &format!("{create} create, {replace} replace, {keep} keep"),
+            );
+            CommandOutput::success(output.into_bytes())
+        }
+        Err(error) => CommandOutput::failure(
+            "INSTALL_PLAN_FAILED",
+            "Cannot plan the SpecBind installation.",
+            error.issues.iter().map(render_install_issue).collect(),
+        ),
+    }
+}
+
+/// Reports that the guarded apply path is not implemented yet.
+#[must_use]
+pub fn install_apply_unimplemented() -> CommandOutput {
+    CommandOutput::failure(
+        "INSTALL_APPLY_UNIMPLEMENTED",
+        "Applying an installation is not implemented yet; run with --dry-run to see the plan.",
+        vec![],
+    )
+}
+
+fn render_install_issue(issue: &install::InstallIssue) -> String {
+    let path = issue
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+    format!("{}{path} {}", issue.code, escape(&issue.message))
 }
 
 /// Lists the embedded product protocols.

@@ -11,6 +11,7 @@ pub mod domain;
 pub mod fingerprint;
 pub mod freshness;
 pub(crate) mod guarded_fs;
+pub mod install;
 pub mod milestone;
 pub mod milestone_status;
 pub mod protocol;

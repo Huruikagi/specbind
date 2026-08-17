@@ -25,6 +25,24 @@ enum Command {
         #[command(subcommand)]
         command: ArtifactCommand,
     },
+    /// Install or refresh `SpecBind` product assets in this project.
+    Install {
+        /// Report the plan without writing anything.
+        #[arg(long)]
+        dry_run: bool,
+        /// Supported agent to install; repeat to select several.
+        #[arg(long = "agent", value_parser = ["claude-code", "codex"])]
+        agents: Vec<String>,
+        /// Project-global artifact language.
+        #[arg(long, value_parser = ["en", "ja"])]
+        language: Option<String>,
+        /// Project-root-relative specification directory.
+        #[arg(long)]
+        spec_dir: Option<String>,
+        /// Maintain the marked `SpecBind` block in root agent instructions.
+        #[arg(long)]
+        project_instructions: bool,
+    },
     /// Read the immutable product protocols embedded in this binary.
     Protocol {
         #[command(subcommand)]
@@ -265,6 +283,33 @@ fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
     }
 }
 
+fn run_install(
+    start: &Path,
+    dry_run: bool,
+    agents: &[String],
+    language: Option<&str>,
+    spec_dir: Option<String>,
+    project_instructions: bool,
+) -> CommandOutput {
+    if !dry_run {
+        return specbind::cli::install_apply_unimplemented();
+    }
+    let inputs = specbind::install::InstallInputs {
+        agents: agents
+            .iter()
+            .filter_map(|value| specbind::install::Agent::parse(value))
+            .collect(),
+        language: match language {
+            Some("en") => Some(specbind::config::ProjectLanguage::En),
+            Some("ja") => Some(specbind::config::ProjectLanguage::Ja),
+            _ => None,
+        },
+        spec_dir,
+        project_instructions: project_instructions.then_some(true),
+    };
+    specbind::cli::install_dry_run(start, &inputs)
+}
+
 fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
     match command {
         CheckCommand::Traceability { spec } => specbind::cli::check_traceability(start, &spec),
@@ -371,6 +416,20 @@ fn main() -> ExitCode {
     };
     let output = match cli.command {
         Command::Artifact { command } => run_artifact(&start, command),
+        Command::Install {
+            dry_run,
+            agents,
+            language,
+            spec_dir,
+            project_instructions,
+        } => run_install(
+            &start,
+            dry_run,
+            &agents,
+            language.as_deref(),
+            spec_dir,
+            project_instructions,
+        ),
         Command::Protocol { command } => match command {
             ProtocolCommand::List => specbind::cli::protocol_list(),
             ProtocolCommand::Read { selector } => specbind::cli::protocol_read(&selector),

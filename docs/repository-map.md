@@ -17,6 +17,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
+- `tools/specbind/src/install.rs` — read-only installation planning and repository guards
 - `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
 - `tools/specbind/src/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language

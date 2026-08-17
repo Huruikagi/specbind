@@ -894,6 +894,164 @@ fn reaccepts_a_currently_fresh_review() {
 }
 
 #[test]
+fn plans_an_initial_installation_without_writing() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--agent",
+            "claude-code",
+            "--language",
+            "ja",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK INSTALL_PLANNED: Planned 3 action(s) for 2 agent(s).\n",
+            )
+            .and(predicate::str::contains("\n  Mode: initial\n"))
+            .and(predicate::str::contains("\n  Language: ja\n"))
+            .and(predicate::str::contains("\n  Agents: claude-code, codex\n"))
+            .and(predicate::str::contains(
+                "\n  Project instructions: disabled\n",
+            ))
+            .and(predicate::str::contains(
+                "- create .specbind.json [config]\n",
+            ))
+            .and(predicate::str::contains(
+                "- create .specbind/settings/templates/specs/requirements.md [template]\n",
+            ))
+            .and(predicate::str::contains(
+                "\n  Summary: 3 create, 0 replace, 0 keep\n",
+            )),
+        )
+        .stderr("");
+
+    assert!(
+        !root.path().join(".specbind.json").exists(),
+        "a dry run must not write the configuration"
+    );
+    assert!(
+        !root.path().join(".specbind").exists(),
+        "a dry run must not create the spec root"
+    );
+}
+
+#[test]
+fn requires_explicit_inputs_for_an_initial_installation() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut missing_language =
+        Command::cargo_bin("specbind").expect("specbind binary should build");
+    missing_language
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--agent", "codex"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR INSTALL_PLAN_FAILED: Cannot plan the SpecBind installation.",
+            )
+            .and(predicate::str::contains("INSTALL_LANGUAGE_REQUIRED")),
+        );
+
+    let mut missing_agent = Command::cargo_bin("specbind").expect("specbind binary should build");
+    missing_agent
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--language", "en"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_AGENT_REQUIRED"));
+}
+
+#[test]
+fn keeps_project_owned_settings_and_guards_replacements() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/settings/templates/specs/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\n---\n# Project design scaffold\n",
+    );
+
+    let mut unchanged = Command::cargo_bin("specbind").expect("specbind binary should build");
+    unchanged
+        .current_dir(root.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("\n  Mode: refresh\n")
+                .and(predicate::str::contains(
+                    "- keep .specbind.json [config] (already matches the requested inputs)\n",
+                ))
+                .and(predicate::str::contains(
+                    "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
+                ))
+                .and(predicate::str::contains(
+                    "\n  Summary: 1 create, 0 replace, 2 keep\n",
+                )),
+        );
+
+    let mut dirty = Command::cargo_bin("specbind").expect("specbind binary should build");
+    dirty
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--agent", "claude-code"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_COMMIT_REQUIRED"));
+
+    commit_all(root.path());
+    let mut replaceable = Command::cargo_bin("specbind").expect("specbind binary should build");
+    replaceable
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--agent", "claude-code"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("- replace .specbind.json [config]\n")
+                .and(predicate::str::contains("\n  Agents: claude-code, codex\n")),
+        );
+
+    write(root.path(), "dirty.txt", "dirty\n");
+    let mut blocked = Command::cargo_bin("specbind").expect("specbind binary should build");
+    blocked
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--agent", "claude-code"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
+}
+
+#[test]
+fn refuses_to_apply_an_installation_yet() {
+    let root = project_fixture();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR INSTALL_APPLY_UNIMPLEMENTED:",
+        ));
+}
+
+#[test]
 fn reads_embedded_protocols_without_a_project() {
     let outside = tempfile::tempdir().expect("directory without a SpecBind project");
 

@@ -45,6 +45,17 @@ struct RootConfig {
     language: ProjectLanguage,
 }
 
+/// Resolves only the containing Git project root.
+///
+/// Installation planning needs this before `.specbind.json` exists.
+///
+/// # Errors
+///
+/// Returns a stable Git diagnostic when no project root can be resolved.
+pub fn project_root_from(start: &Path) -> Result<PathBuf, ConfigError> {
+    git_project_root(start)
+}
+
 /// Resolves the containing Git project and its configured `SpecBind` root.
 ///
 /// This read-only projection validates the configuration fields required by

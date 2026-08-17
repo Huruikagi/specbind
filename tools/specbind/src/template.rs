@@ -83,6 +83,21 @@ pub fn discover_spec_templates(
     inventory(templates, issues)
 }
 
+/// Selectors whose structure a project may own, installed under Decision 0091.
+///
+/// Every other artifact type keeps an embedded scaffold only.
+pub const INSTALLED_SELECTORS: [&str; 2] = ["requirements", "design/main"];
+
+/// Resolves the embedded defaults that `specbind install` writes into the
+/// project customization surface.
+#[must_use]
+pub fn installed_default_templates(language: ProjectLanguage) -> Vec<Template> {
+    embedded_spec_templates(language)
+        .into_iter()
+        .filter(|template| INSTALLED_SELECTORS.contains(&template.selector.as_str()))
+        .collect()
+}
+
 /// Resolves only the official defaults embedded in this binary.
 #[must_use]
 pub fn embedded_spec_templates(language: ProjectLanguage) -> Vec<Template> {
