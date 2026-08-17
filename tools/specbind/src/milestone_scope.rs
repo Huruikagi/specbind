@@ -7,11 +7,17 @@
 use std::path::Path;
 
 use crate::{
+    milestone,
     milestone_status::{self, MilestoneStatusFailure},
     roadmap::{Dependency, DirectItem, RoadmapDocument, SpecItem},
 };
 
 /// Renders the active milestone's scope as a version-1 candidate document.
+///
+/// With `include_body`, the complete current Markdown body is emitted after the
+/// work items, so a caller that deliberately intends to change the prose edits a
+/// complete value rather than composing one. There is no body-only read whose
+/// result could be mistaken for a complete replacement candidate.
 ///
 /// Returns `Ok(None)` when no milestone is active.
 ///
@@ -21,10 +27,16 @@ use crate::{
 /// be read as a valid document. No partial scope is produced, because a
 /// replacement composed from a scope the parser never accepted would be
 /// rejected or, worse, silently lose work items.
-pub fn resolve(specbind_root: &Path) -> Result<Option<String>, MilestoneStatusFailure> {
-    Ok(milestone_status::read_roadmap(specbind_root)?
-        .as_ref()
-        .map(render))
+pub fn resolve(
+    specbind_root: &Path,
+    include_body: bool,
+) -> Result<Option<String>, MilestoneStatusFailure> {
+    Ok(
+        milestone_status::read_roadmap_source(specbind_root)?.map(|(source, document)| {
+            let body = include_body.then(|| milestone::existing_body(&source));
+            render(&document, body)
+        }),
+    )
 }
 
 /// Serializes the candidate by hand.
@@ -33,7 +45,7 @@ pub fn resolve(specbind_root: &Path) -> Result<Option<String>, MilestoneStatusFa
 /// keys alphabetically without the `preserve_order` feature, which would emit
 /// `directChanges` before `newSpecs` and invert the declared order. Writing the
 /// document directly also fixes the indentation and trailing newline.
-fn render(roadmap: &RoadmapDocument) -> String {
+fn render(roadmap: &RoadmapDocument, body: Option<&str>) -> String {
     let mut categories = Vec::new();
     if !roadmap.new_specs.is_empty() {
         categories.push(spec_category("newSpecs", &roadmap.new_specs));
@@ -44,8 +56,11 @@ fn render(roadmap: &RoadmapDocument) -> String {
     if !roadmap.direct_changes.is_empty() {
         categories.push(direct_category(&roadmap.direct_changes));
     }
+    let body = body.map_or_else(String::new, |body| {
+        format!(",\n  \"body\": {}", quote(body))
+    });
     format!(
-        "{{\n  \"schemaVersion\": 1,\n  \"workItems\": {{\n{}\n  }}\n}}\n",
+        "{{\n  \"schemaVersion\": 1,\n  \"workItems\": {{\n{}\n  }}{body}\n}}\n",
         categories.join(",\n")
     )
 }

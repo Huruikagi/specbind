@@ -307,7 +307,7 @@ conditions. Its forward tests remain outstanding, pending the fixture project.
 
 The embedded skill predates Decision 0098 and names neither steering reads nor
 the deliberate `--include-body` path yet. That part of the reading and authoring
-discipline lands with the steering commands and scope-read extension.
+discipline lands with the steering commands.
 
 `tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
@@ -320,8 +320,11 @@ version-1 candidate. The document is serialized by hand rather than through
 `serde_json`, which orders object keys alphabetically without `preserve_order`
 and would emit `directChanges` before `newSpecs`, inverting the declared order.
 Absence returns `NO_CHANGE NO_ACTIVE_MILESTONE` and an invalid Roadmap returns
-`ERROR MILESTONE_SCOPE_FAILED` with no partial document.
+`ERROR MILESTONE_SCOPE_FAILED` with no partial document. `--include-body`
+recovers the authored body through the same extraction that scope replacement
+uses, so the two cannot disagree about where the Front Matter ends.
 
 The accepted checks are covered, including the byte-exact serialization, the
-round trip through `update-scope` returning `NO_CHANGE`, and the omission of
+round trip through `update-scope` returning `NO_CHANGE` in both the default and
+`--include-body` forms, the absence of `body` by default, and the omission of
 completed Direct status. The skill and its forward tests remain outstanding.

@@ -205,6 +205,18 @@ pub fn resolve(
 pub(crate) fn read_roadmap(
     specbind_root: &Path,
 ) -> Result<Option<RoadmapDocument>, MilestoneStatusFailure> {
+    Ok(read_roadmap_source(specbind_root)?.map(|(_, document)| document))
+}
+
+/// Loads the active Roadmap and retains its original source, which a caller
+/// needs to recover the authored Markdown body the parser does not carry.
+///
+/// # Errors
+///
+/// Returns read, path-safety, or parser diagnostics.
+pub(crate) fn read_roadmap_source(
+    specbind_root: &Path,
+) -> Result<Option<(String, RoadmapDocument)>, MilestoneStatusFailure> {
     let path = specbind_root.join("steering/roadmap.md");
     let metadata = match fs::symlink_metadata(&path) {
         Ok(metadata) => metadata,
@@ -220,7 +232,7 @@ pub(crate) fn read_roadmap(
     let content = fs::read_to_string(path)
         .map_err(|error| failure("MILESTONE_ROADMAP_READ_FAILED", error.to_string()))?;
     roadmap::parse(&content)
-        .map(Some)
+        .map(|document| Some((content.clone(), document)))
         .map_err(|error| MilestoneStatusFailure {
             diagnostics: error
                 .issues

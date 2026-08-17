@@ -323,7 +323,11 @@ fn spec_frontmatter(items: &[SpecItem]) -> Option<Vec<SpecItemFrontmatter<'_>>> 
 }
 
 /// Returns the Markdown body that follows the closing frontmatter delimiter.
-fn existing_body(source: &str) -> &str {
+/// Returns the authored Markdown body that follows the Front Matter.
+///
+/// The Roadmap parser does not carry the body, so both scope replacement and the
+/// scope read recover it from the original source through this one function.
+pub(crate) fn existing_body(source: &str) -> &str {
     let mut offset = 0;
     let mut lines = source.split_inclusive('\n');
     let Some(first) = lines.next() else {

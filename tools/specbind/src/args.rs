@@ -200,7 +200,11 @@ pub enum MilestoneCommand {
     /// Report stage, progress, actions, dependencies, and release blockers.
     Status,
     /// Write the current scope as a replacement candidate document.
-    Scope,
+    Scope {
+        /// Include the complete current Markdown body in the candidate.
+        #[arg(long)]
+        include_body: bool,
+    },
     /// Bind or explicitly rebind the active milestone release label.
     BindRelease {
         version: String,

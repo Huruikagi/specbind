@@ -134,7 +134,9 @@ fn run_spec_completion(start: &Path, command: SpecCompletionCommand) -> CommandO
 fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
     match command {
         MilestoneCommand::Status => specbind::cli::milestone_status(start),
-        MilestoneCommand::Scope => specbind::cli::milestone_scope(start),
+        MilestoneCommand::Scope { include_body } => {
+            specbind::cli::milestone_scope(start, include_body)
+        }
         MilestoneCommand::BindRelease { version, rebind } => {
             specbind::cli::milestone_bind_release(start, &version, rebind)
         }

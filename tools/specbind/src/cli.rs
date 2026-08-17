@@ -854,12 +854,12 @@ fn present(value: bool) -> &'static str {
 /// document goes to stdout with no result wrapper, so it can be piped straight
 /// back into `milestone update-scope --scope -`.
 #[must_use]
-pub fn milestone_scope(start: &Path) -> CommandOutput {
+pub fn milestone_scope(start: &Path, include_body: bool) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    match milestone_scope::resolve(&paths.specbind_root) {
+    match milestone_scope::resolve(&paths.specbind_root, include_body) {
         Ok(Some(document)) => CommandOutput::success(document.into_bytes()),
         Ok(None) => CommandOutput::no_change("NO_ACTIVE_MILESTONE", "No active milestone exists."),
         Err(error) => CommandOutput::failure(

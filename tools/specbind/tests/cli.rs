@@ -3037,3 +3037,62 @@ fn omits_completed_direct_status_from_the_emitted_scope() {
         .stdout(predicate::str::contains("\"status\"").not())
         .stderr("");
 }
+
+#[test]
+fn emits_the_complete_body_only_when_deliberately_requested() {
+    let root = project_fixture();
+    commit_all(root.path());
+
+    let mut create = Command::cargo_bin("specbind").expect("specbind binary should build");
+    create
+        .current_dir(root.path())
+        .args(["milestone", "create", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"workItems":{"directChanges":[{"id":"docs","summary":"Update docs"}]},"body":"Overview\n\nDeliver docs.\n"}"#,
+        )
+        .assert()
+        .success();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    let output = command
+        .current_dir(root.path())
+        .args(["milestone", "scope", "--include-body"])
+        .assert()
+        .success()
+        .stderr("")
+        .get_output()
+        .stdout
+        .clone();
+    let document = String::from_utf8(output).expect("UTF-8 scope document");
+
+    // The body is complete and follows the work items, so a caller edits one
+    // whole value rather than composing a replacement from a fragment.
+    assert!(
+        document.contains("  \"body\": \"Overview\\n\\nDeliver docs.\\n\"\n}\n"),
+        "{document}"
+    );
+
+    // The round trip holds for this form too.
+    let mut round_trip = Command::cargo_bin("specbind").expect("specbind binary should build");
+    round_trip
+        .current_dir(root.path())
+        .args(["milestone", "update-scope", "--scope", "-"])
+        .write_stdin(document)
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "NO_CHANGE MILESTONE_SCOPE_UNCHANGED",
+        ))
+        .stderr("");
+
+    // The default read stays body-free, so an ordinary round trip cannot
+    // rewrite authored prose.
+    let mut default = Command::cargo_bin("specbind").expect("specbind binary should build");
+    default
+        .current_dir(root.path())
+        .args(["milestone", "scope"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("\"body\"").not())
+        .stderr("");
+}
