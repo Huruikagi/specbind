@@ -5,10 +5,10 @@ Status: Accepted
 ## Context
 
 SpecBind already has one project-owned operational adapter. Decisions 0002,
-0010, and 0063 place free-form release instructions in
-`settings/release.md`, where an agent interprets project-specific preparation,
-publication, verification, and cleanup without turning Markdown into a command
-language.
+0010, and 0063 put free-form release instructions in a single settings file,
+where an agent interprets project-specific preparation, publication,
+verification, and cleanup without turning Markdown into a command language. This
+decision moves that file, and those decisions now name its new path.
 
 Git checkpoint policy has the same shape. Projects differ on whether they commit
 after each approved gate, once after planning, per implementation Task, or only
@@ -45,8 +45,9 @@ is a pre-implementation path correction rather than a compatibility migration.
 Explicit cc-sdd migration writes any converted release guidance to the new path.
 
 The directory is organization, not an extension loader. A product-managed skill
-names every adapter it consumes and reads that exact known path. It does not
-scan the directory, infer behavior from filenames, or execute an unknown file.
+names every adapter it consumes by selector and reads it through the command
+surface below. It does not scan the directory, infer behavior from filenames, or
+execute an unknown file.
 Adding another product adapter requires an explicit selector, profile, owning
 consumers, absence semantics, installation treatment, and conflict boundary.
 
@@ -61,6 +62,17 @@ hook.
 `specbind install` embeds and creates missing scaffolds for both known adapters,
 then treats the project copies as user-owned settings that are never overwritten.
 This follows Decisions 0008 and 0077.
+
+Scaffolds are localized for both configured languages, like Decision 0059
+templates and unlike Decision 0093 rules. The distinction is what the document
+becomes: a rule states the product's judgment until a project overrides it, so
+it speaks in the product's voice, while an adapter scaffold is an empty vessel
+for the project's own operational procedure. A Japanese project describing its
+release steps under English headings would be as wrong here as it would be in a
+Requirements scaffold.
+
+The `type` literal stays English in both languages. It is machine identity under
+Decision 0045, not prose.
 
 The adapters differ when a project removes or has not yet received one:
 
@@ -133,10 +145,33 @@ clean-worktree precondition to Decision 0088. Approval still fingerprints its
 artifact inputs and writes lifecycle evidence first; an authorized checkpoint
 is a later skill action.
 
-No generic `adapter list` or `adapter read` command is accepted here. Known
-adapter paths and profiles are bounded, project-owned settings, and their owning
-skills already need the complete prose. A future shared read surface can be
-added when more than two consumers justify it.
+Two read-only commands are accepted:
+
+```text
+specbind adapter list
+specbind adapter read <selector>
+```
+
+They match the `artifact`, `template`, `protocol`, and `steering` pattern:
+`list` returns a compact inventory, `read` returns one document as raw UTF-8
+Markdown with no result wrapper.
+
+`list` enumerates the **known selectors**, not the directory. It reports each
+accepted selector with its type, path, and whether the project has it. This is
+what keeps the read surface from becoming the extension loader this decision
+rejects: an unknown file below `settings/adapters/` is never listed, never
+readable, and never acquires meaning by existing.
+
+Absence is reported, not judged. `read` returns `NO_CHANGE` for an adapter the
+project does not have, and the consuming skill applies its own presence
+semantics — a missing release adapter is the Decision 0063 configuration error,
+a missing Git adapter is simply no guidance. The CLI states what is there.
+
+Reading through the CLI rather than by path keeps
+[Decision 0098](./0098-steering-read-surface.md)'s rule general: no skill reads
+project settings directly. It also removes the need for a skill to resolve
+`{{SPEC_DIR}}` from `.specbind.json` before it can find the file, which is
+configuration handling that belongs in the CLI and nowhere else.
 
 ## Consequences
 
@@ -153,5 +188,25 @@ added when more than two consumers justify it.
 
 ## Implementation status
 
-Not implemented. The installer has no adapter assets, the release skill is not
-embedded, and current phase skills do not read `settings/adapters/git.md`.
+Partially implemented. `tools/specbind/src/adapter.rs` holds the closed selector
+set and the localized scaffolds, `specbind adapter list/read` expose them, and
+`specbind install` plans and creates missing scaffolds as project-owned settings
+that an existing copy keeps.
+
+The listing enumerates the accepted selectors and reports project presence per
+selector, so an unrecognized file below the adapters root is neither listed nor
+readable; a test writes one and confirms the read is refused. Absence returns
+`NO_CHANGE ADAPTER_ABSENT` rather than a fault, leaving presence semantics to
+the consuming skill. Scaffolds are verified to differ per language while both
+open with the same English `type` literal.
+
+The release skill is not embedded, and neither embedded phase skill reads the
+Git adapter yet.
+
+That remaining step is not optional. An
+install that creates a Git adapter no skill reads leaves a project that has
+stated its checkpoint policy and is silently ignored, which is worse than having
+no adapter: the setting exists, so its absence of effect reads as SpecBind
+disagreeing rather than as SpecBind not listening. The two embedded phase skills
+are `specbind-discovery` and `specbind-requirements`; later skills carry the
+checkpoint step from the start.

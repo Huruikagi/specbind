@@ -1093,7 +1093,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 14 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 16 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1108,7 +1108,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 14 create, 0 replace, 0 keep\n",
+                "\n  Summary: 16 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1177,7 +1177,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 9 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 11 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1226,10 +1226,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 11 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 13 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 11 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 13 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1372,7 +1372,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 10 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 12 created, 0 replaced, 1 kept\n",
         ));
 
     assert_eq!(
@@ -3414,4 +3414,111 @@ fn stops_installing_instructions_on_a_malformed_marker() {
         preserved,
         "# Project\n\n<!-- specbind:block -->\nhand written\n"
     );
+}
+
+#[test]
+fn lists_accepted_adapters_with_project_presence() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/settings/adapters/git.md",
+        "---\ntype: SpecBind Git Adapter\n---\n# Git\n\nCommit after each gate.\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adapter", "list"])
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK ADAPTER_LISTED: Found 2 accepted adapter(s).\n",
+            "  selector=release type=\"SpecBind Release Adapter\" path=settings/adapters/release.md present=no\n",
+            "  selector=git type=\"SpecBind Git Adapter\" path=settings/adapters/git.md present=yes\n",
+        ))
+        .stderr("");
+}
+
+#[test]
+fn reads_one_adapter_as_raw_markdown_and_reports_absence() {
+    let root = project_fixture();
+    let content = "---\ntype: SpecBind Git Adapter\n---\n# Git\n\nCommit after each gate.\n";
+    write(root.path(), ".specbind/settings/adapters/git.md", content);
+
+    let mut present = Command::cargo_bin("specbind").expect("specbind binary should build");
+    present
+        .current_dir(root.path())
+        .args(["adapter", "read", "git"])
+        .assert()
+        .success()
+        .stdout(content)
+        .stderr("");
+
+    // Absence is reported, not judged. Whether a missing adapter is a fault
+    // belongs to the consuming skill.
+    let mut absent = Command::cargo_bin("specbind").expect("specbind binary should build");
+    absent
+        .current_dir(root.path())
+        .args(["adapter", "read", "release"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE ADAPTER_ABSENT: The project has no release adapter.\n")
+        .stderr("");
+}
+
+#[test]
+fn refuses_a_selector_the_product_does_not_accept() {
+    let root = project_fixture();
+    // The directory is organization, not an extension loader: an unknown file
+    // below it is never readable.
+    write(
+        root.path(),
+        ".specbind/settings/adapters/deploy.md",
+        "---\ntype: SpecBind Git Adapter\n---\n# Deploy\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adapter", "read", "deploy"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr("ERROR ADAPTER_READ_INVALID: unknown adapter selector: deploy\n");
+}
+
+#[test]
+fn installs_localized_adapter_scaffolds_and_keeps_project_copies() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    let owned = "---\ntype: SpecBind Git Adapter\n---\n# Ours\n";
+    write(root.path(), ".specbind/settings/adapters/git.md", owned);
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "ja"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains(
+                "- create .specbind/settings/adapters/release.md [adapter]",
+            )
+            .and(predicate::str::contains(
+                "- keep .specbind/settings/adapters/git.md [adapter] (project-owned settings are never overwritten)",
+            )),
+        );
+
+    // The scaffold follows the configured language; the type literal does not.
+    let release = fs::read_to_string(root.path().join(".specbind/settings/adapters/release.md"))
+        .expect("release adapter");
+    assert!(
+        release.starts_with("---\ntype: SpecBind Release Adapter\n---\n"),
+        "{release}"
+    );
+    assert!(release.contains("# リリースアダプタ"), "{release}");
+
+    let git_adapter = fs::read_to_string(root.path().join(".specbind/settings/adapters/git.md"))
+        .expect("git adapter");
+    assert_eq!(git_adapter, owned);
 }

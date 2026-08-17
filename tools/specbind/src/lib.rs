@@ -1,3 +1,4 @@
+pub mod adapter;
 pub mod approval;
 pub mod args;
 pub mod artifacts;

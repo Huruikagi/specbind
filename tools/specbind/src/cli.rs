@@ -8,7 +8,7 @@ use std::{
 };
 
 use crate::{
-    approval,
+    adapter, approval,
     artifacts::{self, Artifact, DiscoveryIssue},
     completion::{self, CompletionIssue},
     config,
@@ -797,6 +797,75 @@ fn render_progress_failure(
             })
             .collect(),
     )
+}
+
+/// Lists every accepted adapter and whether the project has it.
+///
+/// The listing enumerates the accepted selectors, never the directory. A file
+/// that happens to sit below the adapters root is not an adapter and never
+/// becomes one by existing.
+#[must_use]
+pub fn adapter_list(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let mut details = Vec::new();
+    for entry in adapter::all() {
+        match entry.present(&paths.specbind_root) {
+            Ok(installed) => details.push(format!(
+                "selector={} type=\"{}\" path={} present={}",
+                escape(entry.selector),
+                escape(entry.artifact_type),
+                escape(&entry.path()),
+                present(installed)
+            )),
+            Err(error) => {
+                return CommandOutput::failure(
+                    "ADAPTER_LIST_FAILED",
+                    "Cannot inspect project adapters.",
+                    vec![format!("{} {}", error.code, error.message)],
+                );
+            }
+        }
+    }
+    let mut output = format!(
+        "OK ADAPTER_LISTED: Found {} accepted adapter(s).\n",
+        details.len()
+    );
+    for detail in details {
+        output.push_str("  ");
+        output.push_str(&detail);
+        output.push('\n');
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+/// Reads one adapter selector as raw UTF-8 Markdown.
+///
+/// Absence is reported, not judged. Whether a missing adapter is a fault
+/// belongs to the consuming skill.
+#[must_use]
+pub fn adapter_read(start: &Path, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let Some(entry) = adapter::find(selector) else {
+        return CommandOutput::failure(
+            "ADAPTER_READ_INVALID",
+            format!("unknown adapter selector: {selector}"),
+            vec![],
+        );
+    };
+    match entry.read(&paths.specbind_root) {
+        Ok(Some(content)) => CommandOutput::success(content.into_bytes()),
+        Ok(None) => CommandOutput::no_change(
+            "ADAPTER_ABSENT",
+            &format!("The project has no {selector} adapter."),
+        ),
+        Err(error) => CommandOutput::failure(error.code, error.message, vec![]),
+    }
 }
 
 /// Lists every recognized steering document.

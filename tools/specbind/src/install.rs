@@ -10,7 +10,8 @@ use std::{fmt, fs, path::Path};
 use serde::Deserialize;
 
 use crate::{
-    config::ProjectLanguage, guarded_fs, project_instructions, repository, rule, skill, template,
+    adapter, config::ProjectLanguage, guarded_fs, project_instructions, repository, rule, skill,
+    template,
 };
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
@@ -172,6 +173,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     let mut entries = vec![config_entry(existing.as_ref(), &resolved)];
     entries.extend(template_entries(project_root, &resolved)?);
     entries.extend(rule_entries(project_root, &resolved)?);
+    entries.extend(adapter_entries(project_root, &resolved)?);
     entries.extend(skill_entries(project_root, &resolved)?);
     entries.extend(project_instruction_entries(project_root, &resolved)?);
     if entries
@@ -440,6 +442,44 @@ fn template_entries(
 ///
 /// Installed rules are user-owned policy under Decision 0008, so an existing
 /// file is kept and only a missing default is created.
+/// Plans the Decision 0101 operational adapter scaffolds.
+///
+/// Scaffolds are localized, because a project fills them with its own
+/// operational procedure rather than reading the product's judgment from them.
+/// Like every other project-owned setting, an existing copy is kept.
+fn adapter_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    let mut entries = Vec::new();
+    for entry in adapter::all() {
+        let relative = format!("{}/{}", resolved.spec_dir, entry.path());
+        let target = project_root.join(&relative);
+        let action = match fs::symlink_metadata(&target) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+            Ok(_) => PlanAction::Keep,
+            Err(error) => {
+                return Err(one_issue(
+                    "INSTALL_TARGET_UNREADABLE",
+                    Some(relative),
+                    error.to_string(),
+                ));
+            }
+        };
+        entries.push(PlanEntry {
+            action,
+            path: relative,
+            category: "adapter",
+            detail: (action == PlanAction::Keep)
+                .then(|| "project-owned settings are never overwritten".to_owned()),
+            content: (action == PlanAction::Create)
+                .then(|| entry.scaffold(resolved.language).to_owned()),
+            expected_current: None,
+        });
+    }
+    Ok(entries)
+}
+
 fn rule_entries(
     project_root: &Path,
     resolved: &ResolvedInputs,

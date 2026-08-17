@@ -61,6 +61,11 @@ pub enum Command {
         #[command(subcommand)]
         command: TasksCommand,
     },
+    /// List or read project-owned operational adapters.
+    Adapter {
+        #[command(subcommand)]
+        command: AdapterCommand,
+    },
     /// List or read project-level steering documents.
     Steering {
         #[command(subcommand)]
@@ -139,6 +144,14 @@ pub enum TasksCommand {
     },
     /// Return one executable task to pending.
     Reopen { spec: String, task_id: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum AdapterCommand {
+    /// List every accepted adapter selector and whether the project has it.
+    List,
+    /// Read one adapter selector as raw UTF-8 Markdown.
+    Read { selector: String },
 }
 
 #[derive(Debug, Subcommand)]
