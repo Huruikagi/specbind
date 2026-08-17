@@ -42,6 +42,8 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - `specbind-debug` is a read-only, fresh-context root-cause protocol. It returns a run-scoped diagnosis and next action; a new implementer applies any fix.
 - Automatic task debug/remediation and automatic cross-spec-review remediation each stop after two rounds. Unresolved work remains blocked or returned to the appropriate earlier phase.
 
+[Decision 0096](./0096-skill-asset-layout.md) fixes how these skills are authored, stored, and rendered per agent.
+
 ## Consequences
 
 - Skill names describe user outcomes rather than inherited cc-sdd command families.
