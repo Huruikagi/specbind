@@ -58,13 +58,24 @@ No judgment is available here, and no size exemption applies:
   Decision 0056 declares exactly the boundaries where a change could affect
   another Spec's design or verification, so a change there is Spec work by the
   project's own declaration.
+- The request adds a durable responsibility the project will own, rather than
+  adjusting something that already exists.
 - The user framed the request as part of the active milestone, or as work whose
   completion the release should record.
 
-The third rule is what keeps this from becoming a size heuristic in disguise. It
-is a property of the repository the project itself declared, not an estimate of
-effort, and a one-line change to an owned path enters exactly as a large one
-does.
+The File Ownership rule is what keeps this from becoming a size heuristic in
+disguise. It is a property of the repository the project itself declared, not an
+estimate of effort, and a one-line change to an owned path enters exactly as a
+large one does.
+
+The new-responsibility rule exists because the other three all ask whether the
+request touches territory a Spec already holds. A capability the project does not
+yet have touches none of it, and would otherwise be the one thing SpecBind exists
+for that never enters: Decision 0097 can classify a request as a new Spec only
+once it has arrived. This rule needs judgment, and it is the only one that does.
+Apply it to what the project will own afterwards, not to how much work it looks
+like: a small first version of a capability nobody owns yet still creates the
+boundary that will hold it.
 
 ### Otherwise the work is done directly, and said so
 
@@ -125,8 +136,10 @@ rather than scoping it anyway.
 
 - The most common interaction with a SpecBind project — a small change to
   something no Spec owns — stops being a reason to route around the product.
-- The exemption has a floor that is a declared property of the repository rather
-  than a judgment about effort, so it cannot widen under pressure.
+- The exemption has a floor that is mostly a declared property of the repository
+  rather than a judgment about effort, so it cannot widen under pressure. The one
+  judgment it needs is about what the project will own, which is the same
+  question the rest of the workflow already turns on.
 - Contract File Ownership acquires a second, load-bearing use, which raises the
   cost of leaving it stale. That is a fair trade: a Spec that has not declared
   its boundaries was already unable to protect them.

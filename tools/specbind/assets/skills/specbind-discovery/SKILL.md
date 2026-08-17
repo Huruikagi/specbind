@@ -35,8 +35,16 @@ A request **enters** when any of these holds, regardless of how small it is:
 - it changes behavior an existing Spec owns, even if the artifacts have not
   caught up
 - it modifies a path some Spec's contract declares under File Ownership
+- it adds a durable responsibility the project will own, rather than adjusting
+  something that already exists
 - the user framed it as part of the active milestone, or as work the release
   should record
+
+The first three rules and the last are checks, not judgments. The
+new-responsibility rule is the only one that asks you to think, and it is about
+what the project will own afterwards, not about how large the work looks: a small
+first version of a capability nobody owns yet still creates the boundary that
+will hold it.
 
 The File Ownership rule is the one to check rather than judge. It is the
 project's own declaration of which boundaries matter, so a one-line change to an
