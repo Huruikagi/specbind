@@ -1036,19 +1036,130 @@ fn keeps_project_owned_settings_and_guards_replacements() {
 }
 
 #[test]
-fn refuses_to_apply_an_installation_yet() {
-    let root = project_fixture();
+fn applies_an_initial_installation_and_is_idempotent() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
 
-    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
-    command
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK INSTALL_APPLIED: Applied 8 action(s) for 1 agent(s).\n",
+            )
+            .and(predicate::str::contains(
+                "\n  Summary: 8 created, 0 replaced, 0 kept\n",
+            )),
+        )
+        .stderr("");
+
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("written config");
+    assert_eq!(
+        config,
+        "{\n  \"schemaVersion\": 1,\n  \"specDir\": \".specbind\",\n  \"language\": \"en\",\n  \"agents\": [\"codex\"]\n}\n"
+    );
+    for relative in [
+        ".specbind/settings/templates/specs/requirements.md",
+        ".specbind/settings/templates/specs/design.md",
+        ".specbind/settings/rules/ears-format.md",
+        ".specbind/settings/rules/steering-principles.md",
+    ] {
+        assert!(root.path().join(relative).is_file(), "missing {relative}");
+    }
+
+    let mut installed = Command::cargo_bin("specbind").expect("specbind binary should build");
+    installed
+        .current_dir(root.path())
+        .args(["template", "list", "spec"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "selector=requirements source=project",
+        ));
+
+    let mut again = Command::cargo_bin("specbind").expect("specbind binary should build");
+    again
         .current_dir(root.path())
         .args(["install"])
         .assert()
+        .success()
+        .stdout(predicate::str::starts_with("NO_CHANGE INSTALL_UP_TO_DATE:"))
+        .stderr("");
+}
+
+#[test]
+fn never_overwrites_project_owned_settings_when_applying() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    write(
+        root.path(),
+        ".specbind/settings/rules/ears-format.md",
+        "---\ntype: SpecBind Rule\n---\n# Project owned\n",
+    );
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "ja"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "\n  Summary: 7 created, 0 replaced, 1 kept\n",
+        ));
+
+    assert_eq!(
+        fs::read_to_string(root.path().join(".specbind/settings/rules/ears-format.md"))
+            .expect("preserved rule"),
+        "---\ntype: SpecBind Rule\n---\n# Project owned\n"
+    );
+    let template = fs::read_to_string(
+        root.path()
+            .join(".specbind/settings/templates/specs/requirements.md"),
+    )
+    .expect("installed template");
+    assert!(
+        template.contains("requirement: 要件"),
+        "the configured language must select the installed template"
+    );
+}
+
+#[test]
+fn guards_a_configuration_replacement_when_applying() {
+    let root = project_fixture();
+
+    let mut dirty = Command::cargo_bin("specbind").expect("specbind binary should build");
+    dirty
+        .current_dir(root.path())
+        .args(["install", "--agent", "claude-code"])
+        .assert()
         .failure()
         .stdout("")
-        .stderr(predicate::str::starts_with(
-            "ERROR INSTALL_APPLY_UNIMPLEMENTED:",
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR INSTALL_FAILED: Cannot apply the SpecBind installation.",
+            )
+            .and(predicate::str::contains("INSTALL_COMMIT_REQUIRED")),
+        );
+
+    commit_all(root.path());
+    let mut allowed = Command::cargo_bin("specbind").expect("specbind binary should build");
+    allowed
+        .current_dir(root.path())
+        .args(["install", "--agent", "claude-code"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- replace .specbind.json [config]",
         ));
+
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("rewritten config");
+    assert!(
+        config.contains("\"agents\": [\"claude-code\", \"codex\"]"),
+        "{config}"
+    );
 }
 
 #[test]

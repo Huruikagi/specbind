@@ -291,9 +291,6 @@ fn run_install(
     spec_dir: Option<String>,
     project_instructions: bool,
 ) -> CommandOutput {
-    if !dry_run {
-        return specbind::cli::install_apply_unimplemented();
-    }
     let inputs = specbind::install::InstallInputs {
         agents: agents
             .iter()
@@ -307,7 +304,11 @@ fn run_install(
         spec_dir,
         project_instructions: project_instructions.then_some(true),
     };
-    specbind::cli::install_dry_run(start, &inputs)
+    if dry_run {
+        specbind::cli::install_dry_run(start, &inputs)
+    } else {
+        specbind::cli::install_apply(start, &inputs)
+    }
 }
 
 fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {

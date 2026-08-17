@@ -9,7 +9,7 @@ use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
-use crate::{config::ProjectLanguage, repository, rule, template};
+use crate::{config::ProjectLanguage, guarded_fs, repository, rule, template};
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
 const DEFAULT_SPEC_DIR: &str = ".specbind";
@@ -78,6 +78,15 @@ pub struct PlanEntry {
     pub path: String,
     pub category: &'static str,
     pub detail: Option<String>,
+    /// Exact bytes an apply would write. Absent for a kept target.
+    content: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct InstallOutcome {
+    pub plan: InstallPlan,
+    /// True when the plan contained only kept targets.
+    pub unchanged: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -300,12 +309,14 @@ fn read_existing_config(project_root: &Path) -> Result<Option<InstalledConfig>, 
 }
 
 fn config_entry(existing: Option<&InstalledConfig>, resolved: &ResolvedInputs) -> PlanEntry {
+    let rendered = render_config(resolved);
     let Some(config) = existing else {
         return PlanEntry {
             action: PlanAction::Create,
             path: CONFIG_RELATIVE.to_owned(),
             category: "config",
             detail: None,
+            content: Some(rendered),
         };
     };
     let installed_agents = config
@@ -325,7 +336,32 @@ fn config_entry(existing: Option<&InstalledConfig>, resolved: &ResolvedInputs) -
         path: CONFIG_RELATIVE.to_owned(),
         category: "config",
         detail: unchanged.then(|| "already matches the requested inputs".to_owned()),
+        content: (!unchanged).then_some(rendered),
     }
+}
+
+/// Renders the version-controlled project configuration deterministically.
+fn render_config(resolved: &ResolvedInputs) -> String {
+    let agents = resolved
+        .agents
+        .iter()
+        .map(|agent| format!("\"{}\"", agent.name()))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let language = match resolved.language {
+        ProjectLanguage::En => "en",
+        ProjectLanguage::Ja => "ja",
+    };
+    let instructions = if resolved.project_instructions {
+        ",\n  \"projectInstructions\": true"
+    } else {
+        ""
+    };
+    let output = format!(
+        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}\n}}\n",
+        resolved.spec_dir
+    );
+    output
 }
 
 /// Plans the Decision 0091 customization surface.
@@ -364,12 +400,24 @@ fn template_entries(
                 ));
             }
         };
+        let content = (action == PlanAction::Create)
+            .then(|| {
+                template::read_embedded(resolved.language, &embedded.selector).ok_or_else(|| {
+                    one_issue(
+                        "INSTALL_ASSET_UNAVAILABLE",
+                        Some(relative.clone()),
+                        "embedded template content is unavailable",
+                    )
+                })
+            })
+            .transpose()?;
         entries.push(PlanEntry {
             action,
             path: relative,
             category: "template",
             detail: (action == PlanAction::Keep)
                 .then(|| "project-owned settings are never overwritten".to_owned()),
+            content,
         });
     }
     Ok(entries)
@@ -409,9 +457,100 @@ fn rule_entries(
             category: "rule",
             detail: (action == PlanAction::Keep)
                 .then(|| "project-owned settings are never overwritten".to_owned()),
+            content: (action == PlanAction::Create).then(|| default.content().to_owned()),
         });
     }
     Ok(entries)
+}
+
+/// Decision 0077 permits creating new files in a repository without a commit,
+/// but any replacement of an existing file requires a committed clean state.
+/// Applies a freshly computed plan, writing the Roadmap-style config last.
+///
+/// # Errors
+///
+/// Returns planning, race, or guarded-write diagnostics. A failure may leave
+/// earlier assets written; a later run converges because missing defaults are
+/// created and existing project files are kept.
+pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutcome, InstallIssues> {
+    let plan = plan(project_root, inputs)?;
+    let unchanged = plan
+        .entries
+        .iter()
+        .all(|entry| entry.action == PlanAction::Keep);
+    if unchanged {
+        return Ok(InstallOutcome {
+            plan,
+            unchanged: true,
+        });
+    }
+    // Assets first, configuration last: a project only claims to be installed
+    // once the assets its skills read actually exist.
+    let ordered = plan
+        .entries
+        .iter()
+        .filter(|entry| entry.category != "config")
+        .chain(
+            plan.entries
+                .iter()
+                .filter(|entry| entry.category == "config"),
+        );
+    for entry in ordered {
+        let Some(content) = entry.content.as_deref() else {
+            continue;
+        };
+        let target = project_root.join(&entry.path);
+        verify_expected_state(&target, entry)?;
+        if let Some(parent) = target.parent() {
+            fs::create_dir_all(parent).map_err(|error| {
+                one_issue(
+                    "INSTALL_WRITE_FAILED",
+                    Some(entry.path.clone()),
+                    error.to_string(),
+                )
+            })?;
+        }
+        guarded_fs::replace_optional(&target, content.as_bytes()).map_err(|error| {
+            one_issue(
+                "INSTALL_WRITE_FAILED",
+                Some(entry.path.clone()),
+                error.to_string(),
+            )
+        })?;
+    }
+    Ok(InstallOutcome {
+        plan,
+        unchanged: false,
+    })
+}
+
+/// Fails closed when the filesystem no longer matches the planned action.
+fn verify_expected_state(target: &Path, entry: &PlanEntry) -> Result<(), InstallIssues> {
+    let present = match fs::symlink_metadata(target) {
+        Ok(_) => true,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+        Err(error) => {
+            return Err(one_issue(
+                "INSTALL_TARGET_UNREADABLE",
+                Some(entry.path.clone()),
+                error.to_string(),
+            ));
+        }
+    };
+    let expected = match entry.action {
+        PlanAction::Create => false,
+        PlanAction::Replace => true,
+        PlanAction::Keep => return Ok(()),
+    };
+    if present == expected {
+        Ok(())
+    } else {
+        Err(one_issue(
+            "INSTALL_TARGET_CHANGED",
+            Some(entry.path.clone()),
+            "installation target changed after the plan was computed",
+        ))
+    }
 }
 
 /// Decision 0077 permits creating new files in a repository without a commit,

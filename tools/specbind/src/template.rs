@@ -136,6 +136,18 @@ pub fn embedded_spec_templates(language: ProjectLanguage) -> Vec<Template> {
     templates
 }
 
+/// Reads one embedded default by selector without touching a project.
+#[must_use]
+pub fn read_embedded(language: ProjectLanguage, selector: &str) -> Option<String> {
+    let template = embedded_spec_templates(language)
+        .into_iter()
+        .find(|template| template.selector == selector)?;
+    EMBEDDED_TEMPLATES
+        .get_file(template.template_path.as_str())
+        .and_then(include_dir::File::contents_utf8)
+        .map(ToOwned::to_owned)
+}
+
 fn discover_project_templates(specbind_root: &Path) -> (Vec<Template>, Vec<DiscoveryIssue>) {
     let root = specbind_root.join(SPEC_TEMPLATE_ROOT);
     if let Err(issues) = validate_template_root(&root) {

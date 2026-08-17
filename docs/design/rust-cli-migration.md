@@ -105,7 +105,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 ### 3. Installer and migration
 
-- Implement `specbind install` with additive agent selection and idempotent asset refresh. The read-only `--dry-run` planner exists; the guarded apply path does not.
+- Implement `specbind install` with additive agent selection and idempotent asset refresh. Planning and application exist for the configuration, installed templates, and shared rules; agent assets and project instructions remain.
 - Preserve existing settings files and create only absent defaults.
 - Implement optional managed blocks in project-root agent instructions.
 - Implement `specbind migrate cc-sdd` as plan-first and `--apply`-guarded behavior.
