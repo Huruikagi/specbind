@@ -186,6 +186,11 @@ specbind adapter read git
 `NO_CHANGE ADAPTER_ABSENT` means the project wants no commit from you. Stop
 there — that is an answer, not a missing file to work around.
 
+The same applies when the adapter still carries its `specbind:instruction`
+comments: that is the scaffold as installed, not policy the project wrote. Treat
+it as no guidance, say so in one line, and commit nothing. Do not stop to ask
+about a file nobody has filled in.
+
 When the adapter has guidance, follow it. It sets **policy, not permission**:
 
 - It grants no authority by existing. The user's request, the root agent

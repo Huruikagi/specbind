@@ -81,6 +81,14 @@ The adapters differ when a project removes or has not yet received one:
 - Missing or empty `git.md` means no adapter-directed commit or push. A core
   operation may still require a clean committed revision; the owning skill then
   reports or requests that prerequisite instead of inferring Git authority.
+- An adapter that still carries its `specbind:instruction` comments has not been
+  filled in and counts the same as an absent one. Decision 0059 makes those
+  comments guidance to the author that is omitted from what the author writes,
+  so their presence is a reliable signal that the project has stated no policy
+  yet. Without this rule the installed scaffold reads as guidance too vague to
+  act on, and every freshly installed project stops at its first checkpoint to
+  ask about a file it has not written — the ceremony
+  [Decision 0102](./0102-workflow-entry-condition.md) exists to prevent.
 
 An install refresh may offer a missing Git scaffold again as an uncommitted
 project setting. Removing that addition before committing remains valid.

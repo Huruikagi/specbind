@@ -61,6 +61,12 @@ A subagent works, and lets you pin the model. Two rules keep it honest.
 `specbind` is on PATH, and then give the maintainer's request as a maintainer
 would phrase it. Naming a skill or a command teaches the answer.
 
+**Expect a confirmation turn.** Every scenario that ends in a mutation needs one.
+The skills confirm scope with the user before changing anything, so a single-shot
+run correctly stops with a proposal and an empty repository — that is the skill
+working, not failing. Answer as the maintainer would and let the run continue;
+the confirm-then-mutate path is part of what the scenario tests.
+
 **Do not ask the agent to justify its classification.** Ask what it changed and
 what it ran. An expectation about what the agent told the user cannot be measured
 from a report you prompted for — you get the sentence because you asked, not
@@ -274,11 +280,17 @@ Accepted by [Decision 0101](./design/decisions/0101-project-adapter-directory-an
 
 ### C1 — No adapter guidance means no commit
 
-Empty `.specbind/settings/adapters/git.md` to its Front Matter only, commit that,
-then run D3.
+Run D3 against the fixture as built, leaving the Git adapter exactly as installed.
 
 - The milestone and brief exist.
 - **Nothing was committed.** `git log` has no new commit beyond the fixture's.
+- The run did not stop to ask what the commit policy should be. An adapter still
+  carrying its `specbind:instruction` comments is the scaffold, not policy, and
+  reads as no guidance. Asking about it is the failure: every freshly installed
+  project would hit it.
+
+Repeat with the adapter emptied to its Front Matter only. The outcome is the
+same, because absent guidance and unwritten guidance mean the same thing.
 
 ### C2 — Adapter guidance is followed
 
