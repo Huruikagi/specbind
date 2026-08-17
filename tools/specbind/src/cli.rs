@@ -1452,16 +1452,28 @@ pub fn spec_gate_invalidate(
         canonical_spec,
         gate,
     ) {
-        Ok(approval::InvalidateOutcome::Invalidated { state }) => CommandOutput::success(
-            format!(
-                "OK SPEC_{}_INVALIDATED: Invalidated {} for spec {}.\n  State: {}\n",
+        Ok(approval::InvalidateOutcome::Invalidated {
+            state,
+            review_removed,
+        }) => {
+            let mut output = format!(
+                "OK SPEC_{}_INVALIDATED: Invalidated {} for spec {}.\n",
                 gate.name().to_uppercase(),
                 gate.name(),
-                escape(canonical_spec),
-                approval::state_name(state)
-            )
-            .into_bytes(),
-        ),
+                escape(canonical_spec)
+            );
+            push_field(&mut output, "State", approval::state_name(state));
+            push_field(
+                &mut output,
+                "Accepted review",
+                if review_removed {
+                    "removed"
+                } else {
+                    "unchanged"
+                },
+            );
+            CommandOutput::success(output.into_bytes())
+        }
         Ok(approval::InvalidateOutcome::NoChange) => CommandOutput::no_change(
             not_approved_code(gate),
             &format!(

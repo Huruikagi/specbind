@@ -64,7 +64,11 @@ pub enum ApproveOutcome {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InvalidateOutcome {
-    Invalidated { state: WorkflowState },
+    Invalidated {
+        state: WorkflowState,
+        /// True when this rewind also removed the accepted cross-spec review.
+        review_removed: bool,
+    },
     NoChange,
 }
 
@@ -93,6 +97,18 @@ impl fmt::Display for ApprovalIssues {
 impl std::error::Error for ApprovalIssues {}
 
 impl Gate {
+    /// Whether rewinding this gate invalidates the milestone-owned cross-spec
+    /// review under Decision 0078.
+    ///
+    /// The review is accepted between Design approval and Tasks authoring, so a
+    /// Tasks rewind leaves it intact while an earlier rewind removes it.
+    fn rewind_removes_review(self) -> bool {
+        match self {
+            Self::Requirements | Self::Design => true,
+            Self::Tasks => false,
+        }
+    }
+
     #[must_use]
     pub fn name(self) -> &'static str {
         match self {
@@ -269,6 +285,21 @@ pub fn invalidate(
     );
     finish_issues(issues)?;
 
+    // Remove the milestone review before rewinding the Spec. An interruption
+    // then leaves a milestone that visibly needs a new review, never a rewound
+    // Spec behind a review that still claims to cover it.
+    let review_removed = if gate.rewind_removes_review() {
+        cross_spec_review::remove_accepted(specbind_root).map_err(|error| ApprovalIssues {
+            issues: error
+                .issues
+                .into_iter()
+                .map(|value| issue(value.code, value.source, value.message))
+                .collect(),
+        })?
+    } else {
+        false
+    };
+
     let Some(active) = wire.active_change.0.as_mut() else {
         return Err(one_issue(
             gate.approve_failed(),
@@ -309,6 +340,7 @@ pub fn invalidate(
     persist(specbind_root, canonical_spec, &wire, gate)?;
     Ok(InvalidateOutcome::Invalidated {
         state: gate.required_state(),
+        review_removed,
     })
 }
 

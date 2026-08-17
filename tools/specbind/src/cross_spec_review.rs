@@ -312,6 +312,46 @@ pub fn accept(
     })
 }
 
+/// Removes the accepted cross-spec review artifact.
+///
+/// Explicit Design and scope rewinds own this removal under Decision 0078; the
+/// review is milestone-level state, so no per-Spec condition applies.
+///
+/// # Errors
+///
+/// Returns target-type or filesystem diagnostics. An absent artifact is not an
+/// error and reports that nothing was removed.
+pub fn remove_accepted(specbind_root: &Path) -> Result<bool, ReviewIssues> {
+    let relative = "state/cross-spec-review.md";
+    let path = specbind_root.join(relative);
+    let metadata = match fs::symlink_metadata(&path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
+        Err(error) => {
+            return Err(one_review_issue(
+                "CROSS_SPEC_REVIEW_TARGET_INVALID",
+                Some(relative.to_owned()),
+                error.to_string(),
+            ));
+        }
+    };
+    if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
+        return Err(one_review_issue(
+            "CROSS_SPEC_REVIEW_TARGET_INVALID",
+            Some(relative.to_owned()),
+            "accepted review must be a regular non-symlink file",
+        ));
+    }
+    fs::remove_file(&path).map_err(|error| {
+        one_review_issue(
+            "CROSS_SPEC_REVIEW_REMOVE_FAILED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    Ok(true)
+}
+
 /// Reads the accepted review, reconstructs its declared deep inputs, and
 /// compares the persisted revisions with the current authoritative inputs.
 #[must_use]

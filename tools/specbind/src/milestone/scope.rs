@@ -4,7 +4,7 @@ use serde::Serialize;
 use uuid::Uuid;
 
 use crate::{
-    artifacts, guarded_fs, repository,
+    artifacts, cross_spec_review, guarded_fs, repository,
     roadmap::{self, DirectItem, DirectStatus, RoadmapDocument, SpecItem},
     schema::{
         runtime,
@@ -19,7 +19,6 @@ use super::{
     roadmap_failure,
 };
 
-const REVIEW_RELATIVE: &str = "state/cross-spec-review.md";
 const DEFAULT_BODY: &str = "# Roadmap\n";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -544,34 +543,15 @@ fn write_roadmap(specbind_root: &Path, rendered: &str) -> Result<(), super::Mile
     })
 }
 
+/// Delegates to the review module, which owns the accepted artifact.
 fn remove_accepted_review(specbind_root: &Path) -> Result<bool, super::MilestoneIssues> {
-    let path = specbind_root.join(REVIEW_RELATIVE);
-    let metadata = match fs::symlink_metadata(&path) {
-        Ok(metadata) => metadata,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
-        Err(error) => {
-            return Err(one_issue(
-                "MILESTONE_REVIEW_TARGET_INVALID",
-                Some(REVIEW_RELATIVE.to_owned()),
-                error.to_string(),
-            ));
-        }
-    };
-    if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
-        return Err(one_issue(
-            "MILESTONE_REVIEW_TARGET_INVALID",
-            Some(REVIEW_RELATIVE.to_owned()),
-            "accepted review must be a regular non-symlink file",
-        ));
-    }
-    fs::remove_file(&path).map_err(|error| {
-        one_issue(
-            "MILESTONE_REVIEW_REMOVE_FAILED",
-            Some(REVIEW_RELATIVE.to_owned()),
-            error.to_string(),
-        )
-    })?;
-    Ok(true)
+    cross_spec_review::remove_accepted(specbind_root).map_err(|error| super::MilestoneIssues {
+        issues: error
+            .issues
+            .into_iter()
+            .map(|value| issue(value.code, value.source, value.message))
+            .collect(),
+    })
 }
 
 fn ensure_no_active_roadmap(specbind_root: &Path) -> Result<(), super::MilestoneIssues> {
