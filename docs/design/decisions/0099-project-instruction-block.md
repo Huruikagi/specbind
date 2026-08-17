@@ -1,0 +1,191 @@
+# 0099: Fix the project-instruction block contract
+
+Status: Accepted
+
+## Context
+
+[Decision 0077](./0077-v1-installation-distribution-and-migration.md) accepts that
+enabling project instructions makes the installer maintain "only a marked
+SpecBind block" in the selected agents' root `AGENTS.md` or `CLAUDE.md`. It does
+not fix the marker, the content, the target for each agent, or what happens when
+the setting is turned off. Nothing is implemented: the flag is accepted and
+persisted to `.specbind.json`, and no file is written.
+
+The gap has a concrete cost. An agent opening a project sees skills invoking
+`specbind milestone status` with nothing establishing what that command is,
+whether the binary is available, or why the machine state it reads must not be
+hand-edited. The skills describe how to do the work; nothing says what system
+the work belongs to.
+
+The inherited block answered that question and much more besides — roughly sixty
+lines covering artifact paths, a twenty-command workflow listing, skill
+directory structure, development rules, and an instruction to load all steering
+as project memory. Most of that has since moved elsewhere in SpecBind, and one
+part is now the opposite of an accepted decision.
+
+## Decision
+
+### Scope of the block
+
+The block establishes the system and its boundary. It contains:
+
+- that this project uses SpecBind, and that the `specbind` CLI is the interface
+- that the installed `specbind-*` skills are the entry points, naming discovery
+  and status as the two starting points
+- that CLI-owned machine state is never hand-edited
+
+It contains nothing else. In particular it does not restate:
+
+| Excluded | Owner |
+| --- | --- |
+| Artifact and directory paths | the CLI, which resolves them; skills name logical selectors under Decision 0058 |
+| The workflow and its commands | the skills themselves |
+| Skill directory structure and invocation | the agent platform, which discovers skills |
+| Authoring conventions and development rules | Decision 0094 protocols and Decision 0093 rules |
+| "Load all steering as project memory" | rejected outright by [Decision 0098](./0098-steering-read-surface.md) |
+
+Every excluded row is a place where the block would become a second, unversioned
+copy of a contract owned elsewhere. A duplicate that cannot be validated drifts,
+and a drifted instruction in always-loaded context is worse than none, because
+it is read with the authority of project configuration.
+
+The last row is not merely redundant but contradictory: it would instruct every
+agent to do the thing Decision 0098 removed.
+
+### Markers
+
+```text
+<!-- specbind:block -->
+...
+<!-- /specbind:block -->
+```
+
+HTML comments render as nothing in Markdown, and `specbind:` already prefixes
+the `specbind:instruction` comments in Decision 0059 templates, so the namespace
+is consistent.
+
+- Exactly one opening and one closing marker may appear, in that order.
+- Zero markers means the block is absent and will be appended.
+- Anything else — a marker without its pair, reversed order, or more than one of
+  either — stops the operation with a diagnostic naming the file. The installer
+  never guesses which of two blocks is authoritative, and never repairs a
+  malformed one, because both would edit text the project owns.
+- Markers are matched as whole lines. A marker inside a fenced code block still
+  counts, which is deliberate: resolving that would require a Markdown parse
+  whose result the user cannot easily predict, and a stop is recoverable.
+
+### Content and language
+
+The body is an embedded asset at
+`tools/specbind/assets/project-instructions/block.md`, included in the binary
+the same way Decision 0094 protocols, Decision 0093 rules, and Decision 0096
+skills are. It is prose the product ships, so it is authored and reviewed as
+prose rather than as a string literal in Rust.
+
+This decision fixes what the body must establish, listed above. The asset holds
+the wording, and revising the wording within that scope is an ordinary asset
+change rather than an amendment here.
+
+It is product-managed, not project-owned. Like a skill, and unlike a Decision
+0091 template or a Decision 0093 rule, a divergent copy in a project is replaced
+rather than kept: the block is a pointer to the current product surface, and a
+stale pointer is the failure it exists to prevent. Local guidance belongs outside
+the markers, where the installer never touches it.
+
+The block is English, like every other product-managed agent-facing asset. Only
+Decision 0059 templates are localized, because they scaffold artifacts the
+project authors in its own language; this block is instruction to the agent.
+
+The asset's initial content is:
+
+```markdown
+## SpecBind
+
+This project uses SpecBind for spec-driven development. The `specbind` CLI owns
+the specification lifecycle: it validates artifacts, records approvals, and is
+the only supported writer of machine state.
+
+- Work through the installed `specbind-*` skills. Use `specbind-discovery` to
+  turn a request into scope, and `specbind-status` to see where work stands.
+- Never hand-edit `spec.yaml`, `tasks.yaml`, or the active roadmap. They are
+  CLI-owned, and a hand edit produces state no command validated.
+- Run `specbind --help` if the command is unfamiliar or appears unavailable.
+```
+
+### Targets
+
+| Agent | File |
+| --- | --- |
+| Claude Code | `CLAUDE.md` |
+| Codex | `AGENTS.md` |
+
+Both files are written when both agents are selected. Each agent reads only its
+own file, so a shared file would leave one of them without instructions.
+
+The file is at the repository root. A missing file is created containing the
+block alone. An existing file keeps all content outside the markers exactly as
+it is; only the region between them is replaced.
+
+An absent block is appended at the end of the file, preceded by one blank line
+when the file does not already end in one. Appending is the only safe insertion
+point: the top of an instruction file is where a project states its own most
+important guidance, and inserting there would reorder the project's content by
+the installer's preference.
+
+### Turning it off
+
+Disabling project instructions stops maintaining the block. It does not remove
+one that exists.
+
+Removal deletes text from a project-owned file, and Decision 0077 defers
+uninstall and agent removal past v1 for exactly that reason. The block is
+plainly marked and trivially removable by hand, so the installer gains nothing
+by taking that risk on the user's behalf.
+
+### Guards
+
+- Replacing an existing block is a replacement under Decision 0077 and requires
+  a repository with at least one commit and a clean worktree. Creating a missing
+  file or appending to one does not.
+- The write revalidates the planned state and fails closed when the file changed
+  after planning. Unlike every other installed asset, this one is edited in
+  place, so presence proves nothing: the plan carries the exact prior content it
+  read and the apply compares against those bytes.
+- The plan reports the block as `create`, `replace`, or `keep` with its target
+  path, so `--dry-run` shows exactly which instruction files would be touched.
+
+## Consequences
+
+- An agent entering an installed project learns what SpecBind is before it meets
+  a skill that assumes it.
+- The block stays small enough to review in one screen, and small enough that it
+  does not compete with the project's own instructions.
+- Contracts stay single-sourced: the block points at the CLI and the skills
+  rather than restating them, so it cannot drift out of agreement with either.
+- The wording lives with the other shipped prose, so it is reviewed as prose and
+  can be revised without amending this decision.
+- The inherited instruction to preload steering disappears rather than being
+  quietly carried forward into a decision that rejects it.
+- A malformed or duplicated marker is a stop rather than a repair, so the
+  installer never rewrites instructions a human wrote.
+
+## Implementation status
+
+Implemented. `tools/specbind/src/project_instructions.rs` owns the markers and
+embeds `assets/project-instructions/block.md`, and `specbind install` plans and
+applies one entry per selected agent under the `project-instructions` category.
+
+Adding a block to an existing file is reported as a creation rather than a
+replacement, because it removes no text and therefore does not require the
+Decision 0077 committed clean repository. That distinction needed a stronger
+race check than the other categories use: presence cannot detect a change to a
+file the installer edits in place, so the entry carries the exact prior content
+it planned from and the apply compares against those bytes.
+
+Tests cover creating a missing file, appending behind exactly one blank line
+across four trailing-whitespace shapes, replacing only the marked region while
+preserving the text around it, idempotence, and a stop on duplicated, unpaired,
+or reversed markers including one inside a code fence. An install-level test
+confirms both agent files are written, the project's own content survives, a
+second run reports `NO_CHANGE`, no entry is planned when the setting is off, and
+a malformed marker fails the plan while leaving the file untouched.

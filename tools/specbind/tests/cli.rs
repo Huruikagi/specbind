@@ -3303,3 +3303,115 @@ type: SpecBind Steering
             "STEERING_ARTIFACT_ID_INVALID steering/product.md",
         ));
 }
+
+#[test]
+fn installs_the_marked_block_into_each_agent_instruction_file() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    write(root.path(), "AGENTS.md", "# Project\n\nOur own rules.\n");
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "claude-code",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+            "--project-instructions",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("- create AGENTS.md [project-instructions]").and(
+                predicate::str::contains("- create CLAUDE.md [project-instructions]"),
+            ),
+        );
+
+    // The project's own content survives; the block is appended after it.
+    let agents = fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md");
+    assert!(
+        agents.starts_with("# Project\n\nOur own rules.\n\n"),
+        "{agents}"
+    );
+    assert!(agents.contains("<!-- specbind:block -->"), "{agents}");
+    assert!(
+        agents.trim_end().ends_with("<!-- /specbind:block -->"),
+        "{agents}"
+    );
+
+    // A missing file is created holding the block alone.
+    let claude = fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md");
+    assert!(claude.starts_with("<!-- specbind:block -->\n"), "{claude}");
+
+    // Re-running changes nothing.
+    let mut again = Command::cargo_bin("specbind").expect("specbind binary should build");
+    again
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with("NO_CHANGE INSTALL_UP_TO_DATE"));
+}
+
+#[test]
+fn plans_no_instruction_file_when_the_block_is_disabled() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("[project-instructions]").not());
+    assert!(!root.path().join("AGENTS.md").exists());
+}
+
+#[test]
+fn stops_installing_instructions_on_a_malformed_marker() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    // An opening marker with no closing one: the installer never repairs text
+    // the project owns.
+    write(
+        root.path(),
+        "AGENTS.md",
+        "# Project\n\n<!-- specbind:block -->\nhand written\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+            "--project-instructions",
+        ])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "PROJECT_INSTRUCTIONS_MARKERS_INVALID AGENTS.md",
+        ));
+
+    let preserved = fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md");
+    assert_eq!(
+        preserved,
+        "# Project\n\n<!-- specbind:block -->\nhand written\n"
+    );
+}

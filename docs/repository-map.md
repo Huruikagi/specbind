@@ -168,3 +168,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0096](./design/decisions/0096-skill-asset-layout.md) | Accepted | One agent-neutral source per product-managed skill |
 | [0097](./design/decisions/0097-discovery-routing-and-read-models.md) | Accepted | Discovery routing contract and the read models it requires |
 | [0098](./design/decisions/0098-steering-read-surface.md) | Accepted | Steering documents identified by OKF type and read through the CLI |
+| [0099](./design/decisions/0099-project-instruction-block.md) | Accepted | Marked SpecBind block maintained in root agent instruction files |

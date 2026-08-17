@@ -16,6 +16,7 @@ pub mod install;
 pub mod milestone;
 pub mod milestone_scope;
 pub mod milestone_status;
+pub mod project_instructions;
 pub mod protocol;
 pub mod release;
 pub mod release_finalize;

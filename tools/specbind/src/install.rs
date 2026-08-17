@@ -9,7 +9,9 @@ use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
-use crate::{config::ProjectLanguage, guarded_fs, repository, rule, skill, template};
+use crate::{
+    config::ProjectLanguage, guarded_fs, project_instructions, repository, rule, skill, template,
+};
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
 const DEFAULT_SPEC_DIR: &str = ".specbind";
@@ -80,6 +82,12 @@ pub struct PlanEntry {
     pub detail: Option<String>,
     /// Exact bytes an apply would write. Absent for a kept target.
     content: Option<String>,
+    /// Exact prior content the plan was computed from.
+    ///
+    /// Presence alone cannot detect a race for a target the installer edits in
+    /// place rather than creating whole, so those categories carry what they
+    /// read and the apply compares against it.
+    expected_current: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -165,6 +173,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     entries.extend(template_entries(project_root, &resolved)?);
     entries.extend(rule_entries(project_root, &resolved)?);
     entries.extend(skill_entries(project_root, &resolved)?);
+    entries.extend(project_instruction_entries(project_root, &resolved)?);
     if entries
         .iter()
         .any(|entry| entry.action == PlanAction::Replace)
@@ -318,6 +327,7 @@ fn config_entry(existing: Option<&InstalledConfig>, resolved: &ResolvedInputs) -
             category: "config",
             detail: None,
             content: Some(rendered),
+            expected_current: None,
         };
     };
     let installed_agents = config
@@ -338,6 +348,7 @@ fn config_entry(existing: Option<&InstalledConfig>, resolved: &ResolvedInputs) -
         category: "config",
         detail: unchanged.then(|| "already matches the requested inputs".to_owned()),
         content: (!unchanged).then_some(rendered),
+        expected_current: None,
     }
 }
 
@@ -419,6 +430,7 @@ fn template_entries(
             detail: (action == PlanAction::Keep)
                 .then(|| "project-owned settings are never overwritten".to_owned()),
             content,
+            expected_current: None,
         });
     }
     Ok(entries)
@@ -459,6 +471,7 @@ fn rule_entries(
             detail: (action == PlanAction::Keep)
                 .then(|| "project-owned settings are never overwritten".to_owned()),
             content: (action == PlanAction::Create).then(|| default.content().to_owned()),
+            expected_current: None,
         });
     }
     Ok(entries)
@@ -469,6 +482,73 @@ fn rule_entries(
 /// Skills are replaced rather than kept: a local edit is not a supported
 /// customization path, and the repository guard below refuses the replacement
 /// while that edit is uncommitted.
+/// Plans the Decision 0099 marked block in each selected agent's root
+/// instruction file.
+///
+/// Nothing is planned when project instructions are disabled. Disabling does not
+/// remove an existing block: that would delete text from a project-owned file,
+/// which Decision 0077 defers along with uninstall.
+fn project_instruction_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    if !resolved.project_instructions {
+        return Ok(vec![]);
+    }
+    let mut entries = Vec::new();
+    for agent in &resolved.agents {
+        let relative = project_instructions::target(*agent);
+        let target = project_root.join(relative);
+        let current = match fs::read(&target) {
+            Ok(bytes) => Some(String::from_utf8(bytes).map_err(|_| {
+                one_issue(
+                    "INSTALL_TARGET_NOT_UTF8",
+                    Some(relative.to_owned()),
+                    "agent instruction file must be UTF-8",
+                )
+            })?),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+            Err(error) => {
+                return Err(one_issue(
+                    "INSTALL_TARGET_UNREADABLE",
+                    Some(relative.to_owned()),
+                    error.to_string(),
+                ));
+            }
+        };
+        let applied = project_instructions::apply(current.as_deref())
+            .map_err(|error| one_issue(error.code, Some(relative.to_owned()), error.message))?;
+        // The entry describes the block, not the file. Adding a block to an
+        // existing file removes no text, so it is a creation rather than a
+        // Decision 0077 replacement and needs no committed clean repository.
+        let action = if applied.had_block {
+            if current.as_deref() == Some(applied.content.as_str()) {
+                PlanAction::Keep
+            } else {
+                PlanAction::Replace
+            }
+        } else {
+            PlanAction::Create
+        };
+        let detail = match action {
+            PlanAction::Keep => Some("already matches the current product asset".to_owned()),
+            PlanAction::Create if current.is_some() => {
+                Some("appended to the existing instruction file".to_owned())
+            }
+            _ => None,
+        };
+        entries.push(PlanEntry {
+            action,
+            path: relative.to_owned(),
+            category: "project-instructions",
+            detail,
+            content: (action != PlanAction::Keep).then_some(applied.content),
+            expected_current: current,
+        });
+    }
+    Ok(entries)
+}
+
 fn skill_entries(
     project_root: &Path,
     resolved: &ResolvedInputs,
@@ -504,6 +584,7 @@ fn skill_entries(
                 detail: (action == PlanAction::Keep)
                     .then(|| "already matches the current product asset".to_owned()),
                 content: (action != PlanAction::Keep).then_some(rendered),
+                expected_current: None,
             });
         }
     }
@@ -584,6 +665,26 @@ fn verify_expected_state(target: &Path, entry: &PlanEntry) -> Result<(), Install
             ));
         }
     };
+    if entry.action == PlanAction::Keep {
+        return Ok(());
+    }
+    if let Some(expected) = &entry.expected_current {
+        // An in-place edit leaves the file present either way, so presence
+        // proves nothing. Compare the bytes the plan actually read.
+        return match fs::read(target) {
+            Ok(current) if current == expected.as_bytes() => Ok(()),
+            Ok(_) => Err(one_issue(
+                "INSTALL_TARGET_CHANGED",
+                Some(entry.path.clone()),
+                "installation target changed after the plan was computed",
+            )),
+            Err(error) => Err(one_issue(
+                "INSTALL_TARGET_UNREADABLE",
+                Some(entry.path.clone()),
+                error.to_string(),
+            )),
+        };
+    }
     let expected = match entry.action {
         PlanAction::Create => false,
         PlanAction::Replace => true,
