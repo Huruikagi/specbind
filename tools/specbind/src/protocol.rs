@@ -44,6 +44,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Non-waivable synthesis, simplification, owned-boundary, self-containment, and Requirement/Contract realization baseline.",
         content: include_str!("../assets/protocols/design-authoring.md"),
     },
+    Protocol {
+        selector: "design-validation",
+        purpose: "Semantic Design review baseline shared by pre-approval authoring review and independent validation.",
+        content: include_str!("../assets/protocols/design-validation.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
