@@ -59,6 +59,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Coverage, executability, dependency, completion-detail, boundary, and safe-parallel judgment over the structured Task contract.",
         content: include_str!("../assets/protocols/task-planning.md"),
     },
+    Protocol {
+        selector: "cross-spec-review",
+        purpose: "Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline.",
+        content: include_str!("../assets/protocols/cross-spec-review.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
