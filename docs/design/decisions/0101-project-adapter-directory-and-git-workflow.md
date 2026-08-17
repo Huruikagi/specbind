@@ -200,10 +200,23 @@ readable; a test writes one and confirms the read is refused. Absence returns
 the consuming skill. Scaffolds are verified to differ per language while both
 open with the same English `type` literal.
 
-The release skill is not embedded, and neither embedded phase skill reads the
-Git adapter yet.
+Both embedded phase skills carry a checkpoint step. `specbind-discovery`
+reaches it only after the milestone mutation succeeded and every owed Brief is
+written; `specbind-requirements` only after the approval succeeded, and not at
+all when it stopped short of approving. Each reads the Git adapter, treats
+`NO_CHANGE ADAPTER_ABSENT` as the instruction to commit nothing, and carries the
+policy-is-not-authority limits: no authority from presence, commit guidance is
+not push guidance, no force-push or history rewrite, staging confined to the
+paths that run produced, and a stop before the Git operation on ambiguous or
+conflicting guidance. A failed checkpoint leaves the milestone, Briefs, and
+approval intact and is reported as uncommitted.
 
-That remaining step is not optional. An
+The conformance check covers the adapter invocation; it was confirmed to reject
+a renamed `adapter` route.
+
+The release skill is not embedded, so the release adapter has an installer and a
+read surface but no consumer yet. Later skills carry the checkpoint step from the
+start. An
 install that creates a Git adapter no skill reads leaves a project that has
 stated its checkpoint policy and is silently ignored, which is worse than having
 no adapter: the setting exists, so its absence of effect reads as SpecBind

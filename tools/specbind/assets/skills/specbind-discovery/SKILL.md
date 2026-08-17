@@ -237,8 +237,37 @@ back**. The CLI tracks machine state, not brief content, so a scope whose briefs
 were never authored looks healthy to every command while being exactly the state
 the next skill cannot start from.
 
-Finally, report in the project's language: what was created or changed, what was
-invalidated and why, and which skill runs next for each item.
+## 8. Checkpoint, if the project asks
+
+Only now is this work eligible to commit: the milestone mutation succeeded and
+every brief you owed is written. A partially written discovery result is never
+committed, however often the project wants checkpoints.
+
+```sh
+specbind adapter read git
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means the project wants no commit from you. Stop
+there — that is an answer, not a missing file to work around.
+
+When the adapter has guidance, follow it. It sets **policy, not permission**:
+
+- It grants no authority by existing. The user's request, the root agent
+  instructions, and your tool permissions still decide what you may do.
+- Commit guidance is not push guidance. Push only where the adapter says to, and
+  never force-push, rewrite history, or bypass a protected branch.
+- Stage only the paths this run produced. Unrelated work already in the worktree
+  is left exactly as it is.
+- Stop before the Git operation if the guidance is ambiguous, unsafe, or
+  conflicts with something else you were told.
+
+A failed checkpoint changes nothing that already succeeded. The milestone and
+the briefs remain valid; report them as uncommitted and continue.
+
+## 9. Report
+
+In the project's language: what was created or changed, what was invalidated and
+why, whether the work was committed, and which skill runs next for each item.
 
 ## Boundaries
 

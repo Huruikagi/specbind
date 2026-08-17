@@ -173,6 +173,35 @@ authority. Without either form, present your result and stop.
 Never approve to resolve a failing check. A refused approval is information
 about the artifact; report the diagnostic rather than working around it.
 
+## 6. Checkpoint, if the project asks
+
+Only after the approval succeeds is this work eligible to commit. A draft you
+have not yet approved is never committed, however often the project wants
+checkpoints. If you stopped short of approving, you also stop short of this.
+
+```sh
+specbind adapter read git
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means the project wants no commit from you. Stop
+there — that is an answer, not a missing file to work around.
+
+When the adapter has guidance, follow it. It sets **policy, not permission**:
+
+- It grants no authority by existing. The user's request, the root agent
+  instructions, and your tool permissions still decide what you may do.
+- Delegated approval authorized crossing this gate. It said nothing about
+  committing or pushing.
+- Commit guidance is not push guidance. Push only where the adapter says to, and
+  never force-push, rewrite history, or bypass a protected branch.
+- Stage only the paths this run produced. Unrelated work already in the worktree
+  is left exactly as it is.
+- Stop before the Git operation if the guidance is ambiguous, unsafe, or
+  conflicts with something else you were told.
+
+A failed checkpoint does not undo or weaken the approval. The gate stays
+approved; report the work as uncommitted and continue.
+
 ## When the gate is already approved
 
 Routed work arrives with the gate already rewound, because discovery performs
@@ -201,4 +230,5 @@ Delegation authorizes accepting gates, not discarding accepted work.
 - Write no machine state. Never edit `spec.yaml`. The active set reaches it only
   through the approve command.
 - Report in the project's language: what the contract now says, what changed,
-  which IDs are active and why, and what runs next.
+  which IDs are active and why, whether the work was committed, and what runs
+  next.
