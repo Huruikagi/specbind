@@ -35,7 +35,7 @@ Two read gaps block the SpecBind version outright:
 
 ```text
 specbind spec list
-specbind milestone scope
+specbind milestone scope [--include-body]
 ```
 
 #### `spec list`
@@ -69,15 +69,16 @@ candidate document, in exactly the shape `update-scope --scope` accepts.
   a scope the parser never accepted.
 - The document is the Decision 0089 version-1 camelCase form: `schemaVersion`
   first, then `workItems`, with categories present only when non-empty and item
-  order preserved from the Roadmap. It is serialized with two-space indentation,
-  no trailing whitespace, `\n` line endings, and exactly one trailing newline,
-  independent of the platform.
+  order preserved from the Roadmap. With `--include-body`, `body` follows
+  `workItems` and contains the complete current Markdown body. It is serialized
+  with two-space indentation, no trailing whitespace, `\n` line endings, and
+  exactly one trailing newline, independent of the platform.
 - Per-item `status` is omitted. Decision 0089 forbids it in a candidate and
   preserves completed Direct status by identity across an update, so echoing it
   would produce a document the command rejects while adding nothing.
 
-The two commands compose into a checkable invariant: feeding `milestone scope`
-output straight back into `update-scope --scope -` returns
+The two commands compose into a checkable invariant: feeding either form of
+`milestone scope` output straight back into `update-scope --scope -` returns
 `NO_CHANGE MILESTONE_SCOPE_UNCHANGED`.
 
 This is a raw-content read, in the same family as `artifact read`,
@@ -88,9 +89,12 @@ turning command *results* into JSON; this command echoes transient command
 *input* so a replacement can be composed from the current value. Ordinary
 `OK`, `NO_CHANGE`, and `ERROR` reporting is unchanged for every other command.
 
-The emitted candidate omits `body`. Decision 0089 makes an omitted body preserve
-the current Roadmap prose, so a read-edit-write round trip cannot accidentally
-rewrite it. A caller that intends to change the body supplies one deliberately.
+The default candidate omits `body`. Decision 0089 makes an omitted body preserve
+the current Roadmap prose, so an ordinary read-edit-write round trip cannot
+accidentally rewrite it. A caller that deliberately intends to change the body
+uses `--include-body`, edits that complete value, and submits it with the scope.
+There is no body-only fragment read whose result could be mistaken for a complete
+replacement candidate.
 
 ### Three kinds of work
 
@@ -151,6 +155,12 @@ that is about to be rewound.
 - Every Spec-backed work item gets an active Brief. When the same Spec already
   has a Brief in the same milestone, the new request is folded into it rather
   than creating a second one, per Decision 0062.
+- When steering materially changes why a Spec owns a responsibility, discovery
+  records that reasoning in the Spec's Brief. When it materially changes a
+  Direct classification, dependency, or milestone decomposition, discovery
+  records it in the Roadmap body. For an existing milestone it obtains the
+  complete current prose with `milestone scope --include-body` and merges into
+  that value; it never reconstructs or replaces unseen prose.
 - Briefs are authored **after** the creating or updating command succeeds. Before
   it succeeds there is no committed scope for them to describe, and Decision 0089
   requires an untracked-free repository at `milestone create`, so a Brief written
@@ -194,15 +204,44 @@ skill stays small and cannot drift back into the inherited whole-repository scan
 | --- | --- |
 | `specbind milestone status` | always |
 | `specbind spec list` | always |
-| `specbind milestone scope` | only when a milestone is active |
+| `specbind milestone scope` | only when a milestone is active; add `--include-body` only when confirmed reasoning must change Roadmap prose |
+| `specbind steering list`, then every document listed | always |
 | A Spec's Requirements and Contract | only for a Spec the request may touch |
 
 The first two answer whether a milestone is active and which Specs exist, which
 is everything the classification needs to begin. Requirements and Contract are
 read to decide whether a specific Spec owns a specific request, so they are read
-per candidate Spec and never swept. No other artifact is read for routing: Design
-and task plans describe how accepted work is built, and consulting them would
-reintroduce the technical evaluation this decision excludes.
+per candidate Spec and never swept.
+
+Steering is the one set discovery reads whole. A project's structural
+conventions, naming, and settled ownership boundaries bear directly on where
+work belongs, and the inventory carries no field from which relevance could be
+judged, so discovery reads every listed document.
+[Decision 0098](./0098-steering-read-surface.md) fixes how steering is
+identified and read, rejects preloading it into every skill, and requires that
+guidance which changed a routing decision be recorded in a Brief or the Roadmap
+body according to what the reasoning is about.
+
+Reading settled technical constraints is not technical evaluation. This decision
+excludes *choosing* an approach, not knowing which boundaries the project has
+already fixed.
+
+A steering read that fails stops discovery before classification and before any
+mutation. Decision 0098 returns a partial inventory in that case, and the
+document missing from it may be the one that decided the boundary; routing on a
+knowingly incomplete view of the project's conventions is a guess presented as a
+decision.
+
+The condition is the command result: `steering list` or `steering read` exited
+nonzero with its stable `ERROR` code. Decision 0098 guarantees that no partial
+result is mixed into standard output for the skill to mistake as complete.
+
+Zero steering documents is not this case. It is a complete answer, reported as
+`OK` on standard output, and discovery continues normally.
+
+No other artifact is read for routing. Design and task plans describe how
+accepted work is built, and consulting them would reintroduce the technical
+evaluation this decision excludes.
 
 ### What discovery does not do
 
@@ -265,6 +304,10 @@ Implemented. Both read commands exist and
 installed, carrying the seven stages, the reading discipline, the
 rewind-before-scope ordering, the Brief authoring and retry rules, and the stop
 conditions. Its forward tests remain outstanding, pending the fixture project.
+
+The embedded skill predates Decision 0098 and names neither steering reads nor
+the deliberate `--include-body` path yet. That part of the reading and authoring
+discipline lands with the steering commands and scope-read extension.
 
 `tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
