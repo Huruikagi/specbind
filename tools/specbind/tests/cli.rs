@@ -2822,3 +2822,218 @@ fn write_status_fixture(root: &Path) {
         ),
     );
 }
+
+#[test]
+fn lists_no_specs_in_an_empty_project() {
+    let root = project_fixture();
+    fs::remove_dir_all(root.path().join(".specbind/specs/checkout"))
+        .expect("leave an empty specs directory");
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["spec", "list"])
+        // An empty project is a valid answer, not a missing precondition.
+        .assert()
+        .success()
+        .stdout("OK SPEC_LISTED: Found 0 spec(s).\n")
+        .stderr("");
+}
+
+#[test]
+fn lists_specs_in_identity_order_with_lifecycle_and_artifact_presence() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+    fs::create_dir_all(root.path().join(".specbind/specs/analytics"))
+        .expect("create idle spec directory");
+    write(
+        root.path(),
+        ".specbind/specs/analytics/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["spec", "list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with("OK SPEC_LISTED: Found 2 spec(s).\n  analytics: state=idle milestone=none requirements=no contract=no\n  checkout: state=implementation milestone=")
+            .and(predicate::str::contains(" requirements=yes contract=yes\n")))
+        .stderr("");
+}
+
+#[test]
+fn lists_an_unreadable_spec_instead_of_failing_the_listing() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+    fs::create_dir_all(root.path().join(".specbind/specs/analytics"))
+        .expect("create broken spec directory");
+    write(
+        root.path(),
+        ".specbind/specs/analytics/spec.yaml",
+        "schema_version: 1\nactive_change: {state: nonsense}\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        // The broken Spec is reported, and the healthy one beside it survives.
+        .args(["spec", "list"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Found 2 spec(s).")
+                .and(predicate::str::contains("\n  analytics: unreadable: "))
+                .and(predicate::str::contains("\n  checkout: state=")),
+        )
+        .stderr("");
+}
+
+#[test]
+fn reports_no_change_reading_scope_without_an_active_milestone() {
+    let root = project_fixture();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "scope"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE NO_ACTIVE_MILESTONE: No active milestone exists.\n")
+        .stderr("");
+}
+
+#[test]
+fn refuses_to_emit_a_partial_scope_from_an_invalid_roadmap() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        "---\ntype: SpecBind Roadmap\n---\n# Roadmap\n",
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "scope"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR MILESTONE_SCOPE_FAILED: Cannot read the active milestone scope.\n",
+        ));
+}
+
+#[test]
+fn writes_the_current_scope_as_a_replacement_candidate() {
+    let root = project_fixture();
+    commit_all(root.path());
+
+    let mut create = Command::cargo_bin("specbind").expect("specbind binary should build");
+    create
+        .current_dir(root.path())
+        .args(["milestone", "create", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"payments","summary":"Add payments"}],"directChanges":[{"id":"docs","summary":"Update docs","dependsOn":[{"spec":"payments"}]}]},"body":"Overview\n\nDeliver payments.\n"}"#,
+        )
+        .assert()
+        .success();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    let output = command
+        .current_dir(root.path())
+        .args(["milestone", "scope"])
+        .assert()
+        .success()
+        .stderr("")
+        .get_output()
+        .stdout
+        .clone();
+    let document = String::from_utf8(output).expect("UTF-8 scope document");
+
+    // The serialization is a byte-exact contract: declared field order,
+    // two-space indentation, no body, no per-item status, one trailing newline.
+    assert_eq!(
+        document,
+        concat!(
+            "{\n",
+            "  \"schemaVersion\": 1,\n",
+            "  \"workItems\": {\n",
+            "    \"newSpecs\": [\n",
+            "      {\n",
+            "        \"spec\": \"payments\",\n",
+            "        \"summary\": \"Add payments\"\n",
+            "      }\n",
+            "    ],\n",
+            "    \"directChanges\": [\n",
+            "      {\n",
+            "        \"id\": \"docs\",\n",
+            "        \"summary\": \"Update docs\",\n",
+            "        \"dependsOn\": [\n",
+            "          { \"spec\": \"payments\" }\n",
+            "        ]\n",
+            "      }\n",
+            "    ]\n",
+            "  }\n",
+            "}\n",
+        )
+    );
+
+    // The round trip is the invariant Decision 0097 accepts: feeding the read
+    // straight back into the replacement changes nothing.
+    let mut round_trip = Command::cargo_bin("specbind").expect("specbind binary should build");
+    round_trip
+        .current_dir(root.path())
+        .args(["milestone", "update-scope", "--scope", "-"])
+        .write_stdin(document)
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with(
+            "NO_CHANGE MILESTONE_SCOPE_UNCHANGED",
+        ))
+        .stderr("");
+}
+
+#[test]
+fn omits_completed_direct_status_from_the_emitted_scope() {
+    let root = project_fixture();
+    commit_all(root.path());
+
+    let mut create = Command::cargo_bin("specbind").expect("specbind binary should build");
+    create
+        .current_dir(root.path())
+        .args(["milestone", "create", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"workItems":{"directChanges":[{"id":"docs","summary":"Update docs"}]}}"#,
+        )
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let revision = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    let mut complete = Command::cargo_bin("specbind").expect("specbind binary should build");
+    complete
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "direct",
+            "complete",
+            "docs",
+            "--implementation-revision",
+            &revision,
+        ])
+        .assert()
+        .success();
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "scope"])
+        .assert()
+        .success()
+        // Status is CLI-owned and preserved by identity, so a candidate that
+        // carried it would be rejected by the command it feeds.
+        .stdout(predicate::str::contains("\"status\"").not())
+        .stderr("");
+}

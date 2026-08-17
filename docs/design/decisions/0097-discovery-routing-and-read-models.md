@@ -260,8 +260,22 @@ dirty repository, and a refused reclassification of a completed Direct item.
 
 ## Implementation status
 
-Not implemented. `spec list` and `milestone scope` do not exist, and no
-discovery skill is embedded. The read models they need are already present:
-Spec enumeration exists inside the Contract graph resolver, and the Roadmap
-parser holds the categories and dependencies the scope document requires.
-Implementation proceeds as the two read commands first, then the skill.
+Partially implemented. Both read commands exist; no discovery skill is embedded
+yet.
+
+`tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
+out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
+reports a rejected entry as a structured fault so each caller names it in its own
+diagnostic vocabulary. Identities arrive already ordered, an unreadable Spec is
+listed with its fault named, and only an unreadable `specs/` directory fails.
+
+`tools/specbind/src/milestone_scope.rs` renders the active Roadmap as a
+version-1 candidate. The document is serialized by hand rather than through
+`serde_json`, which orders object keys alphabetically without `preserve_order`
+and would emit `directChanges` before `newSpecs`, inverting the declared order.
+Absence returns `NO_CHANGE NO_ACTIVE_MILESTONE` and an invalid Roadmap returns
+`ERROR MILESTONE_SCOPE_FAILED` with no partial document.
+
+The accepted checks are covered, including the byte-exact serialization, the
+round trip through `update-scope` returning `NO_CHANGE`, and the omission of
+completed Direct status. The skill and its forward tests remain outstanding.

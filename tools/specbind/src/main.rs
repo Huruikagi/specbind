@@ -104,6 +104,7 @@ fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
 
 fn run_spec(start: &Path, command: SpecCommand) -> CommandOutput {
     match command {
+        SpecCommand::List => specbind::cli::spec_list(start),
         SpecCommand::Status { spec } => specbind::cli::spec_status(start, &spec),
         SpecCommand::Completion { command } => run_spec_completion(start, command),
         SpecCommand::Requirements { command } => {
@@ -133,6 +134,7 @@ fn run_spec_completion(start: &Path, command: SpecCompletionCommand) -> CommandO
 fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
     match command {
         MilestoneCommand::Status => specbind::cli::milestone_status(start),
+        MilestoneCommand::Scope => specbind::cli::milestone_scope(start),
         MilestoneCommand::BindRelease { version, rebind } => {
             specbind::cli::milestone_bind_release(start, &version, rebind)
         }

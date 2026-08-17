@@ -1,14 +1,14 @@
 //! Project-wide validation and read models for persistent `SpecBind` Contracts.
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::fs;
 use std::path::Path;
 
 use camino::Utf8PathBuf;
 use petgraph::{algo::tarjan_scc, graphmap::DiGraphMap};
 
 use crate::artifacts::{
-    ArtifactInventory, ArtifactKind, DiscoveryIssue, discover_spec, resolve_contract_projection,
+    self, ArtifactInventory, ArtifactKind, DiscoveryIssue, SpecEntryFault, discover_spec,
+    resolve_contract_projection,
 };
 use crate::contract::{ContractDocument, ContractSection};
 
@@ -178,9 +178,8 @@ pub fn evaluate(
 }
 
 fn discover_spec_ids(specbind_root: &Path) -> (BTreeSet<String>, Vec<DiscoveryIssue>) {
-    let specs_path = specbind_root.join("specs");
-    let entries = match fs::read_dir(&specs_path) {
-        Ok(entries) => entries,
+    let discovery = match artifacts::discover_spec_ids(specbind_root) {
+        Ok(discovery) => discovery,
         Err(error) => {
             return (
                 BTreeSet::new(),
@@ -192,58 +191,36 @@ fn discover_spec_ids(specbind_root: &Path) -> (BTreeSet<String>, Vec<DiscoveryIs
             );
         }
     };
-    let mut specs = BTreeSet::new();
-    let mut issues = Vec::new();
-    for entry in entries {
-        let entry = match entry {
-            Ok(entry) => entry,
-            Err(error) => {
-                issues.push(discovery_issue(
+    let issues = discovery
+        .faults
+        .into_iter()
+        .map(|(path, fault)| {
+            let path = path.or_else(|| Some(Utf8PathBuf::from("specs")));
+            match fault {
+                SpecEntryFault::Unreadable(error) => discovery_issue(
                     "CONTRACT_GRAPH_SPEC_ENTRY_READ_FAILED",
-                    Some(Utf8PathBuf::from("specs")),
+                    path,
                     format!("cannot inspect persistent spec entry: {error}"),
-                ));
-                continue;
+                ),
+                SpecEntryFault::NonUtf8Name => discovery_issue(
+                    "CONTRACT_GRAPH_SPEC_ID_INVALID",
+                    path,
+                    "persistent spec directory name must be UTF-8 lowercase kebab-case",
+                ),
+                SpecEntryFault::NotADirectory => discovery_issue(
+                    "CONTRACT_GRAPH_SPEC_PATH_INVALID",
+                    path,
+                    "persistent spec path must be a regular non-symlink directory",
+                ),
+                SpecEntryFault::InvalidId => discovery_issue(
+                    "CONTRACT_GRAPH_SPEC_ID_INVALID",
+                    path,
+                    "persistent spec directory name must be lowercase kebab-case",
+                ),
             }
-        };
-        let name = entry.file_name();
-        let Some(name) = name.to_str() else {
-            issues.push(discovery_issue(
-                "CONTRACT_GRAPH_SPEC_ID_INVALID",
-                Some(Utf8PathBuf::from("specs")),
-                "persistent spec directory name must be UTF-8 lowercase kebab-case",
-            ));
-            continue;
-        };
-        let relative = Utf8PathBuf::from(format!("specs/{name}"));
-        let file_type = match entry.file_type() {
-            Ok(file_type) => file_type,
-            Err(error) => {
-                issues.push(discovery_issue(
-                    "CONTRACT_GRAPH_SPEC_ENTRY_READ_FAILED",
-                    Some(relative),
-                    format!("cannot inspect persistent spec entry: {error}"),
-                ));
-                continue;
-            }
-        };
-        if file_type.is_symlink() || !file_type.is_dir() {
-            issues.push(discovery_issue(
-                "CONTRACT_GRAPH_SPEC_PATH_INVALID",
-                Some(relative),
-                "persistent spec path must be a regular non-symlink directory",
-            ));
-        } else if is_kebab_id(name) {
-            specs.insert(name.to_owned());
-        } else {
-            issues.push(discovery_issue(
-                "CONTRACT_GRAPH_SPEC_ID_INVALID",
-                Some(relative),
-                "persistent spec directory name must be lowercase kebab-case",
-            ));
-        }
-    }
-    (specs, issues)
+        })
+        .collect();
+    (discovery.specs, issues)
 }
 
 fn resolve_dependencies(
@@ -477,15 +454,6 @@ fn entry_selector(entry: &ContractEntryRef) -> String {
         entry.section.token(),
         entry.entry_id
     )
-}
-
-fn is_kebab_id(value: &str) -> bool {
-    let mut bytes = value.bytes();
-    value.len() <= 64
-        && bytes.next().is_some_and(|byte| byte.is_ascii_lowercase())
-        && bytes.all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
-        && !value.ends_with('-')
-        && !value.contains("--")
 }
 
 fn graph_issue(

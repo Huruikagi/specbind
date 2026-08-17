@@ -196,7 +196,15 @@ pub fn resolve(
     }))
 }
 
-fn read_roadmap(specbind_root: &Path) -> Result<Option<RoadmapDocument>, MilestoneStatusFailure> {
+/// Loads the active Roadmap, distinguishing absence from an unreadable or
+/// invalid document. `Ok(None)` means no milestone is active.
+///
+/// # Errors
+///
+/// Returns read, path-safety, or parser diagnostics.
+pub(crate) fn read_roadmap(
+    specbind_root: &Path,
+) -> Result<Option<RoadmapDocument>, MilestoneStatusFailure> {
     let path = specbind_root.join("steering/roadmap.md");
     let metadata = match fs::symlink_metadata(&path) {
         Ok(metadata) => metadata,

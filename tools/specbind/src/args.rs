@@ -138,6 +138,8 @@ pub enum TasksCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum SpecCommand {
+    /// List every persistent Spec in the project.
+    List,
     /// Report lifecycle, freshness, coverage, and task progress.
     Status { spec: String },
     /// Validate, accept, or invalidate implementation completion.
@@ -197,6 +199,8 @@ pub enum SpecCompletionCommand {
 pub enum MilestoneCommand {
     /// Report stage, progress, actions, dependencies, and release blockers.
     Status,
+    /// Write the current scope as a replacement candidate document.
+    Scope,
     /// Bind or explicitly rebind the active milestone release label.
     BindRelease {
         version: String,

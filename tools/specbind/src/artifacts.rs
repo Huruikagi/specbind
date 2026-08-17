@@ -157,6 +157,78 @@ pub fn canonical_id(value: &str) -> bool {
         && !value.contains("--")
 }
 
+/// Why one entry below `specs/` is not a persistent Spec.
+///
+/// The reason is reported structurally so each caller can name it in its own
+/// diagnostic vocabulary.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SpecEntryFault {
+    /// The directory entry itself could not be inspected.
+    Unreadable(String),
+    /// The entry name is not UTF-8, so it cannot be a canonical identity.
+    NonUtf8Name,
+    /// The entry is a symlink or not a directory.
+    NotADirectory,
+    /// The name is UTF-8 but not a canonical lowercase kebab-case identity.
+    InvalidId,
+}
+
+/// One enumeration of `specs/`, separating identities from rejected entries.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SpecDiscovery {
+    pub specs: BTreeSet<String>,
+    /// Rejected entries, each with its project-relative path when one is known.
+    pub faults: Vec<(Option<Utf8PathBuf>, SpecEntryFault)>,
+}
+
+/// Enumerates every persistent Spec identity below a `SpecBind` root.
+///
+/// # Errors
+///
+/// Returns the underlying message only when `specs/` itself cannot be read. A
+/// single rejected entry is a fault, not a failure, so one malformed directory
+/// never hides the Specs beside it.
+pub fn discover_spec_ids(specbind_root: &Path) -> Result<SpecDiscovery, String> {
+    let entries = fs::read_dir(specbind_root.join("specs")).map_err(|error| error.to_string())?;
+    let mut specs = BTreeSet::new();
+    let mut faults = Vec::new();
+    for entry in entries {
+        let entry = match entry {
+            Ok(entry) => entry,
+            Err(error) => {
+                faults.push((None, SpecEntryFault::Unreadable(error.to_string())));
+                continue;
+            }
+        };
+        let name = entry.file_name();
+        let Some(name) = name.to_str() else {
+            faults.push((None, SpecEntryFault::NonUtf8Name));
+            continue;
+        };
+        let relative = Utf8PathBuf::from(format!("specs/{name}"));
+        match entry.file_type() {
+            Ok(file_type) if file_type.is_dir() && !file_type.is_symlink() => {}
+            Ok(_) => {
+                faults.push((Some(relative), SpecEntryFault::NotADirectory));
+                continue;
+            }
+            Err(error) => {
+                faults.push((
+                    Some(relative),
+                    SpecEntryFault::Unreadable(error.to_string()),
+                ));
+                continue;
+            }
+        }
+        if canonical_id(name) {
+            specs.insert(name.to_owned());
+        } else {
+            faults.push((Some(relative), SpecEntryFault::InvalidId));
+        }
+    }
+    Ok(SpecDiscovery { specs, faults })
+}
+
 /// Discovers recognized live artifacts for one canonical spec below a `SpecBind` root.
 #[must_use]
 pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInventory {
