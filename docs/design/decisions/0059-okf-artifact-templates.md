@@ -37,7 +37,7 @@ SpecBind needs customizable template sets that can create several design artifac
   ```
 
 - The directive is recognized from the Markdown syntax tree as a complete HTML comment node. Prefix-like text inside code fences, inline code, ordinary prose, or a different HTML comment is not an instruction.
-- `specbind:instruction` is allowed only in managed template Markdown. It is included when an agent reads the template and omitted from every materialized artifact.
+- `specbind:instruction` is allowed only in managed template Markdown. It is included when an agent reads the template and omitted from every materialized artifact. The `okf-authoring` protocol accepted by [Decision 0094](./0094-embedded-product-protocols.md) states this to the authoring agent, because a rule enforced only after the fact leaves the agent no way to comply the first time.
 - Template-source validation checks OKF structure, literal identity, path safety, multiplicity, directive syntax, and every target-profile invariant that can hold before authoring. The authoring operation removes instruction nodes and validates the completed output against the full live-artifact profile before writing it.
 - Live-artifact validation reports a template-instruction leak if such a directive remains anywhere in an authoritative artifact. Ordinary HTML comments remain ordinary content and are not stripped or rejected by this rule.
 - The CLI identifies, exposes, strips, and diagnoses instruction nodes but does not interpret whether their natural-language guidance is substantively correct.

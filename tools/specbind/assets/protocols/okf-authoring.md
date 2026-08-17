@@ -35,6 +35,29 @@ An ordinary managed Markdown file is an OKF *concept document*.
   tool, or the project itself, may own it.
 - Do not add SpecBind-looking metadata that no accepted profile defines.
 
+## Template instruction comments
+
+A Markdown HTML comment whose trimmed content begins with the exact token
+`specbind:instruction` is guidance addressed to you, not content of the document
+you are producing.
+
+```markdown
+<!-- specbind:instruction Summarize the responsibility in one paragraph. -->
+```
+
+- It appears only in managed templates. Reading a template returns it intact,
+  because it is the reason the template is worth reading.
+- Follow it while authoring, then **omit it from the artifact you write**. This
+  is the one thing you carry out of a template rather than into the document.
+- A leaked comment in a live artifact is a defect the CLI reports. It is not
+  inert decoration: a later reader cannot tell instruction from specification,
+  and the document stops being the artifact it claims to be.
+- Never write one into a live artifact yourself, and never leave one in place
+  when revising a document that has one.
+
+A template may also carry scaffold headings with no content beneath them. Those
+are structure, not instruction: keep the ones the artifact needs and fill them.
+
 ## Reserved files
 
 `index.md` and `log.md` are OKF reserved files, not concept documents. They are
