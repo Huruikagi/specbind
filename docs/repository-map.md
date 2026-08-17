@@ -63,6 +63,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 | [CLI and agent boundary](./design/cli-agent-boundary.md) | Proposed boundary between bundled deterministic CLI operations and agent skills |
 | [Cross-spec contracts](./design/cross-spec-contracts.md) | Detailed draft for persistent cross-spec seam manifests and contract-first review |
 | [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
+| [Skill forward tests](./skill-forward-tests.md) | Behavioral verification procedure for embedded skills, run against a fixture project |
 
 ## Decision records
 

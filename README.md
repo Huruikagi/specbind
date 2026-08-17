@@ -54,6 +54,12 @@ The versioned Rust DTOs under [`src/schema/`](./tools/specbind/src/schema/) are 
 cargo run --example generate_schemas
 ```
 
+Embedded skills also have behavioral verification that cannot run in CI. Build its fixture project and follow [the forward-test procedure](./docs/skill-forward-tests.md):
+
+```sh
+sh tools/specbind/scripts/forward-test-fixture.sh /tmp/specbind-fixture en
+```
+
 The inherited TypeScript oracle retains its own verification commands:
 
 ```sh

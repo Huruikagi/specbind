@@ -214,5 +214,6 @@ stopping rule, and confirmed self-invalidation when the gate is already approved
 
 The Decision 0096 conformance check covers its invocations; it was confirmed to
 reject both a renamed `spec requirements invalidate` route and an unknown
-`--delegation-flow` option. Forward tests remain outstanding, pending the fixture
-project.
+`--delegation-flow` option. Its forward tests are specified as scenarios R1
+through R5 in [Skill forward tests](../../skill-forward-tests.md) and are run
+manually.

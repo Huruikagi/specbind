@@ -1,0 +1,188 @@
+#!/usr/bin/env sh
+# Builds the fixture project the skill forward tests run against.
+#
+# Everything here is deterministic on purpose. The forward tests are not, so the
+# setup must never be a variable: two runs that disagree should disagree about
+# the agent, not about what it was given.
+#
+# Usage: forward-test-fixture.sh <target-directory> [en|ja]
+#
+# See docs/skill-forward-tests.md for what to do with the result.
+
+set -eu
+
+target=${1:?usage: forward-test-fixture.sh <target-directory> [en|ja]}
+language=${2:-en}
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+workspace=$(dirname -- "$script_dir")
+
+if [ -e "$target" ]; then
+    echo "forward-test-fixture: $target already exists; remove it first" >&2
+    exit 1
+fi
+
+echo "Building the release binary..."
+( cd "$workspace" && cargo build --release --quiet )
+specbind="$workspace/target/release/specbind"
+[ -x "$specbind" ] || specbind="$specbind.exe"
+
+mkdir -p "$target"
+cd "$target"
+
+git init --quiet .
+git config user.name "SpecBind Fixture"
+git config user.email "fixture@example.invalid"
+
+# A small but real codebase. The fixture needs something for a request to be
+# about; an empty repository makes every boundary decision arbitrary.
+mkdir -p src
+cat > README.md <<'EOF'
+# Bookshop
+
+A small order service. Carts hold items, and checkout turns a cart into an order.
+EOF
+cat > src/cart.py <<'EOF'
+"""Holds items a customer intends to buy."""
+
+
+def add_item(cart, sku, quantity):
+    cart.setdefault(sku, 0)
+    cart[sku] += quantity
+    return cart
+EOF
+cat > src/orders.py <<'EOF'
+"""Turns a cart into a placed order."""
+
+
+def place(cart, customer):
+    return {"customer": customer, "lines": dict(cart), "status": "placed"}
+EOF
+
+git add -A
+git commit --quiet -m "Add the bookshop service"
+
+"$specbind" install --agent claude-code --agent codex --language "$language" \
+    --project-instructions >/dev/null
+
+spec_dir=.specbind
+
+# Durable project guidance, so the steering reads have something to find and the
+# boundary rules have something to bite on.
+mkdir -p "$spec_dir/steering"
+cat > "$spec_dir/steering/structure.md" <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: structure
+---
+
+# Structure
+
+Each capability owns one module under `src/` and one Spec.
+
+Ownership follows the data a capability is responsible for. `cart` owns what a
+customer intends to buy; `orders` owns what they have committed to. A change that
+crosses that line needs its own boundary rather than an extension of either.
+EOF
+cat > "$spec_dir/steering/conventions.md" <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: conventions
+---
+
+# Conventions
+
+Spec identities are singular nouns naming the responsibility, not the change.
+
+Every externally visible failure states what the caller should do next. "Invalid
+request" is not an acceptable outcome on its own.
+EOF
+
+# An established Spec, so "existing Spec update" and "new Spec" are both
+# reachable, and so retirement has something to try to remove.
+mkdir -p "$spec_dir/specs/cart"
+cat > "$spec_dir/specs/cart/spec.yaml" <<'EOF'
+schema_version: 1
+active_change: null
+EOF
+cat > "$spec_dir/specs/cart/requirements.md" <<'EOF'
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+
+# Requirements
+
+## Context
+
+Customers collect items before committing to buy them.
+
+## Scope
+
+### In scope
+
+Holding and amending a customer's intended purchase.
+
+### Out of scope
+
+Payment, fulfilment, and anything after an order is placed.
+
+## Requirements
+
+### Requirement 1: Hold intended items
+
+**Objective:** A customer can assemble a purchase over several visits.
+
+#### Acceptance Criteria
+
+1. Adding a SKU that is not in the cart records it with the requested quantity.
+2. Adding a SKU already in the cart increases its quantity by the requested amount.
+3. A quantity below one is rejected and states the smallest accepted quantity.
+
+### Requirement 2: Report the cart
+
+**Objective:** A customer can see what they are about to buy.
+
+#### Acceptance Criteria
+
+1. Reading a cart returns every SKU it holds with its current quantity.
+2. Reading a cart that holds nothing returns an empty result rather than failing.
+EOF
+cat > "$spec_dir/specs/cart/contract.md" <<'EOF'
+---
+type: SpecBind Contract
+---
+
+# Contract
+
+## Owns
+
+- `cart-contents` — the SKUs and quantities a customer intends to buy
+
+## Exports
+
+- `add-item` — record an intended purchase
+
+## Consumes
+
+## Invariants
+
+- `positive-quantity` — A cart holds no SKU at a quantity below one.
+
+## File Ownership
+
+- `cart-module` — `src/cart.py`
+EOF
+
+git add -A
+git commit --quiet -m "Install SpecBind and seed project state"
+
+echo
+echo "Fixture ready at $target"
+echo "  language: $language"
+echo "  specbind: $specbind"
+echo
+echo "Start an agent session with no prior context in that directory and run the"
+echo "scenarios in docs/skill-forward-tests.md."

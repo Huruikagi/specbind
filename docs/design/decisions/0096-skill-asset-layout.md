@@ -123,7 +123,9 @@ These tests belong to the ordinary verification set and run in CI.
 Behavioral verification — whether an agent given the skill actually produces the
 intended result — is not mechanically decidable and does not run in CI. It is
 performed against a fixture project by a session with no prior context, and is
-repeated when a skill changes materially.
+repeated when a skill changes materially. The procedure, its fixture builder, and
+the accepted expectations per scenario are in
+[Skill forward tests](../../skill-forward-tests.md).
 
 ### Scope
 
