@@ -166,3 +166,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0094](./design/decisions/0094-embedded-product-protocols.md) | Accepted | Immutable shared semantic protocols exposed through the CLI |
 | [0095](./design/decisions/0095-task-progress-cli.md) | Accepted | Guarded task execution progress commands |
 | [0096](./design/decisions/0096-skill-asset-layout.md) | Accepted | One agent-neutral source per product-managed skill |
+| [0097](./design/decisions/0097-discovery-routing-and-read-models.md) | Accepted | Discovery routing contract and the read models it requires |

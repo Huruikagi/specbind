@@ -111,6 +111,8 @@ It replaces `baseline_revision`, changes nothing else in the Roadmap, and remove
 - The CLI owns identity generation, baseline capture, grammar and DAG validation, lifecycle guards, persistence, concise English results, and process exit status.
 - V1 returns no general JSON response under Decisions 0067 and 0074.
 
+[Decision 0097](./0097-discovery-routing-and-read-models.md) adds the read commands an agent needs to compose a complete replacement scope.
+
 ## Consequences
 
 - A project can reach every lifecycle state through public commands, closing the last structural gap in the v1 CLI surface.
