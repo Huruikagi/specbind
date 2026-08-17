@@ -297,5 +297,9 @@ alongside a live Roadmap, the raw read, an unknown selector, the duplicate case
 from both commands, the refusal to read valid guidance beside a broken document,
 and a missing `artifact_id`.
 
-`specbind-discovery` does not yet name these reads; that skill revision is
-outstanding along with its forward tests.
+The embedded `specbind-discovery` skill names these reads: it lists steering and
+reads every listed document, stops before classifying when either command prints
+an `ERROR` line while treating a zero-document listing as a complete answer,
+distinguishes settled constraints from open choices, and records guidance that
+changed a decision in the Brief or the Roadmap body. Its forward tests remain
+outstanding, pending the fixture project.

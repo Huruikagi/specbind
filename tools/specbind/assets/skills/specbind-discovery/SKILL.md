@@ -30,7 +30,21 @@ Always:
 ```sh
 specbind milestone status
 specbind spec list
+specbind steering list
 ```
+
+Then read **every** steering document the listing named:
+
+```sh
+specbind steering read <selector>
+```
+
+Read all of them, not a promising-looking subset. The listing carries only a
+selector, a type, and a path, so there is nothing in it from which relevance
+could honestly be judged — a document called `main` may be the one that decides
+this boundary. This is the one set discovery reads whole, and it happens here,
+in the skill whose job is deciding boundaries, rather than being loaded into
+every skill.
 
 Then, only when a milestone is active:
 
@@ -53,8 +67,19 @@ Read them for the candidate Specs, never for all of them. Do not read designs or
 task plans at all — they describe how accepted work is built, which is exactly
 the technical evaluation this stage stays out of.
 
-If `spec list` reports a Spec as unreadable, say so and stop. Routing work into a
-Spec whose machine state is broken compounds the fault.
+### When a read fails
+
+Stop before classifying and before changing anything if:
+
+- `spec list` reports a Spec as unreadable. Routing work into a Spec whose
+  machine state is broken compounds the fault.
+- `steering list` or `steering read` printed an `ERROR` line. The document you
+  did not get may be the one that decided the boundary, and routing on a
+  knowingly partial view of the project's conventions is a guess presented as a
+  decision.
+
+`OK STEERING_LISTED: Found 0 steering document(s).` is not this case. It is a
+complete answer — the project has no steering — and you continue normally.
 
 ## 3. Classify each part of the request
 
@@ -77,6 +102,13 @@ For genuinely new work, each part is exactly one of:
 Decide by ownership, not by size. A large change inside one boundary is still one
 Spec; a small change that creates a new seam is a new Spec. Task counts and
 effort estimates say nothing about where a boundary belongs.
+
+Steering informs this. A constraint the project already settled is an input:
+"authentication is owned by the gateway" decides where work goes, and it is no
+less a boundary for appearing in a document about the stack. What you must not
+do is *choose* — compare options, pick a library, select an architecture. The
+line is between constraints that exist and choices nobody has made, never
+between kinds of document.
 
 A request spanning several kinds is normal and is not a fourth case. It becomes
 one scope candidate holding several work items.
@@ -133,8 +165,20 @@ specbind milestone update-scope --scope -
 ```
 
 `update-scope` takes a **complete** replacement, so start from what
-`milestone scope` emitted and add to it. Omit `body` unless the user asked for
-the roadmap prose to change; omitting it preserves what is already written.
+`milestone scope` emitted and add to it.
+
+The default read carries no `body`, and an omitted body preserves the roadmap
+prose already written. Use the complete form only when you intend to change that
+prose — including when steering shaped a decision you must record there, per
+step 7:
+
+```sh
+specbind milestone scope --include-body
+```
+
+Edit the `body` you were given and submit it whole. Never hand-write a partial
+body into an otherwise default candidate: a complete replacement containing a
+fragment silently discards the rest of the roadmap prose.
 
 The scope document is transient input. Pipe it on standard input rather than
 leaving a file behind in the repository.
@@ -153,6 +197,27 @@ Fill it from the request in the requester's own terms. Keep it short — the
 authoritative scope lives in requirements, and this document is not
 fingerprinted. When the Spec already has a brief in this milestone, **fold the
 new request into it** rather than adding a second one.
+
+### Record what steering decided
+
+Steering is not fingerprinted, so a conclusion resting on it is unreproducible
+unless you write the reasoning where the work lives. Otherwise the next skill
+inherits a boundary it cannot justify, and nobody can tell later whether the
+guidance still says what it said.
+
+| Reasoning | Write it in |
+| --- | --- |
+| Why a Spec owns this responsibility | that Spec's brief |
+| Why an item is Direct, why items depend on each other, how the milestone was decomposed | the roadmap body |
+| A convention you merely confirmed, changing nothing | nowhere |
+
+Direct items get no brief, and no single Spec's brief can hold a reason that is
+about the relationship *between* items — that is why those land in the roadmap
+body instead.
+
+The third row matters as much as the others. Recording every convention that
+turned out to be consistent with the plan buries the ones that actually changed
+it.
 
 Write briefs only after the CLI command succeeded. Before it succeeds there is no
 committed scope for them to describe, and `milestone create` refuses to run with

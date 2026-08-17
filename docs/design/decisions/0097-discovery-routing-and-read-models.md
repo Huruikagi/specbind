@@ -305,9 +305,10 @@ installed, carrying the seven stages, the reading discipline, the
 rewind-before-scope ordering, the Brief authoring and retry rules, and the stop
 conditions. Its forward tests remain outstanding, pending the fixture project.
 
-The embedded skill predates Decision 0098 and names neither steering reads nor
-the deliberate `--include-body` path yet. That part of the reading and authoring
-discipline lands with the steering commands.
+The skill carries the Decision 0098 steering reads and the deliberate
+`--include-body` path. The conformance check was confirmed to reject both a
+renamed `steering` route and an unknown `--with-body` option, so neither
+documented invocation can drift from the command graph unnoticed.
 
 `tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
