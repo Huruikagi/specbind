@@ -54,6 +54,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Evidence gathering, option analysis, uncertainty handling, and the boundary between milestone-local Research and authoritative artifacts.",
         content: include_str!("../assets/protocols/gap-analysis.md"),
     },
+    Protocol {
+        selector: "task-planning",
+        purpose: "Coverage, executability, dependency, completion-detail, boundary, and safe-parallel judgment over the structured Task contract.",
+        content: include_str!("../assets/protocols/task-planning.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
