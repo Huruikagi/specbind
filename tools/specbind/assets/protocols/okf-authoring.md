@@ -1,0 +1,78 @@
+# OKF authoring protocol
+
+This protocol is the shared baseline for creating or rewriting any managed
+Markdown document inside a SpecBind spec root. It applies to every supported
+agent and cannot be waived by a project template or shared rule.
+
+The configured spec root is an **Open Knowledge Format v0.2 Knowledge Bundle**.
+The canonical specification is
+[Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+This protocol states the authoring constraints SpecBind depends on; it does not
+reproduce the specification. Targeting a different OKF version is an explicit
+SpecBind compatibility change, never inherited silently from the upstream URL.
+
+## Concept documents
+
+An ordinary managed Markdown file is an OKF *concept document*.
+
+- It begins on its very first line with a YAML Front Matter delimiter. Nothing —
+  not a blank line, comment, or byte-order mark — may precede it.
+- Its Front Matter must parse as YAML and must contain a non-empty `type`.
+- `type` carries the document's machine identity. Never invent, translate, or
+  reformat it. When a template supplies it, keep the literal value.
+- Collection profiles additionally carry a stable `artifact_id`. It identifies
+  the document across revisions, so do not renumber or rename it to describe
+  current content.
+- The body is Markdown. Unless an artifact profile fixes a structure, headings
+  and section order belong to the project's template.
+
+## Preserve what you did not author
+
+- Unknown top-level Front Matter keys are valid OKF extensions. Preserve them
+  exactly when you rewrite a document, including their order and value shape.
+- Do not delete a field merely because SpecBind assigns it no meaning. Another
+  tool, or the project itself, may own it.
+- Do not add SpecBind-looking metadata that no accepted profile defines.
+
+## Reserved files
+
+`index.md` and `log.md` are OKF reserved files, not concept documents. They are
+never routed as typed artifacts.
+
+- Neither carries Front Matter, and therefore neither carries a `type`.
+- `log.md` is the per-spec release history. Its body is one document title,
+  then ISO 8601 `YYYY-MM-DD` date headings ordered **newest first**, with a flat
+  prose list under each date.
+- SpecBind release finalization inserts `log.md` entries in newest-first order
+  and must remain idempotent for the same milestone. Do not hand-append entries
+  or reorder existing dates while authoring other artifacts.
+
+## Relationships
+
+Express a relationship between documents as an ordinary Markdown link to the
+target path. Do not invent a Front Matter reference graph, a custom link syntax,
+or a parallel index; SpecBind derives its own traceability from the accepted
+artifact profiles rather than from prose links.
+
+## OKF metadata is not SpecBind authority
+
+OKF permits optional lifecycle, trust, provenance, and attestation fields. They
+may appear and must be preserved, but they carry no SpecBind meaning.
+
+- Workflow state, gate evidence, approvals, fingerprints, and completion
+  evidence live only where the accepted SpecBind profiles put them.
+- An OKF status, confidence, or attestation value never advances a gate, marks a
+  change approved, or substitutes for CLI-validated state.
+- When the two appear to disagree, the SpecBind lifecycle artifacts are
+  authoritative and the OKF metadata is descriptive.
+
+## Profiles add to this baseline
+
+Each SpecBind artifact type layers its own required profile on top of this
+protocol: exact `type`, singleton or collection multiplicity, required
+metadata, and any fixed body grammar. Satisfying this protocol is necessary but
+not sufficient.
+
+This document is authoring guidance, not an executable schema. The CLI validates
+every deterministic OKF and profile requirement independently, and no protocol,
+skill, rule, or template can make CLI-invalid content valid.

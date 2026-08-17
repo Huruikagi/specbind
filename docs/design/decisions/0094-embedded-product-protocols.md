@@ -119,4 +119,6 @@ This decision supersedes Decision 0049's placement and mutability choice: its co
 
 ## Implementation status
 
-This decision defines the target protocol surface. The Rust CLI does not yet embed or expose protocol assets, and current agent templates do not invoke `protocol read`. Implementation must add the embedded registry, list/read commands, the eight initial protocol documents, cross-agent skill references, unknown-selector and version-mismatch behavior, and tests proving that project rules cannot override the product baseline.
+The CLI surface is implemented. `protocol list` and `protocol read <selector>` resolve from an explicit embedded registry, take no project path at all, and therefore work without a project root, `.specbind.json`, or installation. A read writes the raw Markdown body to stdout with no wrapper; an unknown selector returns `ERROR PROTOCOL_SELECTOR_NOT_FOUND`, keeps stdout empty, and lists the available selectors.
+
+One of the eight accepted protocol documents is authored: `okf-authoring`. The remaining seven selectors are not yet registered, so `protocol list` currently reports one entry. Authoring them, referencing them from cross-agent skills, and adding the version-mismatch and customization-cannot-override tests remain separate increments.

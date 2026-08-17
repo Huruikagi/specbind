@@ -17,8 +17,10 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
+- `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
 - `tools/specbind/src/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language
+- `tools/specbind/assets/protocols/` — immutable English product protocols exposed by `protocol read`
 - `tools/specbind/src/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
 - `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
 - `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`

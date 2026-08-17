@@ -894,6 +894,47 @@ fn reaccepts_a_currently_fresh_review() {
 }
 
 #[test]
+fn reads_embedded_protocols_without_a_project() {
+    let outside = tempfile::tempdir().expect("directory without a SpecBind project");
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(outside.path())
+        .args(["protocol", "list"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with("OK PROTOCOL_LISTED: Found ").and(
+                predicate::str::contains("selector=okf-authoring purpose=\""),
+            ),
+        )
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(outside.path())
+        .args(["protocol", "read", "okf-authoring"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with("# OKF authoring protocol\n")
+                .and(predicate::str::contains("Open Knowledge Format v0.2"))
+                .and(predicate::str::contains("OK PROTOCOL").not()),
+        )
+        .stderr("");
+
+    let mut unknown = Command::cargo_bin("specbind").expect("specbind binary should build");
+    unknown
+        .current_dir(outside.path())
+        .args(["protocol", "read", "absent-protocol"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR PROTOCOL_SELECTOR_NOT_FOUND:")
+                .and(predicate::str::contains("available selector okf-authoring")),
+        );
+}
+
+#[test]
 fn verifies_traceability_and_fails_closed_on_missing_coverage() {
     let root = project_fixture();
     write_status_fixture(root.path());

@@ -16,6 +16,7 @@ use crate::{
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
     milestone::{self, MilestoneIssue},
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
+    protocol,
     release_finalize::{self, FinalizeIssue},
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
@@ -316,6 +317,46 @@ fn render_graph_issue(issue: &contract_graph::ContractGraphIssue) -> String {
         .as_ref()
         .map_or_else(String::new, |source| format!(" {}:", escape(source)));
     format!("{}{source} {}", issue.code, escape(&issue.message))
+}
+
+/// Lists the embedded product protocols.
+///
+/// Protocols are compiled into this binary, so this command deliberately takes
+/// no project path and works without `.specbind.json` or an installation.
+#[must_use]
+pub fn protocol_list() -> CommandOutput {
+    let protocols = protocol::list();
+    let mut output = format!(
+        "OK PROTOCOL_LISTED: Found {} product protocol(s).
+",
+        protocols.len()
+    );
+    for entry in protocols {
+        writeln!(
+            output,
+            "  selector={} purpose=\"{}\"",
+            escape(entry.selector),
+            escape(entry.purpose)
+        )
+        .expect("writing to a String cannot fail");
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+/// Reads one embedded product protocol as raw Markdown.
+#[must_use]
+pub fn protocol_read(selector: &str) -> CommandOutput {
+    match protocol::read(selector) {
+        Some(entry) => CommandOutput::success(entry.content().as_bytes().to_vec()),
+        None => CommandOutput::failure(
+            "PROTOCOL_SELECTOR_NOT_FOUND",
+            format!("Selector {selector} does not resolve to an embedded product protocol."),
+            protocol::list()
+                .iter()
+                .map(|entry| format!("available selector {}", escape(entry.selector)))
+                .collect(),
+        ),
+    }
 }
 
 #[must_use]

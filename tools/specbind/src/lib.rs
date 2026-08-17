@@ -13,6 +13,7 @@ pub mod freshness;
 pub(crate) mod guarded_fs;
 pub mod milestone;
 pub mod milestone_status;
+pub mod protocol;
 pub mod release;
 pub mod release_finalize;
 pub mod release_log;

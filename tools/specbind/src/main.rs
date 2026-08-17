@@ -25,6 +25,11 @@ enum Command {
         #[command(subcommand)]
         command: ArtifactCommand,
     },
+    /// Read the immutable product protocols embedded in this binary.
+    Protocol {
+        #[command(subcommand)]
+        command: ProtocolCommand,
+    },
     /// Run one deterministic read-only consistency check.
     Check {
         #[command(subcommand)]
@@ -63,6 +68,14 @@ enum ArtifactCommand {
     List { spec: String },
     /// Read one logical artifact selector as raw UTF-8 Markdown.
     Read { spec: String, selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+enum ProtocolCommand {
+    /// List every embedded protocol selector and its purpose.
+    List,
+    /// Read one protocol selector as raw UTF-8 Markdown.
+    Read { selector: String },
 }
 
 #[derive(Debug, Subcommand)]
@@ -358,6 +371,10 @@ fn main() -> ExitCode {
     };
     let output = match cli.command {
         Command::Artifact { command } => run_artifact(&start, command),
+        Command::Protocol { command } => match command {
+            ProtocolCommand::List => specbind::cli::protocol_list(),
+            ProtocolCommand::Read { selector } => specbind::cli::protocol_read(&selector),
+        },
         Command::Check { command } => run_check(&start, command),
         Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
