@@ -28,8 +28,9 @@ An ordinary managed Markdown file is an OKF *concept document*.
 
 ## Preserve what you did not author
 
-- Unknown top-level Front Matter keys are valid OKF extensions. Preserve them
-  exactly when you rewrite a document, including their order and value shape.
+- Unknown top-level Front Matter keys are valid OKF extensions. Preserve their
+  semantic values when you rewrite a document. CLI-owned round trips may
+  canonicalize their order and YAML presentation.
 - Do not delete a field merely because SpecBind assigns it no meaning. Another
   tool, or the project itself, may own it.
 - Do not add SpecBind-looking metadata that no accepted profile defines.
