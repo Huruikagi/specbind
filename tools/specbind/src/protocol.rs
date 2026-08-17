@@ -39,6 +39,11 @@ static PROTOCOLS: &[Protocol] = &[
         purpose: "Selection and escalation of repository investigation needed before a self-contained Design can be authored.",
         content: include_str!("../assets/protocols/design-discovery.md"),
     },
+    Protocol {
+        selector: "design-authoring",
+        purpose: "Non-waivable synthesis, simplification, owned-boundary, self-containment, and Requirement/Contract realization baseline.",
+        content: include_str!("../assets/protocols/design-authoring.md"),
+    },
 ];
 
 /// Lists every embedded protocol.
