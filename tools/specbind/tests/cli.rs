@@ -915,7 +915,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 3 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 8 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -930,7 +930,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 3 create, 0 replace, 0 keep\n",
+                "\n  Summary: 8 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -999,7 +999,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 1 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 6 create, 0 replace, 2 keep\n",
                 )),
         );
 

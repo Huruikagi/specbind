@@ -22,6 +22,7 @@ pub mod release_readiness;
 pub(crate) mod repository;
 pub mod requirements;
 pub mod roadmap;
+pub mod rule;
 pub mod schema;
 pub mod spec_status;
 pub mod task_read_model;

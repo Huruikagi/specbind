@@ -44,7 +44,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 `specbind install --dry-run` is implemented as a read-only planner. It resolves the effective configuration from any existing `.specbind.json` merged with additive agent selection, requires an explicit language and at least one agent for an initial installation, refuses an unsupported `specDir` change, and reports each target as create, replace, or keep. Project-owned settings are reported as keep and never replaced. A plan containing any replacement enforces the accepted repository guard: at least one commit and a clean worktree.
 
-The planner currently covers `.specbind.json` and the Decision 0091 installed template set, because those are the only embedded assets that exist. The Decision 0093 shared rules, agent skill assets, and the project-instruction block are not yet plannable. Applying a plan is not implemented; `specbind install` without `--dry-run` returns `ERROR INSTALL_APPLY_UNIMPLEMENTED`.
+The planner currently covers `.specbind.json`, the Decision 0091 installed template set, and the Decision 0093 shared-rule set. Agent skill assets and the project-instruction block are not yet plannable. Applying a plan is not implemented; `specbind install` without `--dry-run` returns `ERROR INSTALL_APPLY_UNIMPLEMENTED`.
 
 ## Consequences
 

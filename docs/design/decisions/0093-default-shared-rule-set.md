@@ -99,4 +99,8 @@ The inherited files are classified as follows:
 
 ## Implementation status
 
-This decision defines the target installed set and loading contract. The Rust installer and v1 SpecBind skills do not yet install or consume these five rules. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs until the rewritten embedded defaults, Decision 0094 protocols, skill-owned procedures, installation planning, and absence/customization tests are implemented together.
+All five default rules are authored as embedded installation assets under `tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as create-or-keep entries alongside the Decision 0091 templates. Each is a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`, applicability, priority, or enablement field, and the one English set serves both configured artifact languages.
+
+The contents are rewritten for the Decision 0092 boundary rather than copied from cc-sdd: each file states that the project owns it, names the CLI contract or protocol that stays authoritative, and carries preferences plus review questions instead of workflow control. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs.
+
+Applying an installation, the v1 skills that load these rules, and the tests proving absence and customization cannot weaken the product baseline are separate increments.

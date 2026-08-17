@@ -9,7 +9,7 @@ use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
-use crate::{config::ProjectLanguage, repository, template};
+use crate::{config::ProjectLanguage, repository, rule, template};
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
 const DEFAULT_SPEC_DIR: &str = ".specbind";
@@ -154,6 +154,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     let resolved = resolve_inputs(existing.as_ref(), inputs)?;
     let mut entries = vec![config_entry(existing.as_ref(), &resolved)];
     entries.extend(template_entries(project_root, &resolved)?);
+    entries.extend(rule_entries(project_root, &resolved)?);
     if entries
         .iter()
         .any(|entry| entry.action == PlanAction::Replace)
@@ -367,6 +368,45 @@ fn template_entries(
             action,
             path: relative,
             category: "template",
+            detail: (action == PlanAction::Keep)
+                .then(|| "project-owned settings are never overwritten".to_owned()),
+        });
+    }
+    Ok(entries)
+}
+
+/// Plans the Decision 0093 installed shared-rule set.
+///
+/// Installed rules are user-owned policy under Decision 0008, so an existing
+/// file is kept and only a missing default is created.
+fn rule_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    let mut entries = Vec::new();
+    for default in rule::defaults() {
+        let relative = format!(
+            "{}/{}/{}",
+            resolved.spec_dir,
+            rule::RULES_ROOT,
+            default.file_name
+        );
+        let target = project_root.join(&relative);
+        let action = match fs::symlink_metadata(&target) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+            Ok(_) => PlanAction::Keep,
+            Err(error) => {
+                return Err(one_issue(
+                    "INSTALL_TARGET_UNREADABLE",
+                    Some(relative),
+                    error.to_string(),
+                ));
+            }
+        };
+        entries.push(PlanEntry {
+            action,
+            path: relative,
+            category: "rule",
             detail: (action == PlanAction::Keep)
                 .then(|| "project-owned settings are never overwritten".to_owned()),
         });
