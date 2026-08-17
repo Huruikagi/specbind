@@ -137,8 +137,9 @@ Authority is one of two things, never their absence:
 
 Absence of a prompt, a non-interactive invocation, and a scripted run grant no
 authority. Without either form, the skill presents its result and stops.
-- The skill never approves to resolve a failing check. A refused approval is
-  information about the artifact, not an obstacle to route around.
+
+Neither form authorizes approving to resolve a failing check. A refused approval
+is information about the artifact, not an obstacle to route around.
 
 ### Review loop
 
