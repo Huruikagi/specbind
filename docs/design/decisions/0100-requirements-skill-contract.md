@@ -204,4 +204,15 @@ authorizes accepting gates, not discarding accepted work.
 
 ## Implementation status
 
-Not implemented. No `specbind-requirements` skill is embedded.
+Implemented. `tools/specbind/assets/skills/specbind-requirements/SKILL.md` is
+embedded and installed, carrying the conditional reads and the new-versus-
+existing Spec branch, whole-set steering reading with its stop condition and the
+requirement to write constraints into the document, the active-selection rule
+with its stated bias toward inclusion, the retirement stop with the revise-and-add
+cases it leaves open, the two forms of approval authority, the repeated-objection
+stopping rule, and confirmed self-invalidation when the gate is already approved.
+
+The Decision 0096 conformance check covers its invocations; it was confirmed to
+reject both a renamed `spec requirements invalidate` route and an unknown
+`--delegation-flow` option. Forward tests remain outstanding, pending the fixture
+project.

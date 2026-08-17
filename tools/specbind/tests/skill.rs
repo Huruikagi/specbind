@@ -1,7 +1,11 @@
 use clap::CommandFactory as _;
 use specbind::{args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 2] = ["specbind-discovery", "specbind-status"];
+const ACCEPTED_SKILLS: [&str; 3] = [
+    "specbind-discovery",
+    "specbind-requirements",
+    "specbind-status",
+];
 
 #[test]
 fn embeds_the_accepted_skill_set_with_valid_metadata() {
