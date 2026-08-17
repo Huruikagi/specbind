@@ -25,6 +25,8 @@ Tasks may also be added during an active milestone. Treating absence as pending 
 - `completed_at`, `blocked_at`, commit hashes, and review transcripts are not stored in v1 task execution state. Git history and gate evidence retain their respective audit responsibilities.
 - Execution state is excluded from the task-plan fingerprint under Decision 0018. Persistent `SpecBind Implementation Notes` artifacts accepted by Decisions 0026 and 0057 are separate and are not task-gate inputs.
 
+[Decision 0095](./0095-task-progress-cli.md) exposes the guarded commands that write this state.
+
 ## Consequences
 
 - A newly added task is pending without an execution-file update.

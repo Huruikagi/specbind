@@ -160,3 +160,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0092](./design/decisions/0092-template-skill-authoring-boundary.md) | Accepted | Artifact scaffold guidance separated from authoring workflow policy |
 | [0093](./design/decisions/0093-default-shared-rule-set.md) | Accepted | Narrow installed shared-rule set and explicit skill consumers |
 | [0094](./design/decisions/0094-embedded-product-protocols.md) | Accepted | Immutable shared semantic protocols exposed through the CLI |
+| [0095](./design/decisions/0095-task-progress-cli.md) | Accepted | Guarded task execution progress commands |
