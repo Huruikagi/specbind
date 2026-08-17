@@ -13,7 +13,7 @@ Putting all publication behavior in the core skill would make it project-specifi
 `specbind-release` combines:
 
 - a non-overridable core release contract
-- project-specific release instructions read from `{{SPEC_DIR}}/settings/release.md`
+- project-specific release instructions read from `{{SPEC_DIR}}/settings/adapters/release.md`
 
 The core owns lifecycle gates, sequencing, fresh verification requirements, and idempotent finalization of SpecBind artifacts. The project adapter owns instructions for preparing, publishing, and verifying the project's actual release.
 
@@ -44,7 +44,7 @@ The adapter cannot weaken or replace these rules:
 
 ## Missing or unclear adapter
 
-If `{{SPEC_DIR}}/settings/release.md` is missing, `specbind-release` stops because required project configuration is absent. A present empty adapter is valid. If non-empty guidance appears to require a project action but is ambiguous or unsafe, the agent stops before that action instead of inventing release commands from incidental repository files.
+If `{{SPEC_DIR}}/settings/adapters/release.md` is missing, `specbind-release` stops because required project configuration is absent. A present empty adapter is valid. If non-empty guidance appears to require a project action but is ambiguous or unsafe, the agent stops before that action instead of inventing release commands from incidental repository files.
 
 ## Consequences
 

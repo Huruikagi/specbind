@@ -34,6 +34,11 @@ All official default rules are English-authored under Decision 0076. They are or
 
 An installed rule expresses a preference that a project may reasonably strengthen, relax, replace, or remove without changing the SpecBind lifecycle. It may include examples and review questions, but it does not own commands, phase order, retry counts, approval decisions, mutation authority, required reads, or machine-readable artifact grammar.
 
+Project-specific operational guidance therefore does not become another shared
+rule. Decision 0101 places release and Git workflow instructions under
+`settings/adapters/`, where their owning skills interpret them without treating
+them as product authority.
+
 Exact CLI contracts may be summarized in a rule only to explain the boundary around a preference. Such summaries are non-authoritative and should link to or name the owning contract instead of duplicating a complete schema or protocol.
 
 Product protocols and product-managed skills retain the semantic minimum even if every rule is absent. A customized rule can strengthen review or authoring policy, but cannot make a skill skip the product baseline. The CLI remains authoritative for every deterministic invariant.

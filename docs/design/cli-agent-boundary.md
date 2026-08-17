@@ -42,6 +42,7 @@ The goal is not to replace agent judgment. It is to remove mechanical work from 
 | Templates | Supply customizable artifact structure, presentation, and scaffold-local guidance. | Define lifecycle, approval, or semantic minimums. |
 | SpecBind CLI | Parse owned formats, expose read-only protocols, check identifiers and references, enforce lifecycle invariants, and perform explicit idempotent state mutations. | Treat a protocol read as proof of compliance, decide whether requirements or design are substantively correct, or silently choose product scope. |
 | Project release adapter | Supply project-specific Prepare, Publish, Verify, and optional After finalize instructions. | Weaken SpecBind core gates or redefine artifact lifecycle. |
+| Project Git adapter | Supply project-specific checkpoint, commit grouping, message, branch, and push preferences. | Grant mutation authority, commit unaccepted work, or weaken Git and lifecycle safety. |
 
 A skill may orchestrate a CLI operation, but the operation's contract belongs to the CLI rather than being duplicated in each agent template.
 
@@ -163,7 +164,7 @@ CLI mechanical check
 
 For the traceability check, requirements, design, tasks, validation, and release-readiness workflows should consume the same CLI contract instead of embedding agent-specific grep instructions. A standalone validation skill is unnecessary when its only purpose would be to expose one deterministic CLI command.
 
-The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templates/` and `{{SPEC_DIR}}/settings/rules/`; see [Decision 0008](./decisions/0008-customization-surface.md). Generated skills and agent metadata are product-managed resources. The installer replaces clean product-managed assets, never overwrites an existing user-owned settings file, and creates newly introduced defaults when their target is absent. Direct skill modification is not the cross-agent customization contract.
+The stable project-customization surface is shared `{{SPEC_DIR}}/settings/templates/`, `{{SPEC_DIR}}/settings/rules/`, and the dedicated operational guidance under `{{SPEC_DIR}}/settings/adapters/`; see Decisions [0008](./decisions/0008-customization-surface.md) and [0101](./decisions/0101-project-adapter-directory-and-git-workflow.md). Generated skills and agent metadata are product-managed resources. The installer replaces clean product-managed assets, never overwrites an existing user-owned settings file, and creates newly introduced defaults when their target is absent. Direct skill modification is not the cross-agent customization contract.
 
 The CLI and skills must respect supported settings customization while still enforcing documented machine-readable structure. A mechanical check reports an incompatible customized format explicitly rather than silently falling back to agent-specific searches.
 

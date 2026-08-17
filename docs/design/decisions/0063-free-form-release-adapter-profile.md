@@ -10,7 +10,7 @@ If the agent owns semantic interpretation, requiring literal headings or a parse
 
 ## Decision
 
-- `{{SPEC_DIR}}/settings/release.md` is an OKF concept whose only SpecBind-owned Front Matter field is:
+- `{{SPEC_DIR}}/settings/adapters/release.md` is an OKF concept whose only SpecBind-owned Front Matter field is:
 
   ```yaml
   ---
@@ -37,7 +37,7 @@ If the agent owns semantic interpretation, requiring literal headings or a parse
 - An empty or permissive adapter cannot waive a core gate, authorize an external write, or provide credentials.
 - The release skill remains responsible for obtaining any authority required by project instructions and for making the Decision 0066 project-success judgment before requesting finalization.
 - The core does not require a universal publication or source-revision reference under Decision 0064, and Decision 0066 introduces no dedicated external release-evidence representation.
-- A missing `settings/release.md` remains an installation or configuration error because the project-owned customization surface is absent. A present empty adapter is the explicit no-project-actions representation.
+- A missing `settings/adapters/release.md` remains an installation or configuration error because the project-owned customization surface is absent. A present empty adapter is the explicit no-project-actions representation.
 
 ## Consequences
 

@@ -12,6 +12,10 @@ The active implementation plan and progress use canonical `tasks.yaml` rather th
 
 Per-spec lifecycle metadata uses canonical `spec.yaml`; `.specbind.json` and the v1 installation surface remain outside that decision under [Decision 0014](./decisions/0014-structured-spec-metadata.md).
 
+Project-specific checkpoint, commit, branch, and push preferences come from the
+free-form `settings/adapters/git.md` accepted by Decision 0101. They apply only
+at workflow-owned eligible boundaries and never grant mutation authority.
+
 Status: Draft
 
 ## Design goals
@@ -83,7 +87,7 @@ No active milestone
 
 These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Discovery confirms the intent and the Rust CLI owns the guarded milestone-state mutation.
 
-The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
+The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/adapters/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
 
 ```text
 Rust CLI: core preflight and readiness gates

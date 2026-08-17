@@ -90,6 +90,12 @@ CLI contracts, embedded product protocols, and product-managed skill obligations
 
 When a general rule can be satisfied within a customized structure, the skill adapts placement to that structure rather than restoring an official section inventory. If user-owned settings are materially contradictory and cannot both be honored without weakening a core obligation, the skill reports the conflict and requests clarification. It does not silently prefer an embedded default, overwrite project settings, or invent a third policy.
 
+Project adapters accepted later by Decision 0101 sit outside this authoring
+model. They customize project-specific operational actions such as release work
+and Git checkpoints, not artifact structure or semantic quality. Their owning
+skills still control eligibility, ordering, safety, and authority; adapter prose
+cannot waive any obligation allocated here.
+
 ## Artifact-specific allocation
 
 | Artifact | Template owns | Project rule may tune | Product protocol and skill own |

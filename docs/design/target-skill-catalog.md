@@ -29,6 +29,12 @@ Related documents:
 - [Decision 0092: template and skill authoring boundary](./decisions/0092-template-skill-authoring-boundary.md)
 - [Decision 0093: default shared-rule set](./decisions/0093-default-shared-rule-set.md)
 - [Decision 0094: embedded product protocols](./decisions/0094-embedded-product-protocols.md)
+- [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
+
+Skills that may create Git checkpoints or push read the project-owned
+`settings/adapters/git.md` contract when present. The adapter may choose among
+eligible checkpoint boundaries, but it neither makes unaccepted work eligible
+nor grants Git mutation authority.
 
 ## Status and change types
 
@@ -117,7 +123,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - Confirm that the active milestone is ready to close.
 - Require every roadmap direct change to have sparse `status: completed` state.
-- Read project-specific release instructions from `{{SPEC_DIR}}/settings/release.md`.
+- Read project-specific release instructions from `{{SPEC_DIR}}/settings/adapters/release.md`.
 - Run the stateless `specbind release preflight` command and stop before adapter work unless it returns `OK RELEASE_READY`.
 - Execute the adapter's Prepare, Publish, and Verify instructions as the AI agent.
 - For a Spec-backed milestone, prepare one delivered-change summary per participating spec and submit them to the Rust CLI for guarded log insertion and finalization.
@@ -132,7 +138,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 - The active `roadmap.md`
 - A concrete target release version
-- `{{SPEC_DIR}}/settings/release.md`
+- `{{SPEC_DIR}}/settings/adapters/release.md`
 - Existing lifecycle artifacts from which the CLI derives release readiness under Decision 0070
 
 ### Writes
@@ -149,7 +155,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must stop while any roadmap direct change remains pending.
 - Must accept an empty adapter as no project-specific actions, while stopping when non-empty guidance is ambiguous or unsafe and never weakening core evidence requirements.
 - Must not let adapter instructions weaken core readiness or finalization gates.
-- Must not treat `settings/release.md` code blocks as CLI-executable hooks.
+- Must not treat `settings/adapters/release.md` code blocks as CLI-executable hooks.
 - Must not bypass CLI finalization through direct ad hoc artifact deletion or metadata edits.
 - Must not remove active documents before applicable release work and required verification succeed.
 - Must not treat a successful preflight as finalization authority or attempt to pass it back as a token; finalization rechecks current state independently.

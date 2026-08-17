@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Context
 
-Project release procedures differ and are documented as agent-readable instructions in `{{SPEC_DIR}}/settings/release.md`. They may involve repository commands, authenticated external services, application stores, manual checks, or project-specific judgment.
+Project release procedures differ and are documented as agent-readable instructions in `{{SPEC_DIR}}/settings/adapters/release.md`. They may involve repository commands, authenticated external services, application stores, manual checks, or project-specific judgment.
 
 The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it cannot safely or portably execute arbitrary natural-language instructions. Conversely, an agent should not directly implement destructive SpecBind finalization through ad hoc file edits.
 
@@ -12,7 +12,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 - Keep `specbind-release` as the agent-facing orchestration skill.
 - The Rust CLI owns core release preflight, deterministic state checks, evidence validation where mechanically possible, and idempotent finalization mutations.
-- The AI agent reads the complete free-form `settings/release.md` under Decision 0063 and executes any applicable Prepare, Publish, Verify, and After finalize guidance under normal repository, authorization, and tool-permission boundaries.
+- The AI agent reads the complete free-form `settings/adapters/release.md` under Decisions 0063 and 0101 and executes any applicable Prepare, Publish, Verify, and After finalize guidance under normal repository, authorization, and tool-permission boundaries.
 - The CLI does not interpret Markdown code blocks as executable hooks and does not run arbitrary adapter commands.
 - Under Decision 0066, the agent and human judge applicable project release work and, for Spec-backed milestones, pass the per-spec log summaries needed for mutation, not a structured external release-evidence object.
 - Under Decision 0070, the CLI derives release readiness from existing authoritative artifacts and does not persist a separate aggregate readiness record.
@@ -23,7 +23,7 @@ The Rust CLI can enforce SpecBind schemas and lifecycle invariants, but it canno
 
 ## Execution sequence
 
-1. The release skill loads the active milestone, target version, and `settings/release.md`.
+1. The release skill loads the active milestone, target version, and `settings/adapters/release.md`.
 2. The release skill asks the Rust CLI to run core preflight and readiness checks.
 3. If preflight succeeds, the agent executes applicable adapter preparation guidance.
 4. The agent executes applicable publication guidance and uses any project references or results in its release judgment.

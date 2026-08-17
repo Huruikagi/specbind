@@ -18,7 +18,7 @@ SpecBind supports multiple coding agents. Treating skill-local copies as the pri
 - Installed project copies are user-owned and may be edited and version-controlled after installation.
 - Supported agent skills consume the same shared settings so project policy does not fork by agent.
 - Skills and agent metadata remain SpecBind-managed resources. Direct local edits are not the stable project-customization API.
-- Project-owned settings with dedicated contracts, such as `settings/release.md`, remain customizable alongside templates and rules.
+- Project-owned operational guidance lives below `settings/adapters/` under dedicated contracts, alongside the template and rule customization surfaces; see Decision 0101.
 - Official defaults are embedded in the Rust binary under Decision 0077; installed settings remain user-owned copies. [Decision 0091](./0091-installed-template-surface.md) limits the installed artifact-template set to those whose structure a project can actually change.
 
 ## Update behavior
