@@ -124,11 +124,23 @@ r4 | r5)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     if [ "$scenario" = r5 ]; then
+        # The cap has to exist as an approved requirement, or a later request to
+        # change it has nothing to change and the scenario measures the fixture
+        # instead of the skill.
+        awk '{ print }
+             /^3\. A quantity below one is rejected/ {
+               print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
+             }' .specbind/specs/cart/requirements.md > requirements.tmp
+        mv requirements.tmp .specbind/specs/cart/requirements.md
+        expect "the cap criterion was not added" \
+            'specbind artifact read cart requirements | grep -q "exceed 99"'
         specbind spec requirements approve cart \
-            --approval-mode explicit --requirement-ids 1.1,1.2,1.3 >/dev/null \
+            --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
             || fail "could not approve the requirements gate"
         expect "the requirements gate is not approved" \
             'specbind spec status cart | grep -q "requirements=fresh"'
+        expect "the approved set does not carry the cap criterion" \
+            'grep -q "\"1.4\"" .specbind/specs/cart/spec.yaml'
     fi
     ;;
 
