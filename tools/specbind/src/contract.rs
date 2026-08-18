@@ -165,64 +165,7 @@ pub fn parse(body: &str) -> Result<ContractDocument, ContractIssues> {
         )),
     }
 
-    for (section_index, expected_name) in SECTION_NAMES.iter().enumerate() {
-        let section = section_for_index(section_index);
-        match blocks.get(cursor) {
-            Some(Block::Heading {
-                level: HeadingLevel::H2,
-                text,
-                plain: true,
-                ..
-            }) if text == expected_name => cursor += 1,
-            Some(block) => {
-                issues.push(issue(
-                    "CONTRACT_SECTION_HEADING_INVALID",
-                    block.line(),
-                    format!("expected exact section heading ## {expected_name}"),
-                ));
-                if matches!(block, Block::Heading { .. }) {
-                    cursor += 1;
-                }
-            }
-            None => {
-                issues.push(issue(
-                    "CONTRACT_SECTION_HEADING_MISSING",
-                    line_at_end(body),
-                    format!("missing required section heading ## {expected_name}"),
-                ));
-                continue;
-            }
-        }
-
-        if let Some(Block::List {
-            ordered,
-            items,
-            line,
-        }) = blocks.get(cursor)
-        {
-            if *ordered {
-                issues.push(issue(
-                    "CONTRACT_SECTION_LIST_ORDERED",
-                    *line,
-                    format!("section {expected_name} must use an unordered list"),
-                ));
-            }
-            parse_items(section, items, &mut document, &mut issues);
-            cursor += 1;
-        }
-
-        while let Some(block) = blocks.get(cursor) {
-            if matches!(block, Block::Heading { .. }) {
-                break;
-            }
-            issues.push(issue(
-                "CONTRACT_SECTION_CONTENT_INVALID",
-                block.line(),
-                format!("section {expected_name} may contain only one flat unordered list"),
-            ));
-            cursor += 1;
-        }
-    }
+    parse_sections(&blocks, &mut cursor, &mut document, &mut issues, body);
 
     for block in &blocks[cursor..] {
         issues.push(issue(
@@ -239,6 +182,96 @@ pub fn parse(body: &str) -> Result<ContractDocument, ContractIssues> {
         issues.sort();
         issues.dedup();
         Err(ContractIssues { issues })
+    }
+}
+
+/// Walks the five canonical sections in order, advancing `cursor` past each.
+fn parse_sections(
+    blocks: &[Block],
+    cursor: &mut usize,
+    document: &mut ContractDocument,
+    issues: &mut Vec<ContractIssue>,
+    body: &str,
+) {
+    for (section_index, expected_name) in SECTION_NAMES.iter().enumerate() {
+        let section = section_for_index(section_index);
+
+        // Content sitting where a section heading belongs is reported once and
+        // skipped, so the walk stays aligned with the document.
+        //
+        // Without this it desynchronizes: the stray block is blamed as a
+        // malformed heading, the real heading is then read as the *next*
+        // section's, and every following list is parsed under the wrong
+        // section. One stray line reported eleven diagnostics, five of them
+        // claiming a correct heading was wrong, which sends a reader to five
+        // places that are all fine.
+        while let Some(block) = blocks.get(*cursor) {
+            if matches!(block, Block::Heading { .. }) {
+                break;
+            }
+            issues.push(issue(
+                "CONTRACT_DOCUMENT_CONTENT_INVALID",
+                block.line(),
+                format!("contract body contains content before section {expected_name}"),
+            ));
+            *cursor += 1;
+        }
+
+        match blocks.get(*cursor) {
+            Some(Block::Heading {
+                level: HeadingLevel::H2,
+                text,
+                plain: true,
+                ..
+            }) if text == expected_name => *cursor += 1,
+            Some(block) => {
+                issues.push(issue(
+                    "CONTRACT_SECTION_HEADING_INVALID",
+                    block.line(),
+                    format!("expected exact section heading ## {expected_name}"),
+                ));
+                if matches!(block, Block::Heading { .. }) {
+                    *cursor += 1;
+                }
+            }
+            None => {
+                issues.push(issue(
+                    "CONTRACT_SECTION_HEADING_MISSING",
+                    line_at_end(body),
+                    format!("missing required section heading ## {expected_name}"),
+                ));
+                continue;
+            }
+        }
+
+        if let Some(Block::List {
+            ordered,
+            items,
+            line,
+        }) = blocks.get(*cursor)
+        {
+            if *ordered {
+                issues.push(issue(
+                    "CONTRACT_SECTION_LIST_ORDERED",
+                    *line,
+                    format!("section {expected_name} must use an unordered list"),
+                ));
+            }
+            parse_items(section, items, document, issues);
+            *cursor += 1;
+        }
+
+        while let Some(block) = blocks.get(*cursor) {
+            if matches!(block, Block::Heading { .. }) {
+                break;
+            }
+            issues.push(issue(
+                "CONTRACT_SECTION_CONTENT_INVALID",
+                block.line(),
+                format!("section {expected_name} may contain only one flat unordered list"),
+            ));
+            *cursor += 1;
+        }
     }
 }
 

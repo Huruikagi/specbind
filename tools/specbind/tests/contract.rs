@@ -55,6 +55,40 @@ fn rejects_missing_reordered_and_non_list_sections() {
     assert!(codes.contains(&"CONTRACT_SECTION_HEADING_MISSING"));
 }
 
+/// A stray block where a section heading belongs must not desynchronize the
+/// walk. Before this was handled, one sentence in the preamble produced eleven
+/// diagnostics — five of them naming correct headings as wrong, because every
+/// section after the stray block was read one position late.
+#[test]
+fn reports_one_stray_block_once_without_shifting_the_sections() {
+    let error = contract::parse(&EMPTY.replace(
+        "# Contract\n",
+        "# Contract\n\nA note that has no home yet.\n",
+    ))
+    .expect_err("prose is not part of the profile");
+
+    let codes = error
+        .issues
+        .iter()
+        .map(|issue| issue.code)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        codes,
+        ["CONTRACT_DOCUMENT_CONTENT_INVALID"],
+        "one stray block is one diagnostic: {:?}",
+        error.issues
+    );
+    assert!(
+        error.issues[0].message.contains("before section Owns"),
+        "the diagnostic names where the content sits: {:?}",
+        error.issues[0]
+    );
+
+    // The same document with the stray block removed still parses, which is
+    // what proves the sections themselves were never at fault.
+    contract::parse(EMPTY).expect("the canonical empty contract is unaffected");
+}
+
 #[test]
 fn rejects_invalid_entry_ids_targets_and_paths() {
     let error = contract::parse(
