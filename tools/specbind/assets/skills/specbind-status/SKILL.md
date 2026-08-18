@@ -38,7 +38,7 @@ Add these only when the answer needs them:
 - `specbind tasks list <spec>` when the Spec is implementing and the user needs
   to see individual tasks, their progress, or which are blocked.
 - `specbind milestone review status` when the milestone report shows a
-  cross-spec review that is absent, stale, or invalid, and the user needs to
+  contract review that is absent, stale, or invalid, and the user needs to
   know what to do about it.
 - `specbind check traceability <spec>` or `specbind check contracts` when a
   reported inconsistency needs to be attributed to a specific artifact.

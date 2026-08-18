@@ -32,14 +32,14 @@ depend on: nothing states what belongs in a Contract at all.
 
 Decision 0092 assigns the "semantic seam and compatibility baseline" to the
 design and cross-spec protocols. The compatibility half exists: the
-`cross-spec-review` protocol judges what a changed, added, or removed entry does
+`contract-review` protocol judges what a changed, added, or removed entry does
 to its consumers. The inclusion half does not. Decision 0056 supplies an
 inclusion test for File Ownership only, and `design-authoring` requires the
 Design and Contract to agree without saying what should have been in the
 Contract in the first place.
 
 That gap is load-bearing. A Contract that under-declares passes every mechanical
-check — an unstated seam has no dangling reference — and cross-spec review then
+check — an unstated seam has no dangling reference — and contract review then
 compares a before-state and an after-state that both omit it. A Contract that
 over-declares turns internal structure into a durable promise that later
 refactoring must either honor or renegotiate through review.
@@ -47,7 +47,7 @@ refactoring must either honor or renegotiate through review.
 Applying Decision 0092's allocation test places this in a protocol rather than
 in this skill. It must remain true when a project replaces every template and
 rule, it is substantial semantic content, and it is shared by `specbind-design`,
-`specbind-gap-analysis`, and `specbind-cross-spec-review`. The
+`specbind-gap-analysis`, and `specbind-contract-review`. The
 `design-authoring` protocol therefore gains the inclusion test, stated as the
 consequence question: an entry belongs in the Contract when another Spec's
 design or verification would have to change if it changed. This decision records
@@ -153,7 +153,7 @@ not interpret its absence as an absence of cross-spec impact.
 - **A Spec with a Contract** — revised in place when this change adds, alters,
   or removes a seam, and left byte-identical when it does not. Rewording an
   untouched entry is not free: Decision 0038 fingerprints the whole file, so a
-  cosmetic edit invalidates approval and forces a new cross-spec review.
+  cosmetic edit invalidates approval and forces a new contract review.
 - Entry IDs are stable under Decision 0056. The skill does not rename an ID whose
   semantic boundary is unchanged, because another Spec's `Consumes` entry
   resolves through it.
@@ -164,7 +164,7 @@ identity that design, tasks, and completion verification are each required to
 cover, so removing one leaves obligations with nothing to point at, whereas a
 Contract entry's only structural dependents are other Specs' `Consumes` entries,
 which `check contracts` resolves by name. Removal is representable, so it is
-allowed and then judged — by cross-spec review, which exists for precisely this.
+allowed and then judged — by contract review, which exists for precisely this.
 
 The skill runs `specbind check contracts` before approving and resolves what it
 reports. A reference left dangling by a removal is fixed in this Spec, or the
@@ -208,7 +208,7 @@ could submit incorrectly.
 
 The report states what the design decided, which active Requirements it realizes
 and how, and what changed in the Contract — the last of these being the input
-cross-spec review will start from.
+contract review will start from.
 
 ### Review loop
 
@@ -231,7 +231,7 @@ Spec whose design gate is approved, it does not edit, and it runs
 
 The cost stated before asking is larger than the requirements gate's and is
 stated in full. Under Decision 0088, `design invalidate` clears design, tasks,
-and completion evidence **and deletes the accepted cross-spec review**, because
+and completion evidence **and deletes the accepted contract review**, because
 Decision 0078 accepts that review after design approval and it cannot survive a
 rewind past it. A user who confirms without being told that is discarding a
 milestone-wide artifact they did not know about.
@@ -249,7 +249,7 @@ later gates citing freshness rather than the edit that caused it.
   to the previous phase, `tasks.yaml` to the next, and brownfield comparison and
   Research to `specbind-gap-analysis`.
 - It writes no machine state and never edits `spec.yaml`.
-- It does not accept the cross-spec review, add Roadmap items, or create Specs.
+- It does not accept the contract review, add Roadmap items, or create Specs.
   It surfaces the need and lets the owning operation perform it.
 - It does not author Research, and does not resolve a Design gap by recording it
   there.
@@ -263,7 +263,7 @@ later gates citing freshness rather than the edit that caused it.
   guidance has an authoritative destination.
 - Contract entry removal is allowed with a stated reason for differing from
   Requirement retirement, so the two rules do not read as an accident.
-- The rewind's true cost, including the deleted cross-spec review, is stated
+- The rewind's true cost, including the deleted contract review, is stated
   before the user confirms it.
 - Approval authority, the review loop, and the no-edit-under-an-approved-gate
   rule are identical across gates, so the workflow has one answer to those
@@ -280,7 +280,7 @@ current-state authoring with its decomposition rule, Contract materialization
 including the canonical empty case, the removal path with its
 `check contracts` obligation, the `design-validation` self-review, the two forms
 of approval authority, the repeated-objection stopping rule, and confirmed
-self-invalidation that states the deleted cross-spec review.
+self-invalidation that states the deleted contract review.
 
 `tools/specbind/assets/protocols/design-authoring.md` carries the Contract
 inclusion test.

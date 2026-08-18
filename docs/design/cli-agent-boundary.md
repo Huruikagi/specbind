@@ -102,7 +102,7 @@ specbind spec tasks approve <spec> --approval-mode <explicit|delegated>
 specbind spec <requirements|design|tasks> invalidate <spec>
 ```
 
-The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/cross-spec-review.md`.
+The review skill uses the focused status and guarded acceptance operations without directly reading or editing `state/contract-review.md`.
 
 [Decision 0090](./decisions/0090-standalone-check-cli.md) accepts the standalone deterministic checks:
 
@@ -194,7 +194,7 @@ The CLI owns template discovery, identity and path validation, collision checks,
 
 ## Completion validation handshake
 
-Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight returns only a clean full Git `HEAD`; it does not round-trip authoritative fingerprints through the agent. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently recomputes current inputs and rejects it unless the same clean revision, approvals, fresh cross-spec review, and all-completed task state still hold immediately before the `IMPLEMENTATION_VALIDATED` mutation.
+Decision 0029 assigns completion preflight and guarded acceptance to the CLI. Preflight returns only a clean full Git `HEAD`; it does not round-trip authoritative fingerprints through the agent. The validation skill owns execution of project checks and semantic `GO | NO-GO | MANUAL_VERIFY_REQUIRED` synthesis. Only a `GO` candidate is submitted, and the CLI independently recomputes current inputs and rejects it unless the same clean revision, approvals, fresh contract review, and all-completed task state still hold immediately before the `IMPLEMENTATION_VALIDATED` mutation.
 
 The CLI detects the repository's Git object format and validates the scalar full `implementation_revision` under Decision 0031. Generated skills neither submit per-evidence VCS metadata nor infer acceptable hash length themselves.
 
@@ -208,7 +208,7 @@ For accepted mechanical evidence, Decision 0033 requires an ordered list of cate
 
 Decision 0034 keeps requirements coverage, design alignment, spec-local task integration, and boundary integrity as mandatory agent judgments but omits their fixed `passed` flags from persisted evidence. The CLI accepts only the final guarded `GO` candidate; it does not mistake stored booleans for replayable semantic proof.
 
-Decisions 0050, 0052, 0053, and 0055 are refined by Decision 0078. The singleton `state/cross-spec-review.md` contains free-form accepted judgment and only `type`, `milestone_id`, `passed_at`, and `input_revisions` in Front Matter. During Tasks approval, completion acceptance, and release readiness, the CLI resolves this global record through the matching milestone ID and current Spec-backed roadmap membership. The agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
+Decisions 0050, 0052, 0053, and 0055 are refined by Decision 0078. The singleton `state/contract-review.md` contains free-form accepted judgment and only `type`, `milestone_id`, `passed_at`, and `input_revisions` in Front Matter. During Tasks approval, completion acceptance, and release readiness, the CLI resolves this global record through the matching milestone ID and current Spec-backed roadmap membership. The agent consumes a CLI summary and does not copy that record into per-spec candidate evidence.
 
 ## Initial implementation boundary
 

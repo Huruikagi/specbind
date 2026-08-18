@@ -72,7 +72,7 @@ Naming an owner is optional; leaving the boundary ambiguous is not.
   Design must show how the change realizes exactly that.
 - A Contract entry that no part of the design realizes, or a design mechanism
   that crosses a seam the Contract does not declare, is a defect to resolve
-  before approval rather than a discrepancy for cross-spec review to discover.
+  before approval rather than a discrepancy for contract review to discover.
 
 ## What belongs in the Contract
 
@@ -108,7 +108,7 @@ Applying that question:
 Both failures are real and neither is caught mechanically.
 
 **Under-declaring** is the more dangerous of the two. An unstated seam produces
-no dangling reference and no warning, so cross-spec review compares a before and
+no dangling reference and no warning, so contract review compares a before and
 an after that both omit it, and the first evidence is a consumer breaking after
 release.
 

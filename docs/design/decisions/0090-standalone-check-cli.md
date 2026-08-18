@@ -57,7 +57,7 @@ OK CONTRACTS_VERIFIED: Verified 4 contract(s) and 7 dependency reference(s).
 
 - Structural failures — an unavailable or invalid Contract, a duplicate entry ID, a missing manifest, or a dangling reference — return `ERROR CONTRACTS_FAILED`, exit nonzero, and emit their stable diagnostics.
 - Ownership overlaps and dependency cycles remain review warnings under Decision 0011. They are reported in the successful result and do not change the exit status, because the accepted decision makes them agent judgment rather than unconditional structural failure. A future decision may add an escalation flag; v1 does not invent one.
-- The command reports the graph it resolved rather than asserting semantic compatibility, which stays with the cross-spec review skill.
+- The command reports the graph it resolved rather than asserting semantic compatibility, which stays with the contract review skill.
 
 ### Exit and output contract
 

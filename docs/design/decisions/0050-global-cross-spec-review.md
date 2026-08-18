@@ -1,4 +1,4 @@
-# 0050: Keep one global accepted cross-spec review
+# 0050: Keep one global accepted contract review
 
 Status: Accepted
 
@@ -6,7 +6,7 @@ Decision 0078 preserves one global accepted record but removes per-item classifi
 
 ## Context
 
-Decision 0035 originally made the active roadmap the canonical owner of cross-spec review evidence and left room to associate records with individual milestone items or specs. The cross-spec workflow accepts a milestone only when the complete active scope is mutually consistent. Per-item or per-spec pass records would duplicate that conclusion and permit misleading partial states in which some participants appear accepted while the milestone as a whole is not. Decision 0052 later separates the detailed machine record from always-loaded roadmap context without changing its milestone-wide meaning.
+Decision 0035 originally made the active roadmap the canonical owner of contract review evidence and left room to associate records with individual milestone items or specs. The cross-spec workflow accepts a milestone only when the complete active scope is mutually consistent. Per-item or per-spec pass records would duplicate that conclusion and permit misleading partial states in which some participants appear accepted while the milestone as a whole is not. Decision 0052 later separates the detailed machine record from always-loaded roadmap context without changing its milestone-wide meaning.
 
 Failed reviews and remediation attempts are useful while a workflow is running, but they are not accepted release-readiness state.
 

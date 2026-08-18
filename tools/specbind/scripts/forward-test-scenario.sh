@@ -28,10 +28,10 @@
 #   ds1    a new `order` Spec with its requirements authored and approved
 #   ds2    r5's state: the cart cap approved, so design is the next phase
 #   ds3    ds2 with the requirements edited afterwards, so that gate is stale
-#   ds4    cart with the design gate approved and the cross-spec review accepted
+#   ds4    cart with the design gate approved and the contract review accepted
 #   ds5    ds2 plus a `checkout` Spec consuming the cart export
 #   t1     ds4's state: design approved and the review accepted, no plan yet
-#   t2     t1 without the accepted cross-spec review
+#   t2     t1 without the accepted contract review
 #   t3     an approved three-task plan with the first two already completed
 #   t4     d7's state: the tasks gate approved and cart in implementation
 
@@ -142,10 +142,10 @@ cart_design_approved() {
 # Decision 0078 requires this before Tasks authoring, and the acceptance itself
 # refuses to run while a task plan exists. Every recipe that writes a plan
 # accepts the review first.
-cross_spec_review_accepted() {
+contract_review_accepted() {
     printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
         | specbind milestone review accept --candidate - >/dev/null \
-        || fail "could not accept the cross-spec review"
+        || fail "could not accept the contract review"
 }
 
 leave_dirty=no
@@ -351,12 +351,12 @@ ds4 | t1 | t2)
     if [ "$scenario" = t2 ]; then
         # t2 measures what the tasks phase does when the review has not been
         # accepted, so this is the one recipe that deliberately leaves it out.
-        expect "the cross-spec review is already accepted" \
+        expect "the contract review is already accepted" \
             'specbind milestone review status | grep -q "Status: absent"'
     else
-        cross_spec_review_accepted
-        expect "no accepted cross-spec review was written" \
-            'test -e .specbind/state/cross-spec-review.md'
+        contract_review_accepted
+        expect "no accepted contract review was written" \
+            'test -e .specbind/state/contract-review.md'
     fi
     ;;
 
@@ -365,7 +365,7 @@ d7 | t4)
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
     cart_design_approved
-    cross_spec_review_accepted
+    contract_review_accepted
     {
         echo "schema_version: 1"
         echo "plan:"
@@ -386,7 +386,7 @@ t3)
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
     cart_design_approved
-    cross_spec_review_accepted
+    contract_review_accepted
     # Three tasks, two of them finished. A revision that inserts work ahead of
     # them renumbers the completed entries, which is the case the mapping rule
     # exists for. One task would not renumber anything.

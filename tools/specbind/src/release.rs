@@ -132,7 +132,7 @@ pub fn archive_targets(version: &str) -> Result<ArchiveTargets, ReleaseIssues> {
     }
     Ok(ArchiveTargets {
         roadmap: format!("releases/{version}-roadmap.md"),
-        cross_spec_review: format!("releases/{version}-cross-spec-review.md"),
+        cross_spec_review: format!("releases/{version}-contract-review.md"),
     })
 }
 

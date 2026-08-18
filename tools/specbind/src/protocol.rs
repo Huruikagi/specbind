@@ -60,9 +60,9 @@ static PROTOCOLS: &[Protocol] = &[
         content: include_str!("../assets/protocols/task-planning.md"),
     },
     Protocol {
-        selector: "cross-spec-review",
+        selector: "contract-review",
         purpose: "Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline.",
-        content: include_str!("../assets/protocols/cross-spec-review.md"),
+        content: include_str!("../assets/protocols/contract-review.md"),
     },
 ];
 

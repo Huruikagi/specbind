@@ -1,4 +1,4 @@
-//! Contract-first cross-spec review candidate and authoritative input resolution.
+//! Contract-first contract review candidate and authoritative input resolution.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -56,7 +56,7 @@ pub enum ReviewFreshnessStatus {
     Invalid,
 }
 
-/// Later lifecycle boundaries that must recheck the accepted cross-spec review.
+/// Later lifecycle boundaries that must recheck the accepted contract review.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReviewBoundary<'a> {
     TasksApproval { canonical_spec: &'a str },
@@ -140,7 +140,7 @@ impl fmt::Display for ReviewIssues {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             formatter,
-            "cross-spec review has {} issue(s)",
+            "contract review has {} issue(s)",
             self.issues.len()
         )
     }
@@ -186,7 +186,7 @@ fn resolve_candidate_inputs(
         .is_some_and(|bytes| std::str::from_utf8(bytes).is_err())
     {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_ROADMAP_NOT_UTF8",
+            "CONTRACT_REVIEW_ROADMAP_NOT_UTF8",
             Some(ROADMAP_KEY.to_owned()),
             "Roadmap must be UTF-8",
         ));
@@ -198,15 +198,15 @@ fn resolve_candidate_inputs(
     if let (Some(roadmap), Some(_bytes)) = (&roadmap, roadmap_bytes) {
         if roadmap.spec_ids().is_empty() {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_DIRECT_ONLY",
+                "CONTRACT_REVIEW_DIRECT_ONLY",
                 Some(ROADMAP_KEY.to_owned()),
-                "Direct-only milestones do not accept a cross-spec review",
+                "Direct-only milestones do not accept a contract review",
             ));
         }
         for spec in roadmap.spec_ids() {
             if !graph.inventories.contains_key(&spec) {
                 issues.push(review_issue(
-                    "CROSS_SPEC_REVIEW_ROADMAP_SPEC_MISSING",
+                    "CONTRACT_REVIEW_ROADMAP_SPEC_MISSING",
                     Some(ROADMAP_KEY.to_owned()),
                     format!("Roadmap spec {spec} does not exist in the persistent Spec set"),
                 ));
@@ -217,7 +217,7 @@ fn resolve_candidate_inputs(
                 input_revisions.insert(ROADMAP_KEY.to_owned(), fingerprint);
             }
             Err(error) => issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_ROADMAP_FINGERPRINT_FAILED",
+                "CONTRACT_REVIEW_ROADMAP_FINGERPRINT_FAILED",
                 Some(ROADMAP_KEY.to_owned()),
                 error.to_string(),
             )),
@@ -230,7 +230,7 @@ fn resolve_candidate_inputs(
     for selector in &candidate.deep_inputs {
         if !deep_seen.insert(selector) {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_DEEP_INPUT_DUPLICATE",
+                "CONTRACT_REVIEW_DEEP_INPUT_DUPLICATE",
                 Some(selector.clone()),
                 "deepInputs must not contain duplicates",
             ));
@@ -257,7 +257,7 @@ fn resolve_candidate_inputs(
     }
     if issues.is_empty() {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_ROADMAP_UNAVAILABLE",
+            "CONTRACT_REVIEW_ROADMAP_UNAVAILABLE",
             Some(ROADMAP_KEY.to_owned()),
             "current Roadmap could not be resolved",
         ));
@@ -268,7 +268,7 @@ fn resolve_candidate_inputs(
 }
 
 /// Revalidates every authoritative input and atomically writes the accepted
-/// current cross-spec review artifact.
+/// current contract review artifact.
 ///
 /// # Errors
 ///
@@ -287,7 +287,7 @@ pub fn accept(
         || initial.input_revisions != current.input_revisions
     {
         return Err(one_review_issue(
-            "CROSS_SPEC_REVIEW_INPUTS_CHANGED",
+            "CONTRACT_REVIEW_INPUTS_CHANGED",
             None,
             "review inputs changed during guarded acceptance",
         ));
@@ -295,14 +295,10 @@ pub fn accept(
     let passed_at = OffsetDateTime::now_utc()
         .format(&Rfc3339)
         .map_err(|error| {
-            one_review_issue(
-                "CROSS_SPEC_REVIEW_TIMESTAMP_FAILED",
-                None,
-                error.to_string(),
-            )
+            one_review_issue("CONTRACT_REVIEW_TIMESTAMP_FAILED", None, error.to_string())
         })?;
     let content = render_review(&current, &passed_at)?;
-    let relative = "state/cross-spec-review.md";
+    let relative = "state/contract-review.md";
     persist_review(specbind_root, relative, content.as_bytes())?;
     Ok(AcceptedReview {
         path: relative.to_owned(),
@@ -312,7 +308,7 @@ pub fn accept(
     })
 }
 
-/// Removes the accepted cross-spec review artifact.
+/// Removes the accepted contract review artifact.
 ///
 /// Explicit Design and scope rewinds own this removal under Decision 0078; the
 /// review is milestone-level state, so no per-Spec condition applies.
@@ -322,14 +318,14 @@ pub fn accept(
 /// Returns target-type or filesystem diagnostics. An absent artifact is not an
 /// error and reports that nothing was removed.
 pub fn remove_accepted(specbind_root: &Path) -> Result<bool, ReviewIssues> {
-    let relative = "state/cross-spec-review.md";
+    let relative = "state/contract-review.md";
     let path = specbind_root.join(relative);
     let metadata = match fs::symlink_metadata(&path) {
         Ok(metadata) => metadata,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
         Err(error) => {
             return Err(one_review_issue(
-                "CROSS_SPEC_REVIEW_TARGET_INVALID",
+                "CONTRACT_REVIEW_TARGET_INVALID",
                 Some(relative.to_owned()),
                 error.to_string(),
             ));
@@ -337,14 +333,14 @@ pub fn remove_accepted(specbind_root: &Path) -> Result<bool, ReviewIssues> {
     };
     if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
         return Err(one_review_issue(
-            "CROSS_SPEC_REVIEW_TARGET_INVALID",
+            "CONTRACT_REVIEW_TARGET_INVALID",
             Some(relative.to_owned()),
             "accepted review must be a regular non-symlink file",
         ));
     }
     fs::remove_file(&path).map_err(|error| {
         one_review_issue(
-            "CROSS_SPEC_REVIEW_REMOVE_FAILED",
+            "CONTRACT_REVIEW_REMOVE_FAILED",
             Some(relative.to_owned()),
             error.to_string(),
         )
@@ -363,7 +359,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         }
     };
     let milestone_id = roadmap.milestone_id.clone();
-    let relative = "state/cross-spec-review.md";
+    let relative = "state/contract-review.md";
     let accepted = match read_accepted_review(specbind_root, &roadmap, relative) {
         Ok(accepted) => accepted,
         Err(report) => return (*report).with_milestone(milestone_id),
@@ -397,7 +393,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
     validate_baseline(project_root, &roadmap.baseline_revision, &mut issues);
     if accepted.milestone_id != roadmap.milestone_id {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_MILESTONE_STALE",
+            "CONTRACT_REVIEW_MILESTONE_STALE",
             Some(relative.to_owned()),
             "accepted review milestone_id does not match the current Roadmap",
         ));
@@ -410,7 +406,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         })
     {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_INPUTS_STALE",
+            "CONTRACT_REVIEW_INPUTS_STALE",
             Some(relative.to_owned()),
             "accepted input_revisions do not match the current authoritative review inputs",
         ));
@@ -426,7 +422,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         .with_milestone(milestone_id)
 }
 
-/// Requires the accepted cross-spec review state for a later lifecycle boundary.
+/// Requires the accepted contract review state for a later lifecycle boundary.
 ///
 /// Tasks approval and implementation validation require a canonical participating
 /// Spec ID and a fresh review. Release preflight accepts `NotRequired` only for a
@@ -446,7 +442,7 @@ pub fn require_for_boundary(
         .filter(|spec| !valid_id(spec))
         .map(|spec| {
             review_issue(
-                "CROSS_SPEC_REVIEW_SPEC_TARGET_INVALID",
+                "CONTRACT_REVIEW_SPEC_TARGET_INVALID",
                 Some(format!("specs/{spec}")),
                 "later lifecycle review guard requires a canonical Spec ID",
             )
@@ -462,7 +458,7 @@ pub fn require_for_boundary(
         match read_current_roadmap(specbind_root) {
             Ok(roadmap) if !roadmap.spec_ids().iter().any(|spec| spec == canonical_spec) => {
                 issues.push(review_issue(
-                    "CROSS_SPEC_REVIEW_SPEC_NOT_IN_MILESTONE",
+                    "CONTRACT_REVIEW_SPEC_NOT_IN_MILESTONE",
                     Some(format!("specs/{canonical_spec}")),
                     "later lifecycle review guard requires a current Spec-backed Roadmap participant",
                 ));
@@ -508,21 +504,21 @@ impl<'a> ReviewBoundary<'a> {
 
     fn blocked_code(self) -> &'static str {
         match self {
-            Self::TasksApproval { .. } => "CROSS_SPEC_REVIEW_TASKS_APPROVAL_BLOCKED",
+            Self::TasksApproval { .. } => "CONTRACT_REVIEW_TASKS_APPROVAL_BLOCKED",
             Self::ImplementationValidation { .. } => {
-                "CROSS_SPEC_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED"
+                "CONTRACT_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED"
             }
-            Self::ReleasePreflight => "CROSS_SPEC_REVIEW_RELEASE_PREFLIGHT_BLOCKED",
+            Self::ReleasePreflight => "CONTRACT_REVIEW_RELEASE_PREFLIGHT_BLOCKED",
         }
     }
 
     fn blocked_message(self) -> &'static str {
         match self {
             Self::TasksApproval { .. } => {
-                "Tasks approval requires a fresh accepted cross-spec review"
+                "Tasks approval requires a fresh accepted contract review"
             }
             Self::ImplementationValidation { .. } => {
-                "implementation validation requires a fresh accepted cross-spec review"
+                "implementation validation requires a fresh accepted contract review"
             }
             Self::ReleasePreflight => {
                 "release preflight requires a fresh review for Spec-backed work or no review for Direct-only work"
@@ -548,9 +544,9 @@ fn read_accepted_review(
             let issues = (status == ReviewFreshnessStatus::Missing)
                 .then(|| {
                     review_issue(
-                        "CROSS_SPEC_REVIEW_MISSING",
+                        "CONTRACT_REVIEW_MISSING",
                         Some(relative.to_owned()),
-                        "Spec-backed milestone requires an accepted cross-spec review",
+                        "Spec-backed milestone requires an accepted contract review",
                     )
                 })
                 .into_iter()
@@ -567,9 +563,9 @@ fn read_accepted_review(
             None,
             None,
             vec![review_issue(
-                "CROSS_SPEC_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY",
+                "CONTRACT_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY",
                 Some(relative.to_owned()),
-                "Direct-only milestone must not retain an accepted cross-spec review",
+                "Direct-only milestone must not retain an accepted contract review",
             )],
         )));
     }
@@ -579,7 +575,7 @@ fn read_accepted_review(
             None,
             None,
             vec![review_issue(
-                "CROSS_SPEC_REVIEW_TARGET_INVALID",
+                "CONTRACT_REVIEW_TARGET_INVALID",
                 Some(relative.to_owned()),
                 "accepted review must be a regular non-symlink file",
             )],
@@ -603,7 +599,7 @@ fn invalid_read_report(relative: &str, message: String) -> ReviewFreshnessReport
         None,
         None,
         vec![review_issue(
-            "CROSS_SPEC_REVIEW_READ_FAILED",
+            "CONTRACT_REVIEW_READ_FAILED",
             Some(relative.to_owned()),
             message,
         )],
@@ -637,7 +633,7 @@ fn read_current_roadmap(specbind_root: &Path) -> Result<RoadmapDocument, ReviewI
     };
     let content = std::str::from_utf8(&bytes).map_err(|error| {
         one_review_issue(
-            "CROSS_SPEC_REVIEW_ROADMAP_NOT_UTF8",
+            "CONTRACT_REVIEW_ROADMAP_NOT_UTF8",
             Some(ROADMAP_KEY.to_owned()),
             error.to_string(),
         )
@@ -657,52 +653,52 @@ fn parse_accepted_review(
 ) -> Result<AcceptedReviewRecord, ReviewIssues> {
     let (frontmatter, body) = split_review_frontmatter(content).map_err(|message| {
         one_review_issue(
-            "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID",
+            "CONTRACT_REVIEW_FRONTMATTER_INVALID",
             Some(source.to_owned()),
             message,
         )
     })?;
     let raw = serde_saphyr::from_str::<StoredReviewFrontmatter>(frontmatter).map_err(|error| {
         one_review_issue(
-            "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID",
+            "CONTRACT_REVIEW_FRONTMATTER_INVALID",
             Some(source.to_owned()),
             error.to_string(),
         )
     })?;
     let mut issues = Vec::new();
-    if raw.artifact_type != "SpecBind Cross-Spec Review" {
+    if raw.artifact_type != "SpecBind Contract Review" {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_TYPE_INVALID",
+            "CONTRACT_REVIEW_TYPE_INVALID",
             Some(source.to_owned()),
-            "type must be SpecBind Cross-Spec Review",
+            "type must be SpecBind Contract Review",
         ));
     }
     if Uuid::parse_str(&raw.milestone_id).map_or(true, |id| {
         id.get_version_num() != 7 || id.hyphenated().to_string() != raw.milestone_id
     }) {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_MILESTONE_ID_INVALID",
+            "CONTRACT_REVIEW_MILESTONE_ID_INVALID",
             Some(source.to_owned()),
             "milestone_id must be a canonical UUID v7",
         ));
     }
     if OffsetDateTime::parse(&raw.passed_at, &Rfc3339).is_err() {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_PASSED_AT_INVALID",
+            "CONTRACT_REVIEW_PASSED_AT_INVALID",
             Some(source.to_owned()),
             "passed_at must be a timezone-qualified RFC 3339 timestamp",
         ));
     }
     if body.trim().is_empty() {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY",
+            "CONTRACT_REVIEW_ASSESSMENT_EMPTY",
             Some(source.to_owned()),
             "accepted review must contain a non-empty Markdown body",
         ));
     }
     if !raw.input_revisions.contains_key(ROADMAP_KEY) {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_ROADMAP_INPUT_MISSING",
+            "CONTRACT_REVIEW_ROADMAP_INPUT_MISSING",
             Some(source.to_owned()),
             "input_revisions must include the Roadmap cross-spec scope",
         ));
@@ -713,14 +709,14 @@ fn parse_accepted_review(
             && parse_deep_selector(key).is_none()
         {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_INPUT_KEY_INVALID",
+                "CONTRACT_REVIEW_INPUT_KEY_INVALID",
                 Some(key.clone()),
-                "input revision key is not a canonical cross-spec review selector",
+                "input revision key is not a canonical contract review selector",
             ));
         }
         if !valid_fingerprint(value) {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_FINGERPRINT_INVALID",
+                "CONTRACT_REVIEW_FINGERPRINT_INVALID",
                 Some(key.clone()),
                 "input revision must use sha256: followed by 64 lowercase hexadecimal characters",
             ));
@@ -819,13 +815,13 @@ fn validate_baseline(project_root: &Path, baseline: &str, issues: &mut Vec<Revie
     match resolved {
         Ok(value) if value.trim() == baseline => {}
         Ok(_) => issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_BASELINE_NOT_EXACT",
+            "CONTRACT_REVIEW_BASELINE_NOT_EXACT",
             Some(ROADMAP_KEY.to_owned()),
             "baseline_revision must resolve to the same full commit object ID",
         )),
         Err(message) => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_BASELINE_MISSING",
+                "CONTRACT_REVIEW_BASELINE_MISSING",
                 Some(ROADMAP_KEY.to_owned()),
                 message,
             ));
@@ -838,12 +834,12 @@ fn validate_baseline(project_root: &Path, baseline: &str, issues: &mut Vec<Revie
     ) {
         Ok(true) => {}
         Ok(false) => issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_BASELINE_NOT_ANCESTOR",
+            "CONTRACT_REVIEW_BASELINE_NOT_ANCESTOR",
             Some(ROADMAP_KEY.to_owned()),
             "baseline_revision is not an ancestor of current HEAD",
         )),
         Err(message) => issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_GIT_FAILED",
+            "CONTRACT_REVIEW_GIT_FAILED",
             Some(ROADMAP_KEY.to_owned()),
             message,
         )),
@@ -864,7 +860,7 @@ fn validate_participating_spec(
         Ok(input) => input,
         Err(error) => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_SPEC_NOT_UTF8",
+                "CONTRACT_REVIEW_SPEC_NOT_UTF8",
                 Some(source),
                 error.to_string(),
             ));
@@ -875,7 +871,7 @@ fn validate_participating_spec(
         Ok(wire) => wire,
         Err(error) => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_SPEC_INVALID",
+                "CONTRACT_REVIEW_SPEC_INVALID",
                 Some(source),
                 error.to_string(),
             ));
@@ -886,7 +882,7 @@ fn validate_participating_spec(
         Ok(spec) => spec,
         Err(error) => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_SPEC_INVALID",
+                "CONTRACT_REVIEW_SPEC_INVALID",
                 Some(source),
                 error.to_string(),
             ));
@@ -895,7 +891,7 @@ fn validate_participating_spec(
     };
     let Some(active) = spec.as_wire().active_change.0.as_ref() else {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_SPEC_STATE_INVALID",
+            "CONTRACT_REVIEW_SPEC_STATE_INVALID",
             Some(source),
             "participating spec must have an active change in tasks state",
         ));
@@ -903,7 +899,7 @@ fn validate_participating_spec(
     };
     if active.milestone_id.0 != milestone_id || active.state != WorkflowState::Tasks {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_SPEC_STATE_INVALID",
+            "CONTRACT_REVIEW_SPEC_STATE_INVALID",
             Some(source.clone()),
             "participating spec must match the Roadmap milestone and be in tasks state",
         ));
@@ -919,7 +915,7 @@ fn validate_participating_spec(
     let freshness = freshness::evaluate(&spec, &gate_inputs.inputs);
     if freshness.design.status != FreshnessStatus::Fresh {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_DESIGN_NOT_FRESH",
+            "CONTRACT_REVIEW_DESIGN_NOT_FRESH",
             Some(source),
             "participating spec requires a fresh Design gate",
         ));
@@ -927,13 +923,13 @@ fn validate_participating_spec(
     let tasks = specbind_root.join(format!("specs/{canonical_spec}/tasks.yaml"));
     match fs::symlink_metadata(tasks) {
         Ok(_) => issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST",
+            "CONTRACT_REVIEW_TASKS_ALREADY_EXIST",
             Some(format!("specs/{canonical_spec}/tasks.yaml")),
-            "tasks.yaml must not exist before cross-spec review acceptance",
+            "tasks.yaml must not exist before contract review acceptance",
         )),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
         Err(error) => issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_TASKS_INSPECT_FAILED",
+            "CONTRACT_REVIEW_TASKS_INSPECT_FAILED",
             Some(format!("specs/{canonical_spec}/tasks.yaml")),
             error.to_string(),
         )),
@@ -945,17 +941,13 @@ fn render_review(
     passed_at: &str,
 ) -> Result<String, ReviewIssues> {
     let frontmatter = ReviewFrontmatter {
-        artifact_type: "SpecBind Cross-Spec Review",
+        artifact_type: "SpecBind Contract Review",
         milestone_id: &resolution.roadmap.milestone_id,
         passed_at,
         input_revisions: OrderedRevisions(&resolution.input_revisions),
     };
     let yaml = serde_saphyr::to_string(&frontmatter).map_err(|error| {
-        one_review_issue(
-            "CROSS_SPEC_REVIEW_SERIALIZE_FAILED",
-            None,
-            error.to_string(),
-        )
+        one_review_issue("CONTRACT_REVIEW_SERIALIZE_FAILED", None, error.to_string())
     })?;
     let mut content = format!("---\n{yaml}---\n{}", resolution.candidate.assessment);
     if !content.ends_with('\n') {
@@ -969,7 +961,7 @@ fn persist_review(specbind_root: &Path, relative: &str, bytes: &[u8]) -> Result<
     match fs::symlink_metadata(&state) {
         Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_dir() => {
             return Err(one_review_issue(
-                "CROSS_SPEC_REVIEW_STATE_DIR_INVALID",
+                "CONTRACT_REVIEW_STATE_DIR_INVALID",
                 Some("state".to_owned()),
                 "state must be a regular non-symlink directory",
             ));
@@ -978,7 +970,7 @@ fn persist_review(specbind_root: &Path, relative: &str, bytes: &[u8]) -> Result<
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
             fs::create_dir(&state).map_err(|error| {
                 one_review_issue(
-                    "CROSS_SPEC_REVIEW_STATE_DIR_CREATE_FAILED",
+                    "CONTRACT_REVIEW_STATE_DIR_CREATE_FAILED",
                     Some("state".to_owned()),
                     error.to_string(),
                 )
@@ -986,7 +978,7 @@ fn persist_review(specbind_root: &Path, relative: &str, bytes: &[u8]) -> Result<
         }
         Err(error) => {
             return Err(one_review_issue(
-                "CROSS_SPEC_REVIEW_STATE_DIR_INVALID",
+                "CONTRACT_REVIEW_STATE_DIR_INVALID",
                 Some("state".to_owned()),
                 error.to_string(),
             ));
@@ -995,12 +987,12 @@ fn persist_review(specbind_root: &Path, relative: &str, bytes: &[u8]) -> Result<
     let target = specbind_root.join(relative);
     guarded_fs::replace_optional(&target, bytes).map_err(|error| match error {
         GuardedWriteError::InvalidTarget(_) => one_review_issue(
-            "CROSS_SPEC_REVIEW_TARGET_INVALID",
+            "CONTRACT_REVIEW_TARGET_INVALID",
             Some(relative.to_owned()),
             "accepted review target must be absent or a regular non-symlink file",
         ),
         _ => one_review_issue(
-            "CROSS_SPEC_REVIEW_WRITE_FAILED",
+            "CONTRACT_REVIEW_WRITE_FAILED",
             Some(relative.to_owned()),
             error.to_string(),
         ),
@@ -1050,7 +1042,7 @@ fn parse_candidate(input: &str) -> Result<ReviewCandidate, ReviewIssues> {
     let candidate =
         serde_json::from_str::<ReviewCandidate>(input).map_err(|error| ReviewIssues {
             issues: vec![review_issue(
-                "CROSS_SPEC_REVIEW_CANDIDATE_INVALID",
+                "CONTRACT_REVIEW_CANDIDATE_INVALID",
                 None,
                 error.to_string(),
             )],
@@ -1058,14 +1050,14 @@ fn parse_candidate(input: &str) -> Result<ReviewCandidate, ReviewIssues> {
     let mut issues = Vec::new();
     if candidate.schema_version != 1 {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_CANDIDATE_VERSION_UNSUPPORTED",
+            "CONTRACT_REVIEW_CANDIDATE_VERSION_UNSUPPORTED",
             None,
             "schemaVersion must be 1",
         ));
     }
     if candidate.assessment.trim().is_empty() {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY",
+            "CONTRACT_REVIEW_ASSESSMENT_EMPTY",
             None,
             "assessment must contain non-empty Markdown",
         ));
@@ -1113,7 +1105,7 @@ fn resolve_deep_input(
 ) {
     let Some((spec, logical_selector)) = parse_deep_selector(selector) else {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_DEEP_INPUT_INVALID",
+            "CONTRACT_REVIEW_DEEP_INPUT_INVALID",
             Some(selector.to_owned()),
             "deep input must be specs/<spec>#requirements or specs/<spec>#design/<artifact-id>",
         ));
@@ -1121,7 +1113,7 @@ fn resolve_deep_input(
     };
     let Some(inventory) = inventories.get(spec) else {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_DEEP_INPUT_SPEC_MISSING",
+            "CONTRACT_REVIEW_DEEP_INPUT_SPEC_MISSING",
             Some(selector.to_owned()),
             format!("deep input spec {spec} does not exist"),
         ));
@@ -1133,7 +1125,7 @@ fn resolve_deep_input(
         .find(|artifact| artifact.selector == logical_selector)
     else {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_DEEP_INPUT_MISSING",
+            "CONTRACT_REVIEW_DEEP_INPUT_MISSING",
             Some(selector.to_owned()),
             "deep input selector does not resolve uniquely",
         ));
@@ -1145,7 +1137,7 @@ fn resolve_deep_input(
         .any(|issue| issue.path.as_ref() == Some(&artifact.path))
     {
         issues.push(review_issue(
-            "CROSS_SPEC_REVIEW_DEEP_INPUT_INVALID_ARTIFACT",
+            "CONTRACT_REVIEW_DEEP_INPUT_INVALID_ARTIFACT",
             Some(selector.to_owned()),
             "deep input artifact has profile or content diagnostics",
         ));
@@ -1187,7 +1179,7 @@ fn read_regular(path: &Path, source: &str, issues: &mut Vec<ReviewIssue>) -> Opt
     match fs::symlink_metadata(path) {
         Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_INPUT_NOT_REGULAR",
+                "CONTRACT_REVIEW_INPUT_NOT_REGULAR",
                 Some(source.to_owned()),
                 "review input must be a regular non-symlink file",
             ));
@@ -1197,7 +1189,7 @@ fn read_regular(path: &Path, source: &str, issues: &mut Vec<ReviewIssue>) -> Opt
             Ok(bytes) => Some(bytes),
             Err(error) => {
                 issues.push(review_issue(
-                    "CROSS_SPEC_REVIEW_INPUT_READ_FAILED",
+                    "CONTRACT_REVIEW_INPUT_READ_FAILED",
                     Some(source.to_owned()),
                     error.to_string(),
                 ));
@@ -1206,7 +1198,7 @@ fn read_regular(path: &Path, source: &str, issues: &mut Vec<ReviewIssue>) -> Opt
         },
         Err(error) => {
             issues.push(review_issue(
-                "CROSS_SPEC_REVIEW_INPUT_READ_FAILED",
+                "CONTRACT_REVIEW_INPUT_READ_FAILED",
                 Some(source.to_owned()),
                 error.to_string(),
             ));

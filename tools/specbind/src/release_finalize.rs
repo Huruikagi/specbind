@@ -220,11 +220,11 @@ fn validate_partial_plan(
         }
     }
     if let Some(review_archive) = &plan.review_archive {
-        let active = specbind_root.join("state/cross-spec-review.md").exists();
+        let active = specbind_root.join("state/contract-review.md").exists();
         let archived = specbind_root.join(review_archive).exists();
         match (active, archived) {
             (true, false) => {
-                if git_path_dirty(project_root, specbind_root, "state/cross-spec-review.md")? {
+                if git_path_dirty(project_root, specbind_root, "state/contract-review.md")? {
                     return Ok(false);
                 }
             }
@@ -351,12 +351,12 @@ fn verify_completed_retry(
             "RELEASE_FINAL_STATE_INVALID",
         )?;
         if !review.contains(&format!("milestone_id: {milestone_id}"))
-            || specbind_root.join("state/cross-spec-review.md").exists()
+            || specbind_root.join("state/contract-review.md").exists()
         {
             return Err(one_issue(
                 "RELEASE_FINAL_STATE_INVALID",
                 Some(archives.cross_spec_review),
-                "finalized cross-spec review does not match the archived milestone",
+                "finalized contract review does not match the archived milestone",
             ));
         }
     }
@@ -582,7 +582,7 @@ fn apply_plan(specbind_root: &Path, plan: &FinalizationPlan) -> Result<(), Final
             })?;
     }
     if let Some(review_archive) = &plan.review_archive {
-        move_regular(specbind_root, "state/cross-spec-review.md", review_archive)?;
+        move_regular(specbind_root, "state/contract-review.md", review_archive)?;
     }
     move_regular(specbind_root, "steering/roadmap.md", &plan.roadmap_archive)
 }
@@ -598,13 +598,13 @@ fn verify_final_state(specbind_root: &Path, plan: &FinalizationPlan) -> Result<(
         ));
     }
     if let Some(review_archive) = &plan.review_archive
-        && (specbind_root.join("state/cross-spec-review.md").exists()
+        && (specbind_root.join("state/contract-review.md").exists()
             || !specbind_root.join(review_archive).is_file())
     {
         return Err(one_issue(
             "RELEASE_FINAL_STATE_INVALID",
             Some(review_archive.clone()),
-            "cross-spec review did not reach its release archive",
+            "contract review did not reach its release archive",
         ));
     }
     for spec in &plan.specs {

@@ -133,7 +133,7 @@ pub fn resolve(
         diagnostics.insert(MilestoneDiagnostic {
             code: "MILESTONE_TASKS_BEFORE_REVIEW",
             path: None,
-            message: "current tasks.yaml exists before the required cross-spec review is accepted"
+            message: "current tasks.yaml exists before the required contract review is accepted"
                 .to_owned(),
         });
     }
@@ -431,7 +431,7 @@ fn actionable_items(
     {
         actions.push(MilestoneAction {
             item: "milestone".to_owned(),
-            action: "cross_spec_review",
+            action: "contract_review",
         });
     }
     if all_implemented
@@ -506,7 +506,7 @@ fn release_blockers(
         blockers.push("WORKTREE_NOT_CLEAN".to_owned());
     }
     if has_specs(facts) && review != ReviewFreshnessStatus::Fresh {
-        blockers.push("CROSS_SPEC_REVIEW_NOT_FRESH".to_owned());
+        blockers.push("CONTRACT_REVIEW_NOT_FRESH".to_owned());
     }
     if !all_specs_validated {
         blockers.push("SPEC_VALIDATION_INCOMPLETE".to_owned());
@@ -696,7 +696,7 @@ pub fn stage_name(stage: DeliveryStage) -> &'static str {
     match stage {
         DeliveryStage::Requirements => "requirements",
         DeliveryStage::Design => "design",
-        DeliveryStage::CrossSpecReview => "cross_spec_review",
+        DeliveryStage::CrossSpecReview => "contract_review",
         DeliveryStage::Tasks => "tasks",
         DeliveryStage::Implementation => "implementation",
         DeliveryStage::Validation => "validation",

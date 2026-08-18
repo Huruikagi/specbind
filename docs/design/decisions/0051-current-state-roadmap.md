@@ -11,9 +11,9 @@ SpecBind already has distinct history surfaces: Git records active-artifact edit
 ## Decision
 
 - `steering/roadmap.md` represents only the current active milestone state.
-- Its frontmatter and Markdown body contain no required history collection, `updated_at`, actor log, scope-change log, or cross-spec review-attempt list.
+- Its frontmatter and Markdown body contain no required history collection, `updated_at`, actor log, scope-change log, or contract review-attempt list.
 - Confirmed scope and dependency changes update the current `work_items` through guarded CLI operations. The Decision 0054 baseline remains fixed except through an explicit user-confirmed rebaseline.
-- A change that invalidates the accepted global cross-spec review removes or supersedes the current Decision 0052 state artifact; the roadmap does not embed the previous accepted record or failed attempts.
+- A change that invalidates the accepted global contract review removes or supersedes the current Decision 0052 state artifact; the roadmap does not embed the previous accepted record or failed attempts.
 - Git history remains the source for active roadmap edits and authorship.
 - Successful release archives the final roadmap snapshot under `releases/`.
 - Per-spec `log.md` records the released result rather than the active planning sequence.

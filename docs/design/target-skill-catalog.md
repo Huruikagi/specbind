@@ -61,13 +61,13 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-spec-quick` | `specbind-quick` | Change | Accepted | Bring one Spec-backed item through Tasks approval using delegated gates. |
 | `kiro-spec-requirements` | `specbind-requirements` | Change | Accepted | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
 | `kiro-spec-status` | `specbind-status` | Change | Accepted | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
-| `kiro-spec-tasks` | `specbind-tasks` | Change | Accepted | Create a milestone-local plan covering the active requirement set after cross-spec review. |
+| `kiro-spec-tasks` | `specbind-tasks` | Change | Accepted | Create a milestone-local plan covering the active requirement set after contract review. |
 | `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Accepted | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
 | `kiro-validate-design` | `specbind-validate-design` | Change | Accepted | Review technical design quality and design-to-contract consistency. |
 | `kiro-validate-gap` | `specbind-gap-analysis` | Change | Accepted | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
 | `kiro-validate-impl` | `specbind-validate-implementation` | Change | Accepted | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Accepted | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
-| None | `specbind-cross-spec-review` | New | Accepted | Review the complete current contract graph after Design approval and before Tasks authoring. |
+| None | `specbind-contract-review` | New | Accepted | Review the complete current contract graph after Design approval and before Tasks authoring. |
 | None | `specbind-release` | New | Accepted | Complete a release and close its active milestone. |
 
 This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.

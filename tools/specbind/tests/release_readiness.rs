@@ -78,7 +78,7 @@ fn accepts_a_complete_direct_only_milestone_and_ignores_unrelated_dirt() {
         !readiness
             .mutation_targets
             .iter()
-            .any(|target| target.path.contains("cross-spec-review"))
+            .any(|target| target.path.contains("contract-review"))
     );
 
     let status = milestone_status::resolve(root.path(), &root.path().join(".specbind"))
@@ -103,11 +103,7 @@ fn finalizes_a_direct_only_release_without_log_input_or_review_archive() {
     );
     assert!(!specbind.join("steering/roadmap.md").exists());
     assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
-    assert!(
-        !specbind
-            .join("releases/v1.4.0-cross-spec-review.md")
-            .exists()
-    );
+    assert!(!specbind.join("releases/v1.4.0-contract-review.md").exists());
     assert_eq!(
         release_finalize::finalize(root.path(), &specbind, ProjectLanguage::En, None)
             .expect("idempotent Direct-only finalize retry"),

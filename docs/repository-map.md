@@ -83,7 +83,7 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0008](./design/decisions/0008-customization-surface.md) | Accepted | Shared templates and rules as the stable project customization surface |
 | [0009](./design/decisions/0009-milestone-cli-boundary.md) | Accepted | Discovery-plus-Rust-CLI milestone responsibility boundary |
 | [0010](./design/decisions/0010-release-execution-boundary.md) | Accepted | AI adapter execution and Rust CLI release-finalization boundary |
-| [0011](./design/decisions/0011-cross-spec-contract.md) | Accepted | Persistent contract manifest and contract-first cross-spec review direction |
+| [0011](./design/decisions/0011-cross-spec-contract.md) | Accepted | Persistent contract manifest and contract-first contract review direction |
 | [0012](./design/decisions/0012-delegated-approval.md) | Accepted | Explicit-versus-delegated gate approval and non-interactive execution boundary |
 | [0013](./design/decisions/0013-structured-task-artifact.md) | Accepted | Structured `tasks.yaml` source-of-truth direction |
 | [0014](./design/decisions/0014-structured-spec-metadata.md) | Accepted | Structured `spec.yaml` source-of-truth direction |
@@ -122,12 +122,12 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0047](./design/decisions/0047-sparse-direct-change-status.md) | Accepted | Sparse persisted completed status for Direct changes |
 | [0048](./design/decisions/0048-okf-spec-log.md) | Accepted | Canonical OKF `log.md` for per-spec release history |
 | [0049](./design/decisions/0049-okf-authoring-rule.md) | Superseded by 0094 | Concise installed OKF authoring rule |
-| [0050](./design/decisions/0050-global-cross-spec-review.md) | Accepted | One global accepted cross-spec review per milestone |
+| [0050](./design/decisions/0050-global-cross-spec-review.md) | Accepted | One global accepted contract review per milestone |
 | [0051](./design/decisions/0051-current-state-roadmap.md) | Accepted | Current-state-only active Roadmap |
 | [0052](./design/decisions/0052-project-state-artifacts.md) | Accepted | Project-wide machine state separated from steering |
 | [0053](./design/decisions/0053-minimal-cross-spec-review-state.md) | Superseded by 0078 | Structured classifications paired with an AI-authored review |
 | [0054](./design/decisions/0054-milestone-baseline-revision.md) | Accepted | Milestone baseline revision as the contract-diff anchor |
-| [0055](./design/decisions/0055-cross-spec-review-inputs.md) | Accepted | Contract-first cross-spec review inputs |
+| [0055](./design/decisions/0055-cross-spec-review-inputs.md) | Accepted | Contract-first review inputs |
 | [0056](./design/decisions/0056-canonical-contract-markdown.md) | Accepted | Canonical five-section Markdown contract manifests |
 | [0057](./design/decisions/0057-type-based-artifact-discovery.md) | Accepted | Type-based OKF artifact discovery |
 | [0058](./design/decisions/0058-artifact-inventory-read-model.md) | Accepted | Artifact inventory separated from raw content reads |
@@ -159,7 +159,7 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0084](./design/decisions/0084-rust-dependency-strategy.md) | Accepted | Focused Rust dependencies behind SpecBind-owned boundaries |
 | [0085](./design/decisions/0085-rust-wire-model-schema-generation.md) | Accepted | JSON Schema generated from versioned Rust wire models |
 | [0086](./design/decisions/0086-completion-cli-handshake.md) | Accepted | Spec and Direct completion CLI handshake |
-| [0087](./design/decisions/0087-milestone-review-cli.md) | Accepted | Milestone-owned cross-spec review commands |
+| [0087](./design/decisions/0087-milestone-review-cli.md) | Accepted | Milestone-owned contract review commands |
 | [0088](./design/decisions/0088-gate-approval-cli.md) | Accepted | Spec gate approval and invalidation commands |
 | [0089](./design/decisions/0089-milestone-creation-cli.md) | Accepted | Milestone creation, scope, and rebaseline commands |
 | [0090](./design/decisions/0090-standalone-check-cli.md) | Accepted | Standalone traceability and contract check commands |
@@ -178,3 +178,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0103](./design/decisions/0103-schema-read-surface.md) | Accepted | Embedded artifact and command-input schemas readable through the CLI |
 | [0104](./design/decisions/0104-design-skill-contract.md) | Accepted | Reads, Contract update timing, approval, and rewind for the design skill |
 | [0105](./design/decisions/0105-tasks-skill-contract.md) | Accepted | Review ordering, schema-driven authoring, renumbering safety, and approval for the tasks skill |
+| [0106](./design/decisions/0106-contract-review-naming.md) | Accepted | Rename of the cross-spec review to the contract review |

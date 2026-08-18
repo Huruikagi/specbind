@@ -59,7 +59,7 @@ document. One of them had already run `schema list` and found the answer absent.
 `milestone scope` publishes the shape, but only once a milestone exists, so the
 very first command in the workflow was the one with no way to ask.
 
-The same reasoning covers the cross-spec review candidate and the completion
+The same reasoning covers the contract review candidate and the completion
 evidence document, which are still unexposed. They are deferred rather than
 excluded: neither has been reached by a forward test yet, and adding them is the
 same mechanical step taken here.

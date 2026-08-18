@@ -6,7 +6,7 @@ Implementation status: `tools/specbind/src/contract.rs` and `contract_graph.rs` 
 
 ## Context
 
-Cross-spec review currently tends to load every participating spec's complete requirements, design, and tasks. Most of that content is internal to one spec. The review cost grows with document size even though the cross-spec questions concern a much smaller set of dependencies, ownership boundaries, exported capabilities, and shared invariants.
+Contract review currently tends to load every participating spec's complete requirements, design, and tasks. Most of that content is internal to one spec. The review cost grows with document size even though the cross-spec questions concern a much smaller set of dependencies, ownership boundaries, exported capabilities, and shared invariants.
 
 A separately written summary would reduce input size but drift from the authoritative specs. SpecBind instead needs a maintained, minimal source of truth for the boundary that other specs may observe or depend on.
 
@@ -17,7 +17,7 @@ A separately written summary would reduce input size but drift from the authorit
 - Its core categories are Owns, Exports, Consumes, Invariants, and File Ownership.
 - Entries have stable identifiers, and cross-spec references resolve an explicit spec, category, and entry ID.
 - The design workflow maintains the contract alongside the current design and reviews whether internal changes require contract updates.
-- Cross-spec review reads roadmap and contracts first, then loads full spec documents only for affected or ambiguous boundaries.
+- Contract review reads roadmap and contracts first, then loads full spec documents only for affected or ambiguous boundaries.
 - Direct implementation has no persisted Contract-impact field. Requiring no canonical Requirements, Design, or Contract change is the route precondition; a change that cannot preserve it is rerouted to Spec work.
 - The Rust CLI validates syntax, identifiers, references, graph consistency, and other deterministic invariants.
 - AI review evaluates semantic compatibility and downstream impact in a free-form accepted assessment under Decision 0078.
@@ -37,11 +37,11 @@ The CLI computes structural differences and the current dependency graph but doe
 - Do not invent a contract or rewrite requirements and design merely to complete migration.
 - Mark ambiguous ownership and dependencies for review instead of silently resolving them.
 - A missing contract on an active spec is an incomplete migration or damaged state, not the normal empty-contract representation.
-- When a required contract is missing, cross-spec review fails. Requirements and Design may be selected as deeper semantic inputs, but they never substitute for the required Contract.
+- When a required contract is missing, contract review fails. Requirements and Design may be selected as deeper semantic inputs, but they never substitute for the required Contract.
 
 ## Consequences
 
-- Cross-spec review cost follows boundary size more closely than total spec size.
+- Contract review cost follows boundary size more closely than total spec size.
 - Contracts persist and evolve as active specification artifacts across releases.
 - Contract templates and shared review rules become part of project-customizable settings, subject to the fixed machine-readable contract.
 - Downstream revalidation can be targeted from changed entries and consumer edges.

@@ -19,13 +19,13 @@ specbind spec status <spec>
 specbind milestone review status
 ```
 
-**The cross-spec review must be accepted before a plan exists.** Proceed only on
+**The contract review must be accepted before a plan exists.** Proceed only on
 `Status: fresh`.
 
 On `absent` or `stale`, author nothing and route the user to
-`specbind-cross-spec-review`. Say why, because the reason is not visible from
+`specbind-contract-review`. Say why, because the reason is not visible from
 here: `milestone review accept` refuses while a `tasks.yaml` is present
-(`CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST`). Writing the plan now turns a missing
+(`CONTRACT_REVIEW_TASKS_ALREADY_EXIST`). Writing the plan now turns a missing
 prerequisite into a deadlock whose only exit is deleting the plan you just
 wrote. Nothing you can run from this phase would have told you.
 
@@ -250,7 +250,7 @@ State the cost accurately and run it only after the user confirms. This is the
 right operation:
 
 - it clears the tasks and completion evidence, and
-- it **keeps** the accepted cross-spec review, and the requirements and design
+- it **keeps** the accepted contract review, and the requirements and design
   gates.
 
 Add what the revision itself will cost when implementation has started — which
@@ -271,7 +271,7 @@ Delegation authorizes accepting gates, not discarding accepted work.
 - Write no machine state. Never edit `spec.yaml`.
 - Never run `tasks complete`, `tasks block`, or `tasks reopen`. Those record an
   implementer's judgment.
-- Do not accept the cross-spec review, and do not delete a plan to unblock one.
+- Do not accept the contract review, and do not delete a plan to unblock one.
   If a plan exists and the review was never accepted, the order is already lost —
   report it and let the user decide, because discarding an authored plan is their
   call.

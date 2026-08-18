@@ -33,7 +33,7 @@ authoring, at whatever depth the change warrants:
 - **Boundary and seam.** What this Spec owns, what it consumes from adjacent
   Specs, and which existing Contract entries the change touches, adds, or
   invalidates. A Design that changes a seam without recognizing it produces a
-  Contract that later fails cross-spec review.
+  Contract that later fails contract review.
 - **External dependencies.** For each new or upgraded dependency: the actual
   current API, version compatibility with the existing stack, and any
   constraint, limit, or licensing consideration that affects the approach.
@@ -89,5 +89,5 @@ did not resolve.
 - It does not choose the design. Synthesis, simplification, and the realization
   argument belong to the design-authoring protocol.
 - It does not write or approve authoritative artifacts.
-- It does not substitute for cross-spec review. Recognizing a seam is discovery;
+- It does not substitute for contract review. Recognizing a seam is discovery;
   judging compatibility across the milestone is a separate accepted review.

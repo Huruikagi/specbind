@@ -1390,7 +1390,7 @@ pub fn milestone_bind_release(start: &Path, version: &str, rebind: bool) -> Comm
             targets,
         }) => CommandOutput::success(
             format!(
-                "OK RELEASE_BOUND: Bound milestone {} to release {}.\n  Roadmap archive: {}\n  Cross-spec review archive: {}\n",
+                "OK RELEASE_BOUND: Bound milestone {} to release {}.\n  Roadmap archive: {}\n  Contract review archive: {}\n",
                 escape(&milestone_id),
                 escape(&version),
                 escape(&targets.roadmap),
@@ -1405,7 +1405,7 @@ pub fn milestone_bind_release(start: &Path, version: &str, rebind: bool) -> Comm
             targets,
         }) => CommandOutput::success(
             format!(
-                "OK RELEASE_REBOUND: Rebound milestone {} from release {} to {}.\n  Roadmap archive: {}\n  Cross-spec review archive: {}\n",
+                "OK RELEASE_REBOUND: Rebound milestone {} from release {} to {}.\n  Roadmap archive: {}\n  Contract review archive: {}\n",
                 escape(&milestone_id),
                 escape(&previous),
                 escape(&version),
@@ -1970,12 +1970,12 @@ pub fn milestone_review_status(start: &Path) -> CommandOutput {
     let Some(milestone_id) = report.milestone_id.as_deref().filter(|_| reportable) else {
         return CommandOutput::failure(
             "MILESTONE_REVIEW_STATUS_FAILED",
-            "Cannot report the cross-spec review status.",
+            "Cannot report the contract review status.",
             details,
         );
     };
     let mut output = format!(
-        "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {}.\n",
+        "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported contract review status for milestone {}.\n",
         escape(milestone_id)
     );
     push_field(
@@ -2016,7 +2016,7 @@ pub fn milestone_review_accept(start: &Path, candidate_source: &str) -> CommandO
         Err(error) => {
             return CommandOutput::failure(
                 "MILESTONE_REVIEW_ACCEPT_FAILED",
-                "Cannot accept the cross-spec review.",
+                "Cannot accept the contract review.",
                 vec![format!("{} {}", error.code, escape(&error.message))],
             );
         }
@@ -2024,7 +2024,7 @@ pub fn milestone_review_accept(start: &Path, candidate_source: &str) -> CommandO
     match cross_spec_review::accept(&paths.project_root, &paths.specbind_root, &candidate) {
         Ok(accepted) => CommandOutput::success(
             format!(
-                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone {}.\n  Passed at: {}\n  Inputs: {}\n",
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted contract review for milestone {}.\n  Passed at: {}\n  Inputs: {}\n",
                 escape(&accepted.milestone_id),
                 escape(&accepted.passed_at),
                 accepted.input_revisions.len()
@@ -2033,7 +2033,7 @@ pub fn milestone_review_accept(start: &Path, candidate_source: &str) -> CommandO
         ),
         Err(error) => CommandOutput::failure(
             "MILESTONE_REVIEW_ACCEPT_FAILED",
-            "Cannot accept the cross-spec review.",
+            "Cannot accept the contract review.",
             error.issues.iter().map(render_review_issue).collect(),
         ),
     }
@@ -2093,7 +2093,7 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     );
     push_field(
         &mut output,
-        "Cross-spec review",
+        "Contract review",
         milestone_status::review_name(model.review_status),
     );
     let spec_counts = if model.spec_state_counts.is_empty() {

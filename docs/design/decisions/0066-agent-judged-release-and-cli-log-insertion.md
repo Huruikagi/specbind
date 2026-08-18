@@ -16,7 +16,7 @@ When a milestone contains Spec-backed work, release finalization still needs to 
 - The release skill executes any applicable adapter guidance. The agent and human decide whether that project work succeeded and invoke `specbind release finalize` only when they are ready to close the milestone.
 - A direct human invocation carries the same caller responsibility. The command invocation is an explicit transition request, not evidence that the CLI observed an external release.
 - The CLI does not receive or require a tag, Release URL, deployment ID, command list, exit-code list, verification flags, or external timestamps.
-- The CLI reports only the deterministic facts it can verify: current schemas, lifecycle state, roadmap membership and release binding, gate freshness, task completion, the accepted cross-spec review when applicable, target-path safety, archive collision rules, and finalization consistency.
+- The CLI reports only the deterministic facts it can verify: current schemas, lifecycle state, roadmap membership and release binding, gate freshness, task completion, the accepted contract review when applicable, target-path safety, archive collision rules, and finalization consistency.
 - The CLI and generated output must not claim that SpecBind independently verified publication or an external service. If applicable project work fails, the skill does not invoke finalization.
 
 ### Log insertion

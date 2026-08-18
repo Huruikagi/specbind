@@ -94,14 +94,14 @@ OK MILESTONE_CREATED: Created milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
 - Completed Direct status accepted under Decision 0047 is preserved for any Direct item retained by identity, so a scope edit cannot silently reopen finished work.
 - The command refuses to drop a participating Spec that currently holds an active change, and refuses to drop a completed Direct item. Those removals require the deferred Decision 0005 reconciliation surface.
 - Unlike creation, `update-scope` does not require a clean repository, because ordinary milestone work is in progress. It applies Decision 0081 path safety and refuses a dirty or staged `steering/roadmap.md` or any `spec.yaml` it would initialize.
-- When the normalized Decision 0055 Spec-backed scope projection changes, the command removes the accepted `state/cross-spec-review.md`; a Direct-only projection change does not.
+- When the normalized Decision 0055 Spec-backed scope projection changes, the command removes the accepted `state/contract-review.md`; a Direct-only projection change does not.
 - An identical submitted scope and body return `NO_CHANGE MILESTONE_SCOPE_UNCHANGED`. A successful mutation returns `OK MILESTONE_SCOPE_UPDATED` and reports the same counts as creation plus whether the accepted review was removed.
 
 ### Rebaseline
 
 `rebaseline` implements the explicit, user-confirmed operation that Decision 0054 requires and never infers. It requires an existing active Roadmap, a completely clean repository, and one explicit full lowercase commit object ID that exists in this repository and is an ancestor of current `HEAD`. Abbreviated hashes, branch names, tags, and symbolic revisions are rejected.
 
-It replaces `baseline_revision`, changes nothing else in the Roadmap, and removes the accepted `state/cross-spec-review.md`. An identical current baseline returns `NO_CHANGE MILESTONE_BASELINE_UNCHANGED`; a successful mutation returns `OK MILESTONE_REBASELINED`.
+It replaces `baseline_revision`, changes nothing else in the Roadmap, and removes the accepted `state/contract-review.md`. An identical current baseline returns `NO_CHANGE MILESTONE_BASELINE_UNCHANGED`; a successful mutation returns `OK MILESTONE_REBASELINED`.
 
 ### Failure and orchestration boundary
 

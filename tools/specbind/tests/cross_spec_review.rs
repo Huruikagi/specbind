@@ -150,8 +150,8 @@ fn rejects_invalid_and_duplicate_deep_inputs() {
         .map(|issue| issue.code)
         .collect::<Vec<_>>();
 
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_DEEP_INPUT_INVALID"));
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_DEEP_INPUT_DUPLICATE"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_DEEP_INPUT_INVALID"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_DEEP_INPUT_DUPLICATE"));
 }
 
 #[test]
@@ -166,7 +166,7 @@ fn rejects_invalid_candidates_and_direct_only_roadmaps() {
         invalid
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_CANDIDATE_VERSION_UNSUPPORTED")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_CANDIDATE_VERSION_UNSUPPORTED")
     );
 
     write(
@@ -185,7 +185,7 @@ fn rejects_invalid_candidates_and_direct_only_roadmaps() {
         direct
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_DIRECT_ONLY")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_DIRECT_ONLY")
     );
 }
 
@@ -218,10 +218,10 @@ fn atomically_accepts_and_replaces_a_guarded_review() {
         r##"{"schemaVersion":1,"assessment":"# Assessment\n\nCompatible.","deepInputs":[]}"##;
     let accepted =
         cross_spec_review::accept(root.path(), root.path(), first).expect("accepted review");
-    assert_eq!(accepted.path, "state/cross-spec-review.md");
+    assert_eq!(accepted.path, "state/contract-review.md");
     let path = root.path().join(&accepted.path);
     let content = fs::read_to_string(&path).expect("accepted review content");
-    assert!(content.contains("type: SpecBind Cross-Spec Review"));
+    assert!(content.contains("type: SpecBind Contract Review"));
     assert!(content.contains("steering/roadmap.md#cross-spec-scope"));
     assert!(content.ends_with("Compatible.\n"));
 
@@ -243,7 +243,7 @@ fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
         tasks
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_TASKS_ALREADY_EXIST")
     );
     fs::remove_file(root.path().join("specs/checkout/tasks.yaml")).expect("remove fixture task");
     write(
@@ -257,7 +257,7 @@ fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
         stale
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_DESIGN_NOT_FRESH")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_DESIGN_NOT_FRESH")
     );
 }
 
@@ -284,7 +284,7 @@ fn reports_fresh_and_then_stale_authoritative_inputs() {
         stale
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_INPUTS_STALE"),
+            .any(|issue| issue.code == "CONTRACT_REVIEW_INPUTS_STALE"),
         "{:?}",
         stale.issues
     );
@@ -310,7 +310,7 @@ fn reconstructs_and_checks_persisted_deep_inputs() {
         stale
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_INPUTS_STALE")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_INPUTS_STALE")
     );
 }
 
@@ -330,18 +330,14 @@ fn distinguishes_not_required_missing_and_unexpected_review() {
     let not_required = cross_spec_review::evaluate_freshness(root.path(), root.path());
     assert_eq!(not_required.status, ReviewFreshnessStatus::NotRequired);
 
-    write(
-        root.path(),
-        "state/cross-spec-review.md",
-        "leftover review\n",
-    );
+    write(root.path(), "state/contract-review.md", "leftover review\n");
     let unexpected = cross_spec_review::evaluate_freshness(root.path(), root.path());
     assert_eq!(unexpected.status, ReviewFreshnessStatus::Invalid);
     assert!(
         unexpected
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_UNEXPECTED_FOR_DIRECT_ONLY")
     );
 }
 
@@ -350,7 +346,7 @@ fn reports_malformed_accepted_review_as_invalid() {
     let root = fixture();
     write(
         root.path(),
-        "state/cross-spec-review.md",
+        "state/contract-review.md",
         &format!(
             "---\ntype: Wrong Type\nmilestone_id: {MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\nunknown: true\n---\n"
         ),
@@ -362,12 +358,12 @@ fn reports_malformed_accepted_review_as_invalid() {
         invalid
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_FRONTMATTER_INVALID")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_FRONTMATTER_INVALID")
     );
 
     write(
         root.path(),
-        "state/cross-spec-review.md",
+        "state/contract-review.md",
         &format!(
             "---\ntype: Wrong Type\nmilestone_id: {MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\n---\n"
         ),
@@ -379,10 +375,10 @@ fn reports_malformed_accepted_review_as_invalid() {
         .map(|issue| issue.code)
         .collect::<Vec<_>>();
     assert_eq!(invalid_values.status, ReviewFreshnessStatus::Invalid);
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_TYPE_INVALID"));
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_PASSED_AT_INVALID"));
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_FINGERPRINT_INVALID"));
-    assert!(codes.contains(&"CROSS_SPEC_REVIEW_ASSESSMENT_EMPTY"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_TYPE_INVALID"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_PASSED_AT_INVALID"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_FINGERPRINT_INVALID"));
+    assert!(codes.contains(&"CONTRACT_REVIEW_ASSESSMENT_EMPTY"));
 }
 
 #[test]
@@ -423,7 +419,7 @@ fn enforces_fresh_review_for_spec_local_later_boundaries() {
         unrelated
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_SPEC_NOT_IN_MILESTONE")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_SPEC_NOT_IN_MILESTONE")
     );
 
     write(
@@ -443,7 +439,7 @@ fn enforces_fresh_review_for_spec_local_later_boundaries() {
         stale
             .issues
             .iter()
-            .any(|issue| { issue.code == "CROSS_SPEC_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED" })
+            .any(|issue| { issue.code == "CONTRACT_REVIEW_IMPLEMENTATION_VALIDATION_BLOCKED" })
     );
 }
 
@@ -478,6 +474,6 @@ fn release_review_guard_accepts_direct_only_without_review() {
         invalid_target
             .issues
             .iter()
-            .any(|issue| issue.code == "CROSS_SPEC_REVIEW_SPEC_TARGET_INVALID")
+            .any(|issue| issue.code == "CONTRACT_REVIEW_SPEC_TARGET_INVALID")
     );
 }

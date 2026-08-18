@@ -22,7 +22,7 @@ Projects use SemVer, calendar versions, sequential release numbers, and other na
   - roadmap `target_release`
   - the release label in canonical per-spec `log.md` entries
   - `<version>` in `releases/<version>-roadmap.md`
-  - `<version>` in `releases/<version>-cross-spec-review.md`
+  - `<version>` in `releases/<version>-contract-review.md`
 - Distinct exact strings such as `v1.4.0` and `1.4.0` are distinct release identities.
 - Before binding, rebinding, preflight, or finalization, the CLI validates the grammar and returns `ERROR INVALID_RELEASE_VERSION` without mutation when it fails.
 - Archive collision checks compare derived archive filenames using ASCII case-insensitive equality even on a case-sensitive filesystem. This prevents histories such as `v1.4.0` and `V1.4.0` from becoming non-portable to Windows. The stored release identities themselves remain case-sensitive and are not rewritten.

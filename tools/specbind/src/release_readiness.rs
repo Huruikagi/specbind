@@ -224,7 +224,7 @@ fn collect_scope_readiness(
         );
     }
     if !specs.is_empty() {
-        targets.insert(existing("state/cross-spec-review.md"));
+        targets.insert(existing("state/contract-review.md"));
     }
     diagnose_unscoped_active_specs(specbind_root, roadmap, diagnostics);
 }

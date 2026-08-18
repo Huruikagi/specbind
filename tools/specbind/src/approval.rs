@@ -66,7 +66,7 @@ pub enum ApproveOutcome {
 pub enum InvalidateOutcome {
     Invalidated {
         state: WorkflowState,
-        /// True when this rewind also removed the accepted cross-spec review.
+        /// True when this rewind also removed the accepted contract review.
         review_removed: bool,
     },
     NoChange,

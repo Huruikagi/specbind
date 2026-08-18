@@ -389,7 +389,7 @@ contract — run the design skill.
   authors only the design is the failure this scenario exists to catch: the gate
   refuses without a contract, and an absent contract is not read as no impact.
 - `spec status order` reports `State: tasks` with `design=fresh`.
-- No `tasks.yaml`. That belongs to the next phase, and the cross-spec review
+- No `tasks.yaml`. That belongs to the next phase, and the contract review
   before it refuses to run while a plan exists.
 
 ### DS2 — Revising an established Spec
@@ -419,16 +419,16 @@ From `ds3` — `ds2` with `requirements.md` edited after approval, so
 
 ### DS4 — An approved design gate stops, then rewinds on confirmation
 
-From `ds4` — the design gate approved and the cross-spec review accepted — ask
+From `ds4` — the design gate approved and the contract review accepted — ask
 for a change to the design.
 
 - The agent did **not** edit `design.md` or `contract.md` first.
 - It stated, before asking, that invalidation also **deletes the accepted
-  cross-spec review**. Read this from the run's own output. The clearing of
+  contract review**. Read this from the run's own output. The clearing of
   design, tasks, and completion evidence is the expected part; the review is the
   part a user cannot be expected to know about.
 - After confirmation, `spec status cart` reports `State: design` with the design
-  gate cleared, and `.specbind/state/cross-spec-review.md` **is gone**.
+  gate cleared, and `.specbind/state/contract-review.md` **is gone**.
 
 ### DS5 — A removed export surfaces its consumer
 
@@ -456,7 +456,7 @@ Accepted by [Decision 0105](./design/decisions/0105-tasks-skill-contract.md).
 
 ### T1 — First authoring
 
-From `t1` — the design gate approved, the cross-spec review accepted, no plan —
+From `t1` — the design gate approved, the contract review accepted, no plan —
 ask for the work to be planned.
 
 - `tasks.yaml` exists and `tasks list cart` validates it.
@@ -468,7 +468,7 @@ ask for the work to be planned.
 
 ### T2 — A missing review stops before the plan is written
 
-From `t2` — identical to `t1` except the cross-spec review was never accepted —
+From `t2` — identical to `t1` except the contract review was never accepted —
 ask for the work to be planned.
 
 - **No `tasks.yaml` was created.** This is the whole scenario: authoring first
@@ -476,7 +476,7 @@ ask for the work to be planned.
   run would have said so.
 - `milestone review status` still reports `absent`, and `spec status cart` still
   reports `State: tasks`.
-- The agent named the ordering and routed to the cross-spec review, rather than
+- The agent named the ordering and routed to the contract review, rather than
   reporting a generic blocker. Read this from the run's own output.
 
 ### T3 — A revision that renumbers completed work
@@ -501,12 +501,12 @@ From `t4` — the tasks gate approved and `cart` in implementation — ask for a
 change to the plan.
 
 - The agent did not edit `tasks.yaml` first.
-- It stated that the rewind **keeps** the accepted cross-spec review and the
+- It stated that the rewind **keeps** the accepted contract review and the
   requirements and design gates. Overstating this rewind is a failure in the
   same way understating DS4's is: both send the user to the wrong decision.
 - After confirmation, `spec status cart` reports `State: tasks` with
   `requirements=fresh, design=fresh` and the tasks gate cleared.
-- `.specbind/state/cross-spec-review.md` is **still there**.
+- `.specbind/state/contract-review.md` is **still there**.
 
 ### T5 — No authority means no approval
 

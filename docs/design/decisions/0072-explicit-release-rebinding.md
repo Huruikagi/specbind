@@ -24,7 +24,7 @@ A milestone has a stable UUID v7 identity before its eventual release version is
 - `--rebind` permits only the deliberate replacement of that existing binding and returns `OK RELEASE_REBOUND` with the old and new versions.
 - Both initial binding and rebinding resolve the corresponding roadmap and cross-spec-review archive destinations and reject a conflicting version before changing the roadmap.
 - The command operates only on an active milestone. Released roadmap archives and per-spec log history are immutable through this operation.
-- The operation changes only the roadmap-owned `target_release`. It does not rewrite briefs, `spec.yaml`, requirements, design, contracts, tasks, gate evidence, or cross-spec review state.
+- The operation changes only the roadmap-owned `target_release`. It does not rewrite briefs, `spec.yaml`, requirements, design, contracts, tasks, gate evidence, or contract review state.
 
 ### Authorization and freshness
 
@@ -32,7 +32,7 @@ A milestone has a stable UUID v7 identity before its eventual release version is
 - A human directly invoking the CLI expresses the same deliberate intent by supplying `--rebind`.
 - SpecBind provides no `-y` alias, `--force` bypass, or delegated gate-approval shortcut for rebinding. Gate delegation under Decision 0012 does not authorize milestone metadata changes.
 - The rule is the same before and after implementation begins. SpecBind stores no separate phase flag for external release execution, so it does not invent a phase-dependent rebind state.
-- `target_release` is excluded from the Decision 0055 cross-spec scope projection and is not a spec-local gate input. Binding or rebinding therefore does not invalidate gate evidence, completion evidence, or accepted cross-spec review state.
+- `target_release` is excluded from the Decision 0055 cross-spec scope projection and is not a spec-local gate input. Binding or rebinding therefore does not invalidate gate evidence, completion evidence, or accepted contract review state.
 - If project-specific release work has already begun, the release agent must inspect and reconcile actual external state before requesting confirmation. The CLI does not infer or roll back external publication under Decisions 0066 and 0071.
 
 ## Consequences

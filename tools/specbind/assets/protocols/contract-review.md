@@ -1,6 +1,6 @@
-# Cross-spec review protocol
+# Contract review protocol
 
-This protocol is the shared semantic baseline for the one accepted cross-spec
+This protocol is the shared semantic baseline for the one accepted contract
 review a Spec-backed milestone must pass between Design approval and Tasks
 authoring. It applies to every supported agent and cannot be waived by a project
 template or shared rule.

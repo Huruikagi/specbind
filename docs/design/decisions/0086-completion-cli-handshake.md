@@ -21,7 +21,7 @@ specbind spec completion invalidate <spec>
 ```
 
 - `<spec>` is one canonical Spec identity. Completion commands never infer a Spec from the current directory and never operate on every Spec implicitly.
-- `preflight` is read-only. It requires the Spec to be in `implementation`, every participating milestone item to be implementation-complete, the project worktree to be clean at a committed `HEAD`, the Spec task plan to be complete and unblocked, all prior gates to be fresh, and the applicable milestone-owned cross-spec review to be fresh.
+- `preflight` is read-only. It requires the Spec to be in `implementation`, every participating milestone item to be implementation-complete, the project worktree to be clean at a committed `HEAD`, the Spec task plan to be complete and unblocked, all prior gates to be fresh, and the applicable milestone-owned contract review to be fresh.
 - A successful preflight returns `OK SPEC_COMPLETION_PREFLIGHT_READY` and the full Git commit object ID on one `Implementation revision:` detail line. It returns no task-plan or artifact fingerprints.
 - The validation skill runs mechanical checks and the mandatory semantic protocol against that checkout. `NO-GO` and `MANUAL_VERIFY_REQUIRED` remain run-scoped and do not invoke `accept`.
 - `accept` is the sole `IMPLEMENTATION_VALIDATED` mutation. It independently recomputes every preflight guard, requires the submitted full revision to equal current `HEAD`, atomically records completion evidence, and transitions the Spec from `implementation` to `release_ready`.
@@ -80,7 +80,7 @@ specbind milestone direct complete <direct> --implementation-revision <revision>
 - Every guard failure follows the Decision 0067 English text result contract, exits nonzero, and performs no partial mutation. Specific diagnostics identify state, milestone membership, dependency, review, task, Git, evidence, or target-path failures; the top-level failure does not collapse those categories into semantic agent judgment.
 - Neither preflight command runs project tests, accepts `GO`, or creates durable candidate state. Neither acceptance command claims that command text proves execution; the invoking skill owns that judgment.
 - `specbind-validate-implementation` routes Spec-backed work through the three Spec completion commands. Direct implementation uses the milestone Direct handshake and does not create a synthetic Spec.
-- Decision 0087 fixes the stable public cross-spec review acceptance and status commands, and [Decision 0088](./0088-gate-approval-cli.md) fixes the Requirements, Design, and Tasks gate approval and invalidation commands, so the complete generated validation workflow can rely only on public Rust CLI surfaces.
+- Decision 0087 fixes the stable public contract review acceptance and status commands, and [Decision 0088](./0088-gate-approval-cli.md) fixes the Requirements, Design, and Tasks gate approval and invalidation commands, so the complete generated validation workflow can rely only on public Rust CLI surfaces.
 
 ## Consequences
 
@@ -91,4 +91,4 @@ specbind milestone direct complete <direct> --implementation-revision <revision>
 
 ## Implementation status
 
-The Rust CLI implements all five accepted commands. Spec acceptance validates strict transient candidate JSON, converged Roadmap participation, completed Tasks, fresh prior gates and cross-spec review, exact Git revision, and the narrowly recognized same-revision multi-Spec metadata exception before atomically updating `spec.yaml`. Completion invalidation preserves fresh earlier gates and refuses a dirty target. Direct completion rechecks active Roadmap identity, implementation dependencies, clean revision, and atomically replaces only the selected sparse status. The completion freshness evaluator recognizes committed or pending completion-only transitions for multiple participating Specs bound to one implementation revision while rejecting any other project change.
+The Rust CLI implements all five accepted commands. Spec acceptance validates strict transient candidate JSON, converged Roadmap participation, completed Tasks, fresh prior gates and contract review, exact Git revision, and the narrowly recognized same-revision multi-Spec metadata exception before atomically updating `spec.yaml`. Completion invalidation preserves fresh earlier gates and refuses a dirty target. Direct completion rechecks active Roadmap identity, implementation dependencies, clean revision, and atomically replaces only the selected sparse status. The completion freshness evaluator recognizes committed or pending completion-only transitions for multiple participating Specs bound to one implementation revision while rejecting any other project change.

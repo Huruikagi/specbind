@@ -255,7 +255,7 @@ pub enum MilestoneCommand {
         #[command(subcommand)]
         command: DirectCommand,
     },
-    /// Report or accept the milestone-owned cross-spec review.
+    /// Report or accept the milestone-owned contract review.
     Review {
         #[command(subcommand)]
         command: ReviewCommand,
@@ -279,9 +279,9 @@ pub enum MilestoneCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ReviewCommand {
-    /// Report the focused cross-spec review status for the active milestone.
+    /// Report the focused contract review status for the active milestone.
     Status,
-    /// Accept one strict cross-spec review candidate document.
+    /// Accept one strict contract review candidate document.
     Accept {
         #[arg(long)]
         candidate: String,

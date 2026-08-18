@@ -4,25 +4,25 @@ Status: Accepted
 
 ## Context
 
-The Roadmap already persists milestone identity, scope, dependencies, release binding, and sparse Direct completion. Participating Specs persist their own workflow states and evidence, while the accepted cross-spec review is separate project state. Adding a writable milestone `status` or copying per-Spec progress into the Roadmap would create competing authorities.
+The Roadmap already persists milestone identity, scope, dependencies, release binding, and sparse Direct completion. Participating Specs persist their own workflow states and evidence, while the accepted contract review is separate project state. Adding a writable milestone `status` or copying per-Spec progress into the Roadmap would create competing authorities.
 
 Roadmap dependencies still need precise phase semantics. Applying every edge to every phase would serialize Requirements and Tasks unnecessarily, while ignoring dependencies until release would allow consumers to design or implement against unfinished producers. Project-revision-scoped completion evidence also requires final validation to converge at one clean Git revision.
 
 ## Decision
 
 - The active Roadmap has no persisted milestone `status`, phase, readiness flag, wave number, or aggregate progress counters.
-- The CLI derives one milestone read model from the current Roadmap, participating `spec.yaml` and `tasks.yaml` artifacts, Direct status, cross-spec review freshness, target-release binding, Git state, and release guards.
+- The CLI derives one milestone read model from the current Roadmap, participating `spec.yaml` and `tasks.yaml` artifacts, Direct status, contract review freshness, target-release binding, Git state, and release guards.
 - The normal derived delivery stages are `requirements`, `design`, `cross_spec_review`, `tasks`, `implementation`, `validation`, `release_pending`, and `release_ready`. Mixed per-item progress is represented by the earliest unsatisfied milestone barrier plus item-level detail, not by copying state into the Roadmap.
 - Requirements authoring and approval are not dependency-gated.
 - Design approval for a Spec waits only for its direct Spec-backed predecessors to have current Design approval. Dependencies involving a Direct item do not gate Design.
-- Cross-spec review is one global barrier after every participating Spec has current Design approval and before any current `tasks.yaml` is authored.
+- Contract review is one global barrier after every participating Spec has current Design approval and before any current `tasks.yaml` is authored.
 - After a fresh review, participating Specs may author and approve Tasks in parallel. Roadmap dependencies do not serialize Tasks.
 - Implementation uses the complete Roadmap DAG. A predecessor is implementation-complete when:
   - a Direct item has `status: completed`; or
   - a Spec-backed item has all Tasks completed and unblocked at a clean committed project revision. `release_ready` is not required.
 - A pending item is implementation-actionable only when its own prerequisites are ready and every direct Roadmap predecessor is implementation-complete. Topological implementation waves are derived from those predicates; wave numbers are never persisted.
 - Final implementation validation begins only after every Roadmap item is implementation-complete. All participating Specs requiring validation or revalidation converge on the same clean project `HEAD`. Parallel validation is allowed, but any later project-content commit makes earlier Spec completion evidence stale under Decision 0080.
-- `release_ready` is derived only when every participating Spec has fresh completion evidence at the current clean revision, every Direct item is complete, the applicable cross-spec review is fresh, a target release is bound, and every other deterministic release guard passes.
+- `release_ready` is derived only when every participating Spec has fresh completion evidence at the current clean revision, every Direct item is complete, the applicable contract review is fresh, a target release is bound, and every other deterministic release guard passes.
 - Release execution states are run-scoped. Preflight, project Prepare/Publish/Verify work, and core finalization do not add a persisted Roadmap status. Failure before finalization leaves the milestone active; successful finalization archives the Roadmap last and returns the project to no active milestone.
 - A crash-interrupted finalization is an invalid recoverable mutation state, not a supported partial-release milestone state. The CLI diagnoses and idempotently resumes or stops for Git-assisted recovery.
 

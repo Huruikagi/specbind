@@ -1,12 +1,12 @@
-# 0087: Expose milestone-owned cross-spec review commands
+# 0087: Expose milestone-owned contract review commands
 
 Status: Accepted
 
 ## Context
 
-Decision 0078 defines one accepted contract-first cross-spec review after every participating Design gate and before Tasks authoring. The Rust core can already resolve authoritative inputs, guard acceptance, persist the review, evaluate freshness, and enforce freshness at later lifecycle boundaries. However, the agent workflow has no stable public CLI command for submitting its semantic assessment or requesting a focused review summary.
+Decision 0078 defines one accepted contract-first contract review after every participating Design gate and before Tasks authoring. The Rust core can already resolve authoritative inputs, guard acceptance, persist the review, evaluate freshness, and enforce freshness at later lifecycle boundaries. However, the agent workflow has no stable public CLI command for submitting its semantic assessment or requesting a focused review summary.
 
-The review is milestone-wide state rather than a per-Spec gate. A top-level `cross-spec-review` command would expose the storage name as a separate product domain, while placing acceptance under one Spec would misrepresent its complete persistent-Contract scope.
+The review is milestone-wide state rather than a per-Spec gate. A top-level `contract-review` command would expose the storage name as a separate product domain, while placing acceptance under one Spec would misrepresent its complete persistent-Contract scope.
 
 ## Decision
 
@@ -26,7 +26,7 @@ specbind milestone review accept --candidate <path|->
 
 ### Focused status
 
-`status` is read-only. It resolves the configured project and SpecBind roots, parses the current Roadmap, and evaluates the canonical `state/cross-spec-review.md` through the same authoritative freshness read model used by later lifecycle guards.
+`status` is read-only. It resolves the configured project and SpecBind roots, parses the current Roadmap, and evaluates the canonical `state/contract-review.md` through the same authoritative freshness read model used by later lifecycle guards.
 
 For a valid readable project state, it returns `OK MILESTONE_REVIEW_STATUS_REPORTED`, exits zero, and renders these stable public status values:
 
@@ -38,7 +38,7 @@ For a valid readable project state, it returns `OK MILESTONE_REVIEW_STATUS_REPOR
 The concise output contains the active milestone ID and status. When an accepted record is structurally available, it also contains `Passed at:` and `Inputs:` detail lines, where `Inputs:` is the persisted accepted-input count. Its shape is:
 
 ```text
-OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
+OK MILESTONE_REVIEW_STATUS_REPORTED: Reported contract review status for milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
   Status: fresh
   Passed at: 2026-08-16T10:00:00Z
   Inputs: 3
@@ -71,12 +71,12 @@ The version-1 document remains the Decision 0078 shape:
 - `deepInputs` is a JSON array of unique canonical Requirements or Design selectors. It may be empty, and array order has no semantic meaning. Contract and Roadmap selectors are never submitted because Rust always derives their complete required set.
 - The candidate cannot supply paths, fingerprints, milestone identity, timestamps, classifications, or task-plan inputs.
 
-`accept` is the sole public cross-spec review acceptance mutation. It validates the candidate, Roadmap, complete Contract graph, optional deep inputs, baseline, participating Spec states, Design freshness, and absence of current `tasks.yaml`; resolves every revision itself; repeats the authoritative guards immediately before mutation; owns `passed_at`; and atomically creates or replaces `state/cross-spec-review.md`.
+`accept` is the sole public contract review acceptance mutation. It validates the candidate, Roadmap, complete Contract graph, optional deep inputs, baseline, participating Spec states, Design freshness, and absence of current `tasks.yaml`; resolves every revision itself; repeats the authoritative guards immediately before mutation; owns `passed_at`; and atomically creates or replaces `state/contract-review.md`.
 
 A successful acceptance returns `OK MILESTONE_REVIEW_ACCEPTED`, exits zero, and reports the milestone ID, owned timestamp, and accepted input count:
 
 ```text
-OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
+OK MILESTONE_REVIEW_ACCEPTED: Accepted contract review for milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62.
   Passed at: 2026-08-16T10:00:00Z
   Inputs: 3
 ```
@@ -85,7 +85,7 @@ Every candidate, guard, race, or filesystem failure returns `ERROR MILESTONE_REV
 
 ### Agent and output boundary
 
-- `specbind-cross-spec-review` owns semantic compatibility judgment, selection of material deep inputs, user-facing explanation, and bounded remediation. It invokes `accept` only after reaching an accepted conclusion.
+- `specbind-contract-review` owns semantic compatibility judgment, selection of material deep inputs, user-facing explanation, and bounded remediation. It invokes `accept` only after reaching an accepted conclusion.
 - The CLI owns deterministic discovery, validation, fingerprinting, Git and lifecycle guards, timestamping, persistence, freshness evaluation, concise English results, and process exit status.
 - V1 returns no general JSON response. Results follow Decisions 0067 and 0074 with stable `OK` or `ERROR` codes.
 - The standalone `specbind check contracts` and `specbind check traceability` vocabulary is fixed separately by [Decision 0090](./0090-standalone-check-cli.md).

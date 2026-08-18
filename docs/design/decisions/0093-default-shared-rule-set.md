@@ -51,7 +51,7 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 | --- | --- |
 | `ears-format.md` | `specbind-requirements`. |
 | `design-principles.md` | `specbind-design`, `specbind-validate-design`, and `specbind-gap-analysis`. |
-| `contract-principles.md` | `specbind-design`, `specbind-validate-design`, `specbind-gap-analysis` when boundaries are relevant, and `specbind-cross-spec-review`. |
+| `contract-principles.md` | `specbind-design`, `specbind-validate-design`, `specbind-gap-analysis` when boundaries are relevant, and `specbind-contract-review`. |
 | `tasks-generation.md` | `specbind-tasks`. |
 | `steering-principles.md` | `specbind-steering`. |
 

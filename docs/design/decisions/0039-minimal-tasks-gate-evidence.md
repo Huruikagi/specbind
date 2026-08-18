@@ -18,7 +18,7 @@ The tasks workflow performs substantive plan review before approval: active Requ
 - `input_revisions` contains exactly one required key, `tasks.yaml#plan`, whose value is the Decision 0016 fingerprint of the Decision 0028 normalized task-plan projection. Additional input keys are rejected.
 - `explicit` omits `delegation_workflow`; `delegated` requires it under Decision 0012.
 - Presence of current accepted tasks gate evidence means the required task-plan review and sanity review passed. The object contains no per-dimension pass flags, review summary, findings, task counts, or copied Requirement ID coverage list.
-- Mutable `execution` state, blocked reasons, runtime implementation notes, upstream artifact fingerprints, and project-state-owned cross-spec review data are excluded.
+- Mutable `execution` state, blocked reasons, runtime implementation notes, upstream artifact fingerprints, and project-state-owned contract review data are excluded.
 - Tasks approval requires the prerequisite design gate to remain fresh under Decision 0032.
 
 ## Consequences

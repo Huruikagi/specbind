@@ -22,7 +22,7 @@ Release orchestration needs a deterministic check before an agent begins project
   - a valid active roadmap, milestone identity, and concrete target release version
   - the complete participating-spec set and completed direct-change items
   - valid spec lifecycle state, required artifacts, completed tasks, approvals, fresh gate evidence, and accepted completion evidence
-  - accepted and fresh roadmap-owned cross-spec review state when Spec-backed work exists
+  - accepted and fresh roadmap-owned contract review state when Spec-backed work exists
   - archive destination collision rules
   - the currently resolved finalization mutation set and its Decision 0064 target-path Git safety
 - Preflight does not require Decision 0068 log-entry input. The agent authors those summaries after it has judged the delivered release work.

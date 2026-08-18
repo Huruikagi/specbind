@@ -8,7 +8,7 @@ The `SpecBind Brief` artifact is discovery-owned, milestone-local free-form guid
 
 Fingerprinting the brief would make later editorial changes to that guidance look like changes to already-approved requirements even when the authoritative requirements and active set remain identical.
 
-Release history needs a problem and delivered-scope summary, but the brief does not need to become an authoritative release input for that purpose. The final requirements, active Requirement IDs, completed tasks, roadmap, accepted completion evidence, and cross-spec review describe what was delivered. The pre-finalization brief normally remains available through ordinary Git history or an optional project-created release reference under Decision 0064.
+Release history needs a problem and delivered-scope summary, but the brief does not need to become an authoritative release input for that purpose. The final requirements, active Requirement IDs, completed tasks, roadmap, accepted completion evidence, and contract review describe what was delivered. The pre-finalization brief normally remains available through ordinary Git history or an optional project-created release reference under Decision 0064.
 
 ## Decision
 
@@ -16,7 +16,7 @@ Release history needs a problem and delivered-scope summary, but the brief does 
 - The `SpecBind Brief` artifact is not fingerprinted and is not stored in requirements gate evidence.
 - Editing only the brief after requirements approval does not by itself make the spec inconsistent or invalidate the requirements gate.
 - If a brief revision represents a real scope change, the responsible workflow must revise the authoritative requirements or active Requirement ID set as needed and emit `REQUIREMENTS_CHANGED`.
-- Per-spec `log.md` authoring may use the discovered brief as drafting context, but the released summary must be checked against final authoritative artifacts, accepted completion evidence, and cross-spec review. Brief content alone does not determine the release-log entry.
+- Per-spec `log.md` authoring may use the discovered brief as drafting context, but the released summary must be checked against final authoritative artifacts, accepted completion evidence, and contract review. Brief content alone does not determine the release-log entry.
 - Requirements gate evidence stores the ordered active Requirement ID snapshot directly as `approved_requirement_ids`; Decision 0018 defines its comparison contract.
 
 ## Consequences

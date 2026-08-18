@@ -30,7 +30,7 @@ fn resolves_targets_and_rejects_case_insensitive_collisions() {
     assert_eq!(targets.roadmap, "releases/v1.4.0-roadmap.md");
     assert_eq!(
         targets.cross_spec_review,
-        "releases/v1.4.0-cross-spec-review.md"
+        "releases/v1.4.0-contract-review.md"
     );
 
     fs::create_dir(root.path().join("releases")).expect("create releases");

@@ -1,4 +1,4 @@
-# 0055: Keep cross-spec review inputs contract-first
+# 0055: Keep contract review inputs contract-first
 
 Status: Accepted
 
@@ -6,13 +6,13 @@ Decision 0078 narrows the Roadmap projection to Spec-backed scope, removes Tasks
 
 ## Context
 
-Global cross-spec review must discover consumers that are not already named in the active roadmap. Reading only changed producers cannot find a new or previously unrelated `Consumes` edge, so the deterministic contract graph must cover every current persistent spec.
+Global contract review must discover consumers that are not already named in the active roadmap. Reading only changed producers cannot find a new or previously unrelated `Consumes` edge, so the deterministic contract graph must cover every current persistent spec.
 
 At the same time, always fingerprinting every requirement, design, and task plan would undermine the purpose of concise contracts and make unrelated spec-local edits invalidate global review. Deep documents should become review inputs only when the final semantic judgment materially depends on them.
 
 ## Decision
 
-- `state/cross-spec-review.md` frontmatter `input_revisions` is a non-empty flat mapping from canonical input key to a Decision 0016 fingerprint.
+- `state/contract-review.md` frontmatter `input_revisions` is a non-empty flat mapping from canonical input key to a Decision 0016 fingerprint.
 - Every accepted record contains the key `steering/roadmap.md#cross-spec-scope`.
 - The cross-spec scope projection contains exactly:
   - `milestone_id`
@@ -48,7 +48,7 @@ input_revisions:
 - The CLI always reads all contracts, but ordinary agent context can begin with the compact graph and changed entries rather than every raw file.
 - Most accepted reviews contain only the roadmap projection and contract set.
 - Ambiguous cases remain reproducible because the particular deep documents used by the AI judgment become freshness inputs.
-- Spec-local gate evidence remains the authoritative owner of ordinary requirements, design, and task approval; cross-spec review duplicates a revision only when its own semantic conclusion directly depends on that content.
+- Spec-local gate evidence remains the authoritative owner of ordinary requirements, design, and task approval; contract review duplicates a revision only when its own semantic conclusion directly depends on that content.
 
 ## Implementation status
 

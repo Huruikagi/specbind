@@ -537,7 +537,7 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
             predicate::str::contains("  Stage: implementation\n")
                 .and(predicate::str::contains("  Health: consistent\n"))
                 .and(predicate::str::contains(
-                    "  Cross-spec review: not_applicable\n",
+                    "  Contract review: not_applicable\n",
                 ))
                 .and(predicate::str::contains(
                     "  Direct progress: 0/2 completed\n",
@@ -638,7 +638,7 @@ fn binds_and_explicitly_rebinds_a_milestone_release() {
         .assert()
         .success()
         .stdout(
-            "OK RELEASE_BOUND: Bound milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62 to release v1.4.0.\n  Roadmap archive: releases/v1.4.0-roadmap.md\n  Cross-spec review archive: releases/v1.4.0-cross-spec-review.md\n",
+            "OK RELEASE_BOUND: Bound milestone 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62 to release v1.4.0.\n  Roadmap archive: releases/v1.4.0-roadmap.md\n  Contract review archive: releases/v1.4.0-contract-review.md\n",
         )
         .stderr("");
 
@@ -743,7 +743,7 @@ fn reports_tasks_authored_before_the_required_milestone_review() {
         .assert()
         .success()
         .stdout(
-            predicate::str::contains("  Stage: cross_spec_review\n")
+            predicate::str::contains("  Stage: contract_review\n")
                 .and(predicate::str::contains("  Health: inconsistent\n"))
                 .and(predicate::str::contains(
                     "  Spec states: implementation=1\n",
@@ -766,7 +766,7 @@ fn accepts_a_stdin_review_candidate_and_reports_fresh_status() {
         .success()
         .stdout(
             predicate::str::starts_with(format!(
-                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone {REVIEW_MILESTONE}.\n  Passed at: "
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted contract review for milestone {REVIEW_MILESTONE}.\n  Passed at: "
             ))
             .and(predicate::str::contains("\n  Inputs: 2\n")),
         )
@@ -780,7 +780,7 @@ fn accepts_a_stdin_review_candidate_and_reports_fresh_status() {
         .success()
         .stdout(
             predicate::str::starts_with(format!(
-                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: fresh\n  Passed at: "
+                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported contract review status for milestone {REVIEW_MILESTONE}.\n  Status: fresh\n  Passed at: "
             ))
             .and(predicate::str::contains("\n  Inputs: 2\n"))
             .and(predicate::str::contains("Compatible.").not())
@@ -811,11 +811,11 @@ fn accepts_a_repository_external_candidate_file() {
         .assert()
         .success()
         .stdout(predicate::str::starts_with(
-            "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone",
+            "OK MILESTONE_REVIEW_ACCEPTED: Accepted contract review for milestone",
         ))
         .stderr("");
 
-    let accepted = fs::read_to_string(root.path().join(".specbind/state/cross-spec-review.md"))
+    let accepted = fs::read_to_string(root.path().join(".specbind/state/contract-review.md"))
         .expect("accepted review content");
     assert!(accepted.ends_with("Externally reviewed.\n"));
 }
@@ -838,7 +838,7 @@ fn reports_not_applicable_and_absent_review_state_as_success() {
         .assert()
         .success()
         .stdout(format!(
-            "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: not_applicable\n"
+            "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported contract review status for milestone {REVIEW_MILESTONE}.\n  Status: not_applicable\n"
         ))
         .stderr("");
 
@@ -851,11 +851,11 @@ fn reports_not_applicable_and_absent_review_state_as_success() {
         .success()
         .stdout(
             predicate::str::starts_with(format!(
-                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported cross-spec review status for milestone {REVIEW_MILESTONE}.\n  Status: absent\n"
+                "OK MILESTONE_REVIEW_STATUS_REPORTED: Reported contract review status for milestone {REVIEW_MILESTONE}.\n  Status: absent\n"
             ))
             .and(predicate::str::contains("Passed at:").not())
             .and(predicate::str::contains("\n  Inputs:").not())
-            .and(predicate::str::contains("CROSS_SPEC_REVIEW_MISSING")),
+            .and(predicate::str::contains("CONTRACT_REVIEW_MISSING")),
         )
         .stderr("");
 }
@@ -887,14 +887,14 @@ fn reports_stale_review_state_as_success_and_invalid_state_as_failure() {
             predicate::str::contains("\n  Status: stale\n")
                 .and(predicate::str::contains("\n  Passed at: "))
                 .and(predicate::str::contains(
-                    "    - CROSS_SPEC_REVIEW_INPUTS_STALE",
+                    "    - CONTRACT_REVIEW_INPUTS_STALE",
                 )),
         )
         .stderr("");
 
     write(
         root.path(),
-        ".specbind/state/cross-spec-review.md",
+        ".specbind/state/contract-review.md",
         &format!(
             "---\ntype: Wrong Type\nmilestone_id: {REVIEW_MILESTONE}\npassed_at: yesterday\ninput_revisions:\n  steering/roadmap.md#cross-spec-scope: SHA256:BAD\n---\n"
         ),
@@ -908,9 +908,9 @@ fn reports_stale_review_state_as_success_and_invalid_state_as_failure() {
         .stdout("")
         .stderr(
             predicate::str::starts_with(
-                "ERROR MILESTONE_REVIEW_STATUS_FAILED: Cannot report the cross-spec review status.",
+                "ERROR MILESTONE_REVIEW_STATUS_FAILED: Cannot report the contract review status.",
             )
-            .and(predicate::str::contains("CROSS_SPEC_REVIEW_TYPE_INVALID")),
+            .and(predicate::str::contains("CONTRACT_REVIEW_TYPE_INVALID")),
         );
 }
 
@@ -936,7 +936,7 @@ fn rejects_unsafe_and_unreadable_review_candidates() {
         .stdout("")
         .stderr(
             predicate::str::starts_with(
-                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the contract review.",
             )
             .and(predicate::str::contains(
                 "MILESTONE_REVIEW_CANDIDATE_TARGET_INVALID Review candidate file must be outside the project worktree.",
@@ -992,15 +992,15 @@ fn rejects_unsafe_and_unreadable_review_candidates() {
         .stdout("")
         .stderr(
             predicate::str::starts_with(
-                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the contract review.",
             )
-            .and(predicate::str::contains("CROSS_SPEC_REVIEW_CANDIDATE_")),
+            .and(predicate::str::contains("CONTRACT_REVIEW_CANDIDATE_")),
         );
 
     assert!(
         !root
             .path()
-            .join(".specbind/state/cross-spec-review.md")
+            .join(".specbind/state/contract-review.md")
             .exists(),
         "rejected candidates must not create accepted state"
     );
@@ -1017,7 +1017,7 @@ fn keeps_the_accepted_review_unchanged_when_a_guard_fails() {
         .write_stdin(review_candidate("Originally reviewed."))
         .assert()
         .success();
-    let path = root.path().join(".specbind/state/cross-spec-review.md");
+    let path = root.path().join(".specbind/state/contract-review.md");
     let original = fs::read_to_string(&path).expect("accepted review content");
 
     write(
@@ -1035,10 +1035,10 @@ fn keeps_the_accepted_review_unchanged_when_a_guard_fails() {
         .stdout("")
         .stderr(
             predicate::str::starts_with(
-                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the cross-spec review.",
+                "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the contract review.",
             )
             .and(predicate::str::contains(
-                "CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST",
+                "CONTRACT_REVIEW_TASKS_ALREADY_EXIST",
             )),
         );
 
@@ -1061,11 +1061,11 @@ fn reaccepts_a_currently_fresh_review() {
             .assert()
             .success()
             .stdout(predicate::str::starts_with(
-                "OK MILESTONE_REVIEW_ACCEPTED: Accepted cross-spec review for milestone",
+                "OK MILESTONE_REVIEW_ACCEPTED: Accepted contract review for milestone",
             ));
     }
 
-    let accepted = fs::read_to_string(root.path().join(".specbind/state/cross-spec-review.md"))
+    let accepted = fs::read_to_string(root.path().join(".specbind/state/contract-review.md"))
         .expect("accepted review content");
     assert!(accepted.ends_with("Revised assessment.\n"));
     assert!(!accepted.contains("First assessment."));
@@ -2018,11 +2018,11 @@ fn removes_the_accepted_review_only_for_spec_backed_scope_changes() {
         .success();
     write(
         root.path(),
-        ".specbind/state/cross-spec-review.md",
-        "---\ntype: SpecBind Cross-Spec Review\n---\nAccepted.\n",
+        ".specbind/state/contract-review.md",
+        "---\ntype: SpecBind Contract Review\n---\nAccepted.\n",
     );
     commit_all(root.path());
-    let review = root.path().join(".specbind/state/cross-spec-review.md");
+    let review = root.path().join(".specbind/state/contract-review.md");
 
     let mut direct_only = Command::cargo_bin("specbind").expect("specbind binary should build");
     direct_only
@@ -2064,8 +2064,8 @@ fn rebaselines_only_onto_an_explicit_ancestor_revision() {
     create_direct_milestone(root.path());
     write(
         root.path(),
-        ".specbind/state/cross-spec-review.md",
-        "---\ntype: SpecBind Cross-Spec Review\n---\nAccepted.\n",
+        ".specbind/state/contract-review.md",
+        "---\ntype: SpecBind Contract Review\n---\nAccepted.\n",
     );
     commit_all(root.path());
 
@@ -2382,7 +2382,7 @@ fn rejects_an_empty_unknown_or_duplicated_requirement_selection() {
 }
 
 #[test]
-fn blocks_tasks_approval_without_a_fresh_cross_spec_review() {
+fn blocks_tasks_approval_without_a_fresh_contract_review() {
     let root = project_fixture();
     write_gate_fixture(root.path());
     approve_requirements(root.path());
@@ -2412,7 +2412,7 @@ fn blocks_tasks_approval_without_a_fresh_cross_spec_review() {
                 "ERROR SPEC_TASKS_APPROVE_FAILED: Cannot approve tasks for spec checkout.",
             )
             .and(predicate::str::contains(
-                "CROSS_SPEC_REVIEW_TASKS_APPROVAL_BLOCKED",
+                "CONTRACT_REVIEW_TASKS_APPROVAL_BLOCKED",
             )),
         );
 }
@@ -2482,7 +2482,7 @@ fn removes_the_accepted_review_when_an_earlier_gate_rewinds() {
         .write_stdin(review_candidate("Compatible."))
         .assert()
         .success();
-    let accepted = root.path().join(".specbind/state/cross-spec-review.md");
+    let accepted = root.path().join(".specbind/state/contract-review.md");
     assert!(accepted.exists());
     commit_all(root.path());
 

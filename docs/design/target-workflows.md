@@ -28,7 +28,7 @@ Status: Draft
 - Treat specs as active, maintained descriptions of the product across milestones and releases.
 - Move deterministic parsing, invariant checks, and state mutations out of agent-specific shell instructions and into the bundled CLI.
 - Keep document formats and project-wide AI rules customizable through shared settings consumed consistently by every supported agent.
-- Make cross-spec review contract-first so context follows affected boundaries rather than total document volume.
+- Make contract review contract-first so context follows affected boundaries rather than total document volume.
 
 Managed Markdown authoring reads the immutable `okf-authoring` protocol accepted by [Decision 0094](./decisions/0094-embedded-product-protocols.md). The protocol keeps agents aligned with the targeted OKF version and SpecBind's profile boundary, while deterministic CLI validation remains authoritative.
 
@@ -76,7 +76,7 @@ No active milestone
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-item and Direct-only work. It begins from discovery and remains present for the milestone lifetime. Under Decisions 0045, 0046, and 0054, its frontmatter owns the milestone identity, branch-local baseline revision, release binding, and grouped work items while its body remains readable context. Spec-backed progress is derived; Direct items persist only sparse completion state. Decision 0078 stores one accepted free-form cross-spec assessment plus its contract-first input revisions in `state/cross-spec-review.md` whenever the milestone contains a Spec-backed item. Direct-only milestones have no such artifact. Git preserves pre-release history, while release archives the final roadmap and, when present, the accepted global review.
+`roadmap.md` is the required durable representation of every active milestone, including single-item and Direct-only work. It begins from discovery and remains present for the milestone lifetime. Under Decisions 0045, 0046, and 0054, its frontmatter owns the milestone identity, branch-local baseline revision, release binding, and grouped work items while its body remains readable context. Spec-backed progress is derived; Direct items persist only sparse completion state. Decision 0078 stores one accepted free-form cross-spec assessment plus its contract-first input revisions in `state/contract-review.md` whenever the milestone contains a Spec-backed item. Direct-only milestones have no such artifact. Git preserves pre-release history, while release archives the final roadmap and, when present, the accepted global review.
 
 ### Scope removal, abandonment, and rollback
 
@@ -100,9 +100,9 @@ Rust CLI: core preflight and readiness gates
 
 Adapter guidance cannot waive a core gate. An empty adapter means no project-specific actions; ambiguous non-empty guidance causes the agent to stop rather than infer commands from unrelated project files. The CLI does not execute natural-language adapter instructions. Finalization uses `specbind release finalize`; any dirty finalization target stops the operation until the path is made Git-clean. V1 has no finalization `--force` bypass.
 
-## Cross-spec review
+## Contract review
 
-Every persistent Spec has a Contract containing only the seam that other Specs may observe or depend on. After all participating Designs are approved, cross-spec review reads the Spec-backed Roadmap projection and every current Contract, asks the CLI to validate and build the graph, and loads Requirements or selected Design artifacts only where semantic judgment requires them. Tasks do not yet exist and are never review inputs. The skill requests the focused state through `specbind milestone review status` and submits its accepted assessment through `specbind milestone review accept --candidate <path|->`; it never edits the state artifact directly.
+Every persistent Spec has a Contract containing only the seam that other Specs may observe or depend on. After all participating Designs are approved, contract review reads the Spec-backed Roadmap projection and every current Contract, asks the CLI to validate and build the graph, and loads Requirements or selected Design artifacts only where semantic judgment requires them. Tasks do not yet exist and are never review inputs. The skill requests the focused state through `specbind milestone review status` and submits its accepted assessment through `specbind milestone review accept --candidate <path|->`; it never edits the state artifact directly.
 
 ```text
 Spec-backed roadmap scope + every current contract
@@ -124,14 +124,14 @@ User request
        -> create one new spec
             -> requirements
             -> design
-            -> cross-spec review
+            -> contract review
             -> tasks
             -> implementation
             -> implementation validation
        -> create several new specs
             -> roadmap and boundaries
             -> per-spec requirements and design
-            -> one cross-spec review
+            -> one contract review
             -> per-spec tasks approval
             -> stop; implementation remains per-item in v1
 ```
@@ -165,7 +165,7 @@ The target contract should state when project guidance and gap analysis are opti
 | Implementation | Code and tests for one Spec-backed or Direct Roadmap item, progress recording, and maintenance of durable spec-specific knowledge | Silent changes to approved requirements, design, or contract; multi-item orchestration in v1 |
 | Task review | Independent or inline task-level conformance review according to the run-scoped review mode | Spec-level implementation acceptance |
 | Implementation validation | One Spec's complete task integration, full verification, requirements/design/boundary judgment, and run-scoped candidate evidence produced between the Decision 0086 CLI completion calls | Replacing task-level review, directly mutating completion state, or persisting failed attempts |
-| Cross-spec review | Contract-first dependency, ownership, invariant, impact, and downstream analysis, recorded once as accepted project state | Loading Tasks, replacing local Design review, reviewing Direct items, or copying results into per-Spec evidence |
+| Contract review | Contract-first dependency, ownership, invariant, impact, and downstream analysis, recorded once as accepted project state | Loading Tasks, replacing local Design review, reviewing Direct items, or copying results into per-Spec evidence |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
 | Release agent orchestration | Read the adapter, call stateless `specbind release preflight`, execute project phases, reconcile any external partial success, prepare per-spec summaries when Spec-backed work exists, call whole-milestone CLI finalization, and report outcomes | Treating preflight as mutation authority, claiming a subset release, automatically rolling back external systems, reimplementing lifecycle mutations, or bypassing core gates |
 | Rust CLI release core | Readiness gates, mechanically verifiable evidence, idempotent active-spec finalization, and stable diagnostics | Executing natural-language project publication instructions or claiming unobservable external success |

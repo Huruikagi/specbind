@@ -6,17 +6,17 @@ Implementation status: the Rust acceptance operation validates strict version-1 
 
 ## Context
 
-Decisions 0050 through 0055 introduced one milestone-wide cross-spec review, but Decision 0053 also required a closed classification enum for every Roadmap item and Decision 0055 allowed Tasks as review input. Contract compatibility and external-consumer impact are open-ended semantic judgments, while Direct items are defined by the absence of canonical Contract change.
+Decisions 0050 through 0055 introduced one milestone-wide contract review, but Decision 0053 also required a closed classification enum for every Roadmap item and Decision 0055 allowed Tasks as review input. Contract compatibility and external-consumer impact are open-ended semantic judgments, while Direct items are defined by the absence of canonical Contract change.
 
 ## Decision
 
-- Every milestone containing at least one `new_specs` or `spec_updates` item requires one accepted cross-spec review, even when only one Spec-backed item participates. A single changed producer may affect persistent consumers outside the milestone.
+- Every milestone containing at least one `new_specs` or `spec_updates` item requires one accepted contract review, even when only one Spec-backed item participates. A single changed producer may affect persistent consumers outside the milestone.
 - A Direct-only milestone has no active or archived cross-spec-review artifact.
 - All participating Spec-backed items must have current Design approval and be in the `tasks` state before review begins. No current `tasks.yaml` is authored until review passes.
 - The CLI always validates and fingerprints every current persistent Contract. The review skill may declare selected Requirements and Design artifacts as deeper semantic inputs; Tasks are not allowed inputs.
 - The normalized Roadmap review projection contains milestone identity, baseline revision, Spec-backed item identity, summary, category, and only Spec-to-Spec dependencies. Direct items, their status, and dependencies to or from Direct items are excluded.
-- `state/cross-spec-review.md` is an OKF concept with exactly these SpecBind-owned fields:
-  - `type: SpecBind Cross-Spec Review`
+- `state/contract-review.md` is an OKF concept with exactly these SpecBind-owned fields:
+  - `type: SpecBind Contract Review`
   - `milestone_id`
   - `passed_at`
   - `input_revisions`
@@ -41,7 +41,7 @@ Decisions 0050 through 0055 introduced one milestone-wide cross-spec review, but
 - Review does not mutate Spec state by itself. The agent presents affected Specs, obtains confirmation where scope changes materially, and invokes explicit invalidation or Roadmap update operations.
 - A confirmed Design rewind deletes the accepted review, preserves Requirements evidence, clears Design, Tasks, and completion evidence for affected Specs, and retains prose/task documents only as stale repair input. Git preserves the previous review.
 - Out-of-band input edits leave the file present but stale; read-only checks report the mismatch until explicit invalidation or a successful replacement review.
-- Cross-spec review is milestone-level state, not part of the per-Spec `release_ready` invariant. Unaffected Specs retain their local state when the global review becomes stale.
+- Contract review is milestone-level state, not part of the per-Spec `release_ready` invariant. Unaffected Specs retain their local state when the global review becomes stale.
 - A fresh review is required before Tasks approval, implementation validation, and release preflight. These boundaries recheck freshness without rerunning semantic review.
 - File Ownership overlap and dependency-cycle detection are warnings for agent judgment. Missing Contracts, dangling references, invalid syntax, and impossible targets are mechanical errors.
 

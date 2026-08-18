@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Implementation status: `tools/specbind/src/roadmap.rs` now validates the Roadmap metadata and complete typed work-item DAG. Its normalized Cross-spec review projection excludes Direct items, Direct status, and dependencies to or from Direct items, then sorts Spec items and Spec dependencies for deterministic JCS fingerprinting.
+Implementation status: `tools/specbind/src/roadmap.rs` now validates the Roadmap metadata and complete typed work-item DAG. Its normalized Contract review projection excludes Direct items, Direct status, and dependencies to or from Direct items, then sorts Spec items and Spec dependencies for deterministic JCS fingerprinting.
 
 Decision 0082 fixes how the single Roadmap DAG is projected into Design and Implementation waves. Wave numbers and aggregate progress remain derived.
 

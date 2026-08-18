@@ -30,10 +30,10 @@ it never runs.
 ## The review comes first, and nothing says so
 
 [Decision 0078](./0078-contract-first-review-between-design-and-tasks.md)
-requires the accepted cross-spec review between Design approval and Tasks
+requires the accepted contract review between Design approval and Tasks
 authoring, and states it from the review's side: "No current `tasks.yaml` is
 authored until review passes." Acceptance enforces it mechanically —
-`milestone review accept` refuses with `CROSS_SPEC_REVIEW_TASKS_ALREADY_EXIST`
+`milestone review accept` refuses with `CONTRACT_REVIEW_TASKS_ALREADY_EXIST`
 while a plan is present.
 
 Read from the tasks phase, that is a trap rather than a guard. An agent that
@@ -93,7 +93,7 @@ Before authoring or revising a plan, the skill runs
 `specbind milestone review status` and proceeds only on `fresh`.
 
 - **`missing` or `stale`** — the skill authors nothing and routes to
-  `specbind-cross-spec-review`. It states why: acceptance refuses while a plan
+  `specbind-contract-review`. It states why: acceptance refuses while a plan
   exists, so authoring now converts a missing prerequisite into a deadlock whose
   only exit is deleting the plan.
 - **`fresh`** — authoring proceeds.
@@ -196,7 +196,7 @@ user confirmation.
 The cost is stated accurately in both directions, because this is the cheapest of
 the three rewinds and overstating it would push a user away from the correct
 operation. It clears the tasks and completion evidence and **keeps** the accepted
-cross-spec review and the requirements and design gates. When implementation has
+contract review and the requirements and design gates. When implementation has
 started, the skill adds what the revision itself will cost: which recorded
 progress is affected, per the mapping rule above.
 
@@ -208,7 +208,7 @@ Delegated authority does not cover invalidation.
   belong to earlier phases; execution state and Implementation Notes belong to
   implementation.
 - It writes no machine state and never edits `spec.yaml`.
-- It does not accept the cross-spec review, and does not delete a plan to
+- It does not accept the contract review, and does not delete a plan to
   unblock one. When a plan exists and the review has not been accepted, the
   ordering was already lost; the skill reports the situation and lets the user
   decide, because deleting an authored plan is their call.

@@ -14,7 +14,7 @@ The model deliberately does not add a top-level Roadmap `status`. Milestone stat
 | Spec-backed phase and gate evidence | Each participating Spec's `spec.yaml` |
 | Spec-backed implementation plan and execution state | Each participating Spec's `tasks.yaml` |
 | Direct completion | Sparse `status: completed` on the Direct Roadmap item |
-| Contract-wide semantic acceptance | `state/cross-spec-review.md` when Spec-backed work exists |
+| Contract-wide semantic acceptance | `state/contract-review.md` when Spec-backed work exists |
 | Implementation and completion revision | Current project Git state and per-Spec completion evidence |
 | Released milestone history | Versioned Roadmap and applicable review archives plus per-Spec `log.md` |
 
@@ -104,7 +104,7 @@ The derived Design waves are the topological layers of the Spec-only subgraph:
 
 Dependencies to or from Direct items are ignored in this phase because Direct work has no canonical Design gate.
 
-### Cross-spec review
+### Contract review
 
 The review is a single global barrier, not one wave per dependency layer. It becomes runnable only when every participating Spec has current Design approval. A failed review returns only affected Specs to Design through explicit events; unaffected Specs retain their local state.
 
@@ -181,7 +181,7 @@ The milestone is `release_ready` only when:
 - `target_release` is non-null and valid;
 - every participating Spec is validated at the current clean project `HEAD`;
 - every Direct item is completed;
-- the applicable cross-spec review exists and is fresh;
+- the applicable contract review exists and is fresh;
 - Roadmap membership and every participating `active_change.milestone_id` agree;
 - archive destinations do not conflict;
 - every finalization target satisfies the Git and path guards in Decision 0081;
@@ -197,8 +197,8 @@ Project-specific Prepare, Publish, and Verify work happens only after stateless 
 | `MILESTONE_SCOPE_UPDATED` | Explicitly confirmed valid DAG and reconciled participating Specs | Replace current scope and dependencies. A Spec-backed review projection change removes accepted review; Direct-only projection changes do not. Recompute all waves and blockers. |
 | `MILESTONE_REBASELINED` | Explicit confirmation, clean repository, valid ancestor revision | Replace the baseline and remove accepted review. |
 | `RELEASE_BOUND` / `RELEASE_REBOUND` | Decision 0072 command and authorization guards | Change only `target_release`; do not invalidate gates or review. |
-| `CROSS_SPEC_REVIEW_ACCEPTED` | Global review-readiness guards and semantic pass | Persist the one accepted review and expose Tasks authoring. |
-| `CROSS_SPEC_REVIEW_INVALIDATED` | Explicit Design or scope rewind | Remove accepted review and recompute the derived stage. |
+| `CONTRACT_REVIEW_ACCEPTED` | Global review-readiness guards and semantic pass | Persist the one accepted review and expose Tasks authoring. |
+| `CONTRACT_REVIEW_INVALIDATED` | Explicit Design or scope rewind | Remove accepted review and recompute the derived stage. |
 | `DIRECT_COMPLETED` | Direct item pending, dependencies satisfied, clean-revision completion handshake passes | Add sparse `status: completed`; recompute implementation actionability. |
 | `DIRECT_REOPENED` | Explicit current-scope correction | Remove Direct status and recompute downstream actionability and release readiness. |
 | Per-Spec gate or task event | The Spec state-machine guard passes | Do not mutate Roadmap progress. Recompute the milestone read model from current Spec state. |
@@ -249,7 +249,7 @@ Examples include:
 - a Roadmap Spec item without matching active-change metadata and milestone ID
 - an active Spec that is absent from Roadmap scope
 - a dangling, duplicate, self, or cyclic dependency
-- current Tasks authored before the required cross-spec review was accepted
+- current Tasks authored before the required contract review was accepted
 - an accepted review whose Roadmap or artifact inputs are stale
 - a completed Direct item whose route now requires canonical Spec changes
 - a `release_ready` Spec whose completion revision is no longer current

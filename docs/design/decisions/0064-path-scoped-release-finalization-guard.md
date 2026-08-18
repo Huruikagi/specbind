@@ -21,7 +21,7 @@ The core CLI still needs to avoid overwriting, deleting, or moving uncommitted S
   - each discovered active `SpecBind Research`, when present
   - each participating spec's fixed `tasks.yaml`
   - `steering/roadmap.md`
-  - the matching `state/cross-spec-review.md` for a Spec-backed milestone
+  - the matching `state/contract-review.md` for a Spec-backed milestone
   - the version-prefixed roadmap and, when applicable, cross-spec-review archive destinations
 - Every resolved finalization target path must be safe relative to Git state:
   - every required existing source is tracked
@@ -29,7 +29,7 @@ The core CLI still needs to avoid overwriting, deleting, or moving uncommitted S
   - an expected-absent destination has no conflicting untracked file
   - an existing retry destination is clean and passes the existing identity-and-content idempotency check
 - Dirty or untracked files outside the resolved finalization target set do not block core finalization. A project adapter or repository instruction may impose a stricter repository-wide policy, but that is not a SpecBind core invariant.
-- The CLI still revalidates current lifecycle state, gate freshness, roadmap membership, release binding, the accepted cross-spec review when Spec-backed work exists, task completion, archive collision rules, and all other deterministic finalization guards against the current artifact contents.
+- The CLI still revalidates current lifecycle state, gate freshness, roadmap membership, release binding, the accepted contract review when Spec-backed work exists, task completion, archive collision rules, and all other deterministic finalization guards against the current artifact contents.
 - A target-path conflict returns a path-specific diagnostic and performs no mutation. The agent or user resolves, commits, or stashes the affected path before retrying. The CLI never resets, stashes, stages, or commits user changes.
 
 ## Release history and references

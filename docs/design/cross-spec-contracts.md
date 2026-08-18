@@ -8,7 +8,7 @@ Implementation status: the Rust read model parses every canonical Contract, reso
 
 ## Purpose
 
-The singleton `SpecBind Contract` artifact is the current manifest of a Spec's externally observable seams. It lets cross-spec review begin with a small dependency graph rather than loading every participating Requirements and Design document.
+The singleton `SpecBind Contract` artifact is the current manifest of a Spec's externally observable seams. It lets contract review begin with a small dependency graph rather than loading every participating Requirements and Design document.
 
 It answers:
 
@@ -105,7 +105,7 @@ Do not enumerate private implementation files, ordinary fixtures, temporary outp
 
 ## Review flow
 
-Cross-spec review proceeds contract-first:
+Contract review proceeds contract-first:
 
 1. Read the active roadmap and ask the CLI to load every current persistent contract.
 2. Ask the CLI to validate contract structure and construct the complete dependency graph.
@@ -113,7 +113,7 @@ Cross-spec review proceeds contract-first:
 4. Compare changed entries between the roadmap's Decision 0054 `baseline_revision` and the current active contracts.
 5. Traverse affected consumers and load full Requirements or selected Design artifacts only where the Contract change or ambiguity requires it. Tasks do not yet exist.
 6. Return affected Specs explicitly to Design when revision is required; add an out-of-scope owned consumer to the Roadmap before acceptance.
-7. Record exact input revisions and one free-form accepted AI judgment in `state/cross-spec-review.md` under Decision 0078.
+7. Record exact input revisions and one free-form accepted AI judgment in `state/contract-review.md` under Decision 0078.
 
 The assessment is not forced into a closed compatibility enum. External consumers, migration constraints, compatibility measures, and accepted user guidance are handled in prose and agent judgment.
 

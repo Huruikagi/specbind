@@ -9,7 +9,7 @@ const ACCEPTED_SELECTORS: [&str; 8] = [
     "design-validation",
     "gap-analysis",
     "task-planning",
-    "cross-spec-review",
+    "contract-review",
 ];
 
 #[test]

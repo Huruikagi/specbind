@@ -11,7 +11,7 @@ A project adapter may publish to multiple systems, and some external work may su
 ### Failure before core finalization
 
 - If any applicable project Prepare, Publish, or Verify work fails or remains uncertain, the release skill does not invoke core finalization.
-- The milestone and every participating spec remain active. SpecBind does not append release log entries, archive the roadmap or applicable cross-spec review, remove active Brief, Research, or task artifacts, or clear an `active_change`.
+- The milestone and every participating spec remain active. SpecBind does not append release log entries, archive the roadmap or applicable contract review, remove active Brief, Research, or task artifacts, or clear an `active_change`.
 - SpecBind does not automatically roll back an external publication that already succeeded. The agent reports the observed partial result and works with the human to inspect actual project-system state, then retry, reconcile manually, or explicitly abandon the unreleased milestone under Decision 0005.
 - Decision 0070 applies: partial external progress is not persisted as universal SpecBind release evidence. A project-owned system or adapter-directed artifact may retain it.
 - A retry must interpret the adapter against current external state and must not blindly repeat a potentially non-idempotent external operation.

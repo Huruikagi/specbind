@@ -55,7 +55,7 @@ V1 embeds these selectors:
 | `design-validation` | Semantic Design review baseline shared by pre-approval authoring review and independent validation. | `specbind-design`, `specbind-validate-design`. |
 | `gap-analysis` | Evidence gathering, option analysis, uncertainty handling, and the boundary between milestone-local Research and authoritative artifacts. | `specbind-gap-analysis`. |
 | `task-planning` | Coverage, executability, dependency, completion-detail, boundary, and safe-parallel judgment over the structured Task contract. | `specbind-tasks`. |
-| `cross-spec-review` | Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline. | `specbind-cross-spec-review`. |
+| `contract-review` | Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline. | `specbind-contract-review`. |
 
 `specbind-quick` and `specbind-batch` consume the same protocols through the phase contracts they orchestrate. V1 defines no quick-specific or batch-specific protocol variants.
 
@@ -106,7 +106,7 @@ Skill-owned control flow is removed from those documents and remains in the owni
 
 This decision supersedes Decision 0049's placement and mutability choice: its concise OKF content moves from the installed `settings/rules/okf-artifacts.md` file to the immutable `okf-authoring` protocol. The targeted OKF version and authoring baseline remain accepted. Projects may express additional OKF-related preferences in ordinary steering, but cannot replace the product protocol.
 
-`cross-spec-review` has no cc-sdd source because persistent typed Contracts are a SpecBind capability.
+`contract-review` has no cc-sdd source because persistent typed Contracts are a SpecBind capability.
 
 ## Consequences
 

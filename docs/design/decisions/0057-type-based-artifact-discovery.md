@@ -37,7 +37,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
   - requirements gate: `requirements`
   - design gate: `contract` and every discovered `design/<artifact_id>`
 - The complete key set belongs to freshness. Adding or removing a design artifact invalidates design approval; renaming or moving a file without changing its bytes or logical identity does not.
-- Project-level cross-spec review uses spec-qualified logical selectors:
+- Project-level contract review uses spec-qualified logical selectors:
   - `specs/<canonical-spec>#contract`
   - `specs/<canonical-spec>#requirements`
   - `specs/<canonical-spec>#design/<artifact_id>`
@@ -56,7 +56,7 @@ Type-based discovery can preserve human-friendly Markdown organization while giv
 - A spec can split design into files such as `architecture.md`, `persistence.md`, and `error-handling.md` without adding another manifest.
 - Human organization and machine identity are decoupled, while duplicate or missing authoritative artifacts remain deterministic errors.
 - The Decision 0058 CLI read model presents a small typed artifact index before an agent spends context on document bodies.
-- Existing path-keyed gate evidence and accepted cross-spec review state require explicit migration or regeneration; logical-key and path-key representations are not mixed in one evidence record.
+- Existing path-keyed gate evidence and accepted contract review state require explicit migration or regeneration; logical-key and path-key representations are not mixed in one evidence record.
 
 ## Implementation status
 

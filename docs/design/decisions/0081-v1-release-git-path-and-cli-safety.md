@@ -15,12 +15,12 @@ Earlier decisions allow release finalization to overwrite dirty target paths wit
 - V1 removes `specbind release finalize --force`. Every path that finalization will create, update, move, or delete must be Git-clean; unrelated dirty source paths remain allowed.
 - Archive collisions are always errors unless an idempotent retry proves the already-finalized identity and complete content.
 - `--log-entries <path|->` is required when at least one Spec-backed item participates. It is optional for Direct-only milestones; if provided there, only an explicit empty array is valid.
-- Direct-only release archives only the final Roadmap. A Spec-backed release additionally archives the accepted cross-spec review.
+- Direct-only release archives only the final Roadmap. A Spec-backed release additionally archives the accepted contract review.
 - Project publication and verification occur before core finalization. Git tags or packages may therefore point to the verified implementation revision and exclude the later SpecBind log, archive, idle-state, Brief, Research, and Tasks cleanup commit. These are post-publication lifecycle metadata in v1.
 - Multi-file finalization is a validated, ordered, idempotent logical transaction, not a promise of crash-atomic filesystem replacement:
   1. validate all guards and render all outputs before mutation;
   2. update per-Spec logs and lifecycle artifacts;
-  3. archive the cross-spec review when present;
+  3. archive the contract review when present;
   4. archive the active Roadmap last as the completion marker.
 - A retry while the active Roadmap remains finishes idempotently. When no active Roadmap exists, an exact archive and final-state match returns `NO_CHANGE RELEASE_ALREADY_FINALIZED`; inconsistent partial state stops for Git-assisted recovery.
 - CLI-authored release-log titles and wrapper prose use `.specbind.json.language`; machine IDs and references remain fixed tokens. Existing log titles are preserved.

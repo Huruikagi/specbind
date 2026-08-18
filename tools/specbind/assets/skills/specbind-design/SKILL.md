@@ -167,7 +167,7 @@ placeholder.
 **Contract exists** — revise it in place when this change adds, alters, or
 removes a seam, and leave it **byte-identical** when it does not. Rewording an
 untouched entry is not free: the whole file is fingerprinted, so a cosmetic edit
-invalidates approval and forces a new cross-spec review.
+invalidates approval and forces a new contract review.
 
 The `design-authoring` protocol carries the test for what belongs in it. Entry
 IDs are stable — do not rename an ID whose meaning is unchanged, because another
@@ -177,7 +177,7 @@ Removing an entry is allowed. This is not requirement retirement: a requirement
 ID is an identity that design, tasks, and completion verification each have to
 cover, while a contract entry's only structural dependents are other Specs'
 `Consumes` entries, which resolve by name and are checked. Remove it, then let
-the check and the cross-spec review judge it.
+the check and the contract review judge it.
 
 ## 5. Check before you present
 
@@ -196,7 +196,7 @@ contract to make your own graph clean.**
 
 Ownership overlaps and dependency cycles are warnings, because they are
 sometimes deliberate. Say why the overlap is acceptable, or treat it as a
-finding. Passing it silently to cross-spec review is not a judgment.
+finding. Passing it silently to contract review is not a judgment.
 
 ## 6. Review your own design
 
@@ -304,7 +304,7 @@ caused it.
 State the full cost and run it only after the user confirms:
 
 - it clears the design, tasks, and completion evidence for this Spec, **and**
-- it **deletes the accepted cross-spec review** for the whole milestone, because
+- it **deletes the accepted contract review** for the whole milestone, because
   that review is accepted after design approval and cannot survive a rewind past
   it.
 
@@ -324,7 +324,7 @@ Delegation authorizes accepting gates, not discarding accepted work.
   previous phase, `tasks.yaml` to the next, and brownfield comparison and
   research to `specbind-gap-analysis`.
 - Write no machine state. Never edit `spec.yaml`.
-- Do not accept the cross-spec review, add roadmap items, or create Specs.
+- Do not accept the contract review, add roadmap items, or create Specs.
   Surface the need and let the owning operation perform it.
 - Do not author research, and do not park an unresolved design gap there.
 - Report in the project's language: what the design decides, how it realizes each

@@ -33,13 +33,13 @@ fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed(
         readiness
             .mutation_targets
             .iter()
-            .any(|target| target.path == "state/cross-spec-review.md")
+            .any(|target| target.path == "state/contract-review.md")
     );
     assert!(
         readiness
             .mutation_targets
             .iter()
-            .any(|target| target.path == "releases/v1.4.0-cross-spec-review.md")
+            .any(|target| target.path == "releases/v1.4.0-contract-review.md")
     );
 
     let milestone = milestone_status::resolve(root.path(), &specbind)
@@ -73,10 +73,10 @@ fn finalizes_a_spec_backed_release_with_log_cleanup_and_archives() {
     assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
     assert!(
         specbind
-            .join("releases/v1.4.0-cross-spec-review.md")
+            .join("releases/v1.4.0-contract-review.md")
             .is_file()
     );
-    assert!(!specbind.join("state/cross-spec-review.md").exists());
+    assert!(!specbind.join("state/contract-review.md").exists());
     assert!(!specbind.join("specs/checkout/brief.md").exists());
     assert!(!specbind.join("specs/checkout/research.md").exists());
     assert!(!specbind.join("specs/checkout/tasks.yaml").exists());
@@ -137,8 +137,8 @@ fn resumes_an_interrupted_spec_finalization_before_the_roadmap_marker_moves() {
     fs::remove_file(specbind.join("specs/checkout/tasks.yaml")).expect("remove Tasks");
     fs::create_dir(specbind.join("releases")).expect("create releases");
     fs::rename(
-        specbind.join("state/cross-spec-review.md"),
-        specbind.join("releases/v1.4.0-cross-spec-review.md"),
+        specbind.join("state/contract-review.md"),
+        specbind.join("releases/v1.4.0-contract-review.md"),
     )
     .expect("simulate completed review archive step");
 
@@ -452,8 +452,8 @@ fn spec_fixture() -> TempDir {
         &specbind,
         r#"{"schemaVersion":1,"assessment":"Compatible.","deepInputs":[]}"#,
     )
-    .expect("accept cross-spec review");
-    commit_all(root.path(), "accept cross-spec review");
+    .expect("accept contract review");
+    commit_all(root.path(), "accept contract review");
 
     write(
         root.path(),

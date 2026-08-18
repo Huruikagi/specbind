@@ -6,12 +6,12 @@ type: SpecBind Rule
 
 This rule is the project's policy for persistent cross-spec seams. It is a
 `SpecBind Rule`: your project owns this file and may strengthen, relax, replace,
-or remove it. Removing it leaves Contract validation and cross-spec review
+or remove it. Removing it leaves Contract validation and contract review
 intact and only removes this project's seam policy.
 
 The canonical Contract structure and entry grammar are fixed by the CLI
 contract. Graph validity and the review lifecycle are owned by the CLI and the
-`cross-spec-review` protocol. This file is about which seams this project
+`contract-review` protocol. This file is about which seams this project
 chooses to declare and how strictly it treats them.
 
 ## Declare a seam when it is real
@@ -49,7 +49,7 @@ pressure, differently each time.
 ## Dependency direction
 
 Say which direction dependencies may run between areas of this project.
-Cross-spec review reports dependency cycles as warnings because they are
+Contract review reports dependency cycles as warnings because they are
 occasionally deliberate; a stated direction turns that warning into a decision
 you can make quickly rather than an argument you rehear each milestone.
 

@@ -16,7 +16,7 @@ Keeping completed roadmaps under `steering/` would mix active project guidance w
 - Released spec entries use the release version as their human-facing key.
 - `{{SPEC_DIR}}/steering/roadmap.md` represents only the active milestone.
 - Successful release finalization moves the roadmap to a new version-prefixed file at `{{SPEC_DIR}}/releases/<version>-roadmap.md`.
-- Successful release finalization moves the accepted global review state to the companion `{{SPEC_DIR}}/releases/<version>-cross-spec-review.md`.
+- Successful release finalization moves the accepted global review state to the companion `{{SPEC_DIR}}/releases/<version>-contract-review.md`.
 - The archived roadmap retains its machine-generated milestone ID and release-version binding.
 - Under Decision 0073, `<version>` is the exact opaque portable label stored in `target_release`; archive filenames never add, remove, or normalize a leading `v`.
 
@@ -26,9 +26,9 @@ Example after releasing `v1.4.0`:
 {{SPEC_DIR}}/
 ├── releases/
 │   ├── v1.3.0-roadmap.md
-│   ├── v1.3.0-cross-spec-review.md
+│   ├── v1.3.0-contract-review.md
 │   ├── v1.4.0-roadmap.md
-│   └── v1.4.0-cross-spec-review.md
+│   └── v1.4.0-contract-review.md
 ├── specs/
 │   └── <feature>/
 │       └── changelog.md
@@ -42,7 +42,7 @@ Example after releasing `v1.4.0`:
 - Require the active roadmap's bound release version to match the archive filename.
 - Refuse to overwrite an existing archive path unless an idempotent retry proves identical milestone identity and content.
 - Move the roadmap and accepted global review state as part of the same coherent finalization change that updates spec logs and lifecycle state.
-- Verify that `steering/roadmap.md` and `state/cross-spec-review.md` are absent and both companion archives are present after finalization.
+- Verify that `steering/roadmap.md` and `state/contract-review.md` are absent and both companion archives are present after finalization.
 - Spec log entries point to the archived roadmap and may include project release references where useful.
 
 ## Consequences
