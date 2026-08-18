@@ -23,6 +23,8 @@
 #   r5     r4 with the requirements gate already approved
 #   c2     base plus a Git adapter carrying real policy
 #   c3     c2 plus a confirmed cart scope, so a run reaches the approval point
+#   d7     cart driven to implementation with every gate approved
+#   d10    a milestone whose Direct item is already completed
 
 set -eu
 
@@ -146,6 +148,78 @@ r4 | r5)
         expect "the approved set does not carry the cap criterion" \
             'grep -q "\"1.4\"" .specbind/specs/cart/spec.yaml'
     fi
+    ;;
+
+d7)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
+    brief cart "A cart has no upper bound per SKU."
+    awk '{ print }
+         /^3\. A quantity below one is rejected/ {
+           print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
+         }' .specbind/specs/cart/requirements.md > requirements.tmp
+    mv requirements.tmp .specbind/specs/cart/requirements.md
+    specbind spec requirements approve cart \
+        --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
+        || fail "could not approve the requirements gate"
+
+    # Decision 0061 wants the Front Matter set and the union of the body markers
+    # to match exactly, so both list the same four IDs.
+    {
+        echo "---"
+        echo "type: SpecBind Design"
+        echo "artifact_id: main"
+        echo "requirement_ids:"
+        echo '  - "1.1"'
+        echo '  - "1.2"'
+        echo '  - "1.3"'
+        echo '  - "1.4"'
+        echo "---"
+        echo
+        echo "# Design"
+        echo
+        echo "## Holding and capping quantities"
+        echo
+        echo "add_item reads the current held quantity, applies the floor and the"
+        echo "cap, and leaves the cart unchanged when either bound is violated."
+        echo
+        echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
+    } > .specbind/specs/cart/design.md
+    specbind spec design approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the design gate"
+
+    # Decision 0078 requires the accepted review before Tasks approval, and the
+    # acceptance itself refuses to run while a task plan exists. The plan is
+    # therefore written after the review, not before.
+    printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
+        | specbind milestone review accept --candidate - >/dev/null \
+        || fail "could not accept the cross-spec review"
+
+    {
+        echo "schema_version: 1"
+        echo "plan:"
+        echo "  items:"
+        echo "    - id: '1'"
+        echo "      kind: task"
+        echo "      title: Enforce the quantity bounds"
+        echo "      requirement_ids: ['1.1', '1.2', '1.3', '1.4']"
+    } > .specbind/specs/cart/tasks.yaml
+    specbind spec tasks approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the tasks gate"
+    expect "cart did not reach implementation with every gate fresh" \
+        'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    ;;
+
+d10)
+    milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
+    printf '%s\n' "# Contributing" "" "Open an issue before a large change." > CONTRIBUTING.md
+    git add -A
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Add the contributing guide"
+    specbind milestone direct complete contributing-guide \
+        --implementation-revision "$(git rev-parse HEAD)" >/dev/null \
+        || fail "could not complete the Direct item"
+    expect "the Direct item is not recorded as completed" \
+        'specbind milestone status | grep -q "1/1 completed"'
     ;;
 
 c2 | c3)
