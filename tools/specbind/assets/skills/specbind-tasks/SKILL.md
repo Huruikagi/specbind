@@ -116,6 +116,23 @@ the protocol assumes:
 Do not write `execution`. That state belongs to implementation, and a plan that
 arrives claiming completed work records a judgment nobody made.
 
+### The YAML itself has traps
+
+**Quote any string containing `: `.** In YAML, `Reject the addition: leave the
+cart unchanged` is a *mapping*, not a sentence — and the failure surfaces as a
+schema error about a field you never wrote, several lines from the real cause.
+Task titles and `details` entries are where this bites. A `#` after a space
+starts a comment, so quote those too.
+
+The YAML SpecBind reads is deliberately restricted. **No anchors, aliases, merge
+keys, custom tags, or multiple documents** — all are rejected outright. Write the
+value out rather than reaching for a YAML feature to share it.
+
+When `tasks list` reports something you cannot place, suspect the quoting before
+suspecting the schema. Do not install a YAML or JSON-Schema tool to investigate:
+the CLI is the validator, its diagnostics carry the line, and reaching outside
+the project for a second opinion changes the machine rather than the plan.
+
 ## 4. Verify what you wrote
 
 After **every** write:

@@ -95,6 +95,16 @@ Rebuild the fixture between scenarios. Several scenarios depend on the starting
 state, and a leftover milestone from the previous one silently changes what is
 being tested.
 
+**A run can change your machine, not only the fixture.** The fixture bounds what
+SpecBind touches; it does not bound the agent. One T2 run installed two Python
+packages while diagnosing a YAML parse failure, which landed in the host
+environment rather than under the target directory.
+
+That is worth knowing in both directions. Treat it as ordinary agent behavior to
+account for — check afterwards if it matters to you — and read it as a signal:
+an agent reaching outside the project usually means a diagnostic inside the
+project was not good enough, which is a finding about the skill or the CLI.
+
 ### Which agent is being driven
 
 The fixture installs for both agents already — `install --agent claude-code
