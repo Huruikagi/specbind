@@ -85,11 +85,14 @@ brief() {
         || fail "the brief written for $spec is not a readable artifact"
 }
 
+leave_dirty=no
+
 case "$scenario" in
 base)
     ;;
 
 d9)
+    leave_dirty=yes
     printf '\n# pending experiment\n' >> src/cart.py
     expect "the uncommitted edit did not apply" \
         'test -n "$(git status --porcelain src/cart.py)"'
@@ -182,6 +185,24 @@ c2)
     fail "unknown scenario: $scenario"
     ;;
 esac
+
+# A recipe that leaves machine state uncommitted hands over a fixture whose next
+# guarded operation is blocked: gate invalidation refuses a dirty `spec.yaml`,
+# and nothing in a default install is authorized to commit. The scenario would
+# then measure that instead of the skill. Recipes end committed, except the ones
+# whose precondition is precisely an uncommitted worktree.
+if [ "$leave_dirty" = yes ]; then
+    expect "the scenario needs an uncommitted change and has none" \
+        'test -n "$(git status --porcelain)"'
+else
+    if [ -n "$(git status --porcelain)" ]; then
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up the $scenario scenario"
+    fi
+    expect "the fixture did not end on a clean worktree" \
+        'test -z "$(git status --porcelain)"'
+fi
 
 echo "Scenario $scenario ready at $target"
 echo "  language: $language"
