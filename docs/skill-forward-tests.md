@@ -195,12 +195,15 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
 | D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
 | DS1 – DS6 | | |
-| T1 – T5 | | |
-| X1 – X4 | | |
+| T1, T3, T4, T5 | | |
+| T2 | pass | |
+| X1, X2, X4 | | |
+| X3 | pass | |
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
 | VD1, VD2 | | |
-| RL1 – RL3 | | |
+| RL2, RL3 | | |
+| RL1 | pass | |
 | VI1 – VI3 | | |
 | VC1, VC2 | | |
 
@@ -210,6 +213,14 @@ no results at all yet, so the complete set is what it owes on its first pass.
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
+
+T2, X3, and RL1 were measured separately on 2026-08-19 against `366eb39`, as
+Claude Code, and all three passed. They were selected as the newest rules with
+the most expensive failures, one per skill. Two findings came out of them: the
+tasks skill said nothing about YAML quoting, and the T2 row was measuring a stop
+rather than the ordering that stop was protecting. A third observation is
+recorded in the driving rules above, because one run installed packages into the
+host environment.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
 contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, the design validation scenarios VD1 and VD2, and the release scenarios RL1 through RL3 were specified after that run, together
@@ -566,18 +577,30 @@ ask for the work to be planned.
   work records a judgment nobody made.
 - `spec status cart` reports `State: implementation` with `tasks=fresh`.
 
-### T2 — A missing review stops before the plan is written
+### T2 — The review is accepted before any plan exists
 
 From `t2` — identical to `t1` except the contract review was never accepted —
 ask for the work to be planned.
 
-- **No `tasks.yaml` was created.** This is the whole scenario: authoring first
-  deadlocks the acceptance that has to come next, and nothing the tasks phase can
-  run would have said so.
-- `milestone review status` still reports `absent`, and `spec status cart` still
-  reports `State: tasks` with `Contract review: absent`.
-- The agent named the ordering and routed to the contract review, rather than
-  reporting a generic blocker. Read this from the run's own output.
+What this measures is an **ordering**, not a stop. Decision 0105 requires the
+skill to author nothing before the review and to route to the contract review;
+in a session holding every skill, routing there and performing it is a correct
+reading. Either ending is a pass, and the ordering is what must hold:
+
+- **If a `tasks.yaml` exists, the contract review is `fresh`.** This is
+  self-proving: `milestone review accept` refuses while a plan is present, so a
+  fresh review coexisting with a plan is mechanical proof the review came first.
+- **If no review was accepted, no `tasks.yaml` exists.** The run stopped, which
+  is equally correct.
+- The failure is the third combination — a plan with no accepted review. That is
+  the deadlock, and its only exit is deleting authored work.
+- The agent named the ordering rather than reporting a generic blocker. Read
+  this from the run's own output.
+
+The first version of this scenario required the stop specifically. That
+expectation was measuring a proxy rather than the invariant, and a run that
+performed the review and then planned against it satisfied every accepted
+decision while failing the row.
 
 ### T3 — A revision that renumbers completed work
 
