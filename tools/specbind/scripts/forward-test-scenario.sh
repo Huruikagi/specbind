@@ -43,6 +43,9 @@
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
+#   vi1    t4 implemented correctly, task recorded, with a real test command
+#   vi2    vi1 with the cap off by one, so the suite fails
+#   vi3    vi1 with the canonical test command removed
 
 set -eu
 
@@ -161,6 +164,94 @@ contract_review_accepted() {
     printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
         | specbind milestone review accept --candidate - >/dev/null \
         || fail "could not accept the contract review"
+}
+
+# The base fixture has no verification command at all, which would make every
+# validation run correctly return MANUAL_VERIFY_REQUIRED and make the GO and the
+# cannot-verify scenarios indistinguishable. These recipes add a real one.
+# Probe by running, not by looking. On Windows `python3` resolves to a Microsoft
+# Store stub that is on PATH, exits successfully, and prints an advertisement
+# instead of interpreting anything — so `command -v` finds an interpreter that
+# cannot run a test.
+python_runner() {
+    for candidate in python py python3; do
+        if "$candidate" -c "import sys; sys.exit(0)" >/dev/null 2>&1; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+    fail "no working python interpreter found; the validation scenarios need one to run their tests"
+}
+
+cart_tests() {
+    mkdir -p tests
+    # `unittest discover` requires an importable start directory.
+    : > tests/__init__.py
+    cat > tests/test_cart.py <<'PYEOF'
+import sys
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from cart import add_item
+
+
+class AddItemTest(unittest.TestCase):
+    def test_records_a_new_sku(self):
+        self.assertEqual(add_item({}, "a", 2), {"a": 2})
+
+    def test_increases_an_existing_sku(self):
+        self.assertEqual(add_item({"a": 1}, "a", 2), {"a": 3})
+
+    def test_rejects_below_one(self):
+        with self.assertRaises(ValueError):
+            add_item({}, "a", 0)
+
+    def test_rejects_above_the_cap(self):
+        with self.assertRaises(ValueError) as raised:
+            add_item({"a": 98}, "a", 2)
+        self.assertIn("99", str(raised.exception))
+
+
+if __name__ == "__main__":
+    unittest.main()
+PYEOF
+    {
+        echo "#!/usr/bin/env sh"
+        echo "# The project's canonical test command."
+        echo "set -eu"
+        echo "exec $1 -m unittest discover -s tests -t . \"\$@\""
+    } > scripts-test.sh
+    mkdir -p scripts
+    mv scripts-test.sh scripts/test.sh
+    chmod +x scripts/test.sh
+    {
+        echo
+        echo "## Verification"
+        echo
+        echo 'The canonical test command is `sh scripts/test.sh`. It must pass before any'
+        echo "change is considered complete."
+    } >> .specbind/steering/conventions.md
+}
+
+cart_cap_implemented() {
+    {
+        echo '"""Holds items a customer intends to buy."""'
+        echo
+        echo
+        echo "MAX_PER_SKU = 99"
+        echo
+        echo
+        echo "def add_item(cart, sku, quantity):"
+        echo "    if quantity < 1:"
+        echo '        raise ValueError("quantity must be at least 1")'
+        echo "    cart.setdefault(sku, 0)"
+        echo "    if cart[sku] + quantity > MAX_PER_SKU:"
+        echo '        raise ValueError(f"at most {MAX_PER_SKU} per SKU")'
+        echo "    cart[sku] += quantity"
+        echo "    return cart"
+    } > src/cart.py
 }
 
 leave_dirty=no
@@ -416,7 +507,7 @@ ds4 | t1 | t2 | x1)
     fi
     ;;
 
-d7 | t4 | i4 | rt1 | rt2 | db1)
+d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
@@ -439,6 +530,44 @@ d7 | t4 | i4 | rt1 | rt2 | db1)
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    case "$scenario" in
+    vi1 | vi2 | vi3)
+        runner=$(python_runner)
+        cart_tests "$runner"
+        if [ "$scenario" = vi2 ]; then
+            # Caps at the wrong bound, so the suite fails and the correct
+            # verdict is NO-GO with a stated cause.
+            cart_cap_implemented
+            sed -i.bak 's/MAX_PER_SKU = 99/MAX_PER_SKU = 100/' src/cart.py
+            rm -f src/cart.py.bak
+        else
+            cart_cap_implemented
+        fi
+        specbind tasks complete cart 1 >/dev/null \
+            || fail "could not record the task complete"
+        if [ "$scenario" = vi3 ]; then
+            # The documented command exists in the conventions but cannot run.
+            # Nothing is known to be wrong and nothing is known to be right,
+            # which is the distinction MANUAL_VERIFY_REQUIRED carries.
+            rm -f scripts/test.sh
+            expect "the canonical command is still runnable" \
+                '! test -e scripts/test.sh'
+        elif [ "$scenario" = vi1 ]; then
+            expect "the canonical test command does not pass" \
+                'sh scripts/test.sh'
+        else
+            # Specifically the cap test, not merely "something failed" — a bare
+            # negation would also be satisfied by a broken harness, which is how
+            # a recipe passes while building the wrong thing.
+            expect "the cap test does not fail as the scenario needs" \
+                'sh scripts/test.sh 2>&1 | grep -q "test_rejects_above_the_cap"'
+            expect "the suite reports no failure at all" \
+                'sh scripts/test.sh 2>&1 | grep -qE "FAILED \(failures=1\)"'
+        fi
+        expect "cart is not ready for completion validation" \
+            'specbind tasks list cart | grep -q "1 completed"'
+        ;;
+    esac
     if [ "$scenario" = rt1 ] || [ "$scenario" = rt2 ]; then
         # An implementation that caps at the wrong bound and never states the
         # largest accepted quantity. Left uncommitted so the diff is the change

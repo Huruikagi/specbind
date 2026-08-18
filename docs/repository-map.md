@@ -184,3 +184,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0109](./design/decisions/0109-subagent-dispatch-contract.md) | Accepted | Fresh-context subagent dispatch, its neutral expression, and the structured return |
 | [0110](./design/decisions/0110-implement-skill-contract.md) | Accepted | Item selection, per-task dispatch cycle, bounded failure routing, and where the implement run stops |
 | [0111](./design/decisions/0111-review-task-and-debug-skill-contracts.md) | Accepted | Two moments, the read-only boundary, and unfresh-context honesty for the review and debug skills |
+| [0112](./design/decisions/0112-validate-implementation-skill-contract.md) | Accepted | Completion-verification protocol, the three verdicts, run-not-assembled evidence, and the multi-Spec metadata commit |

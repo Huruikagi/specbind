@@ -75,6 +75,11 @@ static PROTOCOLS: &[Protocol] = &[
         content: include_str!("../assets/protocols/debug.md"),
     },
     Protocol {
+        selector: "completion-verification",
+        purpose: "Claim-versus-evidence gate for allowing a completion claim, its graded evidence requirements, and the two distinct refusals.",
+        content: include_str!("../assets/protocols/completion-verification.md"),
+    },
+    Protocol {
         selector: "contract-review",
         purpose: "Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline.",
         content: include_str!("../assets/protocols/contract-review.md"),

@@ -189,6 +189,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | X1 – X4 | | |
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
+| VI1 – VI3 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -198,7 +199,7 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, the implementation scenarios I1 through I5, and the review and debug scenarios RT1, RT2, and DB1 were specified after that run, together
+contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, and the validation scenarios VI1 through VI3 were specified after that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
@@ -673,6 +674,47 @@ reviewer actually rejects. Record which path the run took.
   its reason** — never completed with findings outstanding.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
+
+## Implementation validation scenarios
+
+Accepted by [Decision 0112](./design/decisions/0112-validate-implementation-skill-contract.md).
+Driven from a real session — see [Driving an implementation run](#driving-an-implementation-run),
+which applies to this skill for the same reason.
+
+### VI1 — A complete implementation is validated and accepted
+
+From `vi1` — `cart` with its one task recorded complete, the cap correctly
+implemented, and everything committed — ask whether the Spec is done.
+
+- `spec status cart` reports `State: release_ready` with completion evidence.
+- The recorded `mechanical_checks` name commands that **exist in this project**
+  and were actually run. A check for a command the fixture does not have is the
+  failure this scenario exists to catch, and the CLI cannot detect it.
+- The recorded `implementation_revision` equals the `HEAD` the run validated at.
+
+### VI2 — An unmet requirement is NO-GO, and is not repaired
+
+From `vi2` — the same state, except the implementation caps at the wrong bound —
+ask whether the Spec is done.
+
+- `spec status cart` still reports `State: implementation`. **No completion
+  evidence was written.**
+- **`src/cart.py` is unchanged.** A validator that fixes what it found would then
+  be attesting to its own work; this is the failure the scenario checks even if
+  the verdict was otherwise correct.
+- The run reported `NO-GO` and said what must change.
+
+### VI3 — An unrunnable check is not a pass
+
+From `vi1` with the project's test command made unavailable — the `vi3` recipe
+removes it — ask whether the Spec is done.
+
+- **No completion evidence was written**, and `cart` is still in
+  `implementation`.
+- The verdict is `MANUAL_VERIFY_REQUIRED`, not `GO` and not `NO-GO`. Substituting
+  a different command that happens to pass, or reporting the suite as passing, is
+  the failure here.
+- No `mechanical_checks` entry claims a command that could not run.
 
 ## Review and debug scenarios
 
