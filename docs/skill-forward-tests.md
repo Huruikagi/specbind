@@ -108,6 +108,30 @@ A scenario that fails once and passes on retry is a finding, not a flake. The
 skill is ambiguous enough that the agent can go either way, and the ambiguity is
 the defect.
 
+## Latest run
+
+2026-08-18, against builds from `9f8ae39` through `f134915`. Eighteen of the
+twenty scenarios passed and none failed against the build that finally measured
+them.
+
+| Scenario | Result |
+| --- | --- |
+| D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass |
+| R1, R2, R3, R4, R5 | pass |
+| C1, C2, C3 | pass |
+| D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check |
+| D7 | not measured — no `specbind-tasks` skill is embedded, so nothing owns plan authoring and the run correctly stops |
+
+D5 failed first and passed after the framing rule was corrected. R5 was blocked
+once by a recipe that built a state its own request contradicted, and passed
+after the recipe was fixed.
+
+Eight product defects surfaced: the missing workflow-entry condition, its
+missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
+two unpublished schemas, the invented delegation label, and a block that
+forbade task-plan authoring. Four of them were re-run after the fix and
+confirmed changed.
+
 ## Discovery scenarios
 
 Accepted by [Decision 0097](./design/decisions/0097-discovery-routing-and-read-models.md).
