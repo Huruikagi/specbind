@@ -62,7 +62,7 @@ Then start an agent session **with no prior context** in that directory. Context
 carried from developing the skill is the most common way a forward test passes
 for the wrong reason: the agent already knows what you meant.
 
-## Driving a run with a subagent
+## Driving a run
 
 A subagent works, and lets you pin the model. Two rules keep it honest.
 
@@ -95,39 +95,82 @@ Rebuild the fixture between scenarios. Several scenarios depend on the starting
 state, and a leftover milestone from the previous one silently changes what is
 being tested.
 
+### Which agent is being driven
+
+The fixture installs for both agents already — `install --agent claude-code
+--agent codex` — so `.claude/skills/` and `.agents/skills/` are both present and
+nothing in the setup changes between them. Start the session for the agent you
+are measuring and leave the other tree alone.
+
+Both agents read the **same skill body**. Rendering maps the declared metadata
+onto each platform's Front Matter schema and never edits the document, so a run
+under Codex and a run under Claude Code are given identical instructions.
+
+The driving rules above apply unchanged, and the second one applies harder under
+Codex. It inherits the host session's `AGENTS.md` rather than its `CLAUDE.md`,
+which is this repository's own instruction file: the same rules about answering
+in Japanese and committing to `main` travel with it by a different route. Say
+the fixture stands alone regardless of which agent you drive.
+
 ## Recording a run
 
 These are samples, not proofs. Record enough that a later reader can tell what
 was actually observed:
 
 - the commit under test
-- the scenario, and pass or fail
+- the scenario, **the agent it was driven as**, and pass or fail
 - for a failure, the expectation that did not hold and the state that was left
 
 A scenario that fails once and passes on retry is a finding, not a flake. The
 skill is ambiguous enough that the agent can go either way, and the ambiguity is
 the defect.
 
+**A divergence between agents is a finding about the skill, not about the
+agent.** It is the same rule one step out: both agents were handed the identical
+body, so a scenario that passes under one and fails under the other proves the
+document admits two readings. Fix the skill. "Codex does it differently" is a
+restatement of the defect, not an explanation of it.
+
+A scenario with no result for an agent has not been measured under it. There is
+no blank row to fill in and no expectation that every scenario is eventually run
+twice — the matrix is a record of what was observed, not a checklist.
+
+### How much to re-run per agent
+
+Run the complete set once under a newly supported agent, to find out where it
+diverges. After that, a skill change needs re-running only the scenarios its
+change can reach, under each agent that has a result to keep honest.
+
+When only one agent can be run, prefer the scenarios where the two plausibly
+differ: the ones that measure **stopping and confirmation** (D9, R3, R4, R5, DS3,
+DS4, DS6), **whole-set reading** (D11, D12), and **checkpoint behavior** (C1, C2,
+C3). Scenarios that only check the artifacts an authoring phase produced (R1, R2,
+DS1, DS2) are the least agent-sensitive and a single sample covers them.
+
 ## Latest run
 
 2026-08-18, against builds from `9f8ae39` through `f134915`. Eighteen of the
-twenty scenarios passed and none failed against the build that finally measured
-them.
+twenty scenarios then defined passed and none failed against the build that
+finally measured them. Every one of those runs was driven as Claude Code.
 
-| Scenario | Result |
-| --- | --- |
-| D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass |
-| R1, R2, R3, R4, R5 | pass |
-| C1, C2, C3 | pass |
-| D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check |
-| D7 | not measured — no `specbind-tasks` skill is embedded, so nothing owns plan authoring and the run correctly stops |
+| Scenario | Claude Code | Codex |
+| --- | --- | --- |
+| D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass | |
+| R1, R2, R3, R4, R5 | pass | |
+| C1, C2, C3 | pass | |
+| D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
+| D7 | not measured — no `specbind-tasks` skill is embedded, so nothing owns plan authoring and the run correctly stops | |
+| DS1 – DS6 | | |
+
+An empty cell means that scenario has not been run under that agent. Codex has
+no results at all yet, so the complete set is what it owes on its first pass.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6 were specified after that run, together
-with the `specbind-design` skill, and have not been measured yet.
+with the `specbind-design` skill, and have not been measured under either agent.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,

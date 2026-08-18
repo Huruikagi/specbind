@@ -67,6 +67,13 @@ Use a subagent with no prior context. Pin the model when comparing behavior
 across models — the Agent tool's `model` accepts `sonnet`, `opus`, `haiku`, and
 `fable`.
 
+**A subagent always drives Claude Code.** The fixture installs both agents, so
+`.agents/skills/` is sitting right there, but nothing about spawning a subagent
+makes it read that tree. Measuring Codex means opening a real Codex session in
+the fixture directory; there is no way to do it from here. Record which agent a
+result came from, because the scenario document now tracks them as separate
+columns and an unlabelled result silently becomes a Claude Code one.
+
 The prompt gives three things and nothing else:
 
 1. the working directory, given as the **native path** its file tools resolve,
@@ -90,6 +97,10 @@ hygiene, not method.
 A run reporting in Japanese against an `en` fixture is the visible symptom. Treat
 it as a signal that the contamination is active, and re-read any checkpoint
 result taken from the same batch.
+
+A Codex session in the fixture has the same problem by a different route: it
+reads `AGENTS.md`, which is this repository's instruction file too. State the
+same thing.
 
 **Never name a skill or a command in the prompt.** Whether the agent finds and
 uses the installed skill is the thing under test; telling it teaches the answer.
@@ -151,10 +162,17 @@ A scenario that fails once and passes on retry is a finding, not a flake: the
 skill is ambiguous enough for the agent to go either way, and that ambiguity is
 the defect.
 
+The same applies across agents. Both are handed the identical skill body —
+rendering only rewrites Front Matter — so a scenario that passes under one and
+fails under the other proves the document admits two readings. That is a skill
+defect, and "the other agent behaves differently" restates it rather than
+explains it.
+
 ## Finishing
 
-Report per scenario: pass or fail, the expectation that did not hold, and the
-state that was left behind. Then clean up the fixtures.
+Report per scenario: the agent it was driven as, pass or fail, the expectation
+that did not hold, and the state that was left behind. Then clean up the
+fixtures.
 
 Record any defect the run exposed against the decision or skill it belongs to,
 and update the scenario document when the run showed the procedure itself was
