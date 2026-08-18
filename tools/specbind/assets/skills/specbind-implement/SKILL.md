@@ -138,6 +138,11 @@ trap that would otherwise be repeated.
 The bar is durability, not activity. A note restating what the task did is noise
 — the plan and Git already have that.
 
+**A diagnosis that found something durable is recorded here, by you.** The debug
+run writes nothing, and its report is run-scoped: what it learned about a trap
+survives only if you write it down. That is how the next task avoids the same
+issue instead of rediscovering it.
+
 ## 5. When something fails
 
 `BLOCKED`, unresolved `NEEDS_CONTEXT`, and a rejection surviving two rounds all

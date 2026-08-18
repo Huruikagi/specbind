@@ -64,6 +64,13 @@ review among the workflows that update Implementation Notes.
 specific, assigning the durability judgment and the creation or update timing to
 the implementation skill alone. This decision follows 0092.
 
+The inherited tree corroborates the narrower reading. Across cc-sdd's skills,
+`kiro-debug`, `kiro-review`, and `kiro-validate-impl` only **read** the
+`## Implementation Notes` section, and `kiro-impl` is the only writer — including
+for debug findings, which it records on the diagnosis's behalf so a later task
+avoids the same issue. Decision 0026's prose conflates reading with updating;
+the behavior it described already had one writer.
+
 Both readings are reconcilable in practice, and the narrower one is correct
 here. Durable knowledge discovered during review or diagnosis is returned in the
 finding or the diagnosis, and the skill that applies the fix records it. A
@@ -71,6 +78,11 @@ reviewer writing to the repository would contaminate the diff it is reviewing,
 and a diagnosis that writes has stopped being read-only. Both still **read**
 notes when present, which is what makes a diagnosis aware of a trap an earlier
 task already hit.
+
+This places one obligation on the dispatcher, and
+[Decision 0110](./0110-implement-skill-contract.md)'s skill carries it: a
+diagnosis is run-scoped, so durable knowledge it surfaced is lost unless the
+implementation run writes it down.
 
 ### Structured returns in both moments
 
