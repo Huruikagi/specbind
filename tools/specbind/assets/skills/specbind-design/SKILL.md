@@ -98,6 +98,36 @@ tasks that cannot be executed as written.
 A question that blocks choosing the approach is resolved or escalated now. It
 cannot be deferred into the design as an open item.
 
+### Dispatch the independent parts
+
+When the investigation is large enough that reading it all here would crowd out
+the design, dispatch the independent areas as **fresh subagents** and synthesize
+what comes back. Typical splits — adjust to the change rather than filling a
+template:
+
+- how the affected area works today, and what already exists to extend
+- external dependencies: current API, version compatibility, constraints
+- the seam: which contract entries this touches, and who consumes them
+
+Give each one a brief that stands alone — what to establish, which paths and
+identifiers to read, and what a useful answer contains — plus the protocol to
+read:
+
+```sh
+specbind protocol read design-discovery
+```
+
+Require a **findings summary, not raw material**. A subagent that returns file
+dumps has moved the crowding rather than removed it.
+
+**Synthesize here, never in a subagent.** Choosing the approach needs the whole
+picture, and the whole picture is what only this context has. If a returned
+summary is unusable, ask once for the summary alone rather than reading around
+it.
+
+For a change that follows an established pattern in an area you already
+understand, skip dispatch entirely and check the pattern directly.
+
 ## 3. Write the design
 
 ```sh

@@ -285,5 +285,12 @@ self-invalidation that states the deleted contract review.
 `tools/specbind/assets/protocols/design-authoring.md` carries the Contract
 inclusion test.
 
+[Decision 0109](./0109-subagent-dispatch-contract.md) subsequently added
+fresh-context subagent dispatch to the investigation step: independent areas are
+dispatched with self-contained briefs and the `design-discovery` selector, return
+findings summaries, and synthesis stays in the main context because choosing the
+approach needs the whole picture. Dispatch is skipped for a change that follows
+an established pattern.
+
 Its forward tests are specified as scenarios DS1 through DS6 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.
