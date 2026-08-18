@@ -73,6 +73,12 @@ rather than starting a new one, so it keeps the state it gathered. The
 confirm-then-mutate path is part of what the scenario tests, and it is where the
 guarded CLI operations actually run.
 
+**Confirm the phase, not the project.** Say what the scenario needs confirmed and
+where to stop. "Proceed with that scope" reads as permission to build the whole
+thing: one run answered that way went from discovery through requirements,
+design, review, tasks, and implementation, which left every discovery expectation
+unmeasurable because later phases had legitimately changed the same files.
+
 ## Judge from the fixture, never from the report
 
 Read the result with commands against the fixture:

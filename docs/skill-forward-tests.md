@@ -65,7 +65,10 @@ would phrase it. Naming a skill or a command teaches the answer.
 The skills confirm scope with the user before changing anything, so a single-shot
 run correctly stops with a proposal and an empty repository — that is the skill
 working, not failing. Answer as the maintainer would and let the run continue;
-the confirm-then-mutate path is part of what the scenario tests.
+the confirm-then-mutate path is part of what the scenario tests. Confirm only the
+phase under test and say where to stop — a bare "go ahead" reads as permission to
+build the whole feature, and later phases legitimately rewrite the files an
+earlier scenario is checking.
 
 **Do not ask the agent to justify its classification.** Ask what it changed and
 what it ran. An expectation about what the agent told the user cannot be measured
