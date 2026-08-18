@@ -41,7 +41,19 @@ fixture. That line is not optional. The skills invoke `specbind` as a bare
 command because a real installed project has it on PATH; without it the run stops
 at "command not found" and produces no result about the skill at all.
 
-Several scenarios need a precondition set up first — an uncommitted edit, a
+Most scenarios have a recipe that builds their starting state and proves it:
+
+```sh
+sh tools/specbind/scripts/forward-test-scenario.sh <scenario> /tmp/sb-<scenario> en
+```
+
+It wraps the fixture builder, applies the scenario's precondition, and exits
+nonzero with a message when the precondition did not take. Use it rather than
+composing the state by hand; that is where a run silently becomes a different
+run. Add a recipe when a scenario needs one, and give it a check that fails when
+the setup is a no-op.
+
+Scenarios with no recipe yet need a precondition set up first — an uncommitted edit, a
 broken steering document. **Do that from the shell**, not from a helper script in
 another language. On Windows the shell maps `/tmp` to a real directory, but a
 native interpreter invoked from it does not, so a script that opens

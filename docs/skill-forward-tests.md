@@ -38,6 +38,15 @@ one.
 
 Pass `ja` as the second argument to exercise the localized surface.
 
+Scenarios that start from something further along have a recipe that builds and
+verifies that state:
+
+```bash
+sh tools/specbind/scripts/forward-test-scenario.sh r4 /tmp/sb-r4 en
+```
+
+The recipe owns starting state only. The request and the expectations stay here.
+
 Use a target path the agent session can address directly. On Windows a `/tmp`
 path is a shell alias that some tools cannot resolve, and an agent that has to
 guess at the real location is being tested on something other than the skill.
