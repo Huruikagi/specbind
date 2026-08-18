@@ -34,6 +34,10 @@
 #   t2     t1 without the accepted contract review
 #   t3     an approved three-task plan with the first two already completed
 #   t4     d7's state: the tasks gate approved and cart in implementation
+#   x1     t2's state: one participant ready for review, contract unchanged
+#   x2     ds5 with cart's approved design removing the export checkout consumes
+#   x3     cart in tasks state with a plan already written and no review
+#   x4     d10's state: a Direct-only milestone that needs no review
 
 set -eu
 
@@ -186,7 +190,7 @@ r3)
         'specbind spec status cart | grep -q "State: requirements"'
     ;;
 
-r4 | r5 | ds2 | ds3 | ds5)
+r4 | r5 | ds2 | ds3 | ds5 | x2)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     if [ "$scenario" != r4 ]; then
@@ -217,7 +221,7 @@ r4 | r5 | ds2 | ds3 | ds5)
         expect "the requirements gate is still fresh" \
             'specbind spec status cart | grep -q "requirements=stale"'
     fi
-    if [ "$scenario" = ds5 ]; then
+    if [ "$scenario" = ds5 ] || [ "$scenario" = x2 ]; then
         # A second persistent Spec that consumes the cart export, so removing
         # that export has a consumer the graph can name.
         mkdir -p .specbind/specs/checkout
@@ -286,6 +290,47 @@ r4 | r5 | ds2 | ds3 | ds5)
         expect "checkout does not consume the cart export" \
             'specbind artifact read checkout contract | grep -q "cart/exports/add-item"'
     fi
+    if [ "$scenario" = x2 ]; then
+        # The approved design removes the export checkout consumes. Design
+        # approval does not run the project-wide graph check, so this state is
+        # reachable exactly as a real milestone reaches it — which is the whole
+        # reason the contract review exists.
+        # The contract is reduced before the gate is approved, so the approval
+        # covers the removal. Approving first and editing after would leave a
+        # stale gate and measure freshness instead of the seam.
+        awk '!/^- `add-item`/' .specbind/specs/cart/contract.md > contract.tmp
+        mv contract.tmp .specbind/specs/cart/contract.md
+        cart_design_approved
+        expect "the cart export was not removed" \
+            '! specbind artifact read cart contract | grep -q "add-item"'
+        expect "the dangling consumer did not appear" \
+            '! specbind check contracts'
+    fi
+    ;;
+
+x3)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
+    brief cart "A cart has no upper bound per SKU."
+    cart_cap_approved
+    cart_design_approved
+    # The trap state: a plan authored before the review was accepted. Acceptance
+    # now refuses, and the only exit is a decision about the plan that belongs to
+    # the user rather than to the review.
+    {
+        echo "schema_version: 1"
+        echo "plan:"
+        echo "  items:"
+        echo "    - id: '1'"
+        echo "      kind: task"
+        echo "      title: Enforce the quantity bounds"
+        echo "      requirement_ids: ['1.1', '1.2', '1.3', '1.4']"
+    } > .specbind/specs/cart/tasks.yaml
+    expect "cart is not waiting in the tasks state" \
+        'specbind spec status cart | grep -q "State: tasks"'
+    expect "the contract review is already accepted" \
+        'specbind milestone review status | grep -q "Status: absent"'
+    expect "no task plan is present" \
+        'test -e .specbind/specs/cart/tasks.yaml'
     ;;
 
 ds1)
@@ -339,7 +384,7 @@ ds1)
         '! test -e .specbind/specs/order/contract.md'
     ;;
 
-ds4 | t1 | t2)
+ds4 | t1 | t2 | x1)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
@@ -348,7 +393,7 @@ ds4 | t1 | t2)
         'specbind spec status cart | grep -q "design=fresh"'
     expect "a task plan already exists" \
         '! test -e .specbind/specs/cart/tasks.yaml'
-    if [ "$scenario" = t2 ]; then
+    if [ "$scenario" = t2 ] || [ "$scenario" = x1 ]; then
         # t2 measures what the tasks phase does when the review has not been
         # accepted, so this is the one recipe that deliberately leaves it out.
         expect "the contract review is already accepted" \
@@ -417,7 +462,7 @@ t3)
         'specbind tasks list cart | grep -q "\[pending actionable\] 3 "'
     ;;
 
-d10)
+d10 | x4)
     milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
     printf '%s\n' "# Contributing" "" "Open an issue before a large change." > CONTRIBUTING.md
     git add -A

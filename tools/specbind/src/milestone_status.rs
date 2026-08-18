@@ -58,6 +58,8 @@ pub struct MilestoneItemView {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MilestoneStatusModel {
     pub milestone_id: String,
+    /// The revision this milestone's Contract changes are compared against.
+    pub baseline_revision: String,
     pub target_release: Option<String>,
     pub stage: DeliveryStage,
     pub health: MilestoneHealth,
@@ -181,6 +183,7 @@ pub fn resolve(
 
     Ok(Some(MilestoneStatusModel {
         milestone_id: roadmap.milestone_id,
+        baseline_revision: roadmap.baseline_revision,
         target_release: roadmap.target_release,
         stage,
         health,

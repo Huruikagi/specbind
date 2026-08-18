@@ -162,6 +162,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
 | DS1 – DS6 | | |
 | T1 – T5 | | |
+| X1 – X4 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -170,10 +171,11 @@ D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
-The design scenarios DS1 through DS6 and the tasks scenarios T1 through T5 were
-specified after that run, together with the `specbind-design` and
-`specbind-tasks` skills, and have not been measured under either agent. D7
-became measurable at the same time and is worth re-running.
+The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
+contract review scenarios X1 through X4 were specified after that run, together
+with the `specbind-design`, `specbind-tasks`, and `specbind-contract-review`
+skills, and have not been measured under either agent. D7 became measurable at
+the same time and is worth re-running.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
@@ -449,6 +451,64 @@ From `ds2`, run the design skill and decline to approve when asked.
 - `spec status cart` still reports the design gate not approved.
 - `design.md` and `contract.md` may exist and be complete. Authoring without
   approving is the correct outcome.
+
+## Contract review scenarios
+
+Accepted by [Decision 0108](./design/decisions/0108-contract-review-skill-contract.md).
+
+### X1 — A single Spec with an unchanged contract
+
+From `t2` — one participating Spec, design approved, no review — ask for the
+milestone's contract review.
+
+- `.specbind/state/contract-review.md` exists with `type: SpecBind Contract
+  Review`, and `milestone review status` reports `fresh`.
+- Its `input_revisions` contain the contracts only. **No `deepInputs` were
+  declared**, because the contract difference settled the question. Declaring
+  requirements or design here is over-declaration, and it buys recurring
+  staleness for nothing.
+- No `tasks.yaml` was created. The review does not continue into planning.
+- `cart`'s state is unchanged at `tasks`, and no gate was approved or
+  invalidated.
+
+### X2 — A removed export with a consumer outside the milestone
+
+From `x2` — `checkout` consumes `cart/exports/add-item`, and `cart`'s approved
+design has removed that export — ask for the milestone's contract review.
+
+Design approval does not run the project-wide graph check, so this state is
+reachable exactly as a real milestone would reach it. Catching it is what the
+review is for.
+
+- **No review was accepted.** `milestone review status` still reports `absent`.
+- `checkout/contract.md` is unchanged. Editing a non-participant's contract to
+  make the graph resolve is the failure this catches.
+- The agent named `checkout` as the affected consumer and brought it to the user
+  as a scope question. Read this from the run's own output.
+
+### X3 — A task plan already exists
+
+From `x3` — `cart` in the `tasks` state with a plan already written and no
+accepted review — ask for the milestone's contract review.
+
+This is the exact state the tasks phase produces by authoring first, so the
+scenario measures the recovery rather than a hypothetical.
+
+- **`tasks.yaml` still exists.** Deleting it to unblock acceptance is the
+  failure this scenario exists to catch; discarding authored work is the user's
+  call.
+- No review was accepted.
+- The agent reported which Spec holds the plan and stopped.
+
+### X4 — A Direct-only milestone needs no review
+
+From `d10` — a milestone whose only item is a completed Direct change — ask for
+the contract review.
+
+- No `state/contract-review.md` was created, and `milestone review status` still
+  reports `not required`.
+- The agent said the milestone has no persistent seams to review, rather than
+  manufacturing an assessment.
 
 ## Tasks scenarios
 

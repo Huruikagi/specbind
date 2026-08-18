@@ -2120,6 +2120,7 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
         "Revision",
         model.current_revision.as_deref().unwrap_or("unavailable"),
     );
+    push_field(&mut output, "Baseline", &model.baseline_revision);
     render_milestone_items(model, &mut output);
     render_milestone_actions(model, &mut output);
     push_inline_list(&mut output, "Release blockers", &model.release_blockers);
