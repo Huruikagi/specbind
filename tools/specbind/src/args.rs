@@ -46,6 +46,11 @@ pub enum Command {
         #[command(subcommand)]
         command: ProtocolCommand,
     },
+    /// Read the structured artifact schemas embedded in this binary.
+    Schema {
+        #[command(subcommand)]
+        command: SchemaCommand,
+    },
     /// Run one deterministic read-only consistency check.
     Check {
         #[command(subcommand)]
@@ -101,6 +106,14 @@ pub enum ProtocolCommand {
     /// List every embedded protocol selector and its purpose.
     List,
     /// Read one protocol selector as raw UTF-8 Markdown.
+    Read { selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum SchemaCommand {
+    /// List every embedded schema selector and the artifact it governs.
+    List,
+    /// Read one versioned schema selector as raw JSON.
     Read { selector: String },
 }
 

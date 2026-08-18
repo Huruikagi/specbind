@@ -21,6 +21,7 @@ use crate::{
     protocol,
     release_finalize::{self, FinalizeIssue},
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
+    schema,
     spec_list::{self, SpecHealth},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     steering,
@@ -796,6 +797,44 @@ fn render_progress_failure(
                 format!("{}{path} {}", issue.code, escape(&issue.message))
             })
             .collect(),
+    )
+}
+
+/// Lists every embedded structured-artifact schema.
+///
+/// Like the protocols, these are properties of the binary. Taking no project
+/// path is the structural guarantee of that rather than a convenience.
+#[must_use]
+pub fn schema_list() -> CommandOutput {
+    let schemas = schema::schemas();
+    let mut output = format!(
+        "OK SCHEMA_LISTED: Found {} embedded schema(s).\n",
+        schemas.len()
+    );
+    for entry in schemas {
+        let _ = writeln!(
+            output,
+            "  selector={} artifact={} written_by=\"{}\"",
+            escape(entry.selector),
+            escape(entry.artifact),
+            escape(entry.written_by)
+        );
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+/// Reads one versioned schema selector as raw JSON.
+#[must_use]
+pub fn schema_read(selector: &str) -> CommandOutput {
+    schema::find_schema(selector).map_or_else(
+        || {
+            CommandOutput::failure(
+                "SCHEMA_READ_INVALID",
+                format!("unknown schema selector: {selector}"),
+                vec![],
+            )
+        },
+        |entry| CommandOutput::success(entry.content().as_bytes().to_vec()),
     )
 }
 

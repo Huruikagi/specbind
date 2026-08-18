@@ -3522,3 +3522,48 @@ fn installs_localized_adapter_scaffolds_and_keeps_project_copies() {
         .expect("git adapter");
     assert_eq!(git_adapter, owned);
 }
+
+#[test]
+fn lists_and_reads_embedded_schemas_without_a_project() {
+    // Like the protocols, these are properties of the binary. Running outside
+    // any SpecBind project is the structural guarantee of that.
+    let outside = tempfile::tempdir().expect("temporary directory");
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(outside.path())
+        .args(["schema", "list"])
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK SCHEMA_LISTED: Found 2 embedded schema(s).\n",
+            "  selector=spec/v1 artifact=spec.yaml written_by=\"guarded CLI operations only\"\n",
+            "  selector=tasks/v1 artifact=tasks.yaml written_by=\"the authoring agent\"\n",
+        ))
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(outside.path())
+        .args(["schema", "read", "tasks/v1"])
+        .assert()
+        .success()
+        // The read is the same bytes the runtime validator compiles, so the
+        // format an agent authors against cannot drift from the one enforced.
+        .stdout(predicate::eq(specbind::schema::TASKS_V1_SCHEMA_JSON))
+        .stderr("");
+}
+
+#[test]
+fn refuses_a_schema_selector_the_binary_does_not_carry() {
+    let outside = tempfile::tempdir().expect("temporary directory");
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(outside.path())
+        // An unversioned selector is not accepted: the version is part of the
+        // identity, so a caller always names the schema it is targeting.
+        .args(["schema", "read", "tasks"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr("ERROR SCHEMA_READ_INVALID: unknown schema selector: tasks\n");
+}
