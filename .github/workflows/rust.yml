@@ -35,6 +35,11 @@ jobs:
       - name: Show Rust toolchain
         run: rustup show active-toolchain
 
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "tools/specbind -> target"
+
       - name: Check formatting
         run: cargo fmt --all -- --check
 
