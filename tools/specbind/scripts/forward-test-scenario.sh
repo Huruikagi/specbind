@@ -46,6 +46,7 @@
 #   vi1    t4 implemented correctly, task recorded, with a real test command
 #   vi2    vi1 with the cap off by one, so the suite fails
 #   vi3    vi1 with the canonical test command removed
+#   vd1    an approved design that defers the bound to a research document
 
 set -eu
 
@@ -486,16 +487,38 @@ ds1)
         '! test -e .specbind/specs/order/contract.md'
     ;;
 
-ds4 | t1 | t2 | x1)
+ds4 | t1 | t2 | x1 | vd1)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
-    cart_design_approved
+    if [ "$scenario" = vd1 ]; then
+        # The design points at Research for the bound instead of stating it.
+        # Research is excluded from every gate fingerprint and is deleted at
+        # release, so this design becomes incomplete the moment the milestone
+        # closes — and nothing mechanical reports that.
+        {
+            echo "---"
+            echo "type: SpecBind Research"
+            echo "---"
+            echo
+            echo "# Research"
+            echo
+            echo "## Chosen bound"
+            echo
+            echo "Ninety-nine per SKU, matching the warehouse pick limit. Additions"
+            echo "that would exceed it are rejected rather than trimmed."
+        } > .specbind/specs/cart/research.md
+        expect "the research artifact is not readable" \
+            'specbind artifact read cart research | grep -q "Ninety-nine"'
+        cart_design_approved "cap recorded in the research document, in the manner decided there."
+    else
+        cart_design_approved
+    fi
     expect "the design gate is not approved" \
         'specbind spec status cart | grep -q "design=fresh"'
     expect "a task plan already exists" \
         '! test -e .specbind/specs/cart/tasks.yaml'
-    if [ "$scenario" = t2 ] || [ "$scenario" = x1 ]; then
+    if [ "$scenario" = t2 ] || [ "$scenario" = x1 ] || [ "$scenario" = vd1 ]; then
         # t2 measures what the tasks phase does when the review has not been
         # accepted, so this is the one recipe that deliberately leaves it out.
         expect "the contract review is already accepted" \

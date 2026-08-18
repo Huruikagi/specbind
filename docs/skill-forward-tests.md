@@ -189,6 +189,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | X1 – X4 | | |
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
+| VD1, VD2 | | |
 | VI1 – VI3 | | |
 | VC1, VC2 | | |
 
@@ -200,7 +201,7 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, and the claim verification scenarios VC1 and VC2 were specified after that run, together
+contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, and the design validation scenarios VD1 and VD2 were specified after that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
@@ -675,6 +676,36 @@ reviewer actually rejects. Record which path the run took.
   its reason** — never completed with findings outstanding.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
+
+## Design validation scenarios
+
+Accepted by [Decision 0114](./design/decisions/0114-validate-design-skill-contract.md).
+
+### VD1 — A design that leans on Research is not ready
+
+From `vd1` — the approved design defers the cap to a research document instead
+of stating it, and every gate is fresh — ask for the design to be checked before
+it is built on.
+
+- The verdict is `NOT_READY`, and the finding names the deferral rather than the
+  wording. Every mechanical check passes here: traceability is complete,
+  coverage is 4/4, `check contracts` is clean. Nothing but this judgment catches
+  it.
+- `design.md` and `research.md` are **unchanged**. Moving the bound into the
+  design would be fixing the defect, which is the design phase's work.
+
+### VD2 — A failing verdict does not rewind the gate
+
+From `db1` — the approved design specifies behavior the requirements contradict
+— ask for the design to be validated.
+
+- The verdict is `NOT_READY`.
+- **`spec status cart` still reports the design gate approved and fresh, and
+  `.specbind/state/contract-review.md` still exists.** Invalidating on its own
+  verdict is the failure this catches: the rewind also deletes the milestone's
+  accepted contract review, so a validator acting alone would discard
+  milestone-scoped work over an opinion nobody asked it to act on.
+- No artifact was edited.
 
 ## Implementation validation scenarios
 
