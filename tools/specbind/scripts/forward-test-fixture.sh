@@ -80,9 +80,10 @@ artifact_id: structure
 
 Each capability owns one module under `src/` and one Spec.
 
-Ownership follows the data a capability is responsible for. `cart` owns what a
-customer intends to buy; `orders` owns what they have committed to. A change that
-crosses that line needs its own boundary rather than an extension of either.
+Ownership follows the data a capability is responsible for. One capability owns
+what a customer intends to buy; another owns what they have committed to. A
+change that crosses that line needs its own boundary rather than an extension of
+either.
 EOF
 cat > "$spec_dir/steering/conventions.md" <<'EOF'
 ---
@@ -181,8 +182,7 @@ EOF
 # can guess an install location, which is not the thing under test.
 mkdir -p "$spec_dir/bin"
 cp "$specbind" "$spec_dir/bin/"
-printf '%s
-' "bin/" > "$spec_dir/.gitignore"
+printf '%s\n' "bin/" > "$spec_dir/.gitignore"
 
 git add -A
 git commit --quiet -m "Install SpecBind and seed project state"
