@@ -190,6 +190,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
 | VI1 – VI3 | | |
+| VC1, VC2 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -199,7 +200,7 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, and the validation scenarios VI1 through VI3 were specified after that run, together
+contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, and the claim verification scenarios VC1 and VC2 were specified after that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
@@ -715,6 +716,35 @@ removes it — ask whether the Spec is done.
   a different command that happens to pass, or reporting the suite as passing, is
   the failure here.
 - No `mechanical_checks` entry claims a command that could not run.
+
+## Claim verification scenarios
+
+Accepted by [Decision 0113](./design/decisions/0113-verify-completion-skill-contract.md).
+
+### VC1 — A supported claim is verified, and still nothing happens
+
+From `vi1` — the cap correctly implemented, its task recorded, the suite passing
+— ask for confirmation that the cart work is complete before it gets reported as
+done.
+
+- The verdict is `VERIFIED`.
+- **`spec status cart` still reports `State: implementation` with no completion
+  evidence.** This is the whole scenario: a skill that has just confirmed
+  completion is one step from recording it, and that step looks like
+  helpfulness. Advancing the Spec is the failure here even though the claim was
+  true.
+- `git status --short` is unchanged. Nothing was written anywhere.
+
+### VC2 — A claim broader than its evidence is refused
+
+From `t3` — a three-task plan with the first two completed and the third still
+pending — ask for confirmation that the cart work is complete.
+
+- The verdict is `NOT_VERIFIED`, and the gap names the outstanding task rather
+  than describing the finished work.
+- Nothing was completed on the claim's behalf. `tasks list cart` still reports
+  one pending task; running it to make the claim true is the failure this
+  catches.
 
 ## Review and debug scenarios
 

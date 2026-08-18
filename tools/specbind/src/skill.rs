@@ -85,6 +85,10 @@ static SKILLS: &[Skill] = &[
         name: "specbind-validate-implementation",
         source: include_str!("../assets/skills/specbind-validate-implementation/SKILL.md"),
     },
+    Skill {
+        name: "specbind-verify-completion",
+        source: include_str!("../assets/skills/specbind-verify-completion/SKILL.md"),
+    },
 ];
 
 /// Lists every embedded skill.
