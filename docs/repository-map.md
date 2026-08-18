@@ -65,6 +65,8 @@ For the files the CLI installs into consumer projects, see the [current generate
 | [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
 | [Skill forward tests](./skill-forward-tests.md) | Behavioral verification procedure for embedded skills, run against a fixture project |
 
+This repository's own agent skills live in `.agents/skills/`: `specbind-new-agent` for adding coding-agent support, and `specbind-forward-test` for running the behavioral verification above. They are development assets and are never installed into a consumer project.
+
 ## Decision records
 
 Accepted decisions are authoritative. A superseded decision is retained for history; follow the decision that replaced it.
