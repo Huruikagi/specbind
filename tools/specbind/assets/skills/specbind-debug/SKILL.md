@@ -1,0 +1,101 @@
+---
+name: specbind-debug
+description: Establish the root cause of a failure that stopped work, categorize it, and return a next action for whoever owns it. Read-only; never applies the fix.
+argument-hint: "<failure>"
+---
+
+# Diagnose one failure
+
+The **diagnosis is the deliverable**. Someone else applies the fix, from a
+context that did not watch this failure happen.
+
+```sh
+specbind protocol read debug
+```
+
+## Change nothing
+
+Read-only means read-only. You may run commands that reproduce or observe the
+failure; you may **not** modify any tracked file, and you may not apply the fix
+you find.
+
+This is evidentiary, not procedural. A repository you have already edited leaves
+the next agent unable to tell which state your reasoning describes, and destroys
+the evidence a second round would need.
+
+## When the context is not fresh
+
+You work best dispatched into a clean context, given the failure and the inputs
+and **not** the history of attempts that failed. That omission is the mechanism:
+a retry that inherits the reasoning which just failed reliably reproduces it.
+
+**If you were invoked inside the session that already failed, say so.** Then:
+
+- name what you are deliberately setting aside — the conclusions this session
+  already reached, the theories it already committed to;
+- re-derive from the evidence in front of you rather than from where the session
+  had got to;
+- when the failure has already survived several attempts here, say plainly that
+  a fresh session would produce a more trustworthy diagnosis.
+
+Running as though the context were clean is the failure mode this skill exists
+to break.
+
+## Establish the cause
+
+Read what the system was supposed to do, not only what it did:
+
+```sh
+specbind spec status <spec>
+specbind tasks show <spec> <task-id>
+specbind artifact read <spec> requirements
+specbind artifact read <spec> design/main
+```
+
+Read implementation notes when the Spec has them. A recorded trap is often
+exactly the cause.
+
+The cause is where actual behavior **first diverges** from what the approved
+artifacts require. Everything after that point is consequence, and the error
+message names where something surfaced, not where it went wrong.
+
+If two causes remain possible, say both and say what would distinguish them. A
+confident single answer that is wrong costs more than an honest fork.
+
+## Return the diagnosis
+
+```text
+## Diagnosis
+- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT
+- CAUSE: <what diverges, and where>
+- NEXT_ACTION: <for whoever owns that category>
+- UNCERTAIN: <what remains open, or none>
+```
+
+The category decides who fixes it, and misrouting is expensive:
+
+- **IMPLEMENTATION** — the code does not do what the design requires. Back to
+  the task.
+- **PLAN** — the task, its ordering, or its prerequisites are wrong. Back to the
+  task plan.
+- **ARTIFACT** — the requirements or design specify something unworkable, or
+  contradict each other. **No amount of implementation effort fixes this**, and
+  handing it back as an implementation defect produces repeated attempts at work
+  that cannot succeed.
+- **ENVIRONMENT** — the system is not in the state the work assumes. Usually
+  outside the change entirely.
+
+Describe what must become true rather than dictating a diff, unless the exact
+edit is itself the finding. The implementer has context you do not.
+
+**Say when you cannot diagnose it.** Report what you ruled out and what evidence
+would be needed. That is a useful result; a guess presented as a cause sends the
+next round in a direction chosen by nothing, and looks exactly like a real
+finding until it fails.
+
+## Boundaries
+
+- Write nothing. No fix, no implementation notes, no task state, no gate.
+- Diagnose one failure and return. Counting rounds belongs to the run that
+  dispatched you.
+- Report in the project's language, with the block above intact.

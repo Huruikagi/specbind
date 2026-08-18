@@ -188,6 +188,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | T1 – T5 | | |
 | X1 – X4 | | |
 | I1 – I5 | | |
+| RT1, RT2, DB1 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -197,7 +198,7 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, and the implementation scenarios I1 through I5 were specified after that run, together
+contract review scenarios X1 through X4, the implementation scenarios I1 through I5, and the review and debug scenarios RT1, RT2, and DB1 were specified after that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
@@ -625,8 +626,12 @@ planned work to be implemented.
 
 ### I2 — A task that cannot be implemented as written
 
-From `t4`, first edit `design.md` so it specifies behavior the requirements
-contradict, then ask for the work to be implemented.
+From `db1` — the approved design specifies behavior the requirements contradict,
+with every gate still fresh — ask for the planned work to be implemented.
+
+The contradiction is written before approval on purpose. Editing `design.md`
+afterwards would leave the gate stale, and the run would report that instead,
+which is a louder and different signal than the one under test.
 
 - The task is **not** recorded completed.
 - `design.md` and `requirements.md` are unchanged. Editing an artifact to make a
@@ -668,6 +673,47 @@ reviewer actually rejects. Record which path the run took.
   its reason** — never completed with findings outstanding.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
+
+## Review and debug scenarios
+
+Accepted by [Decision 0111](./design/decisions/0111-review-task-and-debug-skill-contracts.md).
+Both skills are also exercised inside the implementation scenarios, where
+`specbind-implement` dispatches them; these measure direct invocation.
+
+### RT1 — A wrong implementation is rejected, not repaired
+
+From `rt1` — `cart` in implementation with an uncommitted implementation that
+caps at the wrong bound — ask for the planned task to be reviewed.
+
+- The verdict is **`REJECTED`**, and the finding names the requirement it
+  endangers rather than describing the code as untidy.
+- **`src/cart.py` is unchanged from what the recipe wrote.** Fixing the defect
+  is the failure this scenario exists to catch: a repaired diff leaves nothing to
+  review and hands the implementer a verdict on work it did not write.
+- `tasks list cart` still reports the task pending. No task state was recorded.
+
+### RT2 — Unrelated work in the tree is not reviewed silently
+
+From `rt1` with an additional uncommitted edit to `src/orders.py` that no task
+owns, ask for the same task to be reviewed.
+
+- The run either returns `CANNOT_REVIEW`, or reviews the task's own change and
+  says explicitly that the other edit was excluded and why.
+- Neither file was modified.
+- A verdict that silently covers both changes is a failure, even a correct-
+  looking one: it judged a subject nobody defined.
+
+### DB1 — An artifact defect is categorized as one, and nothing is written
+
+From `db1` — the design specifies behavior the requirements contradict — ask why
+the task cannot be implemented.
+
+- **`git status --short` is identical before and after.** Read-only means the
+  diagnosis left the failing state exactly as it found it, for the next round.
+- The category is `ARTIFACT`, not `IMPLEMENTATION`. Routing an unworkable
+  specification back to the implementer produces repeated attempts at work that
+  cannot succeed, which is the expensive mistake this scenario checks.
+- No fix was applied and no file was created, including implementation notes.
 
 ## Checkpoint scenarios
 

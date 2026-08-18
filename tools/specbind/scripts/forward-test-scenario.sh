@@ -40,6 +40,9 @@
 #   x4     d10's state: a Direct-only milestone that needs no review
 #   i3     a Direct item still pending, for the run under test to implement
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
+#   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
+#   rt2    rt1 plus unrelated uncommitted work no task owns
+#   db1    t4 whose approved design contradicts the requirements, gates fresh
 
 set -eu
 
@@ -120,7 +123,13 @@ cart_cap_approved() {
 
 # Decision 0061 wants the Front Matter set and the union of the body markers to
 # match exactly, so both list the same four IDs.
+#
+# The mechanism sentence is a parameter because one scenario needs a design that
+# contradicts the requirements. Writing that before approval keeps every gate
+# fresh, so the run meets the contradiction itself rather than a stale-gate
+# report, which is a louder and different signal.
 cart_design_approved() {
+    mechanism=${1:-"cap, and leaves the cart unchanged when either bound is violated."}
     {
         echo "---"
         echo "type: SpecBind Design"
@@ -137,7 +146,7 @@ cart_design_approved() {
         echo "## Holding and capping quantities"
         echo
         echo "add_item reads the current held quantity, applies the floor and the"
-        echo "cap, and leaves the cart unchanged when either bound is violated."
+        echo "$mechanism"
         echo
         echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
     } > .specbind/specs/cart/design.md
@@ -407,11 +416,15 @@ ds4 | t1 | t2 | x1)
     fi
     ;;
 
-d7 | t4 | i4)
+d7 | t4 | i4 | rt1 | rt2 | db1)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
-    cart_design_approved
+    if [ "$scenario" = db1 ]; then
+        cart_design_approved "cap, silently trimming the addition to the cap instead of rejecting it."
+    else
+        cart_design_approved
+    fi
     contract_review_accepted
     {
         echo "schema_version: 1"
@@ -426,6 +439,37 @@ d7 | t4 | i4)
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    if [ "$scenario" = rt1 ] || [ "$scenario" = rt2 ]; then
+        # An implementation that caps at the wrong bound and never states the
+        # largest accepted quantity. Left uncommitted so the diff is the change
+        # under review. A correct review rejects it and repairs nothing.
+        leave_dirty=yes
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up the $scenario scenario"
+        {
+            echo '"""Holds items a customer intends to buy."""'
+            echo
+            echo
+            echo "def add_item(cart, sku, quantity):"
+            echo "    if quantity < 1:"
+            echo '        raise ValueError("quantity must be at least 1")'
+            echo "    cart.setdefault(sku, 0)"
+            echo "    if cart[sku] + quantity > 100:"
+            echo '        raise ValueError("too many")'
+            echo "    cart[sku] += quantity"
+            echo "    return cart"
+        } > src/cart.py
+        expect "the wrong implementation did not apply" \
+            'grep -q "> 100" src/cart.py'
+        if [ "$scenario" = rt2 ]; then
+            # Unrelated work no task owns, so the reviewer has to decide what it
+            # is reviewing instead of taking the whole tree.
+            printf '\n# unrelated experiment\n' >> src/orders.py
+            expect "the unrelated edit did not apply" \
+                'test -n "$(git status --porcelain src/orders.py)"'
+        fi
+    fi
     if [ "$scenario" = i4 ]; then
         # An unrelated uncommitted edit. The run must leave it exactly as it is;
         # rescuing the worktree destroys work the user has not seen.

@@ -50,6 +50,10 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../assets/skills/specbind-contract-review/SKILL.md"),
     },
     Skill {
+        name: "specbind-debug",
+        source: include_str!("../assets/skills/specbind-debug/SKILL.md"),
+    },
+    Skill {
         name: "specbind-design",
         source: include_str!("../assets/skills/specbind-design/SKILL.md"),
     },
@@ -64,6 +68,10 @@ static SKILLS: &[Skill] = &[
     Skill {
         name: "specbind-requirements",
         source: include_str!("../assets/skills/specbind-requirements/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-review-task",
+        source: include_str!("../assets/skills/specbind-review-task/SKILL.md"),
     },
     Skill {
         name: "specbind-status",
