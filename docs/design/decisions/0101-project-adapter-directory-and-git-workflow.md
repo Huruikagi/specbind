@@ -222,6 +222,12 @@ approval intact and is reported as uncommitted.
 The conformance check covers the adapter invocation; it was confirmed to reject
 a renamed `adapter` route.
 
+A forward test confirms the consuming side: with a Git adapter carrying real
+policy, a run committed after the approval with the required message prefix,
+staged only the paths it produced, and neither pushed nor changed branch. With
+the adapter left as its installed scaffold, other runs committed nothing and did
+not stop to ask about it.
+
 The release skill is not embedded, so the release adapter has an installer and a
 read surface but no consumer yet. Later skills carry the checkpoint step from the
 start. An

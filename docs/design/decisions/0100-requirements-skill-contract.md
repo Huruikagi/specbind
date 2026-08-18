@@ -135,6 +135,19 @@ Authority is one of two things, never their absence:
   the selection is still stated in the report so the delegation remains
   auditable.
 
+  The workflow label comes from that run context and is never invented. Decision
+  0012 has it identify the accelerated workflow whose authority is being
+  exercised, so a name the skill made up identifies nothing and turns the one
+  auditable trace of a skipped confirmation into a fiction. When no name was
+  given, there is no delegation: the skill presents its result and stops.
+
+  A forward test reached this by the other road. Told only that the content was
+  pre-approved, an agent chose delegated, had no label, and probed the command
+  with a placeholder to learn whether the flag was validated — which recorded a
+  real approval, because approval has no dry run. It caught and corrected that
+  itself. The rule above removes the reason to experiment: a mutating command is
+  never the way to find out what it accepts.
+
 Absence of a prompt, a non-interactive invocation, and a scripted run grant no
 authority. Without either form, the skill presents its result and stops.
 
@@ -216,4 +229,7 @@ The Decision 0096 conformance check covers its invocations; it was confirmed to
 reject both a renamed `spec requirements invalidate` route and an unknown
 `--delegation-flow` option. Its forward tests are specified as scenarios R1
 through R5 in [Skill forward tests](../../skill-forward-tests.md) and are run
-manually.
+manually. R1, R3, R4, and R5 have passed against a fixture project: the first
+authoring of a new Spec stops short of the Contract, a requested retirement stops
+before editing, absent authority produces a complete document and no approval,
+and an approved gate is invalidated only after the cost is stated and confirmed.

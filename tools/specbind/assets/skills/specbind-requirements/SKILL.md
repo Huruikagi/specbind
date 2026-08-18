@@ -156,6 +156,15 @@ for this gate. Authority is one of two things, never their absence:
   check still runs, and you still state the selection in your report so the
   delegation stays auditable.
 
+  **The workflow name comes from that context. Never invent one.** It identifies
+  the authority you are exercising, so a name you made up identifies nothing and
+  makes the record of a skipped confirmation false. If you were told the content
+  is pre-approved but given no workflow name, you do not have a delegation —
+  present your result and stop.
+
+Never run a mutating command to find out what it accepts. Approval has no dry
+run, so a probe with a placeholder value records a real approval.
+
 ```sh
 specbind spec requirements approve <spec> --approval-mode explicit --requirement-ids <ids>
 ```
