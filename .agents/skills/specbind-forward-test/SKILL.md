@@ -63,6 +63,18 @@ The prompt gives three things and nothing else:
 
 Then ask only what it changed and what it ran.
 
+**Neutralize this repository's instructions.** A subagent is not a clean room: it
+carries the host session's `CLAUDE.md`, not the fixture's. This repository's own
+instructions tell an agent to answer in Japanese and to commit each finished unit
+to `main` — and the checkpoint scenarios exist to measure whether the agent
+commits. State in the prompt that the fixture is a standalone project and that
+instructions from any other repository do not apply to it. That is environment
+hygiene, not method.
+
+A run reporting in Japanese against an `en` fixture is the visible symptom. Treat
+it as a signal that the contamination is active, and re-read any checkpoint
+result taken from the same batch.
+
 **Never name a skill or a command in the prompt.** Whether the agent finds and
 uses the installed skill is the thing under test; telling it teaches the answer.
 

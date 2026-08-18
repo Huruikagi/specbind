@@ -61,6 +61,12 @@ A subagent works, and lets you pin the model. Two rules keep it honest.
 `specbind` is on PATH, and then give the maintainer's request as a maintainer
 would phrase it. Naming a skill or a command teaches the answer.
 
+**Say the fixture stands alone.** A subagent inherits the host session's project
+instructions rather than the fixture's, so this repository's rules about
+answering in Japanese and committing to `main` travel with it. The checkpoint
+scenarios measure whether the agent commits, so that inheritance can produce a
+failure the skill did not cause.
+
 **Expect a confirmation turn.** Every scenario that ends in a mutation needs one.
 The skills confirm scope with the user before changing anything, so a single-shot
 run correctly stops with a proposal and an empty repository — that is the skill
