@@ -185,6 +185,11 @@ Run D3, then drive `cart` through requirements, design, and tasks approval —
 `spec status cart` should report `state=implementation`. Then ask to split one
 planned task into two without changing behavior.
 
+This scenario cannot be measured until `specbind-tasks` is embedded. No command
+authors plan content, so with no skill owning that authoring an agent has no
+sanctioned way to revise the plan and correctly stops. A run against a build
+without that skill measures its absence, not the rewind rule.
+
 - No new Roadmap item appeared. Refining work already in scope is not a new
   Direct item.
 - `spec status cart` reports the tasks gate cleared and `state=tasks`.

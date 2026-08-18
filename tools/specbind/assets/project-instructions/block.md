@@ -9,6 +9,7 @@ the only supported writer of machine state.
 - A request enters that flow when it changes what a Spec owns, adds a durable
   responsibility, or belongs to a delivery the project is tracking. Anything else
   is ordinary work: say in one line that it needs no Spec, and do it.
-- Never hand-edit `spec.yaml`, `tasks.yaml`, or the active roadmap. They are
-  CLI-owned, and a hand edit produces state no command validated.
+- Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
+  `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
+  validated. The task plan itself is authored, by the skill that owns it.
 - Run `specbind --help` if the command is unfamiliar or appears unavailable.

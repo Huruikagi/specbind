@@ -32,7 +32,8 @@ The block establishes the system and its boundary. It contains:
 - that this project uses SpecBind, and that the `specbind` CLI is the interface
 - that the installed `specbind-*` skills are the entry points, naming discovery
   and status as the two starting points
-- that CLI-owned machine state is never hand-edited
+- that CLI-owned machine state is never hand-edited, stated precisely enough to
+  exclude the parts that are authored
 
 It contains nothing else. In particular it does not restate:
 
@@ -96,7 +97,7 @@ The block is English, like every other product-managed agent-facing asset. Only
 Decision 0059 templates are localized, because they scaffold artifacts the
 project authors in its own language; this block is instruction to the agent.
 
-The asset's initial content is:
+The asset currently reads:
 
 ```markdown
 ## SpecBind
@@ -107,10 +108,22 @@ the only supported writer of machine state.
 
 - Work through the installed `specbind-*` skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
-- Never hand-edit `spec.yaml`, `tasks.yaml`, or the active roadmap. They are
-  CLI-owned, and a hand edit produces state no command validated.
+- A request enters that flow when it changes what a Spec owns, adds a durable
+  responsibility, or belongs to a delivery the project is tracking. Anything else
+  is ordinary work: say in one line that it needs no Spec, and do it.
+- Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
+  `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
+  validated. The task plan itself is authored, by the skill that owns it.
 - Run `specbind --help` if the command is unfamiliar or appears unavailable.
 ```
+
+The machine-state line names its targets exactly. An earlier wording grouped
+`tasks.yaml` with `spec.yaml` and the roadmap, which forbade the only way a task
+plan can be written: no command authors plan content, and Decisions 0024 and 0095
+give the CLI only the execution state inside that file. A forward test found it —
+an agent drafted a plan revision, reverted it on reading the block, and stopped
+with nothing left to do. Always-loaded context reaches every agent in every
+installed project, so an over-broad prohibition there is not a wording problem.
 
 ### Targets
 
