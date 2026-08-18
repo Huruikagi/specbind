@@ -24,3 +24,22 @@ Brownfield gap analysis may require enough investigation that a run-scoped repor
 - Design remains self-contained after milestone-local artifacts are removed.
 - Optionality is represented by file absence, and Git provides attempt history.
 
+## Implementation status
+
+The non-deference check assigned above to `specbind-validate-design` has its
+semantic baseline in the `design-validation` protocol, under the criterion that
+a Design must stand on its own.
+
+That placement follows the [Decision 0092](./0092-template-skill-authoring-boundary.md)
+allocation test rather than narrowing this decision. The obligation must survive
+a project replacing every template and rule, and it is needed at both moments the
+protocol serves: [Decision 0104](./0104-design-skill-contract.md) requires the
+design skill to apply the same standard to its own draft before seeking approval.
+Leaving the check only in the independent validation skill would mean a Design
+could be authored, reviewed, and approved with a deferred decision intact,
+because the one skill that checks for it is not a precondition of any gate.
+
+`specbind-validate-design` remains the skill that reports it independently, and
+`design-authoring` states the authoring side of the same rule: Research is
+referenced for background, never for a conclusion.
+

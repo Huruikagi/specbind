@@ -57,6 +57,27 @@ not reviewed anything.
 - A section too vague for a task to reference directly must be rewritten before
   the Design is considered ready.
 
+## It must stand on its own
+
+The Design is read after the milestone that produced it has closed, by people
+who did not participate in it. Everything it needs to mean must be inside it.
+
+- A decision that matters is stated in the Design, not referenced. Research,
+  investigation notes, a ticket, a conversation, or a prior review may be cited
+  as background; none of them may carry the meaning.
+- **Research is the case to check deliberately.** It is milestone-local: it is
+  excluded from every gate fingerprint, so editing it invalidates nothing, and
+  release finalization deletes it. A Design that defers a normative decision to
+  Research is therefore not merely inconvenient to read later — it becomes
+  incomplete at release, with nothing reporting the loss.
+- The test is a deletion test. Remove the referenced document and read the
+  Design again: if a requirement, constraint, interface, or rationale is now
+  missing or ambiguous, the Design was depending on it. Reference the source for
+  context, then restate the conclusion in the Design itself.
+- The same applies to a reference into source code as the definition of intended
+  behavior. Code states what the system does now; the Design states what it must
+  do.
+
 ## It must fit the system it enters
 
 - Integration with existing boundaries, layers, and module organization is part
@@ -85,12 +106,13 @@ not reviewed anything.
 
 A Design is ready when every active Requirement is substantively realized, the
 owned boundary is explicit and inspectable, the work can be decomposed into
-bounded tasks, and it fits the existing architecture with proportionate
-complexity and acceptable, stated risk.
+bounded tasks, the document carries its own meaning, and it fits the existing
+architecture with proportionate complexity and acceptable, stated risk.
 
 It is not ready when it conflicts with the existing architecture in a way the
 Design does not resolve, leaves a material requirement unaddressed, hides a
-prerequisite, or carries complexity out of proportion to what was asked.
+prerequisite, defers a decision to a document that will not survive the
+milestone, or carries complexity out of proportion to what was asked.
 
 Uncertainty is not a verdict. When readiness cannot be judged from the Design as
 written, that itself is a finding: the Design does not yet stand on its own.
