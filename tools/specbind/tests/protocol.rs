@@ -1,7 +1,7 @@
 use specbind::protocol;
 
 /// The complete Decision 0094 v1 selector set, in accepted order.
-const ACCEPTED_SELECTORS: [&str; 8] = [
+const ACCEPTED_SELECTORS: [&str; 11] = [
     "okf-authoring",
     "requirements-review",
     "design-discovery",
@@ -9,6 +9,9 @@ const ACCEPTED_SELECTORS: [&str; 8] = [
     "design-validation",
     "gap-analysis",
     "task-planning",
+    "task-implementation",
+    "task-review",
+    "debug",
     "contract-review",
 ];
 

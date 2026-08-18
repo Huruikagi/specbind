@@ -60,6 +60,21 @@ static PROTOCOLS: &[Protocol] = &[
         content: include_str!("../assets/protocols/task-planning.md"),
     },
     Protocol {
+        selector: "task-implementation",
+        purpose: "Definition-of-done derivation, artifact authority, verification duty, and the stop conditions for implementing one Task.",
+        content: include_str!("../assets/protocols/task-implementation.md"),
+    },
+    Protocol {
+        selector: "task-review",
+        purpose: "Diff-first independent verdict on one implemented Task, its finding quality, and the closed verdict set.",
+        content: include_str!("../assets/protocols/task-review.md"),
+    },
+    Protocol {
+        selector: "debug",
+        purpose: "Fresh-context root-cause establishment, failure categorization, and the contents of an actionable diagnosis.",
+        content: include_str!("../assets/protocols/debug.md"),
+    },
+    Protocol {
         selector: "contract-review",
         purpose: "Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline.",
         content: include_str!("../assets/protocols/contract-review.md"),

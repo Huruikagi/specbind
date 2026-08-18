@@ -182,3 +182,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0107](./design/decisions/0107-spec-status-contract-review-barrier.md) | Accepted | Contract-review barrier reported in Spec status from the tasks state onward |
 | [0108](./design/decisions/0108-contract-review-skill-contract.md) | Accepted | Reads, baseline comparison, deep-input discipline, remediation, and acceptance for the contract review skill |
 | [0109](./design/decisions/0109-subagent-dispatch-contract.md) | Accepted | Fresh-context subagent dispatch, its neutral expression, and the structured return |
+| [0110](./design/decisions/0110-implement-skill-contract.md) | Accepted | Item selection, per-task dispatch cycle, bounded failure routing, and where the implement run stops |

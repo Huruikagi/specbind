@@ -38,6 +38,8 @@
 #   x2     ds5 with cart's approved design removing the export checkout consumes
 #   x3     cart in tasks state with a plan already written and no review
 #   x4     d10's state: a Direct-only milestone that needs no review
+#   i3     a Direct item still pending, for the run under test to implement
+#   i4     t4 plus an unrelated uncommitted edit the run must not touch
 
 set -eu
 
@@ -405,7 +407,7 @@ ds4 | t1 | t2 | x1)
     fi
     ;;
 
-d7 | t4)
+d7 | t4 | i4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
@@ -424,6 +426,17 @@ d7 | t4)
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    if [ "$scenario" = i4 ]; then
+        # An unrelated uncommitted edit. The run must leave it exactly as it is;
+        # rescuing the worktree destroys work the user has not seen.
+        leave_dirty=yes
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up the i4 scenario"
+        printf '\n# pending experiment\n' >> src/orders.py
+        expect "the unrelated edit did not apply" \
+            'test -n "$(git status --porcelain src/orders.py)"'
+    fi
     ;;
 
 t3)
@@ -460,6 +473,16 @@ t3)
         'specbind tasks list cart | grep -q "2 completed"'
     expect "task 3 is not the remaining pending one" \
         'specbind tasks list cart | grep -q "\[pending actionable\] 3 "'
+    ;;
+
+i3)
+    # The same Direct item as d10, left pending: the run under test is what
+    # implements and completes it.
+    milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
+    expect "the Direct item is not pending" \
+        'specbind milestone status | grep -q "0/1 completed"'
+    expect "the guide already exists" \
+        '! test -e CONTRIBUTING.md'
     ;;
 
 d10 | x4)

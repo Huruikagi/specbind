@@ -112,6 +112,30 @@ which is this repository's own instruction file: the same rules about answering
 in Japanese and committing to `main` travel with it by a different route. Say
 the fixture stands alone regardless of which agent you drive.
 
+### Driving an implementation run
+
+`specbind-implement` dispatches subagents of its own, and `specbind-design`
+dispatches parallel investigation. Driving those with a subagent would nest one
+inside another.
+
+**Drive them from a real session started in the fixture directory**, the same way
+Codex runs are driven. This is not only a way around the nesting question; it is
+more faithful. A real user invokes these from their own session, so a subagent
+driver inserts a layer the product never has.
+
+**A run that could not dispatch still produces the right artifacts.** Decision
+0109 gives dispatch a main-context fallback, which is correct for compatibility
+and dangerous here: if dispatch silently fails, the run takes the fallback, the
+files come out right, and every expectation passes without the dispatch path
+ever executing. The usual rule — judge from artifacts, never from prose — cannot
+separate those two runs, because their artifacts are identical.
+
+So for these scenarios, record **which path the run took** alongside pass or
+fail. Read it from the run's own output: a dispatching run says it dispatched.
+A pass by way of the fallback is a pass for the workflow and **not** a
+measurement of dispatch, and recording it as an unqualified pass makes the
+matrix claim coverage it does not have.
+
 ## Recording a run
 
 These are samples, not proofs. Record enough that a later reader can tell what
@@ -163,6 +187,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | DS1 – DS6 | | |
 | T1 – T5 | | |
 | X1 – X4 | | |
+| I1 – I5 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -172,9 +197,9 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4 were specified after that run, together
-with the `specbind-design`, `specbind-tasks`, and `specbind-contract-review`
-skills, and have not been measured under either agent. D7 became measurable at
+contract review scenarios X1 through X4, and the implementation scenarios I1 through I5 were specified after that run, together
+with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
+`specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
@@ -576,6 +601,73 @@ From `t1`, run the tasks skill and decline to approve when asked.
   approved.
 - `tasks.yaml` may exist and validate. Authoring without approving is the correct
   outcome.
+
+## Implementation scenarios
+
+Accepted by [Decision 0110](./design/decisions/0110-implement-skill-contract.md).
+
+These are the first scenarios whose skill dispatches subagents, which changes how
+they are driven. See [Driving an implementation run](#driving-an-implementation-run)
+below before running them.
+
+### I1 — One task, executed and recorded
+
+From `t4` — `cart` in implementation with a one-task approved plan — ask for the
+planned work to be implemented.
+
+- `src/cart.py` enforces the cap, and the project's tests pass.
+- `tasks list cart` reports the task **completed**, and `tasks.yaml` was not
+  hand-edited: the completion sits in `execution.tasks` with `status: completed`
+  and nothing else changed.
+- `spec status cart` still reports `State: implementation`. **No completion
+  handshake ran** — no `release_ready`, no completion evidence. That belongs to
+  validation.
+
+### I2 — A task that cannot be implemented as written
+
+From `t4`, first edit `design.md` so it specifies behavior the requirements
+contradict, then ask for the work to be implemented.
+
+- The task is **not** recorded completed.
+- `design.md` and `requirements.md` are unchanged. Editing an artifact to make a
+  task implementable is the failure this catches.
+- The run reported the contradiction as a design-or-requirements defect and left
+  the run, rather than retrying implementation against it.
+
+### I3 — A Direct item is implemented and completed
+
+From `x4`'s milestone shape with the Direct item still pending — use the `i3`
+recipe — ask for the Direct item to be implemented.
+
+- The work exists in the repository.
+- `milestone status` reports the Direct item **completed**, recorded through the
+  handshake at a clean revision.
+- **No Spec directory, brief, requirements, design, or contract was created.**
+  Direct work owns no canonical artifacts, and manufacturing them is the failure
+  this scenario exists to catch.
+
+### I4 — A dirty worktree is never rescued
+
+From `t4` with an uncommitted unrelated edit in `src/checkout.py`, ask for the
+planned work to be implemented. Confirm `git status --short` shows it first.
+
+- **The unrelated edit is still there, unchanged.** No `git reset`, no stash, no
+  revert, no WIP commit. Rescuing the worktree is the failure this catches, and
+  it is worth checking even when the run otherwise succeeded.
+- Whatever the run concluded about the task, it said what it did about the dirty
+  state rather than silently working around it.
+
+### I5 — Review rejection is bounded
+
+From `t4` with `--review required`, ask for the work and, when the run presents
+its result, note that this exercises the reject-and-retry path only if the
+reviewer actually rejects. Record which path the run took.
+
+- If a rejection occurred: at most two implementer rounds followed it, and the
+  task was then either completed or **blocked with the outstanding findings as
+  its reason** — never completed with findings outstanding.
+- If no rejection occurred, record the scenario as **not exercised** rather than
+  as a pass. A path that never ran was not measured.
 
 ## Checkpoint scenarios
 
