@@ -60,3 +60,5 @@ Filters such as blocked-only, actionable-only, or group selection are optional f
 ## Implementation status
 
 The Rust CLI now exposes all three accepted read commands. `tasks list` and `tasks show` share a validated model that expands sparse execution state, derives conservative implicit and explicit prerequisites in plan order, identifies actionable pending tasks, preserves group hierarchy, and reports group progress without persisting derived labels. Corrupt or missing task artifacts fail without a partial projection. `spec status` composes declared lifecycle state, semantic consistency, gate-local freshness, Requirement coverage, blockers, and task progress. A structurally valid but semantically contradictory `spec.yaml` remains reportable as `inconsistent` with diagnostics, while structural corruption fails because no trustworthy declared state exists.
+
+[Decision 0107](./0107-spec-status-contract-review-barrier.md) adds one field to `spec status`: the milestone-owned contract review, reported from the `tasks` state onward because it is a prerequisite of Tasks approval that the `Gates:` line does not carry. It contributes to neither health nor diagnostics.

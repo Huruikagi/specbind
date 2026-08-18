@@ -22,12 +22,15 @@ specbind milestone review status
 **The contract review must be accepted before a plan exists.** Proceed only on
 `Status: fresh`.
 
+From the `tasks` state onward `spec status` also reports `Contract review:`, so
+either command answers this. Read whichever you already ran.
+
 On `absent` or `stale`, author nothing and route the user to
-`specbind-contract-review`. Say why, because the reason is not visible from
-here: `milestone review accept` refuses while a `tasks.yaml` is present
+`specbind-contract-review`. Say why, because the consequence is not visible from
+either report: `milestone review accept` refuses while a `tasks.yaml` is present
 (`CONTRACT_REVIEW_TASKS_ALREADY_EXIST`). Writing the plan now turns a missing
 prerequisite into a deadlock whose only exit is deleting the plan you just
-wrote. Nothing you can run from this phase would have told you.
+wrote.
 
 This check is for **first authoring**. A plan that already exists and is being
 revised does not re-enter that path — `tasks invalidate` keeps the accepted

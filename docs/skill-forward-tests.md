@@ -475,7 +475,7 @@ ask for the work to be planned.
   deadlocks the acceptance that has to come next, and nothing the tasks phase can
   run would have said so.
 - `milestone review status` still reports `absent`, and `spec status cart` still
-  reports `State: tasks`.
+  reports `State: tasks` with `Contract review: absent`.
 - The agent named the ordering and routed to the contract review, rather than
   reporting a generic blocker. Read this from the run's own output.
 

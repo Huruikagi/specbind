@@ -179,3 +179,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0104](./design/decisions/0104-design-skill-contract.md) | Accepted | Reads, Contract update timing, approval, and rewind for the design skill |
 | [0105](./design/decisions/0105-tasks-skill-contract.md) | Accepted | Review ordering, schema-driven authoring, renumbering safety, and approval for the tasks skill |
 | [0106](./design/decisions/0106-contract-review-naming.md) | Accepted | Rename of the cross-spec review to the contract review |
+| [0107](./design/decisions/0107-spec-status-contract-review-barrier.md) | Accepted | Contract-review barrier reported in Spec status from the tasks state onward |

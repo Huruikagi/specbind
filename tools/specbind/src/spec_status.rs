@@ -4,6 +4,7 @@ use std::{collections::BTreeSet, path::Path};
 
 use crate::{
     artifacts::{self, ArtifactKind, DiscoveryIssue},
+    cross_spec_review::{self, ReviewFreshnessStatus},
     freshness::{self, ArtifactFreshnessReport, FreshnessStatus},
     schema::spec::v1::WorkflowState,
     task_read_model::TaskReadModel,
@@ -42,6 +43,10 @@ pub struct SpecStatusModel {
     pub milestone_id: Option<String>,
     pub health: ConsistencyHealth,
     pub freshness: ArtifactFreshnessReport,
+    /// Milestone-owned contract review, reported only where it is a prerequisite
+    /// of something this Spec still needs. It never affects `health`, because
+    /// Decision 0078 keeps the review out of the per-Spec invariant.
+    pub contract_review: Option<ReviewFreshnessStatus>,
     pub task_model: Option<TaskReadModel>,
     pub blockers: Vec<TaskBlocker>,
     pub coverage: Option<RequirementCoverage>,
@@ -115,17 +120,48 @@ pub fn resolve(
     } else {
         ConsistencyHealth::Inconsistent
     };
+    let contract_review = contract_review(project_root, specbind_root, declared_state);
 
     Ok(SpecStatusModel {
         declared_state,
         milestone_id,
         health,
         freshness,
+        contract_review,
         task_model,
         blockers,
         coverage,
         diagnostics,
     })
+}
+
+/// Resolves the milestone-owned contract review where it gates this Spec.
+///
+/// Before the `tasks` state the review is not yet runnable, because acceptance
+/// requires every participating Spec to hold current Design approval. Reporting
+/// its absence there would describe an expected condition as a finding, so the
+/// evaluation is skipped entirely and its Git work is not paid for.
+fn contract_review(
+    project_root: &Path,
+    specbind_root: &Path,
+    declared_state: Option<WorkflowState>,
+) -> Option<ReviewFreshnessStatus> {
+    if !matches!(
+        declared_state,
+        Some(WorkflowState::Tasks | WorkflowState::Implementation | WorkflowState::ReleaseReady)
+    ) {
+        return None;
+    }
+    let report = cross_spec_review::evaluate_freshness(project_root, specbind_root);
+    // An absent `milestone_id` means no trustworthy active Roadmap was parsed, so
+    // the review could not be evaluated at all. Reporting `invalid` here would
+    // send a reader looking for a broken review file when the fault is the
+    // Roadmap, which the milestone read model already reports with the
+    // diagnostics that name it.
+    report.milestone_id.as_ref()?;
+    // A Direct-only Roadmap cannot participate this Spec, so `NotRequired` is a
+    // contradiction the milestone read model owns rather than a barrier here.
+    (report.status != ReviewFreshnessStatus::NotRequired).then_some(report.status)
 }
 
 fn task_blockers(model: &TaskReadModel) -> Vec<TaskBlocker> {

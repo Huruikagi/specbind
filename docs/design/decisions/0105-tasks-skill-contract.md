@@ -38,13 +38,21 @@ while a plan is present.
 
 Read from the tasks phase, that is a trap rather than a guard. An agent that
 authors the plan first has not violated a check it could see: `tasks list`
-validates the plan happily, `spec status` reports nothing wrong, and the refusal
-arrives later, in a different command, run by a different skill, naming a file
-the tasks phase considers its own output. The only way out is deleting an
-authored plan, which looks like destroying work rather than restoring an order.
+validates the plan happily, and the refusal arrives later, in a different
+command, run by a different skill, naming a file the tasks phase considers its
+own output. The only way out is deleting an authored plan, which looks like
+destroying work rather than restoring an order.
 
 No accepted decision states the constraint in the direction the tasks phase
 travels. This decision does, and assigns the check to this skill.
+
+When this decision was taken, `spec status` also reported nothing about the
+review, so the skill's check was the only thing standing between an agent and
+that trap. [Decision 0107](./0107-spec-status-contract-review-barrier.md)
+subsequently made the barrier visible in Spec status from the `tasks` state
+onward. The check here is unchanged and remains required: the CLI now reports
+that the review is missing, but nothing except this skill states that authoring
+a plan first is what makes recovering from it expensive.
 
 ## Decision
 

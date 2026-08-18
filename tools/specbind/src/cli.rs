@@ -2218,6 +2218,13 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
             spec_status::freshness_name(model.freshness.completion.status),
         ),
     );
+    if let Some(review) = model.contract_review {
+        push_field(
+            &mut output,
+            "Contract review",
+            milestone_status::review_name(review),
+        );
+    }
     render_status_tasks(model, &mut output);
     render_status_coverage(model, &mut output);
     render_status_diagnostics(model, &mut output);

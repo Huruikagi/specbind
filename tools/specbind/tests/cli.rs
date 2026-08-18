@@ -2417,6 +2417,53 @@ fn blocks_tasks_approval_without_a_fresh_contract_review() {
         );
 }
 
+/// The review is a prerequisite of Tasks approval that lives outside the Spec.
+/// Before this line existed, a Spec sitting behind the barrier reported
+/// `Blockers: none` with no indication that its next transition was refused.
+#[test]
+fn reports_the_contract_review_barrier_from_the_tasks_state_onward() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+
+    let status = |root: &Path| {
+        let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+        let output = command
+            .current_dir(root)
+            .args(["spec", "status", "checkout"])
+            .output()
+            .expect("spec status runs");
+        String::from_utf8(output.stdout).expect("status is UTF-8")
+    };
+
+    // The review is not runnable until every participating Spec holds Design
+    // approval, so its absence in the `design` state is expected, not a barrier.
+    assert!(
+        !status(root.path()).contains("Contract review:"),
+        "the design state must not report a review that cannot yet run"
+    );
+
+    approve_design(root.path());
+    assert!(
+        status(root.path()).contains("\n  Contract review: absent\n"),
+        "the tasks state must report the missing review"
+    );
+
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Assessed."))
+        .assert()
+        .success();
+
+    let fresh = status(root.path());
+    assert!(fresh.contains("\n  Contract review: fresh\n"));
+    // Decision 0078 keeps the milestone-owned review out of the per-Spec
+    // invariant, so it never moves this Spec's health.
+    assert!(fresh.contains("\n  Health: consistent\n"));
+}
+
 #[test]
 fn invalidates_one_gate_and_clears_only_its_downstream_evidence() {
     let root = project_fixture();
