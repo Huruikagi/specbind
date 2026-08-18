@@ -61,6 +61,10 @@ static SKILLS: &[Skill] = &[
         name: "specbind-status",
         source: include_str!("../assets/skills/specbind-status/SKILL.md"),
     },
+    Skill {
+        name: "specbind-tasks",
+        source: include_str!("../assets/skills/specbind-tasks/SKILL.md"),
+    },
 ];
 
 /// Lists every embedded skill.

@@ -177,3 +177,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0102](./design/decisions/0102-workflow-entry-condition.md) | Accepted | When a request enters the SpecBind workflow at all |
 | [0103](./design/decisions/0103-schema-read-surface.md) | Accepted | Embedded artifact and command-input schemas readable through the CLI |
 | [0104](./design/decisions/0104-design-skill-contract.md) | Accepted | Reads, Contract update timing, approval, and rewind for the design skill |
+| [0105](./design/decisions/0105-tasks-skill-contract.md) | Accepted | Review ordering, schema-driven authoring, renumbering safety, and approval for the tasks skill |

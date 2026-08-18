@@ -30,6 +30,10 @@
 #   ds3    ds2 with the requirements edited afterwards, so that gate is stale
 #   ds4    cart with the design gate approved and the cross-spec review accepted
 #   ds5    ds2 plus a `checkout` Spec consuming the cart export
+#   t1     ds4's state: design approved and the review accepted, no plan yet
+#   t2     t1 without the accepted cross-spec review
+#   t3     an approved three-task plan with the first two already completed
+#   t4     d7's state: the tasks gate approved and cart in implementation
 
 set -eu
 
@@ -91,6 +95,57 @@ brief() {
     } > ".specbind/specs/$spec/brief.md"
     specbind artifact read "$spec" brief >/dev/null \
         || fail "the brief written for $spec is not a readable artifact"
+}
+
+# The cart quantity cap, approved. Five recipes need the same starting contract,
+# and building it five times is where they drift apart.
+cart_cap_approved() {
+    awk '{ print }
+         /^3\. A quantity below one is rejected/ {
+           print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
+         }' .specbind/specs/cart/requirements.md > requirements.tmp
+    mv requirements.tmp .specbind/specs/cart/requirements.md
+    expect "the cap criterion was not added" \
+        'specbind artifact read cart requirements | grep -q "exceed 99"'
+    specbind spec requirements approve cart \
+        --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
+        || fail "could not approve the requirements gate"
+}
+
+# Decision 0061 wants the Front Matter set and the union of the body markers to
+# match exactly, so both list the same four IDs.
+cart_design_approved() {
+    {
+        echo "---"
+        echo "type: SpecBind Design"
+        echo "artifact_id: main"
+        echo "requirement_ids:"
+        echo '  - "1.1"'
+        echo '  - "1.2"'
+        echo '  - "1.3"'
+        echo '  - "1.4"'
+        echo "---"
+        echo
+        echo "# Design"
+        echo
+        echo "## Holding and capping quantities"
+        echo
+        echo "add_item reads the current held quantity, applies the floor and the"
+        echo "cap, and leaves the cart unchanged when either bound is violated."
+        echo
+        echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
+    } > .specbind/specs/cart/design.md
+    specbind spec design approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the design gate"
+}
+
+# Decision 0078 requires this before Tasks authoring, and the acceptance itself
+# refuses to run while a task plan exists. Every recipe that writes a plan
+# accepts the review first.
+cross_spec_review_accepted() {
+    printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
+        | specbind milestone review accept --candidate - >/dev/null \
+        || fail "could not accept the cross-spec review"
 }
 
 leave_dirty=no
@@ -284,94 +339,33 @@ ds1)
         '! test -e .specbind/specs/order/contract.md'
     ;;
 
-ds4)
+ds4 | t1 | t2)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
-    awk '{ print }
-         /^3\. A quantity below one is rejected/ {
-           print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
-         }' .specbind/specs/cart/requirements.md > requirements.tmp
-    mv requirements.tmp .specbind/specs/cart/requirements.md
-    specbind spec requirements approve cart \
-        --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
-        || fail "could not approve the requirements gate"
-    {
-        echo "---"
-        echo "type: SpecBind Design"
-        echo "artifact_id: main"
-        echo "requirement_ids:"
-        echo '  - "1.1"'
-        echo '  - "1.2"'
-        echo '  - "1.3"'
-        echo '  - "1.4"'
-        echo "---"
-        echo
-        echo "# Design"
-        echo
-        echo "## Holding and capping quantities"
-        echo
-        echo "add_item reads the current held quantity, applies the floor and the"
-        echo "cap, and leaves the cart unchanged when either bound is violated."
-        echo
-        echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
-    } > .specbind/specs/cart/design.md
-    specbind spec design approve cart --approval-mode explicit >/dev/null \
-        || fail "could not approve the design gate"
-    # The accepted review is what makes the rewind expensive, and it is the part
-    # a user does not know they are discarding.
-    printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
-        | specbind milestone review accept --candidate - >/dev/null \
-        || fail "could not accept the cross-spec review"
+    cart_cap_approved
+    cart_design_approved
     expect "the design gate is not approved" \
         'specbind spec status cart | grep -q "design=fresh"'
-    expect "no accepted cross-spec review was written" \
-        'test -e .specbind/state/cross-spec-review.md'
+    expect "a task plan already exists" \
+        '! test -e .specbind/specs/cart/tasks.yaml'
+    if [ "$scenario" = t2 ]; then
+        # t2 measures what the tasks phase does when the review has not been
+        # accepted, so this is the one recipe that deliberately leaves it out.
+        expect "the cross-spec review is already accepted" \
+            'specbind milestone review status | grep -q "Status: absent"'
+    else
+        cross_spec_review_accepted
+        expect "no accepted cross-spec review was written" \
+            'test -e .specbind/state/cross-spec-review.md'
+    fi
     ;;
 
-d7)
+d7 | t4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
-    awk '{ print }
-         /^3\. A quantity below one is rejected/ {
-           print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
-         }' .specbind/specs/cart/requirements.md > requirements.tmp
-    mv requirements.tmp .specbind/specs/cart/requirements.md
-    specbind spec requirements approve cart \
-        --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
-        || fail "could not approve the requirements gate"
-
-    # Decision 0061 wants the Front Matter set and the union of the body markers
-    # to match exactly, so both list the same four IDs.
-    {
-        echo "---"
-        echo "type: SpecBind Design"
-        echo "artifact_id: main"
-        echo "requirement_ids:"
-        echo '  - "1.1"'
-        echo '  - "1.2"'
-        echo '  - "1.3"'
-        echo '  - "1.4"'
-        echo "---"
-        echo
-        echo "# Design"
-        echo
-        echo "## Holding and capping quantities"
-        echo
-        echo "add_item reads the current held quantity, applies the floor and the"
-        echo "cap, and leaves the cart unchanged when either bound is violated."
-        echo
-        echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
-    } > .specbind/specs/cart/design.md
-    specbind spec design approve cart --approval-mode explicit >/dev/null \
-        || fail "could not approve the design gate"
-
-    # Decision 0078 requires the accepted review before Tasks approval, and the
-    # acceptance itself refuses to run while a task plan exists. The plan is
-    # therefore written after the review, not before.
-    printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
-        | specbind milestone review accept --candidate - >/dev/null \
-        || fail "could not accept the cross-spec review"
-
+    cart_cap_approved
+    cart_design_approved
+    cross_spec_review_accepted
     {
         echo "schema_version: 1"
         echo "plan:"
@@ -385,6 +379,42 @@ d7)
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    ;;
+
+t3)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
+    brief cart "A cart has no upper bound per SKU."
+    cart_cap_approved
+    cart_design_approved
+    cross_spec_review_accepted
+    # Three tasks, two of them finished. A revision that inserts work ahead of
+    # them renumbers the completed entries, which is the case the mapping rule
+    # exists for. One task would not renumber anything.
+    {
+        echo "schema_version: 1"
+        echo "plan:"
+        echo "  items:"
+        echo "    - id: '1'"
+        echo "      kind: task"
+        echo "      title: Reject a quantity below one"
+        echo "      requirement_ids: ['1.3']"
+        echo "    - id: '2'"
+        echo "      kind: task"
+        echo "      title: Record and increase held quantities"
+        echo "      requirement_ids: ['1.1', '1.2']"
+        echo "    - id: '3'"
+        echo "      kind: task"
+        echo "      title: Reject a quantity above the cap"
+        echo "      requirement_ids: ['1.4']"
+    } > .specbind/specs/cart/tasks.yaml
+    specbind spec tasks approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the tasks gate"
+    specbind tasks complete cart 1 >/dev/null || fail "could not complete task 1"
+    specbind tasks complete cart 2 >/dev/null || fail "could not complete task 2"
+    expect "the recorded progress did not take" \
+        'specbind tasks list cart | grep -q "2 completed"'
+    expect "task 3 is not the remaining pending one" \
+        'specbind tasks list cart | grep -q "\[pending actionable\] 3 "'
     ;;
 
 d10)

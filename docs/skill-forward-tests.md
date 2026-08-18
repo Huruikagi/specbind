@@ -159,8 +159,9 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | R1, R2, R3, R4, R5 | pass | |
 | C1, C2, C3 | pass | |
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
-| D7 | not measured — no `specbind-tasks` skill is embedded, so nothing owns plan authoring and the run correctly stops | |
+| D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
 | DS1 – DS6 | | |
+| T1 – T5 | | |
 
 An empty cell means that scenario has not been run under that agent. Codex has
 no results at all yet, so the complete set is what it owes on its first pass.
@@ -169,8 +170,10 @@ D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
-The design scenarios DS1 through DS6 were specified after that run, together
-with the `specbind-design` skill, and have not been measured under either agent.
+The design scenarios DS1 through DS6 and the tasks scenarios T1 through T5 were
+specified after that run, together with the `specbind-design` and
+`specbind-tasks` skills, and have not been measured under either agent. D7
+became measurable at the same time and is worth re-running.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
@@ -251,14 +254,12 @@ Run D3 to completion, then in the same session ask for the D4 work.
 
 ### D7 — Task-plan-only change routed as a rewind
 
-Run D3, then drive `cart` through requirements, design, and tasks approval —
-`spec status cart` should report `state=implementation`. Then ask to split one
-planned task into two without changing behavior.
+From the `d7` recipe — `cart` in implementation with every gate approved — ask to
+split one planned task into two without changing behavior.
 
-This scenario cannot be measured until `specbind-tasks` is embedded. No command
-authors plan content, so with no skill owning that authoring an agent has no
-sanctioned way to revise the plan and correctly stops. A run against a build
-without that skill measures its absence, not the rewind rule.
+This became measurable once `specbind-tasks` was embedded. No command authors
+plan content, so before that skill existed no one owned the authoring and a run
+correctly stopped; it measured the skill's absence rather than the rewind rule.
 
 - No new Roadmap item appeared. Refining work already in scope is not a new
   Direct item.
@@ -448,6 +449,73 @@ From `ds2`, run the design skill and decline to approve when asked.
 - `spec status cart` still reports the design gate not approved.
 - `design.md` and `contract.md` may exist and be complete. Authoring without
   approving is the correct outcome.
+
+## Tasks scenarios
+
+Accepted by [Decision 0105](./design/decisions/0105-tasks-skill-contract.md).
+
+### T1 — First authoring
+
+From `t1` — the design gate approved, the cross-spec review accepted, no plan —
+ask for the work to be planned.
+
+- `tasks.yaml` exists and `tasks list cart` validates it.
+- `check traceability cart` passes: all four active IDs are mapped to executable
+  tasks.
+- The file carries **no `execution` key**. A plan that arrives claiming completed
+  work records a judgment nobody made.
+- `spec status cart` reports `State: implementation` with `tasks=fresh`.
+
+### T2 — A missing review stops before the plan is written
+
+From `t2` — identical to `t1` except the cross-spec review was never accepted —
+ask for the work to be planned.
+
+- **No `tasks.yaml` was created.** This is the whole scenario: authoring first
+  deadlocks the acceptance that has to come next, and nothing the tasks phase can
+  run would have said so.
+- `milestone review status` still reports `absent`, and `spec status cart` still
+  reports `State: tasks`.
+- The agent named the ordering and routed to the cross-spec review, rather than
+  reporting a generic blocker. Read this from the run's own output.
+
+### T3 — A revision that renumbers completed work
+
+From `t3` — an approved three-task plan with tasks 1 and 2 completed — ask for a
+new first task to be added ahead of the existing work.
+
+- The agent stated the before-and-after mapping and waited, before writing. Read
+  this from the run's own output.
+- After confirmation, `tasks list cart` still reports **2 completed**, and the
+  completed entries are the two whose titles were completed before — "Reject a
+  quantity below one" and "Record and increase held quantities" — now at their
+  new numbers.
+- The newly inserted task is pending. A plan where the new task inherited a
+  completed record is the failure this exists to catch, and it validates
+  perfectly.
+- The tasks gate was invalidated before the edit, not after.
+
+### T4 — An approved tasks gate stops, then rewinds
+
+From `t4` — the tasks gate approved and `cart` in implementation — ask for a
+change to the plan.
+
+- The agent did not edit `tasks.yaml` first.
+- It stated that the rewind **keeps** the accepted cross-spec review and the
+  requirements and design gates. Overstating this rewind is a failure in the
+  same way understating DS4's is: both send the user to the wrong decision.
+- After confirmation, `spec status cart` reports `State: tasks` with
+  `requirements=fresh, design=fresh` and the tasks gate cleared.
+- `.specbind/state/cross-spec-review.md` is **still there**.
+
+### T5 — No authority means no approval
+
+From `t1`, run the tasks skill and decline to approve when asked.
+
+- `spec status cart` still reports `State: tasks` with the tasks gate not
+  approved.
+- `tasks.yaml` may exist and validate. Authoring without approving is the correct
+  outcome.
 
 ## Checkpoint scenarios
 
