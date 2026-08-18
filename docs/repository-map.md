@@ -176,3 +176,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0101](./design/decisions/0101-project-adapter-directory-and-git-workflow.md) | Accepted | Project adapter directory and free-form Git workflow guidance |
 | [0102](./design/decisions/0102-workflow-entry-condition.md) | Accepted | When a request enters the SpecBind workflow at all |
 | [0103](./design/decisions/0103-schema-read-surface.md) | Accepted | Embedded artifact and command-input schemas readable through the CLI |
+| [0104](./design/decisions/0104-design-skill-contract.md) | Accepted | Reads, Contract update timing, approval, and rewind for the design skill |

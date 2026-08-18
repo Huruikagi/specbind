@@ -1,0 +1,332 @@
+---
+name: specbind-design
+description: Investigate the system, author a Spec's complete current technical design, maintain the Contract that other Specs depend on, and approve the design gate.
+argument-hint: "<spec>"
+---
+
+# Design the change
+
+Produce the document an implementer builds from and a reviewer judges against:
+this Spec's **complete current technical design**, plus the **Contract** that
+states what other Specs may rely on.
+
+You author two artifacts and approve one gate. The requirements belong to the
+phase before you, the task plan to the phase after.
+
+## 1. Read
+
+Always:
+
+```sh
+specbind spec status <spec>
+specbind steering list
+```
+
+### Check the prerequisite first
+
+`spec status` must report the requirements gate approved and fresh, and the Spec
+a current participant of the active milestone.
+
+A Spec that has reached the design state and has no design artifact yet reports
+`Health: inconsistent` with `TRACEABILITY_DESIGN_COVERAGE_MISSING` for every
+active requirement. That is what an unstarted design phase looks like — it is
+the work you are here to do, not a fault to repair.
+
+If the requirements gate is not approved and fresh, stop and say so. Route the
+user to `specbind-requirements`.
+Never approve or invalidate the requirements gate yourself, and never edit
+`requirements.md` to make your own work possible — editing an approved artifact
+invalidates its gate as a side effect, and the user gets a freshness diagnostic
+instead of the decision they would have made.
+
+### Then read the inputs
+
+```sh
+specbind artifact read <spec> requirements
+specbind artifact read <spec> brief
+```
+
+The requirements are the obligation you must realize. The brief is why this
+milestone is changing it.
+
+Read **every** steering document the listing named:
+
+```sh
+specbind steering read <selector>
+```
+
+All of them, not a promising-looking subset. This is where the project's
+technical guidance finally lands: the requirements phase is required to keep
+technology, structure, and mechanism out of its document, so a constraint on how
+this project builds things cannot have reached you through it. If you also read
+selectively, that guidance reaches no authoritative artifact at all.
+
+If `steering list` or `steering read` prints an `ERROR` line, stop. `Found 0
+steering document(s).` is a complete answer and you continue.
+
+### Read what the Spec already has
+
+```sh
+specbind artifact list <spec>
+```
+
+Read every design artifact and the contract when they exist. Read the research
+when one exists — and treat it as background only. It is deleted at release and
+is not fingerprinted, so a design whose meaning depends on it becomes incomplete
+the moment the milestone closes. Any conclusion you need, restate here.
+
+When the change touches a seam, read the contracts of the Specs on the other
+side of it:
+
+```sh
+specbind spec list
+specbind artifact read <other-spec> contract
+```
+
+## 2. Investigate before you decide
+
+```sh
+specbind protocol read design-discovery
+```
+
+The protocol owns what must be established and when to go deeper. Read the code
+you are changing rather than inferring it from names; confirm an external API
+against its current source rather than from memory. A design written from
+assumption produces a contract describing a seam the code does not have, and
+tasks that cannot be executed as written.
+
+A question that blocks choosing the approach is resolved or escalated now. It
+cannot be deferred into the design as an open item.
+
+## 3. Write the design
+
+```sh
+specbind protocol read design-authoring
+specbind protocol read okf-authoring
+```
+
+The project's `settings/rules/design-principles.md` and
+`settings/rules/contract-principles.md` state its own preferences. They are
+project-owned; if one is absent, the project removed it deliberately and the
+protocol still applies.
+
+**New Spec** — start from the template:
+
+```sh
+specbind template read spec design/main
+```
+
+**Existing Spec** — revise the current design artifacts in place.
+
+The design set is the Spec's **complete current design**, persistent the way the
+requirements are. Fold this milestone's change into the document that owns that
+concern. Do not append a milestone-shaped supplement: a reader arriving after
+release must understand the system from the design set alone, with no knowledge
+of which milestone contributed which paragraph.
+
+Coverage is a separate axis. Every **active** requirement ID must be covered by
+the union of the set; requirements outside the active set may stay mapped by the
+existing design and are not re-argued.
+
+Write the traceability exactly as the profile requires — a Front Matter
+`requirement_ids` array, and an italic `_Requirements: 1.1, 1.2_` marker beside
+each section that satisfies them. The Front Matter set and the union of the body
+markers must match exactly.
+
+### Splitting
+
+One `main` document is the default. Split only when the design holds
+responsibility seams a reader would follow independently, and give each
+`artifact_id` a name for a durable concern rather than a slice of this
+milestone's work.
+
+Identity churn is expensive here. Adding or removing a design identity
+invalidates approval by itself, so reorganizing an established Spec's design set
+needs a stated reason — it is not housekeeping to do in passing.
+
+If the design turns out to hold seams that could move separately, raise
+splitting the Spec or revisiting roadmap scope with the user. Do not create or
+rescope Specs yourself.
+
+## 4. Maintain the contract
+
+Every Spec reaching design approval has exactly one contract, and this phase is
+what puts it there. A missing contract refuses approval; it is never read as an
+absence of cross-spec impact.
+
+**No contract yet** — including every Spec this milestone created:
+
+```sh
+specbind template read spec contract
+```
+
+A Spec with no cross-spec seams gets the canonical empty contract: five
+headings, no entries. That is a complete and deliberate statement, not a
+placeholder.
+
+**Contract exists** — revise it in place when this change adds, alters, or
+removes a seam, and leave it **byte-identical** when it does not. Rewording an
+untouched entry is not free: the whole file is fingerprinted, so a cosmetic edit
+invalidates approval and forces a new cross-spec review.
+
+The `design-authoring` protocol carries the test for what belongs in it. Entry
+IDs are stable — do not rename an ID whose meaning is unchanged, because another
+Spec's `Consumes` entry resolves through it.
+
+Removing an entry is allowed. This is not requirement retirement: a requirement
+ID is an identity that design, tasks, and completion verification each have to
+cover, while a contract entry's only structural dependents are other Specs'
+`Consumes` entries, which resolve by name and are checked. Remove it, then let
+the check and the cross-spec review judge it.
+
+## 5. Check before you present
+
+```sh
+specbind check traceability <spec>
+specbind check contracts
+```
+
+Approval enforces both anyway. Running them first turns a refused approval into
+a diagnostic you can act on.
+
+Resolve what `check contracts` reports. A reference left dangling by a removal is
+either fixed in this Spec, or the consuming Spec needs owned work — which is a
+scope question for the user, not something you fix. **Never edit another Spec's
+contract to make your own graph clean.**
+
+Ownership overlaps and dependency cycles are warnings, because they are
+sometimes deliberate. Say why the overlap is acceptable, or treat it as a
+finding. Passing it silently to cross-spec review is not a judgment.
+
+## 6. Review your own design
+
+```sh
+specbind protocol read design-validation
+```
+
+This is the same standard an independent validation would apply. A design that
+would fail it is not ready to submit for approval, so apply it to your own draft
+before presenting.
+
+`specbind-validate-design` is a separate skill the user invokes when they want a
+second opinion. It is not a step you run, and not a precondition of this gate.
+
+Present the design, what it decided and why, and what changed in the contract.
+Revise on feedback rather than approving something you know to be weak.
+
+Stop and ask the user when the same objection survives one revision. A repeated
+objection is a disagreement about intent, and rewriting again produces another
+variation of the same misunderstanding.
+
+If the objection reveals that the **requirements** are ambiguous, contradictory,
+or underspecified, say so and stop. Returning to requirements is the answer;
+inventing design detail that hides the gap is not. You do not perform that
+rewind yourself.
+
+## 7. Approve
+
+Approve only when the validation protocol's judgment is satisfied **and** you
+hold authority for this gate. Authority is one of two things, never their
+absence:
+
+- **Explicit** — the user approved this design after seeing it.
+- **Delegated** — a run context the user intentionally started authorized this
+  gate by name. The user does not confirm this document, because delegation is
+  exactly the decision to skip that pause. Every check still runs.
+
+  **The workflow name comes from that context. Never invent one.** If you were
+  told the content is pre-approved but given no workflow name, you do not have a
+  delegation — present your result and stop.
+
+Never run a mutating command to find out what it accepts. Approval has no dry
+run, so a probe with a placeholder value records a real approval.
+
+```sh
+specbind spec design approve <spec> --approval-mode explicit
+```
+
+A delegated run names the workflow that carries the authority:
+
+```sh
+specbind spec design approve <spec> --approval-mode delegated --delegation-workflow <workflow>
+```
+
+There are no IDs, paths, or fingerprints to pass. The CLI derives the complete
+input set from the current contract and design files.
+
+No prompt appearing, a non-interactive invocation, and a scripted run grant no
+authority. Without either form, present your result and stop.
+
+Never approve to resolve a failing check. A refused approval is information
+about the artifacts; report the diagnostic rather than working around it.
+
+## 8. Checkpoint, if the project asks
+
+Only after the approval succeeds is this work eligible to commit. A draft you
+have not yet approved is never committed, however often the project wants
+checkpoints. If you stopped short of approving, you also stop short of this.
+
+```sh
+specbind adapter read git
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means the project wants no commit from you. Stop
+there — that is an answer, not a missing file to work around.
+
+The same applies when the adapter still carries its `specbind:instruction`
+comments: that is the scaffold as installed, not policy the project wrote. Treat
+it as no guidance, say so in one line, and commit nothing. Do not stop to ask
+about a file nobody has filled in.
+
+When the adapter has guidance, follow it. It sets **policy, not permission**:
+
+- It grants no authority by existing. The user's request, the root agent
+  instructions, and your tool permissions still decide what you may do.
+- Delegated approval authorized crossing this gate. It said nothing about
+  committing or pushing.
+- Commit guidance is not push guidance. Push only where the adapter says to, and
+  never force-push, rewrite history, or bypass a protected branch.
+- Stage only the paths this run produced. Unrelated work already in the worktree
+  is left exactly as it is.
+- Stop before the Git operation if the guidance is ambiguous, unsafe, or
+  conflicts with something else you were told.
+
+A failed checkpoint does not undo or weaken the approval. The gate stays
+approved; report the work as uncommitted and continue.
+
+## When the gate is already approved
+
+If `spec status` shows the design gate approved, do not edit. Editing underneath
+an approved gate leaves evidence describing a revision that no longer exists, and
+the CLI then refuses later gates citing freshness rather than the edit that
+caused it.
+
+State the full cost and run it only after the user confirms:
+
+- it clears the design, tasks, and completion evidence for this Spec, **and**
+- it **deletes the accepted cross-spec review** for the whole milestone, because
+  that review is accepted after design approval and cannot survive a rewind past
+  it.
+
+The second one is the part a user will not know to expect. Say it before you
+ask.
+
+```sh
+specbind spec design invalidate <spec>
+```
+
+Confirmation cannot be inferred, and delegated authority does not cover this.
+Delegation authorizes accepting gates, not discarding accepted work.
+
+## Boundaries
+
+- Author the design set and **this** Spec's contract. Requirements belong to the
+  previous phase, `tasks.yaml` to the next, and brownfield comparison and
+  research to `specbind-gap-analysis`.
+- Write no machine state. Never edit `spec.yaml`.
+- Do not accept the cross-spec review, add roadmap items, or create Specs.
+  Surface the need and let the owning operation perform it.
+- Do not author research, and do not park an unresolved design gap there.
+- Report in the project's language: what the design decides, how it realizes each
+  active requirement, what changed in the contract, whether the work was
+  committed, and what runs next.

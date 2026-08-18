@@ -25,6 +25,11 @@
 #   c3     c2 plus a confirmed cart scope, so a run reaches the approval point
 #   d7     cart driven to implementation with every gate approved
 #   d10    a milestone whose Direct item is already completed
+#   ds1    a new `order` Spec with its requirements authored and approved
+#   ds2    r5's state: the cart cap approved, so design is the next phase
+#   ds3    ds2 with the requirements edited afterwards, so that gate is stale
+#   ds4    cart with the design gate approved and the cross-spec review accepted
+#   ds5    ds2 plus a `checkout` Spec consuming the cart export
 
 set -eu
 
@@ -126,10 +131,10 @@ r3)
         'specbind spec status cart | grep -q "State: requirements"'
     ;;
 
-r4 | r5)
+r4 | r5 | ds2 | ds3 | ds5)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
-    if [ "$scenario" = r5 ]; then
+    if [ "$scenario" != r4 ]; then
         # The cap has to exist as an approved requirement, or a later request to
         # change it has nothing to change and the scenario measures the fixture
         # instead of the skill.
@@ -148,6 +153,179 @@ r4 | r5)
         expect "the approved set does not carry the cap criterion" \
             'grep -q "\"1.4\"" .specbind/specs/cart/spec.yaml'
     fi
+    if [ "$scenario" = ds3 ]; then
+        # An edit after the approval, so the gate the design phase depends on is
+        # stale rather than missing. The design skill must route this back
+        # instead of repairing it.
+        printf '4. Reading a cart states the largest accepted quantity per SKU.\n' \
+            >> .specbind/specs/cart/requirements.md
+        expect "the requirements gate is still fresh" \
+            'specbind spec status cart | grep -q "requirements=stale"'
+    fi
+    if [ "$scenario" = ds5 ]; then
+        # A second persistent Spec that consumes the cart export, so removing
+        # that export has a consumer the graph can name.
+        mkdir -p .specbind/specs/checkout
+        printf 'schema_version: 1\nactive_change: null\n' \
+            > .specbind/specs/checkout/spec.yaml
+        {
+            echo "---"
+            echo "type: SpecBind Requirements"
+            echo "heading_labels:"
+            echo "  requirement: Requirement"
+            echo "  acceptance_criteria: Acceptance Criteria"
+            echo "---"
+            echo
+            echo "# Requirements"
+            echo
+            echo "## Context"
+            echo
+            echo "A customer turns an assembled cart into a placed order."
+            echo
+            echo "## Scope"
+            echo
+            echo "### In scope"
+            echo
+            echo "Placing an order from a cart."
+            echo
+            echo "### Out of scope"
+            echo
+            echo "Payment and fulfilment."
+            echo
+            echo "## Requirements"
+            echo
+            echo "### Requirement 1: Place an order"
+            echo
+            echo "**Objective:** A customer can commit to the purchase they assembled."
+            echo
+            echo "#### Acceptance Criteria"
+            echo
+            echo "1. Placing an order records every SKU the cart holds."
+            echo "2. Placing an order from an empty cart is rejected."
+        } > .specbind/specs/checkout/requirements.md
+        {
+            echo "---"
+            echo "type: SpecBind Contract"
+            echo "---"
+            echo
+            echo "# Contract"
+            echo
+            echo "## Owns"
+            echo
+            echo '- `placed-order` — the committed record of a purchase'
+            echo
+            echo "## Exports"
+            echo
+            echo "## Consumes"
+            echo
+            echo '- `cart-add` → `cart/exports/add-item` — replays a cart while placing an order'
+            echo
+            echo "## Invariants"
+            echo
+            echo "## File Ownership"
+            echo
+            echo '- `checkout-module` — `src/checkout.py`'
+        } > .specbind/specs/checkout/contract.md
+        expect "the seeded contract graph does not resolve" \
+            'specbind check contracts'
+        expect "checkout does not consume the cart export" \
+            'specbind artifact read checkout contract | grep -q "cart/exports/add-item"'
+    fi
+    ;;
+
+ds1)
+    milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
+    brief order "Customers cannot cancel an order once placed."
+    # Requirements authored and approved deterministically. Only the design
+    # phase is under test, and three runs starting from the same contract differ
+    # in the request rather than in what the previous phase happened to write.
+    {
+        echo "---"
+        echo "type: SpecBind Requirements"
+        echo "heading_labels:"
+        echo "  requirement: Requirement"
+        echo "  acceptance_criteria: Acceptance Criteria"
+        echo "---"
+        echo
+        echo "# Requirements"
+        echo
+        echo "## Context"
+        echo
+        echo "A customer sometimes changes their mind after committing to a purchase."
+        echo
+        echo "## Scope"
+        echo
+        echo "### In scope"
+        echo
+        echo "Cancelling a placed order while cancellation is still allowed."
+        echo
+        echo "### Out of scope"
+        echo
+        echo "Refund settlement and fulfilment reversal."
+        echo
+        echo "## Requirements"
+        echo
+        echo "### Requirement 1: Cancel a placed order"
+        echo
+        echo "**Objective:** A customer can withdraw an order they no longer want."
+        echo
+        echo "#### Acceptance Criteria"
+        echo
+        echo "1. Cancelling an order within the cancellation window marks it cancelled and states when it was cancelled."
+        echo "2. Cancelling an order after the cancellation window is rejected and states when the window closed."
+        echo "3. Cancelling an order that is already cancelled leaves it cancelled and reports no further change."
+    } > .specbind/specs/order/requirements.md
+    specbind spec requirements approve order \
+        --approval-mode explicit --requirement-ids 1.1,1.2,1.3 >/dev/null \
+        || fail "could not approve the requirements gate"
+    expect "order did not reach the design state" \
+        'specbind spec status order | grep -q "State: design"'
+    expect "order already has a contract" \
+        '! test -e .specbind/specs/order/contract.md'
+    ;;
+
+ds4)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
+    brief cart "A cart has no upper bound per SKU."
+    awk '{ print }
+         /^3\. A quantity below one is rejected/ {
+           print "4. Adding a SKU where the resulting held quantity would exceed 99 is rejected and states the largest accepted quantity."
+         }' .specbind/specs/cart/requirements.md > requirements.tmp
+    mv requirements.tmp .specbind/specs/cart/requirements.md
+    specbind spec requirements approve cart \
+        --approval-mode explicit --requirement-ids 1.1,1.2,1.3,1.4 >/dev/null \
+        || fail "could not approve the requirements gate"
+    {
+        echo "---"
+        echo "type: SpecBind Design"
+        echo "artifact_id: main"
+        echo "requirement_ids:"
+        echo '  - "1.1"'
+        echo '  - "1.2"'
+        echo '  - "1.3"'
+        echo '  - "1.4"'
+        echo "---"
+        echo
+        echo "# Design"
+        echo
+        echo "## Holding and capping quantities"
+        echo
+        echo "add_item reads the current held quantity, applies the floor and the"
+        echo "cap, and leaves the cart unchanged when either bound is violated."
+        echo
+        echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
+    } > .specbind/specs/cart/design.md
+    specbind spec design approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the design gate"
+    # The accepted review is what makes the rewind expensive, and it is the part
+    # a user does not know they are discarding.
+    printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
+        | specbind milestone review accept --candidate - >/dev/null \
+        || fail "could not accept the cross-spec review"
+    expect "the design gate is not approved" \
+        'specbind spec status cart | grep -q "design=fresh"'
+    expect "no accepted cross-spec review was written" \
+        'test -e .specbind/state/cross-spec-review.md'
     ;;
 
 d7)

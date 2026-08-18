@@ -74,6 +74,56 @@ Naming an owner is optional; leaving the boundary ambiguous is not.
   that crosses a seam the Contract does not declare, is a defect to resolve
   before approval rather than a discrepancy for cross-spec review to discover.
 
+## What belongs in the Contract
+
+The Contract is not a summary of the Design. It is the part of the Design that
+other Specs are entitled to rely on, and every entry is a promise that outlives
+this milestone.
+
+One question decides membership:
+
+> If this changed, would another Spec's design or verification have to change
+> too?
+
+When the answer is yes, it is a Contract entry. When the answer is no, it is
+internal to the Spec and belongs in the Design alone, however important it is
+there.
+
+Applying that question:
+
+- **Owns** — a responsibility another Spec must not also take. Naming it
+  prevents the second implementation, not the misunderstanding.
+- **Exports** — a capability, interface, event, or data shape another Spec
+  consumes. The entry describes the guarantee, not the current signature.
+- **Consumes** — a dependency on another Spec's entry, declared so the producer
+  can see who breaks when it changes. An undeclared dependency is invisible to
+  the producer at exactly the moment it matters.
+- **Invariants** — a guarantee others build on that no single interface carries.
+  Ordering, uniqueness, idempotence, and "never observed in state X" belong
+  here; the wording is not the promise, the behavior is.
+- **File Ownership** — the sparse persistent write boundaries where a conflicting
+  change would affect another Spec, under the inclusion test that section already
+  carries.
+
+Both failures are real and neither is caught mechanically.
+
+**Under-declaring** is the more dangerous of the two. An unstated seam produces
+no dangling reference and no warning, so cross-spec review compares a before and
+an after that both omit it, and the first evidence is a consumer breaking after
+release.
+
+**Over-declaring** is a slower cost. Internal structure promoted to a Contract
+entry becomes something later refactoring must either preserve or renegotiate
+through a review, and a Contract that lists everything tells a reader nothing
+about which boundaries actually matter.
+
+When membership is genuinely unclear, ask what a consumer would be relying on if
+the entry were absent. If nothing outside this Spec could notice, leave it out.
+
+A Spec with no cross-spec seams has an empty Contract with all five headings and
+no entries. That is a complete, correct Contract and a deliberate statement; it
+is not a placeholder to be filled in later.
+
 ## The document stands alone
 
 A Design is the artifact a reviewer, and later an implementer, reads to

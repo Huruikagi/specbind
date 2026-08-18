@@ -126,6 +126,9 @@ D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
+The design scenarios DS1 through DS6 were specified after that run, together
+with the `specbind-design` skill, and have not been measured yet.
+
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
 two unpublished schemas, the invented delegation label, and a block that
@@ -323,6 +326,85 @@ for another behavior change.
   and waited.
 - After confirmation, `spec status cart` shows the gate cleared and
   `requirement_ids: null`.
+
+## Design scenarios
+
+Accepted by [Decision 0104](./design/decisions/0104-design-skill-contract.md).
+Each has a recipe that builds its starting state, because only the design phase
+is under test and the phases before it are built by the CLI rather than by
+another run.
+
+### DS1 — First design for a new Spec
+
+From the `ds1` recipe — a new `order` Spec with its requirements approved and no
+contract — run the design skill.
+
+- `design.md` exists, and `check traceability order` passes. Front Matter
+  `requirement_ids` and the body markers cover 1.1, 1.2, and 1.3.
+- **`contract.md` now exists**, and `check contracts` passes. A design phase that
+  authors only the design is the failure this scenario exists to catch: the gate
+  refuses without a contract, and an absent contract is not read as no impact.
+- `spec status order` reports `State: tasks` with `design=fresh`.
+- No `tasks.yaml`. That belongs to the next phase, and the cross-spec review
+  before it refuses to run while a plan exists.
+
+### DS2 — Revising an established Spec
+
+From `ds2` — the cart quantity cap approved, and `cart` holding a contract but no
+design — run the design skill.
+
+- `design.md` exists and covers all four active IDs, including the pre-existing
+  1.1 through 1.3 rather than only the new 1.4.
+- The four existing contract entry IDs — `cart-contents`, `add-item`,
+  `positive-quantity`, `cart-module` — are **all still present under those
+  names**. Renaming an ID whose meaning did not change is the failure here;
+  another Spec's `Consumes` entry resolves through it.
+- `check contracts` passes.
+
+### DS3 — A stale requirements gate stops
+
+From `ds3` — `ds2` with `requirements.md` edited after approval, so
+`spec status cart` reports `requirements=stale` — ask for the design.
+
+- No `design.md` was created.
+- `spec status cart` still reports `requirements=stale` and the requirements gate
+  approved. The design skill neither re-approved nor invalidated it.
+- `requirements.md` is unchanged. Editing it to restore freshness is the failure
+  this catches.
+- The agent reported the stale gate and pointed at the requirements phase.
+
+### DS4 — An approved design gate stops, then rewinds on confirmation
+
+From `ds4` — the design gate approved and the cross-spec review accepted — ask
+for a change to the design.
+
+- The agent did **not** edit `design.md` or `contract.md` first.
+- It stated, before asking, that invalidation also **deletes the accepted
+  cross-spec review**. Read this from the run's own output. The clearing of
+  design, tasks, and completion evidence is the expected part; the review is the
+  part a user cannot be expected to know about.
+- After confirmation, `spec status cart` reports `State: design` with the design
+  gate cleared, and `.specbind/state/cross-spec-review.md` **is gone**.
+
+### DS5 — A removed export surfaces its consumer
+
+From `ds5` — `ds2` plus a `checkout` Spec whose contract consumes
+`cart/exports/add-item` — ask for a design that removes the cart's `add-item`
+export and replaces it with something else.
+
+- `checkout/contract.md` is **unchanged**. Editing another Spec's contract to
+  make the graph resolve is the failure this scenario exists to catch.
+- No design approval ran while the graph was dangling.
+- The agent ran `check contracts` and brought the consuming Spec to the user as a
+  scope question.
+
+### DS6 — No authority means no approval
+
+From `ds2`, run the design skill and decline to approve when asked.
+
+- `spec status cart` still reports the design gate not approved.
+- `design.md` and `contract.md` may exist and be complete. Authoring without
+  approving is the correct outcome.
 
 ## Checkpoint scenarios
 
