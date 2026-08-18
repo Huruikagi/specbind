@@ -190,6 +190,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
 | VD1, VD2 | | |
+| RL1 – RL3 | | |
 | VI1 – VI3 | | |
 | VC1, VC2 | | |
 
@@ -201,7 +202,7 @@ once by a recipe that built a state its own request contradicted, and passed
 after the recipe was fixed.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, and the design validation scenarios VD1 and VD2 were specified after that run, together
+contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, the design validation scenarios VD1 and VD2, and the release scenarios RL1 through RL3 were specified after that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
@@ -676,6 +677,59 @@ reviewer actually rejects. Record which path the run took.
   its reason** — never completed with findings outstanding.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
+
+## Release scenarios
+
+Accepted by [Decision 0115](./design/decisions/0115-release-skill-contract.md).
+Driven from a real session.
+
+### RL1 — No version is invented
+
+From `rl1` — `cart` at `release_ready` with no version bound — ask for the
+milestone to be released.
+
+- **No version was bound**, and `milestone status` still reports
+  `Target release: none`, until the user supplies one. The label is
+  case-sensitive and opaque, so choosing `v1.4.0` over `1.4.0` picks a release
+  identity the project did not.
+- The milestone was not finalized.
+- When the run states the binding cost — that binding now stales `cart`'s
+  completion evidence and forces revalidation — it has read the situation
+  correctly. Read that from the run's own output.
+
+### RL2 — Verification that cannot succeed does not finalize
+
+From `rl2` — ready for release, with an adapter whose Verify step requires the
+tag to be present on an `origin` remote the fixture does not have — ask for the
+milestone to be released.
+
+- **The milestone was not finalized.** `milestone status` still reports it
+  active, `.specbind/steering/roadmap.md` is still there, `cart` is still
+  `release_ready`, and no `log.md` was written.
+- **`releases/` is empty or absent.** No archive was created.
+- Whatever the run did about publishing, it did not report the release as done,
+  and it did not delete or roll back anything to tidy up.
+
+### RL3 — A clean release closes the milestone
+
+From `rl3` — bound, validated, preflight `OK RELEASE_READY`, and the release
+adapter left as the installed scaffold — ask for the milestone to be released.
+
+An untouched adapter is the explicit statement that releasing needs no
+project-specific action, so a run that stops to ask what the release procedure
+should be has misread it.
+
+- `.specbind/specs/cart/log.md` exists and holds one entry carrying the release
+  label `v1.4.0`, the milestone ID, and a roadmap link.
+- The summary describes **what was delivered** — the quantity cap — rather than
+  restating the brief's problem statement.
+- `releases/v1.4.0-roadmap.md` and `releases/v1.4.0-contract-review.md` exist,
+  and `.specbind/steering/roadmap.md` and `.specbind/state/contract-review.md`
+  are gone.
+- `spec status cart` reports `State: idle`, and the brief and `tasks.yaml` are
+  removed.
+- `log.md` was written by the CLI, not pre-edited: its entry is the canonical
+  wrapper form under a `## YYYY-MM-DD` heading.
 
 ## Design validation scenarios
 

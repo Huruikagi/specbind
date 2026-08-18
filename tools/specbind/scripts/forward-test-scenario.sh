@@ -47,6 +47,9 @@
 #   vi2    vi1 with the cap off by one, so the suite fails
 #   vi3    vi1 with the canonical test command removed
 #   vd1    an approved design that defers the bound to a research document
+#   rl1    cart released-ready but with no version bound yet
+#   rl2    rl3 plus a release adapter whose Verify step cannot succeed
+#   rl3    a milestone ready for release: bound, validated, preflight OK
 
 set -eu
 
@@ -530,7 +533,7 @@ ds4 | t1 | t2 | x1 | vd1)
     fi
     ;;
 
-d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3)
+d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart "A cart has no upper bound per SKU."
     cart_cap_approved
@@ -554,6 +557,76 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3)
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
     case "$scenario" in
+    rl1 | rl2 | rl3)
+        runner=$(python_runner)
+        cart_tests "$runner"
+        cart_cap_implemented
+        specbind tasks complete cart 1 >/dev/null \
+            || fail "could not record the task complete"
+        expect "the canonical test command does not pass" \
+            'sh scripts/test.sh'
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Implement the cap"
+        if [ "$scenario" != rl1 ]; then
+            # Bind before accepting completion. The reverse order stales the
+            # evidence, because the roadmap write is a non-metadata project
+            # change — which is exactly what rl1 is built to leave unbound.
+            # Binding also refuses a dirty roadmap, hence the commit above.
+            specbind milestone bind-release v1.4.0 >/dev/null \
+                || fail "could not bind the release version"
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Bind the release version"
+        fi
+        printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
+            | specbind spec completion accept cart --evidence - >/dev/null \
+            || fail "could not accept completion"
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Accept completion"
+        if [ "$scenario" = rl1 ]; then
+            expect "the release is already bound" \
+                'specbind release preflight 2>&1 | grep -q RELEASE_VERSION_UNBOUND'
+        else
+            expect "the milestone is not ready for release" \
+                'specbind release preflight | grep -q "OK RELEASE_READY"'
+        fi
+        if [ "$scenario" = rl2 ]; then
+            # Real release policy whose Verify step cannot succeed, so the run
+            # meets a failed verification rather than an empty adapter.
+            {
+                echo "---"
+                echo "type: SpecBind Release Adapter"
+                echo "---"
+                echo
+                echo "# Release adapter"
+                echo
+                echo "## Prepare"
+                echo
+                echo "Run \`sh scripts/test.sh\` and confirm it passes."
+                echo
+                echo "## Publish"
+                echo
+                echo 'Create an annotated tag named after the release version.'
+                echo
+                echo "## Verify"
+                echo
+                echo 'Confirm the tag is present on the `origin` remote.'
+                echo
+                echo "## After finalize"
+                echo
+                echo "Nothing."
+            } > .specbind/settings/adapters/release.md
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "State the project release policy"
+            expect "the adapter still carries its scaffold comments" \
+                '! specbind adapter read release | grep -q "specbind:instruction"'
+            expect "the fixture unexpectedly has a remote" \
+                '! git remote | grep -q .'
+        fi
+        ;;
     vi1 | vi2 | vi3)
         runner=$(python_runner)
         cart_tests "$runner"

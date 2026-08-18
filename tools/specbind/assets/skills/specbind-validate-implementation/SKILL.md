@@ -35,6 +35,11 @@ precondition, not an obstacle to route around.
 stales completion evidence, so a Spec validated before other work landed needs
 revalidating rather than trusting an earlier verdict.
 
+That includes the release version. `milestone bind-release` writes the roadmap,
+which is a non-metadata change, so binding **after** you accept completion stales
+what you just recorded. If the version is already known, say it should be bound
+before this handshake rather than after.
+
 ## 2. Read what completion would mean
 
 ```sh

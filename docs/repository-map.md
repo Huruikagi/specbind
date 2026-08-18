@@ -187,3 +187,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0112](./design/decisions/0112-validate-implementation-skill-contract.md) | Accepted | Completion-verification protocol, the three verdicts, run-not-assembled evidence, and the multi-Spec metadata commit |
 | [0113](./design/decisions/0113-verify-completion-skill-contract.md) | Accepted | Claim-shaped subject, distinct verdicts, and the consequence-free boundary for the claim verification skill |
 | [0114](./design/decisions/0114-validate-design-skill-contract.md) | Accepted | Two verdicts with no inconclusive escape, the deletion test, and no self-initiated rewind for design validation |
+| [0115](./design/decisions/0115-release-skill-contract.md) | Accepted | Binding order, confirmed publication, verification as a completion claim, and delivered-change summaries |
