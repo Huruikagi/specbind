@@ -419,7 +419,7 @@ fn reports_composed_spec_status_with_freshness_coverage_and_progress() {
         .assert()
         .success()
         .stdout(
-            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  Health: consistent\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next actionable: none\n  Blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
+            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  Health: consistent\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Delegated gates: none\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next actionable: none\n  Blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
         )
         .stderr("");
 }
@@ -2462,6 +2462,55 @@ fn reports_the_contract_review_barrier_from_the_tasks_state_onward() {
     // Decision 0078 keeps the milestone-owned review out of the per-Spec
     // invariant, so it never moves this Spec's health.
     assert!(fresh.contains("\n  Health: consistent\n"));
+}
+
+/// Delegation exists to skip a confirmation the user would otherwise give, and
+/// Decision 0100 calls that skip auditable. Before this field, the only durable
+/// trace was `spec.yaml` itself, which no command read back.
+#[test]
+fn reports_which_gates_were_crossed_by_delegation() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+
+    let status = |root: &Path| {
+        let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+        let output = command
+            .current_dir(root)
+            .args(["spec", "status", "checkout"])
+            .output()
+            .expect("spec status runs");
+        String::from_utf8(output.stdout).expect("status is UTF-8")
+    };
+
+    // No gate approved yet, so the field is absent rather than empty. The two
+    // states mean different things and must not render the same.
+    assert!(!status(root.path()).contains("Delegated gates:"));
+
+    let mut approve = Command::cargo_bin("specbind").expect("specbind binary should build");
+    approve
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--delegation-workflow",
+            "quick",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .success();
+    assert!(status(root.path()).contains("\n  Delegated gates: requirements (quick)\n"));
+
+    approve_design(root.path());
+    let after_explicit = status(root.path());
+    assert!(
+        after_explicit.contains("\n  Delegated gates: requirements (quick)\n"),
+        "an explicit approval adds nothing to the list: {after_explicit}"
+    );
 }
 
 #[test]

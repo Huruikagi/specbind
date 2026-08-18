@@ -6,7 +6,7 @@ use crate::{
     artifacts::{self, ArtifactKind, DiscoveryIssue},
     cross_spec_review::{self, ReviewFreshnessStatus},
     freshness::{self, ArtifactFreshnessReport, FreshnessStatus},
-    schema::spec::v1::WorkflowState,
+    schema::spec::{self, v1::WorkflowState},
     task_read_model::TaskReadModel,
 };
 
@@ -37,6 +37,14 @@ pub struct TaskBlocker {
     pub reason: String,
 }
 
+/// One gate crossed under Decision 0012 delegated authority, with the workflow
+/// that carried it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DelegatedGate {
+    pub gate: &'static str,
+    pub workflow: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecStatusModel {
     pub declared_state: Option<WorkflowState>,
@@ -47,6 +55,10 @@ pub struct SpecStatusModel {
     /// of something this Spec still needs. It never affects `health`, because
     /// Decision 0078 keeps the review out of the per-Spec invariant.
     pub contract_review: Option<ReviewFreshnessStatus>,
+    /// Present once any gate is approved. Empty means every approval was
+    /// explicit, which is why absence of the field and an empty list mean
+    /// different things.
+    pub delegated_gates: Option<Vec<DelegatedGate>>,
     pub task_model: Option<TaskReadModel>,
     pub blockers: Vec<TaskBlocker>,
     pub coverage: Option<RequirementCoverage>,
@@ -121,6 +133,9 @@ pub fn resolve(
         ConsistencyHealth::Inconsistent
     };
     let contract_review = contract_review(project_root, specbind_root, declared_state);
+    let delegated_gates = active
+        .and_then(|active| active.gate_evidence.as_ref())
+        .map(delegated_gates);
 
     Ok(SpecStatusModel {
         declared_state,
@@ -128,11 +143,42 @@ pub fn resolve(
         health,
         freshness,
         contract_review,
+        delegated_gates,
         task_model,
         blockers,
         coverage,
         diagnostics,
     })
+}
+
+/// Collects every gate whose accepted evidence records delegated authority.
+///
+/// Decision 0012 delegation skips the confirmation a user would otherwise give,
+/// and Decision 0100 calls that skip auditable. The audit trail is this evidence,
+/// so it needs a reader that is not the approving command's own transient output.
+fn delegated_gates(evidence: &spec::v1::GateEvidence) -> Vec<DelegatedGate> {
+    use spec::v1::{DesignGateEvidence, RequirementsGateEvidence, TasksGateEvidence};
+
+    let mut delegated = Vec::new();
+    if let Some(RequirementsGateEvidence::Delegated(gate)) = evidence.requirements.as_ref() {
+        delegated.push(DelegatedGate {
+            gate: "requirements",
+            workflow: gate.delegation_workflow.0.clone(),
+        });
+    }
+    if let Some(DesignGateEvidence::Delegated(gate)) = evidence.design.as_ref() {
+        delegated.push(DelegatedGate {
+            gate: "design",
+            workflow: gate.delegation_workflow.0.clone(),
+        });
+    }
+    if let Some(TasksGateEvidence::Delegated(gate)) = evidence.tasks.as_ref() {
+        delegated.push(DelegatedGate {
+            gate: "tasks",
+            workflow: gate.delegation_workflow.0.clone(),
+        });
+    }
+    delegated
 }
 
 /// Resolves the milestone-owned contract review where it gates this Spec.

@@ -102,3 +102,7 @@ Artifact fingerprints are required to detect out-of-band edits. Their stored val
 - Exact concise English diagnostic codes for missing or out-of-scope run-context delegation; Decision 0074 defers JSON diagnostics beyond v1.
 
 Decisions 0036 through 0040 fix the v1 gate-evidence fields and state invariants. Decisions 0017, 0018, 0028, 0032, and 0038 fix their input projections and normalization. Migration never invents approval mode or `passed_at` evidence that cannot be established from the inherited state.
+
+## Implementation status
+
+The persisted record is the per-gate `approval_mode` and conditional `delegation_workflow` fixed by [Decision 0040](./0040-state-gate-evidence-invariants.md). [Decision 0116](./0116-spec-status-delegated-gates.md) adds its reader: `spec status` reports which gates were crossed by delegation and under which workflow, so the audit trail outlives the run that wrote it.

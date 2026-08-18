@@ -2226,6 +2226,21 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
             milestone_status::review_name(review),
         );
     }
+    if let Some(delegated) = &model.delegated_gates {
+        push_field(
+            &mut output,
+            "Delegated gates",
+            &if delegated.is_empty() {
+                "none".to_owned()
+            } else {
+                delegated
+                    .iter()
+                    .map(|gate| format!("{} ({})", gate.gate, escape(&gate.workflow)))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            },
+        );
+    }
     render_status_tasks(model, &mut output);
     render_status_coverage(model, &mut output);
     render_status_diagnostics(model, &mut output);
