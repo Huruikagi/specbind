@@ -57,7 +57,11 @@ across models — the Agent tool's `model` accepts `sonnet`, `opus`, `haiku`, an
 
 The prompt gives three things and nothing else:
 
-1. the working directory, in a form the agent's file tools can address
+1. the working directory, given as the **native path** its file tools resolve,
+   with the shell alias named separately if the two differ. On Windows a subagent
+   writing to `/tmp/sb-<scenario>/...` with a file tool can land under the drive
+   root instead of the shell's temp mapping, creating a file the CLI then reports
+   as missing. One run caught that itself and moved the file; the next may not.
 2. the `export PATH=` line, stated as an environment fact
 3. the maintainer's request, phrased the way a maintainer would phrase it
 
