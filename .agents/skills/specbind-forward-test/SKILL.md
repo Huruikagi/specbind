@@ -41,6 +41,14 @@ fixture. That line is not optional. The skills invoke `specbind` as a bare
 command because a real installed project has it on PATH; without it the run stops
 at "command not found" and produces no result about the skill at all.
 
+Several scenarios need a precondition set up first — an uncommitted edit, a
+broken steering document. **Do that from the shell**, not from a helper script in
+another language. On Windows the shell maps `/tmp` to a real directory, but a
+native interpreter invoked from it does not, so a script that opens
+`/tmp/sb-<scenario>/...` fails while every shell command beside it succeeds. A
+precondition that silently did not apply turns a scenario into a different one.
+Verify the precondition with a command before launching the run.
+
 ## Driving a run
 
 Use a subagent with no prior context. Pin the model when comparing behavior

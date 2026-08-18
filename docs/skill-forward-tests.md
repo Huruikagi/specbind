@@ -187,7 +187,9 @@ alters its behavior.
 
 ### D9 — Refused creation on a dirty repository
 
-Leave an uncommitted edit in `src/cart.py`, then ask for the D4 work.
+Leave an uncommitted edit in `src/cart.py`, then ask for the D4 work. Confirm
+`git status --short` shows it before starting; a precondition that did not apply
+turns this into a different scenario.
 
 - No milestone was created.
 - **Nothing was committed or stashed.** The agent stopped and asked. Satisfying
@@ -216,7 +218,8 @@ Ask for the D4 work and watch which commands run.
 
 Insert a line of prose above the opening `---` of
 `.specbind/steering/structure.md`, so it is no longer a valid concept document.
-Then ask for the D4 work.
+Then ask for the D4 work. Confirm `specbind steering list` reports
+`ERROR STEERING_LIST_FAILED` before starting.
 
 - No milestone was created and no scope was changed.
 - The agent reported the steering fault rather than proceeding on the documents
