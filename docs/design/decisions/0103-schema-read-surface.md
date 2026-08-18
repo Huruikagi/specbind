@@ -1,4 +1,4 @@
-# 0103: Expose the structured artifact schemas
+# 0103: Expose the structured artifact and command-input schemas
 
 Status: Accepted
 
@@ -38,13 +38,31 @@ in the same family as `artifact read`, `template read`, `protocol read`,
 
 ### Selectors carry the version
 
-The accepted selectors are `spec/v1` and `tasks/v1`.
+The accepted selectors are `spec/v1`, `scope/v1`, and `tasks/v1`.
 
 The version is part of the selector because the wire model is versioned. An
 unversioned `tasks` would have to mean "whatever this binary considers current",
 so adding a v2 would silently change what an existing skill reads, and a skill
 that writes `schema_version: 1` would have no way to ask for the schema it is
 actually targeting. The conformance tests already name these artifacts this way.
+
+### Transient command input counts
+
+`scope/v1` is the milestone scope candidate. Decision 0089 calls it transient
+command data that SpecBind reads once and discards, so it has no persisted
+artifact — but an agent must author it exactly as strictly, and the shape it must
+hit is no more discoverable for being short-lived.
+
+Two forward-test runs found this independently, each probing `milestone create
+--scope -` about ten times with guessed JSON before landing on the accepted
+document. One of them had already run `schema list` and found the answer absent.
+`milestone scope` publishes the shape, but only once a milestone exists, so the
+very first command in the workflow was the one with no way to ask.
+
+The same reasoning covers the cross-spec review candidate and the completion
+evidence document, which are still unexposed. They are deferred rather than
+excluded: neither has been reached by a forward test yet, and adding them is the
+same mechanical step taken here.
 
 ### Project-independent, like protocols
 
@@ -56,8 +74,8 @@ convenience.
 
 ### It cannot drift
 
-The commands read the same `SPEC_V1_SCHEMA_JSON` and `TASKS_V1_SCHEMA_JSON`
-constants the runtime validator compiles and the conformance tests check against
+The commands read the same `SPEC_V1_SCHEMA_JSON`, `SCOPE_V1_SCHEMA_JSON`, and
+`TASKS_V1_SCHEMA_JSON` constants the runtime validator compiles and the conformance tests check against
 the generated output of the wire model. There is no second copy to fall behind:
 a structural change that skipped regeneration already fails
 `cargo run --example generate_schemas -- --check`.
@@ -93,7 +111,15 @@ artifact prototypes, and `tasks.yaml` is neither Markdown nor OKF.
 
 ## Implementation status
 
-Implemented. `tools/specbind/src/schema/mod.rs` registers the two schemas beside
+Implemented for `spec/v1`, `scope/v1`, and `tasks/v1`. The review-candidate and
+completion-evidence documents remain unexposed.
+
+`tools/specbind/src/schema/scope.rs` holds the scope candidate as a wire model
+beside the persisted ones, and `tools/specbind/src/milestone/candidate.rs` now
+decodes through it rather than through a private duplicate, so the schema and the
+loader cannot disagree.
+
+`tools/specbind/src/schema/mod.rs` registers the schemas beside
 the constants the runtime validator already compiles, and `specbind schema
 list/read` expose them. Neither command takes a project path, so
 project-independence is structural rather than a documented promise; a test runs

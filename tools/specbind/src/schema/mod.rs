@@ -2,11 +2,13 @@ use serde::{Deserialize, Deserializer};
 
 pub mod generate;
 pub mod runtime;
+pub mod scope;
 pub mod spec;
 pub mod tasks;
 
 pub const SPEC_V1_SCHEMA_JSON: &str = include_str!("../../schemas/spec/v1.schema.json");
 pub const TASKS_V1_SCHEMA_JSON: &str = include_str!("../../schemas/tasks/v1.schema.json");
+pub const SCOPE_V1_SCHEMA_JSON: &str = include_str!("../../schemas/scope/v1.schema.json");
 
 /// One embedded structured-artifact schema.
 ///
@@ -40,6 +42,12 @@ static SCHEMAS: &[EmbeddedSchema] = &[
         artifact: "spec.yaml",
         written_by: "guarded CLI operations only",
         content: SPEC_V1_SCHEMA_JSON,
+    },
+    EmbeddedSchema {
+        selector: "scope/v1",
+        artifact: "milestone scope candidate (transient)",
+        written_by: "the authoring agent",
+        content: SCOPE_V1_SCHEMA_JSON,
     },
     EmbeddedSchema {
         selector: "tasks/v1",

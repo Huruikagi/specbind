@@ -3535,8 +3535,9 @@ fn lists_and_reads_embedded_schemas_without_a_project() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK SCHEMA_LISTED: Found 2 embedded schema(s).\n",
+            "OK SCHEMA_LISTED: Found 3 embedded schema(s).\n",
             "  selector=spec/v1 artifact=spec.yaml written_by=\"guarded CLI operations only\"\n",
+            "  selector=scope/v1 artifact=milestone scope candidate (transient) written_by=\"the authoring agent\"\n",
             "  selector=tasks/v1 artifact=tasks.yaml written_by=\"the authoring agent\"\n",
         ))
         .stderr("");

@@ -1,6 +1,7 @@
-use serde::Deserialize;
-
-use crate::roadmap::{Dependency, DirectItem, SpecItem};
+use crate::{
+    roadmap::{DirectItem, SpecItem},
+    schema::scope::v1::{ScopeDocument, SpecItemDocument},
+};
 
 use super::{MilestoneIssues, one_issue};
 
@@ -12,44 +13,6 @@ pub(super) struct ValidatedScope {
     pub(super) spec_updates: Vec<SpecItem>,
     pub(super) direct_changes: Vec<DirectItem>,
     pub(super) body: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct ScopeDocument {
-    schema_version: u64,
-    work_items: WorkItemsDocument,
-    #[serde(default)]
-    body: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct WorkItemsDocument {
-    #[serde(default)]
-    new_specs: Option<Vec<SpecDocument>>,
-    #[serde(default)]
-    spec_updates: Option<Vec<SpecDocument>>,
-    #[serde(default)]
-    direct_changes: Option<Vec<DirectDocument>>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct SpecDocument {
-    spec: String,
-    summary: String,
-    #[serde(default)]
-    depends_on: Vec<Dependency>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct DirectDocument {
-    id: String,
-    summary: String,
-    #[serde(default)]
-    depends_on: Vec<Dependency>,
 }
 
 /// Decodes one strict version-1 scope document.
@@ -85,7 +48,7 @@ pub(super) fn parse(json: &str, code: &'static str) -> Result<ValidatedScope, Mi
     })
 }
 
-fn spec_items(items: Option<Vec<SpecDocument>>) -> Vec<SpecItem> {
+fn spec_items(items: Option<Vec<SpecItemDocument>>) -> Vec<SpecItem> {
     items
         .unwrap_or_default()
         .into_iter()

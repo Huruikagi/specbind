@@ -16,6 +16,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         check,
     )?;
     write_or_check(
+        &root.join("schemas/scope/v1.schema.json"),
+        &generate::to_pretty_json(&generate::scope_v1())?,
+        check,
+    )?;
+    write_or_check(
         &root.join("schemas/tasks/v1.schema.json"),
         &generate::to_pretty_json(&generate::tasks_v1())?,
         check,

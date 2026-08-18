@@ -51,6 +51,11 @@ project's own declaration of which boundaries matter, so a one-line change to an
 owned path enters exactly as a large one does. Run `specbind spec list` and read
 the contracts of the Specs that could plausibly own what the request touches.
 
+The last rule is about the **request**, not one item in it. When the user presents
+several pieces as one delivery, every piece enters, including the ones that would
+not on their own. Do not split a stated delivery across the boundary: the user
+said what belonged in the release, and part of it silently would not be there.
+
 Otherwise say in one sentence that the work needs no Spec, and hand it back to be
 done as ordinary work. Do not create a milestone, a Roadmap item, or a brief for
 it. That one sentence matters: it lets the user answer "actually, track that,"

@@ -1,10 +1,15 @@
 use schemars::{JsonSchema, Schema, generate::SchemaSettings};
 
-use super::{spec, tasks};
+use super::{scope, spec, tasks};
 
 #[must_use]
 pub fn spec_v1() -> Schema {
     generate::<spec::v1::SpecDocument>()
+}
+
+#[must_use]
+pub fn scope_v1() -> Schema {
+    generate::<scope::v1::ScopeDocument>()
 }
 
 #[must_use]

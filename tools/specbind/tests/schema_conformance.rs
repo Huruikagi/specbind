@@ -4,7 +4,9 @@ use std::{
 };
 
 use serde::de::DeserializeOwned;
-use specbind::schema::{SPEC_V1_SCHEMA_JSON, TASKS_V1_SCHEMA_JSON, generate, spec, tasks};
+use specbind::schema::{
+    SCOPE_V1_SCHEMA_JSON, SPEC_V1_SCHEMA_JSON, TASKS_V1_SCHEMA_JSON, generate, spec, tasks,
+};
 use specbind::yaml;
 
 #[test]
@@ -12,6 +14,7 @@ fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
     let cases = [
         ("spec/v1", SPEC_V1_SCHEMA_JSON, generate::spec_v1()),
         ("tasks/v1", TASKS_V1_SCHEMA_JSON, generate::tasks_v1()),
+        ("scope/v1", SCOPE_V1_SCHEMA_JSON, generate::scope_v1()),
     ];
 
     for (name, checked_in, generated) in cases {

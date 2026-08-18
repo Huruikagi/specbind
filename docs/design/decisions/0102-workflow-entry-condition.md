@@ -77,6 +77,23 @@ Apply it to what the project will own afterwards, not to how much work it looks
 like: a small first version of a capability nobody owns yet still creates the
 boundary that will hold it.
 
+### Framing covers everything it frames
+
+The first three rules ask about one work item. The fourth asks about the request,
+and it applies to the whole of what the user framed.
+
+When a request presents several pieces as one delivery, every piece enters, even
+the ones that would not on their own. Splitting a stated delivery across the
+workflow boundary is the surprising outcome: the user said what belonged in the
+release, and part of it silently would not be there.
+
+A forward test found this. Asked for "for the next release: add order
+cancellation, cap cart quantities at 99, and ship a CONTRIBUTING guide," an agent
+entered the first two and did the third as ordinary work, because the guide alone
+touches nothing a Spec owns. Each item was judged on its own and the framing was
+lost. It is stated here because nothing in the rules said which unit they apply
+to.
+
 ### Otherwise the work is done directly, and said so
 
 A request that satisfies none of those is performed as ordinary work, outside

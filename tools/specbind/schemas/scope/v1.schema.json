@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpecBind milestone scope candidate v1",
+  "description": "Transient input for milestone create and update-scope. Identity, baseline, release binding, and Direct completion status are never accepted from the caller.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "workItems": {
+      "$ref": "#/$defs/WorkItemsDocument"
+    },
+    "body": {
+      "description": "Free-form Roadmap Markdown body. Omitting it preserves the current\nprose on an update and writes a minimal body on creation.",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "workItems"
+  ],
+  "$defs": {
+    "WorkItemsDocument": {
+      "description": "At least one category must be present, and a category appears only when\nit has items.",
+      "type": "object",
+      "properties": {
+        "newSpecs": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SpecItemDocument"
+          }
+        },
+        "specUpdates": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SpecItemDocument"
+          }
+        },
+        "directChanges": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/DirectItemDocument"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "SpecItemDocument": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "description": "Canonical lowercase kebab-case Spec identity.",
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "spec",
+        "summary"
+      ]
+    },
+    "Dependency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SpecDependency"
+        },
+        {
+          "$ref": "#/$defs/DirectDependency"
+        }
+      ]
+    },
+    "SpecDependency": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "spec"
+      ]
+    },
+    "DirectDependency": {
+      "type": "object",
+      "properties": {
+        "direct": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "direct"
+      ]
+    },
+    "DirectItemDocument": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Canonical lowercase kebab-case Direct identity.",
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "summary"
+      ]
+    }
+  }
+}
