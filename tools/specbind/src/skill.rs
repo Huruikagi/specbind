@@ -62,6 +62,10 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../assets/skills/specbind-discovery/SKILL.md"),
     },
     Skill {
+        name: "specbind-gap-analysis",
+        source: include_str!("../assets/skills/specbind-gap-analysis/SKILL.md"),
+    },
+    Skill {
         name: "specbind-implement",
         source: include_str!("../assets/skills/specbind-implement/SKILL.md"),
     },

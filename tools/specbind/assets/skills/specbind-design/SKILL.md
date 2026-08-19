@@ -75,6 +75,19 @@ when one exists — and treat it as background only. It is deleted at release an
 is not fingerprinted, so a design whose meaning depends on it becomes incomplete
 the moment the milestone closes. Any conclusion you need, restate here.
 
+**Research marks where each of its conclusions has to land.** Those marks are
+addressed to you, and the milestone deletes the document that carries them:
+
+- **Design** or **Contract** — promote it here. That is what the mark is for.
+- **Requirements** — you cannot write it. Surface it: a change to an obligation
+  is a requirements rewind, with the cost that carries.
+- **Steering** — surface it for `specbind-steering`. Do not write steering here.
+- **Brief** — already routed back to the user by the analysis; nothing to do.
+
+A mark you neither promote nor surface expires silently when the milestone
+closes. If you judge one unnecessary, say so — that is a decision, and it should
+be visible as one.
+
 When the change touches a seam, read the contracts of the Specs on the other
 side of it:
 

@@ -190,3 +190,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0115](./design/decisions/0115-release-skill-contract.md) | Accepted | Binding order, confirmed publication, verification as a completion claim, and delivered-change summaries |
 | [0116](./design/decisions/0116-spec-status-delegated-gates.md) | Accepted | Delegated gates and their workflow reported in Spec status |
 | [0117](./design/decisions/0117-steering-authoring-contract.md) | Accepted | Steering authoring, in-place synchronization, and the steering template scope |
+| [0118](./design/decisions/0118-gap-analysis-skill-contract.md) | Accepted | Gap analysis before Requirements, the request-mediated influence path, and marked conclusions |

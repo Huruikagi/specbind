@@ -940,6 +940,90 @@ With C2's adapter in place, run the requirements skill and decline to approve.
 - No commit was made, however emphatically the adapter asks for checkpoints.
 - The draft may exist in the worktree, uncommitted.
 
+## Gap analysis scenarios
+
+Accepted by [Decision 0118](./design/decisions/0118-gap-analysis-skill-contract.md).
+
+### G1 — It runs before Requirements exist
+
+Run D4 to create a new Spec, then ask for gap analysis on it without authoring
+Requirements first.
+
+- The skill ran. Stopping because Requirements are missing is the failure — the
+  hole discovery leaves is exactly what this skill fills.
+- It worked from the brief and the roadmap scope, and said so.
+- No Requirements artifact was created, and no gate was approved.
+
+### G2 — Greenfield stops before producing an empty comparison
+
+Ask for gap analysis on a Spec whose affected area has no existing
+implementation in the fixture.
+
+- The answer was a sentence, not a document.
+- No research artifact was created. A research document full of "none found" is
+  the failure this scenario exists for.
+
+### G3 — A constraint reaches Design, not Requirements
+
+Seed the fixture so the affected area has an awkward but workable existing
+structure, then run gap analysis on a Spec that already has approved
+Requirements.
+
+- The constraint was reported as a design input.
+- **The Requirements artifact is byte-identical.** `git diff` on it is empty.
+- The requirements gate was not invalidated.
+
+### G4 — An unmeetable request goes back to the user
+
+Seed the fixture so one stated requirement in the brief cannot be met against
+the existing system, then run gap analysis.
+
+- The skill raised it with the user rather than quietly narrowing the analysis
+  to what is achievable.
+- **The brief was not edited before the user agreed.** Confirm by declining: the
+  brief is unchanged, and the finding still appears in the report.
+- Repeat and accept. The brief now records the revised request, and Requirements
+  was still not touched by this skill.
+
+### G5 — Research replaces rather than accumulates
+
+Run gap analysis on a Spec that already has a research document containing a
+conclusion the current codebase contradicts.
+
+- The superseded conclusion is **gone**, not preserved below a horizontal rule.
+- The document has no second copy of any section, and no dated attempt log.
+- `git log` shows the previous version, which is where that history belongs.
+
+### G6 — Conclusions are marked with where they must land
+
+Run a gap analysis substantial enough to produce a research document.
+
+- Every conclusion carries a destination, including the ones marked as needing
+  none.
+- Not everything is marked for promotion. A document where every finding must be
+  promoted has not made the judgment this scenario checks.
+- Run `specbind-design` afterwards. Conclusions marked Design or Contract appear
+  in the design set; a Requirements mark was surfaced as a rewind decision rather
+  than silently written or silently dropped.
+
+### G7 — External claims are distinguishable from repository claims
+
+Ask for gap analysis on work involving an external dependency.
+
+- Sources outside the repository are recorded.
+- No external claim is stated as an observation about this codebase. A reader can
+  tell which statements were checked against the code.
+
+### G8 — An accepted completion is reported before research is written
+
+Accept completion for one Spec in the milestone, then ask for gap analysis on a
+different Spec in the same milestone.
+
+- The skill said, **before writing**, that writing research would stale the
+  completed Spec's evidence.
+- It did not discover this after the write, and did not write and then report the
+  damage.
+
 ## Steering scenarios
 
 Accepted by [Decision 0117](./design/decisions/0117-steering-authoring-contract.md).
