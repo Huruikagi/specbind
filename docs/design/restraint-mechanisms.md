@@ -93,6 +93,39 @@ Highest leverage, widest blast radius.
 - Cap blocking findings per round and cap rounds, then return the judgment to a
   person when a cap is reached.
 
+#### A severity floor needs a destination first
+
+Field observation from cc-sdd: reviewers raise findings as critical because a
+finding is otherwise volatile. Nothing downstream picks up a non-blocking
+observation, so blocking is the only way to make it survive. Severity inflation
+is a rational adaptation to a missing destination, not reviewer error, and
+raising the floor alone does not remove it. Either reviewers keep inflating, or
+the observations are genuinely lost. Both outcomes are worse than today.
+
+SpecBind currently has no destination. `contract-review` states that there is no
+partial, conditional, or provisional acceptance and no field in which to record
+a caveat, so a finding is resolved or it blocks. `task-planning` says work worth
+doing later belongs to a future change, and no artifact holds a future change:
+the Roadmap is milestone-scoped and archived at release, Research and
+`tasks.yaml` are milestone-local and deleted at release, `log.md` is history,
+and steering carries durable convention rather than pending work.
+
+Design constraints if this is built:
+
+- **One-way.** A backlog an authoring agent reads becomes a scope source, which
+  reopens from the back door what Decision 0121 closed at the front. It must not
+  be an input to any authoring or review protocol.
+- **Human promotion only.** An item re-enters the workflow by being promoted to
+  the Roadmap, where ordinary discovery classification applies.
+- **Prefer an existing surface.** `settings/adapters/` can name where deferred
+  findings go, letting a project route them to its own tracker instead of
+  SpecBind growing one. Open question: an empty adapter leaves no destination
+  and restores the original incentive, so a minimal default sink may be needed.
+
+Consequently the severity floor and the destination are one unit of work.
+Shipping the floor alone degrades review quality; shipping the destination alone
+gives reviewers somewhere nobody is required to use.
+
 ### E. Observation layer
 
 Not restraint by itself, but its precondition.
