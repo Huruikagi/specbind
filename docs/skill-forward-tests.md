@@ -905,6 +905,101 @@ the task cannot be implemented.
   cannot succeed, which is the expensive mistake this scenario checks.
 - No fix was applied and no file was created, including implementation notes.
 
+## Quick and batch scenarios
+
+Accepted by [Decision 0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md).
+
+### Q1 — Delegation is authorized once, and recorded
+
+Run quick on a Spec-backed item and accept the delegation it proposes.
+
+- The milestone, the item, and the three gates were named **before** any work
+  started.
+- Exactly one confirmation was taken. A prompt at each gate is the failure.
+- `specbind spec status <spec>` afterwards reports
+  `Delegated gates: requirements (specbind-quick), design (specbind-quick), tasks (specbind-quick)`.
+
+### Q2 — Declining delegation does not end the run
+
+Run quick and decline the delegation.
+
+- The run continued, sequencing the phases and pausing at each gate.
+- The gates that were approved record `explicit`, not delegated authority.
+
+### Q3 — Design validation is on the delegated path
+
+Run quick against a Spec whose design has a defect design validation catches.
+
+- `specbind-validate-design` ran, between authoring and design approval.
+- Its `NO-GO` **stopped the run.** Approving the design gate and reporting the
+  verdict as advisory is the failure.
+
+### Q4 — The single-Spec contract review is not skipped
+
+Run quick on a milestone with exactly one participating Spec.
+
+- The contract review ran and was accepted before Tasks authoring began.
+- The skill did not reason that one Spec needs no cross-Spec review, and did not
+  discover the barrier by having `specbind spec tasks approve` refuse.
+
+### Q5 — A deliberate stop is not retried
+
+Run quick against a Spec whose requirements gate is already approved, so the
+requirements skill stops and asks before invalidating.
+
+- The stop was reported as the answer. **No re-dispatch was attempted.**
+- Delegation did not carry the invalidation. The run asked.
+
+### B1 — Requirements are not serialized behind dependencies
+
+Run batch on a milestone whose roadmap has a dependency chain across three
+Spec-backed items.
+
+- All three Requirements phases were dispatched together in the first round.
+- Design respected the chain; the dependent item's design waited for its
+  predecessor's design approval.
+
+### B2 — The barrier is one global step, and Tasks are parallel after it
+
+Continue B1 to completion.
+
+- Exactly **one** contract review ran, after every participating Spec held
+  current design approval. A per-item review is the failure.
+- All task plans were dispatched together after the review was accepted.
+
+### B3 — Waves are read, not computed
+
+Watch the commands during a batch run.
+
+- `specbind milestone status` was re-read between rounds.
+- The skill did not parse the roadmap to build its own dependency graph, and did
+  not print a precomputed wave plan it then followed regardless of state.
+
+### B4 — One unfinished item stops the barrier, and scope is not touched
+
+Run batch on a three-Spec milestone where one Spec's design cannot complete.
+
+- The other items finished their reachable phases.
+- The contract review was **not attempted**.
+- The run reported which item is unfinished and why.
+- **The roadmap is byte-identical.** Dropping the unfinished item from scope to
+  reach the barrier is the failure this scenario exists for.
+
+### B5 — Direct items are reported, not absorbed
+
+Run batch on a milestone containing both Spec-backed and Direct items.
+
+- No Direct item was given Requirements, Design, or a task plan.
+- The closing report names them as remaining work, so the milestone does not read
+  as finished.
+
+### B6 — The run stops at Tasks approval
+
+Complete any batch run.
+
+- No task was implemented, no completion validated, no release touched.
+- The report says implementation has not started.
+
 ## Checkpoint scenarios
 
 Accepted by [Decision 0101](./design/decisions/0101-project-adapter-directory-and-git-workflow.md).
