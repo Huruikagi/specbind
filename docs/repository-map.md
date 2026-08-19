@@ -189,3 +189,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0114](./design/decisions/0114-validate-design-skill-contract.md) | Accepted | Two verdicts with no inconclusive escape, the deletion test, and no self-initiated rewind for design validation |
 | [0115](./design/decisions/0115-release-skill-contract.md) | Accepted | Binding order, confirmed publication, verification as a completion claim, and delivered-change summaries |
 | [0116](./design/decisions/0116-spec-status-delegated-gates.md) | Accepted | Delegated gates and their workflow reported in Spec status |
+| [0117](./design/decisions/0117-steering-authoring-contract.md) | Accepted | Steering authoring, in-place synchronization, and the steering template scope |

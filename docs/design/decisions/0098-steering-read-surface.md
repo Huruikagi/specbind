@@ -257,6 +257,11 @@ it.
   and drift detection against the codebase.
 - Any write command. This decision adds no steering mutation surface.
 
+[Decision 0117](./0117-steering-authoring-contract.md) settles the last three.
+It fixes the authoring skill, adds a `steering` template scope that is embedded
+rather than installed, and keeps the absent write command by making this
+decision's read surface the validator the authoring skill checks itself against.
+
 ## Consequences
 
 - The premise several accepted decisions already relied on now has a mechanism,
