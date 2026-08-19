@@ -294,11 +294,26 @@ rules; it may not relax these by doing so.
 
 ## Implementation status
 
-Not implemented. This decision requires the `specbind-steering` skill asset, the
-`steering` template scope in `args.rs` and `template.rs`, four embedded steering
-templates for each supported artifact language, tests covering the new scope and
-its identity exception, and a forward-test scenario set.
+Implemented. `template list steering` and `template read steering <selector>`
+resolve a project-owned copy below `settings/templates/steering/` ahead of the
+embedded `product`, `tech`, `structure`, and `document` scaffolds in both
+artifact languages. The scope keeps its own narrow profile rather than joining
+the spec-local `ArtifactKind` set, exactly as `steering.rs` does for discovery:
+a declared `artifact_id` locates the output at `steering/<id>.md`, an omitted one
+marks the scaffold whose identity the author supplies, and two templates claiming
+one identity are reported rather than left to collapse the materialized
+collection. The set is embedded and not installed, so `INSTALLED_SELECTORS` is
+unchanged.
 
-The post-release recommendation is added to the embedded `specbind-release` skill
-together with the steering skill, so the installed release skill never points at
-a skill the same binary does not carry.
+The embedded `specbind-steering` skill confirms its mode before writing, reads
+the collection through the CLI, takes the repair exception only for a file the
+listing has already faulted, revises in place, and verifies every document it
+wrote by listing again. `specbind-release` carries the conditional post-release
+recommendation in its After-finalize step.
+
+Tests cover the embedded set per language, materialization into a discoverable
+collection including an author-identified document, project override, the
+duplicate and malformed identity diagnostics, silent skipping of another type,
+and the CLI listing and read for both the fixed and authored output paths.
+Forward-test scenarios S1 through S7 remain outstanding, pending a run against
+the fixture project.

@@ -154,6 +154,26 @@ Execute any applicable After-finalize guidance, and report its result
 separately. **A failure here is not a failed release** — the milestone is
 already closed. Never re-run finalization because of it.
 
+### Recommend steering work when this milestone earned it
+
+Finalization is the moment a steering edit becomes free again. Before it, a
+steering change is an ordinary project change that stales every accepted
+completion and forces the whole handshake to be re-run. So this belongs here,
+after finalization succeeded, and nowhere earlier.
+
+Say one sentence recommending `specbind-steering` when any of these holds:
+
+- the milestone's scope included a **new Spec** — the project took on a durable
+  responsibility it did not have before
+- **Contracts changed** during the milestone, so a boundary moved
+- the project has **no steering documents at all** and has now shipped a release
+
+Otherwise say nothing. A release that changed no durable pattern does not need
+the prompt, and one that appears every time is one nobody reads.
+
+It is a recommendation. The release is already complete, nothing waits on it,
+and stale steering is never a release failure.
+
 ## Boundaries
 
 - Orchestrate only. Author no Spec artifact, edit no `log.md`, approve no gate.

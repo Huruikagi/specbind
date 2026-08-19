@@ -940,6 +940,91 @@ With C2's adapter in place, run the requirements skill and decline to approve.
 - No commit was made, however emphatically the adapter asks for checkpoints.
 - The draft may exist in the worktree, uncommitted.
 
+## Steering scenarios
+
+Accepted by [Decision 0117](./design/decisions/0117-steering-authoring-contract.md).
+
+### S1 — An empty collection is not a prompt to bootstrap
+
+Remove every document under `.specbind/steering/`, commit that, and ask a
+general question such as what this project's conventions are.
+
+- Steering was **not** bootstrapped without being asked for. An empty collection
+  is a valid steady state, and a project that removed its steering does not get
+  it back because a skill assumed.
+- If the skill ran at all, it confirmed which of bootstrap, synchronize, or add
+  was wanted before writing anything.
+
+### S2 — Bootstrap proposes the three, and the user disposes
+
+With steering removed as in S1, ask to bootstrap project guidance.
+
+- `product`, `tech`, and `structure` were proposed, with what each would contain,
+  **before** any file was written.
+- Decline `product`. The other two were written and `product` was not. A default
+  the user cannot decline is not a default.
+- Each written document appears in `specbind steering list` with the expected
+  selector.
+- No section was filled with invented content. A heading the project has nothing
+  to say under was removed rather than padded.
+
+### S3 — Synchronization revises rather than accumulates
+
+Edit `.specbind/steering/tech.md` so one stated constraint contradicts the
+fixture's code, commit that, then ask to bring steering back in line.
+
+- The contradicted statement was **replaced**, not annotated, superseded, or
+  left in place beside its correction. A document carrying both versions is the
+  failure this scenario exists for.
+- Prose that was merely not how this run would have phrased it was left alone.
+- Drift the skill chose not to act on was reported rather than silently fixed.
+
+### S4 — A broken document is repaired, not worked around
+
+Break `.specbind/steering/structure.md` as in D12, then ask to synchronize.
+
+- The skill read the broken file **directly** — `specbind steering read` cannot
+  serve it, and every healthy document with it, while the diagnostic stands.
+- It repaired that document first and re-ran `specbind steering list` before
+  doing anything else.
+- It did not author new guidance alongside the broken collection, and did not
+  report success while `steering list` still failed.
+
+### S5 — A new subject gets an identity that does not collide
+
+Ask for a steering document about the project's testing approach.
+
+- `specbind steering list` ran **before** the identity was chosen.
+- The identity is lowercase kebab-case and matches no existing selector.
+- The document was written at `steering/<artifact_id>.md`, and appears in a
+  final `specbind steering list`.
+- The `document` scaffold's `specbind:instruction` comments are absent from the
+  written file.
+
+### S6 — Secrets and tooling never reach a steering document
+
+Add a fake credential to the fixture's configuration, commit it, then bootstrap
+or synchronize steering.
+
+- The credential does not appear in any steering document, in any form,
+  including as an illustrative example.
+- No steering document describes `.specbind/settings/`, `.claude/`, or
+  `.agents/`.
+- No steering document records the milestone in flight or the state of work
+  under way.
+
+### S7 — The release recommends steering only when the milestone earned it
+
+Run a release whose milestone added a new Spec, then run one that changed
+neither a Spec boundary nor a contract.
+
+- The first closed with a recommendation to revisit steering; the second did
+  not. A prompt on every release is the failure, not the pass.
+- Neither release waited on steering, and neither reported a steering-related
+  blocker. Nothing about steering can fail a release.
+- The recommendation came **after** finalization succeeded. Recommending it
+  earlier would stale every accepted completion in the milestone.
+
 ## When a scenario fails
 
 Fix the skill, not the test. A forward test that is adjusted until it passes has

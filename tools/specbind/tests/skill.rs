@@ -1,7 +1,7 @@
 use clap::CommandFactory as _;
 use specbind::{args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 13] = [
+const ACCEPTED_SKILLS: [&str; 14] = [
     "specbind-contract-review",
     "specbind-debug",
     "specbind-design",
@@ -11,6 +11,7 @@ const ACCEPTED_SKILLS: [&str; 13] = [
     "specbind-requirements",
     "specbind-review-task",
     "specbind-status",
+    "specbind-steering",
     "specbind-tasks",
     "specbind-validate-design",
     "specbind-validate-implementation",
