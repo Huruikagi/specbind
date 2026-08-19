@@ -191,3 +191,211 @@ fn project_owned_templates_override_the_embedded_default() {
         "an override must not add a selector"
     );
 }
+
+const EXPECTED_STEERING_SELECTORS: [&str; 4] = ["document", "product", "structure", "tech"];
+
+#[test]
+fn embeds_the_steering_scaffold_set_in_every_language() {
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        let inventory = template::discover_steering_templates(root.path(), language);
+        assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+        let selectors = inventory
+            .templates
+            .iter()
+            .map(|template| template.selector.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            selectors, EXPECTED_STEERING_SELECTORS,
+            "{language:?} embeds unexpected steering templates"
+        );
+
+        for template in &inventory.templates {
+            assert_eq!(template.source, TemplateSource::Embedded);
+            assert_eq!(template.artifact_type, "SpecBind Steering");
+        }
+        // The three bootstrap defaults carry literal identity; the scaffold
+        // whose subject the author chooses cannot, under Decision 0117.
+        for selector in ["product", "tech", "structure"] {
+            let template = steering_template(&inventory, selector);
+            assert_eq!(template.artifact_id.as_deref(), Some(selector));
+            assert_eq!(
+                template
+                    .output_path
+                    .as_ref()
+                    .expect("fixed output path")
+                    .as_str(),
+                format!("steering/{selector}.md")
+            );
+        }
+        let document = steering_template(&inventory, "document");
+        assert_eq!(document.artifact_id, None);
+        assert_eq!(document.output_path, None);
+    }
+}
+
+#[test]
+fn materialized_steering_templates_are_recognized_documents() {
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        for selector in ["product", "tech", "structure"] {
+            let (content, _) = template::read_steering_template(root.path(), language, selector)
+                .expect("embedded steering template");
+            write_steering(
+                root.path(),
+                &format!("{selector}.md"),
+                &strip_instructions(&content),
+            );
+        }
+        // The authoring skill supplies the identity the scaffold omits.
+        let (scaffold, _) = template::read_steering_template(root.path(), language, "document")
+            .expect("embedded steering scaffold");
+        let authored = strip_instructions(&scaffold).replacen(
+            "type: SpecBind Steering\n",
+            "type: SpecBind Steering\nartifact_id: api-standards\n",
+            1,
+        );
+        write_steering(root.path(), "api-standards.md", &authored);
+
+        let inventory = specbind::steering::discover(root.path()).expect("steering inventory");
+        assert!(
+            inventory.issues.is_empty(),
+            "{language:?} materialization has diagnostics: {:?}",
+            inventory.issues
+        );
+        let selectors = inventory
+            .documents
+            .iter()
+            .map(|document| document.selector.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            selectors,
+            ["api-standards", "product", "structure", "tech"],
+            "{language:?} materialization is not the expected collection"
+        );
+    }
+}
+
+#[test]
+fn project_owned_steering_templates_override_the_embedded_default() {
+    let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
+    write_steering_template(
+        root.path(),
+        "product.md",
+        "---\ntype: SpecBind Steering\nartifact_id: product-overview\n---\n\n# Product\n",
+    );
+
+    let inventory = template::discover_steering_templates(root.path(), ProjectLanguage::En);
+    assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+    let product = steering_template(&inventory, "product");
+    assert_eq!(product.source, TemplateSource::Project);
+    assert_eq!(product.artifact_id.as_deref(), Some("product-overview"));
+    assert_eq!(
+        product
+            .output_path
+            .as_ref()
+            .expect("fixed output path")
+            .as_str(),
+        "steering/product-overview.md",
+        "the declared identity locates the output, not the file stem"
+    );
+    assert_eq!(
+        inventory.templates.len(),
+        EXPECTED_STEERING_SELECTORS.len(),
+        "an override must not add a selector"
+    );
+}
+
+#[test]
+fn reports_steering_templates_that_would_materialize_onto_one_another() {
+    let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
+    write_steering_template(
+        root.path(),
+        "overview.md",
+        "---\ntype: SpecBind Steering\nartifact_id: product\n---\n\n# Overview\n",
+    );
+
+    let inventory = template::discover_steering_templates(root.path(), ProjectLanguage::En);
+    let codes = inventory
+        .issues
+        .iter()
+        .map(|issue| issue.code)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        codes,
+        ["TEMPLATE_STEERING_ID_DUPLICATE"],
+        "{:?}",
+        inventory.issues
+    );
+}
+
+#[test]
+fn rejects_a_steering_template_identity_that_discovery_could_not_use() {
+    let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
+    write_steering_template(
+        root.path(),
+        "product.md",
+        "---\ntype: SpecBind Steering\nartifact_id: Product Overview\n---\n\n# Product\n",
+    );
+
+    let inventory = template::discover_steering_templates(root.path(), ProjectLanguage::En);
+    let codes = inventory
+        .issues
+        .iter()
+        .map(|issue| issue.code)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        codes,
+        ["TEMPLATE_STEERING_ID_INVALID"],
+        "{:?}",
+        inventory.issues
+    );
+    assert_eq!(
+        steering_template(&inventory, "product").source,
+        TemplateSource::Embedded,
+        "a rejected override must not shadow the embedded default"
+    );
+}
+
+#[test]
+fn skips_a_project_file_of_another_type_without_reporting_it() {
+    let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
+    write_steering_template(
+        root.path(),
+        "notes.md",
+        "---\ntype: SpecBind Rule\n---\n\n# Notes\n",
+    );
+
+    let inventory = template::discover_steering_templates(root.path(), ProjectLanguage::En);
+    assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+    let selectors = inventory
+        .templates
+        .iter()
+        .map(|template| template.selector.as_str())
+        .collect::<Vec<_>>();
+    assert_eq!(selectors, EXPECTED_STEERING_SELECTORS);
+}
+
+fn steering_template<'a>(
+    inventory: &'a template::SteeringTemplateInventory,
+    selector: &str,
+) -> &'a template::SteeringTemplate {
+    inventory
+        .templates
+        .iter()
+        .find(|template| template.selector == selector)
+        .unwrap_or_else(|| panic!("steering template {selector}"))
+}
+
+fn write_steering(specbind_root: &Path, name: &str, content: &str) {
+    let target = specbind_root.join("steering").join(name);
+    fs::create_dir_all(target.parent().expect("steering parent")).expect("create steering root");
+    fs::write(target, content).expect("write steering document");
+}
+
+fn write_steering_template(specbind_root: &Path, name: &str, content: &str) {
+    let target = specbind_root.join("settings/templates/steering").join(name);
+    fs::create_dir_all(target.parent().expect("template parent"))
+        .expect("create template directory");
+    fs::write(target, content).expect("write project template");
+}

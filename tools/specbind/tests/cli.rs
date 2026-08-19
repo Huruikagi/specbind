@@ -1628,6 +1628,52 @@ fn lists_and_reads_project_owned_spec_templates() {
 }
 
 #[test]
+fn lists_and_reads_the_steering_template_scope() {
+    let root = project_fixture();
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(root.path())
+        .args(["template", "list", "steering"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK TEMPLATE_LISTED: Found 4 recognized steering template(s).\n",
+            )
+            .and(predicate::str::contains(
+                "selector=product source=embedded type=\"SpecBind Steering\" artifact_id=product template_path=en/steering/product.md output_path=steering/product.md\n",
+            ))
+            .and(predicate::str::contains(
+                "selector=document source=embedded type=\"SpecBind Steering\" template_path=en/steering/document.md output_path=<authored>\n",
+            )),
+        )
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(root.path())
+        .args(["template", "read", "steering", "document"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("type: SpecBind Steering")
+                .and(predicate::str::contains("artifact_id:").not())
+                .and(predicate::str::contains("specbind:instruction")),
+        )
+        .stderr("");
+
+    let mut missing = Command::cargo_bin("specbind").expect("specbind binary should build");
+    missing
+        .current_dir(root.path())
+        .args(["template", "read", "steering", "product-overview"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "ERROR TEMPLATE_SELECTOR_NOT_FOUND",
+        ));
+}
+
+#[test]
 fn falls_back_to_embedded_defaults_in_the_configured_language() {
     let root = project_fixture();
 
