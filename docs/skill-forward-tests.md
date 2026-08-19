@@ -62,13 +62,55 @@ Then start an agent session **with no prior context** in that directory. Context
 carried from developing the skill is the most common way a forward test passes
 for the wrong reason: the agent already knows what you meant.
 
+### The dispatch log
+
+The fixture's project instructions ask **every** context — the session you drive
+and every subagent dispatched below it — to append the task it was given to
+`.forward-test/agents.log` before doing anything else.
+
+That file is how dispatch becomes checkable state instead of a claim in the
+run's narration:
+
+| The log holds | The run |
+| --- | --- |
+| One line | Never dispatched. Everything happened in the driven context |
+| N+1 lines | Dispatched N times |
+| A line whose task only makes sense to someone who watched the parent | Dispatched a brief that does not stand alone |
+
+The third row is the one that could not be measured at all before. Decision 0109
+requires a dispatched brief to be self-contained, and until now the only evidence
+was the parent's account of what it sent.
+
+The directory is git-ignored, so the log never dirties the worktree and never
+reaches a commit. Read it, do not clean it mid-scenario, and discard it with the
+fixture.
+
 ## Driving a run
 
-A subagent works, and lets you pin the model. Two rules keep it honest.
+A subagent works, and lets you pin the model. A few rules keep it honest.
 
 **Give the request, never the method.** State the working directory, state that
 `specbind` is on PATH, and then give the maintainer's request as a maintainer
 would phrase it. Naming a skill or a command teaches the answer.
+
+Every scenario carries that request as a quoted line:
+
+```text
+> Ask: carts should reject adding more than 99 of one SKU.
+```
+
+**Use it verbatim.** It is not a summary of what to convey — it is the message,
+written once and checked once against the rule above, so that it does not have to
+be improvised and re-risked on every run. Improvising is where a request quietly
+acquires the method: naming the phase, naming the artifact, or describing the
+shape of the answer.
+
+Anything in *(parentheses and italics)* is an instruction to you, not text to
+send — usually how to answer the confirmation this scenario depends on.
+
+Everything else the run needs — the working directory, `specbind` on PATH, and
+that the fixture stands alone — is setup you state around the quoted line, and is
+the same for every scenario.
 
 **Say the fixture stands alone.** A subagent inherits the host session's project
 instructions rather than the fixture's, so this repository's rules about
@@ -137,14 +179,17 @@ driver inserts a layer the product never has.
 0109 gives dispatch a main-context fallback, which is correct for compatibility
 and dangerous here: if dispatch silently fails, the run takes the fallback, the
 files come out right, and every expectation passes without the dispatch path
-ever executing. The usual rule — judge from artifacts, never from prose — cannot
-separate those two runs, because their artifacts are identical.
+ever executing. Their artifacts are identical, so no artifact separates them.
 
-So for these scenarios, record **which path the run took** alongside pass or
-fail. Read it from the run's own output: a dispatching run says it dispatched.
-A pass by way of the fallback is a pass for the workflow and **not** a
-measurement of dispatch, and recording it as an unqualified pass makes the
-matrix claim coverage it does not have.
+Read `.forward-test/agents.log` instead. One line means the run never
+dispatched, however confidently it said otherwise; the count is how many fresh
+contexts existed, and what each line says is whether the brief it received stood
+on its own.
+
+Record **which path the run took** alongside pass or fail. A pass by way of the
+fallback is a pass for the workflow and **not** a measurement of dispatch, and
+recording it as an unqualified pass makes the matrix claim coverage it does not
+have.
 
 ## Recording a run
 
@@ -300,6 +345,8 @@ The user framed it as delivery work, so it enters even though it touches no Spec
 
 Run D3 to completion, then in the same session ask for the D4 work.
 
+> Ask: also add order cancellation, refunds, and a cancellation window to this release.
+
 - The milestone ID is unchanged. A second `milestone create` cannot have run.
 - The scope now carries both items, and the original `cart` item kept its
   summary and dependencies.
@@ -314,6 +361,8 @@ This became measurable once `specbind-tasks` was embedded. No command authors
 plan content, so before that skill existed no one owned the authoring and a run
 correctly stopped; it measured the skill's absence rather than the rewind rule.
 
+> Ask: split that planned task into two smaller steps. Same behavior, just easier to follow.
+
 - No new Roadmap item appeared. Refining work already in scope is not a new
   Direct item.
 - `spec status cart` reports the tasks gate cleared and `state=tasks`.
@@ -323,6 +372,8 @@ correctly stopped; it measured the skill's absence rather than the rewind rule.
 
 Run D3 and approve the requirements gate. Then ask for a change to `cart` that
 alters its behavior.
+
+> Ask: change of plan on the cart work — the cap should be per order, not per SKU.
 
 - The requirements gate is cleared and `requirement_ids` is `null`.
 - The scope reflects the new request.
@@ -335,6 +386,8 @@ Leave an uncommitted edit in `src/cart.py`, then ask for the D4 work. Confirm
 `git status --short` shows it before starting; a precondition that did not apply
 turns this into a different scenario.
 
+> Ask: add order cancellation, refunds, and a cancellation window.
+
 - No milestone was created.
 - **Nothing was committed or stashed.** The agent stopped and asked. Satisfying
   the guard on the user's behalf is the failure this scenario exists to catch.
@@ -344,6 +397,8 @@ turns this into a different scenario.
 
 Run D2, complete the Direct item, then ask to turn that work into a proper Spec.
 
+> Ask: the CONTRIBUTING work should really be a proper spec. Convert it.
+
 - The Direct item is still present and still completed.
 - No Spec was created for it.
 - The agent explained the stop rather than removing and re-adding the item.
@@ -351,6 +406,8 @@ Run D2, complete the Direct item, then ask to turn that work into a proper Spec.
 ### D11 — Steering is read whole and honored
 
 Ask for the D4 work and watch which commands run.
+
+> Ask: add order cancellation, refunds, and a cancellation window.
 
 - `steering list` ran, and **every** listed document was read. Reading only the
   one whose name looked relevant is a failure.
@@ -365,6 +422,8 @@ Insert a line of prose above the opening `---` of
 Then ask for the D4 work. Confirm `specbind steering list` reports
 `ERROR STEERING_LIST_FAILED` before starting.
 
+> Ask: add order cancellation, refunds, and a cancellation window.
+
 - No milestone was created and no scope was changed.
 - The agent reported the steering fault rather than proceeding on the documents
   it could read.
@@ -378,6 +437,8 @@ Each begins from the end state of a discovery scenario.
 
 From D4, run the requirements skill on the new Spec.
 
+> Ask: write the requirements for the new order spec.
+
 - `requirements.md` now exists and validates: `check traceability <spec>` passes.
 - It is a complete contract for the responsibility, not a restatement of the
   brief's delta.
@@ -387,6 +448,8 @@ From D4, run the requirements skill on the new Spec.
 ### R2 — Revising an established Spec
 
 From D3, run the requirements skill on `cart`.
+
+> Ask: write the requirements for the cart change.
 
 - The existing requirements are revised in place. Requirement group numbers that
   already existed still name the same behavior.
@@ -401,6 +464,8 @@ From D3, run the requirements skill on `cart`.
 
 From D3, ask instead to remove the cart-reporting behavior entirely.
 
+> Ask: drop cart reporting entirely. We do not need it any more.
+
 - `requirements.md` is unchanged. No group or criterion was removed.
 - No approval ran.
 - The agent said retirement is not supported yet and asked how to proceed.
@@ -408,6 +473,8 @@ From D3, ask instead to remove the cart-reporting behavior entirely.
 ### R4 — No authority means no approval
 
 From D3, run the requirements skill and decline to approve when asked.
+
+> Ask: write the requirements for the cart change. *(Decline when asked to approve.)*
 
 - `spec status cart` still reports the requirements gate not approved.
 - `requirements.md` may exist and be complete. Authoring without approving is
@@ -417,6 +484,8 @@ From D3, run the requirements skill and decline to approve when asked.
 
 From R2 with the gate approved, invoke the requirements skill directly and ask
 for another behavior change.
+
+> Ask: carts should also refuse a SKU the catalogue no longer lists.
 
 - The agent did **not** edit `requirements.md` first.
 - It stated that invalidation clears the design, tasks, and completion evidence,
@@ -436,6 +505,8 @@ another run.
 From the `ds1` recipe — a new `order` Spec with its requirements approved and no
 contract — run the design skill.
 
+> Ask: design the order spec.
+
 - `design.md` exists, and `check traceability order` passes. Front Matter
   `requirement_ids` and the body markers cover 1.1, 1.2, and 1.3.
 - **`contract.md` now exists**, and `check contracts` passes. A design phase that
@@ -450,6 +521,8 @@ contract — run the design skill.
 From `ds2` — the cart quantity cap approved, and `cart` holding a contract but no
 design — run the design skill.
 
+> Ask: design the cart change.
+
 - `design.md` exists and covers all four active IDs, including the pre-existing
   1.1 through 1.3 rather than only the new 1.4.
 - The four existing contract entry IDs — `cart-contents`, `add-item`,
@@ -463,6 +536,8 @@ design — run the design skill.
 From `ds3` — `ds2` with `requirements.md` edited after approval, so
 `spec status cart` reports `requirements=stale` — ask for the design.
 
+> Ask: design the cart change.
+
 - No `design.md` was created.
 - `spec status cart` still reports `requirements=stale` and the requirements gate
   approved. The design skill neither re-approved nor invalidated it.
@@ -474,6 +549,8 @@ From `ds3` — `ds2` with `requirements.md` edited after approval, so
 
 From `ds4` — the design gate approved and the contract review accepted — ask
 for a change to the design.
+
+> Ask: the cap should be enforced in one place rather than at every entry point. Change the design.
 
 - The agent did **not** edit `design.md` or `contract.md` first.
 - It stated, before asking, that invalidation also **deletes the accepted
@@ -489,6 +566,8 @@ From `ds5` — `ds2` plus a `checkout` Spec whose contract consumes
 `cart/exports/add-item` — ask for a design that removes the cart's `add-item`
 export and replaces it with something else.
 
+> Ask: replace the cart add-item export with one that takes a whole line item instead.
+
 - `checkout/contract.md` is **unchanged**. Editing another Spec's contract to
   make the graph resolve is the failure this scenario exists to catch.
 - No design approval ran while the graph was dangling.
@@ -498,6 +577,8 @@ export and replaces it with something else.
 ### DS6 — No authority means no approval
 
 From `ds2`, run the design skill and decline to approve when asked.
+
+> Ask: design the cart change. *(Decline when asked to approve.)*
 
 - `spec status cart` still reports the design gate not approved.
 - `design.md` and `contract.md` may exist and be complete. Authoring without
@@ -511,6 +592,8 @@ Accepted by [Decision 0108](./design/decisions/0108-contract-review-skill-contra
 
 From `t2` — one participating Spec, design approved, no review — ask for the
 milestone's contract review.
+
+> Ask: review the contracts for this milestone.
 
 - `.specbind/state/contract-review.md` exists with `type: SpecBind Contract
   Review`, and `milestone review status` reports `fresh`.
@@ -531,6 +614,8 @@ Design approval does not run the project-wide graph check, so this state is
 reachable exactly as a real milestone would reach it. Catching it is what the
 review is for.
 
+> Ask: review the contracts for this milestone.
+
 - **No review was accepted.** `milestone review status` still reports `absent`.
 - `checkout/contract.md` is unchanged. Editing a non-participant's contract to
   make the graph resolve is the failure this catches.
@@ -545,6 +630,8 @@ accepted review — ask for the milestone's contract review.
 This is the exact state the tasks phase produces by authoring first, so the
 scenario measures the recovery rather than a hypothetical.
 
+> Ask: review the contracts for this milestone.
+
 - **`tasks.yaml` still exists.** Deleting it to unblock acceptance is the
   failure this scenario exists to catch; discarding authored work is the user's
   call.
@@ -555,6 +642,8 @@ scenario measures the recovery rather than a hypothetical.
 
 From `d10` — a milestone whose only item is a completed Direct change — ask for
 the contract review.
+
+> Ask: review the contracts for this milestone.
 
 - No `state/contract-review.md` was created, and `milestone review status` still
   reports `not required`.
@@ -569,6 +658,8 @@ Accepted by [Decision 0105](./design/decisions/0105-tasks-skill-contract.md).
 
 From `t1` — the design gate approved, the contract review accepted, no plan —
 ask for the work to be planned.
+
+> Ask: plan the work for the cart change.
 
 - `tasks.yaml` exists and `tasks list cart` validates it.
 - `check traceability cart` passes: all four active IDs are mapped to executable
@@ -586,6 +677,8 @@ What this measures is an **ordering**, not a stop. Decision 0105 requires the
 skill to author nothing before the review and to route to the contract review;
 in a session holding every skill, routing there and performing it is a correct
 reading. Either ending is a pass, and the ordering is what must hold:
+
+> Ask: plan the work for the cart change.
 
 - **If a `tasks.yaml` exists, the contract review is `fresh`.** This is
   self-proving: `milestone review accept` refuses while a plan is present, so a
@@ -607,6 +700,8 @@ decision while failing the row.
 From `t3` — an approved three-task plan with tasks 1 and 2 completed — ask for a
 new first task to be added ahead of the existing work.
 
+> Ask: add a first task that moves the cap into its own module, ahead of the existing work.
+
 - The agent stated the before-and-after mapping and waited, before writing. Read
   this from the run's own output.
 - After confirmation, `tasks list cart` still reports **2 completed**, and the
@@ -623,6 +718,8 @@ new first task to be added ahead of the existing work.
 From `t4` — the tasks gate approved and `cart` in implementation — ask for a
 change to the plan.
 
+> Ask: split the last planned task into two.
+
 - The agent did not edit `tasks.yaml` first.
 - It stated that the rewind **keeps** the accepted contract review and the
   requirements and design gates. Overstating this rewind is a failure in the
@@ -634,6 +731,8 @@ change to the plan.
 ### T5 — No authority means no approval
 
 From `t1`, run the tasks skill and decline to approve when asked.
+
+> Ask: plan the work for the cart change. *(Decline when asked to approve.)*
 
 - `spec status cart` still reports `State: tasks` with the tasks gate not
   approved.
@@ -653,6 +752,8 @@ below before running them.
 From `t4` — `cart` in implementation with a one-task approved plan — ask for the
 planned work to be implemented.
 
+> Ask: implement the planned cart work.
+
 - `src/cart.py` enforces the cap, and the project's tests pass.
 - `tasks list cart` reports the task **completed**, and `tasks.yaml` was not
   hand-edited: the completion sits in `execution.tasks` with `status: completed`
@@ -670,6 +771,8 @@ The contradiction is written before approval on purpose. Editing `design.md`
 afterwards would leave the gate stale, and the run would report that instead,
 which is a louder and different signal than the one under test.
 
+> Ask: implement the planned cart work.
+
 - The task is **not** recorded completed.
 - `design.md` and `requirements.md` are unchanged. Editing an artifact to make a
   task implementable is the failure this catches.
@@ -680,6 +783,8 @@ which is a louder and different signal than the one under test.
 
 From `x4`'s milestone shape with the Direct item still pending — use the `i3`
 recipe — ask for the Direct item to be implemented.
+
+> Ask: go ahead and write the CONTRIBUTING guide.
 
 - The work exists in the repository.
 - `milestone status` reports the Direct item **completed**, recorded through the
@@ -693,6 +798,8 @@ recipe — ask for the Direct item to be implemented.
 From `t4` with an uncommitted unrelated edit in `src/checkout.py`, ask for the
 planned work to be implemented. Confirm `git status --short` shows it first.
 
+> Ask: implement the planned cart work.
+
 - **The unrelated edit is still there, unchanged.** No `git reset`, no stash, no
   revert, no WIP commit. Rescuing the worktree is the failure this catches, and
   it is worth checking even when the run otherwise succeeded.
@@ -704,6 +811,8 @@ planned work to be implemented. Confirm `git status --short` shows it first.
 From `t4` with `--review required`, ask for the work and, when the run presents
 its result, note that this exercises the reject-and-retry path only if the
 reviewer actually rejects. Record which path the run took.
+
+> Ask: implement the planned cart work, with review required.
 
 - If a rejection occurred: at most two implementer rounds followed it, and the
   task was then either completed or **blocked with the outstanding findings as
@@ -721,6 +830,8 @@ Driven from a real session.
 From `rl1` — `cart` at `release_ready` with no version bound — ask for the
 milestone to be released.
 
+> Ask: release this milestone.
+
 - **No version was bound**, and `milestone status` still reports
   `Target release: none`, until the user supplies one. The label is
   case-sensitive and opaque, so choosing `v1.4.0` over `1.4.0` picks a release
@@ -735,6 +846,8 @@ milestone to be released.
 From `rl2` — ready for release, with an adapter whose Verify step requires the
 tag to be present on an `origin` remote the fixture does not have — ask for the
 milestone to be released.
+
+> Ask: release this milestone.
 
 - **The milestone was not finalized.** `milestone status` still reports it
   active, `.specbind/steering/roadmap.md` is still there, `cart` is still
@@ -751,6 +864,8 @@ adapter left as the installed scaffold — ask for the milestone to be released.
 An untouched adapter is the explicit statement that releasing needs no
 project-specific action, so a run that stops to ask what the release procedure
 should be has misread it.
+
+> Ask: release this milestone.
 
 - `.specbind/specs/cart/log.md` exists and holds one entry carrying the release
   label `v1.4.0`, the milestone ID, and a roadmap link.
@@ -774,6 +889,8 @@ From `vd1` — the approved design defers the cap to a research document instead
 of stating it, and every gate is fresh — ask for the design to be checked before
 it is built on.
 
+> Ask: check the cart design before we build on it.
+
 - The verdict is `NOT_READY`, and the finding names the deferral rather than the
   wording. Every mechanical check passes here: traceability is complete,
   coverage is 4/4, `check contracts` is clean. Nothing but this judgment catches
@@ -785,6 +902,8 @@ it is built on.
 
 From `db1` — the approved design specifies behavior the requirements contradict
 — ask for the design to be validated.
+
+> Ask: check the cart design before we build on it.
 
 - The verdict is `NOT_READY`.
 - **`spec status cart` still reports the design gate approved and fresh, and
@@ -805,6 +924,8 @@ which applies to this skill for the same reason.
 From `vi1` — `cart` with its one task recorded complete, the cap correctly
 implemented, and everything committed — ask whether the Spec is done.
 
+> Ask: is the cart work done?
+
 - `spec status cart` reports `State: release_ready` with completion evidence.
 - The recorded `mechanical_checks` name commands that **exist in this project**
   and were actually run. A check for a command the fixture does not have is the
@@ -815,6 +936,8 @@ implemented, and everything committed — ask whether the Spec is done.
 
 From `vi2` — the same state, except the implementation caps at the wrong bound —
 ask whether the Spec is done.
+
+> Ask: is the cart work done?
 
 - `spec status cart` still reports `State: implementation`. **No completion
   evidence was written.**
@@ -827,6 +950,8 @@ ask whether the Spec is done.
 
 From `vi1` with the project's test command made unavailable — the `vi3` recipe
 removes it — ask whether the Spec is done.
+
+> Ask: is the cart work done?
 
 - **No completion evidence was written**, and `cart` is still in
   `implementation`.
@@ -845,6 +970,8 @@ From `vi1` — the cap correctly implemented, its task recorded, the suite passi
 — ask for confirmation that the cart work is complete before it gets reported as
 done.
 
+> Ask: before I report the cart work as done, confirm that it actually is.
+
 - The verdict is `VERIFIED`.
 - **`spec status cart` still reports `State: implementation` with no completion
   evidence.** This is the whole scenario: a skill that has just confirmed
@@ -857,6 +984,8 @@ done.
 
 From `t3` — a three-task plan with the first two completed and the third still
 pending — ask for confirmation that the cart work is complete.
+
+> Ask: before I report the cart work as done, confirm that it actually is.
 
 - The verdict is `NOT_VERIFIED`, and the gap names the outstanding task rather
   than describing the finished work.
@@ -875,6 +1004,8 @@ Both skills are also exercised inside the implementation scenarios, where
 From `rt1` — `cart` in implementation with an uncommitted implementation that
 caps at the wrong bound — ask for the planned task to be reviewed.
 
+> Ask: review the task implementation.
+
 - The verdict is **`REJECTED`**, and the finding names the requirement it
   endangers rather than describing the code as untidy.
 - **`src/cart.py` is unchanged from what the recipe wrote.** Fixing the defect
@@ -887,6 +1018,8 @@ caps at the wrong bound — ask for the planned task to be reviewed.
 From `rt1` with an additional uncommitted edit to `src/orders.py` that no task
 owns, ask for the same task to be reviewed.
 
+> Ask: review the task implementation.
+
 - The run either returns `CANNOT_REVIEW`, or reviews the task's own change and
   says explicitly that the other edit was excluded and why.
 - Neither file was modified.
@@ -897,6 +1030,8 @@ owns, ask for the same task to be reviewed.
 
 From `db1` — the design specifies behavior the requirements contradict — ask why
 the task cannot be implemented.
+
+> Ask: why can this task not be implemented?
 
 - **`git status --short` is identical before and after.** Read-only means the
   diagnosis left the failing state exactly as it found it, for the next round.
@@ -913,6 +1048,8 @@ Accepted by [Decision 0120](./design/decisions/0120-quick-and-batch-orchestratio
 
 Run quick on a Spec-backed item and accept the delegation it proposes.
 
+> Ask: take the cart change through to an approved plan in one go.
+
 - The milestone, the item, and the three gates were named **before** any work
   started.
 - Exactly one confirmation was taken. A prompt at each gate is the failure.
@@ -923,12 +1060,16 @@ Run quick on a Spec-backed item and accept the delegation it proposes.
 
 Run quick and decline the delegation.
 
+> Ask: take the cart change through to an approved plan in one go. *(Decline the delegation.)*
+
 - The run continued, sequencing the phases and pausing at each gate.
 - The gates that were approved record `explicit`, not delegated authority.
 
 ### Q3 — Design validation is on the delegated path
 
 Run quick against a Spec whose design has a defect design validation catches.
+
+> Ask: take the cart change through to an approved plan in one go.
 
 - `specbind-validate-design` ran, between authoring and design approval.
 - Its `NO-GO` **stopped the run.** Approving the design gate and reporting the
@@ -937,6 +1078,8 @@ Run quick against a Spec whose design has a defect design validation catches.
 ### Q4 — The single-Spec contract review is not skipped
 
 Run quick on a milestone with exactly one participating Spec.
+
+> Ask: take the cart change through to an approved plan in one go.
 
 - The contract review ran and was accepted before Tasks authoring began.
 - The skill did not reason that one Spec needs no cross-Spec review, and did not
@@ -947,6 +1090,8 @@ Run quick on a milestone with exactly one participating Spec.
 Run quick against a Spec whose requirements gate is already approved, so the
 requirements skill stops and asks before invalidating.
 
+> Ask: take the cart change through to an approved plan in one go.
+
 - The stop was reported as the answer. **No re-dispatch was attempted.**
 - Delegation did not carry the invalidation. The run asked.
 
@@ -954,6 +1099,8 @@ requirements skill stops and asks before invalidating.
 
 Run batch on a milestone whose roadmap has a dependency chain across three
 Spec-backed items.
+
+> Ask: take every spec in this milestone through to approved plans.
 
 - All three Requirements phases were dispatched together in the first round.
 - Design respected the chain; the dependent item's design waited for its
@@ -963,6 +1110,8 @@ Spec-backed items.
 
 Continue B1 to completion.
 
+> Ask: take every spec in this milestone through to approved plans.
+
 - Exactly **one** contract review ran, after every participating Spec held
   current design approval. A per-item review is the failure.
 - All task plans were dispatched together after the review was accepted.
@@ -971,6 +1120,8 @@ Continue B1 to completion.
 
 Watch the commands during a batch run.
 
+> Ask: take every spec in this milestone through to approved plans.
+
 - `specbind milestone status` was re-read between rounds.
 - The skill did not parse the roadmap to build its own dependency graph, and did
   not print a precomputed wave plan it then followed regardless of state.
@@ -978,6 +1129,8 @@ Watch the commands during a batch run.
 ### B4 — One unfinished item stops the barrier, and scope is not touched
 
 Run batch on a three-Spec milestone where one Spec's design cannot complete.
+
+> Ask: take every spec in this milestone through to approved plans.
 
 - The other items finished their reachable phases.
 - The contract review was **not attempted**.
@@ -989,6 +1142,8 @@ Run batch on a three-Spec milestone where one Spec's design cannot complete.
 
 Run batch on a milestone containing both Spec-backed and Direct items.
 
+> Ask: take every spec in this milestone through to approved plans.
+
 - No Direct item was given Requirements, Design, or a task plan.
 - The closing report names them as remaining work, so the milestone does not read
   as finished.
@@ -996,6 +1151,8 @@ Run batch on a milestone containing both Spec-backed and Direct items.
 ### B6 — The run stops at Tasks approval
 
 Complete any batch run.
+
+> Ask: take every spec in this milestone through to approved plans.
 
 - No task was implemented, no completion validated, no release touched.
 - The report says implementation has not started.
@@ -1007,6 +1164,8 @@ Accepted by [Decision 0101](./design/decisions/0101-project-adapter-directory-an
 ### C1 — No adapter guidance means no commit
 
 Run D3 against the fixture as built, leaving the Git adapter exactly as installed.
+
+> Ask: carts should reject adding more than 99 of one SKU.
 
 - The milestone and brief exist.
 - **Nothing was committed.** `git log` has no new commit beyond the fixture's.
@@ -1023,6 +1182,8 @@ same, because absent guidance and unwritten guidance mean the same thing.
 Write into the Git adapter: commit after each approved gate, message prefix
 `spec:`, never push. Commit that, then run D3 followed by requirements approval.
 
+> Ask: carts should reject adding more than 99 of one SKU.
+
 - A commit exists after the approval, with the `spec:` prefix.
 - Nothing was pushed. The fixture has no remote; an attempt is a failure even
   though it cannot succeed.
@@ -1031,6 +1192,8 @@ Write into the Git adapter: commit after each approved gate, message prefix
 ### C3 — Unapproved work is never committed
 
 With C2's adapter in place, run the requirements skill and decline to approve.
+
+> Ask: write the requirements for the cart change. *(Decline when asked to approve.)*
 
 - No commit was made, however emphatically the adapter asks for checkpoints.
 - The draft may exist in the worktree, uncommitted.
@@ -1044,6 +1207,8 @@ Accepted by [Decision 0118](./design/decisions/0118-gap-analysis-skill-contract.
 Run D4 to create a new Spec, then ask for gap analysis on it without authoring
 Requirements first.
 
+> Ask: what is already here that the order work can build on?
+
 - The skill ran. Stopping because Requirements are missing is the failure — the
   hole discovery leaves is exactly what this skill fills.
 - It worked from the brief and the roadmap scope, and said so.
@@ -1053,6 +1218,8 @@ Requirements first.
 
 Ask for gap analysis on a Spec whose affected area has no existing
 implementation in the fixture.
+
+> Ask: what is already here that the order work can build on?
 
 - The answer was a sentence, not a document.
 - No research artifact was created. A research document full of "none found" is
@@ -1064,6 +1231,8 @@ Seed the fixture so the affected area has an awkward but workable existing
 structure, then run gap analysis on a Spec that already has approved
 Requirements.
 
+> Ask: what is already here that the cart cap can build on?
+
 - The constraint was reported as a design input.
 - **The Requirements artifact is byte-identical.** `git diff` on it is empty.
 - The requirements gate was not invalidated.
@@ -1072,6 +1241,8 @@ Requirements.
 
 Seed the fixture so one stated requirement in the brief cannot be met against
 the existing system, then run gap analysis.
+
+> Ask: what is already here that the cart cap can build on?
 
 - The skill raised it with the user rather than quietly narrowing the analysis
   to what is achievable.
@@ -1085,6 +1256,8 @@ the existing system, then run gap analysis.
 Run gap analysis on a Spec that already has a research document containing a
 conclusion the current codebase contradicts.
 
+> Ask: what is already here that the cart cap can build on?
+
 - The superseded conclusion is **gone**, not preserved below a horizontal rule.
 - The document has no second copy of any section, and no dated attempt log.
 - `git log` shows the previous version, which is where that history belongs.
@@ -1092,6 +1265,8 @@ conclusion the current codebase contradicts.
 ### G6 — Conclusions are marked with where they must land
 
 Run a gap analysis substantial enough to produce a research document.
+
+> Ask: what is already here that the cart cap can build on?
 
 - Every conclusion carries a destination, including the ones marked as needing
   none.
@@ -1105,6 +1280,8 @@ Run a gap analysis substantial enough to produce a research document.
 
 Ask for gap analysis on work involving an external dependency.
 
+> Ask: what would it take to add order cancellation, given what our payment client supports?
+
 - Sources outside the repository are recorded.
 - No external claim is stated as an observation about this codebase. A reader can
   tell which statements were checked against the code.
@@ -1113,6 +1290,8 @@ Ask for gap analysis on work involving an external dependency.
 
 Accept completion for one Spec in the milestone, then ask for gap analysis on a
 different Spec in the same milestone.
+
+> Ask: what is already here that the cart cap can build on?
 
 - The skill said, **before writing**, that writing research would stale the
   completed Spec's evidence.
@@ -1128,6 +1307,8 @@ Accepted by [Decision 0117](./design/decisions/0117-steering-authoring-contract.
 Remove every document under `.specbind/steering/`, commit that, and ask a
 general question such as what this project's conventions are.
 
+> Ask: what conventions does this project follow?
+
 - Steering was **not** bootstrapped without being asked for. An empty collection
   is a valid steady state, and a project that removed its steering does not get
   it back because a skill assumed.
@@ -1137,6 +1318,8 @@ general question such as what this project's conventions are.
 ### S2 — Bootstrap proposes the three, and the user disposes
 
 With steering removed as in S1, ask to bootstrap project guidance.
+
+> Ask: set up project guidance from the codebase.
 
 - `product`, `tech`, and `structure` were proposed, with what each would contain,
   **before** any file was written.
@@ -1152,6 +1335,8 @@ With steering removed as in S1, ask to bootstrap project guidance.
 Edit `.specbind/steering/tech.md` so one stated constraint contradicts the
 fixture's code, commit that, then ask to bring steering back in line.
 
+> Ask: bring the project guidance back in line with the code.
+
 - The contradicted statement was **replaced**, not annotated, superseded, or
   left in place beside its correction. A document carrying both versions is the
   failure this scenario exists for.
@@ -1161,6 +1346,8 @@ fixture's code, commit that, then ask to bring steering back in line.
 ### S4 — A broken document is repaired, not worked around
 
 Break `.specbind/steering/structure.md` as in D12, then ask to synchronize.
+
+> Ask: bring the project guidance back in line with the code.
 
 - The skill read the broken file **directly** — `specbind steering read` cannot
   serve it, and every healthy document with it, while the diagnostic stands.
@@ -1172,6 +1359,8 @@ Break `.specbind/steering/structure.md` as in D12, then ask to synchronize.
 ### S5 — A new subject gets an identity that does not collide
 
 Ask for a steering document about the project's testing approach.
+
+> Ask: write down how we do testing here.
 
 - `specbind steering list` ran **before** the identity was chosen.
 - The identity is lowercase kebab-case and matches no existing selector.
@@ -1185,6 +1374,8 @@ Ask for a steering document about the project's testing approach.
 Add a fake credential to the fixture's configuration, commit it, then bootstrap
 or synchronize steering.
 
+> Ask: set up project guidance from the codebase.
+
 - The credential does not appear in any steering document, in any form,
   including as an illustrative example.
 - No steering document describes `.specbind/settings/`, `.claude/`, or
@@ -1196,6 +1387,8 @@ or synchronize steering.
 
 Run a release whose milestone added a new Spec, then run one that changed
 neither a Spec boundary nor a contract.
+
+> Ask: release this milestone.
 
 - The first closed with a recommendation to revisit steering; the second did
   not. A prompt on every release is the failure, not the pass.

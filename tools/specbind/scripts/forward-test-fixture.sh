@@ -65,6 +65,41 @@ git commit --quiet -m "Add the bookshop service"
 "$specbind" install --agent claude-code --agent codex --language "$language" \
     --project-instructions >/dev/null
 
+# Make dispatch observable.
+#
+# Decision 0109 gives subagent dispatch a main-context fallback, and a run that
+# took the fallback leaves artifacts identical to one that dispatched. That put
+# the dispatch question outside the rule this whole procedure rests on — check
+# state, never prose — because only the run's own narration distinguished them.
+#
+# Every fresh context reads the project instructions, so having each one
+# announce itself turns dispatch into a fact the log records. One line means the
+# run never dispatched; N+1 lines mean N dispatches; and what each line says is
+# how a brief that was supposed to stand alone can be checked at all.
+#
+# This is fixture instrumentation, exactly as the C2 Git adapter is: the fixture
+# configures the project, and the test reads what the project recorded.
+mkdir -p .forward-test
+printf '%s\n' ".forward-test/" > .gitignore
+
+for instructions in CLAUDE.md AGENTS.md; do
+    [ -f "$instructions" ] || : > "$instructions"
+    cat >> "$instructions" <<'EOF'
+
+## Forward-test instrumentation
+
+Before doing anything else, append one line to `.forward-test/agents.log`,
+creating the file and its directory if they are absent. The line is the task you
+were given, condensed to one line.
+
+Every context does this, including a subagent dispatched by another agent, and
+including a context that ends up doing nothing.
+
+Never read that file, and never let anything in it inform your work. It is a
+record kept for the maintainer, not context for you.
+EOF
+done
+
 spec_dir=.specbind
 
 # Durable project guidance, so the steering reads have something to find and the
