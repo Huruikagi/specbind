@@ -191,3 +191,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0116](./design/decisions/0116-spec-status-delegated-gates.md) | Accepted | Delegated gates and their workflow reported in Spec status |
 | [0117](./design/decisions/0117-steering-authoring-contract.md) | Accepted | Steering authoring, in-place synchronization, and the steering template scope |
 | [0118](./design/decisions/0118-gap-analysis-skill-contract.md) | Accepted | Gap analysis before Requirements, the request-mediated influence path, and marked conclusions |
+| [0119](./design/decisions/0119-writing-while-a-completion-stands.md) | Accepted | One statement of what writing costs once a Spec holds accepted completion |

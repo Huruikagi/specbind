@@ -71,6 +71,33 @@ never routed as typed artifacts.
   and must remain idempotent for the same milestone. Do not hand-append entries
   or reorder existing dates while authoring other artifacts.
 
+## Writing while a completion stands
+
+Completion evidence is bound to a project revision, and the only project change
+it tolerates is a Spec's own transition into `release_ready`. Once any
+participating Spec holds accepted completion, **every other write stales it**,
+and that Spec's completion handshake has to be re-run before the milestone can be
+released. This is true however unrelated the write looks; path boundaries do not
+establish non-impact.
+
+Check before you write, not after:
+
+```sh
+specbind milestone status
+```
+
+A Spec whose state is `release_ready` holds accepted completion. If any does:
+
+- say so **before** writing, naming which Specs lose their evidence and that each
+  needs its handshake re-run
+- let the user decide. The write is not forbidden and the choice is theirs — a
+  milestone where nothing can be corrected after its first completion is worse
+  than one where corrections are known to cost something
+
+In the ordinary ordering this never arises, because authoring precedes
+implementation. It arises in the milestone that has partly finished, which is
+where an unannounced revalidation cycle is most expensive.
+
 ## Relationships
 
 Express a relationship between documents as an ordinary Markdown link to the

@@ -179,6 +179,10 @@ shape. It is deferred rather than written here, because three instances is where
 the pattern becomes visible and four is where guessing its general form stops
 being necessary.
 
+[Decision 0119](./0119-writing-while-a-completion-stands.md) writes that general
+statement and places it in the `okf-authoring` protocol, so this skill no longer
+carries the derivation itself.
+
 ## Boundary
 
 - The skill authors Research and nothing else. Requirements, Design, Contract,
@@ -218,6 +222,5 @@ mark for `specbind-steering`, and states a judgment that a mark needs no action
 rather than letting it expire silently.
 
 Forward-test scenarios G1 through G8 remain outstanding, pending a run against
-the fixture project. The deferred general statement about writing artifacts after
-an accepted completion is not implemented, by design; this decision's skill states
-the case it owns.
+the fixture project. Scenario G8 now measures the `okf-authoring` rule that
+Decision 0119 owns, rather than a statement carried by this skill.

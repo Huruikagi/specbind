@@ -91,6 +91,7 @@ Materialize from the scaffolds rather than inventing structure:
 ```sh
 specbind template list steering
 specbind template read steering <selector>
+specbind protocol read okf-authoring
 ```
 
 `product`, `tech`, and `structure` are the bootstrap defaults and carry their own

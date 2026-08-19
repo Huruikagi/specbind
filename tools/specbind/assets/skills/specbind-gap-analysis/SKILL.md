@@ -110,6 +110,7 @@ If you write it:
 
 ```sh
 specbind template read spec research
+specbind protocol read okf-authoring
 ```
 
 Remove every `specbind:instruction` comment. Materialize at the Spec's research
@@ -148,14 +149,6 @@ Lead with the answer. In the project's language:
   decision in disguise
 - whether you wrote research, and why
 - anything you routed back to the user
-
-## Before writing anything
-
-If any Spec in this milestone has already accepted completion, writing research
-stales that Spec's completion evidence and forces its handshake to be re-run.
-Check `specbind milestone status` and say so **before** writing, not after. In
-the ordinary ordering this never comes up, because analysis precedes
-implementation.
 
 ## Boundaries
 
