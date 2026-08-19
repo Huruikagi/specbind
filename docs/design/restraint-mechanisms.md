@@ -1,10 +1,12 @@
 # Restraint mechanisms
 
-Status: Idea
+Status: Partly accepted
 
 This page collects candidate mechanisms for suppressing over-engineering in
-projects that adopt SpecBind. Nothing here is accepted. It exists so the options
-stay comparable when the topic is picked up again.
+projects that adopt SpecBind. Candidate A is accepted and implemented by
+[Decision 0121](./decisions/0121-requirements-coverage-is-not-slots.md). The
+rest are ideas, kept here so the options stay comparable when the topic is
+picked up again.
 
 ## Problem
 
@@ -33,17 +35,24 @@ write the excess.
 
 ## Candidates
 
-### A. Rule layer
+### A. Authoring baseline — resolved by Decision 0121
 
-Cheapest option, and it lands directly on the Decision 0008 customization
-surface, so installing or removing the file is itself the on/off switch.
+Reviewing the accepted protocols against this list showed the restraint baseline
+was already present in three of the four authoring layers: `design-authoring`
+("the right design is the smallest one that works"), `task-planning` ("every
+task is work that will be done"), and `task-implementation` ("do not implement
+adjacent work because it is nearby").
 
-- Add an official default rule (working name `restraint-principles.md`) stating
-  YAGNI as checkable sentences: no abstraction until a second caller exists; no
-  interface with a single implementation; no configuration option without a
-  requester; consider at least one deletion alternative.
-- Positioned as a strengthened, separated form of the "Level of detail" section
-  in `design-principles.md`.
+The gap was `requirements-review`, whose Coverage section enumerates categories
+and so reads as a set of fields to fill. That gap is the one that is amplified
+rather than absorbed downstream: an invented requirement enters the active set,
+the Design must realize it, and the plan must deliver it.
+
+[Decision 0121](./decisions/0121-requirements-coverage-is-not-slots.md) adds
+*Every requirement is one the Spec owes* to `requirements-review`. It is carried
+as a protocol section rather than a new shared rule or an install-time option,
+because Decision 0093 forbids a rule that restates a protocol baseline, and
+because coverage proportionality is not a project preference worth switching off.
 
 ### B. Validation layer
 
@@ -95,7 +104,7 @@ Not restraint by itself, but its precondition.
 
 ## Suggested order
 
-1. A and D. Light to implement, no structural change; measure the effect first.
+1. ~~A~~ and D. A is done; D remains light to implement with no structural change.
 2. B's reverse traceability and orphan contract detection. SpecBind-specific
    strength, and mechanical rather than prompt-based.
 3. C's scale. Adopt only if 1 and 2 prove insufficient, because it propagates

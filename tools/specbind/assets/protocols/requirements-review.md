@@ -66,6 +66,31 @@ user-visible behavior or operator expectations.
 Express the boundary as responsibility and expectation, not as architecture.
 Components, layers, and internal ownership belong to Design.
 
+## Every requirement is one the Spec owes
+
+The list above names the categories this document is judged against. It is not a
+set of slots that a complete document has filled.
+
+A category the Spec has nothing observable to say about is complete when it is
+absent. A requirement written to occupy an empty category does not stay in the
+document: the active set makes it accountable scope, the Design must realize it,
+and the task plan must deliver it. An obligation invented for symmetry is paid
+for three times downstream.
+
+- Cover a category because the Spec's behavior meets it, not because the
+  category exists.
+- A small responsibility produces a small document. Length is not evidence of
+  coverage, and brevity is not evidence of a shallow contract.
+- When a concern is real but owned elsewhere, state it as an expectation of that
+  boundary rather than as an obligation this Spec owes.
+- Behavior the current change does not touch stays as it is already written.
+  Re-deriving it in more detail rewrites the current contract under the
+  appearance of improving coverage, and moves settled obligations for no
+  requested reason.
+
+A category the Spec plausibly owns but whose expectation is unknown is an
+ambiguity to escalate, not one to omit or to fill in with a plausible guess.
+
 ## Quality of individual requirements
 
 - Every acceptance criterion must be observable and decidable. A reviewer must be
