@@ -108,6 +108,60 @@ model, or the CLI knows those names; type-based discovery is untouched.
 
 A default a project can delete is not a privilege.
 
+## Steering is recommended after a release, and only then
+
+Nothing invokes this skill. Steering describes durable facts, so no gate,
+freshness rule, or command produces the moment where it should be revisited, and
+the observed result in cc-sdd is that steering falls behind the codebase it
+describes. Under Decision 0098 discovery reads the whole collection and routes on
+it, so steering that has quietly gone stale is worse than steering that was never
+written: routing trusts it either way.
+
+**The window is fixed by completion freshness, not by preference.** Completion
+evidence is project-revision-scoped under
+[Decision 0080](./0080-v1-task-contract-and-completion-details.md), and the only
+tolerated change is a Spec's own completion transition in `spec.yaml`. A steering
+edit is an ordinary project change, so editing steering costs:
+
+| Interval | Cost |
+| --- | --- |
+| Milestone start until the first accepted completion | Free. No gate fingerprints steering |
+| First accepted completion until `release finalize` | The completion handshake must be re-run for every affected Spec |
+| After `release finalize` | Free, and the next milestone has no completion evidence yet |
+
+This is the trap [Decision 0115](./0115-release-skill-contract.md) found for
+`bind-release`, in a second place. The recommendation therefore belongs **after
+finalization succeeds**, never before it, and the post-release moment is the
+widest safe window in the cycle rather than merely a convenient one.
+
+**The recommendation is conditional.** Offered after every release it becomes
+ceremony, and a prompt that is usually noise is one users learn to skip. The
+release skill already holds what decides it, so it recommends steering work when
+any of these holds:
+
+- the milestone's Roadmap work items included a new Spec, which means the project
+  took on a durable responsibility it did not have before
+- Contracts changed against the milestone baseline revision, which means a
+  boundary moved
+- the project has no steering documents at all and has now shipped a release
+
+**It is a recommendation and nothing more.** A release never fails, waits, or
+warns because steering is old. Decision 0098 keeps steering out of gate evidence
+and freshness inputs, and no last-reviewed timestamp, fingerprint, or staleness
+flag is introduced here — that is the state that decision refused, and a
+recommendation does not need it.
+
+It belongs in the release skill's closing summary rather than in `release
+finalize` output, which stays a concise guarded mutation result under
+[Decision 0067](./0067-text-first-english-cli-results.md).
+
+**This is late, and knowingly so.** A durable pattern is established during
+implementation, and by the release the agent that saw it is long gone, so the
+release skill recommends from what was delivered rather than from what was
+learned. Observing earlier and acting after finalization is the better shape, but
+it needs somewhere for the observation to survive the milestone and is deferred
+until this trigger has been used enough to show whether it is needed.
+
 ## The mode is confirmed, not inferred
 
 The inherited skill selected bootstrap or sync by checking whether the core files
@@ -244,3 +298,7 @@ Not implemented. This decision requires the `specbind-steering` skill asset, the
 `steering` template scope in `args.rs` and `template.rs`, four embedded steering
 templates for each supported artifact language, tests covering the new scope and
 its identity exception, and a forward-test scenario set.
+
+The post-release recommendation is added to the embedded `specbind-release` skill
+together with the steering skill, so the installed release skill never points at
+a skill the same binary does not carry.
