@@ -10,6 +10,14 @@ Verdict on **one task**: is it done correctly?
 
 You read. You do not fix, do not implement, and do not record anything.
 
+**Read-only stop rule — before any probe:** the working tree after review must
+match the working tree you received. Choose command forms that cannot create
+caches, coverage data, reports, lockfiles, or other generated files. For
+example, a Python import probe must disable bytecode generation. If an
+observation cannot be made without writing, do not run it; report the resulting
+verification gap instead. Capture `git status --short` before and after so this
+boundary is checked rather than assumed.
+
 ## 1. Read the change first
 
 ```sh
@@ -109,6 +117,9 @@ you, and no entry there becomes work until a person puts it on the Roadmap.
 
 - **Never fix what you find.** Repairing the change destroys the thing under
   review and leaves the implementer holding a verdict on work it did not write.
+- Leave no generated files behind. A cache produced by a review command is still
+  a repository change, even when it is untracked and the implementation diff is
+  otherwise untouched.
 - Never run `tasks complete`, `tasks block`, or any gate command. Recording a
   task is the implementer's judgment, not a consequence of your verdict.
 - Never write implementation notes. Durable knowledge goes in your findings; the

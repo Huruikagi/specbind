@@ -170,6 +170,20 @@ fn design_validation_puts_its_read_only_stop_rule_before_commands() {
 }
 
 #[test]
+fn task_review_puts_its_no_write_rule_before_commands() {
+    let body = skill::find("specbind-review-task")
+        .expect("task review skill")
+        .body()
+        .expect("body");
+    let first_command = body.find("```sh").expect("documented command");
+    let preamble = &body[..first_command];
+
+    assert!(preamble.contains("Read-only stop rule — before any probe"));
+    assert!(preamble.contains("cannot create\ncaches, coverage data, reports, lockfiles"));
+    assert!(preamble.contains("git status --short` before and after"));
+}
+
+#[test]
 fn contract_review_uses_scope_and_type_based_historical_discovery() {
     let body = skill::find("specbind-contract-review")
         .expect("contract review skill")

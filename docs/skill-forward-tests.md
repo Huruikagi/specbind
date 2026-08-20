@@ -1123,6 +1123,8 @@ caps at the wrong bound — ask for the planned task to be reviewed.
 - **`src/cart.py` is unchanged from what the recipe wrote.** Fixing the defect
   is the failure this scenario exists to catch: a repaired diff leaves nothing to
   review and hands the implementer a verdict on work it did not write.
+- `git status --short` is identical before and after. A probe-created cache or
+  report is still a repository change, even when `src/cart.py` was not edited.
 - `tasks list cart` still reports the task pending. No task state was recorded.
 
 ### RT2 — Unrelated work in the tree is not reviewed silently
