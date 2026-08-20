@@ -235,21 +235,22 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | Scenario | Claude Code | Codex |
 | --- | --- | --- |
 | D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass | |
-| R1, R2, R3, R4, R5 | pass | |
-| G1 | pass | |
+| R3 | pass | pass |
+| R1, R2, R4, R5 | pass | |
+| G1 | pass | pass |
 | C1, C2, C3 | pass | |
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
 | D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
-| DS1 | pass — workflow; no investigation dispatch | |
+| DS1 | | pass — workflow; no investigation dispatch |
 | DS2 – DS6 | | |
 | T1, T3, T4, T5 | | |
-| T2 | pass | |
-| X1 | pass | |
+| T2 | pass | pass |
+| X1 | | pass |
 | X2, X4 | | |
 | X3 | pass | |
-| I2, I3 | pass | |
+| I2, I3 | | pass |
 | I1, I4, I5 | | |
-| DB1 | pass | |
+| DB1 | | pass |
 | RT1, RT2 | | |
 | VD1, VD2 | | |
 | RL2, RL3 | | |
@@ -257,8 +258,9 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | VI1 – VI3 | | |
 | VC1, VC2 | | |
 
-An empty cell means that scenario has not been run under that agent. Codex has
-no results at all yet, so the complete set is what it owes on its first pass.
+An empty cell means that scenario has not been run under that agent. Codex now
+has targeted results for R3, G1, DS1, T2, X1, I2, I3, and DB1; the remaining
+empty Codex cells are still unmeasured.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
@@ -272,7 +274,7 @@ rather than the ordering that stop was protecting. A third observation is
 recorded in the driving rules above, because one run installed packages into the
 host environment.
 
-R3 and G1 were re-measured on 2026-08-20 against `e1f024d`, as Claude Code, and
+R3 and G1 were re-measured on 2026-08-20 against `e1f024d`, as Codex, and
 both passed. R3 left the established Requirements and gate untouched when asked
 to retire behavior. G1 read the Brief and full Roadmap scope before Requirements
 existed, dispatched two independent repository reads, and created no
@@ -280,8 +282,8 @@ Requirements, Research, or gate evidence. The first G1 attempt reported in
 Japanese against the English fixture and was discarded as host-instruction
 contamination; a fresh fixture and session produced the recorded pass.
 
-DS1, T2, and X1 were re-measured on 2026-08-20 against `65bdc89`, as Claude
-Code, and all three passed their workflow expectations. X1 accepted a fresh
+DS1, T2, and X1 were re-measured on 2026-08-20 against `65bdc89`, as Codex, and
+all three passed their workflow expectations. X1 accepted a fresh
 Contract Review from only the Roadmap scope and Contract inputs, and created no
 task plan. T2 stopped before authoring because the review was absent, preserving
 the required ordering. DS1 produced a 3/3 traceable design and coherent
@@ -290,16 +292,17 @@ fixture was small enough that the driven context did not dispatch independent
 investigation, so this is a workflow result rather than a measurement of the
 design dispatch path.
 
-I2 and DB1 were measured on 2026-08-20 against `38920a0`, as Claude Code, and
+I2 and DB1 were measured on 2026-08-20 against `38920a0`, as Codex, and
 both passed. I2 dispatched a fresh implementer and diagnosis, categorized the
 approved Requirements/Design contradiction as `ARTIFACT`, left the task pending,
 and changed neither artifact. DB1 returned the same category directly and left
 the worktree byte-identical.
 
-I3 first exposed a harness defect: the scenario required a completed Direct
-item while leaving the Git adapter scaffold in place, which means commit
-nothing and makes the handshake's clean committed revision unobtainable. The
-`i3` recipe gained real Direct checkpoint policy in `1a10b00`. That build then
+The Codex I3 run first exposed a harness defect: the scenario required a
+completed Direct item while leaving the Git adapter scaffold in place, which
+means commit nothing and makes the handshake's clean committed revision
+unobtainable. The `i3` recipe gained real Direct checkpoint policy in
+`1a10b00`. That build then
 exposed a skill defect rather than passing: the run committed the guide and
 stopped because the skill described checkpoint through a backward reference
 from an earlier handshake section. After the workflow was made physically
