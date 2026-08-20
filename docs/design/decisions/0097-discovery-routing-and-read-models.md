@@ -311,13 +311,13 @@ The skill carries the Decision 0098 steering reads and the deliberate
 renamed `steering` route and an unknown `--with-body` option, so neither
 documented invocation can drift from the command graph unnoticed.
 
-`tools/specbind/src/spec_list.rs` lists Specs from a shared enumeration lifted
+`tools/specbind/src/read_model/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
 reports a rejected entry as a structured fault so each caller names it in its own
 diagnostic vocabulary. Identities arrive already ordered, an unreadable Spec is
 listed with its fault named, and only an unreadable `specs/` directory fails.
 
-`tools/specbind/src/milestone_scope.rs` renders the active Roadmap as a
+`tools/specbind/src/read_model/milestone_scope.rs` renders the active Roadmap as a
 version-1 candidate. The document is serialized by hand rather than through
 `serde_json`, which orders object keys alphabetically without `preserve_order`
 and would emit `directChanges` before `newSpecs`, inverting the declared order.

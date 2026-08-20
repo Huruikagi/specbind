@@ -1,42 +1,33 @@
-pub mod adapter;
-pub mod agent_role;
-pub mod approval;
+mod catalog;
+mod infrastructure;
+mod installation;
+mod lifecycle;
+mod read_model;
+
 pub mod args;
 pub mod artifacts;
 pub mod cli;
-pub mod completion;
 pub mod config;
 pub mod contract;
-pub mod contract_graph;
-pub mod cross_spec_review;
 pub mod design;
 pub mod domain;
 pub mod fingerprint;
-pub mod freshness;
-pub(crate) mod guarded_fs;
-pub mod install;
 pub mod migration;
 pub use migration::resolution as migration_resolution;
-pub mod milestone;
-pub mod milestone_scope;
-pub mod milestone_status;
-pub mod project_instructions;
-pub mod protocol;
-pub mod release;
-pub mod release_finalize;
-pub mod release_log;
-pub mod release_readiness;
-pub(crate) mod repository;
 pub mod requirements;
 pub mod roadmap;
-pub mod rule;
 pub mod schema;
-pub mod skill;
-pub mod spec_list;
-pub mod spec_status;
-pub mod steering;
-pub mod task_progress;
-pub mod task_read_model;
-pub mod template;
 pub mod traceability;
 pub mod yaml;
+
+pub use catalog::{adapter, protocol, rule, skill, steering, template};
+pub(crate) use infrastructure::{guarded_fs, repository};
+pub use installation::{agent_role, install, project_instructions};
+pub use lifecycle::{
+    approval, completion, cross_spec_review, milestone, release, release_finalize, release_log,
+    task_progress,
+};
+pub use read_model::{
+    contract_graph, freshness, milestone_scope, milestone_status, release_readiness, spec_list,
+    spec_status, task_read_model,
+};

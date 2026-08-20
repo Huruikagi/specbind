@@ -15,6 +15,11 @@ in [Implementation architecture](./architecture.md).
 - `tools/cc-sdd/templates/` — current files installed into consumer projects
 - `tools/specbind/` — canonical Rust CLI workspace
 - `tools/specbind/src/` — Rust CLI implementation
+- `tools/specbind/src/catalog.rs` and `catalog/` — facade and implementations for adapters, protocols, rules, skills, templates, and steering
+- `tools/specbind/src/installation.rs` and `installation/` — facade and implementations for installation, agent roles, and project instructions
+- `tools/specbind/src/lifecycle.rs` and `lifecycle/` — facade and implementations for guarded lifecycle operations
+- `tools/specbind/src/read_model.rs` and `read_model/` — facade and implementations for non-authoritative current-state projections
+- `tools/specbind/src/infrastructure.rs` and `infrastructure/` — crate-private Git and guarded-filesystem adapters
 - `tools/specbind/src/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
@@ -26,18 +31,18 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/artifacts.rs` — stable public facade and result models for spec-local artifact reads
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
 - `tools/specbind/src/artifacts/resolution.rs` — typed Spec and Task loads, gate-input resolution, fingerprints, and traceability projections
-- `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
-- `tools/specbind/src/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex rendering
+- `tools/specbind/src/installation/install.rs` — installation planning, guarded asset application, and repository guards
+- `tools/specbind/src/installation/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
 - `tools/specbind/src/migration/inventory.rs` — read-only historical cc-sdd inventory and conversion planning
 - `tools/specbind/src/migration/apply.rs` — Git-guarded deterministic apply and final source retirement
 - `tools/specbind/src/migration/resolution.rs` — guarded agent-resolution acceptance and source/target freshness checks
 - `tools/specbind/src/args.rs` — command-line argument definitions, walkable by skill conformance tests
-- `tools/specbind/src/skill.rs` — embedded product-managed skills and per-agent rendering
-- `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
-- `tools/specbind/src/task_progress.rs` — guarded task execution progress records
-- `tools/specbind/src/rule.rs` — embedded default shared-rule installation assets
-- `tools/specbind/src/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
+- `tools/specbind/src/catalog/skill.rs` — embedded product-managed skills and per-agent rendering
+- `tools/specbind/src/catalog/protocol.rs` — embedded product-protocol registry and raw reads
+- `tools/specbind/src/lifecycle/task_progress.rs` — guarded task execution progress records
+- `tools/specbind/src/catalog/rule.rs` — embedded default shared-rule installation assets
+- `tools/specbind/src/catalog/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language
 - `tools/specbind/assets/protocols/` — immutable English product protocols exposed by `protocol read`
 - `tools/specbind/assets/skills/` — one agent-neutral source per product-managed skill
@@ -46,20 +51,20 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
 - `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
 - `tools/specbind/src/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
-- `tools/specbind/src/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
+- `tools/specbind/src/read_model/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
 - `tools/specbind/src/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
-- `tools/specbind/src/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
+- `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
-- `tools/specbind/src/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
-- `tools/specbind/src/approval.rs` — guarded Requirements, Design, and Tasks gate approval and invalidation transitions
-- `tools/specbind/src/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
-- `tools/specbind/src/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
-- `tools/specbind/src/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization
-- `tools/specbind/src/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
-- `tools/specbind/src/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
-- `tools/specbind/src/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state
-- `tools/specbind/src/milestone/` — guarded active-Roadmap creation, scope replacement, rebaseline, and release binding
-- `tools/specbind/src/release.rs` — portable release labels and case-insensitive archive-target collision resolution
+- `tools/specbind/src/read_model/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
+- `tools/specbind/src/lifecycle/approval.rs` — guarded Requirements, Design, and Tasks gate approval and invalidation transitions
+- `tools/specbind/src/read_model/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
+- `tools/specbind/src/lifecycle/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
+- `tools/specbind/src/lifecycle/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization
+- `tools/specbind/src/lifecycle/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
+- `tools/specbind/src/infrastructure/repository.rs` — installed-Git process adapter shared by lifecycle and status read models
+- `tools/specbind/src/infrastructure/guarded_fs.rs` — regular-file guards and atomic replacement for SpecBind-owned state
+- `tools/specbind/src/lifecycle/milestone/` — guarded active-Roadmap creation, scope replacement, rebaseline, and release binding
+- `tools/specbind/src/lifecycle/release.rs` — portable release labels and case-insensitive archive-target collision resolution
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `scripts/check_decisions.py` — Decision filename, heading, identifier, and repository-map consistency check

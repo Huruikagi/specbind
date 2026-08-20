@@ -283,7 +283,7 @@ decision's read surface the validator the authoring skill checks itself against.
 
 ## Implementation status
 
-Implemented for the read surface. `tools/specbind/src/steering.rs` discovers the
+Implemented for the read surface. `tools/specbind/src/catalog/steering.rs` discovers the
 collection recursively below `steering/`, keeping its own narrow profile rather
 than joining the spec-local `ArtifactKind` set, whose ordering and multiplicity
 rules do not apply to a project-level collection. It shares the Front Matter

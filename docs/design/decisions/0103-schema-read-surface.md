@@ -115,7 +115,7 @@ Implemented for `spec/v1`, `scope/v1`, and `tasks/v1`. The review-candidate and
 completion-evidence documents remain unexposed.
 
 `tools/specbind/src/schema/scope.rs` holds the scope candidate as a wire model
-beside the persisted ones, and `tools/specbind/src/milestone/candidate.rs` now
+beside the persisted ones, and `tools/specbind/src/lifecycle/milestone/candidate.rs` now
 decodes through it rather than through a private duplicate, so the schema and the
 loader cannot disagree.
 

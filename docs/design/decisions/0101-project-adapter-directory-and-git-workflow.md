@@ -196,7 +196,7 @@ configuration handling that belongs in the CLI and nowhere else.
 
 ## Implementation status
 
-Partially implemented. `tools/specbind/src/adapter.rs` holds the closed selector
+Partially implemented. `tools/specbind/src/catalog/adapter.rs` holds the closed selector
 set and the localized scaffolds, `specbind adapter list/read` expose them, and
 `specbind install` plans and creates missing scaffolds as project-owned settings
 that an existing copy keeps.

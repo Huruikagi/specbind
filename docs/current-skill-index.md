@@ -43,8 +43,8 @@ skills.
 ## Sources of truth
 
 - Agent-neutral skill sources: `tools/specbind/assets/skills/`
-- Registry and per-agent rendering: `tools/specbind/src/skill.rs`
-- Installation planning and refresh: `tools/specbind/src/install.rs`
+- Registry and per-agent rendering: `tools/specbind/src/catalog/skill.rs`
+- Installation planning and refresh: `tools/specbind/src/installation/install.rs`
 - Mechanical conformance tests: `tools/specbind/tests/skill.rs` and `tools/specbind/tests/cli.rs`
 - Behavioral verification ledger: `docs/skill-forward-tests.md`
 

@@ -78,8 +78,8 @@ Contract-review state keep their accepted fixed structured paths.
 
 ## Sources of truth
 
-- Installation plan and ownership behavior: `tools/specbind/src/install.rs`
+- Installation plan and ownership behavior: `tools/specbind/src/installation/install.rs`
 - Embedded templates, rules, adapters, protocols, and skills: `tools/specbind/assets/`
 - Artifact discovery and lifecycle I/O: `tools/specbind/src/artifacts.rs`
 - Structured wire models and generated schemas: `tools/specbind/src/schema/` and `tools/specbind/schemas/`
-- Guarded lifecycle mutations: `tools/specbind/src/approval.rs`, `tools/specbind/src/milestone/`, `tools/specbind/src/completion/`, and `tools/specbind/src/release_finalize.rs`
+- Guarded lifecycle mutations: `tools/specbind/src/lifecycle/approval.rs`, `tools/specbind/src/lifecycle/milestone/`, `tools/specbind/src/lifecycle/completion/`, and `tools/specbind/src/lifecycle/release_finalize.rs`

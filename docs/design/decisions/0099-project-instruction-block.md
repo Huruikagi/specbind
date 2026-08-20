@@ -184,7 +184,7 @@ by taking that risk on the user's behalf.
 
 ## Implementation status
 
-Implemented. `tools/specbind/src/project_instructions.rs` owns the markers and
+Implemented. `tools/specbind/src/installation/project_instructions.rs` owns the markers and
 embeds `assets/project-instructions/block.md`, and `specbind install` plans and
 applies one entry per selected agent under the `project-instructions` category.
 

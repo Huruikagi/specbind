@@ -35,10 +35,11 @@ They do not decide whether a lifecycle transition is allowed.
 
 ### Application lifecycle services
 
-Approval, completion, milestone, contract-review, and release modules own
-guarded use cases. A mutating use case must rediscover and revalidate its
-authoritative current inputs immediately before persistence. Earlier inventory,
-status, or agent-authored evidence is never mutation authority.
+`lifecycle/` groups approval, completion, milestone, contract-review, release,
+and task-progress services. `lifecycle.rs` is the crate-root compatibility
+facade. A mutating use case must rediscover and revalidate its authoritative
+current inputs immediately before persistence. Earlier inventory, status, or
+agent-authored evidence is never mutation authority.
 
 ### Current-state read models
 
@@ -49,9 +50,17 @@ status, or agent-authored evidence is never mutation authority.
 - `artifacts/resolution.rs` owns typed Spec and Task loads, gate inputs,
   fingerprints, and traceability projections.
 
-`contract_graph.rs`, freshness/status projections, Roadmap scope reads, and
-release-readiness projections are also read models. They report current state
-and diagnostics; they do not authorize transitions.
+`read_model/` groups Contract graph, freshness, status/list, Roadmap scope,
+task, and release-readiness projections. `read_model.rs` re-exports their
+existing crate-root paths. They report current state and diagnostics; they do
+not authorize transitions.
+
+### Installation and catalogs
+
+`installation/` owns installation planning, agent-role rendering, and the
+project-instruction block. `catalog/` owns the closed product/project
+registries for adapters, protocols, rules, skills, templates, and steering.
+Their root facade modules preserve the existing public crate paths.
 
 ### Domain and wire models
 
@@ -62,17 +71,21 @@ boundaries and are not public CLI or persisted contracts.
 
 ### Adapters
 
-`repository.rs` owns Git process interaction. `guarded_fs.rs` owns guarded
-regular-file reads and atomic replacement. Lifecycle services may depend on
-these adapters; adapters do not know lifecycle policy.
+`infrastructure/repository.rs` owns Git process interaction.
+`infrastructure/guarded_fs.rs` owns guarded regular-file reads and atomic
+replacement. `infrastructure.rs` keeps both adapters crate-private.
+Lifecycle services may depend on these adapters; adapters do not know
+lifecycle policy.
 
 ## Facade rule
 
 Large capabilities expose a small stable facade from their top-level module.
-Implementation files may be reorganized behind it, while callers continue to
-depend on SpecBind-owned request, result, and diagnostic models. Add a new
-public path only when it represents a new product capability, not merely a new
-source-file boundary.
+The `catalog.rs`, `installation.rs`, `lifecycle.rs`, and `read_model.rs`
+facades re-export the established crate-root module paths; callers do not need
+to know the physical directory layout. Implementation files may be reorganized
+behind a facade while callers continue to depend on SpecBind-owned request,
+result, and diagnostic models. Add a new public path only when it represents a
+new product capability, not merely a new source-file boundary.
 
 ## Change checklist
 
