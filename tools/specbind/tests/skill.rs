@@ -262,6 +262,8 @@ fn implementation_completion_questions_route_to_validation_not_status() {
     assert!(validation_body.contains("specbind check traceability <spec>"));
     assert!(validation_body.contains("Validate the **active Requirement IDs**"));
     assert!(validation_body.contains("outside it is not a completion"));
+    assert!(validation_body.contains("Fix that required\nset **before** running anything"));
+    assert!(validation_body.contains("do not invoke its underlying test runner"));
 }
 
 #[test]

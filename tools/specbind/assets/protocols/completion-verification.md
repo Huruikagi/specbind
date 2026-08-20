@@ -86,6 +86,7 @@ everything downstream will trust it.
 | "Tests and build passed, so it runs" | Startup, configuration, module loading, and native compatibility all fail after both. |
 | "Every task is checked off" | Completed tasks say work happened, not that the whole is coherent or covered. |
 | "The failure is unrelated" | Establish that. An unexplained failure is not a passing result. |
+| "The canonical script is missing, but I can run its test runner directly" | That is a substitute command, not fresh evidence from the required check. |
 
 Each of these is a way of accepting evidence for something adjacent to the
 claim. That is the same error as step 5, arriving in a form that sounds like

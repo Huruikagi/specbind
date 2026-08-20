@@ -72,7 +72,8 @@ workflow.
 ## 3. Gather the evidence
 
 Derive the required mechanical checks from this project's own automation and
-conventions — its test command, build, lint, typecheck, smoke — and **run them**.
+conventions — its test command, build, lint, typecheck, smoke. Fix that required
+set **before** running anything, then run those exact commands.
 
 - Record what they actually returned. Never report a command you did not
   execute, and never submit a check whose exit status you did not see.
@@ -80,6 +81,10 @@ conventions — its test command, build, lint, typecheck, smoke — and **run th
   anything ran, so the honesty of the record rests entirely here.
 - A failing check is `NO-GO`. Never swap in a cheaper command that passes,
   narrow a check, or skip a case to reach green.
+- A declared canonical command that is missing or cannot execute is
+  `MANUAL_VERIFY_REQUIRED`. Stop: do not invoke its underlying test runner
+  directly, reconstruct what the script probably did, or substitute a command
+  that reaches the same tests. That is still a different check.
 
 ### Dispatch the independent dimensions
 
