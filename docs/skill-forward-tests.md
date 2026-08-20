@@ -241,7 +241,7 @@ DS1, DS2) are the least agent-sensitive and a single sample covers them.
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-20. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-21. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -376,6 +376,16 @@ verification, leaving a partial change and a pending task. `d5878f7` made
 waiting for the implementer's verified structured result explicit; the rerun
 used three recorded contexts (driver, implementer, reviewer), completed the
 task, and stopped in `implementation` without a completion handshake.
+
+I1 was re-measured on 2026-08-21 against `4d9cb10`, as Codex, after Decision
+0129 installed role capability adapters. The generated implementer and reviewer
+roles both selected `gpt-5.6-terra` at medium reasoning. The run again recorded
+exactly three contexts with standalone implementation and review briefs,
+received `READY_FOR_REVIEW` and `APPROVED`, completed only Task 1, and stopped in
+`implementation` without completion evidence. The fixture proves the installed
+configuration and fresh dispatch behavior; it does not independently expose
+the runtime model identity chosen by the host, so model selection itself remains
+configuration evidence rather than a behavioral assertion.
 
 D7 remains unmeasured under Codex: the agent correctly stated the Tasks rewind
 cost, but the host safety review rejected the confirmed invalidation twice.
