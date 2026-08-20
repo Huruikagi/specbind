@@ -1,45 +1,48 @@
 # SpecBind
 
-SpecBindは、AIコーディングエージェントによる開発で、意図からリリースまでの
+SpecBindは、AIコーディングエージェントを使った開発で、意図からリリースまでの
 仕様を継続して保守するためのツールです。
 
-Requirements、Design、Contract、Tasksを一度きりのプロンプトから切り離し、
-後続の変更でも参照・更新できるプロジェクトの記録として残します。
+Requirements、Design、Contract、Tasksをその場限りのプロンプトから切り離し、
+あとの変更でも参照・更新できるプロジェクトの記録として残します。
 
 !!! warning "Preview"
 
-    SpecBindはまだ正式リリースされていません。現在はソースからCLIをビルドして
-    試すPreview段階です。CLI、スキル、ガイドの細部は正式リリースまで変更される
-    可能性があります。
+    SpecBindはまだ正式リリースしていません。現在はv1.0前のプレビュー版で、
+    リリース候補版のバイナリまたはソースビルドで試せます。CLI、スキル、
+    ガイドの細部は、正式リリースまでに変わる可能性があります。
 
 ## SpecBindの役割
 
-- **Skillが判断する** — エージェントがスコープ確認、仕様作成、レビュー、実装、
-  検証を担当します。
+- **Skillが判断する** — エージェントがスコープの確認、仕様の作成、レビュー、
+  実装、検証を担当します。
 - **CLIが不変条件を守る** — `specbind` CLIが成果物の構造、トレーサビリティ、
-  承認、進捗、ライフサイクル遷移を検証・記録します。
-- **Specを使い捨てない** — 同じ能力への後続変更は、同じSpecのRequirements、
-  Design、Contractを現在形として更新します。
-- **Milestoneでリリース境界を明示する** — 複数Specと小さなDirect changeを、
-  依存関係を含む1つのdeliveryとして追跡します。
+  承認、進捗、状態の遷移を検証して記録します。
+- **Specを使い捨てない** — 同じ能力をあとから変更するときは、同じSpecの
+  Requirements、Design、Contractを「現在の姿」として更新します。
+- **Milestoneでリリース境界を明示する** — 複数のSpecと小さなDirect changeを、
+  依存関係も含めて1回のリリース単位として追跡します。
 
 ## 最初に進む
 
 [Getting Startedを始める](guide/ja/getting-started.md){ .md-button .md-button--primary }
 [基本概念を読む](guide/ja/concepts.md){ .md-button }
 
-Getting Startedでは、既存のGitプロジェクトへSpecBindを導入し、Codexまたは
-Claude Codeを使って、最初の変更をDiscoveryから実装検証まで進めます。
+Getting Startedでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
+Claude Codeを使って、最初の変更をDiscoveryから実装の検証まで進めます。
 
 ## 現在の対応範囲
 
 - CodexとClaude Code
-- 日本語または英語のプロジェクト成果物
+- プロジェクト成果物の言語は日本語または英語
 - Windows x64とWSL2上のLinux x64
-- ソースからビルドするPreview CLI
+- リリース候補版のバイナリ、またはソースからビルドしたプレビュー版CLI
 
-GitHub Releaseバイナリ、ダウンロード用インストーラ、cc-sdd migrationは準備中です。
-cc-sdd移行の確定済み安全境界とエージェント支援手順は、
+リリース候補版は自動では選ばれないため、バージョンを明示してインストーラを
+実行してください。手順は[Getting Started](guide/ja/getting-started.md)にあります。
+
+`specbind migrate cc-sdd`はまだ実装していません。移行時に守る安全境界と、
+エージェントに任せる手順は
 [マイグレーションガイド](guide/migration/cc-sdd.md)で先行公開しています。
 
 ## 詳細
