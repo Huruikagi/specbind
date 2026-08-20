@@ -43,11 +43,13 @@ all reference them.
 
 - Do not renumber groups or reorder criteria to tidy the document. A cosmetic
   edit that shifts positions silently repoints every downstream reference.
-- Group numbers are presentation order only, and gaps are acceptable. Leave a gap
-  where a requirement was removed rather than closing it.
-- When a criterion genuinely no longer applies, removing it is correct; just
-  recognize that later criteria in the same group shift and their references
-  must be revisited.
+- Group numbers are presentation order only, and existing gaps are acceptable.
+  Never close one by renumbering a later group.
+- SpecBind does not yet support retiring an established Requirement group or
+  Acceptance Criterion. When one genuinely no longer applies, stop before
+  deleting it and route the requested retirement through the requirements
+  skill. Revising a live obligation in place and adding new obligations remain
+  supported.
 
 ## Coverage
 

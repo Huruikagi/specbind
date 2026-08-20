@@ -40,6 +40,7 @@ Reads:
 | `specbind spec status <spec>` | always |
 | The Spec's Brief | always |
 | `specbind steering list`, then every document listed | always |
+| `specbind milestone scope` | when the Spec has no Requirements yet |
 | The Spec's Requirements | only when one exists |
 | The Spec's existing Research | only when one exists |
 | The Spec's Contract, and those of Specs across a touched seam | when boundaries are in scope |
@@ -185,8 +186,10 @@ carries the derivation itself.
 
 ## Boundary
 
-- The skill authors Research and nothing else. Requirements, Design, Contract,
-  and `tasks.yaml` belong to their own phases, and it writes no machine state.
+- The skill authors Research, with one narrow exception: when its findings show
+  that the request itself must change, it revises the Brief only after the user
+  accepts the new terms. Requirements, Design, Contract, and `tasks.yaml` belong
+  to their own phases, and it writes no machine state.
 - It informs; it does not decide. The protocol owns that rule, and the skill does
   not acquire the decision by being the one that gathered the evidence.
 - It is not a gate and not a precondition. No approval waits on it, and Design
@@ -213,8 +216,10 @@ carries the derivation itself.
 Implemented. The embedded `specbind-gap-analysis` skill reads the protocol first,
 treats Requirements as an input rather than a precondition, stops early on
 greenfield work, dispatches its investigation, routes an unmeetable request back
-to the user before any artifact is touched, replaces rather than appends an
-existing Research document, and marks every conclusion with its destination.
+to the user before any artifact is touched, reads the Roadmap scope when no
+Requirements exist, revises the Brief only after the user accepts changed terms,
+replaces rather than appends an existing Research document, and marks every
+conclusion with its destination.
 
 `specbind-design` handles those marks: it promotes the Design and Contract ones,
 surfaces a Requirements mark as the rewind decision it is, surfaces a Steering

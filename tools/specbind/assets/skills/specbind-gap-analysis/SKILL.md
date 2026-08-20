@@ -44,8 +44,13 @@ boundaries are in scope. They are the project's own preferences.
 **Requirements is an input, not a precondition.** This skill runs before
 Requirements exist as readily as after. Discovery deliberately refuses technical
 evaluation, so running here — right after routing, before the behavior contract
-is written — is the point where the answer is cheapest to act on. With no
-Requirements yet, work from the brief and the milestone's roadmap scope.
+is written — is the point where the answer is cheapest to act on. When no
+Requirements exist yet, read the milestone's complete current scope and work
+from it together with the brief:
+
+```sh
+specbind milestone scope
+```
 
 ## 2. Decide whether there is anything to compare
 
@@ -91,6 +96,13 @@ into an obligation the project has promised.
 the requester's own words. Rewriting them on the strength of a technical finding
 is exactly what this routing exists to prevent.
 
+Before the first managed Markdown write in this run — a user-approved Brief
+revision here or a Research artifact below — read the authoring protocol once:
+
+```sh
+specbind protocol read okf-authoring
+```
+
 ## 5. Decide whether to write the research artifact
 
 Research is optional and its absence is normal. Write it when the finding
@@ -110,8 +122,11 @@ If you write it:
 
 ```sh
 specbind template read spec research
-specbind protocol read okf-authoring
 ```
+
+If this is the first managed Markdown write in the run, read `okf-authoring` as
+directed above before materializing the artifact. Do not read it a second time
+when a Brief revision already required it.
 
 Remove every `specbind:instruction` comment. Materialize at the Spec's research
 path.
@@ -152,8 +167,10 @@ Lead with the answer. In the project's language:
 
 ## Boundaries
 
-- **Author research and nothing else.** Requirements, Design, Contract, and
-  `tasks.yaml` belong to their phases. Write no machine state.
+- **Author Research, with one narrow exception:** after the user accepts a
+  request change exposed by the analysis, revise that Spec's Brief to carry the
+  requester's new terms. Requirements, Design, Contract, and `tasks.yaml` belong
+  to their phases. Write no machine state.
 - **Inform, do not decide.** Gathering the evidence does not make the decision
   yours.
 - Not a gate and not a precondition. Nothing waits on this, and Design proceeds

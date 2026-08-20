@@ -138,6 +138,16 @@ approved, not a detail derived quietly at the end.
 Present the document and the selection. Revise on feedback rather than approving
 something you know to be weak.
 
+When the review has findings, report each one in this shape:
+
+```text
+- [BLOCKING|DEFERRED|RESOLVED] <requirement or behavior at risk> — <where> — <consequence>
+```
+
+Every finding carries exactly one disposition from the protocol. An approval
+with an undisposed finding is not a verdict, and a finding mentioned elsewhere
+in the report does not count as disposed.
+
 Stop and ask the user when the same objection survives one revision. A repeated
 objection means the disagreement is about intent, not wording, and rewriting
 again produces another variation of the same misunderstanding. You have run out

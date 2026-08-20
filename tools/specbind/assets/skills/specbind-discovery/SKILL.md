@@ -235,10 +235,11 @@ leaving a file behind in the repository.
 
 Every Spec-backed work item gets an active brief at `<specDir>/<spec>/brief.md`,
 where `specDir` is the value configured in `.specbind.json`. Start from the
-template:
+template, and read the authoring protocol before you write:
 
 ```sh
 specbind template read spec brief
+specbind protocol read okf-authoring
 ```
 
 Fill it from the request in the requester's own terms. Keep it short — the
@@ -323,12 +324,6 @@ In the project's language: what was created or changed, what was invalidated and
 why, whether the work was committed, and which skill runs next for each item.
 
 ## Boundaries
-
-Read the OKF authoring protocol before writing any brief:
-
-```sh
-specbind protocol read okf-authoring
-```
 
 Do not author requirements here, for a new Spec or an existing one. A newly
 created Spec correctly holds only machine state until `specbind-requirements`
