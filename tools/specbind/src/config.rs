@@ -7,7 +7,10 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::repository::{self, RepositoryError};
+use crate::{
+    guarded_fs,
+    repository::{self, RepositoryError},
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectPaths {
@@ -72,7 +75,7 @@ pub fn resolve_from(start: &Path) -> Result<ProjectPaths, ConfigError> {
         code: "CONFIG_READ_FAILED",
         message: format!("cannot inspect {}: {error}", config_path.display()),
     })?;
-    if is_link_like(&config_metadata) || !config_metadata.is_file() {
+    if guarded_fs::is_link_like(&config_metadata) || !config_metadata.is_file() {
         return Err(ConfigError {
             code: "CONFIG_TARGET_INVALID",
             message: ".specbind.json must be a regular non-symlink file".to_owned(),
@@ -100,7 +103,7 @@ pub fn resolve_from(start: &Path) -> Result<ProjectPaths, ConfigError> {
             code: "SPEC_ROOT_UNAVAILABLE",
             message: format!("cannot inspect configured specDir: {error}"),
         })?;
-        if is_link_like(&metadata) || !metadata.is_dir() {
+        if guarded_fs::is_link_like(&metadata) || !metadata.is_dir() {
             return Err(ConfigError {
                 code: "SPEC_ROOT_INVALID",
                 message: "configured specDir must traverse only regular directories".to_owned(),
@@ -155,20 +158,6 @@ fn reject_nested_submodule(project_root: &Path, spec_dir: &str) -> Result<(), Co
         });
     }
     Ok(())
-}
-
-#[cfg(windows)]
-fn is_link_like(metadata: &fs::Metadata) -> bool {
-    use std::os::windows::fs::MetadataExt as _;
-
-    const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x400;
-    metadata.file_type().is_symlink()
-        || metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
-}
-
-#[cfg(not(windows))]
-fn is_link_like(metadata: &fs::Metadata) -> bool {
-    metadata.file_type().is_symlink()
 }
 
 fn git_project_root(start: &Path) -> Result<PathBuf, ConfigError> {

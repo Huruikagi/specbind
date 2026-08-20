@@ -1,4 +1,4 @@
-# 0125: Name the planning orchestrators by their stopping point
+# 0128: Name the planning orchestrators by their stopping point
 
 Status: Accepted
 
@@ -39,9 +39,9 @@ surface, and Decision 0075 already establishes that v1 ships no legacy skill
 aliases. Carrying aliases now would create two names for one authorization
 identity before compatibility requires it.
 
-Decision filenames remain stable. Existing accepted decisions and current
-design documents use the new names where they state the governing contract;
-superseded historical decisions remain unchanged.
+Other accepted decision filenames remain stable. Existing accepted decisions
+and current design documents use the new names where they state the governing
+contract; superseded historical decisions remain unchanged.
 
 ## Consequences
 
