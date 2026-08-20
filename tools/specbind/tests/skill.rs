@@ -173,6 +173,27 @@ fn planning_orchestrators_handoff_their_delegation_identity() {
 }
 
 #[test]
+fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
+    let quick = skill::find("specbind-quick-plan")
+        .expect("quick-plan")
+        .metadata()
+        .expect("metadata");
+    assert!(quick.description.contains("exactly one named or targeted"));
+    assert!(quick.description.contains("do not use for every Spec"));
+
+    let batch = skill::find("specbind-batch-plan")
+        .expect("batch-plan")
+        .metadata()
+        .expect("metadata");
+    assert!(batch.description.contains("every Spec-backed item"));
+    assert!(
+        batch
+            .description
+            .contains("do not use for one named or targeted item")
+    );
+}
+
+#[test]
 fn design_validation_puts_its_read_only_stop_rule_before_commands() {
     let body = skill::find("specbind-validate-design")
         .expect("design validation skill")
