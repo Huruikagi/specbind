@@ -251,6 +251,15 @@ This is the same standard an independent validation would apply. A design that
 would fail it is not ready to submit for approval, so apply it to your own draft
 before presenting.
 
+Report every finding with its protocol disposition:
+
+```text
+- [BLOCKING|DEFERRED|RESOLVED] <finding> — <obligation, destination, or resolution>
+```
+
+Do not leave a real observation unclassified. `RESOLVED` remains visible in the
+review summary; it is evidence of what changed, not an open gate condition.
+
 `specbind-validate-design` is a separate skill the user invokes when they want a
 second opinion. It is not a step you run, and not a precondition of this gate.
 

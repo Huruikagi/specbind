@@ -21,6 +21,7 @@ You accept one artifact. You author no Spec artifact and change no Spec's state.
 ```sh
 specbind milestone review status
 specbind milestone status
+specbind milestone scope
 ```
 
 Stop and report, rather than fixing, in these cases:
@@ -35,8 +36,14 @@ Stop and report, rather than fixing, in these cases:
   **Do not delete it.** The ordering is already lost, and discarding authored
   work is the user's decision, not a step in a review.
 
-`milestone status` gives you the scope, the participants, and the two revisions
-you need:
+`milestone scope` gives you the complete current scope. For every Spec-backed
+participant it names, also run:
+
+```sh
+specbind spec status <spec>
+```
+
+`milestone status` gives you the two revisions you need:
 
 ```text
   Revision: <current HEAD>
@@ -57,11 +64,21 @@ specbind spec list
 specbind artifact read <spec> contract
 ```
 
-Then read the same Contracts at the baseline. This is ordinary Git:
+Then discover and read the same Contracts independently at the baseline. This
+is ordinary Git, but the path is not an identity: `specDir` is configured in
+`.specbind.json`, and a Contract is the lowercase Markdown artifact whose Front
+Matter `type` is `SpecBind Contract`.
 
 ```sh
-git show <baseline>:.specbind/specs/<spec>/contract.md
+git ls-tree -r --name-only <baseline> -- <specDir>/specs/<spec>
+git show <baseline>:<candidate-path>
 ```
+
+Inspect the historical candidates and require exactly one Contract by `type`,
+or establish that the Spec or Contract did not yet exist. Never substitute the
+current artifact path for this discovery: a moved or renamed Contract keeps its
+logical identity, and `.specbind/specs/<spec>/contract.md` is only the default
+location in a default installation.
 
 **The difference is the entry point.** A run that never established what changed
 has not performed the review, however carefully it read the current graph.

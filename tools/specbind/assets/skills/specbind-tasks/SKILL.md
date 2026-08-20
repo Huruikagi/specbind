@@ -23,7 +23,8 @@ specbind milestone review status
 `Status: fresh`.
 
 From the `tasks` state onward `spec status` also reports `Contract review:`, so
-either command answers this. Read whichever you already ran.
+use it as corroborating Spec-local context. `milestone review status` remains
+the authoritative focused check and is always required before first authoring.
 
 On `absent` or `stale`, author nothing and route the user to
 `specbind-contract-review`. Say why, because the consequence is not visible from

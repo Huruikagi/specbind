@@ -63,6 +63,13 @@ The before-state is read at `Baseline:` through ordinary Git. The comparison is
 the review's entry point, so a run that never established what changed has not
 performed the review, however carefully it read the current graph.
 
+Artifact identity remains type-based at both revisions. The skill resolves the
+configured `specDir`, enumerates the historical Spec directory, and identifies
+the lowercase Markdown artifact whose Front Matter `type` is
+`SpecBind Contract`. It does not reuse the current path or assume the default
+`.specbind/specs/<spec>/contract.md` locator: a rename or move does not turn one
+logical Contract into a removal and an addition.
+
 **Steering is not read.** [Decision 0093](./0093-default-shared-rule-set.md)
 assigns `contract-principles.md` to this skill and assigns no steering document
 to it. The distinction holds: this skill judges whether the graph is coherent

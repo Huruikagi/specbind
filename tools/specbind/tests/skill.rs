@@ -137,16 +137,35 @@ fn every_named_protocol_selector_and_rule_path_exists() {
 }
 
 #[test]
-fn requirements_review_findings_require_an_explicit_disposition() {
-    let body = skill::find("specbind-requirements")
-        .expect("requirements skill")
+fn reviewing_skills_require_an_explicit_finding_disposition() {
+    for name in [
+        "specbind-requirements",
+        "specbind-design",
+        "specbind-validate-design",
+        "specbind-review-task",
+    ] {
+        let body = skill::find(name)
+            .expect("reviewing skill")
+            .body()
+            .expect("body");
+        assert!(
+            body.contains("[BLOCKING|DEFERRED|RESOLVED]"),
+            "{name}: Decision 0122 requires the findings report shape"
+        );
+    }
+}
+
+#[test]
+fn contract_review_uses_scope_and_type_based_historical_discovery() {
+    let body = skill::find("specbind-contract-review")
+        .expect("contract review skill")
         .body()
         .expect("body");
 
-    assert!(
-        body.contains("[BLOCKING|DEFERRED|RESOLVED]"),
-        "the requirements report shape must carry Decision 0122 dispositions"
-    );
+    assert!(body.contains("specbind milestone scope"));
+    assert!(body.contains("git ls-tree -r --name-only <baseline>"));
+    assert!(body.contains("`type` is `SpecBind Contract`"));
+    assert!(!body.contains("git show <baseline>:.specbind/specs/<spec>/contract.md"));
 }
 
 /// Extracts each literal invocation: a standalone inline code span or one line
