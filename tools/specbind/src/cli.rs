@@ -97,15 +97,26 @@ pub fn migrate_cc_sdd(start: &Path, apply: bool) -> CommandOutput {
         );
     }
     if apply {
-        return CommandOutput::failure(
-            "MIGRATION_APPLY_UNAVAILABLE",
-            "Applying a cc-sdd migration is not implemented in this release.",
-            vec![
-                "The read-only plan completed without semantic findings.".to_owned(),
-                "No files were changed.".to_owned(),
-                format!("Original {} tree remains intact.", plan.legacy_root),
-            ],
-        );
+        return match migration::apply(&project_root) {
+            Ok(outcome) if outcome.unchanged => CommandOutput::no_change(
+                "CC_SDD_MIGRATION_UP_TO_DATE",
+                "The deterministic cc-sdd migration target is already current.",
+            ),
+            Ok(outcome) => CommandOutput::success(
+                format!(
+                    "OK CC_SDD_MIGRATION_APPLIED: Applied the deterministic cc-sdd migration.\n  Installed files: {}\n  Removed legacy assets: {}\n  Original {} tree remains intact.\n",
+                    outcome.installed_files,
+                    outcome.removed_legacy_assets,
+                    escape(&plan.legacy_root)
+                )
+                .into_bytes(),
+            ),
+            Err(error) => CommandOutput::failure(
+                "MIGRATION_APPLY_FAILED",
+                "Cannot apply cc-sdd migration.",
+                error.issues.iter().map(render_migration_finding).collect(),
+            ),
+        };
     }
     render_migration_plan(&plan)
 }

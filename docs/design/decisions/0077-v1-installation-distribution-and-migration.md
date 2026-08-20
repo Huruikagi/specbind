@@ -55,7 +55,9 @@ finding adapter scaffolds, and the Decision 0096 agent skill assets rendered per
 selected agent. The project-instruction block specified by Decision 0099 is
 planned and applied for each selected agent when the setting is enabled. TTY
 prompting for missing inputs is not implemented, so an initial installation
-requires explicit agent and language values. Explicit cc-sdd migration and the
+requires explicit agent and language values. Explicit cc-sdd migration now has
+a read-only inventory and a guarded automatic apply subset for unambiguous
+configuration and exact known legacy skills. Legacy Spec conversion and the
 binary distribution surface remain outstanding.
 
 ## Consequences

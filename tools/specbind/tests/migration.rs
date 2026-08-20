@@ -54,7 +54,7 @@ fn routes_semantic_findings_to_the_neutral_agent_guide() {
 }
 
 #[test]
-fn apply_is_explicitly_unavailable_and_read_only() {
+fn apply_requires_a_clean_committed_recovery_boundary() {
     let root = migration_fixture("minimal");
     let before = snapshot(root.path());
 
@@ -64,10 +64,108 @@ fn apply_is_explicitly_unavailable_and_read_only() {
         .args(["migrate", "cc-sdd", "--apply"])
         .assert()
         .failure()
-        .stderr(predicate::str::contains(
-            "ERROR MIGRATION_APPLY_UNAVAILABLE",
+        .stderr(predicate::str::contains("ERROR MIGRATION_APPLY_FAILED"))
+        .stderr(predicate::str::contains("MIGRATION_COMMIT_REQUIRED"));
+
+    assert_eq!(before, snapshot(root.path()));
+}
+
+#[test]
+fn applies_and_rejoins_an_exact_deterministic_migration() {
+    let root = migration_fixture("minimal");
+    git_commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("OK CC_SDD_MIGRATION_APPLIED"))
+        .stdout(predicate::str::contains("Removed legacy assets: 1"))
+        .stdout(predicate::str::contains(
+            "Original .kiro tree remains intact.",
         ))
-        .stderr(predicate::str::contains("No files were changed."));
+        .stderr("");
+
+    assert!(root.path().join(".specbind.json").is_file());
+    assert!(root.path().join(".specbind/settings").is_dir());
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-discovery/SKILL.md")
+            .is_file()
+    );
+    assert!(!root.path().join(".agents/skills/kiro-spec-init").exists());
+    assert!(root.path().join(".kiro").is_dir());
+
+    let mut rerun = Command::cargo_bin("specbind").expect("specbind binary should build");
+    rerun
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "NO_CHANGE CC_SDD_MIGRATION_UP_TO_DATE",
+        ))
+        .stderr("");
+}
+
+#[test]
+fn apply_refuses_unrelated_changes_without_writing() {
+    let root = migration_fixture("minimal");
+    git_commit_all(root.path());
+    fs::write(root.path().join("unrelated.txt"), "user work\n").expect("write unrelated change");
+    let before = snapshot(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MIGRATION_REPOSITORY_DIRTY"));
+
+    assert_eq!(before, snapshot(root.path()));
+    assert!(!root.path().join(".specbind.json").exists());
+}
+
+#[test]
+fn unknown_kiro_prefixed_agent_assets_require_guided_review() {
+    let root = migration_fixture("minimal");
+    fs::create_dir_all(root.path().join(".agents/skills/kiro-project-custom"))
+        .expect("create unknown legacy skill");
+    fs::write(
+        root.path()
+            .join(".agents/skills/kiro-project-custom/SKILL.md"),
+        "# Project-owned legacy workflow\n",
+    )
+    .expect("write unknown legacy skill");
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "MIGRATE_LEGACY_AGENT_ASSET_UNKNOWN",
+        ));
+}
+
+#[test]
+fn existing_nonconverged_target_is_never_overwritten() {
+    let root = migration_fixture("minimal");
+    fs::create_dir_all(root.path().join(".specbind")).expect("create conflicting target root");
+    fs::write(root.path().join(".specbind.json"), "{}\n").expect("write conflicting config");
+    let before = snapshot(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MIGRATE_TARGET_ALREADY_EXISTS"));
 
     assert_eq!(before, snapshot(root.path()));
 }
@@ -75,6 +173,8 @@ fn apply_is_explicitly_unavailable_and_read_only() {
 #[test]
 fn does_not_invent_a_ready_state_invariant_that_cc_sdd_never_maintained() {
     let root = migration_fixture("minimal");
+    fs::create_dir_all(root.path().join(".kiro/specs/checkout"))
+        .expect("create legacy Spec directory");
     fs::write(
         root.path().join(".kiro/specs/checkout/spec.json"),
         r#"{
@@ -185,6 +285,36 @@ fn git_init(root: &Path) {
         .arg("-C")
         .arg(root)
         .arg("init")
+        .output()
+        .expect("start Git");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
+fn git_commit_all(root: &Path) {
+    git(root, &["add", "--all"]);
+    git(
+        root,
+        &[
+            "-c",
+            "user.name=SpecBind Test",
+            "-c",
+            "user.email=specbind@example.invalid",
+            "commit",
+            "-m",
+            "fixture",
+        ],
+    );
+}
+
+fn git(root: &Path, arguments: &[&str]) {
+    let output = ProcessCommand::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(arguments)
         .output()
         .expect("start Git");
     assert!(

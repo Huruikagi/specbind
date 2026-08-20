@@ -9,9 +9,9 @@ SpecBindが自動で変換するのは、意味を機械的に確認できる入
 
 !!! warning "Preview"
 
-    現在のプレビュー版では、`specbind migrate cc-sdd`の読み取り専用計画だけを
-    利用できます。`--apply`は`MIGRATION_APPLY_UNAVAILABLE`で停止し、ファイルを
-    変更しません。通常の`specbind install`で`.kiro`を移行しないでください。
+    現在のプレビュー版では、findingのない既知の設定・agent資産だけ`--apply`
+    できます。旧Specの成果物変換はagent-assisted経路です。通常の
+    `specbind install`で`.kiro`を移行しないでください。
 
 ## 安全境界
 
@@ -23,6 +23,7 @@ SpecBindが自動で変換するのは、意味を機械的に確認できる入
 - 分からないMilestone、リリース履歴、Contract、Requirementの対応関係を作り話で
   埋めない。
 - 旧`kiro-*`のエージェント資産は、変換後の検証とあなたの確認が済むまで残す。
+- 自動退役する旧agent資産はGitで追跡されているものに限る。
 - CLIが所有する状態は、対応するSpecBindコマンドがある限り手編集しない。
 
 ## 1. 読み取り専用の計画を取得する
@@ -34,8 +35,9 @@ specbind migrate cc-sdd
 ```
 
 すべてを一意に変換できる場合、CLIは作成・変換・保持・除去する予定の対象を
-表示します。現在のプレビュー版では、内容のレビューまで進められますが、適用は
-まだ行えません。
+表示します。`--apply`は計画を再計算し、commit済みでcleanなGit状態を確認してから、
+既知の自動変換だけを適用します。退役対象がGit未追跡なら、回復できない削除を
+避けるため適用を停止します。
 
 ```sh
 specbind migrate cc-sdd --apply
@@ -43,6 +45,10 @@ specbind migrate cc-sdd --apply
 
 `MANUAL_MIGRATION_REQUIRED`が返ったときは、`--apply`で押し切ろうとしないで
 ください。CLIが表示したfinding code、対象パス、理由を控えて、次の手順へ進みます。
+
+現在の自動適用範囲は、`.cc-sdd.json`からのSpecBind installと、Codex・Claude Codeの
+既知の`kiro-*` skillの退役です。`.kiro`は残ります。旧Specが1件でもあれば
+`MIGRATE_SPEC_CONVERSION_REQUIRED`で停止し、MilestoneやGate evidenceを推測しません。
 
 ## 2. エージェントに依頼する
 
@@ -145,6 +151,16 @@ SpecBind v1の対象外です。利用するエージェントを確認してく
 旧設定またはSpec metadataの言語が、SpecBind v1の英語・日本語に含まれません。
 対象言語と翻訳範囲を確認してください。
 
+### MIGRATE_LANGUAGE_SELECTION_REQUIRED {#migrate-language-selection-required}
+
+旧設定やSpec metadataから英語・日本語を決められません。自動適用前に成果物言語を
+選択してください。
+
+### MIGRATE_SPEC_CONVERSION_REQUIRED {#migrate-spec-conversion-required}
+
+旧Specがあります。active Milestone、Requirement対応、Gate evidenceを推測せず、
+agent-assisted手順で成果物を変換してからCLI検証へ戻ります。
+
 ### MIGRATE_ACTIVE_SCOPE_AMBIGUOUS {#migrate-active-scope-ambiguous}
 
 進行中に見える旧Specが複数あるものの、それらを1つのactive milestoneとして
@@ -188,10 +204,11 @@ Steeringとして検証してください。
 `spec.json`がないか、phase・generated・approvedの組合せが旧cc-sddの状態として
 成立しません。成果物と履歴から状態を調べ、証明できないGate evidenceは作りません。
 
-### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
+### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_AGENT_ASSET_UNKNOWN / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
 
-既知の旧agent資産が通常ディレクトリではないか、`.kiro`直下に未対応の内容が
-あります。対象を個別に調べ、自動除去や自動変換の対象に加えません。
+既知の旧agent資産が通常ディレクトリではない、未知の`kiro-*`資産がある、または
+`.kiro`直下に未対応の内容があります。対象を個別に調べ、自動除去や自動変換の
+対象に加えません。
 
 ---
 

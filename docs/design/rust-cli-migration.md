@@ -108,8 +108,10 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 - Initial migration fixtures now cover the historical `.cc-sdd.json`, legacy
   `.kiro` and `spec.json`, Codex and Claude Code skill detection, mixed language,
   multiple Specs, Design traceability, customized rules, no-write planning,
-  and the guarded unavailable `--apply` path. Task conversion, exact quick-start
-  recognition, and platform-specific legacy layouts remain outstanding.
+  and guarded `--apply`. Automatic apply currently covers only finding-free
+  configuration and exact known Codex or Claude Code legacy skills. Spec and
+  task conversion, exact quick-start recognition, and platform-specific legacy
+  layouts remain outstanding.
 - The accepted agent-assisted path is published in Japanese and English under
   `docs/guide/`; stable findings and language-aware guide selection are
   implemented. Retry-safe recognition of guided target work remains
@@ -135,7 +137,10 @@ and plan. It reads the original cc-sdd configuration name `.cc-sdd.json`, not
 the `.specbind.json` name introduced by the later repository-wide rename. The
 current `tools/cc-sdd` tree therefore remains a migration oracle for inherited
 artifact shapes, but Git history is authoritative for renamed brand-specific
-inputs. `--apply` and guided-work convergence remain outstanding.
+inputs. `--apply` now installs the unambiguous configuration-and-agent subset,
+retires exact known legacy skills only after successful installation, and
+recognizes its own converged target on retry. Legacy Spec conversion and
+guided-work convergence remain outstanding.
 [Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md) defines the
 supported Pages handoff and deterministic rejoin boundary.
 

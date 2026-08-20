@@ -5,7 +5,12 @@ use std::{collections::BTreeSet, fmt, fs, path::Path};
 use serde::Deserialize;
 use serde_json::Value;
 
-use crate::{artifacts, config::ProjectLanguage};
+use crate::{
+    artifacts,
+    config::ProjectLanguage,
+    install::{self, Agent, InstallInputs, PlanAction},
+    repository,
+};
 
 pub const GUIDE_NEUTRAL: &str = "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/";
 pub const GUIDE_EN: &str = "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/";
@@ -15,6 +20,25 @@ const LEGACY_CONFIG: &str = ".cc-sdd.json";
 const TARGET_CONFIG: &str = ".specbind.json";
 const DEFAULT_LEGACY_ROOT: &str = ".kiro";
 const TARGET_ROOT: &str = ".specbind";
+const LEGACY_SKILLS: &[&str] = &[
+    "kiro-debug",
+    "kiro-discovery",
+    "kiro-impl",
+    "kiro-review",
+    "kiro-spec-batch",
+    "kiro-spec-design",
+    "kiro-spec-init",
+    "kiro-spec-quick",
+    "kiro-spec-requirements",
+    "kiro-spec-status",
+    "kiro-spec-tasks",
+    "kiro-steering",
+    "kiro-steering-custom",
+    "kiro-validate-design",
+    "kiro-validate-gap",
+    "kiro-validate-impl",
+    "kiro-verify-completion",
+];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MigrationPlan {
@@ -25,6 +49,14 @@ pub struct MigrationPlan {
     pub specs: Vec<LegacySpec>,
     pub actions: Vec<MigrationAction>,
     pub findings: Vec<MigrationFinding>,
+    pub target_converged: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MigrationOutcome {
+    pub installed_files: usize,
+    pub removed_legacy_assets: usize,
+    pub unchanged: bool,
 }
 
 impl MigrationPlan {
@@ -119,24 +151,11 @@ pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     )?;
 
     let mut findings = config.findings;
-    if path_exists(project_root.join(TARGET_CONFIG).as_path())? {
-        findings.push(finding(
-            "MIGRATE_TARGET_ALREADY_EXISTS",
-            Some(TARGET_CONFIG.to_owned()),
-            "a target-shaped .specbind.json already exists; guided convergence is required",
-        ));
-    }
     if config.root == TARGET_ROOT {
         findings.push(finding(
             "MIGRATE_TARGET_ALREADY_EXISTS",
             Some(TARGET_ROOT.to_owned()),
             "the legacy root is also the default SpecBind target root",
-        ));
-    } else if path_exists(project_root.join(TARGET_ROOT).as_path())? {
-        findings.push(finding(
-            "MIGRATE_TARGET_ALREADY_EXISTS",
-            Some(TARGET_ROOT.to_owned()),
-            "the default SpecBind target root already exists",
         ));
     }
 
@@ -146,20 +165,6 @@ pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
         target: None,
         detail: "the original cc-sdd tree remains unchanged".to_owned(),
     }];
-    actions.push(MigrationAction {
-        kind: if project_root.join(LEGACY_CONFIG).exists() {
-            "convert"
-        } else {
-            "create"
-        },
-        source: project_root
-            .join(LEGACY_CONFIG)
-            .exists()
-            .then(|| LEGACY_CONFIG.to_owned()),
-        target: Some(TARGET_CONFIG.to_owned()),
-        detail: "write the strict SpecBind project configuration after assets exist".to_owned(),
-    });
-
     let mut languages = BTreeSet::new();
     if let Some(language) = config.language {
         languages.insert(language_name(language).to_owned());
@@ -175,20 +180,7 @@ pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     inspect_legacy_content(&legacy_root_path, &config.root, &mut actions, &mut findings)?;
     inspect_project_instructions(project_root, &mut actions, &mut findings)?;
 
-    if specs.len() > 1 {
-        findings.push(finding(
-            "MIGRATE_ACTIVE_SCOPE_AMBIGUOUS",
-            Some(format!("{}/specs", config.root)),
-            "multiple legacy Specs require a user-confirmed active milestone or baseline disposition",
-        ));
-    }
-    if languages.len() > 1 {
-        findings.push(finding(
-            "MIGRATE_LANGUAGE_MIXED",
-            Some(format!("{}/specs", config.root)),
-            "legacy configuration and Spec metadata do not establish one project-global artifact language",
-        ));
-    }
+    inspect_scope_findings(&specs, &config.root, &languages, &mut findings);
 
     let mut agents = config.agents;
     inspect_agent_assets(project_root, &mut agents, &mut actions, &mut findings)?;
@@ -201,6 +193,45 @@ pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
         ));
     }
 
+    let target_converged = if findings.iter().any(|finding| {
+        matches!(
+            finding.code,
+            "MIGRATE_AGENT_SELECTION_REQUIRED"
+                | "MIGRATE_AGENT_UNSUPPORTED"
+                | "MIGRATE_LANGUAGE_MIXED"
+                | "MIGRATE_LANGUAGE_SELECTION_REQUIRED"
+                | "MIGRATE_LANGUAGE_UNSUPPORTED"
+        )
+    }) {
+        false
+    } else {
+        inspect_target_state(
+            project_root,
+            one_language(&languages),
+            &agents,
+            &mut findings,
+        )?
+    };
+    actions.insert(
+        1,
+        MigrationAction {
+            kind: if target_converged {
+                "keep"
+            } else if project_root.join(LEGACY_CONFIG).exists() {
+                "convert"
+            } else {
+                "create"
+            },
+            source: project_root
+                .join(LEGACY_CONFIG)
+                .exists()
+                .then(|| LEGACY_CONFIG.to_owned()),
+            target: Some(TARGET_CONFIG.to_owned()),
+            detail: "establish the strict SpecBind project configuration after assets exist"
+                .to_owned(),
+        },
+    );
+
     findings.sort();
     findings.dedup();
     Ok(MigrationPlan {
@@ -211,7 +242,158 @@ pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
         specs,
         actions,
         findings,
+        target_converged,
     })
+}
+
+fn inspect_scope_findings(
+    specs: &[LegacySpec],
+    legacy_root: &str,
+    languages: &BTreeSet<String>,
+    findings: &mut Vec<MigrationFinding>,
+) {
+    let specs_path = Some(format!("{legacy_root}/specs"));
+    if specs.len() > 1 {
+        findings.push(finding(
+            "MIGRATE_ACTIVE_SCOPE_AMBIGUOUS",
+            specs_path.clone(),
+            "multiple legacy Specs require a user-confirmed active milestone or baseline disposition",
+        ));
+    }
+    if !specs.is_empty() {
+        findings.push(finding(
+            "MIGRATE_SPEC_CONVERSION_REQUIRED",
+            specs_path.clone(),
+            "legacy Specs require guided lifecycle conversion before automatic apply",
+        ));
+    }
+    if languages.len() > 1 {
+        findings.push(finding(
+            "MIGRATE_LANGUAGE_MIXED",
+            specs_path,
+            "legacy configuration and Spec metadata do not establish one project-global artifact language",
+        ));
+    } else if languages.is_empty() {
+        findings.push(finding(
+            "MIGRATE_LANGUAGE_SELECTION_REQUIRED",
+            None,
+            "no supported project-global artifact language can be established",
+        ));
+    }
+}
+
+fn inspect_target_state(
+    project_root: &Path,
+    language: Option<ProjectLanguage>,
+    agents: &[String],
+    findings: &mut Vec<MigrationFinding>,
+) -> Result<bool, MigrationIssues> {
+    let config_exists = path_exists(&project_root.join(TARGET_CONFIG))?;
+    let root_exists = path_exists(&project_root.join(TARGET_ROOT))?;
+    if !config_exists && !root_exists {
+        return Ok(false);
+    }
+    let Some(inputs) = install_inputs(language, agents) else {
+        return Ok(false);
+    };
+    let converged = config_exists
+        && root_exists
+        && install::plan(project_root, &inputs).is_ok_and(|plan| {
+            plan.entries
+                .iter()
+                .all(|entry| entry.action == PlanAction::Keep)
+        });
+    if !converged {
+        findings.push(finding(
+            "MIGRATE_TARGET_ALREADY_EXISTS",
+            Some(TARGET_CONFIG.to_owned()),
+            "the existing SpecBind target is not the exact converged migration target",
+        ));
+    }
+    Ok(converged)
+}
+
+fn install_inputs(language: Option<ProjectLanguage>, agents: &[String]) -> Option<InstallInputs> {
+    let language = language?;
+    let agents = agents
+        .iter()
+        .map(|agent| Agent::parse(agent))
+        .collect::<Option<Vec<_>>>()?;
+    Some(InstallInputs {
+        agents,
+        language: Some(language),
+        spec_dir: Some(TARGET_ROOT.to_owned()),
+        project_instructions: Some(false),
+    })
+}
+
+/// Recomputes and applies only a finding-free deterministic migration plan.
+///
+/// # Errors
+///
+/// Returns stable diagnostics when the plan changed, Git is not a safe
+/// recovery boundary, installation fails, or a known legacy asset cannot be
+/// removed safely.
+pub fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIssues> {
+    let plan = plan(project_root)?;
+    if !plan.findings.is_empty() {
+        return Err(one_issue(
+            "MIGRATION_PLAN_CHANGED",
+            None,
+            "the freshly recomputed migration plan contains findings",
+        ));
+    }
+    let inputs = install_inputs(plan.language, &plan.agents).ok_or_else(|| {
+        one_issue(
+            "MIGRATION_PLAN_CHANGED",
+            None,
+            "the freshly recomputed plan has no complete installation inputs",
+        )
+    })?;
+    let install_plan = install::plan(project_root, &inputs).map_err(render_install_issues)?;
+    let legacy_assets = plan
+        .actions
+        .iter()
+        .filter(|action| action.kind == "remove-after-cutover")
+        .filter_map(|action| action.source.clone())
+        .collect::<Vec<_>>();
+    if plan.target_converged && legacy_assets.is_empty() {
+        return Ok(MigrationOutcome {
+            installed_files: 0,
+            removed_legacy_assets: 0,
+            unchanged: true,
+        });
+    }
+    require_apply_repository(
+        project_root,
+        &install_plan,
+        &legacy_assets,
+        plan.target_converged,
+    )?;
+    let installed_files = install_plan
+        .entries
+        .iter()
+        .filter(|entry| entry.action != PlanAction::Keep)
+        .count();
+    install::apply(project_root, &inputs).map_err(render_install_issues)?;
+    for relative in &legacy_assets {
+        remove_legacy_asset(project_root, relative)?;
+    }
+    Ok(MigrationOutcome {
+        installed_files,
+        removed_legacy_assets: legacy_assets.len(),
+        unchanged: false,
+    })
+}
+
+fn render_install_issues(error: install::InstallIssues) -> MigrationIssues {
+    MigrationIssues {
+        issues: error
+            .issues
+            .into_iter()
+            .map(|issue| finding(issue.code, issue.path, issue.message))
+            .collect(),
+    }
 }
 
 fn read_legacy_config(project_root: &Path) -> Result<LegacyConfigValues, MigrationIssues> {
@@ -584,7 +766,7 @@ fn inspect_agent_assets(
                     "legacy agent asset name is not UTF-8",
                 )
             })?;
-            if name.starts_with("kiro-") {
+            if LEGACY_SKILLS.contains(&name.as_str()) {
                 let metadata = fs::symlink_metadata(entry.path()).map_err(|error| {
                     one_issue(
                         "MIGRATION_LEGACY_SOURCE_UNREADABLE",
@@ -601,6 +783,12 @@ fn inspect_agent_assets(
                 } else {
                     assets.push(name);
                 }
+            } else if name.starts_with("kiro-") {
+                findings.push(finding(
+                    "MIGRATE_LEGACY_AGENT_ASSET_UNKNOWN",
+                    Some(format!("{root}/{name}")),
+                    "legacy kiro-prefixed agent asset is not an exact known cc-sdd skill",
+                ));
             }
         }
         assets.sort();
@@ -617,6 +805,149 @@ fn inspect_agent_assets(
         }
     }
     Ok(())
+}
+
+fn require_apply_repository(
+    project_root: &Path,
+    install_plan: &install::InstallPlan,
+    legacy_assets: &[String],
+    allow_expected_changes: bool,
+) -> Result<(), MigrationIssues> {
+    let committed = repository::predicate(project_root, &["rev-parse", "--verify", "-q", "HEAD"])
+        .map_err(|error| one_issue("MIGRATION_GIT_FAILED", None, error.to_string()))?;
+    if !committed {
+        return Err(one_issue(
+            "MIGRATION_COMMIT_REQUIRED",
+            None,
+            "cc-sdd migration apply requires at least one commit",
+        ));
+    }
+    for relative in legacy_assets {
+        let tracked = repository::output_bytes(project_root, &["ls-files", "-z", "--", relative])
+            .map_err(|error| {
+            one_issue(
+                "MIGRATION_GIT_FAILED",
+                Some(relative.clone()),
+                error.to_string(),
+            )
+        })?;
+        if tracked.is_empty() {
+            return Err(one_issue(
+                "MIGRATION_LEGACY_ASSET_UNTRACKED",
+                Some(relative.clone()),
+                "legacy cleanup requires Git-tracked source files for recovery",
+            ));
+        }
+    }
+    let status = repository::output_bytes(
+        project_root,
+        &["status", "--porcelain=v1", "-z", "--untracked-files=all"],
+    )
+    .map_err(|error| one_issue("MIGRATION_GIT_FAILED", None, error.to_string()))?;
+    if status.is_empty() {
+        return Ok(());
+    }
+    if allow_expected_changes && status_is_expected(&status, install_plan, legacy_assets)? {
+        return Ok(());
+    }
+    Err(one_issue(
+        "MIGRATION_REPOSITORY_DIRTY",
+        None,
+        "cc-sdd migration apply requires a clean repository",
+    ))
+}
+
+fn status_is_expected(
+    status: &[u8],
+    install_plan: &install::InstallPlan,
+    legacy_assets: &[String],
+) -> Result<bool, MigrationIssues> {
+    for record in status
+        .split(|byte| *byte == 0)
+        .filter(|record| !record.is_empty())
+    {
+        if record.len() < 4 {
+            return Ok(false);
+        }
+        let relative = std::str::from_utf8(&record[3..]).map_err(|_| {
+            one_issue(
+                "MIGRATION_GIT_OUTPUT_INVALID",
+                None,
+                "Git status returned a non-UTF-8 path",
+            )
+        })?;
+        let installation_target = install_plan.entries.iter().any(|entry| {
+            relative == entry.path || relative.starts_with(&format!("{}/", entry.path))
+        });
+        let legacy_target = legacy_assets
+            .iter()
+            .any(|asset| relative == asset || relative.starts_with(&format!("{asset}/")))
+            || is_known_legacy_change(relative);
+        if !installation_target && !legacy_target {
+            return Ok(false);
+        }
+    }
+    Ok(true)
+}
+
+fn remove_legacy_asset(project_root: &Path, relative: &str) -> Result<(), MigrationIssues> {
+    let known = [".agents/skills", ".claude/skills"].iter().any(|root| {
+        LEGACY_SKILLS
+            .iter()
+            .any(|name| relative == format!("{root}/{name}"))
+    });
+    if !known {
+        return Err(one_issue(
+            "MIGRATION_LEGACY_ASSET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup target is not an exact known skill path",
+        ));
+    }
+    let path = project_root.join(relative);
+    let metadata = fs::symlink_metadata(&path).map_err(|error| {
+        one_issue(
+            "MIGRATION_LEGACY_ASSET_CHANGED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if is_link_like(&metadata) || !metadata.is_dir() {
+        return Err(one_issue(
+            "MIGRATION_LEGACY_ASSET_CHANGED",
+            Some(relative.to_owned()),
+            "legacy cleanup target is no longer a regular non-symlink directory",
+        ));
+    }
+    let status = repository::path_status(project_root, relative).map_err(|error| {
+        one_issue(
+            "MIGRATION_GIT_FAILED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if !status.is_empty() {
+        return Err(one_issue(
+            "MIGRATION_LEGACY_ASSET_DIRTY",
+            Some(relative.to_owned()),
+            "legacy cleanup target changed after the recovery boundary was established",
+        ));
+    }
+    fs::remove_dir_all(&path).map_err(|error| {
+        one_issue(
+            "MIGRATION_LEGACY_ASSET_REMOVE_FAILED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })
+}
+
+fn is_known_legacy_change(relative: &str) -> bool {
+    [".agents/skills", ".claude/skills"].iter().any(|root| {
+        LEGACY_SKILLS.iter().any(|name| {
+            let target = format!("{root}/{name}");
+            relative == target || relative.starts_with(&format!("{target}/"))
+        })
+    })
 }
 
 fn inspect_legacy_content(

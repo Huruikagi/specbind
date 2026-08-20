@@ -9,13 +9,13 @@ specbind migrate cc-sdd
 
 !!! warning "Preview"
 
-    現在のプレビュー版CLIでは、`specbind migrate cc-sdd`の読み取り専用計画だけを
-    利用できます。`--apply`はまだ利用できません。
+    現在のプレビュー版CLIでは、findingのない既知の設定・agent資産だけ
+    `--apply`できます。旧Specの成果物変換は、引き続きガイドに従ってください。
     `specbind install`でcc-sddからの切り替えを試みないでください。
 
-    The current Preview CLI provides only the read-only
-    `specbind migrate cc-sdd` plan. `--apply` is not available yet. Do not
-    attempt an in-place cc-sdd cutover with `specbind install`.
+    The current Preview CLI can `--apply` only finding-free, known
+    configuration and agent assets. Legacy Spec conversion still follows the
+    guide. Do not attempt an in-place cc-sdd cutover with `specbind install`.
 
 ## 日本語
 

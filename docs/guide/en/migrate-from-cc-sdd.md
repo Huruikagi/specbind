@@ -8,10 +8,9 @@ ambiguous.
 
 !!! warning "Preview"
 
-    The current Preview provides only the read-only
-    `specbind migrate cc-sdd` plan. `--apply` stops with
-    `MIGRATION_APPLY_UNAVAILABLE` and changes no files. Do not use ordinary
-    `specbind install` to migrate `.kiro`.
+    The current Preview can `--apply` only finding-free, known configuration
+    and agent assets. Legacy Spec conversion uses the agent-assisted path. Do
+    not use ordinary `specbind install` to migrate `.kiro`.
 
 ## Safety boundary
 
@@ -22,6 +21,7 @@ ambiguous.
   or completion evidence.
 - Keep legacy `kiro-*` agent assets until validation and user confirmation are
   complete.
+- Automatically retire only legacy agent assets tracked by Git.
 - Do not hand-edit CLI-owned state when a corresponding SpecBind operation
   exists.
 
@@ -34,8 +34,9 @@ specbind migrate cc-sdd
 ```
 
 If every conversion is unambiguous, review the reported create, convert,
-preserve, and removal actions. Applying them is not available in the current
-Preview:
+preserve, and removal actions. `--apply` recomputes the plan and verifies a
+committed, clean Git recovery boundary before applying known conversions. It
+stops rather than delete a legacy asset that Git cannot recover:
 
 ```sh
 specbind migrate cc-sdd --apply
@@ -44,6 +45,11 @@ specbind migrate cc-sdd --apply
 If the command returns `MANUAL_MIGRATION_REQUIRED`, do not use `--apply` to
 bypass it. Preserve the complete output, including finding codes, paths, and
 reasons.
+
+The current automatic subset installs SpecBind from `.cc-sdd.json` and retires
+exact known Codex or Claude Code `kiro-*` skills. It preserves `.kiro`. Any
+legacy Spec produces `MIGRATE_SPEC_CONVERSION_REQUIRED`; the CLI does not guess
+its milestone or gate evidence.
 
 ## 2. Ask an agent to assist
 
@@ -147,6 +153,17 @@ legacy agent is outside SpecBind v1. Confirm the agent to install.
 The legacy configuration or Spec metadata uses a language outside SpecBind
 v1 English and Japanese. Confirm the target language and translation scope.
 
+### MIGRATE_LANGUAGE_SELECTION_REQUIRED {#migrate-language-selection-required}
+
+Neither legacy configuration nor Spec metadata establishes English or
+Japanese. Select the project-global artifact language before automatic apply.
+
+### MIGRATE_SPEC_CONVERSION_REQUIRED {#migrate-spec-conversion-required}
+
+Legacy Specs exist. Use the agent-assisted procedure without guessing the
+active milestone, Requirement mappings, or gate evidence, then return to CLI
+validation.
+
 ### MIGRATE_ACTIVE_SCOPE_AMBIGUOUS {#migrate-active-scope-ambiguous}
 
 Several legacy Specs appear active, but the repository does not prove that
@@ -193,11 +210,11 @@ kebab-case. Do not follow links; confirm the intended Spec ID and location.
 not a valid legacy state. Investigate artifacts and history; do not invent gate
 evidence.
 
-### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
+### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_AGENT_ASSET_UNKNOWN / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
 
-A known legacy agent asset is not a regular directory, or unsupported content
-exists directly under `.kiro`. Inspect it individually and keep it outside
-automatic conversion and removal.
+A known legacy agent asset is not a regular directory, an unknown `kiro-*`
+asset exists, or unsupported content exists directly under `.kiro`. Inspect it
+individually and keep it outside automatic conversion and removal.
 
 ---
 
