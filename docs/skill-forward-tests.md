@@ -87,7 +87,19 @@ fixture.
 
 ## Driving a run
 
-A subagent works, and lets you pin the model. A few rules keep it honest.
+A subagent works, and lets you pin the model. For a Codex-driven run, use the
+following default profile:
+
+```yaml
+fork_turns: none
+model: gpt-5.6-terra
+reasoning_effort: medium
+```
+
+`fork_turns: none` supplies the clean context the test requires. The model and
+reasoning effort are properties of the test driver, not of the installed product
+skill. Override them only for an intentional model comparison, and record the
+override with the result. A few rules keep the run honest.
 
 **Give the request, never the method.** State the working directory, state that
 `specbind` is on PATH, and then give the maintainer's request as a maintainer
@@ -151,8 +163,9 @@ project was not good enough, which is a finding about the skill or the CLI.
 
 The fixture installs for both agents already — `install --agent claude-code
 --agent codex` — so `.claude/skills/` and `.agents/skills/` are both present and
-nothing in the setup changes between them. Start the session for the agent you
-are measuring and leave the other tree alone.
+nothing in the setup changes between them. A Codex-spawned subagent measures
+Codex; a Claude Code Agent-tool subagent measures Claude Code. Start the driver
+for the agent you are measuring and leave the other tree alone.
 
 Both agents read the **same skill body**. Rendering maps the declared metadata
 onto each platform's Front Matter schema and never edits the document, so a run

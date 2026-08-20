@@ -63,16 +63,23 @@ Verify the precondition with a command before launching the run.
 
 ## Driving a run
 
-Use a subagent with no prior context. Pin the model when comparing behavior
-across models — the Agent tool's `model` accepts `sonnet`, `opus`, `haiku`, and
-`fable`.
+Use a subagent with no prior context.
 
-**A subagent always drives Claude Code.** The fixture installs both agents, so
-`.agents/skills/` is sitting right there, but nothing about spawning a subagent
-makes it read that tree. Measuring Codex means opening a real Codex session in
-the fixture directory; there is no way to do it from here. Record which agent a
-result came from, because the scenario document now tracks them as separate
-columns and an unlabelled result silently becomes a Claude Code one.
+### Codex driver profile
+
+When Codex drives a scenario through a subagent, use this profile:
+
+- `fork_turns: "none"`
+- `model: "gpt-5.6-terra"`
+- `reasoning_effort: "medium"`
+
+This is the default forward-test driver profile, not part of the product skill
+under test. Override it only when the run deliberately compares models, and
+record the override with the result.
+
+A Codex-spawned subagent is a Codex result; a Claude Code Agent-tool subagent is
+a Claude Code result. Record the actual driver because the scenario document
+tracks them as separate columns.
 
 The prompt gives three things and nothing else:
 
@@ -87,7 +94,8 @@ The prompt gives three things and nothing else:
 Then ask only what it changed and what it ran.
 
 **Neutralize this repository's instructions.** A subagent is not a clean room: it
-carries the host session's `CLAUDE.md`, not the fixture's. This repository's own
+carries the host session's project instructions (`AGENTS.md` under Codex or
+`CLAUDE.md` under Claude Code), not the fixture's. This repository's own
 instructions tell an agent to answer in Japanese and to commit each finished unit
 to `main` — and the checkpoint scenarios exist to measure whether the agent
 commits. State in the prompt that the fixture is a standalone project and that
@@ -97,10 +105,6 @@ hygiene, not method.
 A run reporting in Japanese against an `en` fixture is the visible symptom. Treat
 it as a signal that the contamination is active, and re-read any checkpoint
 result taken from the same batch.
-
-A Codex session in the fixture has the same problem by a different route: it
-reads `AGENTS.md`, which is this repository's instruction file too. State the
-same thing.
 
 **Never name a skill or a command in the prompt.** Whether the agent finds and
 uses the installed skill is the thing under test; telling it teaches the answer.
