@@ -254,6 +254,14 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .expect("claim verification body")
             .contains("use `specbind-validate-implementation` instead")
     );
+
+    let validation_body = skill::find("specbind-validate-implementation")
+        .expect("implementation validation skill")
+        .body()
+        .expect("implementation validation body");
+    assert!(validation_body.contains("specbind check traceability <spec>"));
+    assert!(validation_body.contains("Validate the **active Requirement IDs**"));
+    assert!(validation_body.contains("outside it is not a completion"));
 }
 
 #[test]

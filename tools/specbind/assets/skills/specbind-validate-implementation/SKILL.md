@@ -47,10 +47,17 @@ specbind artifact read <spec> requirements
 specbind artifact read <spec> design/main
 specbind artifact read <spec> contract
 specbind tasks list <spec>
+specbind check traceability <spec>
 ```
 
 Use `specbind artifact list <spec>` when the design is split. Read implementation
 notes if the Spec has them.
+
+Validate the **active Requirement IDs**, not every Requirement retained in the
+current Requirements document. A clean traceability result establishes that the
+union of the approved Design artifacts' `requirement_ids` is exactly the active
+set. Use that set for coverage. A Requirement outside it is not a completion
+blocker for this active change.
 
 Then the standard you are held to:
 

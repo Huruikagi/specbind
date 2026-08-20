@@ -213,9 +213,11 @@ class AddItemTest(unittest.TestCase):
             add_item({}, "a", 0)
 
     def test_rejects_above_the_cap(self):
+        cart = {}
         with self.assertRaises(ValueError) as raised:
-            add_item({"a": 98}, "a", 2)
+            add_item(cart, "a", 100)
         self.assertIn("99", str(raised.exception))
+        self.assertEqual(cart, {})
 
 
 if __name__ == "__main__":
@@ -250,10 +252,10 @@ cart_cap_implemented() {
         echo "def add_item(cart, sku, quantity):"
         echo "    if quantity < 1:"
         echo '        raise ValueError("quantity must be at least 1")'
-        echo "    cart.setdefault(sku, 0)"
-        echo "    if cart[sku] + quantity > MAX_PER_SKU:"
+        echo "    current = cart.get(sku, 0)"
+        echo "    if current + quantity > MAX_PER_SKU:"
         echo '        raise ValueError(f"at most {MAX_PER_SKU} per SKU")'
-        echo "    cart[sku] += quantity"
+        echo "    cart[sku] = current + quantity"
         echo "    return cart"
     } > src/cart.py
 }
