@@ -33,7 +33,8 @@ SpecBindはpre-1.0のPreviewです。このガイドは、release candidateま�
 
 既存の`.kiro`プロジェクトを通常の`specbind install`で自動変換することは
 ありません。移行機能が提供されるまでは、同じプロジェクト上での試用を避けて
-ください。
+ください。確定した安全境界とエージェント支援手順は、先行公開している
+[cc-sddマイグレーションガイド](./migrate-from-cc-sdd.md)で確認できます。
 
 ## 最初に読むページ
 
@@ -41,6 +42,7 @@ SpecBindはpre-1.0のPreviewです。このガイドは、release candidateま�
 2. [基本概念](./concepts.md) — Spec、Milestone、Direct、Gate、成果物
 3. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
 4. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
+5. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ## SpecBindを使う変更
 

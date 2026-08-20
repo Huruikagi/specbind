@@ -39,10 +39,13 @@ Claude Codeを使って、最初の変更をDiscoveryから実装検証まで進
 - ソースからビルドするPreview CLI
 
 GitHub Releaseバイナリ、ダウンロード用インストーラ、cc-sdd migrationは準備中です。
+cc-sdd移行の確定済み安全境界とエージェント支援手順は、
+[マイグレーションガイド](guide/migration/cc-sdd.md)で先行公開しています。
 
 ## 詳細
 
 - [ユーザーガイド](guide/ja/index.md)
+- [cc-sddマイグレーションガイド](guide/migration/cc-sdd.md)
 - [現在のスキル一覧](current-skill-index.md)
 - [現在の成果物一覧](current-artifact-index.md)
 - [GitHubリポジトリ](https://github.com/Huruikagi/specbind)

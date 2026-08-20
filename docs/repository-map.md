@@ -58,6 +58,9 @@ For the files the CLI installs into consumer projects, see the [current generate
 | [Japanese user guide (Preview)](./guide/ja/index.md) | Entry point for source-built Preview users |
 | [Japanese Getting Started](./guide/ja/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
 | [Japanese basic concepts](./guide/ja/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
+| [cc-sdd migration entry](./guide/migration/cc-sdd.md) | Language-neutral entry for automatic and agent-assisted migration guidance |
+| [Japanese cc-sdd migration guide](./guide/ja/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
+| [English cc-sdd migration guide](./guide/en/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
 | [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
 | [Current generated artifact index](./current-artifact-index.md) | Current installation and lifecycle artifact surface |
 
@@ -214,3 +217,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0122](./design/decisions/0122-finding-disposition-and-deferred-destination.md) | Accepted | Finding disposition and the project-named destination for deferred findings |
 | [0123](./design/decisions/0123-reverse-traceability-and-unconsumed-seams.md) | Accepted | Reverse task-scope traceability and unconsumed exported seams |
 | [0124](./design/decisions/0124-pre-1.0-binary-release-line.md) | Accepted | Pre-1.0 public binary release and distribution contract |
+| [0125](./design/decisions/0125-agent-assisted-cc-sdd-migration.md) | Accepted | Agent-assisted cc-sdd migration and GitHub Pages handoff contract |

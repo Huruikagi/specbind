@@ -7,7 +7,7 @@ on:
     paths:
       - ".github/workflows/pages.yml"
       - "docs/index.md"
-      - "docs/guide/ja/**"
+      - "docs/guide/**"
       - "docs/current-artifact-index.md"
       - "docs/current-skill-index.md"
       - "mkdocs.yml"
@@ -16,7 +16,7 @@ on:
     paths:
       - ".github/workflows/pages.yml"
       - "docs/index.md"
-      - "docs/guide/ja/**"
+      - "docs/guide/**"
       - "docs/current-artifact-index.md"
       - "docs/current-skill-index.md"
       - "mkdocs.yml"

@@ -91,7 +91,7 @@ Capture focused fixtures for:
 | Artifact templates and schemas | Embedded defaults and runtime schemas match the CLI version; custom settings remain external. |
 | Git and path safety | Root, submodule, ignored-path, portability, and clean-target cases match Decision 0081. |
 | TTY behavior | Installer prompting and non-interactive lifecycle behavior are covered. |
-| cc-sdd migration | Default plan is read-only; `--apply` handles only unambiguous known artifacts and stops on ambiguity. |
+| cc-sdd migration | Default plan is read-only; `--apply` handles only unambiguous known artifacts and stops on ambiguity. Decision 0125 routes semantic findings to the version-compatible GitHub Pages guide and requires guided work to rejoin deterministic validation. |
 | Output | Stable English result codes, stdout/stderr routing, sanitization, and zero/nonzero exits are covered. |
 
 Golden generated-tree fixtures should identify the accepted decision that explains each intentional difference. Regenerating snapshots alone is not sufficient evidence.
@@ -100,7 +100,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 ### 1. Contract capture
 
-- Complete for the accepted SpecBind interface: Decisions 0075 through 0123
+- Complete for the accepted SpecBind interface: Decisions 0075 through 0125
   classify the retained, replaced, and removed product behavior.
 - Current install and lifecycle fixtures cover clean and locally modified
   product assets, existing project-owned settings, custom roots, project
@@ -108,6 +108,9 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 - Outstanding for migration: legacy `.kiro`, `spec.json`, `tasks.md`, quick-start
   block, and platform-specific conversion fixtures that belong to
   `specbind migrate cc-sdd`.
+- The accepted agent-assisted path is published in Japanese and English under
+  `docs/guide/`; implementation still needs stable finding codes, guide
+  selection, and retry-safe recognition of guided work.
 
 ### 2. Read-only Rust core
 
@@ -125,7 +128,9 @@ and optional marked project-instruction blocks. Initial installation still
 requires explicit agent and language values; TTY prompting is outstanding.
 
 `specbind migrate cc-sdd` and its plan-first, `--apply`-guarded conversion
-fixtures remain outstanding.
+fixtures remain outstanding. [Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md)
+adds the supported Pages handoff for semantic findings and requires guided work
+to converge back into the read-only plan before deterministic finalization.
 
 ### 4. Native SpecBind operations
 
