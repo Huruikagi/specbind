@@ -146,7 +146,8 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 - Produce Windows x64 and Linux x64 GitHub Release binaries plus `SHA256SUMS`.
 - Publish PowerShell and shell installers that select the latest stable version by default, accept explicit prerelease versions, verify checksums, and never edit PATH.
 - Verify `%LOCALAPPDATA%\SpecBind\bin` and `$HOME/.local/bin` defaults plus `--install-dir`.
-- Start public Rust versioning at `1.0.0`.
+- Start the public Rust release line under the pre-1.0 policy in
+  [Decision 0124](./decisions/0124-pre-1.0-binary-release-line.md).
 - Retire the temporary TypeScript tree only after install, migration, artifact, lifecycle, and distribution fixtures pass.
 
 ## V1 distribution boundary

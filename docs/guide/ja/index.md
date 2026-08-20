@@ -14,18 +14,19 @@ Requirements、Design、Contract、Tasksを一度きりのプロンプトでは�
 - Gitで管理された既存プロジェクトがある
 - CodexまたはClaude Codeを利用している
 - 1つの振る舞いの変更を、スコープ確認から実装検証まで進めたい
-- SpecBindをソースからビルドして試せる
+- Previewバイナリ、またはソースビルドを試せる
 
 最初に[Getting Started](./getting-started.md)を進めてください。作業中に登場する
 用語や責任分担は[基本概念](./concepts.md)で確認できます。
 
 ## 現在の公開状態
 
-SpecBindはまだ正式リリースされていません。このガイドは、現在の実装を試すための
-Previewです。
+SpecBindはpre-1.0のPreviewです。このガイドは、release candidateまたは現在の
+ソースを使って実装を試すためのものです。
 
-- GitHub Releaseバイナリとダウンロード用インストーラはまだ提供していません。
-- 現在はWindows x64またはWSL2上のLinux x64で、Rustからビルドして試します。
+- GitHub ReleaseはWindows x64とWSL2上のLinux x64を対象に構築しています。
+- release candidateはバージョンを明示してインストールします。対応するReleaseの
+  公開前はソースからビルドします。
 - `specbind migrate cc-sdd`はまだ実装されていません。
 - エージェントの削除とプロジェクトからのアンインストールはv1の対象外です。
 - CLI、スキル、ガイドの細部は正式リリースまで変更される可能性があります。

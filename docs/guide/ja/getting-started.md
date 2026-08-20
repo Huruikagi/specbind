@@ -3,27 +3,62 @@
 このガイドでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
 Claude Codeを使って、最初の変更をスコープ確認から実装検証まで進めます。
 
-SpecBindはまだ正式リリースされていないため、ここではリポジトリからCLIを
-ビルドします。公開バイナリが利用可能になった後、この節は正式なインストール
-手順へ置き換わります。
+SpecBindはpre-1.0 Previewとして配布します。公開済みのrelease candidateを試す
+場合はバージョンを明示してインストーラを実行します。対応するGitHub Releaseが
+まだ公開されていない場合は、後述のソースビルドを使用します。
 
 ## 1. 前提を確認する
 
 必要なものは次のとおりです。
 
 - Gitで管理された、少なくとも1つのコミットがある対象プロジェクト
-- [Rustup](https://rustup.rs/)で導入したRustツールチェーン
 - CodexまたはClaude Code
 - Windows x64、またはWSL2上のLinux x64
 
-Windowsでビルドする場合は、Visual Studio Build Toolsの**Desktop development
-with C++**ワークロードとWindows SDKも必要です。
+ソースからビルドする場合だけ、[Rustup](https://rustup.rs/)で導入したRust
+ツールチェーンが必要です。Windowsでのソースビルドには、Visual Studio Build
+Toolsの**Desktop development with C++**ワークロードとWindows SDKも必要です。
 
 対象プロジェクトに未コミットの変更がある場合は、導入前に内容を確認し、通常の
 プロジェクト手順でコミットしてください。SpecBindはGitの履歴とクリーンな作業
 ツリーを、既存ファイルを置き換える操作の安全境界として利用します。
 
-## 2. Preview CLIをビルドする
+## 2. Preview CLIをインストールする
+
+release candidateは最新版として暗黙選択されないため、バージョンを明示します。
+
+Windows PowerShell:
+
+```powershell
+Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 `
+  -OutFile install.ps1
+.\install.ps1 -Version 0.1.0-rc.1
+```
+
+WSL2/Linux:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
+sh install.sh --version 0.1.0-rc.1
+```
+
+インストーラはGitHub Releaseのarchiveと`SHA256SUMS`を取得し、checksumが一致
+した場合だけバイナリを配置します。既定の配置先は次のとおりです。
+
+- Windows: `%LOCALAPPDATA%\SpecBind\bin\specbind.exe`
+- WSL2/Linux: `$HOME/.local/bin/specbind`
+
+永続的な`PATH`は変更しません。配置先が現在の`PATH`に含まれない場合は、現在の
+シェルに追加するためのコマンドを表示します。別の配置先を使う場合は、PowerShell
+では`-InstallDir`、Linuxでは`--install-dir`を指定します。
+
+インストール後に確認します。
+
+```sh
+specbind --version
+```
+
+### GitHub Release公開前にソースからビルドする
 
 SpecBindリポジトリを取得し、Rustワークスペースでreleaseバイナリをビルドします。
 
@@ -38,7 +73,7 @@ cargo build --release
 - Windows: `target/release/specbind.exe`
 - WSL2/Linux: `target/release/specbind`
 
-バイナリのディレクトリを現在のシェルの`PATH`へ追加し、確認します。
+ソースビルドしたバイナリのディレクトリを現在のシェルの`PATH`へ追加し、確認します。
 
 PowerShell:
 

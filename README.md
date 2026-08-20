@@ -49,6 +49,43 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 - `tools/cc-sdd/` — inherited TypeScript migration oracle
 - `docs/design/` — target workflows, lifecycle models, and accepted design decisions
 
+## Install the CLI
+
+The first binary release line is a pre-1.0 Preview for Windows x64 and Linux
+x64. Stable releases can be installed without choosing a version after the
+first stable `0.1.x` release is published.
+
+Windows PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 | iex
+```
+
+WSL2/Linux:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
+```
+
+Prereleases are never selected implicitly. Download the installer and name the
+version explicitly when testing a release candidate:
+
+```powershell
+Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 -OutFile install.ps1
+.\install.ps1 -Version 0.1.0-rc.1
+```
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
+sh install.sh --version 0.1.0-rc.1
+```
+
+Both installers verify the release archive against `SHA256SUMS`, install to the
+platform default, and leave persistent `PATH` changes to the user. Use
+`-InstallDir` on PowerShell or `--install-dir` on Linux to choose another
+location. Until the corresponding GitHub Release is published, use the source
+build instructions below.
+
 ## Development
 
 The workspace pins Rust 1.97.1, Rustfmt, and Clippy through [`rust-toolchain.toml`](./tools/specbind/rust-toolchain.toml). Install [Rustup](https://rustup.rs/) before running Cargo commands. Windows development with the default MSVC target also requires Visual Studio Build Tools with the **Desktop development with C++** workload and a Windows SDK.

@@ -1,0 +1,178 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+
+    defaults:
+      run:
+        working-directory: tools/specbind
+
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+      RUST_TARGET: ${{ matrix.target }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Show Rust toolchain
+        run: rustup show active-toolchain
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "tools/specbind -> target"
+
+      - name: Check tag and Cargo version
+        shell: pwsh
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$') {
+            throw "Release tag is not supported SemVer: $env:RELEASE_TAG"
+          }
+          $metadata = cargo metadata --format-version 1 --no-deps | ConvertFrom-Json
+          $package = $metadata.packages | Where-Object { $_.name -eq 'specbind' }
+          $expected = $env:RELEASE_TAG.Substring(1)
+          if ($package.version -ne $expected) {
+            throw "Cargo version '$($package.version)' does not match tag '$env:RELEASE_TAG'."
+          }
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Check generated schemas
+        run: cargo run --example generate_schemas -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test --workspace --all-features
+
+      - name: Build release binary
+        run: cargo build --workspace --release --target ${{ matrix.target }}
+
+      - name: Package Windows archive
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $stage = Join-Path $env:RUNNER_TEMP 'specbind-package'
+          $archive = "specbind-$env:RELEASE_TAG-x86_64-pc-windows-msvc.zip"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item "target/$env:RUST_TARGET/release/specbind.exe", ../../README.md, ../../LICENSE -Destination $stage
+          Compress-Archive -Path "$stage/*" -DestinationPath "dist/$archive"
+
+          $smoke = Join-Path $env:RUNNER_TEMP 'specbind-smoke'
+          Expand-Archive -LiteralPath "dist/$archive" -DestinationPath $smoke
+          $actual = & "$smoke/specbind.exe" --version
+          $expected = "specbind $($env:RELEASE_TAG.Substring(1))"
+          if ($actual -ne $expected) {
+            throw "Archive reports '$actual'; expected '$expected'."
+          }
+          "Windows x64: $env:ImageOS $env:ImageVersion" |
+            Set-Content -Encoding utf8NoBOM "dist/environment-$env:RUST_TARGET.txt"
+
+      - name: Package Linux archive
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/specbind-package"
+          archive="specbind-${RELEASE_TAG}-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$stage" dist
+          install -m 755 "target/$RUST_TARGET/release/specbind" "$stage/specbind"
+          install -m 644 ../../README.md ../../LICENSE "$stage/"
+          tar -C "$stage" -czf "dist/$archive" specbind README.md LICENSE
+
+          smoke="$RUNNER_TEMP/specbind-smoke"
+          mkdir -p "$smoke"
+          tar -C "$smoke" -xzf "dist/$archive"
+          actual=$("$smoke/specbind" --version)
+          expected="specbind ${RELEASE_TAG#v}"
+          test "$actual" = "$expected"
+          printf 'Linux x64: %s %s\n' "$ImageOS" "$ImageVersion" \
+            > "dist/environment-$RUST_TARGET.txt"
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ matrix.target }}
+          path: |
+            tools/specbind/dist/specbind-*
+            tools/specbind/dist/environment-*
+          if-no-files-found: error
+          compression-level: 0
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download release archives
+        uses: actions/download-artifact@v8
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Generate and verify checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          archives=(dist/specbind-*.zip dist/specbind-*.tar.gz)
+          if [[ ${#archives[@]} -ne 2 ]]; then
+            echo "Expected two release archives, found ${#archives[@]}." >&2
+            exit 1
+          fi
+          (
+            cd dist
+            LC_ALL=C sha256sum specbind-* > SHA256SUMS
+            sha256sum --check SHA256SUMS
+          )
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          options=(--verify-tag --generate-notes --title "$RELEASE_TAG")
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            options+=(--prerelease)
+          fi
+          environments=$(LC_ALL=C sort dist/environment-*.txt)
+          notes=$(printf 'Built and smoke-tested on:\n\n%s' "$environments")
+          options+=(--notes "$notes")
+          gh release create "$RELEASE_TAG" \
+            dist/specbind-*.zip \
+            dist/specbind-*.tar.gz \
+            dist/SHA256SUMS \
+            "${options[@]}"

@@ -1,0 +1,84 @@
+# Releasing SpecBind
+
+SpecBind binaries are published by the tag-triggered GitHub Actions release
+workflow. The tag, Cargo version, CLI version, archive names, and release title
+must describe the same SemVer.
+
+## Prepare a release
+
+1. Choose the version. Use prereleases such as `0.1.0-rc.1` while validating a
+   release line; do not publish a prerelease from a Cargo package that reports
+   the final version.
+2. Update `tools/specbind/Cargo.toml`, `tools/specbind/Cargo.lock`, the CLI
+   version assertion, and `CHANGELOG.md` together.
+3. Run the complete Rust verification set from `tools/specbind/`:
+
+   ```sh
+   cargo fmt --all -- --check
+   cargo run --example generate_schemas -- --check
+   cargo clippy --workspace --all-targets --all-features -- -D warnings
+   cargo test --workspace --all-features
+   cargo build --workspace --release
+   ```
+
+4. Commit and push the release preparation to `main`.
+
+## Publish
+
+Create and push one annotated tag whose name is `v` plus the Cargo version:
+
+```sh
+git tag -a v0.1.0-rc.1 -m "SpecBind v0.1.0-rc.1"
+git push origin v0.1.0-rc.1
+```
+
+The release workflow verifies both native targets, creates the archives and
+`SHA256SUMS`, and publishes a GitHub prerelease when the version has a SemVer
+prerelease suffix. A final version such as `v0.1.0` becomes the latest stable
+release and is therefore selected by installers that omit `--version` or
+`-Version`.
+
+Do not reuse a version. If publication fails before a GitHub Release exists,
+fix the workflow on `main`, move to a new prerelease version, and create a new
+tag. If the workflow created an incomplete GitHub Release, remove that release
+before retrying the same workflow run; do not silently replace individual
+assets in an otherwise published release.
+
+## Verify the published release
+
+Verify the checksum file and both archive entries on the GitHub Release page.
+Then test explicit installation on the documented native environments.
+
+Windows x64:
+
+```powershell
+irm https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 |
+  iex
+```
+
+For a prerelease, download the script before passing a version:
+
+```powershell
+Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 `
+  -OutFile install.ps1
+.\install.ps1 -Version 0.1.0-rc.1
+```
+
+Linux x64:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh |
+  sh
+```
+
+For a prerelease:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
+sh install.sh --version 0.1.0-rc.1
+```
+
+In each environment, confirm `specbind --version`, create a temporary Git
+project, and run an initial `specbind install --dry-run` with an explicit agent
+and language. Record the exact Windows and WSL2/Linux versions tested in the
+GitHub Release notes if they are not already generated from repository changes.
