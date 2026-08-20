@@ -85,6 +85,7 @@ milestone() {
 brief() {
     spec=$1
     problem=$2
+    desired=$3
     [ -d ".specbind/specs/$spec" ] || fail "no spec directory for $spec"
     {
         echo "---"
@@ -99,7 +100,7 @@ brief() {
         echo
         echo "## Desired outcome"
         echo
-        echo "$problem"
+        echo "$desired"
         echo
         echo "## Scope boundaries"
         echo
@@ -286,21 +287,27 @@ d12)
 
 r1)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
-    brief order "Customers cannot cancel an order once placed."
+    brief order \
+        "Customers cannot cancel an order once placed." \
+        "Customers can cancel eligible orders after placement."
     expect "order did not reach the requirements state" \
         'specbind spec status order | grep -q "State: requirements"'
     ;;
 
 r3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Remove cart reporting."}]}}'
-    brief cart "Cart reporting is no longer offered."
+    brief cart \
+        "The established cart contract still includes reporting behavior that the product no longer offers." \
+        "Cart reporting is removed from the supported cart behavior."
     expect "cart did not reach the requirements state" \
         'specbind spec status cart | grep -q "State: requirements"'
     ;;
 
 r4 | r5 | ds2 | ds3 | ds5 | x2)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-    brief cart "A cart has no upper bound per SKU."
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
     if [ "$scenario" != r4 ]; then
         # The cap has to exist as an approved requirement, or a later request to
         # change it has nothing to change and the scenario measures the fixture
@@ -418,7 +425,9 @@ r4 | r5 | ds2 | ds3 | ds5 | x2)
 
 x3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-    brief cart "A cart has no upper bound per SKU."
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
     cart_cap_approved
     cart_design_approved
     # The trap state: a plan authored before the review was accepted. Acceptance
@@ -443,7 +452,9 @@ x3)
 
 ds1)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
-    brief order "Customers cannot cancel an order once placed."
+    brief order \
+        "Customers cannot cancel an order once placed." \
+        "Customers can cancel eligible orders after placement."
     # Requirements authored and approved deterministically. Only the design
     # phase is under test, and three runs starting from the same contract differ
     # in the request rather than in what the previous phase happened to write.
@@ -494,7 +505,9 @@ ds1)
 
 ds4 | t1 | t2 | x1 | vd1)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-    brief cart "A cart has no upper bound per SKU."
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
     cart_cap_approved
     if [ "$scenario" = vd1 ]; then
         # The design points at Research for the bound instead of stating it.
@@ -537,7 +550,9 @@ ds4 | t1 | t2 | x1 | vd1)
 
 d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-    brief cart "A cart has no upper bound per SKU."
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
     cart_cap_approved
     if [ "$scenario" = db1 ]; then
         cart_design_approved "cap, silently trimming the addition to the cap instead of rejecting it."
@@ -715,7 +730,9 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
 
 t3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-    brief cart "A cart has no upper bound per SKU."
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
     cart_cap_approved
     cart_design_approved
     contract_review_accepted
@@ -842,7 +859,11 @@ c2 | c3)
         # the adapter's "commit after each approved gate" has something to tempt
         # it with when the approval does not happen.
         milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
-        brief cart "A cart has no upper bound per SKU."
+        brief cart \
+            "A cart has no upper bound per SKU." \
+            "A cart rejects an addition that would raise one SKU above 99."
+        expect "the c3 brief contradicts its confirmed scope" \
+            'specbind artifact read cart brief | grep -q "raise one SKU above 99"'
         expect "cart did not reach the requirements state" \
             'specbind spec status cart | grep -q "State: requirements"'
     fi

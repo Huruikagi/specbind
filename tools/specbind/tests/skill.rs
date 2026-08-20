@@ -156,6 +156,20 @@ fn reviewing_skills_require_an_explicit_finding_disposition() {
 }
 
 #[test]
+fn design_validation_puts_its_read_only_stop_rule_before_commands() {
+    let body = skill::find("specbind-validate-design")
+        .expect("design validation skill")
+        .body()
+        .expect("body");
+    let first_command = body.find("```sh").expect("documented command");
+    let preamble = &body[..first_command];
+
+    assert!(preamble.contains("Read-only stop rule — before any command"));
+    assert!(preamble.contains("do not run a\ngate invalidation command"));
+    assert!(preamble.contains("every gate and review record exactly as you found them"));
+}
+
+#[test]
 fn contract_review_uses_scope_and_type_based_historical_discovery() {
     let body = skill::find("specbind-contract-review")
         .expect("contract review skill")
