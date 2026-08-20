@@ -262,7 +262,7 @@ without a pass are listed separately below.
 | Contract review | X3 | X1, X2 |
 | Implementation | None recorded | I1–I4 |
 | Debug | None recorded | DB1 |
-| Task review | None recorded | None recorded |
+| Task review | None recorded | RT1, RT2 |
 | Design validation | None recorded | VD2 |
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
@@ -383,6 +383,15 @@ That is an execution-environment stop, not a product verdict. The Quick and
 Batch additions were intentionally deferred after this batch produced three
 actionable findings; the matrix remains a measurement record rather than a
 coverage target.
+
+RT1 and RT2 were measured as Codex on 2026-08-20 with `gpt-5.6-terra` at medium
+reasoning. RT2 passed against `e543c07`, returning `CANNOT_REVIEW` for the
+unrelated `src/orders.py` change and modifying neither file. RT1 returned the
+correct `REJECTED` verdict on that build, but its Python probe created an
+untracked `src/__pycache__/`, violating the review's read-only boundary.
+`7b19472` moved the no-write rule before every probe and required before/after
+status checks. The rerun rejected the off-by-one implementation, left the exact
+recipe diff in place, kept the task pending, and generated no cache or report.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
