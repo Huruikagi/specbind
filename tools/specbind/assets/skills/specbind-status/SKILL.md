@@ -1,6 +1,6 @@
 ---
 name: specbind-status
-description: Report the current state of a Spec or the active milestone, and say what can be done next. Read-only.
+description: Report where a Spec or active milestone is in its lifecycle and what can happen next. Read-only; do not use to judge whether completed implementation is actually done.
 argument-hint: "[spec]"
 ---
 

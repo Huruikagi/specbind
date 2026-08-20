@@ -1,6 +1,6 @@
 ---
 name: specbind-validate-implementation
-description: Validate one Spec's complete implementation against its requirements and design, then record completion evidence when — and only when — the verdict is GO.
+description: Decide whether a named Spec's completed implementation is actually done. Validate it against requirements and design, then record completion evidence when — and only when — the verdict is GO.
 argument-hint: "<spec>"
 ---
 

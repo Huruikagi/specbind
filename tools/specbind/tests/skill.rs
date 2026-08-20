@@ -215,6 +215,25 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
 }
 
 #[test]
+fn implementation_completion_questions_route_to_validation_not_status() {
+    let validation = skill::find("specbind-validate-implementation")
+        .expect("implementation validation skill")
+        .metadata()
+        .expect("validation metadata");
+    assert!(validation.description.contains("actually done"));
+
+    let status = skill::find("specbind-status")
+        .expect("status skill")
+        .metadata()
+        .expect("status metadata");
+    assert!(
+        status
+            .description
+            .contains("do not use to judge whether completed implementation is actually done")
+    );
+}
+
+#[test]
 fn task_review_and_debug_discover_split_designs_before_reading_them() {
     for name in ["specbind-review-task", "specbind-debug"] {
         let body = skill::find(name)
