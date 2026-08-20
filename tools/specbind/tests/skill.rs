@@ -231,6 +231,29 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .description
             .contains("do not use to judge whether completed implementation is actually done")
     );
+    assert!(
+        skill::find("specbind-status")
+            .expect("status skill")
+            .body()
+            .expect("status body")
+            .contains("use\n`specbind-validate-implementation`")
+    );
+
+    let claim_verification =
+        skill::find("specbind-verify-completion").expect("claim verification skill");
+    assert!(
+        claim_verification
+            .metadata()
+            .expect("claim verification metadata")
+            .description
+            .contains("do not use to advance a named Spec")
+    );
+    assert!(
+        claim_verification
+            .body()
+            .expect("claim verification body")
+            .contains("use `specbind-validate-implementation` instead")
+    );
 }
 
 #[test]

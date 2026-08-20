@@ -9,6 +9,11 @@ argument-hint: "[spec]"
 Answer "where is this work now, and what is the next thing that can happen?"
 using the CLI's derived read models. Change nothing.
 
+This is not the answer to "is this completed implementation actually done?"
+When every task is complete and the user asks whether a named Spec is done, use
+`specbind-validate-implementation`; that judgment may record completion evidence
+on `GO`.
+
 ## Choose the scope
 
 - A named Spec, when the user asks about one, or when only one Spec is under

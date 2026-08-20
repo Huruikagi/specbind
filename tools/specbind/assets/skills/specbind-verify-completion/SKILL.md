@@ -1,6 +1,6 @@
 ---
 name: specbind-verify-completion
-description: Check whether a completion or success claim is actually supported by fresh evidence, before it gets stated. Returns a verdict and changes nothing.
+description: Consequence-free check of an explicit completion or success claim against fresh evidence. Changes nothing; do not use to advance a named Spec whose implementation may be accepted.
 argument-hint: "<claim>"
 ---
 
@@ -11,6 +11,11 @@ or an implementation is complete — including before trusting a subagent's repo
 that any of those is true.
 
 You answer one question and change nothing.
+
+This is not the Spec completion gate. When the user asks whether a named Spec's
+completed implementation is done and a `GO` should record completion evidence,
+use `specbind-validate-implementation` instead. Use this skill when the subject
+is the claim itself and the result must remain consequence-free.
 
 ```sh
 specbind protocol read completion-verification
