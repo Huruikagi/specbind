@@ -145,14 +145,16 @@ AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 最初は、1つの振る舞いを追加するだけの小さな変更を選んでください。複数の機能や
 リリース作業をまとめて試すのは避けます。
 
-このガイドでは、既存のCLIアプリケーションに次の変更を加える例で説明します。
+このガイドでは、既存のアプリケーションに次の変更を加える例で説明します。
 
-> 設定ファイルを検証し、問題のある項目と理由を表示する
-> `validate-config`コマンドを追加したい。
+> 一覧画面に表示している内容を、CSVファイルとして
+> ダウンロードできるようにしたい。
 
 この例は、プロジェクトが持ち続ける新しい振る舞いと境界を作るため、該当する
-既存Specがなければ新規Specに分類される想定です。実際に試すときは、自分の
-プロジェクトにある同じくらいの規模の変更に置き換えてください。
+既存Specがなければ新規Specに分類される想定です。出力するCSVの列や形式は、
+あとから他の機能や利用者が依存する外部との約束になるので、Contractとしても
+扱いやすい題材です。実際に試すときは、自分のプロジェクトにある同じくらいの
+規模の変更に置き換えてください。
 
 ## 5. Discoveryでスコープを確認する
 
@@ -161,15 +163,15 @@ AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 Codex:
 
 ```text
-$specbind-discovery 設定ファイルを検証し、問題のある項目と理由を表示する
-validate-configコマンドを追加したい。
+$specbind-discovery 一覧画面に表示している内容を、CSVファイルとして
+ダウンロードできるようにしたい。
 ```
 
 Claude Code:
 
 ```text
-/specbind-discovery 設定ファイルを検証し、問題のある項目と理由を表示する
-validate-configコマンドを追加したい。
+/specbind-discovery 一覧画面に表示している内容を、CSVファイルとして
+ダウンロードできるようにしたい。
 ```
 
 Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読んだうえで、
@@ -196,18 +198,18 @@ Claude Codeでは`/specbind-status`です。このスキルは読み取り専用
 ## 6. Tasks承認まで進める
 
 Discoveryが報告したSpec IDを使い、最初の1件はquickワークフローで進めます。
-ここではSpec IDが`config-validation`だったとします。
+ここではSpec IDが`csv-export`だったとします。
 
 Codex:
 
 ```text
-$specbind-quick config-validation
+$specbind-quick csv-export
 ```
 
 Claude Code:
 
 ```text
-/specbind-quick config-validation
+/specbind-quick csv-export
 ```
 
 Quickは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
@@ -227,13 +229,13 @@ Quickが終わった時点では、実装はまだ始まっていません。
 Codex:
 
 ```text
-$specbind-implement config-validation
+$specbind-implement csv-export
 ```
 
 Claude Code:
 
 ```text
-/specbind-implement config-validation
+/specbind-implement csv-export
 ```
 
 Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
@@ -246,20 +248,20 @@ Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記
 Codex:
 
 ```text
-$specbind-validate-implementation config-validation
+$specbind-validate-implementation csv-export
 ```
 
 Claude Code:
 
 ```text
-/specbind-validate-implementation config-validation
+/specbind-validate-implementation csv-export
 ```
 
 検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
 完了です。最後に状態を確認します。
 
 ```text
-$specbind-status config-validation
+$specbind-status csv-export
 ```
 
 この時点では、Milestoneはまだリリースされていません。リリースするには、
@@ -274,7 +276,7 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 ```text
 .specbind/
 ├─ steering/roadmap.md
-└─ specs/config-validation/
+└─ specs/csv-export/
    ├─ spec.yaml
    ├─ brief.md
    ├─ requirements.md
@@ -291,9 +293,9 @@ Tasksの計画部分は、それぞれを所有するスキル経由で保守し
 
 ```sh
 specbind milestone status
-specbind spec status config-validation
-specbind tasks list config-validation
-specbind artifact list config-validation
+specbind spec status csv-export
+specbind tasks list csv-export
+specbind artifact list csv-export
 ```
 
 ## 次に読む
