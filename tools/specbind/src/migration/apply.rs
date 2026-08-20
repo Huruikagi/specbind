@@ -4,11 +4,12 @@ use std::{fs, path::Path};
 
 use super::{
     LEGACY_CONFIG, LEGACY_SKILLS, MigrationIssues, MigrationOutcome, finding, inventory, one_issue,
+    resolution,
 };
 use crate::{
     guarded_fs,
     install::{self, PlanAction},
-    migration_resolution, repository,
+    repository,
 };
 
 pub(super) fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIssues> {
@@ -35,15 +36,14 @@ pub(super) fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIs
         .filter_map(|action| action.source.clone())
         .collect::<Vec<_>>();
     let legacy_config = inventory::path_exists(&project_root.join(LEGACY_CONFIG))?;
-    let resolution_state =
-        inventory::path_exists(&project_root.join(migration_resolution::STATE_RELATIVE))?;
+    let resolution_state = inventory::path_exists(&project_root.join(resolution::STATE_RELATIVE))?;
     let mut cleanup_targets = legacy_assets.clone();
     cleanup_targets.push(plan.legacy_root.clone());
     if legacy_config {
         cleanup_targets.push(LEGACY_CONFIG.to_owned());
     }
     if resolution_state {
-        cleanup_targets.push(migration_resolution::STATE_RELATIVE.to_owned());
+        cleanup_targets.push(resolution::STATE_RELATIVE.to_owned());
     }
     require_apply_repository(project_root, &cleanup_targets)?;
     let installed_files = install_plan
@@ -60,7 +60,7 @@ pub(super) fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIs
         remove_cleanup_target(project_root, LEGACY_CONFIG)?;
     }
     if resolution_state {
-        remove_cleanup_target(project_root, migration_resolution::STATE_RELATIVE)?;
+        remove_cleanup_target(project_root, resolution::STATE_RELATIVE)?;
     }
     Ok(MigrationOutcome {
         installed_files,

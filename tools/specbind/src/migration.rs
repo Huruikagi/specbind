@@ -2,13 +2,13 @@
 
 mod apply;
 mod inventory;
+pub mod resolution;
 
 use std::{fmt, fs, path::Path};
 
 use crate::{
     config::ProjectLanguage,
     install::{self, InstallInputs, PlanAction},
-    migration_resolution,
 };
 
 pub const GUIDE_NEUTRAL: &str = "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/";
@@ -147,7 +147,7 @@ impl std::error::Error for MigrationIssues {}
 /// CLI can route it to the agent-assisted guide.
 pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     let mut plan = inventory::plan_inner(project_root)?;
-    migration_resolution::reconcile(project_root, &mut plan);
+    resolution::reconcile(project_root, &mut plan);
     Ok(plan)
 }
 

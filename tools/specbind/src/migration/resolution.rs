@@ -1,4 +1,4 @@
-//! Guarded acceptance and freshness checks for agent-assisted cc-sdd migration.
+//! Guarded resolution acceptance and freshness checks for agent-assisted cc-sdd migration.
 
 use std::{
     collections::{BTreeMap, BTreeSet},

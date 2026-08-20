@@ -16,12 +16,14 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
+- `tools/specbind/src/cli.rs` — shared CLI output contract, rendering helpers, and command-family re-exports
+- `tools/specbind/src/cli/` — migration, read, task, external-input, and lifecycle command execution/rendering
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
 - `tools/specbind/src/migration/inventory.rs` — read-only historical cc-sdd inventory and conversion planning
 - `tools/specbind/src/migration/apply.rs` — Git-guarded deterministic apply and final source retirement
-- `tools/specbind/src/migration_resolution.rs` — guarded agent-resolution acceptance and source/target freshness checks
+- `tools/specbind/src/migration/resolution.rs` — guarded agent-resolution acceptance and source/target freshness checks
 - `tools/specbind/src/args.rs` — command-line argument definitions, walkable by skill conformance tests
 - `tools/specbind/src/skill.rs` — embedded product-managed skills and per-agent rendering
 - `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
@@ -52,7 +54,9 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/release.rs` — portable release labels and case-insensitive archive-target collision resolution
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
+- `scripts/check_decisions.py` — Decision filename, heading, identifier, and repository-map consistency check
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification
+- `.github/workflows/decisions.yml` — focused Decision-index verification for affected pushes and pull requests
 
 ## User documentation
 
@@ -94,6 +98,8 @@ This repository's own agent skills live in `.agents/skills/`: `specbind-new-agen
 ## Decision records
 
 Accepted decisions are authoritative. A superseded decision is retained for history; follow the decision that replaced it.
+Run `python scripts/check_decisions.py` from the repository root to verify that
+Decision filenames, headings, identifiers, and this index remain consistent.
 
 | Decision | Status | Summary |
 | --- | --- | --- |
