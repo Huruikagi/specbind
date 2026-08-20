@@ -746,12 +746,45 @@ t3)
 
 i3)
     # The same Direct item as d10, left pending: the run under test is what
-    # implements and completes it.
+    # implements and completes it. Unlike the base fixture, this scenario needs
+    # real checkpoint policy: the Direct handshake requires a clean committed
+    # implementation revision, while the installed adapter scaffold means
+    # "commit nothing".
     milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
+    {
+        echo "---"
+        echo "type: SpecBind Git Adapter"
+        echo "---"
+        echo
+        echo "# Git adapter"
+        echo
+        echo "## When to checkpoint"
+        echo
+        echo "Commit reviewed Direct implementation immediately before its completion handshake."
+        echo
+        echo "## What to include"
+        echo
+        echo "Include only the Direct implementation paths produced by the run."
+        echo
+        echo "## Commit messages"
+        echo
+        echo 'Prefix the message with `direct:`.'
+        echo
+        echo "## Branches and pushing"
+        echo
+        echo "Stay on the current branch and never push."
+    } > .specbind/settings/adapters/git.md
+    git add .specbind/settings/adapters/git.md
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Configure Direct checkpoints"
     expect "the Direct item is not pending" \
         'specbind milestone status | grep -q "0/1 completed"'
     expect "the guide already exists" \
         '! test -e CONTRIBUTING.md'
+    expect "the Git adapter still carries its scaffold comments" \
+        '! specbind adapter read git | grep -q "specbind:instruction"'
+    expect "the Direct checkpoint policy is missing" \
+        'specbind adapter read git | grep -q "immediately before its completion handshake"'
     ;;
 
 d10 | x4)

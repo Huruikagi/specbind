@@ -807,7 +807,8 @@ which is a louder and different signal than the one under test.
 ### I3 — A Direct item is implemented and completed
 
 From `x4`'s milestone shape with the Direct item still pending — use the `i3`
-recipe — ask for the Direct item to be implemented.
+recipe, which also installs real Git guidance for the clean committed revision
+the Direct handshake requires — ask for the Direct item to be implemented.
 
 > Ask: go ahead and write the CONTRIBUTING guide.
 
