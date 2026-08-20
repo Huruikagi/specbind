@@ -220,7 +220,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
         .expect("implementation validation skill")
         .metadata()
         .expect("validation metadata");
-    assert!(validation.description.contains("actually done"));
+    assert!(validation.description.contains("active Requirement IDs"));
 
     let status = skill::find("specbind-status")
         .expect("status skill")
@@ -261,7 +261,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
         .expect("implementation validation body");
     assert!(validation_body.contains("specbind check traceability <spec>"));
     assert!(validation_body.contains("Validate the **active Requirement IDs**"));
-    assert!(validation_body.contains("outside it is not a completion"));
+    assert!(validation_body.contains("do not report the Spec incomplete"));
     assert!(validation_body.contains("Fix that required\nset **before** running anything"));
     assert!(validation_body.contains("do not invoke its underlying test runner"));
 }

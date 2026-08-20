@@ -581,22 +581,10 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
             git -c user.name=Fixture -c user.email=fixture@example.invalid \
                 commit --quiet -m "Bind the release version"
         fi
-        printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
-            | specbind spec completion accept cart --evidence - >/dev/null \
-            || fail "could not accept completion"
-        git add -A
-        git -c user.name=Fixture -c user.email=fixture@example.invalid \
-            commit --quiet -m "Accept completion"
-        if [ "$scenario" = rl1 ]; then
-            expect "the release is already bound" \
-                'specbind release preflight 2>&1 | grep -q RELEASE_VERSION_UNBOUND'
-        else
-            expect "the milestone is not ready for release" \
-                'specbind release preflight | grep -q "OK RELEASE_READY"'
-        fi
         if [ "$scenario" = rl2 ]; then
-            # Real release policy whose Verify step cannot succeed, so the run
-            # meets a failed verification rather than an empty adapter.
+            # Real release policy whose Verify step cannot succeed. Commit it
+            # before completion acceptance so release policy setup does not
+            # itself stale the evidence the scenario is meant to start with.
             {
                 echo "---"
                 echo "type: SpecBind Release Adapter"
@@ -623,6 +611,21 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
             git add -A
             git -c user.name=Fixture -c user.email=fixture@example.invalid \
                 commit --quiet -m "State the project release policy"
+        fi
+        printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
+            | specbind spec completion accept cart --evidence - >/dev/null \
+            || fail "could not accept completion"
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Accept completion"
+        if [ "$scenario" = rl1 ]; then
+            expect "the release is already bound" \
+                'specbind release preflight 2>&1 | grep -q RELEASE_VERSION_UNBOUND'
+        else
+            expect "the milestone is not ready for release" \
+                'specbind release preflight | grep -q "OK RELEASE_READY"'
+        fi
+        if [ "$scenario" = rl2 ]; then
             expect "the adapter still carries its scaffold comments" \
                 '! specbind adapter read release | grep -q "specbind:instruction"'
             expect "the fixture unexpectedly has a remote" \

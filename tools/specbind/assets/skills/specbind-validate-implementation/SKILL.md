@@ -1,6 +1,6 @@
 ---
 name: specbind-validate-implementation
-description: Decide whether a named Spec's completed implementation is actually done. Validate it against requirements and design, then record completion evidence when — and only when — the verdict is GO.
+description: Decide whether a named Spec's completed implementation delivers its active Requirement IDs. Validate it against the approved design, then record completion evidence when — and only when — the verdict is GO.
 argument-hint: "<spec>"
 ---
 
@@ -10,6 +10,12 @@ The gate between "every task is recorded complete" and "this Spec is done".
 
 Your verdict writes durable evidence, so it has to be earned. **You validate;
 you never repair.**
+
+**Scope the claim to the active Requirement IDs.** The Requirements document can
+retain requirements that are outside this active change. They are not completion
+blockers: do not report the Spec incomplete because one of them is unimplemented.
+After traceability passes, the approved Design artifacts' `requirement_ids` are
+the exact active set you assess.
 
 ## 1. Preflight
 
@@ -56,8 +62,7 @@ notes if the Spec has them.
 Validate the **active Requirement IDs**, not every Requirement retained in the
 current Requirements document. A clean traceability result establishes that the
 union of the approved Design artifacts' `requirement_ids` is exactly the active
-set. Use that set for coverage. A Requirement outside it is not a completion
-blocker for this active change.
+set. Use that set for coverage.
 
 Then the standard you are held to:
 
