@@ -62,6 +62,10 @@ impression that something was checked.
 
 Dispatch fresh readers rather than reading everything yourself. Each starts with
 no context, so give it a brief that stands alone and a question it can answer.
+Use the registered `specbind-researcher` role when available, with ordinary
+fresh readers as the fallback.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
 The independent lines are:
 
 - **What exists** in the affected area — modules, layout, reusable components

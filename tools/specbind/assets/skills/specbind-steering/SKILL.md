@@ -67,6 +67,11 @@ Dispatch fresh readers rather than reading everything yourself. Each one starts
 with no context, so give it a brief that stands alone: what to look at, what
 question to answer, and that you want the *pattern*, not an inventory.
 
+Use the registered `specbind-researcher` role when available, with ordinary
+fresh readers as the fallback.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
+
 For bootstrap, three independent readers cover the ground:
 
 - **Product** — README, package and project metadata, user-facing documentation.

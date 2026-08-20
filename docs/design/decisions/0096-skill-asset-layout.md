@@ -134,6 +134,10 @@ V1 renders skill documents only. Codex subagent definitions under
 the marked project-instruction block accepted by Decision 0077 are separate
 installation surfaces that this decision does not define.
 
+[Decision 0129](./0129-agent-role-capability-adapters.md) later defines the
+Codex subagent-definition surface while preserving this decision's one shared
+skill body.
+
 ## Consequences
 
 - One workflow obligation exists once, so a correction cannot reach one agent

@@ -142,6 +142,11 @@ agents dispatch today.
 
 ### Per-agent role registration stays deferred
 
+This deferral was later resolved by
+[Decision 0129](./0129-agent-role-capability-adapters.md), which installs stable
+neutral roles with Codex model and reasoning-effort rendering. The dispatch
+brief and protocol contract below remains unchanged.
+
 Decision 0096 reserved "platform-specific subagent or skill-invocation adapters"
 and `.codex/agents/` as separate installation surfaces it did not define. This
 decision does not define them either, and does not need to: a dispatch that
@@ -200,3 +205,6 @@ parallel research returning summaries, and keeps synthesis in the main context.
 
 `specbind-implement`, `specbind-review-task`, and `specbind-debug` are authored
 under this contract as they are embedded.
+
+Decision 0129 additionally installs Codex role registrations and lets the
+dispatching skills select them with the compatibility fallback defined here.

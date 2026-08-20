@@ -20,6 +20,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/cli/` — migration, read, task, external-input, and lifecycle command execution/rendering
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
+- `tools/specbind/src/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
 - `tools/specbind/src/migration/inventory.rs` — read-only historical cc-sdd inventory and conversion planning
 - `tools/specbind/src/migration/apply.rs` — Git-guarded deterministic apply and final source retirement
@@ -231,3 +232,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0126](./design/decisions/0126-cli-owned-cc-sdd-migration-resolution.md) | Accepted | CLI-owned accepted cc-sdd migration resolution and freshness contract |
 | [0127](./design/decisions/0127-retire-cc-sdd-source-at-final-cutover.md) | Accepted | Git-guarded retirement of cc-sdd sources at final cutover |
 | [0128](./design/decisions/0128-plan-orchestrator-names.md) | Accepted | Planning orchestrator names expose their Tasks-approval stopping point |
+| [0129](./design/decisions/0129-agent-role-capability-adapters.md) | Accepted | Agent-role capability adapters with project model overrides |

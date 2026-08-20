@@ -10,8 +10,10 @@ use std::{fmt, fs, path::Path};
 use serde::Deserialize;
 
 use crate::{
-    adapter, config::ProjectLanguage, guarded_fs, project_instructions, repository, rule, skill,
-    template,
+    adapter,
+    agent_role::{self, AgentRoleOverrides},
+    config::ProjectLanguage,
+    guarded_fs, project_instructions, repository, rule, skill, template,
 };
 
 const CONFIG_RELATIVE: &str = ".specbind.json";
@@ -159,6 +161,8 @@ struct InstalledConfig {
     agents: Vec<String>,
     #[serde(default)]
     project_instructions: bool,
+    #[serde(default)]
+    agent_roles: AgentRoleOverrides,
 }
 
 /// Computes the installation plan without touching the filesystem.
@@ -175,6 +179,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     entries.extend(rule_entries(project_root, &resolved)?);
     entries.extend(adapter_entries(project_root, &resolved)?);
     entries.extend(skill_entries(project_root, &resolved)?);
+    entries.extend(agent_role_entries(project_root, &resolved)?);
     entries.extend(project_instruction_entries(project_root, &resolved)?);
     if entries
         .iter()
@@ -197,6 +202,7 @@ struct ResolvedInputs {
     language: ProjectLanguage,
     agents: Vec<Agent>,
     project_instructions: bool,
+    agent_roles: AgentRoleOverrides,
 }
 
 fn resolve_inputs(
@@ -267,12 +273,42 @@ fn resolve_inputs(
         .or_else(|| existing.map(|config| config.project_instructions))
         .unwrap_or(false);
 
+    let agent_roles = existing
+        .map(|config| config.agent_roles.clone())
+        .unwrap_or_default();
+    if agent_roles.codex.is_some() && !agents.contains(&Agent::Codex) {
+        issues.push(issue(
+            "INSTALL_AGENT_ROLE_UNUSED",
+            Some(CONFIG_RELATIVE.to_owned()),
+            "agentRoles.codex requires codex in the selected agents",
+        ));
+    }
+    if let Some(overrides) = agent_roles.codex.as_ref() {
+        for role in agent_role::all() {
+            if let Some(model) = role
+                .override_from(Some(overrides))
+                .and_then(|value| value.model.as_deref())
+                && !agent_role::valid_model(model)
+            {
+                issues.push(issue(
+                    "INSTALL_AGENT_ROLE_MODEL_INVALID",
+                    Some(CONFIG_RELATIVE.to_owned()),
+                    format!(
+                        "agentRoles.codex.{}.model must use only ASCII letters, digits, '.', '_', or '-'",
+                        role.selector
+                    ),
+                ));
+            }
+        }
+    }
+
     finish(issues)?;
     Ok(ResolvedInputs {
         spec_dir,
         language: language.unwrap_or(ProjectLanguage::En),
         agents,
         project_instructions,
+        agent_roles,
     })
 }
 
@@ -339,6 +375,7 @@ fn config_entry(existing: Option<&InstalledConfig>, resolved: &ResolvedInputs) -
         .collect::<Vec<_>>();
     let unchanged = config.language == resolved.language
         && config.project_instructions == resolved.project_instructions
+        && config.agent_roles == resolved.agent_roles
         && installed_agents == resolved.agents;
     PlanEntry {
         action: if unchanged {
@@ -371,11 +408,40 @@ fn render_config(resolved: &ResolvedInputs) -> String {
     } else {
         ""
     };
+    let agent_roles = render_agent_role_overrides(&resolved.agent_roles);
     let output = format!(
-        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}\n}}\n",
+        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}{agent_roles}\n}}\n",
         resolved.spec_dir
     );
     output
+}
+
+fn render_agent_role_overrides(overrides: &AgentRoleOverrides) -> String {
+    let Some(codex) = overrides.codex.as_ref() else {
+        return String::new();
+    };
+    let roles = agent_role::all()
+        .iter()
+        .filter_map(|role| {
+            let role_override = role.override_from(Some(codex))?;
+            let fields = [
+                role_override
+                    .model
+                    .as_ref()
+                    .map(|model| format!("\"model\": \"{model}\"")),
+                role_override
+                    .reasoning_effort
+                    .map(|effort| format!("\"reasoningEffort\": \"{}\"", effort.name())),
+            ]
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>()
+            .join(", ");
+            Some(format!("      \"{}\": {{ {fields} }}", role.selector))
+        })
+        .collect::<Vec<_>>()
+        .join(",\n");
+    format!(",\n  \"agentRoles\": {{\n    \"codex\": {{\n{roles}\n    }}\n  }}")
 }
 
 /// Plans the Decision 0091 customization surface.
@@ -627,6 +693,49 @@ fn skill_entries(
                 expected_current: None,
             });
         }
+    }
+    Ok(entries)
+}
+
+/// Plans the Codex execution adapter for the stable roles named by skills.
+///
+/// Role semantics remain product-managed. A project may override only model
+/// capability through `.specbind.json`; the resulting files are derived assets
+/// and are replaced under the same repository guard as skills.
+fn agent_role_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    if !resolved.agents.contains(&Agent::Codex) {
+        return Ok(Vec::new());
+    }
+    let overrides = resolved.agent_roles.codex.as_ref();
+    let mut entries = Vec::new();
+    for role in agent_role::all() {
+        let relative = role.target();
+        let rendered = role.render(overrides);
+        let target = project_root.join(&relative);
+        let action = match fs::read(&target) {
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+            Ok(current) if current == rendered.as_bytes() => PlanAction::Keep,
+            Ok(_) => PlanAction::Replace,
+            Err(error) => {
+                return Err(one_issue(
+                    "INSTALL_TARGET_UNREADABLE",
+                    Some(relative),
+                    error.to_string(),
+                ));
+            }
+        };
+        entries.push(PlanEntry {
+            action,
+            path: relative,
+            category: "agent-role",
+            detail: (action == PlanAction::Keep)
+                .then(|| "already matches the configured capability".to_owned()),
+            content: (action != PlanAction::Keep).then_some(rendered),
+            expected_current: None,
+        });
     }
     Ok(entries)
 }

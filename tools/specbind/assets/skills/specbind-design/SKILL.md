@@ -118,6 +118,12 @@ the design, dispatch the independent areas as **fresh subagents** and synthesize
 what comes back. Typical splits — adjust to the change rather than filling a
 template:
 
+Use the registered `specbind-researcher` role when the host provides it;
+otherwise use ordinary fresh subagents. The role changes capability only; each
+brief still owns its exact evidence boundary.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
+
 - how the affected area works today, and what already exists to extend
 - external dependencies: current API, version compatibility, constraints
 - the seam: which contract entries this touches, and who consumes them

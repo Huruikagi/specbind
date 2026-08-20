@@ -1,4 +1,5 @@
 pub mod adapter;
+pub mod agent_role;
 pub mod approval;
 pub mod args;
 pub mod artifacts;

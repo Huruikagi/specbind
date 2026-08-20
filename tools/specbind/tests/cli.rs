@@ -1093,7 +1093,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 45 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 50 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1108,7 +1108,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 45 create, 0 replace, 0 keep\n",
+                "\n  Summary: 50 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1177,7 +1177,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 26 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 31 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1226,10 +1226,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 28 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 33 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 28 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 33 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1356,6 +1356,108 @@ fn installs_product_managed_skills_for_each_selected_agent() {
 }
 
 #[test]
+fn installs_codex_roles_with_cost_aware_defaults() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- create .codex/agents/specbind-implementer.toml [agent-role]",
+        ));
+
+    let role = |name: &str| {
+        fs::read_to_string(
+            root.path()
+                .join(format!(".codex/agents/specbind-{name}.toml")),
+        )
+        .expect("installed Codex role")
+    };
+    let implementer = role("implementer");
+    assert!(implementer.contains("model = \"gpt-5.6-terra\""));
+    assert!(implementer.contains("model_reasoning_effort = \"medium\""));
+    assert!(role("reviewer").contains("model = \"gpt-5.6-terra\""));
+    assert!(role("debugger").contains("model = \"gpt-5.6-sol\""));
+    assert!(role("researcher").contains("model = \"gpt-5.6-luna\""));
+}
+
+#[test]
+fn applies_only_project_capability_overrides_to_codex_roles() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind.json",
+        r#"{
+  "schemaVersion": 1,
+  "specDir": ".specbind",
+  "language": "en",
+  "agents": ["codex"],
+  "agentRoles": {
+    "codex": {
+      "implementer": { "model": "gpt-5.6-luna", "reasoningEffort": "low" },
+      "reviewer": { "reasoningEffort": "high" }
+    }
+  }
+}"#,
+    );
+    commit_all(root.path());
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success();
+
+    let implementer =
+        fs::read_to_string(root.path().join(".codex/agents/specbind-implementer.toml"))
+            .expect("overridden implementer role");
+    assert!(implementer.contains("model = \"gpt-5.6-luna\""));
+    assert!(implementer.contains("model_reasoning_effort = \"low\""));
+    assert!(implementer.contains("Implement exactly one dispatched task."));
+
+    let reviewer = fs::read_to_string(root.path().join(".codex/agents/specbind-reviewer.toml"))
+        .expect("overridden reviewer role");
+    assert!(reviewer.contains("model = \"gpt-5.6-terra\""));
+    assert!(reviewer.contains("model_reasoning_effort = \"high\""));
+}
+
+#[test]
+fn rejects_invalid_or_unselected_codex_role_overrides() {
+    let invalid_model = project_fixture();
+    write(
+        invalid_model.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"en","agents":["codex"],"agentRoles":{"codex":{"implementer":{"model":"gpt-5.6/luna"}}}}"#,
+    );
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(invalid_model.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_AGENT_ROLE_MODEL_INVALID"));
+
+    let unselected = project_fixture();
+    write(
+        unselected.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"en","agents":["claude-code"],"agentRoles":{"codex":{}}}"#,
+    );
+    let mut unused = Command::cargo_bin("specbind").expect("specbind binary should build");
+    unused
+        .current_dir(unselected.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_AGENT_ROLE_UNUSED"));
+}
+
+#[test]
 fn never_overwrites_project_owned_settings_when_applying() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
@@ -1372,7 +1474,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 27 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 32 created, 0 replaced, 1 kept\n",
         ));
 
     assert_eq!(

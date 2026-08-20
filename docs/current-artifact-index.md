@@ -17,7 +17,7 @@ agent's root instruction file. Existing project-owned settings are kept.
 
 | Target | Current behavior |
 | --- | --- |
-| `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, and optional project-instruction integration. |
+| `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, optional project-instruction integration, and optional agent-role capability overrides. |
 | `{{SPEC_DIR}}/settings/templates/specs/requirements.md` | Project-owned Requirements structure and authoring scaffold. |
 | `{{SPEC_DIR}}/settings/templates/specs/design.md` | Project-owned Design structure and authoring scaffold. |
 | `{{SPEC_DIR}}/settings/rules/ears-format.md` | Project Requirements style preferences. |
@@ -30,6 +30,7 @@ agent's root instruction file. Existing project-owned settings are kept.
 | `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
 | `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 17 embedded skills. |
 | `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 17 embedded skills. |
+| `.codex/agents/specbind-*.toml` | Product-managed Codex role adapters for planning, implementation, review, diagnosis, and bounded research; model capability may be overridden through `.specbind.json`. |
 | `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
 
 The binary also embeds six Spec scaffolds (`brief`, `research`, `requirements`,

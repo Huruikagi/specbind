@@ -79,6 +79,14 @@ you never separately made.
 
 ### a) Dispatch a fresh implementer
 
+Use the registered `specbind-implementer` role when the host provides it;
+otherwise dispatch an ordinary fresh subagent with the same brief and protocol.
+The role selects capability, not scope or authority.
+Fallback is only for an absent role. If a registered role exists but its
+configured model cannot start, report a configuration or environment failure;
+do not silently change its capability. This applies to every registered role in
+this run.
+
 Give it a brief that stands alone — it saw nothing you saw:
 
 - the task: title, details, completion criteria
@@ -121,6 +129,9 @@ required|inline|off` is run-scoped, and plain requests like "skip review" mean
 
 **`required` means a fresh dispatch.** Give the reviewer the diff and the
 artifact paths — not the implementer's account of what it did — and:
+
+Use the registered `specbind-reviewer` role when available, with an ordinary
+fresh subagent as the fallback.
 
 ```sh
 specbind protocol read task-review
@@ -185,6 +196,10 @@ concern.
 two rounds all go to the same place: **a fresh dispatch that receives the
 failure and the inputs, and not the failed attempts.**
 
+Use the registered `specbind-debugger` role when available, with an ordinary
+fresh subagent as the fallback. Never substitute the implementer or reviewer
+role: fresh diagnostic judgment is the reason this dispatch exists.
+
 ```sh
 specbind protocol read debug
 ```
@@ -242,6 +257,9 @@ with that summary, the actual diff, the checks, and the protocol; `off` skips
 only this run-scoped review. A rejection may return to implementation at most
 twice. `CANNOT_REVIEW` and an unresolved rejection enter the same bounded
 diagnosis route as Spec-backed work.
+
+When `required`, use the registered `specbind-reviewer` role when available,
+with an ordinary fresh subagent as the fallback.
 
 ```sh
 specbind protocol read task-review

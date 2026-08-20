@@ -1,5 +1,5 @@
 use clap::CommandFactory as _;
-use specbind::{args::Cli, install::Agent, protocol, rule, skill};
+use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
 const ACCEPTED_SKILLS: [&str; 17] = [
     "specbind-batch-plan",
@@ -134,6 +134,32 @@ fn every_named_protocol_selector_and_rule_path_exists() {
             );
         }
     }
+}
+
+#[test]
+fn every_registered_role_named_by_a_skill_exists_and_every_role_is_consumed() {
+    let mut accepted = agent_role::all()
+        .iter()
+        .map(|role| role.name())
+        .collect::<Vec<_>>();
+    accepted.sort();
+    let mut consumed = Vec::new();
+    for entry in skill::all() {
+        for role in tokens_after(entry.body().expect("body"), "registered `") {
+            assert!(
+                accepted.contains(&role),
+                "{}: unknown registered role {role}",
+                entry.name
+            );
+            consumed.push(role);
+        }
+    }
+    consumed.sort();
+    consumed.dedup();
+    assert_eq!(
+        consumed, accepted,
+        "every installed role needs a skill consumer"
+    );
 }
 
 #[test]

@@ -32,6 +32,9 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - V1 removes public manifest, OS, profile, overwrite, backup, `--yes`, `--kiro-dir`, and other inherited compatibility options.
 - Agent selection is additive and may contain Codex, Claude Code, or both. Agent removal and uninstall are post-v1.
 - `.specbind.json` is version-controlled and contains `schemaVersion`, `specDir`, `language`, `agents`, and optional `projectInstructions: true`. False project-instruction state may be represented by absence.
+- [Decision 0129](./0129-agent-role-capability-adapters.md) later adds optional
+  `agentRoles` capability overrides without changing the configuration schema
+  version.
 - Product-managed agent skills are replaced with the current embedded versions when their target paths are Git-clean. Direct skill edits are not a supported customization API; Git remains recovery.
 - Existing project-owned settings are never overwritten. Missing embedded default settings are created automatically and left uncommitted for review; users may remove unwanted additions before committing.
 - Decision 0093 fixes the five default shared-rule paths, and Decision 0101 fixes the release and Git adapter paths; install and refresh treat both sets as project-owned settings rather than product-managed skill assets. Decision 0094 protocols remain binary-owned and are never installed as project files.

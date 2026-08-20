@@ -130,9 +130,31 @@ specbind install --agent codex --language ja --project-instructions
 .specbind.json
 .specbind/settings/
 .agents/skills/specbind-*/       # Codex
+.codex/agents/specbind-*.toml    # Codexの役割別モデル設定
 .claude/skills/specbind-*/       # Claude Code
 AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 ```
+
+Codexでは、実装・レビューなどの役割ごとにSpecBindの既定モデルが設定されます。
+通常は変更不要です。プロジェクトでコストと能力の配分を変える場合だけ、
+`.specbind.json`の`agentRoles.codex`で`model`または`reasoningEffort`を
+上書きしてから、クリーンなリポジトリで`specbind install`を再実行します。
+
+```json
+{
+  "agentRoles": {
+    "codex": {
+      "implementer": {
+        "model": "gpt-5.6-luna",
+        "reasoningEffort": "medium"
+      }
+    }
+  }
+}
+```
+
+指定できる役割は`planner`、`implementer`、`reviewer`、`debugger`、
+`researcher`です。省略した役割と項目にはSpecBindの既定値が使われます。
 
 生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
 インストーラ自体はコミットを行いません。

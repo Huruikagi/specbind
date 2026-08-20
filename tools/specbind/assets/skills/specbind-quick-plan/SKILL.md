@@ -61,6 +61,12 @@ and, when delegation was accepted, the workflow name `specbind-quick-plan` plus
 the authorized gate names. Let it read its own artifact inputs; it saw nothing
 you saw, and authorization omitted from the dispatch does not reach it.
 
+Use the registered `specbind-planner` role when the host provides it; otherwise
+use an ordinary fresh subagent. The brief must still name the owning skill and
+carry the same scope and authority.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
+
 | Order | Skill | Produces |
 | --- | --- | --- |
 | 1 | `specbind-requirements` | Requirements, and the requirements gate |

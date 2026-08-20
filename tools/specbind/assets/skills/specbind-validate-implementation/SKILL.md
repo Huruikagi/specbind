@@ -97,6 +97,12 @@ When the Spec is large enough that reading every result here would crowd out the
 judgment, dispatch these as fresh subagents with self-contained briefs, each
 returning **structured findings, not raw output**:
 
+Use the registered `specbind-reviewer` role when available, with ordinary fresh
+subagents as the fallback. These dispatches collect independent evidence; they
+do not own the final verdict.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
+
 - full-suite results
 - runtime liveness: does the built artifact reach its first usable state
 - active requirement coverage: genuinely delivered, not merely referenced

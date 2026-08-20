@@ -87,7 +87,7 @@ Capture focused fixtures for:
 | Contract | Migration gate |
 | --- | --- |
 | Installed Claude Code and Codex trees | Generated product-managed assets match the accepted catalog; user-owned settings are never overwritten. |
-| `.specbind.json` | Only the v1 fields and precedence accepted by Decision 0077 are supported. |
+| `.specbind.json` | Only the v1 fields and precedence accepted by Decisions 0077 and 0129 are supported. |
 | Artifact templates and schemas | Embedded defaults and runtime schemas match the CLI version; custom settings remain external. |
 | Git and path safety | Root, submodule, ignored-path, portability, and clean-target cases match Decision 0081. |
 | TTY behavior | Installer prompting and non-interactive lifecycle behavior are covered. |

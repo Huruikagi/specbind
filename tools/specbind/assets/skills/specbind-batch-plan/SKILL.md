@@ -75,6 +75,12 @@ run, and, when delegation was accepted, the workflow name
 `specbind-batch-plan` plus the authorized gate names. It reads its own artifact
 inputs; authorization omitted from the dispatch does not reach it.
 
+Use the registered `specbind-planner` role when the host provides it; otherwise
+use an ordinary fresh subagent. The role changes capability, never the owning
+skill, scope, or delegated gate authority carried by the brief.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
+
 Per item, in order:
 
 1. `specbind-requirements` — Requirements and its gate

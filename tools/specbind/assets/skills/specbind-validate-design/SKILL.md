@@ -61,6 +61,10 @@ still applies.
 When judging whether the design fits the system it enters requires real
 investigation of the existing code, dispatch that as a fresh subagent with a
 self-contained brief and have it return findings rather than file dumps.
+Use the registered `specbind-researcher` role when available, with an ordinary
+fresh subagent as the fallback.
+Fallback is only for an absent role. A configured role whose model cannot start
+is a configuration or environment failure, not permission to change models.
 Everything else is a reading judgment — the criteria interlock, and splitting
 them loses the picture.
 
