@@ -1,0 +1,1 @@
+# Legacy Spec initialization
