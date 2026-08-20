@@ -177,16 +177,16 @@ which is this repository's own instruction file: the same rules about answering
 in Japanese and committing to `main` travel with it by a different route. Say
 the fixture stands alone regardless of which agent you drive.
 
-### Driving an implementation run
+### Driving a nested-dispatch run
 
 `specbind-implement` dispatches subagents of its own, and `specbind-design`
 dispatches parallel investigation. Driving those with a subagent would nest one
 inside another.
 
-**Drive them from a real session started in the fixture directory**, the same way
-Codex runs are driven. This is not only a way around the nesting question; it is
-more faithful. A real user invokes these from their own session, so a subagent
-driver inserts a layer the product never has.
+Prefer a real session started in the fixture directory when the driver cannot
+nest subagents. A subagent driver is valid only when its platform supports the
+product's nested dispatch and leaves enough capacity for it. In either case,
+the dispatch log below is what proves the path actually ran.
 
 **A run that could not dispatch still produces the right artifacts.** Decision
 0109 gives dispatch a main-context fallback, which is correct for compatibility
@@ -241,9 +241,9 @@ DS1, DS2) are the least agent-sensitive and a single sample covers them.
 
 ## Latest run
 
-2026-08-18, against builds from `9f8ae39` through `f134915`. Eighteen of the
-twenty scenarios then defined passed and none failed against the build that
-finally measured them. Every one of those runs was driven as Claude Code.
+Runs below span 2026-08-18 through 2026-08-20. The initial Claude Code suite was
+measured against builds from `9f8ae39` through `f134915`; later targeted Codex
+runs record their own builds below.
 
 | Scenario | Claude Code | Codex |
 | --- | --- | --- |
@@ -266,14 +266,14 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | DB1 | | pass |
 | RT1, RT2 | | |
 | VD1, VD2 | | |
-| RL2, RL3 | | |
-| RL1 | pass | |
-| VI1 – VI3 | | |
-| VC1, VC2 | | |
+| RL2, RL3 | | pass |
+| RL1 | pass | pass |
+| VI1 – VI3 | | pass |
+| VC1, VC2 | | pass |
 
 An empty cell means that scenario has not been run under that agent. Codex now
-has targeted results for R3, G1, DS1, T2, X1, I2, I3, and DB1; the remaining
-empty Codex cells are still unmeasured.
+has targeted results for R3, G1, DS1, T2, X1, I2, I3, DB1, VI1–VI3, VC1–VC2,
+and RL1–RL3; the remaining empty Codex cells are still unmeasured.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
@@ -323,6 +323,35 @@ linear, I3 passed against `d21590f`: the guide was committed, the Direct
 handshake ran, and `milestone status` reported 1/1 completed. The initial
 failure and its fix are retained here because a pass on retry is a finding, not
 a flake.
+
+VI1–VI3, VC1–VC2, and RL1–RL3 were measured as Codex on 2026-08-20. The final
+passing builds were `18da4be` for VI2, `e76d36a` for VC1, `bf61d4e` for VI3,
+VC2, RL1, and RL3, and `8421484` for VI1 and RL2.
+
+The implementation-validation batch produced four findings before those final
+passes. Natural "is this done?" wording first routed to status or the
+consequence-free claim verifier; `7c8e573` and `18da4be` separated those three
+routes. VI1 then exposed a fixture implementation that mutated an empty cart on
+rejection and a validator ambiguity about Requirements retained outside the
+active ID set; `e76d36a` fixed the fixture and `8421484` put the active-set rule
+at the start of the skill. VI3 substituted the underlying Python runner when
+the canonical test script was absent and incorrectly accepted completion;
+`bf61d4e` made a missing canonical command an immediate
+`MANUAL_VERIFY_REQUIRED`. The final runs left VI1 at `release_ready`, VI2 at
+`implementation` with `NO-GO`, and VI3 at `implementation` with
+`MANUAL_VERIFY_REQUIRED`.
+
+VC1 and VC2 both preserved the consequence-free boundary: VC1 returned
+`VERIFIED` without completion evidence, while VC2 returned `NOT_VERIFIED` for
+the outstanding task and changed no lifecycle state.
+
+RL1 stopped with `RELEASE_VERSION_UNBOUND`, and RL3 finalized `v1.4.0` with the
+canonical delivered-change log entry and both milestone archives. RL2 first
+exposed a recipe defect: committing its release adapter after completion
+acceptance staled the evidence before release work began. `8421484` moved that
+policy commit before acceptance. The rerun created the confirmed local tag,
+could not verify it on the absent `origin`, and correctly left the milestone
+active with no archive or log.
 
 The remaining design scenarios DS2 through DS6, tasks scenarios T1 and T3
 through T5, contract review scenarios X2 and X4, implementation scenarios I1,
@@ -885,7 +914,6 @@ reviewer actually rejects. Record which path the run took.
 ## Release scenarios
 
 Accepted by [Decision 0115](./design/decisions/0115-release-skill-contract.md).
-Driven from a real session.
 
 ### RL1 — No version is invented
 
@@ -978,8 +1006,9 @@ From `db1` — the approved design specifies behavior the requirements contradic
 ## Implementation validation scenarios
 
 Accepted by [Decision 0112](./design/decisions/0112-validate-implementation-skill-contract.md).
-Driven from a real session — see [Driving an implementation run](#driving-an-implementation-run),
-which applies to this skill for the same reason.
+Its independent investigations are proportional. If a run dispatches them, the
+[nested-dispatch rule](#driving-a-nested-dispatch-run) applies; a small fixture
+may correctly stay in one context.
 
 ### VI1 — A complete implementation is validated and accepted
 

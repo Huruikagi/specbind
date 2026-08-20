@@ -93,6 +93,17 @@ The prompt gives three things and nothing else:
 
 Then ask only what it changed and what it ran.
 
+The fixture's own `AGENTS.md` or `CLAUDE.md` is applicable project context. Say
+that explicitly when the driver would otherwise treat a prompted working
+directory as less authoritative than the host session. If it never reads the
+fixture instructions and installed skill tree, the product skill was not
+measured.
+
+On Windows, also state the native Git Bash `sh.exe` location when a fixture's
+canonical command uses `sh`. The printed `export PATH=` line still remains the
+environment fact for the CLI. A run that cannot resolve either executable is an
+environment failure, not a verdict about the product skill.
+
 **Neutralize this repository's instructions.** A subagent is not a clean room: it
 carries the host session's project instructions (`AGENTS.md` under Codex or
 `CLAUDE.md` under Claude Code), not the fixture's. This repository's own
