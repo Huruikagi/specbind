@@ -110,3 +110,16 @@ discarding it silently.
 Uncertainty is never an approval. An approved verdict asserts that the work was
 checked and found correct, and everything downstream relies on that assertion
 having been made deliberately.
+
+Always end with this block. The caller parses the verdict, never the prose:
+
+```text
+## Review
+- VERDICT: APPROVED | REJECTED | CANNOT_REVIEW
+- FINDINGS:
+  - [BLOCKING|DEFERRED|RESOLVED] <requirement or behavior at risk> — <where> — <consequence>
+```
+
+Write `none` under `FINDINGS` when there is no finding. A rejection carries at
+least one blocking finding; an approval carries no blocking finding, but may
+carry deferred or resolved findings with their dispositions.

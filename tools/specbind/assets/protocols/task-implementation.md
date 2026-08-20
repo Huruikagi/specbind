@@ -89,3 +89,20 @@ next task needs to know.
 
 It never claims verification that was not run, and never describes intended
 behavior as though it were observed.
+
+Always end with this block. The dispatcher parses the status, never the prose:
+
+```text
+## Implementation
+- STATUS: READY_FOR_REVIEW | BLOCKED | NEEDS_CONTEXT
+- CHANGED: <paths and outcomes, or none>
+- VERIFICATION: <commands and results, or not run with reason>
+- DECISIONS: <smallest decisions made where artifacts were silent, or none>
+- DURABLE_NOTES: <knowledge the next task needs, or none>
+```
+
+Use `BLOCKED` for a contradiction in the approved artifacts and name the
+contradiction in the block. Use `NEEDS_CONTEXT` only when a missing decision or
+input could let this same task continue once supplied. `READY_FOR_REVIEW` means
+the stated verification ran and the change is ready for an independent verdict;
+it does not mean the task is already complete.

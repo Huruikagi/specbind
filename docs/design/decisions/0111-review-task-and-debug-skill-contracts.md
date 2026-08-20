@@ -79,6 +79,12 @@ and a diagnosis that writes has stopped being read-only. Both still **read**
 notes when present, which is what makes a diagnosis aware of a trap an earlier
 task already hit.
 
+Reading is type-based rather than filename-based. Both skills use
+`artifact list`, then read every discovered
+`implementation-notes/<artifact_id>` selector and every Design relevant to the
+subject. An absent notes collection is a complete answer; neither guesses the
+default filename or materializes a placeholder while examining the work.
+
 This places one obligation on the dispatcher, and
 [Decision 0110](./0110-implement-skill-contract.md)'s skill carries it: a
 diagnosis is run-scoped, so durable knowledge it surfaced is lost unless the
@@ -87,8 +93,11 @@ implementation run writes it down.
 ### Structured returns in both moments
 
 Each skill returns the closed-set result its protocol defines — the three review
-verdicts, and the four debug categories with a cause and a next action — in a
-parseable block, whether dispatched or invoked directly.
+verdicts, and the four owned debug categories plus `UNDETERMINED`, with a cause
+and a next action — in a parseable block, whether dispatched or invoked
+directly. `UNDETERMINED` is required by the same honesty rule as
+`CANNOT_REVIEW`: when evidence cannot identify an owner, forcing one of the four
+owned categories turns uncertainty into misrouting.
 
 Keeping the block in the direct case costs nothing and removes a class of
 divergence: one output shape means the skill cannot drift into a chatty variant

@@ -114,15 +114,21 @@ completions at the end records judgments that were never separately made.
    its boundary — plus the `task-implementation` selector.
 2. **Parse the structured return.** Under Decision 0109 the status comes from a
    closed set and prose is never parsed. An unusable return is re-dispatched
-   once, asking only for the status block.
+   once, asking only for the status block. The `task-implementation` protocol
+   owns the exact block and maps an approved-artifact contradiction to
+   `BLOCKED`, so the dispatcher does not invent a fourth status from prose.
 3. **Review**, per the run's review mode below.
 4. **Record** the outcome through `tasks complete` or `tasks block`.
 
+Before dispatch, the skill discovers every Implementation Notes artifact through
+`artifact list` and reads each typed selector; absence is a complete answer.
 Implementation Notes are written when the run discovers knowledge that outlives
 the task: a non-obvious constraint, a dependency behavior that contradicted the
 plan, a trap the next task would otherwise repeat. Decision 0026 makes the
 judgment this skill's, and its bar is durability, not activity. A note that
 restates what the task did is noise; the plan and Git already record that.
+Creation or revision reads `okf-authoring`; a new collection starts from the
+default `implementation-notes/main` scaffold only when durable content exists.
 
 ### Review mode binds where Decision 0075 put it
 
@@ -139,20 +145,24 @@ Spec-backed default.
 
 A rejection returns the task to the implementer with the findings. Decision 0075
 bounds this at two rounds; after that the task is blocked with the outstanding
-findings as its reason.
+findings as its reason. `CANNOT_REVIEW` is not a rejection to retry blindly: it
+enters diagnosis with the reason the review subject could not be determined.
 
 ### Failure has one route, and it is bounded
 
-`BLOCKED`, an unresolved need for context, and a review rejection surviving two
-rounds all lead to the same place: a fresh dispatch carrying the `debug`
-selector, which receives the failure and the inputs and **not the failed
-attempts**. That omission is the mechanism under Decision 0109.
+`BLOCKED`, an unresolved need for context, `CANNOT_REVIEW`, and a review
+rejection surviving two rounds all lead to the same place: a fresh dispatch
+carrying the `debug` selector, which receives the failure and the inputs and
+**not the failed attempts**. That omission is the mechanism under Decision
+0109.
 
 Diagnosis is bounded at two rounds under Decision 0075. The diagnosis routes by
 its own category: an implementation defect returns to a fresh implementer with
 the fix plan; a plan, design, or requirements defect leaves the run entirely and
 is reported to the user, because no amount of implementation effort repairs an
-artifact that specifies something unworkable.
+artifact that specifies something unworkable. `UNDETERMINED` gathers the named
+distinguishing evidence when safely available and otherwise remains explicitly
+unrouted; forcing an owner would undo the diagnosis's honesty.
 
 When the rounds are exhausted, the task is recorded blocked with a reason that
 names what is unresolved. A blocked task is a legitimate outcome, not a failure
@@ -184,13 +194,21 @@ The two kinds end differently, and the asymmetry is deliberate:
   that implemented the last task is the worst-placed judge of whether the whole
   Spec is correct, having just spent the run convincing itself of each part.
 - **Direct.** The run completes the item, because Decision 0086 assigns the
-  Direct handshake to this skill and no Spec-level validation covers it. The
-  skill runs its own checks, then `milestone direct preflight <direct>` and
-  `milestone direct complete <direct> --implementation-revision <revision>`.
+  Direct handshake to this skill and no Spec-level validation covers it. It
+  implements the Roadmap summary in the main context, applies the selected
+  review mode to the actual diff, and runs the project checks. With no Task or
+  approved Spec artifacts, the Roadmap summary is the review obligation; work
+  that needs those artifacts is rerouted through discovery rather than guessed.
+  The skill then performs its adapter-governed checkpoint **before**
+  `milestone direct preflight <direct>` and the corresponding
+  `milestone direct complete` command.
 
 The Direct handshake requires a clean committed `HEAD`. The skill does not
-manufacture one: if the worktree is dirty because the adapter told it not to
-commit, it reports that completion needs a commit and stops.
+manufacture one: if the adapter gives no usable commit guidance or the run lacks
+commit authority, it reports that completion needs a commit and stops. Reading
+the adapter only after attempting preflight would make the required revision
+unobtainable by construction, so Direct is the one path where checkpoint order
+precedes lifecycle completion.
 
 ### Boundary
 

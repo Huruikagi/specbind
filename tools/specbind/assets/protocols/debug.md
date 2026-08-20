@@ -88,3 +88,18 @@ with what you ruled out and what evidence would be needed.
 That is a useful result. A confident guess presented as a cause sends the next
 round in a direction chosen by nothing, and it is indistinguishable from a real
 finding by the time it fails.
+
+Always end with this block. The caller parses the category, never the prose:
+
+```text
+## Diagnosis
+- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
+- CAUSE: <what diverges, and where>
+- NEXT_ACTION: <for whoever owns that category>
+- UNCERTAIN: <what remains open, or none>
+```
+
+Use `UNDETERMINED` when the available evidence cannot establish a category. Put
+the leading possibilities in `UNCERTAIN` and make `NEXT_ACTION` the
+evidence-gathering step that distinguishes them. Do not guess a category merely
+to fill the block.

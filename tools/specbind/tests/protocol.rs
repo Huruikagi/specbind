@@ -80,3 +80,22 @@ fn requirements_review_does_not_authorize_unsupported_retirement() {
         "the protocol must not contradict the requirements skill's retirement stop"
     );
 }
+
+#[test]
+fn dispatched_role_protocols_define_their_parseable_result_blocks() {
+    let implementation = protocol::read("task-implementation")
+        .expect("task implementation protocol")
+        .content();
+    assert!(implementation.contains("- STATUS: READY_FOR_REVIEW | BLOCKED | NEEDS_CONTEXT"));
+
+    let review = protocol::read("task-review")
+        .expect("task review protocol")
+        .content();
+    assert!(review.contains("- VERDICT: APPROVED | REJECTED | CANNOT_REVIEW"));
+    assert!(review.contains("[BLOCKING|DEFERRED|RESOLVED]"));
+
+    let debug = protocol::read("debug").expect("debug protocol").content();
+    assert!(
+        debug.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
+    );
+}

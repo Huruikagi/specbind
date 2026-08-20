@@ -29,14 +29,22 @@ review, because the verdict it produces will be trusted.
 
 ```sh
 specbind tasks show <spec> <task-id>
+specbind artifact list <spec>
 specbind artifact read <spec> requirements
-specbind artifact read <spec> design/main
 ```
 
-Use `specbind artifact list <spec>` when the design is split across documents.
-Read the requirement IDs the task carries **in the requirements' own words**, not
-through the task title. Read implementation notes if the Spec has them — a trap
-recorded there may be exactly what this change walked into.
+The inventory names every split Design and every
+`implementation-notes/<artifact-id>` selector. Read all Designs that govern the
+task and all Implementation Notes — a recorded trap may be exactly what this
+change walked into:
+
+```sh
+specbind artifact read <spec> design/<artifact-id>
+specbind artifact read <spec> implementation-notes/<artifact-id>
+```
+
+Read the requirement IDs the task carries **in the requirements' own words**,
+not through the task title. An inventory with no notes is a complete answer.
 
 Then apply the standard:
 

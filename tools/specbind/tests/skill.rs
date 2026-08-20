@@ -168,6 +168,56 @@ fn contract_review_uses_scope_and_type_based_historical_discovery() {
     assert!(!body.contains("git show <baseline>:.specbind/specs/<spec>/contract.md"));
 }
 
+#[test]
+fn implementation_workflow_carries_notes_and_all_failure_routes() {
+    let body = skill::find("specbind-implement")
+        .expect("implementation skill")
+        .body()
+        .expect("body");
+
+    for required in [
+        "specbind artifact list <spec>",
+        "specbind artifact read <spec> implementation-notes/<artifact-id>",
+        "specbind protocol read okf-authoring",
+        "specbind template read spec implementation-notes/main",
+        "`CANNOT_REVIEW`",
+        "**before** the handshake",
+    ] {
+        assert!(
+            body.contains(required),
+            "implementation skill must contain {required}"
+        );
+    }
+}
+
+#[test]
+fn direct_debug_surface_can_report_an_undetermined_owner() {
+    let body = skill::find("specbind-debug")
+        .expect("debug skill")
+        .body()
+        .expect("body");
+
+    assert!(
+        body.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
+    );
+}
+
+#[test]
+fn task_review_and_debug_discover_split_designs_before_reading_them() {
+    for name in ["specbind-review-task", "specbind-debug"] {
+        let body = skill::find(name)
+            .expect("inspection skill")
+            .body()
+            .expect("body");
+        assert!(body.contains("specbind artifact list <spec>"));
+        assert!(body.contains("specbind artifact read <spec> design/<artifact-id>"));
+        assert!(
+            !body.contains("specbind artifact read <spec> design/main"),
+            "{name}: a fixed selector must not precede type-based discovery"
+        );
+    }
+}
+
 /// Extracts each literal invocation: a standalone inline code span or one line
 /// of a shell fence, beginning with the exact token `specbind `.
 fn invocations(body: &str) -> Vec<Vec<String>> {

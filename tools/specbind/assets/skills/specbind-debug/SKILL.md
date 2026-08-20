@@ -48,12 +48,20 @@ Read what the system was supposed to do, not only what it did:
 ```sh
 specbind spec status <spec>
 specbind tasks show <spec> <task-id>
+specbind artifact list <spec>
 specbind artifact read <spec> requirements
-specbind artifact read <spec> design/main
 ```
 
-Read implementation notes when the Spec has them. A recorded trap is often
-exactly the cause.
+The inventory names split Designs and every
+`implementation-notes/<artifact-id>` selector. Read all that govern the failure:
+
+```sh
+specbind artifact read <spec> design/<artifact-id>
+specbind artifact read <spec> implementation-notes/<artifact-id>
+```
+
+An inventory with no notes is a complete answer. When notes exist, a recorded
+trap is often exactly the cause.
 
 The cause is where actual behavior **first diverges** from what the approved
 artifacts require. Everything after that point is consequence, and the error
@@ -66,7 +74,7 @@ confident single answer that is wrong costs more than an honest fork.
 
 ```text
 ## Diagnosis
-- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT
+- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
 - CAUSE: <what diverges, and where>
 - NEXT_ACTION: <for whoever owns that category>
 - UNCERTAIN: <what remains open, or none>
@@ -84,6 +92,8 @@ The category decides who fixes it, and misrouting is expensive:
   that cannot succeed.
 - **ENVIRONMENT** — the system is not in the state the work assumes. Usually
   outside the change entirely.
+- **UNDETERMINED** — the evidence does not yet establish an owner. Name the
+  evidence-gathering step that would distinguish the remaining possibilities.
 
 Describe what must become true rather than dictating a diff, unless the exact
 edit is itself the finding. The implementer has context you do not.
