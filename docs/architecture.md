@@ -64,10 +64,18 @@ Their root facade modules preserve the existing public crate paths.
 
 ### Domain and wire models
 
-`schema/` and `yaml.rs` own structural loading. `domain/` and the focused
-Requirements, Design, Contract, Roadmap, and traceability modules own semantic
-validation and normalized values. Third-party parser types stop at these
-boundaries and are not public CLI or persisted contracts.
+`schema/` and `foundation/yaml.rs` own structural loading. `domain/` owns
+validated structured-artifact wrappers. `documents/` groups the focused
+Requirements, Design, Contract, Roadmap, and traceability semantics behind the
+`documents.rs` crate-root compatibility facade. Third-party parser types stop
+at these boundaries and are not public CLI or persisted contracts.
+
+### Foundation
+
+`foundation/` groups project configuration resolution, canonical
+fingerprints, and the restricted YAML boundary. These are cross-cutting
+mechanisms without lifecycle authority. `foundation.rs` preserves the existing
+`crate::config`, `crate::fingerprint`, and `crate::yaml` paths.
 
 ### Adapters
 
@@ -80,12 +88,13 @@ lifecycle policy.
 ## Facade rule
 
 Large capabilities expose a small stable facade from their top-level module.
-The `catalog.rs`, `installation.rs`, `lifecycle.rs`, and `read_model.rs`
-facades re-export the established crate-root module paths; callers do not need
-to know the physical directory layout. Implementation files may be reorganized
-behind a facade while callers continue to depend on SpecBind-owned request,
-result, and diagnostic models. Add a new public path only when it represents a
-new product capability, not merely a new source-file boundary.
+The `catalog.rs`, `documents.rs`, `foundation.rs`, `installation.rs`,
+`lifecycle.rs`, and `read_model.rs` facades re-export the established
+crate-root module paths; callers do not need to know the physical directory
+layout. Implementation files may be reorganized behind a facade while callers
+continue to depend on SpecBind-owned request, result, and diagnostic models.
+Add a new public path only when it represents a new product capability, not
+merely a new source-file boundary.
 
 ## Change checklist
 

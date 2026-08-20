@@ -16,11 +16,13 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/` — canonical Rust CLI workspace
 - `tools/specbind/src/` — Rust CLI implementation
 - `tools/specbind/src/catalog.rs` and `catalog/` — facade and implementations for adapters, protocols, rules, skills, templates, and steering
+- `tools/specbind/src/documents.rs` and `documents/` — facade and implementations for Requirements, Design, Contract, Roadmap, and traceability semantics
+- `tools/specbind/src/foundation.rs` and `foundation/` — facade and implementations for configuration, fingerprints, and restricted YAML
 - `tools/specbind/src/installation.rs` and `installation/` — facade and implementations for installation, agent roles, and project instructions
 - `tools/specbind/src/lifecycle.rs` and `lifecycle/` — facade and implementations for guarded lifecycle operations
 - `tools/specbind/src/read_model.rs` and `read_model/` — facade and implementations for non-authoritative current-state projections
 - `tools/specbind/src/infrastructure.rs` and `infrastructure/` — crate-private Git and guarded-filesystem adapters
-- `tools/specbind/src/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
+- `tools/specbind/src/foundation/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
@@ -47,14 +49,14 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/assets/protocols/` — immutable English product protocols exposed by `protocol read`
 - `tools/specbind/assets/skills/` — one agent-neutral source per product-managed skill
 - `tools/specbind/assets/rules/` — official default project-owned shared rules written by `install`
-- `tools/specbind/src/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
-- `tools/specbind/src/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
-- `tools/specbind/src/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
-- `tools/specbind/src/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
+- `tools/specbind/src/documents/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
+- `tools/specbind/src/documents/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
+- `tools/specbind/src/documents/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
+- `tools/specbind/src/documents/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
 - `tools/specbind/src/read_model/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
-- `tools/specbind/src/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
+- `tools/specbind/src/documents/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
-- `tools/specbind/src/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
+- `tools/specbind/src/foundation/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/read_model/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
 - `tools/specbind/src/lifecycle/approval.rs` — guarded Requirements, Design, and Tasks gate approval and invalidation transitions
 - `tools/specbind/src/read_model/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation

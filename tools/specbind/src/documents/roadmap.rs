@@ -1,4 +1,4 @@
-//! Typed parsing and normalized review projection for `SpecBind Roadmap` artifacts.
+//! Document semantics and review projection for `SpecBind Roadmap` artifacts.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;

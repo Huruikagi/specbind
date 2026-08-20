@@ -1,4 +1,4 @@
-//! Cross-artifact Requirement traceability over one spec's current artifacts.
+//! Cross-document Requirement traceability over one Spec's current artifacts.
 
 use std::collections::{BTreeMap, BTreeSet};
 

@@ -1,4 +1,4 @@
-//! Read-only project and SpecBind-root resolution for CLI operations.
+//! Foundation service for project and SpecBind-root resolution.
 
 use std::{
     fmt, fs,

@@ -1,3 +1,5 @@
+//! Foundation parser boundary from restricted YAML to neutral JSON.
+
 use std::collections::BTreeSet;
 
 use saphyr_parser::{Event, Parser, ScalarStyle, Tag};

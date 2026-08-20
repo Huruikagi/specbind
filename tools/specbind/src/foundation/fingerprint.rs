@@ -1,4 +1,4 @@
-//! Canonical fingerprint producers for gate-owned inputs.
+//! Foundation values and canonical fingerprint producers for gate-owned inputs.
 
 use std::cmp::Ordering;
 use std::fmt;

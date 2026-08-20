@@ -1,4 +1,4 @@
-//! Requirement traceability extracted from Design Markdown emphasis markers.
+//! Document semantics for Design Markdown Requirement traceability.
 
 use std::collections::BTreeSet;
 use std::fmt;

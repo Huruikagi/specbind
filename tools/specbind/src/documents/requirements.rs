@@ -1,4 +1,4 @@
-//! Deterministic Requirement ID extraction from a Requirements Markdown body.
+//! Document semantics for deterministic Requirement ID extraction.
 
 use std::fmt;
 use std::ops::Range;

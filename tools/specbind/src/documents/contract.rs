@@ -1,4 +1,4 @@
-//! Typed parsing for the canonical `SpecBind` Contract Markdown profile.
+//! Document semantics for the canonical `SpecBind` Contract Markdown profile.
 
 use std::collections::BTreeSet;
 use std::fmt;
