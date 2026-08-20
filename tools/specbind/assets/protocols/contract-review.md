@@ -69,6 +69,25 @@ and bring it to the user when the change requires a decision they own.
 Silence here is the most expensive failure mode in the review, because nothing
 downstream will catch it.
 
+## A seam with no consumer is a claim, not a fact
+
+`check contracts` reports an exported entry that no managed spec consumes. The
+graph cannot distinguish a seam whose only consumer is outside it from one cut
+for a consumer that never arrived, which is why the reviewer decides and the
+report is a warning.
+
+- When the consumer is external or unmanaged, name it. That is the same duty the
+  section above states, and it turns the warning into a recorded fact.
+- When there is no consumer at all, the seam is a boundary the project is paying
+  for in advance. Say so. Whether it is retired now, retired later, or kept for a
+  stated reason is the user's decision, not a detail to leave unremarked.
+- An export added by the change under review deserves the question directly:
+  what depends on it today?
+
+Neither answer is a defect by itself. Leaving the warning unexamined is, because
+an unconsumed seam is exactly what a boundary looks like before anyone discovers
+it was unnecessary.
+
 ## Scope expansion is surfaced, not absorbed
 
 Review frequently reveals that another persistent Spec needs work.

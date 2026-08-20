@@ -156,6 +156,18 @@ pub fn evaluate(
         ));
     }
 
+    for entry in unconsumed_exports(&contracts, &dependencies) {
+        issues.push(graph_issue(
+            GraphIssueSeverity::Warning,
+            "CONTRACT_GRAPH_EXPORT_UNCONSUMED",
+            Some(entry_selector(&entry)),
+            format!(
+                "Exports entry {} is consumed by no managed spec; confirm an external consumer or retire the seam",
+                entry.entry_id
+            ),
+        ));
+    }
+
     let dependency_cycles = dependency_cycles(&contracts, &dependencies);
     for cycle in &dependency_cycles {
         issues.push(graph_issue(
@@ -175,6 +187,35 @@ pub fn evaluate(
         dependency_cycles,
         issues,
     }
+}
+
+/// Reports every exported seam no managed spec consumes.
+///
+/// An export exists to be depended on, so one nothing reaches is either a
+/// boundary cut for a consumer that never arrived or a seam whose only consumer
+/// is outside the graph. The graph cannot tell those apart, which is why this is
+/// a warning the reviewer resolves rather than an error.
+fn unconsumed_exports(
+    contracts: &BTreeMap<String, ContractDocument>,
+    dependencies: &[ContractDependency],
+) -> Vec<ContractEntryRef> {
+    let consumed = dependencies
+        .iter()
+        .map(|dependency| dependency.provider.clone())
+        .collect::<BTreeSet<_>>();
+    let mut unconsumed = contracts
+        .iter()
+        .flat_map(|(canonical_spec, contract)| {
+            contract.exports.iter().map(move |export| ContractEntryRef {
+                canonical_spec: canonical_spec.clone(),
+                section: ContractSection::Exports,
+                entry_id: export.id.clone(),
+            })
+        })
+        .filter(|entry| !consumed.contains(entry))
+        .collect::<Vec<_>>();
+    unconsumed.sort();
+    unconsumed
 }
 
 fn discover_spec_ids(specbind_root: &Path) -> (BTreeSet<String>, Vec<DiscoveryIssue>) {

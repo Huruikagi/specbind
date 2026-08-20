@@ -3,11 +3,13 @@
 Status: Partly accepted
 
 This page collects candidate mechanisms for suppressing over-engineering in
-projects that adopt SpecBind. Candidates A and D are accepted and implemented by
-[Decision 0121](./decisions/0121-requirements-coverage-is-not-slots.md) and
-[Decision 0122](./decisions/0122-finding-disposition-and-deferred-destination.md).
-The rest are ideas, kept here so the options stay comparable when the topic is
-picked up again.
+projects that adopt SpecBind. Candidates A and D are accepted, and B is accepted
+in part, by Decisions
+[0121](./decisions/0121-requirements-coverage-is-not-slots.md),
+[0122](./decisions/0122-finding-disposition-and-deferred-destination.md), and
+[0123](./decisions/0123-reverse-traceability-and-unconsumed-seams.md). The rest
+are ideas, kept here so the options stay comparable when the topic is picked up
+again.
 
 ## Problem
 
@@ -55,21 +57,29 @@ as a protocol section rather than a new shared rule or an install-time option,
 because Decision 0093 forbids a rule that restates a protocol baseline, and
 because coverage proportionality is not a project preference worth switching off.
 
-### B. Validation layer
+### B. Validation layer — partly resolved by Decision 0123
 
-Reuses machinery SpecBind already has, and is likely the highest-value option
-per unit of new surface.
+The sketch below proposed flagging Design elements and Tasks that trace to
+nothing in the active requirement set. Only the task half survived contact with
+the model: Requirements and Design are complete-current-contract documents, so a
+Design section realizing an inactive Requirement is describing behavior the Spec
+already owns. Flagging it would punish accurate documents. `tasks.yaml` is
+milestone-local and exists to produce this change, so unjustified work there is
+meaningfully unjustified.
 
-- **Reverse traceability (necessity check).** `traceability.rs` currently checks
-  that active Requirements are covered by Design and Tasks. Invert it: detect
-  Design elements and Tasks that trace to nothing in the active requirement set.
-  Over-engineering is largely artifacts without upstream justification, and the
-  existing emphasis-marker extraction can decide most of it mechanically.
-- **Orphan contract detection.** `contract_graph.rs` already holds the reference
-  graph. Warn on contract entries with zero referencing specs as speculative
-  seams. This targets the cross-spec layer named as an accelerant.
+[Decision 0123](./decisions/0123-reverse-traceability-and-unconsumed-seams.md)
+adds `TRACEABILITY_TASK_SCOPE_INACTIVE`, an error holding the Tasks gate when an
+executable task references no active Requirement ID, and
+`CONTRACT_GRAPH_EXPORT_UNCONSUMED`, a warning when an exported seam reaches no
+managed consumer. The second is a warning because external consumers are
+legitimate and the Contract format cannot express them, so the graph cannot tell
+a premature seam from one serving something outside it.
+
+Still open from this candidate:
+
 - **Budget checks.** Per-scale caps on requirement count and design section
-  count, enforced by `check` rather than requested in prose.
+  count, enforced by `check` rather than requested in prose. These depend on
+  candidate C, since there is no scale to key a budget to yet.
 
 ### C. State and schema layer
 
@@ -137,8 +147,8 @@ Not restraint by itself, but its precondition.
 ## Suggested order
 
 1. ~~A and D.~~ Both done.
-2. B's reverse traceability and orphan contract detection. SpecBind-specific
-   strength, and mechanical rather than prompt-based.
+2. ~~B's reverse traceability and orphan contract detection.~~ Done, minus the
+   budget checks, which have nothing to key a budget to until C exists.
 3. C's scale. Adopt only if 1 and 2 prove insufficient, because it propagates
    through schema, state machine, gates, skills, and tests.
 

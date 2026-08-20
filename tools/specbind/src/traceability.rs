@@ -87,7 +87,12 @@ pub fn evaluate(
         }
     }
 
-    let (task_map, task_union) = evaluate_tasks(tasks, &requirements, &mut issues);
+    let (task_map, task_union) = evaluate_tasks(
+        tasks,
+        &requirements,
+        active_requirement_ids.as_deref(),
+        &mut issues,
+    );
     if tasks_required {
         if task_map.is_none() {
             issues.push(TraceabilityIssue {
@@ -130,15 +135,33 @@ pub fn evaluate(
 fn evaluate_tasks(
     tasks: Option<Vec<TaskRequirementSet>>,
     requirements: &BTreeSet<String>,
+    active_requirement_ids: Option<&[String]>,
     issues: &mut Vec<TraceabilityIssue>,
 ) -> (Option<BTreeMap<String, Vec<String>>>, BTreeSet<String>) {
     let Some(tasks) = tasks else {
         return (None, BTreeSet::new());
     };
+    let active = active_requirement_ids.map(|ids| ids.iter().cloned().collect::<BTreeSet<_>>());
     let mut task_map = BTreeMap::new();
     let mut task_union = BTreeSet::new();
     for task in tasks {
         let ids = task.requirement_ids.into_iter().collect::<BTreeSet<_>>();
+        // The reverse direction of coverage. A task plan is milestone-local, so
+        // a task accountable to no active Requirement is work this change was
+        // not asked for, or an active set that is missing one.
+        if let Some(active) = &active
+            && ids.is_disjoint(active)
+        {
+            issues.push(TraceabilityIssue {
+                code: "TRACEABILITY_TASK_SCOPE_INACTIVE",
+                source: Some(format!("tasks/{}", task.task_id)),
+                requirement_id: None,
+                message: format!(
+                    "Task {} references no active Requirement ID, so the plan carries work the active scope does not account for",
+                    task.task_id
+                ),
+            });
+        }
         for id in ids.difference(requirements) {
             issues.push(TraceabilityIssue {
                 code: "TRACEABILITY_TASK_REQUIREMENT_UNKNOWN",

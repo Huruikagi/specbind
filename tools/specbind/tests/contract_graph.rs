@@ -216,3 +216,34 @@ fn resolves_every_immediate_persistent_spec_and_keeps_partial_inventories() {
             .any(|issue| issue.code == "CONTRACT_GRAPH_SPEC_PATH_INVALID")
     );
 }
+
+#[test]
+fn warns_when_an_exported_seam_reaches_no_managed_consumer() {
+    let report = contract_graph::evaluate(
+        &specs(&["catalog", "checkout"]),
+        contracts(&[
+            (
+                "catalog",
+                "# Contract\n\n## Owns\n\n## Exports\n\n- `stock-status` — Stock status.\n- `restock-forecast` — Forecast nobody consumes.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+            ),
+            (
+                "checkout",
+                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `inventory` → `catalog/exports/stock-status`\n\n## Invariants\n\n## File Ownership\n",
+            ),
+        ]),
+    );
+    let unconsumed = report
+        .issues
+        .iter()
+        .filter(|issue| issue.code == "CONTRACT_GRAPH_EXPORT_UNCONSUMED")
+        .collect::<Vec<_>>();
+
+    // The graph cannot tell a premature seam from one whose only consumer is
+    // outside it, so this is a warning a reviewer resolves, not an error.
+    assert_eq!(unconsumed.len(), 1);
+    assert_eq!(unconsumed[0].severity, GraphIssueSeverity::Warning);
+    assert_eq!(
+        unconsumed[0].source.as_deref(),
+        Some("specs/catalog#contract/exports/restock-forecast")
+    );
+}

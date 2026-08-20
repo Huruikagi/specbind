@@ -206,3 +206,44 @@ fn resolves_current_artifacts_and_active_scope_with_owned_paths() {
                 == Some("specs/example/invalid-coverage.md")
     }));
 }
+
+#[test]
+fn flags_a_task_that_serves_no_active_requirement() {
+    // The reverse direction of coverage. 3.1 exists and is legitimately part of
+    // the Spec's contract, but the milestone is not accountable for it, so a
+    // task that serves only 3.1 is work nothing asked for.
+    let report = traceability::evaluate(
+        &strings(&["1.1", "2.1", "3.1"]),
+        vec![design("design/main", &["1.1", "2.1", "3.1"])],
+        Some(strings(&["1.1", "2.1"])),
+        Some(vec![
+            task("1", &["1.1", "2.1"]),
+            task("2", &["1.1", "3.1"]),
+            task("3", &["3.1"]),
+        ]),
+        true,
+    );
+    let flagged = report
+        .issues
+        .iter()
+        .filter(|issue| issue.code == "TRACEABILITY_TASK_SCOPE_INACTIVE")
+        .map(|issue| issue.source.as_deref().expect("task source"))
+        .collect::<Vec<_>>();
+
+    // Serving one active Requirement is enough; only the task serving none is
+    // reported.
+    assert_eq!(flagged, vec!["tasks/3"]);
+}
+
+#[test]
+fn keeps_task_scope_unjudged_without_an_active_set() {
+    let report = traceability::evaluate(
+        &strings(&["1.1"]),
+        vec![design("design/main", &["1.1"])],
+        None,
+        Some(vec![task("1", &["1.1"])]),
+        false,
+    );
+
+    assert!(report.issues.is_empty(), "{:?}", report.issues);
+}

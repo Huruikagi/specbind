@@ -29,6 +29,21 @@ each one is referenced; the planner is responsible for the part it cannot check:
 - A requirement that needs setup, integration, and verification is covered when
   all of that work exists in the plan, not when one task mentions its ID.
 
+## Coverage runs both ways
+
+The active Requirement set is what the plan must deliver and also the limit of
+what it may deliver. The plan is milestone-local: it exists to produce this
+change and is deleted when the milestone closes.
+
+A task whose Requirement IDs are all outside the active set is therefore work
+this change was never asked for, or a sign that the active set is missing
+something it should contain. The CLI reports it, and the fix is one of those two
+answers rather than a reference added to satisfy the check.
+
+Referencing a Requirement the task genuinely touches alongside an active one is
+ordinary. Referencing an active Requirement a task does not actually serve, to
+clear the report, makes the plan lie about what delivers what.
+
 ## Tasks state outcomes
 
 A task states the capability or behavior to achieve and the conditions under
