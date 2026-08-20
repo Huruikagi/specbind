@@ -156,6 +156,23 @@ fn reviewing_skills_require_an_explicit_finding_disposition() {
 }
 
 #[test]
+fn planning_orchestrators_handoff_their_delegation_identity() {
+    for name in ["specbind-quick-plan", "specbind-batch-plan"] {
+        let body = skill::find(name)
+            .expect("planning orchestrator")
+            .body()
+            .expect("body");
+        assert!(body.contains("The request to run this skill is **not** that confirmation"));
+        assert!(
+            body.contains(&format!("workflow name\n`{name}`"))
+                || body.contains(&format!("workflow name `{name}`"))
+        );
+        assert!(body.contains("authorized gate names"));
+        assert!(body.contains("authorization omitted from the dispatch does not reach it"));
+    }
+}
+
+#[test]
 fn design_validation_puts_its_read_only_stop_rule_before_commands() {
     let body = skill::find("specbind-validate-design")
         .expect("design validation skill")

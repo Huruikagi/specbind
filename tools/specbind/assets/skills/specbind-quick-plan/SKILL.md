@@ -56,8 +56,10 @@ Two things this authorization never covers:
 
 ## 3. Run the phases
 
-Each phase is a dispatch to the skill that owns it. Give it the Spec identity and
-let it read its own inputs; it saw nothing you saw.
+Each phase is a dispatch to the skill that owns it. Give it the Spec identity
+and, when delegation was accepted, the workflow name `specbind-quick-plan` plus
+the authorized gate names. Let it read its own artifact inputs; it saw nothing
+you saw, and authorization omitted from the dispatch does not reach it.
 
 | Order | Skill | Produces |
 | --- | --- | --- |

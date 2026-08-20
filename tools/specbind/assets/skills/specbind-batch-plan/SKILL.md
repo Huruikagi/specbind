@@ -70,8 +70,10 @@ The loop is: read status → dispatch everything actionable, in parallel → col
 
 ## 4. Run the phases
 
-Each item's phase is a fresh dispatch. Give it the Spec identity and the phase to
-run; it reads its own inputs.
+Each item's phase is a fresh dispatch. Give it the Spec identity, the phase to
+run, and, when delegation was accepted, the workflow name
+`specbind-batch-plan` plus the authorized gate names. It reads its own artifact
+inputs; authorization omitted from the dispatch does not reach it.
 
 Per item, in order:
 

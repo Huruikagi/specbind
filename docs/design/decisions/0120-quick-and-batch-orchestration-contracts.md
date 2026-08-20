@@ -46,6 +46,11 @@ Declining delegation is a legitimate answer and does not end the run. The
 orchestration is still worth something without it: the skill sequences the
 phases, dispatches the work, and pauses at each gate for an explicit approval.
 
+Each delegated phase dispatch carries the workflow name and the gate names the
+user authorized. A fresh phase run inherits no conversational context from the
+orchestrator; omitting that handoff leaves it with no authority and correctly
+stops at the gate.
+
 Two things delegation never covers:
 
 - **Invalidating an approved gate.** Decision 0100 already states it: delegation
