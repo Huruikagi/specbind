@@ -240,10 +240,12 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | C1, C2, C3 | pass | |
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
 | D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
-| DS1 – DS6 | | |
+| DS1 | pass — workflow; no investigation dispatch | |
+| DS2 – DS6 | | |
 | T1, T3, T4, T5 | | |
 | T2 | pass | |
-| X1, X2, X4 | | |
+| X1 | pass | |
+| X2, X4 | | |
 | X3 | pass | |
 | I1 – I5 | | |
 | RT1, RT2, DB1 | | |
@@ -276,8 +278,22 @@ Requirements, Research, or gate evidence. The first G1 attempt reported in
 Japanese against the English fixture and was discarded as host-instruction
 contamination; a fresh fixture and session produced the recorded pass.
 
-The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
-contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, the design validation scenarios VD1 and VD2, and the release scenarios RL1 through RL3 were specified after that run, together
+DS1, T2, and X1 were re-measured on 2026-08-20 against `65bdc89`, as Claude
+Code, and all three passed their workflow expectations. X1 accepted a fresh
+Contract Review from only the Roadmap scope and Contract inputs, and created no
+task plan. T2 stopped before authoring because the review was absent, preserving
+the required ordering. DS1 produced a 3/3 traceable design and coherent
+Contract, obtained explicit design approval, and created no task plan. Its
+fixture was small enough that the driven context did not dispatch independent
+investigation, so this is a workflow result rather than a measurement of the
+design dispatch path.
+
+The remaining design scenarios DS2 through DS6, tasks scenarios T1 and T3
+through T5, contract review scenarios X2 and X4, implementation scenarios I1
+through I5, review and debug scenarios RT1, RT2, and DB1, validation scenarios
+VI1 through VI3, claim verification scenarios VC1 and VC2, design validation
+scenarios VD1 and VD2, and release scenarios RL2 and RL3 were specified after
+that run, together
 with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
 `specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
 the same time and is worth re-running.
