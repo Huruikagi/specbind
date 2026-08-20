@@ -226,6 +226,8 @@ surfaces a Requirements mark as the rewind decision it is, surfaces a Steering
 mark for `specbind-steering`, and states a judgment that a mark needs no action
 rather than letting it expire silently.
 
-Forward-test scenarios G1 through G8 remain outstanding, pending a run against
-the fixture project. Scenario G8 now measures the `okf-authoring` rule that
-Decision 0119 owns, rather than a statement carried by this skill.
+Scenario G1 has recorded passes under both supported agents. G2 through G8 have
+no recorded pass yet; the authoritative changing ledger remains in
+[Skill forward tests](../../skill-forward-tests.md). Scenario G8 measures the
+`okf-authoring` rule that Decision 0119 owns, rather than a statement carried by
+this skill.

@@ -41,4 +41,7 @@ Removing their templates entirely would cost something real. A template is also 
 
 ## Implementation status
 
-The embedded set and per-selector override resolution are implemented, so `template list` and `template read` already behave as accepted. The narrower installed set applies to `specbind install`, which is not implemented yet.
+Implemented. The embedded set and per-selector override resolution make
+`template list spec` and `template read spec <selector>` behave as accepted.
+`specbind install` creates only the Requirements and Design defaults when they
+are absent and keeps every existing project-owned template unchanged.

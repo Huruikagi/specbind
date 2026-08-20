@@ -1,11 +1,14 @@
 # Target skill catalog
 
-This document is the working catalog for the SpecBind skill system we intend to build. It describes proposed names and responsibilities before they are implemented.
+This document records the design history and implementation status of the
+SpecBind skill system. Decision 0075's complete v1 set is now embedded and
+installed; the current concise interface is indexed in the
+[current generated skill index](../current-skill-index.md).
 
 The catalog is intentionally separate from the [current generated skill index](../current-skill-index.md):
 
 - The current index records what the CLI generates today.
-- This catalog records ideas, drafts, accepted decisions, and implementation progress.
+- This catalog records the inherited mapping, accepted changes, and implementation progress.
 
 Related documents:
 
@@ -51,26 +54,28 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
-| `kiro-debug` | `specbind-debug` | Change | Accepted | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
-| `kiro-discovery` | `specbind-discovery` | Change | Accepted | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
-| `kiro-impl` | `specbind-implement` | Change | Accepted | Implement one Spec-backed or Direct Roadmap item. |
-| `kiro-review` | `specbind-review-task` | Rename | Accepted | Review one task implementation using the actual diff and approved inputs. |
-| `kiro-spec-batch` | `specbind-batch` | Change | Accepted | Bring all Spec-backed milestone items through Tasks approval without implementation. |
-| `kiro-spec-design` | `specbind-design` | Change | Accepted | Maintain current design, active-requirement traceability, and the cross-spec contract. |
-| `kiro-spec-init` | None | Remove | Accepted | Initialization is a deterministic Rust CLI operation invoked by discovery. |
-| `kiro-spec-quick` | `specbind-quick` | Change | Accepted | Bring one Spec-backed item through Tasks approval using delegated gates. |
-| `kiro-spec-requirements` | `specbind-requirements` | Change | Accepted | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
-| `kiro-spec-status` | `specbind-status` | Change | Accepted | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
-| `kiro-spec-tasks` | `specbind-tasks` | Change | Accepted | Create a milestone-local plan covering the active requirement set after contract review. |
-| `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Accepted | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
-| `kiro-validate-design` | `specbind-validate-design` | Change | Accepted | Review technical design quality and design-to-contract consistency. |
-| `kiro-validate-gap` | `specbind-gap-analysis` | Change | Accepted | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
-| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Accepted | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
-| `kiro-verify-completion` | `specbind-verify-completion` | Change | Accepted | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
-| None | `specbind-contract-review` | New | Accepted | Review the complete current contract graph after Design approval and before Tasks authoring. |
-| None | `specbind-release` | New | Accepted | Complete a release and close its active milestone. |
+| `kiro-debug` | `specbind-debug` | Change | Implemented | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
+| `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
+| `kiro-impl` | `specbind-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
+| `kiro-review` | `specbind-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
+| `kiro-spec-batch` | `specbind-batch` | Change | Implemented | Bring all Spec-backed milestone items through Tasks approval without implementation. |
+| `kiro-spec-design` | `specbind-design` | Change | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
+| `kiro-spec-init` | None | Remove | Implemented | Initialization is a deterministic Rust CLI operation invoked by discovery. |
+| `kiro-spec-quick` | `specbind-quick` | Change | Implemented | Bring one Spec-backed item through Tasks approval using delegated gates. |
+| `kiro-spec-requirements` | `specbind-requirements` | Change | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
+| `kiro-spec-status` | `specbind-status` | Change | Implemented | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
+| `kiro-spec-tasks` | `specbind-tasks` | Change | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |
+| `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Implemented | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
+| `kiro-validate-design` | `specbind-validate-design` | Change | Implemented | Review technical design quality and design-to-contract consistency. |
+| `kiro-validate-gap` | `specbind-gap-analysis` | Change | Implemented | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
+| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Implemented | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
+| `kiro-verify-completion` | `specbind-verify-completion` | Change | Implemented | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
+| None | `specbind-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
+| None | `specbind-release` | New | Implemented | Complete a release and close its active milestone. |
 
-This initial classification records only the known naming direction. Change a row from `Rename` when its responsibility is intentionally changed, merged, split, or removed.
+This classification now records the implemented v1 migration from the inherited
+set. Future rows should use `Rename` only when responsibility is unchanged;
+otherwise use `Change`, `Merge`, `Split`, `Remove`, or `New`.
 
 ## Skill definition format
 
@@ -111,7 +116,7 @@ For a new skill, add a `New` row to the working catalog and set `Current equival
 
 ## `specbind-release`
 
-Status: Draft
+Status: Implemented
 
 Current equivalent: None
 

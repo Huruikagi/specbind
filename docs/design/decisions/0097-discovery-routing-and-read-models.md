@@ -329,4 +329,6 @@ uses, so the two cannot disagree about where the Front Matter ends.
 The accepted checks are covered, including the byte-exact serialization, the
 round trip through `update-scope` returning `NO_CHANGE` in both the default and
 `--include-body` forms, the absence of `body` by default, and the omission of
-completed Direct status. The skill and its forward tests remain outstanding.
+completed Direct status. Manual behavioral results are maintained in
+[Skill forward tests](../../skill-forward-tests.md); the implementation-status
+section does not duplicate that changing ledger.

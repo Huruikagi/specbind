@@ -306,5 +306,6 @@ The embedded `specbind-discovery` skill names these reads: it lists steering and
 reads every listed document, stops before classifying when either command prints
 an `ERROR` line while treating a zero-document listing as a complete answer,
 distinguishes settled constraints from open choices, and records guidance that
-changed a decision in the Brief or the Roadmap body. Its forward tests remain
-outstanding, pending the fixture project.
+changed a decision in the Brief or the Roadmap body. Discovery scenarios D11
+and D12 have recorded Claude Code passes; the complete changing measurement
+ledger remains in [Skill forward tests](../../skill-forward-tests.md).

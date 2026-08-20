@@ -1,11 +1,14 @@
 # Target artifact catalog
 
-This document is the working catalog for the files the future SpecBind workflow will install, create, maintain, or remove. It describes proposed artifact lifecycles before they are implemented.
+This document records the accepted lifecycle and implementation status for the
+files the SpecBind workflow installs, creates, maintains, or removes. The
+current concise surface is indexed in the
+[current generated artifact index](../current-artifact-index.md).
 
 The catalog is intentionally separate from the [current generated artifact index](../current-artifact-index.md):
 
 - The current index records what the CLI and skills produce today.
-- This catalog records intended ownership and lifecycle changes.
+- This catalog records accepted ownership, lifecycle, and remaining open questions.
 
 Related documents:
 
@@ -56,7 +59,7 @@ Related documents:
 - [Decision 0094: embedded product protocols](./decisions/0094-embedded-product-protocols.md)
 - [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
 
-Status: Draft
+Status: Accepted and implemented for the v1 artifact set
 
 `{{SPEC_DIR}}` is configurable and defaults to `.specbind` for new installations. Existing explicitly configured roots remain valid; migration from the inherited `.kiro` default must be deliberate and guarded.
 
@@ -78,7 +81,7 @@ Status: Draft
 
 | Artifact or target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Draft | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, the Decision 0054 branch-local Git baseline, an initially null Decision 0073 portable release-version binding, and grouped work items. It represents current state only under Decision 0051 and carries no detailed contract review evidence. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | Required for every active milestone, including single-spec work. | Intent confirmed by `specbind-discovery`, persisted by Rust CLI milestone operations, and archived by `specbind-release`. | Accepted | An OKF concept with `type: SpecBind Roadmap`; its frontmatter holds a branch-safe UUID v7 milestone ID, the Decision 0054 branch-local Git baseline, an initially null Decision 0073 portable release-version binding, and grouped work items. It represents current state only under Decision 0051 and carries no detailed contract review evidence. An explicitly abandoned unreleased roadmap is removed rather than release-archived. |
 | `{{SPEC_DIR}}/steering/<name>.md` collection (`artifact_id` required) | Optional durable project guidance that outlives any milestone. | Authored by `specbind-steering`; consumed by applicable skills through `specbind steering list/read`. | Accepted | An OKF concept with `type: SpecBind Steering` under Decision 0098, discovered recursively below `steering/` and identified by `artifact_id`, which is also its selector. There is no core-versus-custom split. It is never fingerprinted, never gate evidence, and never a freshness input, so guidance that materially changed a decision is recorded in a Spec Brief, the Roadmap body, or the later skill's owning canonical artifact. |
 | `{{SPEC_DIR}}/state/contract-review.md` | Exists only while a milestone with Spec-backed items has a current accepted global contract review. | `specbind-contract-review` authors a candidate judgment; guarded Rust CLI operations persist it. | Accepted | OKF project-state concept under Decision 0078. Frontmatter retains milestone identity, pass time, and contract-first input revisions; the body preserves the free-form AI-authored judgment. It has no classifications or Markdown-profile schema version. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Persists as the released milestone-wide scope and dependency record. | `specbind-release`. | Accepted | Each release adds the final active-roadmap snapshot as a new flat file after verified publication; archive collisions must not overwrite history. |
@@ -88,7 +91,7 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/settings/templates/` | Installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Spec Markdown templates are final-form OKF prototypes under Decision 0059; their relative paths define initial output paths and instruction comments are removed from materialized artifacts. Updates must not silently overwrite local changes or reconcile existing specs. |
+| `{{SPEC_DIR}}/settings/templates/` | Requirements and Design defaults are installed, then maintained and version-controlled by the project; other embedded scaffolds may be overridden deliberately. | Project maintainers; consumed by authoring skills. | Accepted | Supported customization surface for generated document structure and format. Spec Markdown templates are final-form OKF prototypes under Decision 0059; their relative paths define initial output paths and instruction comments are removed from materialized artifacts. Updates must not silently overwrite local changes or reconcile existing specs. |
 | `{{SPEC_DIR}}/settings/rules/` | Five known files are installed from official defaults, then maintained and version-controlled by the project. | Project maintainers; consumed by the explicit owning skills. | Accepted | Supported customization surface for shared judgment criteria and generation principles. Decision 0093 fixes the default paths, skill consumers, absence behavior, and cc-sdd disposition; v1 does not recursively auto-load additional rule files. Non-customizable product protocols remain embedded under Decision 0094. |
 | `{{SPEC_DIR}}/settings/adapters/release.md` | Installed as a scaffold and maintained as project configuration. | Project maintainers; consumed by `specbind-release`. | Accepted | Free-form OKF project guidance under Decisions 0063 and 0101. Its only known field is `type`; headings are not machine syntax and an empty body means no adapter-specific actions. It cannot override core release gates or evidence requirements. |
 | `{{SPEC_DIR}}/settings/adapters/git.md` | Installed as an empty scaffold and maintained as optional project configuration. | Project maintainers; consumed by skills that may create Git checkpoints or push. | Accepted | Free-form OKF project guidance under Decision 0101. Its only known field is `type`; absence or an empty body means no adapter-directed commit or push. It expresses project policy but grants no mutation authority. |
@@ -98,7 +101,7 @@ Status: Draft
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Draft | A release must not delete a spec merely because its milestone completed. |
+| `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Accepted | A release must not delete a spec merely because its milestone completed. |
 | `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Minimal free-form OKF input under Decision 0062. Its only known field is `type`; the CLI does not parse its body or fingerprint it for gate evidence. Same-milestone deltas merge into it, and successful release finalization removes it. |
 | `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. Front Matter maps the two customizable structural heading labels, while Requirement IDs derive from explicit group number plus Acceptance Criteria list position under Decision 0060. The active requirement set is a separate milestone-scoped concept. |
 | `SpecBind Design` collection (`design.md`, `artifact_id: main` by default) | Holds the complete currently valid design across one or more focused documents. | Design workflow. | Accepted | Discovered by OKF type plus stable `artifact_id`; revised in place for an active change. Its stable v1 Front Matter contract is `type`, `artifact_id`, and non-empty `requirement_ids`; unknown project metadata is allowed but ignored by SpecBind. The mapping set exactly matches its italic `_Requirements: ..._` body markers under Decision 0061. |

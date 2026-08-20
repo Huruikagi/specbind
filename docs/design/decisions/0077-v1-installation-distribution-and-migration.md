@@ -46,7 +46,14 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 `specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist, and an interrupted run converges on the next invocation because missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits.
 
-Both paths currently cover `.specbind.json`, the Decision 0091 installed template set, the Decision 0093 shared-rule set, and the Decision 0096 agent skill assets rendered per selected agent. The Decision 0101 adapter scaffolds are not implemented yet. The project-instruction block specified by [Decision 0099](./0099-project-instruction-block.md) is planned and applied for each selected agent when the setting is enabled. TTY prompting for missing inputs is not implemented, so an initial installation requires explicit agent and language values.
+Both paths cover `.specbind.json`, the Decision 0091 installed template set, the
+Decision 0093 shared-rule set, the Decision 0101 release, Git, and deferred
+finding adapter scaffolds, and the Decision 0096 agent skill assets rendered per
+selected agent. The project-instruction block specified by Decision 0099 is
+planned and applied for each selected agent when the setting is enabled. TTY
+prompting for missing inputs is not implemented, so an initial installation
+requires explicit agent and language values. Explicit cc-sdd migration and the
+binary distribution surface remain outstanding.
 
 ## Consequences
 

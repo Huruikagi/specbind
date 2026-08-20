@@ -1,89 +1,84 @@
 # Current generated artifact index
 
-This page is a lightweight index of the files installed or maintained by the current SpecBind CLI and skill set. It records the inherited file surface before SpecBind-specific commands and workflows are redesigned; it is not a commitment to preserve these paths or formats.
+This page indexes the files the current SpecBind CLI installs and the artifacts
+the current CLI and product-managed skills maintain. `{{SPEC_DIR}}` is configured
+in `.specbind.json` and defaults to `.specbind` for a new installation.
 
-`{{KIRO_DIR}}` defaults to `.kiro`. For the commands that manage these files, see the [current generated skill index](./current-skill-index.md).
-For proposed artifact lifecycles, see the [target artifact catalog](./design/target-artifact-catalog.md).
+For the workflows that own these files, see the
+[current generated skill index](./current-skill-index.md). For their design
+history and detailed lifecycle, see the
+[target artifact catalog](./design/target-artifact-catalog.md).
 
-## Settings templates
+## Installation surface
 
-The CLI installs these files under `{{KIRO_DIR}}/settings/templates/` for both supported agents.
+`specbind install` creates absent project-owned settings, refreshes
+product-managed skills, and optionally maintains a marked block in each selected
+agent's root instruction file. Existing project-owned settings are kept.
 
-| Path under `settings/templates/` | Current role |
+| Target | Current behavior |
 | --- | --- |
-| `specs/init.json` | Initial `spec.json` structure. |
-| `specs/requirements-init.md` | Initial requirements document created with a spec. |
-| `specs/requirements.md` | Full requirements document structure. |
-| `specs/design.md` | Technical design document structure. |
-| `specs/research.md` | Research and gap-analysis log structure. |
-| `specs/tasks.md` | Implementation task document structure. |
-| `steering/product.md` | Core product steering structure. |
-| `steering/tech.md` | Core technology steering structure. |
-| `steering/structure.md` | Core repository-structure steering format. |
-| `steering-custom/api-standards.md` | Optional API standards steering template. |
-| `steering-custom/authentication.md` | Optional authentication steering template. |
-| `steering-custom/database.md` | Optional database steering template. |
-| `steering-custom/deployment.md` | Optional deployment steering template. |
-| `steering-custom/error-handling.md` | Optional error-handling steering template. |
-| `steering-custom/security.md` | Optional security steering template. |
-| `steering-custom/testing.md` | Optional testing steering template. |
+| `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, and optional project-instruction integration. |
+| `{{SPEC_DIR}}/settings/templates/specs/requirements.md` | Project-owned Requirements structure and authoring scaffold. |
+| `{{SPEC_DIR}}/settings/templates/specs/design.md` | Project-owned Design structure and authoring scaffold. |
+| `{{SPEC_DIR}}/settings/rules/ears-format.md` | Project Requirements style preferences. |
+| `{{SPEC_DIR}}/settings/rules/design-principles.md` | Project Design preferences. |
+| `{{SPEC_DIR}}/settings/rules/contract-principles.md` | Project seam and compatibility policy. |
+| `{{SPEC_DIR}}/settings/rules/tasks-generation.md` | Project task-decomposition preferences. |
+| `{{SPEC_DIR}}/settings/rules/steering-principles.md` | Project steering-authoring preferences. |
+| `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
+| `{{SPEC_DIR}}/settings/adapters/git.md` | Optional project checkpoint, commit, and push guidance. |
+| `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
+| `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 17 embedded skills. |
+| `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 17 embedded skills. |
+| `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
 
-## Shared rules
+The binary also embeds six Spec scaffolds (`brief`, `research`, `requirements`,
+`design/main`, `contract`, and `implementation-notes/main`) and four Steering
+scaffolds (`product`, `tech`, `structure`, and author-identified `document`) in
+English and Japanese. `template list/read` exposes all of them. Only Requirements
+and Design are installed by default; a project can override any selector under
+`settings/templates/` deliberately.
 
-The rule sources live under `tools/cc-sdd/templates/shared/settings/rules/`. The current CLI copies each referenced rule into the consuming skill's `rules/` directory:
+Twelve immutable product protocols and the versioned structured-artifact and
+command-input schemas are binary-owned read surfaces exposed by
+`protocol list/read` and `schema list/read`; they are not installed as project
+settings.
 
-- Claude Code: `.claude/skills/<skill>/rules/`
-- Codex: `.agents/skills/<skill>/rules/`
+## Project-level lifecycle artifacts
 
-The current CLI does not create `{{KIRO_DIR}}/settings/rules/`.
-
-| Rule | Installed for |
+| Artifact or path | Current lifecycle and owner |
 | --- | --- |
-| `design-discovery-full.md` | `kiro-spec-design` |
-| `design-discovery-light.md` | `kiro-spec-design` |
-| `design-principles.md` | `kiro-spec-design` |
-| `design-review-gate.md` | `kiro-spec-design` |
-| `design-review.md` | `kiro-validate-design` |
-| `design-synthesis.md` | `kiro-spec-design` |
-| `ears-format.md` | `kiro-spec-requirements` |
-| `gap-analysis.md` | `kiro-validate-gap` |
-| `requirements-review-gate.md` | `kiro-spec-requirements` |
-| `steering-principles.md` | `kiro-steering`, `kiro-steering-custom` |
-| `tasks-generation.md` | `kiro-spec-tasks` |
-| `tasks-parallel-analysis.md` | `kiro-spec-tasks` |
+| `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope. |
+| `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `specbind-steering` and selected by `artifact_id`. |
+| `{{SPEC_DIR}}/state/contract-review.md` | Current accepted milestone-wide Contract review for a Spec-backed milestone; authored by `specbind-contract-review` and persisted by the CLI. |
+| `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Final released Roadmap archive written by release finalization. |
+| `{{SPEC_DIR}}/releases/<version>-contract-review.md` | Final accepted Contract-review archive for a Spec-backed release. |
 
-## Steering artifacts
+## Per-Spec artifacts
 
-Skills create or update these persistent project-level files under `{{KIRO_DIR}}/steering/`.
+The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 
-| Path | Current role | Created or updated by |
-| --- | --- | --- |
-| `product.md` | Product purpose, value, and capabilities. | `kiro-steering` |
-| `tech.md` | Technology choices and engineering conventions. | `kiro-steering` |
-| `structure.md` | Repository organization and naming patterns. | `kiro-steering` |
-| `roadmap.md` | Multi-spec scope, ordering, and progress. | `kiro-discovery`, `kiro-spec-batch` |
-| `<name>.md` | Specialized project guidance. | `kiro-steering-custom` |
+| Artifact | Current lifecycle and owner |
+| --- | --- |
+| `spec.yaml` | Persistent structured lifecycle, active-change, Requirement-selection, gate, and completion state maintained only through guarded CLI operations. |
+| `requirements.md` | Persistent complete current Requirements maintained by `specbind-requirements`. |
+| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by `specbind-design`; `artifact_id` is its stable selector. |
+| `contract.md` | Persistent canonical five-section Contract maintained with Design and reviewed milestone-wide. |
+| `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
+| `brief.md` | Active-milestone input authored by discovery and removed by successful release finalization. |
+| `research.md` | Optional active-milestone gap-analysis result replaced by `specbind-gap-analysis` and removed by finalization. |
+| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by `specbind-tasks`, progressed by implementation, and removed by finalization. |
+| `log.md` | Persistent newest-first release history maintained by release finalization for Spec-backed milestones. |
 
-## Spec artifacts
-
-Skills create or update these feature-level files under `{{KIRO_DIR}}/specs/<feature>/`.
-
-| Path | Current role | Created or updated by |
-| --- | --- | --- |
-| `brief.md` | Discovery context, scope, and candidate boundaries. | `kiro-discovery` |
-| `spec.json` | Spec metadata, phase, language, and approval state. | `kiro-spec-init`, `kiro-spec-requirements`, `kiro-spec-design`, `kiro-spec-tasks`, `kiro-spec-quick` |
-| `requirements.md` | Initial project description and approved requirements. | `kiro-spec-init`, `kiro-spec-requirements`, `kiro-spec-quick` |
-| `research.md` | Gap analysis, discovery findings, and design decisions. | `kiro-validate-gap`, `kiro-spec-design` |
-| `design.md` | Approved technical design. | `kiro-spec-design`, `kiro-spec-quick` |
-| `tasks.md` | Approved implementation tasks, progress, and implementation notes. | `kiro-spec-tasks`, `kiro-impl`, `kiro-spec-quick` |
-
-`kiro-spec-batch` orchestrates the normal spec phase skills for multiple features, so their outputs are represented by the same spec rows above.
+Markdown artifacts are discovered by their OKF type and, for collections, their
+`artifact_id`; the default filenames above are materialization paths rather than
+general semantic identity. `spec.yaml`, `tasks.yaml`, `roadmap.md`, and the
+Contract-review state keep their accepted fixed structured paths.
 
 ## Sources of truth
 
-- Settings templates and shared rule sources: `tools/cc-sdd/templates/shared/settings/`
-- Skill output behavior: `tools/cc-sdd/templates/agents/{claude-code-skills,codex-skills}/skills/`
-- Installation manifests: `tools/cc-sdd/templates/manifests/{claude-code-skills,codex-skills}.json`
-- Shared-rule expansion: `tools/cc-sdd/src/plan/sharedRules.ts` and `tools/cc-sdd/src/plan/fileOperations.ts`
-
-When installed paths or skill outputs change, update this index together with the templates, manifests, and skill instructions so it remains a useful migration checklist.
+- Installation plan and ownership behavior: `tools/specbind/src/install.rs`
+- Embedded templates, rules, adapters, protocols, and skills: `tools/specbind/assets/`
+- Artifact discovery and lifecycle I/O: `tools/specbind/src/artifacts.rs`
+- Structured wire models and generated schemas: `tools/specbind/src/schema/` and `tools/specbind/schemas/`
+- Guarded lifecycle mutations: `tools/specbind/src/approval.rs`, `tools/specbind/src/milestone/`, `tools/specbind/src/completion/`, and `tools/specbind/src/release_finalize.rs`
