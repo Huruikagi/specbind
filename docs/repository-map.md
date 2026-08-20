@@ -4,6 +4,9 @@ This page is the single index of how this repository is organized to develop Spe
 
 For the files the CLI installs into consumer projects, see the [current generated artifact index](./current-artifact-index.md) and the [current generated skill index](./current-skill-index.md).
 
+The canonical Rust dependency direction and module-boundary rules are defined
+in [Implementation architecture](./architecture.md).
+
 ## Source layout
 
 - `tools/cc-sdd/src/` — inherited TypeScript CLI retained as a migration and comparison oracle
@@ -17,8 +20,12 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
 - `tools/specbind/src/cli.rs` — shared CLI output contract, rendering helpers, and command-family re-exports
-- `tools/specbind/src/cli/` — migration, read, task, external-input, and lifecycle command execution/rendering
-- `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
+- `tools/specbind/src/cli/` — stable command-family facades for migration, reads, tasks, external input, and lifecycle operations
+- `tools/specbind/src/cli/read/` — artifact/check, installation, catalog, and project-scope read command execution/rendering
+- `tools/specbind/src/cli/lifecycle/` — completion, gate, milestone mutation, release, contract-review, and status command execution/rendering
+- `tools/specbind/src/artifacts.rs` — stable public facade and result models for spec-local artifact reads
+- `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
+- `tools/specbind/src/artifacts/resolution.rs` — typed Spec and Task loads, gate-input resolution, fingerprints, and traceability projections
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
 - `tools/specbind/src/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
