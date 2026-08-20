@@ -64,6 +64,12 @@ self-contained brief and have it return findings rather than file dumps.
 Everything else is a reading judgment — the criteria interlock, and splitting
 them loses the picture.
 
+Existing code is architectural context, not implementation evidence. This
+validation normally runs before implementation, so code that does not yet
+realize the proposed behavior is expected and is never by itself a finding.
+Judge whether the design can realize the Requirements in that codebase; do not
+judge whether the code already does.
+
 ## 3. Apply the deletion test
 
 For anything the design points at rather than states — research, notes, a

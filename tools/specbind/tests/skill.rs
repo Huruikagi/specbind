@@ -184,6 +184,9 @@ fn design_validation_puts_its_read_only_stop_rule_before_commands() {
     assert!(preamble.contains("Read-only stop rule — before any command"));
     assert!(preamble.contains("do not run a\ngate invalidation command"));
     assert!(preamble.contains("every gate and review record exactly as you found them"));
+
+    assert!(body.contains("Existing code is architectural context, not implementation evidence"));
+    assert!(body.contains("do not\njudge whether the code already does"));
 }
 
 #[test]

@@ -69,6 +69,11 @@ Requirement is substantively realized, the owned boundary is inspectable, the
 work decomposes into bounded tasks, the document carries its own meaning, and it
 fits the architecture it enters.
 
+Fitting the architecture may require reading existing code, but existing code
+is context rather than implementation evidence. This validation is deliberately
+available before implementation; the absence of the proposed behavior from the
+current code is expected and is not a Design finding by itself.
+
 ### The CLI checks are preconditions, not the review
 
 The skill runs `specbind check traceability <spec>` and
