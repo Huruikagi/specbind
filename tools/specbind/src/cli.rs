@@ -14,7 +14,7 @@ use crate::{
     config,
     contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
-    install,
+    install, migration,
     milestone::{self, MilestoneIssue},
     milestone_scope,
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
@@ -63,6 +63,107 @@ impl CommandOutput {
     fn no_change(code: &str, message: &str) -> Self {
         Self::success(format!("NO_CHANGE {code}: {message}\n").into_bytes())
     }
+}
+
+#[must_use]
+pub fn migrate_cc_sdd(start: &Path, apply: bool) -> CommandOutput {
+    let project_root = match config::project_root_from(start) {
+        Ok(project_root) => project_root,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let plan = match migration::plan(&project_root) {
+        Ok(plan) => plan,
+        Err(error) => {
+            return CommandOutput::failure(
+                "MIGRATION_PLAN_FAILED",
+                "Cannot plan cc-sdd migration.",
+                error.issues.iter().map(render_migration_finding).collect(),
+            );
+        }
+    };
+    if !plan.findings.is_empty() {
+        let mut details = migration_summary(&plan);
+        details.extend(plan.findings.iter().map(render_migration_finding));
+        details.push(format!("Guide: {}", plan.guide_url()));
+        details.push("No files were changed.".to_owned());
+        details.push(format!(
+            "Original {} tree remains intact.",
+            plan.legacy_root
+        ));
+        return CommandOutput::failure(
+            "MANUAL_MIGRATION_REQUIRED",
+            "cc-sdd migration requires semantic decisions.",
+            details,
+        );
+    }
+    if apply {
+        return CommandOutput::failure(
+            "MIGRATION_APPLY_UNAVAILABLE",
+            "Applying a cc-sdd migration is not implemented in this release.",
+            vec![
+                "The read-only plan completed without semantic findings.".to_owned(),
+                "No files were changed.".to_owned(),
+                format!("Original {} tree remains intact.", plan.legacy_root),
+            ],
+        );
+    }
+    render_migration_plan(&plan)
+}
+
+fn render_migration_plan(plan: &migration::MigrationPlan) -> CommandOutput {
+    let mut output = format!(
+        "OK CC_SDD_MIGRATION_PLANNED: Planned {} read-only action(s) from {}.\n",
+        plan.actions.len(),
+        escape(&plan.legacy_root)
+    );
+    push_field(&mut output, "Target", &plan.target_root);
+    push_field(
+        &mut output,
+        "Language",
+        match plan.language {
+            Some(config::ProjectLanguage::En) => "en",
+            Some(config::ProjectLanguage::Ja) => "ja",
+            None => "unknown",
+        },
+    );
+    push_inline_list(&mut output, "Agents", &plan.agents);
+    push_field(&mut output, "Specs", &plan.specs.len().to_string());
+    output.push_str("  Actions:\n");
+    for action in &plan.actions {
+        let source = action
+            .source
+            .as_deref()
+            .map_or_else(String::new, |value| format!(" source={}", escape(value)));
+        let target = action
+            .target
+            .as_deref()
+            .map_or_else(String::new, |value| format!(" target={}", escape(value)));
+        writeln!(
+            output,
+            "    - {}{source}{target} detail={}",
+            action.kind,
+            escape(&action.detail)
+        )
+        .expect("writing to a String cannot fail");
+    }
+    output.push_str("  No files were changed.\n");
+    CommandOutput::success(output.into_bytes())
+}
+
+fn migration_summary(plan: &migration::MigrationPlan) -> Vec<String> {
+    vec![
+        format!("Legacy root: {}", plan.legacy_root),
+        format!("Target root: {}", plan.target_root),
+        format!("Specs: {}", plan.specs.len()),
+    ]
+}
+
+fn render_migration_finding(finding: &migration::MigrationFinding) -> String {
+    let path = finding
+        .path
+        .as_ref()
+        .map_or_else(String::new, |path| format!(" {path}:"));
+    format!("{}{path} {}", finding.code, finding.message)
 }
 
 #[must_use]

@@ -105,12 +105,15 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 - Current install and lifecycle fixtures cover clean and locally modified
   product assets, existing project-owned settings, custom roots, project
   instruction blocks, Git guards, and portable path failures.
-- Outstanding for migration: legacy `.kiro`, `spec.json`, `tasks.md`, quick-start
-  block, and platform-specific conversion fixtures that belong to
-  `specbind migrate cc-sdd`.
+- Initial migration fixtures now cover the historical `.cc-sdd.json`, legacy
+  `.kiro` and `spec.json`, Codex and Claude Code skill detection, mixed language,
+  multiple Specs, Design traceability, customized rules, no-write planning,
+  and the guarded unavailable `--apply` path. Task conversion, exact quick-start
+  recognition, and platform-specific legacy layouts remain outstanding.
 - The accepted agent-assisted path is published in Japanese and English under
-  `docs/guide/`; implementation still needs stable finding codes, guide
-  selection, and retry-safe recognition of guided work.
+  `docs/guide/`; stable findings and language-aware guide selection are
+  implemented. Retry-safe recognition of guided target work remains
+  outstanding.
 
 ### 2. Read-only Rust core
 
@@ -127,10 +130,14 @@ product-asset refresh, project-owned template, rule, and adapter preservation,
 and optional marked project-instruction blocks. Initial installation still
 requires explicit agent and language values; TTY prompting is outstanding.
 
-`specbind migrate cc-sdd` and its plan-first, `--apply`-guarded conversion
-fixtures remain outstanding. [Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md)
-adds the supported Pages handoff for semantic findings and requires guided work
-to converge back into the read-only plan before deterministic finalization.
+`specbind migrate cc-sdd` now implements the read-only, fail-closed inventory
+and plan. It reads the original cc-sdd configuration name `.cc-sdd.json`, not
+the `.specbind.json` name introduced by the later repository-wide rename. The
+current `tools/cc-sdd` tree therefore remains a migration oracle for inherited
+artifact shapes, but Git history is authoritative for renamed brand-specific
+inputs. `--apply` and guided-work convergence remain outstanding.
+[Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md) defines the
+supported Pages handoff and deterministic rejoin boundary.
 
 ### 4. Native SpecBind operations
 

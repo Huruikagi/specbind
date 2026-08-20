@@ -128,7 +128,8 @@ documentation verification.
 
 ## Implementation status
 
-The GitHub Pages entry pages and initial bilingual playbook are published with
-this decision. CLI migration findings, guide selection, guided-work
-recognition, and `--apply` remain outstanding with the rest of
-`specbind migrate cc-sdd`.
+The GitHub Pages entry pages and bilingual playbook are published. The Preview
+CLI now provides the read-only `specbind migrate cc-sdd` inventory, stable
+semantic findings, language-aware guide selection, and no-write fixture
+coverage. Deterministic `--apply`, exact legacy-instruction recognition, and
+retry-safe recognition of guided target work remain outstanding.

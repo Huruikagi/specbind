@@ -9,13 +9,13 @@ specbind migrate cc-sdd
 
 !!! warning "Preview"
 
-    `specbind migrate cc-sdd`は、現在のプレビュー版CLIにはまだ実装していません。
-    このページ群では、コマンドの公開に先立って、確定した移行手順を公開しています。
+    現在のプレビュー版CLIでは、`specbind migrate cc-sdd`の読み取り専用計画だけを
+    利用できます。`--apply`はまだ利用できません。
     `specbind install`でcc-sddからの切り替えを試みないでください。
 
-    `specbind migrate cc-sdd` is not implemented in the current Preview CLI.
-    These pages publish the accepted migration procedure before the command is
-    released. Do not attempt an in-place cc-sdd cutover with `specbind install`.
+    The current Preview CLI provides only the read-only
+    `specbind migrate cc-sdd` plan. `--apply` is not available yet. Do not
+    attempt an in-place cc-sdd cutover with `specbind install`.
 
 ## 日本語
 
@@ -34,7 +34,7 @@ SpecBind supports two cc-sdd migration paths: deterministic automatic
 conversion, and an agent-assisted path for cases that require semantic
 decisions.
 
-If the future CLI reports `MANUAL_MIGRATION_REQUIRED`, give the complete CLI
+If the CLI reports `MANUAL_MIGRATION_REQUIRED`, give the complete CLI
 output and the English guide URL to Codex or Claude Code. The agent must return
 to SpecBind CLI validation before declaring the cutover complete.
 

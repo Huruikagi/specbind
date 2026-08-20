@@ -91,6 +91,11 @@ pub enum Command {
         #[command(subcommand)]
         command: ReleaseCommand,
     },
+    /// Plan or apply an explicit migration from a legacy product.
+    Migrate {
+        #[command(subcommand)]
+        command: MigrateCommand,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -308,5 +313,15 @@ pub enum ReleaseCommand {
     Finalize {
         #[arg(long)]
         log_entries: Option<String>,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum MigrateCommand {
+    /// Plan migration from the inherited cc-sdd project layout.
+    CcSdd {
+        /// Apply a freshly recomputed unambiguous plan.
+        #[arg(long)]
+        apply: bool,
     },
 }

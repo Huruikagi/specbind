@@ -18,6 +18,7 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
+- `tools/specbind/src/migration.rs` — read-only historical cc-sdd inventory, conversion plan, and agent-guide findings
 - `tools/specbind/src/args.rs` — command-line argument definitions, walkable by skill conformance tests
 - `tools/specbind/src/skill.rs` — embedded product-managed skills and per-agent rendering
 - `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads

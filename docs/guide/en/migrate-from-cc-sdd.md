@@ -8,9 +8,10 @@ ambiguous.
 
 !!! warning "Preview"
 
-    `specbind migrate cc-sdd` is not implemented in the current Preview CLI.
-    This page publishes the accepted procedure before the command is released.
-    Do not use ordinary `specbind install` to migrate `.kiro`.
+    The current Preview provides only the read-only
+    `specbind migrate cc-sdd` plan. `--apply` stops with
+    `MIGRATION_APPLY_UNAVAILABLE` and changes no files. Do not use ordinary
+    `specbind install` to migrate `.kiro`.
 
 ## Safety boundary
 
@@ -33,7 +34,8 @@ specbind migrate cc-sdd
 ```
 
 If every conversion is unambiguous, review the reported create, convert,
-preserve, and removal actions before applying them:
+preserve, and removal actions. Applying them is not available in the current
+Preview:
 
 ```sh
 specbind migrate cc-sdd --apply
@@ -81,7 +83,8 @@ The agent limits its work to the findings reported by the CLI.
 
 | cc-sdd input | SpecBind target | Boundary |
 | --- | --- | --- |
-| `spec.json` | `.specbind.json`, `spec.yaml` | Validate the complete phase and approval combination; do not recreate gate evidence |
+| `.cc-sdd.json` | `.specbind.json` | Validate legacy `kiroDir`, language, and agent values, then create a new SpecBind configuration |
+| `spec.json` | `spec.yaml` | Validate the complete phase and approval combination; do not recreate gate evidence |
 | `requirements.md` | `SpecBind Requirements` | Validate Requirement IDs from recognized headings and Acceptance Criteria |
 | `design.md` | `SpecBind Design` | Make Front Matter and body-marker Requirement mappings equal |
 | `tasks.md` | `tasks.yaml` | Convert only supported task grammar and preserve only provable progress |
@@ -129,6 +132,21 @@ state concurrently.
 
 ## Finding codes
 
+### MIGRATE_TARGET_ALREADY_EXISTS {#migrate-target-already-exists}
+
+`.specbind.json` or `.specbind` already exists. Reconcile the legacy input
+with the current target state without overwriting valid SpecBind artifacts.
+
+### MIGRATE_AGENT_SELECTION_REQUIRED / MIGRATE_AGENT_UNSUPPORTED {#migrate-agent-selection-required}
+
+The target cannot be established as Codex or Claude Code, or the configured
+legacy agent is outside SpecBind v1. Confirm the agent to install.
+
+### MIGRATE_LANGUAGE_UNSUPPORTED {#migrate-language-unsupported}
+
+The legacy configuration or Spec metadata uses a language outside SpecBind
+v1 English and Japanese. Confirm the target language and translation scope.
+
 ### MIGRATE_ACTIVE_SCOPE_AMBIGUOUS {#migrate-active-scope-ambiguous}
 
 Several legacy Specs appear active, but the repository does not prove that
@@ -152,6 +170,34 @@ scope.
 Legacy guidance in `AGENTS.md` or `CLAUDE.md` is not an exact known block. Do
 not delete text based on the word `kiro`; preserve surrounding project-owned
 instructions and confirm the intended removal with the user.
+
+### MIGRATE_RULE_REVIEW_REQUIRED / MIGRATE_TEMPLATE_REVIEW_REQUIRED {#migrate-rule-review-required}
+
+Legacy rules or templates exist. Compare them with current SpecBind defaults,
+retain project-owned policy or overrides, and do not copy procedural files
+wholesale.
+
+### MIGRATE_STEERING_REVIEW_REQUIRED {#migrate-steering-review-required}
+
+Legacy steering documents exist. Confirm each responsibility and stable
+`artifact_id`, then validate the resulting SpecBind Steering artifact.
+
+### MIGRATE_SPEC_DIRECTORY_INVALID / MIGRATE_SPEC_ID_INVALID {#migrate-spec-path-invalid}
+
+A legacy Spec path is not a regular directory or its ID is not canonical
+kebab-case. Do not follow links; confirm the intended Spec ID and location.
+
+### MIGRATE_SPEC_METADATA_MISSING / MIGRATE_SPEC_STATE_INVALID {#migrate-spec-state-invalid}
+
+`spec.json` is missing, or its phase, generated, and approved combination is
+not a valid legacy state. Investigate artifacts and history; do not invent gate
+evidence.
+
+### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
+
+A known legacy agent asset is not a regular directory, or unsupported content
+exists directly under `.kiro`. Inspect it individually and keep it outside
+automatic conversion and removal.
 
 ---
 

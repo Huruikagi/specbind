@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "agent": "claude-code-skills",
+  "lang": "en",
+  "kiroDir": ".kiro"
+}

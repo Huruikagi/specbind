@@ -7,8 +7,9 @@ use std::{
 use clap::Parser as _;
 use specbind::args::{
     AdapterCommand, ArtifactCommand, CheckCommand, Cli, Command, DirectCommand, GateCommand,
-    MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand, SchemaCommand, SpecCommand,
-    SpecCompletionCommand, SteeringCommand, TasksCommand, TemplateCommand,
+    MigrateCommand, MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand,
+    SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
+    TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -205,6 +206,12 @@ fn run_release(start: &Path, command: ReleaseCommand) -> CommandOutput {
     }
 }
 
+fn run_migrate(start: &Path, command: &MigrateCommand) -> CommandOutput {
+    match command {
+        MigrateCommand::CcSdd { apply } => specbind::cli::migrate_cc_sdd(start, *apply),
+    }
+}
+
 fn main() -> ExitCode {
     let cli = Cli::parse();
     let start = match std::env::current_dir() {
@@ -243,6 +250,7 @@ fn main() -> ExitCode {
         Command::Spec { command } => run_spec(&start, command),
         Command::Milestone { command } => run_milestone(&start, command),
         Command::Release { command } => run_release(&start, command),
+        Command::Migrate { command } => run_migrate(&start, &command),
     };
     if let Err(error) = io::stdout().write_all(&output.stdout) {
         eprintln!("ERROR STDOUT_WRITE_FAILED: {error}");
