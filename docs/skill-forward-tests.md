@@ -251,29 +251,30 @@ runs record their own builds below.
 | R3 | pass | pass |
 | R1, R2, R4, R5 | pass | |
 | G1 | pass | pass |
-| C1, C2, C3 | pass | |
+| C1, C2, C3 | pass | C1, C3 pass |
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
-| D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
+| D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | not measured — the host safety review blocked the confirmed invalidation twice |
 | DS1 | | pass — workflow; no investigation dispatch |
 | DS2 – DS6 | | |
-| T1, T3, T4, T5 | | |
+| T1, T3, T4, T5 | | T4 pass |
 | T2 | pass | pass |
 | X1 | | pass |
-| X2, X4 | | |
+| X2, X4 | | X2 pass |
 | X3 | pass | |
 | I2, I3 | | pass |
-| I1, I4, I5 | | |
+| I1, I4, I5 | | I1, I4 pass |
 | DB1 | | pass |
 | RT1, RT2 | | |
-| VD1, VD2 | | |
+| VD1, VD2 | | VD2 pass |
 | RL2, RL3 | | pass |
 | RL1 | pass | pass |
 | VI1 – VI3 | | pass |
 | VC1, VC2 | | pass |
 
 An empty cell means that scenario has not been run under that agent. Codex now
-has targeted results for R3, G1, DS1, T2, X1, I2, I3, DB1, VI1–VI3, VC1–VC2,
-and RL1–RL3; the remaining empty Codex cells are still unmeasured.
+has targeted results for R3, G1, C1, C3, DS1, T2, T4, X1, X2, I1–I4, DB1,
+VD2, VI1–VI3, VC1–VC2, and RL1–RL3; the remaining empty Codex cells are still
+unmeasured.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
@@ -353,15 +354,32 @@ policy commit before acceptance. The rerun created the confirmed local tag,
 could not verify it on the absent `origin`, and correctly left the milestone
 active with no archive or log.
 
-The remaining design scenarios DS2 through DS6, tasks scenarios T1 and T3
-through T5, contract review scenarios X2 and X4, implementation scenarios I1,
-I4, and I5, review scenarios RT1 and RT2, validation scenarios
-VI1 through VI3, claim verification scenarios VC1 and VC2, design validation
-scenarios VD1 and VD2, and release scenarios RL2 and RL3 were specified after
-that run, together
-with the `specbind-design`, `specbind-tasks`, `specbind-contract-review`, and
-`specbind-implement` skills, and have not been measured under either agent. D7 became measurable at
-the same time and is worth re-running.
+The next Codex batch used `gpt-5.6-terra` at medium reasoning. C1, T4, X2, and
+I4 passed against `eba2faf`: discovery left its draft uncommitted, the Tasks
+rewind preserved Requirements, Design, and the accepted Contract Review, the
+cross-Spec review surfaced the out-of-scope `checkout` consumer without editing
+it, and implementation left the unrelated dirty edit byte-for-byte intact.
+
+Three findings were fixed and re-run. C3 first exposed a fixture defect: the
+Brief helper copied its Problem into Desired outcome, contradicting the scoped
+quantity cap. `476985b` gave every recipe an explicit desired outcome; C3 then
+authored an uncommitted Requirements draft and left the gate unapproved when
+approval was declined. VD2 first returned `NOT_READY` and then invalidated the
+Design gate, deleting the accepted Contract Review despite the read-only
+contract. `476985b` moved the no-invalidation rule before all commands; the
+rerun returned the same verdict while preserving every gate and review record.
+I1 first dispatched an implementer but requested an immediate return before
+verification, leaving a partial change and a pending task. `d5878f7` made
+waiting for the implementer's verified structured result explicit; the rerun
+used three recorded contexts (driver, implementer, reviewer), completed the
+task, and stopped in `implementation` without a completion handshake.
+
+D7 remains unmeasured under Codex: the agent correctly stated the Tasks rewind
+cost, but the host safety review rejected the confirmed invalidation twice.
+That is an execution-environment stop, not a product verdict. The Quick and
+Batch additions were intentionally deferred after this batch produced three
+actionable findings; the matrix remains a measurement record rather than a
+coverage target.
 
 Eight product defects surfaced: the missing workflow-entry condition, its
 missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
