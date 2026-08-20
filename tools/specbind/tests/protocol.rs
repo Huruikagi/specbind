@@ -64,3 +64,19 @@ fn rejects_unknown_selectors() {
         "selectors are exact lowercase kebab-case identifiers"
     );
 }
+
+#[test]
+fn requirements_review_does_not_authorize_unsupported_retirement() {
+    let content = protocol::read("requirements-review")
+        .expect("requirements review protocol")
+        .content();
+
+    assert!(
+        content.contains("does not yet support retiring"),
+        "the protocol must name the current retirement boundary"
+    );
+    assert!(
+        !content.contains("removing it is correct"),
+        "the protocol must not contradict the requirements skill's retirement stop"
+    );
+}

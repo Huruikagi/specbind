@@ -136,6 +136,19 @@ fn every_named_protocol_selector_and_rule_path_exists() {
     }
 }
 
+#[test]
+fn requirements_review_findings_require_an_explicit_disposition() {
+    let body = skill::find("specbind-requirements")
+        .expect("requirements skill")
+        .body()
+        .expect("body");
+
+    assert!(
+        body.contains("[BLOCKING|DEFERRED|RESOLVED]"),
+        "the requirements report shape must carry Decision 0122 dispositions"
+    );
+}
+
 /// Extracts each literal invocation: a standalone inline code span or one line
 /// of a shell fence, beginning with the exact token `specbind `.
 fn invocations(body: &str) -> Vec<Vec<String>> {

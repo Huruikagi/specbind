@@ -236,6 +236,7 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | --- | --- | --- |
 | D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass | |
 | R1, R2, R3, R4, R5 | pass | |
+| G1 | pass | |
 | C1, C2, C3 | pass | |
 | D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
 | D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | |
@@ -266,6 +267,14 @@ tasks skill said nothing about YAML quoting, and the T2 row was measuring a stop
 rather than the ordering that stop was protecting. A third observation is
 recorded in the driving rules above, because one run installed packages into the
 host environment.
+
+R3 and G1 were re-measured on 2026-08-20 against `e1f024d`, as Claude Code, and
+both passed. R3 left the established Requirements and gate untouched when asked
+to retire behavior. G1 read the Brief and full Roadmap scope before Requirements
+existed, dispatched two independent repository reads, and created no
+Requirements, Research, or gate evidence. The first G1 attempt reported in
+Japanese against the English fixture and was discarded as host-instruction
+contamination; a fresh fixture and session produced the recorded pass.
 
 The design scenarios DS1 through DS6, the tasks scenarios T1 through T5, and the
 contract review scenarios X1 through X4, the implementation scenarios I1 through I5, the review and debug scenarios RT1, RT2, and DB1, the validation scenarios VI1 through VI3, the claim verification scenarios VC1 and VC2, the design validation scenarios VD1 and VD2, and the release scenarios RL1 through RL3 were specified after that run, together
