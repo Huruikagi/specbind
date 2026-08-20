@@ -1,6 +1,6 @@
 ---
 name: specbind-batch-plan
-description: Take every Spec-backed item in the active milestone through Tasks approval in one run. Use only for an all-Spec milestone request; do not use for one named or targeted item.
+description: Take every Spec-backed item in the active milestone through to approved plans in one run, ending at Tasks approval. Use only for an all-Spec milestone request; do not use for one named or targeted item.
 ---
 
 # Take the whole milestone through to approved task plans

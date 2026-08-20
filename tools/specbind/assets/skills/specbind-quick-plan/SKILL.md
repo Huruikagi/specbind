@@ -1,6 +1,6 @@
 ---
 name: specbind-quick-plan
-description: Take exactly one named or targeted Spec-backed item from its brief through Tasks approval using delegated gates. Use for one item; do not use for every Spec in a milestone.
+description: Take exactly one named or targeted Spec-backed item through to an approved plan in one go, ending at Tasks approval. Use for one item; do not use for every Spec in a milestone.
 argument-hint: "<spec>"
 ---
 
