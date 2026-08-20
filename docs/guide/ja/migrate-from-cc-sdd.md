@@ -9,9 +9,10 @@ SpecBindが自動で変換するのは、意味を機械的に確認できる入
 
 !!! warning "Preview"
 
-    現在のプレビュー版では、findingのない既知の設定・agent資産だけ`--apply`
-    できます。旧Specの成果物変換はagent-assisted経路です。通常の
-    `specbind install`で`.kiro`を移行しないでください。
+    旧Specなどの意味判断はagent-assisted経路です。`specbind install`は
+    `.kiro`を変換しませんが、読み取り専用planの後で、合意した言語とagentの
+    SpecBind targetを準備するために使えます。移行完了の判定と旧資産の退役には、
+    必ずこのページのresolution受理と`--apply`へ戻ってください。
 
 ## 安全境界
 
@@ -100,7 +101,46 @@ Contractが存在しない場合、エージェントは「影響なし」と決
 作ることはしません。現在のRequirementsとDesignをもとに、通常のSpecBind Design
 ワークフローでContractを作り、必要なレビューと承認をやり直します。
 
-## 5. CLI検証へ戻る
+## 5. 移行判断をCLIへ受け渡す
+
+まず、合意した言語とagentでSpecBindのtargetを準備し、変換した成果物を通常のCLIで
+検証します。`.kiro`を入力にした変換処理としてではなく、SpecBind側の土台を作る
+操作として`specbind install`を使います。変換結果をレビューし、cleanなcommitを
+回復点にしてください。
+
+次に、エージェントは現在のfindingをすべて正確に列挙したstrict JSON候補を、
+プロジェクト外の一時ファイルまたはstdinからCLIへ渡します。
+
+```json
+{
+  "schemaVersion": 1,
+  "assessment": "旧ルールを比較し、現在も必要な方針だけをSpecBind用に書き直した。",
+  "target": { "language": "ja", "agents": ["codex"] },
+  "resolutions": [
+    {
+      "code": "MIGRATE_RULE_REVIEW_REQUIRED",
+      "path": ".kiro/settings/rules",
+      "disposition": "converted",
+      "targets": [".specbind/settings/rules/project.md"]
+    }
+  ]
+}
+```
+
+```sh
+specbind migrate cc-sdd --accept-resolution ../cc-sdd-resolution.json
+```
+
+`converted`は具体的なtargetを1件以上必要とします。意図的に移行しないfindingは
+`not_migrated`とし、`targets`を空にします。候補は現在のsemantic findingを過不足なく
+含む必要があり、安全性findingを判断だけで抑制することはできません。
+
+CLIはsourceとtargetを再検証し、fingerprintを自分で計算して
+`.specbind/state/cc-sdd-migration.yaml`へ保存します。このファイルは手編集せず、内容を
+レビューしてcommitしてください。sourceまたはtargetが後で変わればresolutionはstaleに
+なり、元のfindingが再表示されます。
+
+## 6. CLI検証へ戻る
 
 エージェントによる作業が終わったら、もう一度、読み取り専用の計画を実行します。
 
@@ -123,7 +163,13 @@ specbind spec status <spec>
 specbind milestone status
 ```
 
-## 6. 旧ワークフローを止める
+resolution recordをcommitしたcleanな状態で、残る決定的な処理を適用します。
+
+```sh
+specbind migrate cc-sdd --apply
+```
+
+## 7. 旧ワークフローを止める
 
 変換後の状態が有効だと確認でき、あなたが切り替えを承認したあとで、はじめて旧
 資産を取り除きます。取り除く対象は、CLIが計画した、内容が正確に分かっている
@@ -209,6 +255,12 @@ Steeringとして検証してください。
 既知の旧agent資産が通常ディレクトリではない、未知の`kiro-*`資産がある、または
 `.kiro`直下に未対応の内容があります。対象を個別に調べ、自動除去や自動変換の
 対象に加えません。
+
+### MIGRATE_RESOLUTION_STALE / MIGRATE_RESOLUTION_STATE_INVALID {#migrate-resolution-stale}
+
+受理済みの移行判断に対応するsource、target、finding、または選択済みinstallが変わったか、
+CLI所有のstateが壊れています。stateを手編集せず、現在のfindingをもう一度レビューして、
+新しい外部候補を`--accept-resolution`で受理し直してください。
 
 ---
 

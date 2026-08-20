@@ -1,4 +1,4 @@
-//! Read-only cc-sdd migration inventory and planning.
+//! cc-sdd migration inventory, planning, and deterministic application.
 
 use std::{collections::BTreeSet, fmt, fs, path::Path};
 
@@ -9,7 +9,7 @@ use crate::{
     artifacts,
     config::ProjectLanguage,
     install::{self, Agent, InstallInputs, PlanAction},
-    repository,
+    migration_resolution, repository,
 };
 
 pub const GUIDE_NEUTRAL: &str = "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/";
@@ -57,6 +57,13 @@ pub struct MigrationOutcome {
     pub installed_files: usize,
     pub removed_legacy_assets: usize,
     pub unchanged: bool,
+}
+
+/// Returns the unresolved source plan before any accepted semantic resolution
+/// record is considered. Resolution acceptance uses this to avoid allowing an
+/// older record to authorize its own replacement.
+pub(crate) fn unresolved_plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
+    plan_inner(project_root)
 }
 
 impl MigrationPlan {
@@ -142,6 +149,12 @@ struct LegacyConfigValues {
 /// paths. Semantic ambiguity is returned in `MigrationPlan::findings` so the
 /// CLI can route it to the agent-assisted guide.
 pub fn plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
+    let mut plan = plan_inner(project_root)?;
+    migration_resolution::reconcile(project_root, &mut plan);
+    Ok(plan)
+}
+
+fn plan_inner(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     let config = read_legacy_config(project_root)?;
     let legacy_root_path = project_root.join(&config.root);
     require_directory(

@@ -323,5 +323,8 @@ pub enum MigrateCommand {
         /// Apply a freshly recomputed unambiguous plan.
         #[arg(long)]
         apply: bool,
+        /// Accept an agent-authored migration resolution candidate from an external file or stdin.
+        #[arg(long, value_name = "PATH_OR_STDIN", conflicts_with = "apply")]
+        accept_resolution: Option<String>,
     },
 }

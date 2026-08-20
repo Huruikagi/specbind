@@ -18,7 +18,8 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
 - `tools/specbind/src/artifacts.rs` — spec-local OKF discovery, metadata profiles, inventory, gate-input resolution, and traceability I/O
 - `tools/specbind/src/install.rs` — installation planning, guarded asset application, and repository guards
-- `tools/specbind/src/migration.rs` — read-only historical cc-sdd inventory, conversion plan, and agent-guide findings
+- `tools/specbind/src/migration.rs` — historical cc-sdd inventory, conversion plan, and deterministic apply
+- `tools/specbind/src/migration_resolution.rs` — guarded agent-resolution acceptance and source/target freshness checks
 - `tools/specbind/src/args.rs` — command-line argument definitions, walkable by skill conformance tests
 - `tools/specbind/src/skill.rs` — embedded product-managed skills and per-agent rendering
 - `tools/specbind/src/protocol.rs` — embedded product-protocol registry and raw reads
@@ -219,3 +220,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0123](./design/decisions/0123-reverse-traceability-and-unconsumed-seams.md) | Accepted | Reverse task-scope traceability and unconsumed exported seams |
 | [0124](./design/decisions/0124-pre-1.0-binary-release-line.md) | Accepted | Pre-1.0 public binary release and distribution contract |
 | [0125](./design/decisions/0125-agent-assisted-cc-sdd-migration.md) | Accepted | Agent-assisted cc-sdd migration and GitHub Pages handoff contract |
+| [0126](./design/decisions/0126-cli-owned-cc-sdd-migration-resolution.md) | Accepted | CLI-owned accepted cc-sdd migration resolution and freshness contract |

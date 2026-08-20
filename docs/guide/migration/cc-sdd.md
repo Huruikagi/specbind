@@ -9,13 +9,12 @@ specbind migrate cc-sdd
 
 !!! warning "Preview"
 
-    現在のプレビュー版CLIでは、findingのない既知の設定・agent資産だけ
-    `--apply`できます。旧Specの成果物変換は、引き続きガイドに従ってください。
-    `specbind install`でcc-sddからの切り替えを試みないでください。
+    旧Specなどのsemantic findingはガイドに従って変換し、外部JSON候補を
+    `--accept-resolution`でCLI所有の状態へ受け渡してから`--apply`へ戻ります。
 
-    The current Preview CLI can `--apply` only finding-free, known
-    configuration and agent assets. Legacy Spec conversion still follows the
-    guide. Do not attempt an in-place cc-sdd cutover with `specbind install`.
+    Convert semantic findings such as legacy Specs through the guide, hand an
+    external JSON candidate to CLI-owned state with `--accept-resolution`, then
+    return to `--apply`.
 
 ## 日本語
 

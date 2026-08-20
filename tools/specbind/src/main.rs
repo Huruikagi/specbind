@@ -208,7 +208,10 @@ fn run_release(start: &Path, command: ReleaseCommand) -> CommandOutput {
 
 fn run_migrate(start: &Path, command: &MigrateCommand) -> CommandOutput {
     match command {
-        MigrateCommand::CcSdd { apply } => specbind::cli::migrate_cc_sdd(start, *apply),
+        MigrateCommand::CcSdd {
+            apply,
+            accept_resolution,
+        } => specbind::cli::migrate_cc_sdd(start, *apply, accept_resolution.as_deref()),
     }
 }
 

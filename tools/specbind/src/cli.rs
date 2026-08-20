@@ -14,7 +14,7 @@ use crate::{
     config,
     contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
-    install, migration,
+    install, migration, migration_resolution,
     milestone::{self, MilestoneIssue},
     milestone_scope,
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},
@@ -66,11 +66,34 @@ impl CommandOutput {
 }
 
 #[must_use]
-pub fn migrate_cc_sdd(start: &Path, apply: bool) -> CommandOutput {
+pub fn migrate_cc_sdd(start: &Path, apply: bool, accept_resolution: Option<&str>) -> CommandOutput {
     let project_root = match config::project_root_from(start) {
         Ok(project_root) => project_root,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
+    if let Some(source) = accept_resolution {
+        let candidate =
+            match read_external_input(&MIGRATION_RESOLUTION_INPUT, start, &project_root, source) {
+                Ok(candidate) => candidate,
+                Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+            };
+        return match migration_resolution::accept(&project_root, &candidate) {
+            Ok(accepted) => CommandOutput::success(
+                format!(
+                    "OK CC_SDD_MIGRATION_RESOLUTION_ACCEPTED: Accepted the current cc-sdd migration resolution.\n  Path: {}\n  Accepted at: {}\n  Resolutions: {}\n",
+                    accepted.path,
+                    accepted.accepted_at,
+                    accepted.resolutions
+                )
+                .into_bytes(),
+            ),
+            Err(error) => CommandOutput::failure(
+                "MIGRATION_RESOLUTION_ACCEPT_FAILED",
+                "Cannot accept cc-sdd migration resolution.",
+                error.issues.iter().map(render_migration_finding).collect(),
+            ),
+        };
+    }
     let plan = match migration::plan(&project_root) {
         Ok(plan) => plan,
         Err(error) => {
@@ -1496,6 +1519,15 @@ const REVIEW_CANDIDATE_INPUT: ExternalInputSpec = ExternalInputSpec {
     stdin_subject: "review candidate",
     subject: "review candidate",
     capitalized: "Review candidate",
+    require_external: true,
+};
+
+const MIGRATION_RESOLUTION_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "MIGRATION_RESOLUTION_READ_FAILED",
+    target_invalid: "MIGRATION_RESOLUTION_TARGET_INVALID",
+    stdin_subject: "migration resolution candidate",
+    subject: "migration resolution candidate",
+    capitalized: "Migration resolution candidate",
     require_external: true,
 };
 

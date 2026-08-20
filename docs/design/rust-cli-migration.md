@@ -49,7 +49,7 @@ specbind
 ├── spec <operation>
 ├── milestone <operation>
 ├── release <preflight|finalize>
-└── migrate cc-sdd [--apply]  # accepted, not yet implemented
+└── migrate cc-sdd [--apply | --accept-resolution <path|->]
 ```
 
 There is no option-only compatibility alias. `specbind install` performs initial installation and idempotent agent-asset refresh; the command name `update` remains available for a future binary-update workflow. Lifecycle commands are non-interactive. The installer may prompt only in a TTY; non-TTY execution supplies its choices explicitly.
@@ -100,7 +100,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 ### 1. Contract capture
 
-- Complete for the accepted SpecBind interface: Decisions 0075 through 0125
+- Complete for the accepted SpecBind interface: Decisions 0075 through 0126
   classify the retained, replaced, and removed product behavior.
 - Current install and lifecycle fixtures cover clean and locally modified
   product assets, existing project-owned settings, custom roots, project
@@ -140,9 +140,13 @@ artifact shapes, but Git history is authoritative for renamed brand-specific
 inputs. `--apply` now installs the unambiguous configuration-and-agent subset,
 retires exact known legacy skills only after successful installation, and
 recognizes its own converged target on retry. Legacy Spec conversion and
-guided-work convergence remain outstanding.
+other semantic conversion remain agent-authored. The CLI now accepts a strict
+external resolution candidate, persists CLI-computed source and target
+fingerprints, and reopens findings when that accepted work becomes stale.
 [Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md) defines the
-supported Pages handoff and deterministic rejoin boundary.
+supported Pages handoff and deterministic rejoin boundary; [Decision
+0126](./decisions/0126-cli-owned-cc-sdd-migration-resolution.md) defines the
+accepted resolution lifecycle.
 
 ### 4. Native SpecBind operations
 

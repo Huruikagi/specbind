@@ -5,7 +5,7 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::repository::{self, RepositoryError};
 
@@ -16,7 +16,7 @@ pub struct ProjectPaths {
     pub language: ProjectLanguage,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ProjectLanguage {
     En,

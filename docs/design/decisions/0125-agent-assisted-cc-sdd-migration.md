@@ -129,11 +129,8 @@ documentation verification.
 ## Implementation status
 
 The GitHub Pages entry pages and bilingual playbook are published. The Preview
-CLI now provides the read-only `specbind migrate cc-sdd` inventory, stable
-semantic findings, language-aware guide selection, and no-write fixture
-coverage. `--apply` handles the finding-free configuration-and-agent subset,
-requires a committed clean Git recovery boundary, removes only exact known
-Git-tracked legacy skills after target installation, and recognizes its
-converged target on retry. Legacy Spec conversion, exact legacy-instruction
-recognition, and retry-safe recognition of agent-authored target artifacts
-remain outstanding.
+CLI provides the read-only inventory, stable semantic findings, language-aware
+guide selection, guarded deterministic `--apply`, and the Decision 0126
+candidate-acceptance handshake for retry-safe recognition of agent-authored
+work. Exact legacy-instruction recognition and mechanical legacy Spec
+conversion remain outside the automatic subset.

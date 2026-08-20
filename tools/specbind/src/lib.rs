@@ -15,6 +15,7 @@ pub mod freshness;
 pub(crate) mod guarded_fs;
 pub mod install;
 pub mod migration;
+pub mod migration_resolution;
 pub mod milestone;
 pub mod milestone_scope;
 pub mod milestone_status;

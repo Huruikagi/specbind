@@ -8,9 +8,11 @@ ambiguous.
 
 !!! warning "Preview"
 
-    The current Preview can `--apply` only finding-free, known configuration
-    and agent assets. Legacy Spec conversion uses the agent-assisted path. Do
-    not use ordinary `specbind install` to migrate `.kiro`.
+    Semantic work such as legacy Spec conversion uses the agent-assisted path.
+    `specbind install` does not convert `.kiro`, but after the read-only plan it
+    may prepare the selected SpecBind language and agents. Always return to the
+    resolution acceptance and `--apply` steps on this page before claiming the
+    cutover is complete or retiring legacy assets.
 
 ## Safety boundary
 
@@ -102,7 +104,49 @@ A missing Contract is not proof that a Spec has no external effect. Create it
 through the normal SpecBind Design workflow from current Requirements and
 Design, then repeat the required review and approval steps.
 
-## 5. Return to CLI validation
+## 5. Hand the migration decisions to the CLI
+
+First prepare the SpecBind target with the selected language and agents and
+validate the converted artifacts through ordinary CLI operations. Use
+`specbind install` only to establish the SpecBind-side foundation, not as a
+`.kiro` converter. Review and commit the converted target so Git provides a
+clean recovery point.
+
+The agent then gives the CLI a strict JSON candidate that exactly enumerates
+all current findings. Read it from an external temporary file or standard
+input:
+
+```json
+{
+  "schemaVersion": 1,
+  "assessment": "Compared the legacy rules and rewrote only current project policy.",
+  "target": { "language": "en", "agents": ["codex"] },
+  "resolutions": [
+    {
+      "code": "MIGRATE_RULE_REVIEW_REQUIRED",
+      "path": ".kiro/settings/rules",
+      "disposition": "converted",
+      "targets": [".specbind/settings/rules/project.md"]
+    }
+  ]
+}
+```
+
+```sh
+specbind migrate cc-sdd --accept-resolution ../cc-sdd-resolution.json
+```
+
+`converted` requires at least one concrete target. Use `not_migrated` with an
+empty `targets` list for an intentional omission. The candidate must cover all
+current semantic findings exactly; it cannot waive a mechanical safety
+finding.
+
+The CLI revalidates the sources and targets, computes its own fingerprints,
+and writes `.specbind/state/cc-sdd-migration.yaml`. Do not hand-edit this file.
+Review and commit it. A later source or target change makes the resolution
+stale and restores the original findings.
+
+## 6. Return to CLI validation
 
 After guided work, run the read-only plan again:
 
@@ -125,7 +169,14 @@ specbind spec status <spec>
 specbind milestone status
 ```
 
-## 6. Retire the legacy workflow
+From the clean commit containing the resolution record, apply the remaining
+deterministic work:
+
+```sh
+specbind migrate cc-sdd --apply
+```
+
+## 7. Retire the legacy workflow
 
 Only after the converted state is valid and the user confirms cutover may the
 CLI remove exact known `kiro-*` agent assets and an exact known legacy
@@ -215,6 +266,13 @@ evidence.
 A known legacy agent asset is not a regular directory, an unknown `kiro-*`
 asset exists, or unsupported content exists directly under `.kiro`. Inspect it
 individually and keep it outside automatic conversion and removal.
+
+### MIGRATE_RESOLUTION_STALE / MIGRATE_RESOLUTION_STATE_INVALID {#migrate-resolution-stale}
+
+A source, target, finding, or selected installation covered by the accepted
+resolution changed, or the CLI-owned state is invalid. Do not hand-edit the
+state. Review the current findings and accept a new external candidate with
+`--accept-resolution`.
 
 ---
 

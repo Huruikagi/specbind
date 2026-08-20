@@ -171,6 +171,131 @@ fn existing_nonconverged_target_is_never_overwritten() {
 }
 
 #[test]
+fn accepts_agent_resolution_and_rejoins_deterministic_apply() {
+    let root = migration_fixture("minimal");
+    write_file(
+        root.path(),
+        ".kiro/settings/rules/project.md",
+        "# Legacy project rule\n",
+    );
+    git_commit_all(root.path());
+
+    let mut install = Command::cargo_bin("specbind").expect("specbind binary should build");
+    install
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success();
+    write_file(
+        root.path(),
+        ".specbind/settings/rules/project.md",
+        "# SpecBind project rule\n",
+    );
+    git_commit_all(root.path());
+
+    let candidate = r#"{
+  "schemaVersion": 1,
+  "assessment": "The project-owned rule was reviewed and rewritten for SpecBind.",
+  "target": { "language": "en", "agents": ["codex"] },
+  "resolutions": [{
+    "code": "MIGRATE_RULE_REVIEW_REQUIRED",
+    "path": ".kiro/settings/rules",
+    "disposition": "converted",
+    "targets": [".specbind/settings/rules/project.md"]
+  }]
+}"#;
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--accept-resolution", "-"])
+        .write_stdin(candidate)
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "OK CC_SDD_MIGRATION_RESOLUTION_ACCEPTED",
+        ));
+    assert!(
+        root.path()
+            .join(".specbind/state/cc-sdd-migration.yaml")
+            .is_file()
+    );
+
+    let mut plan = Command::cargo_bin("specbind").expect("specbind binary should build");
+    plan.current_dir(root.path())
+        .args(["migrate", "cc-sdd"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("OK CC_SDD_MIGRATION_PLANNED"))
+        .stderr("");
+
+    git_commit_all(root.path());
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("OK CC_SDD_MIGRATION_APPLIED"));
+    assert!(!root.path().join(".agents/skills/kiro-spec-init").exists());
+    assert!(root.path().join(".kiro/settings/rules/project.md").exists());
+}
+
+#[test]
+fn changed_resolution_input_restores_the_finding() {
+    let root = migration_fixture("minimal");
+    write_file(
+        root.path(),
+        ".kiro/settings/rules/project.md",
+        "# Legacy project rule\n",
+    );
+    git_commit_all(root.path());
+    let mut install = Command::cargo_bin("specbind").expect("specbind binary should build");
+    install
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success();
+    write_file(
+        root.path(),
+        ".specbind/settings/rules/project.md",
+        "# SpecBind project rule\n",
+    );
+    git_commit_all(root.path());
+
+    let candidate = r#"{
+  "schemaVersion": 1,
+  "assessment": "Reviewed.",
+  "target": { "language": "en", "agents": ["codex"] },
+  "resolutions": [{
+    "code": "MIGRATE_RULE_REVIEW_REQUIRED",
+    "path": ".kiro/settings/rules",
+    "disposition": "converted",
+    "targets": [".specbind/settings/rules/project.md"]
+  }]
+}"#;
+    let mut accept = Command::cargo_bin("specbind").expect("specbind binary should build");
+    accept
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--accept-resolution", "-"])
+        .write_stdin(candidate)
+        .assert()
+        .success();
+
+    write_file(
+        root.path(),
+        ".kiro/settings/rules/project.md",
+        "# Legacy project rule changed\n",
+    );
+    let mut plan = Command::cargo_bin("specbind").expect("specbind binary should build");
+    plan.current_dir(root.path())
+        .args(["migrate", "cc-sdd"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MIGRATE_RULE_REVIEW_REQUIRED"))
+        .stderr(predicate::str::contains("MIGRATE_RESOLUTION_STALE"));
+}
+
+#[test]
 fn does_not_invent_a_ready_state_invariant_that_cc_sdd_never_maintained() {
     let root = migration_fixture("minimal");
     fs::create_dir_all(root.path().join(".kiro/specs/checkout"))
@@ -322,4 +447,10 @@ fn git(root: &Path, arguments: &[&str]) {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+}
+
+fn write_file(root: &Path, relative: &str, content: &str) {
+    let path = root.join(relative);
+    fs::create_dir_all(path.parent().expect("fixture file parent")).expect("create fixture parent");
+    fs::write(path, content).expect("write fixture file");
 }
