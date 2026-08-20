@@ -39,6 +39,10 @@ Present, before doing anything:
 Take **one confirmation** for the run. Asking again at each gate is the
 deliberate flow with extra steps.
 
+The request to run this skill is **not** that confirmation. Present the scope
+above, stop, and wait for the user's answer before dispatching any phase or
+approving any gate.
+
 **Declining is a legitimate answer and does not end the run.** Without
 delegation, sequence the phases exactly as below and pause at each gate for an
 explicit approval. The orchestration is still worth something.

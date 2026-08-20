@@ -33,6 +33,10 @@ and that each acceptance records this workflow by name in the gate's evidence.
 
 Take **one confirmation** for the run.
 
+The request to run this skill is **not** that confirmation. Present the scope
+above, stop, and wait for the user's answer before dispatching any phase or
+approving any gate.
+
 Declining does not end the run; it means pausing at each gate for an explicit
 approval. At milestone scale that is a lot of pauses, so say so before assuming
 it is what the user wants.
