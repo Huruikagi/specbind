@@ -31,6 +31,7 @@ agent's root instruction file. Existing project-owned settings are kept.
 | `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 17 embedded skills. |
 | `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 17 embedded skills. |
 | `.codex/agents/specbind-*.toml` | Product-managed Codex role adapters for planning, implementation, review, diagnosis, and bounded research; model capability may be overridden through `.specbind.json`. |
+| `.claude/agents/specbind-*.md` | Product-managed Claude Code role adapters for the same five roles; model capability may be overridden through `.specbind.json`. |
 | `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
 
 The binary also embeds six Spec scaffolds (`brief`, `research`, `requirements`,

@@ -26,13 +26,13 @@ subagent starts.
 
 Product-managed skills may name these registered roles:
 
-| Role | Work | Codex default |
-| --- | --- | --- |
-| `specbind-planner` | planning phases and contract review | `gpt-5.6-terra`, `medium` |
-| `specbind-implementer` | one implementation or repair task | `gpt-5.6-terra`, `medium` |
-| `specbind-reviewer` | independent task review and validation evidence | `gpt-5.6-terra`, `medium` |
-| `specbind-debugger` | fresh root-cause diagnosis | `gpt-5.6-sol`, `high` |
-| `specbind-researcher` | bounded read-only investigation | `gpt-5.6-luna`, `medium` |
+| Role | Work | Codex default | Claude Code default |
+| --- | --- | --- | --- |
+| `specbind-planner` | planning phases and contract review | `gpt-5.6-terra`, `medium` | `sonnet` |
+| `specbind-implementer` | one implementation or repair task | `gpt-5.6-terra`, `medium` | `sonnet` |
+| `specbind-reviewer` | independent task review and validation evidence | `gpt-5.6-terra`, `medium` | `sonnet` |
+| `specbind-debugger` | fresh root-cause diagnosis | `gpt-5.6-sol`, `high` | `opus` |
+| `specbind-researcher` | bounded read-only investigation | `gpt-5.6-luna`, `medium` | `haiku` |
 
 The names describe semantic roles, not a host mechanism. A skill uses the
 registered role when the host provides it and otherwise dispatches an ordinary
@@ -69,12 +69,30 @@ The role and agent sets are closed. Reasoning effort is one of `none`, `low`,
 `medium`, `high`, `xhigh`, or `max`; model identifiers are non-empty portable
 tokens rather than a hard-coded provider catalog.
 
+Each host's override surface carries only the fields that host actually
+renders. A Claude Code subagent definition pins a model and has no
+reasoning-effort field, so `agentRoles.claudeCode` accepts `model` alone:
+
+```json
+{
+  "agentRoles": {
+    "claudeCode": {
+      "researcher": { "model": "sonnet" }
+    }
+  }
+}
+```
+
+A `reasoningEffort` under `claudeCode` is rejected rather than accepted and
+silently dropped, because an accepted setting that never reaches the host would
+misrepresent the configured capability.
+
 An override is policy, not availability proof. The host remains responsible
 for whether the configured model is available to the user. A model-start
 failure is reported as an environment or configuration failure; a skill does
 not silently change the configured capability.
 
-### Codex rendering and ownership
+### Host rendering and ownership
 
 When Codex is selected, `specbind install` renders:
 
@@ -86,10 +104,30 @@ When Codex is selected, `specbind install` renders:
 .codex/agents/specbind-researcher.toml
 ```
 
+When Claude Code is selected, it renders the same roles as Claude Code
+subagent definitions:
+
+```text
+.claude/agents/specbind-planner.md
+.claude/agents/specbind-implementer.md
+.claude/agents/specbind-reviewer.md
+.claude/agents/specbind-debugger.md
+.claude/agents/specbind-researcher.md
+```
+
+The Claude Code frontmatter carries `name`, `description`, and `model`; the
+body carries the same product-owned instructions as the Codex rendering. It
+omits `tools` so a dispatched role inherits the session toolset, keeping
+registration a capability selection rather than an authority grant.
+
+The Claude Code defaults use model aliases rather than pinned identifiers so a
+rendering stays valid across model refreshes. A project may still pin an exact
+identifier through the override.
+
 These files are derived product-managed assets. Local edits are not the
 customization surface and are replaced only under Decision 0077's committed,
 clean-repository guard. Projects edit `.specbind.json` and run the installer.
-Other agents may gain renderings later without changing role names or skill
+Further agents may gain renderings later without changing role names or skill
 bodies.
 
 The installed developer instructions remain deliberately small. Task-specific
@@ -99,8 +137,12 @@ protocol selector continue to travel in every dispatch brief under Decision
 
 ## Consequences
 
-- Common implementation and review work defaults to Terra, while bounded
-  research can use Luna and rare diagnosis retains Sol.
+- Common implementation and review work defaults to Terra on Codex and Sonnet
+  on Claude Code, while bounded research drops to Luna or Haiku and rare
+  diagnosis rises to Sol or Opus.
+- The same skill body reaches a comparable capability distribution on both
+  supported hosts, so dispatch cost no longer depends on which agent a project
+  installed.
 - Projects can tune cost and capability without editing product-managed skills
   or role semantics.
 - Free-form operational adapters remain separate from deterministic host
@@ -111,7 +153,7 @@ protocol selector continue to travel in every dispatch brief under Decision
 ## Implementation status
 
 Implemented. The Rust installer validates optional role overrides, installs the
-five Codex role files, refreshes them under the product-asset repository guard,
-and the dispatching skills select the applicable role with an explicit
-fresh-subagent fallback. Skill conformance rejects an unknown registered role
+five role files for each selected host, refreshes them under the product-asset
+repository guard, and the dispatching skills select the applicable role with an
+explicit fresh-subagent fallback. Skill conformance rejects an unknown registered role
 and requires every installed role to have a consumer.

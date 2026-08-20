@@ -276,31 +276,7 @@ fn resolve_inputs(
     let agent_roles = existing
         .map(|config| config.agent_roles.clone())
         .unwrap_or_default();
-    if agent_roles.codex.is_some() && !agents.contains(&Agent::Codex) {
-        issues.push(issue(
-            "INSTALL_AGENT_ROLE_UNUSED",
-            Some(CONFIG_RELATIVE.to_owned()),
-            "agentRoles.codex requires codex in the selected agents",
-        ));
-    }
-    if let Some(overrides) = agent_roles.codex.as_ref() {
-        for role in agent_role::all() {
-            if let Some(model) = role
-                .override_from(Some(overrides))
-                .and_then(|value| value.model.as_deref())
-                && !agent_role::valid_model(model)
-            {
-                issues.push(issue(
-                    "INSTALL_AGENT_ROLE_MODEL_INVALID",
-                    Some(CONFIG_RELATIVE.to_owned()),
-                    format!(
-                        "agentRoles.codex.{}.model must use only ASCII letters, digits, '.', '_', or '-'",
-                        role.selector
-                    ),
-                ));
-            }
-        }
-    }
+    issues.extend(agent_role_issues(&agent_roles, &agents));
 
     finish(issues)?;
     Ok(ResolvedInputs {
@@ -310,6 +286,63 @@ fn resolve_inputs(
         project_instructions,
         agent_roles,
     })
+}
+
+/// Reports role overrides that name an unselected agent or an unusable model.
+///
+/// An override is capability policy, so it is only meaningful for an agent the
+/// installation actually renders.
+fn agent_role_issues(overrides: &AgentRoleOverrides, agents: &[Agent]) -> Vec<InstallIssue> {
+    let mut issues = Vec::new();
+    if overrides.codex.is_some() && !agents.contains(&Agent::Codex) {
+        issues.push(issue(
+            "INSTALL_AGENT_ROLE_UNUSED",
+            Some(CONFIG_RELATIVE.to_owned()),
+            "agentRoles.codex requires codex in the selected agents",
+        ));
+    }
+    if overrides.claude_code.is_some() && !agents.contains(&Agent::ClaudeCode) {
+        issues.push(issue(
+            "INSTALL_AGENT_ROLE_UNUSED",
+            Some(CONFIG_RELATIVE.to_owned()),
+            "agentRoles.claudeCode requires claude-code in the selected agents",
+        ));
+    }
+    for role in agent_role::all() {
+        let models = [
+            (
+                "codex",
+                overrides
+                    .codex
+                    .as_ref()
+                    .and_then(|codex| role.override_from(Some(codex)))
+                    .and_then(|value| value.model.as_deref()),
+            ),
+            (
+                "claudeCode",
+                overrides
+                    .claude_code
+                    .as_ref()
+                    .and_then(|claude| role.claude_override_from(Some(claude)))
+                    .and_then(|value| value.model.as_deref()),
+            ),
+        ];
+        for (agent, model) in models {
+            if let Some(model) = model
+                && !agent_role::valid_model(model)
+            {
+                issues.push(issue(
+                    "INSTALL_AGENT_ROLE_MODEL_INVALID",
+                    Some(CONFIG_RELATIVE.to_owned()),
+                    format!(
+                        "agentRoles.{agent}.{}.model must use only ASCII letters, digits, '.', '_', or '-'",
+                        role.selector
+                    ),
+                ));
+            }
+        }
+    }
+    issues
 }
 
 fn read_existing_config(project_root: &Path) -> Result<Option<InstalledConfig>, InstallIssues> {
@@ -417,31 +450,62 @@ fn render_config(resolved: &ResolvedInputs) -> String {
 }
 
 fn render_agent_role_overrides(overrides: &AgentRoleOverrides) -> String {
-    let Some(codex) = overrides.codex.as_ref() else {
-        return String::new();
-    };
-    let roles = agent_role::all()
-        .iter()
-        .filter_map(|role| {
+    let codex = overrides.codex.as_ref().map(|codex| {
+        role_block("codex", |role| {
             let role_override = role.override_from(Some(codex))?;
-            let fields = [
+            Some(
+                [
+                    role_override
+                        .model
+                        .as_ref()
+                        .map(|model| format!("\"model\": \"{model}\"")),
+                    role_override
+                        .reasoning_effort
+                        .map(|effort| format!("\"reasoningEffort\": \"{}\"", effort.name())),
+                ]
+                .into_iter()
+                .flatten()
+                .collect::<Vec<_>>(),
+            )
+        })
+    });
+    let claude_code = overrides.claude_code.as_ref().map(|claude| {
+        role_block("claudeCode", |role| {
+            let role_override = role.claude_override_from(Some(claude))?;
+            Some(
                 role_override
                     .model
                     .as_ref()
-                    .map(|model| format!("\"model\": \"{model}\"")),
-                role_override
-                    .reasoning_effort
-                    .map(|effort| format!("\"reasoningEffort\": \"{}\"", effort.name())),
-            ]
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>()
-            .join(", ");
+                    .map(|model| format!("\"model\": \"{model}\""))
+                    .into_iter()
+                    .collect::<Vec<_>>(),
+            )
+        })
+    });
+    let blocks = [codex, claude_code]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    if blocks.is_empty() {
+        return String::new();
+    }
+    format!(",\n  \"agentRoles\": {{\n{}\n  }}", blocks.join(",\n"))
+}
+
+/// Renders one agent's role overrides as a nested `agentRoles` object.
+fn role_block(
+    agent: &str,
+    fields: impl Fn(&agent_role::AgentRole) -> Option<Vec<String>>,
+) -> String {
+    let roles = agent_role::all()
+        .iter()
+        .filter_map(|role| {
+            let fields = fields(role)?.join(", ");
             Some(format!("      \"{}\": {{ {fields} }}", role.selector))
         })
         .collect::<Vec<_>>()
         .join(",\n");
-    format!(",\n  \"agentRoles\": {{\n    \"codex\": {{\n{roles}\n    }}\n  }}")
+    format!("    \"{agent}\": {{\n{roles}\n    }}")
 }
 
 /// Plans the Decision 0091 customization surface.
@@ -697,7 +761,8 @@ fn skill_entries(
     Ok(entries)
 }
 
-/// Plans the Codex execution adapter for the stable roles named by skills.
+/// Plans each selected host's execution adapter for the stable roles named by
+/// skills.
 ///
 /// Role semantics remain product-managed. A project may override only model
 /// capability through `.specbind.json`; the resulting files are derived assets
@@ -706,14 +771,25 @@ fn agent_role_entries(
     project_root: &Path,
     resolved: &ResolvedInputs,
 ) -> Result<Vec<PlanEntry>, InstallIssues> {
-    if !resolved.agents.contains(&Agent::Codex) {
-        return Ok(Vec::new());
+    let mut rendered_roles = Vec::new();
+    if resolved.agents.contains(&Agent::Codex) {
+        let overrides = resolved.agent_roles.codex.as_ref();
+        rendered_roles.extend(
+            agent_role::all()
+                .iter()
+                .map(|role| (role.target(), role.render(overrides))),
+        );
     }
-    let overrides = resolved.agent_roles.codex.as_ref();
+    if resolved.agents.contains(&Agent::ClaudeCode) {
+        let overrides = resolved.agent_roles.claude_code.as_ref();
+        rendered_roles.extend(
+            agent_role::all()
+                .iter()
+                .map(|role| (role.claude_target(), role.render_claude(overrides))),
+        );
+    }
     let mut entries = Vec::new();
-    for role in agent_role::all() {
-        let relative = role.target();
-        let rendered = role.render(overrides);
+    for (relative, rendered) in rendered_roles {
         let target = project_root.join(&relative);
         let action = match fs::read(&target) {
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,

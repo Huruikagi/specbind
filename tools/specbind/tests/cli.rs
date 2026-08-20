@@ -1093,7 +1093,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 50 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 55 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1108,7 +1108,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 50 create, 0 replace, 0 keep\n",
+                "\n  Summary: 55 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1424,6 +1424,136 @@ fn applies_only_project_capability_overrides_to_codex_roles() {
         .expect("overridden reviewer role");
     assert!(reviewer.contains("model = \"gpt-5.6-terra\""));
     assert!(reviewer.contains("model_reasoning_effort = \"high\""));
+}
+
+#[test]
+fn installs_claude_roles_with_cost_aware_defaults() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install", "--agent", "claude-code", "--language", "en"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- create .claude/agents/specbind-implementer.md [agent-role]",
+        ));
+
+    let role = |name: &str| {
+        fs::read_to_string(
+            root.path()
+                .join(format!(".claude/agents/specbind-{name}.md")),
+        )
+        .expect("installed Claude Code role")
+    };
+    let implementer = role("implementer");
+    assert!(implementer.starts_with("---\nname: specbind-implementer\n"));
+    assert!(implementer.contains("\nmodel: sonnet\n"));
+    assert!(implementer.contains("Implement exactly one dispatched task."));
+    assert!(
+        !implementer.contains("reasoning"),
+        "Claude Code subagents expose no reasoning-effort field"
+    );
+    assert!(role("planner").contains("\nmodel: sonnet\n"));
+    assert!(role("reviewer").contains("\nmodel: sonnet\n"));
+    assert!(role("debugger").contains("\nmodel: opus\n"));
+    assert!(role("researcher").contains("\nmodel: haiku\n"));
+
+    assert!(
+        !root.path().join(".codex/agents").exists(),
+        "an unselected agent receives no role rendering"
+    );
+}
+
+#[test]
+fn applies_only_project_capability_overrides_to_claude_roles() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind.json",
+        r#"{
+  "schemaVersion": 1,
+  "specDir": ".specbind",
+  "language": "en",
+  "agents": ["claude-code"],
+  "agentRoles": {
+    "claudeCode": {
+      "researcher": { "model": "sonnet" }
+    }
+  }
+}"#,
+    );
+    commit_all(root.path());
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success();
+
+    let researcher = fs::read_to_string(root.path().join(".claude/agents/specbind-researcher.md"))
+        .expect("overridden researcher role");
+    assert!(researcher.contains("\nmodel: sonnet\n"));
+    assert!(researcher.contains("Investigate only the bounded question"));
+
+    let debugger = fs::read_to_string(root.path().join(".claude/agents/specbind-debugger.md"))
+        .expect("default debugger role");
+    assert!(debugger.contains("\nmodel: opus\n"));
+
+    assert!(
+        fs::read_to_string(root.path().join(".specbind.json"))
+            .expect("configuration")
+            .contains("\"claudeCode\""),
+        "the configuration keeps the accepted override"
+    );
+}
+
+#[test]
+fn rejects_invalid_or_unselected_claude_role_overrides() {
+    let invalid_model = project_fixture();
+    write(
+        invalid_model.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"en","agents":["claude-code"],"agentRoles":{"claudeCode":{"researcher":{"model":"claude sonnet"}}}}"#,
+    );
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(invalid_model.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_AGENT_ROLE_MODEL_INVALID"));
+
+    let effort = project_fixture();
+    write(
+        effort.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"en","agents":["claude-code"],"agentRoles":{"claudeCode":{"researcher":{"reasoningEffort":"high"}}}}"#,
+    );
+    let mut unsupported = Command::cargo_bin("specbind").expect("specbind binary should build");
+    unsupported
+        .current_dir(effort.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_CONFIG_INVALID"));
+
+    let unselected = project_fixture();
+    write(
+        unselected.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":".specbind","language":"en","agents":["codex"],"agentRoles":{"claudeCode":{}}}"#,
+    );
+    let mut unused = Command::cargo_bin("specbind").expect("specbind binary should build");
+    unused
+        .current_dir(unselected.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_AGENT_ROLE_UNUSED"));
 }
 
 #[test]
