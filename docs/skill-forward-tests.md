@@ -1163,13 +1163,13 @@ the task cannot be implemented.
   cannot succeed, which is the expensive mistake this scenario checks.
 - No fix was applied and no file was created, including implementation notes.
 
-## Quick and batch scenarios
+## Quick-plan and batch-plan scenarios
 
 Accepted by [Decision 0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md).
 
 ### Q1 — Delegation is authorized once, and recorded
 
-Run quick on a Spec-backed item and accept the delegation it proposes.
+Run quick-plan on a Spec-backed item and accept the delegation it proposes.
 
 > Ask: take the cart change through to an approved plan in one go.
 
@@ -1177,11 +1177,11 @@ Run quick on a Spec-backed item and accept the delegation it proposes.
   started.
 - Exactly one confirmation was taken. A prompt at each gate is the failure.
 - `specbind spec status <spec>` afterwards reports
-  `Delegated gates: requirements (specbind-quick), design (specbind-quick), tasks (specbind-quick)`.
+  `Delegated gates: requirements (specbind-quick-plan), design (specbind-quick-plan), tasks (specbind-quick-plan)`.
 
 ### Q2 — Declining delegation does not end the run
 
-Run quick and decline the delegation.
+Run quick-plan and decline the delegation.
 
 > Ask: take the cart change through to an approved plan in one go. *(Decline the delegation.)*
 
@@ -1190,7 +1190,7 @@ Run quick and decline the delegation.
 
 ### Q3 — Design validation is on the delegated path
 
-Run quick against a Spec whose design has a defect design validation catches.
+Run quick-plan against a Spec whose design has a defect design validation catches.
 
 > Ask: take the cart change through to an approved plan in one go.
 
@@ -1200,7 +1200,7 @@ Run quick against a Spec whose design has a defect design validation catches.
 
 ### Q4 — The single-Spec contract review is not skipped
 
-Run quick on a milestone with exactly one participating Spec.
+Run quick-plan on a milestone with exactly one participating Spec.
 
 > Ask: take the cart change through to an approved plan in one go.
 
@@ -1210,7 +1210,7 @@ Run quick on a milestone with exactly one participating Spec.
 
 ### Q5 — A deliberate stop is not retried
 
-Run quick against a Spec whose requirements gate is already approved, so the
+Run quick-plan against a Spec whose requirements gate is already approved, so the
 requirements skill stops and asks before invalidating.
 
 > Ask: take the cart change through to an approved plan in one go.
@@ -1220,7 +1220,7 @@ requirements skill stops and asks before invalidating.
 
 ### B1 — Requirements are not serialized behind dependencies
 
-Run batch on a milestone whose roadmap has a dependency chain across three
+Run batch-plan on a milestone whose roadmap has a dependency chain across three
 Spec-backed items.
 
 > Ask: take every spec in this milestone through to approved plans.
@@ -1251,7 +1251,7 @@ Watch the commands during a batch run.
 
 ### B4 — One unfinished item stops the barrier, and scope is not touched
 
-Run batch on a three-Spec milestone where one Spec's design cannot complete.
+Run batch-plan on a three-Spec milestone where one Spec's design cannot complete.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -1263,7 +1263,7 @@ Run batch on a three-Spec milestone where one Spec's design cannot complete.
 
 ### B5 — Direct items are reported, not absorbed
 
-Run batch on a milestone containing both Spec-backed and Direct items.
+Run batch-plan on a milestone containing both Spec-backed and Direct items.
 
 > Ask: take every spec in this milestone through to approved plans.
 

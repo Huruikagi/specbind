@@ -1,4 +1,4 @@
-# 0120: Fix the quick and batch orchestration contracts
+# 0120: Fix the quick-plan and batch-plan orchestration contracts
 
 Status: Accepted
 
@@ -22,10 +22,10 @@ the review and debug skills together.
 
 ## One contract, two scales
 
-`specbind-quick` orchestrates one Spec-backed item. `specbind-batch` orchestrates
+`specbind-quick-plan` orchestrates one Spec-backed item. `specbind-batch-plan` orchestrates
 every Spec-backed item in the active milestone. The phases, gates, protocols, and
-guards are identical; Decisions 0093 and 0094 already refuse quick-specific or
-batch-specific rule and protocol variants.
+guards are identical; Decisions 0093 and 0094 already refuse quick-plan-specific
+or batch-plan-specific rule and protocol variants.
 
 Direct items are in neither scope. They have no Requirements, Design, or task
 plan to produce. Both skills report them as remaining work rather than silently
@@ -107,7 +107,7 @@ Spec boundaries, not inside one Spec's design.
 Both skills therefore route through `specbind-validate-design` before design
 approval. This is the accelerated flow's substitute for the reading a user would
 otherwise do at the gate, and it reuses an existing contract rather than
-inventing a quick-specific sanity review the way the inherited skill did.
+inventing a quick-plan-specific sanity review the way the inherited skill did.
 
 It applies to batch as much as to quick. The hole is identical, and batch is the
 higher-volume path, so exempting it would put the weaker check on the run that
@@ -163,7 +163,7 @@ touched.
 
 - Orchestrate only. Every artifact is authored by the phase skill that owns it,
   and every state change goes through the CLI.
-- No quick-specific or batch-specific rules, protocols, or review criteria.
+- No quick-plan-specific or batch-plan-specific rules, protocols, or review criteria.
 - No scope changes: no Roadmap items, no new Specs, no removals.
 - No gate invalidation without asking, and no rewind on delegated authority.
 - Writing while a milestone holds an accepted completion carries the cost stated
@@ -186,7 +186,7 @@ touched.
 
 ## Implementation status
 
-Implemented. `specbind-quick` and `specbind-batch` are embedded and installed,
+Implemented. `specbind-quick-plan` and `specbind-batch-plan` are embedded and installed,
 completing the Decision 0075 v1 skill set at seventeen.
 
 Both take one bounded delegation confirmation, route through

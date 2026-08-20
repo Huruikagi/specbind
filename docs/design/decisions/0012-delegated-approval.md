@@ -66,7 +66,7 @@ The target interface does not support `-y`.
 
 - New interfaces use an explicit accelerated workflow or approval-mode contract for delegation.
 - `--non-interactive` remains orthogonal and never implies `delegated`.
-- Quick and batch orchestration keep delegation in their run context instead of asking phase skills to mutate all approval booleans.
+- Quick-plan and batch-plan orchestration keep delegation in their run context instead of asking phase skills to mutate all approval booleans.
 - SpecBind skills and CLI commands do not expose a compatibility alias for the inherited flag.
 - Supplying `-y` to a target SpecBind interface stops with a stable unsupported-option diagnostic and points to an intentional accelerated workflow.
 - Migration guidance explains the replacement rather than silently reinterpreting an inherited invocation as delegated approval.
@@ -92,7 +92,7 @@ Artifact fingerprints are required to detect out-of-band edits. Their stored val
 - Status and audit output can distinguish direct approval from delegated continuation.
 - Non-interactive CI or agent execution fails safely when approval authority is absent.
 - Phase commands no longer gain authority to retroactively approve prerequisites.
-- Quick and batch workflows need a run-scoped delegation handoff rather than repeated `-y` flags.
+- Quick-plan and batch-plan workflows need a run-scoped delegation handoff rather than repeated `-y` flags.
 - Delegation adds no project file or persistent authorization object for users to understand or maintain.
 - Target SpecBind interfaces make inherited `-y` invocations fail visibly instead of preserving ambiguous auto-approval semantics.
 - Migration from inherited boolean approvals can preserve that a gate was approved, but must not invent whether it was explicit or delegated when historical evidence is absent.

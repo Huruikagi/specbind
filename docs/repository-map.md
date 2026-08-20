@@ -214,11 +214,12 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0117](./design/decisions/0117-steering-authoring-contract.md) | Accepted | Steering authoring, in-place synchronization, and the steering template scope |
 | [0118](./design/decisions/0118-gap-analysis-skill-contract.md) | Accepted | Gap analysis before Requirements, the request-mediated influence path, and marked conclusions |
 | [0119](./design/decisions/0119-writing-while-a-completion-stands.md) | Accepted | One statement of what writing costs once a Spec holds accepted completion |
-| [0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md) | Accepted | Quick and batch orchestration, phase-specific dependency shape, and retry classification |
+| [0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md) | Accepted | Quick-plan and batch-plan orchestration, phase-specific dependency shape, and retry classification |
 | [0121](./design/decisions/0121-requirements-coverage-is-not-slots.md) | Accepted | Requirements coverage bounded to what the Spec owes |
 | [0122](./design/decisions/0122-finding-disposition-and-deferred-destination.md) | Accepted | Finding disposition and the project-named destination for deferred findings |
 | [0123](./design/decisions/0123-reverse-traceability-and-unconsumed-seams.md) | Accepted | Reverse task-scope traceability and unconsumed exported seams |
 | [0124](./design/decisions/0124-pre-1.0-binary-release-line.md) | Accepted | Pre-1.0 public binary release and distribution contract |
+| [0125](./design/decisions/0125-plan-orchestrator-names.md) | Accepted | Planning orchestrator names expose their Tasks-approval stopping point |
 | [0125](./design/decisions/0125-agent-assisted-cc-sdd-migration.md) | Accepted | Agent-assisted cc-sdd migration and GitHub Pages handoff contract |
 | [0126](./design/decisions/0126-cli-owned-cc-sdd-migration-resolution.md) | Accepted | CLI-owned accepted cc-sdd migration resolution and freshness contract |
 | [0127](./design/decisions/0127-retire-cc-sdd-source-at-final-cutover.md) | Accepted | Git-guarded retirement of cc-sdd sources at final cutover |

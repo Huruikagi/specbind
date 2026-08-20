@@ -29,7 +29,7 @@ forbidden to parse. This is the same shape as the gap
 [Decision 0107](./0107-spec-status-contract-review-barrier.md) closed: a fact
 the CLI holds, needed by a reader, surfaced nowhere.
 
-It has a deadline. `specbind-quick` and `specbind-batch` are, under
+It has a deadline. `specbind-quick-plan` and `specbind-batch-plan` are, under
 [Decision 0075](./0075-v1-skill-and-orchestration-scope.md), the workflows that
 exist to use delegated gates. Their forward tests will need to observe that a
 gate was crossed by delegation and under which workflow name, and today that is
@@ -78,7 +78,7 @@ records a validation rather than an approval. There is nothing to report.
 
 - The audit trail Decision 0100 relies on has a reader that outlives the run
   that wrote it.
-- `specbind-quick` and `specbind-batch` become testable in the dimension that
+- `specbind-quick-plan` and `specbind-batch-plan` become testable in the dimension that
   distinguishes them from the deliberate flow, before either is authored.
 - A reviewer can answer "which of these did I actually approve?" from the same
   command they already use, without opening machine state.

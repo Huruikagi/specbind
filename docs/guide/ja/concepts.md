@@ -84,7 +84,7 @@ Requirements、Design、TasksにはそれぞれGateがあります。Gateの承�
 承認には2つの形があります。
 
 - **explicit** — あなたがそのGateで内容を確認して承認する
-- **delegated** — `specbind-quick`など、名前の付いた1回の実行に対して、承認を
+- **delegated** — `specbind-quick-plan`など、名前の付いた1回の実行に対して、承認を
   あらかじめ委任する
 
 委任しても、レビューや検査は省略されません。また、承認済みGateを破棄したり、
@@ -134,7 +134,7 @@ Discovery
   -> Release
 ```
 
-`specbind-quick`は、RequirementsからTasks承認までの確認回数を減らします。ただし、
+`specbind-quick-plan`は、RequirementsからTasks承認までの確認回数を減らします。ただし、
 使う成果物、レビュー、CLIの検査は通常のワークフローと同じです。
 `specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。v1には、
 Milestone全体を自動で実装するオーケストレータはありません。

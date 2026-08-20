@@ -59,7 +59,7 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 | `tasks-generation.md` | `specbind-tasks`. |
 | `steering-principles.md` | `specbind-steering`. |
 
-`specbind-quick` and `specbind-batch` use the same phase contracts and therefore the same applicable rules when they perform Requirements, Design, and Tasks work. They do not define separate quick or batch rule variants. Implementation, task review, completion validation, release, status, and debug use their product-managed contracts plus current project artifacts and steering; v1 installs no extra shared rule merely because one of those skills exists.
+`specbind-quick-plan` and `specbind-batch-plan` use the same phase contracts and therefore the same applicable rules when they perform Requirements, Design, and Tasks work. They do not define separate quick-plan or batch-plan rule variants. Implementation, task review, completion validation, release, status, and debug use their product-managed contracts plus current project artifacts and steering; v1 installs no extra shared rule merely because one of those skills exists.
 
 A skill reads each applicable file at most once per invocation. It does not silently substitute an embedded rule when a project file is absent, because the installed file is the user-owned policy source. Absence means that no project customization from that rule is applied; core protocol, skill, and CLI behavior remains intact.
 

@@ -46,8 +46,8 @@ impl std::error::Error for SkillError {}
 /// The complete embedded skill set.
 static SKILLS: &[Skill] = &[
     Skill {
-        name: "specbind-batch",
-        source: include_str!("../assets/skills/specbind-batch/SKILL.md"),
+        name: "specbind-batch-plan",
+        source: include_str!("../assets/skills/specbind-batch-plan/SKILL.md"),
     },
     Skill {
         name: "specbind-contract-review",
@@ -74,8 +74,8 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../assets/skills/specbind-implement/SKILL.md"),
     },
     Skill {
-        name: "specbind-quick",
-        source: include_str!("../assets/skills/specbind-quick/SKILL.md"),
+        name: "specbind-quick-plan",
+        source: include_str!("../assets/skills/specbind-quick-plan/SKILL.md"),
     },
     Skill {
         name: "specbind-release",

@@ -88,7 +88,7 @@ Highest leverage, widest blast radius.
 - **First-class scale in `spec.yaml`** (for example `small` / `standard` /
   `deep`), fixed during discovery, with the CLI selecting which artifacts are
   required, which gates exist, and which protocols load. This is orthogonal to
-  `specbind-quick`: quick reduces approval round trips, scale reduces produced
+  `specbind-quick-plan`: quick reduces approval round trips, scale reduces produced
   volume. A `small` spec could structurally lack a design gate and skip contract
   review.
 - **Direct as the discovery default.** Require a positive trigger to choose

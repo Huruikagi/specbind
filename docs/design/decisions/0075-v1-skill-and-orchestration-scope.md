@@ -20,8 +20,8 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
   - `specbind-validate-implementation`
   - `specbind-verify-completion`
   - `specbind-status`
-  - `specbind-quick`
-  - `specbind-batch`
+  - `specbind-quick-plan`
+  - `specbind-batch-plan`
   - `specbind-release`
   - `specbind-gap-analysis`
   - `specbind-debug`
@@ -30,7 +30,7 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - `specbind-spec-init` is removed. After discovery confirms scope, a Rust CLI milestone creation operation initializes the roadmap, briefs, new specs, and active changes coherently.
 - `specbind-steering-custom` is merged into `specbind-steering`; the skill bootstraps, synchronizes, or adds guidance based on intent.
 - A dedicated customization skill is post-v1. Project maintainers edit the documented settings customization surface directly.
-- `specbind-quick` and `specbind-batch` are thin orchestrators over the same artifacts, reviews, approvals, and CLI guards as the deliberate flow. They stop after Tasks approval and never implement code.
+- `specbind-quick-plan` and `specbind-batch-plan` are thin orchestrators over the same artifacts, reviews, approvals, and CLI guards as the deliberate flow. They stop after Tasks approval and never implement code.
 - Contract review occurs after every participating Spec has passed its Design gate and entered the `tasks` state, but before any current `tasks.yaml` is authored. It is a contract-first milestone review, not a general Design review or release gate. Decision 0087 routes its focused read and accepted assessment through `specbind milestone review status` and `specbind milestone review accept --candidate <path|->`.
 - `specbind-implement` targets exactly one roadmap item per invocation:
   - for a Spec-backed item, it executes the approved local task plan;
@@ -48,5 +48,5 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 
 - Skill names describe user outcomes rather than inherited cc-sdd command families.
 - Direct work has an explicit implementation owner without adding another public skill.
-- Quick and batch improve throughput without defining weaker lifecycle semantics.
+- Quick-plan and batch-plan improve throughput without defining weaker lifecycle semantics.
 - A later milestone orchestrator can coordinate multiple Spec and Direct items without changing the v1 per-item implementation contract.

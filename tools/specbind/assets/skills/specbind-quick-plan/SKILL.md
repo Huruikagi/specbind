@@ -1,5 +1,5 @@
 ---
-name: specbind-quick
+name: specbind-quick-plan
 description: Take one Spec-backed item from its brief through Tasks approval in a single run, using delegated gates. Same artifacts, reviews, and guards as the deliberate flow.
 argument-hint: "<spec>"
 ---

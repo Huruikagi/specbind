@@ -57,7 +57,7 @@ V1 embeds these selectors:
 | `task-planning` | Coverage, executability, dependency, completion-detail, boundary, and safe-parallel judgment over the structured Task contract. | `specbind-tasks`. |
 | `contract-review` | Contract-first compatibility, external-consumer impact, scope-expansion, and unresolved-finding baseline. | `specbind-contract-review`. |
 
-`specbind-quick` and `specbind-batch` consume the same protocols through the phase contracts they orchestrate. V1 defines no quick-specific or batch-specific protocol variants.
+`specbind-quick-plan` and `specbind-batch-plan` consume the same protocols through the phase contracts they orchestrate. V1 defines no quick-plan-specific or batch-plan-specific protocol variants.
 
 This initial set is deliberately bounded to substantial semantic material that was previously duplicated, mixed into cc-sdd rules, or newly shared by SpecBind's Contract workflow. Short instructions used by only one skill remain in that skill. Adding a protocol later is low-impact because it creates no project file, but still requires an explicit selector, consumer mapping, tests, and release-note treatment.
 

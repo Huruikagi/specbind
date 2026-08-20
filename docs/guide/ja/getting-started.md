@@ -203,13 +203,13 @@ Discoveryが報告したSpec IDを使い、最初の1件はquickワークフロ�
 Codex:
 
 ```text
-$specbind-quick csv-export
+$specbind-quick-plan csv-export
 ```
 
 Claude Code:
 
 ```text
-/specbind-quick csv-export
+/specbind-quick-plan csv-export
 ```
 
 Quickは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、

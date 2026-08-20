@@ -13,7 +13,7 @@ steering, and used it to fix when the steering recommendation belongs.
 Research, and deferred the general statement on the grounds that three instances
 show the pattern and a fourth removes the need to guess its shape.
 
-`specbind-quick` and `specbind-batch` are the fourth. They author Requirements,
+`specbind-quick-plan` and `specbind-batch-plan` are the fourth. They author Requirements,
 Design, and task plans across a milestone that may already contain a completed
 Spec, and would otherwise restate the same derivation a fourth time.
 

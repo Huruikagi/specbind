@@ -1,5 +1,5 @@
 ---
-name: specbind-batch
+name: specbind-batch-plan
 description: Take every Spec-backed item in the active milestone through Tasks approval in one run, respecting the phase-specific dependency semantics and the contract review barrier.
 ---
 
@@ -10,7 +10,7 @@ approved task plan. **You orchestrate and stay light.** The phase skills author
 everything, the CLI owns every state change, and the dispatched runs do the
 reading.
 
-This is `specbind-quick` at milestone scale. Same phases, same gates, same
+This is `specbind-quick-plan` at milestone scale. Same phases, same gates, same
 reviews, same guards.
 
 ## 1. Establish the scope

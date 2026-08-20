@@ -2248,13 +2248,13 @@ fn walks_every_gate_from_requirements_to_implementation() {
             "--approval-mode",
             "delegated",
             "--delegation-workflow",
-            "specbind-quick",
+            "specbind-quick-plan",
         ])
         .assert()
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK SPEC_TASKS_APPROVED: Approved tasks for spec checkout.\n  State: implementation\n  Approval mode: delegated\n  Delegation workflow: specbind-quick\n  Passed at: ",
+                "OK SPEC_TASKS_APPROVED: Approved tasks for spec checkout.\n  State: implementation\n  Approval mode: delegated\n  Delegation workflow: specbind-quick-plan\n  Passed at: ",
             ),
         )
         .stderr("");
@@ -2360,7 +2360,7 @@ fn requires_an_unambiguous_approval_authority() {
             "--approval-mode",
             "explicit",
             "--delegation-workflow",
-            "specbind-quick",
+            "specbind-quick-plan",
             "--requirement-ids",
             "1.1",
         ])

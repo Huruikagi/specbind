@@ -33,8 +33,8 @@ Both supported agents receive the same 17 skills:
 | `specbind-release` | Bind the release, execute project release guidance, verify the result, and finalize the complete milestone. |
 | `specbind-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
 | `specbind-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
-| `specbind-quick` | Take one Spec-backed item from Brief through Tasks approval with one bounded delegated-gate authorization. |
-| `specbind-batch` | Take every Spec-backed milestone item through Tasks approval while respecting phase dependencies and the global Contract-review barrier. |
+| `specbind-quick-plan` | Take one Spec-backed item from Brief through Tasks approval with one bounded delegated-gate authorization. |
+| `specbind-batch-plan` | Take every Spec-backed milestone item through Tasks approval while respecting phase dependencies and the global Contract-review barrier. |
 
 There are no `kiro-*` compatibility aliases. Milestone and Spec initialization
 are deterministic CLI operations invoked by `specbind-discovery`, not separate

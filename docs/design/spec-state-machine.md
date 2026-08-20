@@ -50,7 +50,7 @@ active_change:
     requirements:
       passed_at: <timestamp>
       approval_mode: delegated
-      delegation_workflow: specbind-quick
+      delegation_workflow: specbind-quick-plan
       approved_requirement_ids:
         - "1.1"
         - "1.2"
