@@ -2966,16 +2966,17 @@ fn write_status_fixture(root: &Path) {
 }
 
 #[test]
-fn lists_no_specs_in_an_empty_project() {
+fn lists_no_specs_before_the_specs_directory_exists() {
     let root = project_fixture();
-    fs::remove_dir_all(root.path().join(".specbind/specs/checkout"))
-        .expect("leave an empty specs directory");
+    fs::remove_dir_all(root.path().join(".specbind/specs"))
+        .expect("remove the specs directory created by the fixture");
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
     command
         .current_dir(root.path())
         .args(["spec", "list"])
-        // An empty project is a valid answer, not a missing precondition.
+        // Installation creates settings before any Spec exists. Discovery must
+        // be able to ask for the empty list without materializing the directory.
         .assert()
         .success()
         .stdout("OK SPEC_LISTED: Found 0 spec(s).\n")

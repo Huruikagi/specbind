@@ -50,6 +50,16 @@ For the files the CLI installs into consumer projects, see the [current generate
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `.github/workflows/rust.yml` — Windows and Linux Rust verification
 
+## User documentation
+
+| Document | Role |
+| --- | --- |
+| [Japanese user guide (Preview)](./guide/ja/index.md) | Entry point for source-built Preview users |
+| [Japanese Getting Started](./guide/ja/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
+| [Japanese basic concepts](./guide/ja/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
+| [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
+| [Current generated artifact index](./current-artifact-index.md) | Current installation and lifecycle artifact surface |
+
 ## Design documents
 
 | Document | Role |

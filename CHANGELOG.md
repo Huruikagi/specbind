@@ -6,6 +6,11 @@ All notable changes to SpecBind will be documented in this file.
 
 SpecBind has not been released yet.
 
+- Added a Japanese Preview user guide covering source-based installation, the
+  first Spec-backed workflow, and the core lifecycle concepts.
+- Fixed `specbind spec list` to report an empty project immediately after
+  installation, before the first Spec directory exists.
+
 ## Upstream history
 
 SpecBind was bootstrapped from

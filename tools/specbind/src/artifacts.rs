@@ -185,11 +185,21 @@ pub struct SpecDiscovery {
 ///
 /// # Errors
 ///
-/// Returns the underlying message only when `specs/` itself cannot be read. A
-/// single rejected entry is a fault, not a failure, so one malformed directory
-/// never hides the Specs beside it.
+/// A missing `specs/` directory is the normal state before the first Spec is
+/// created and returns an empty discovery. Other failures to read the directory
+/// are returned to the caller. A single rejected entry is a fault, not a
+/// failure, so one malformed directory never hides the Specs beside it.
 pub fn discover_spec_ids(specbind_root: &Path) -> Result<SpecDiscovery, String> {
-    let entries = fs::read_dir(specbind_root.join("specs")).map_err(|error| error.to_string())?;
+    let entries = match fs::read_dir(specbind_root.join("specs")) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Ok(SpecDiscovery {
+                specs: BTreeSet::new(),
+                faults: Vec::new(),
+            });
+        }
+        Err(error) => return Err(error.to_string()),
+    };
     let mut specs = BTreeSet::new();
     let mut faults = Vec::new();
     for entry in entries {
