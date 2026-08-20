@@ -6,13 +6,19 @@ on:
       - main
     paths:
       - ".github/workflows/pages.yml"
-      - "docs/**"
+      - "docs/index.md"
+      - "docs/guide/ja/**"
+      - "docs/current-artifact-index.md"
+      - "docs/current-skill-index.md"
       - "mkdocs.yml"
       - "requirements-docs.txt"
   pull_request:
     paths:
       - ".github/workflows/pages.yml"
-      - "docs/**"
+      - "docs/index.md"
+      - "docs/guide/ja/**"
+      - "docs/current-artifact-index.md"
+      - "docs/current-skill-index.md"
       - "mkdocs.yml"
       - "requirements-docs.txt"
   workflow_dispatch:
