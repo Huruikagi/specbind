@@ -36,6 +36,7 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 
 ## Learn more
 
+- [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
 - [Japanese user guide (Preview)](./docs/guide/ja/index.md) walks through the current source-built preview from project installation to a first verified implementation.
 - [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
 - [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.

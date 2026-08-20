@@ -1,6 +1,6 @@
 # Repository map
 
-This page is the single index of how this repository is organized to develop SpecBind itself. [CLAUDE.md](../CLAUDE.md) and [AGENTS.md](../AGENTS.md) link here instead of duplicating it, so one edit keeps every agent's map current.
+This page is the single index of how this repository is organized to develop SpecBind itself. [CLAUDE.md](https://github.com/Huruikagi/specbind/blob/main/CLAUDE.md) and [AGENTS.md](https://github.com/Huruikagi/specbind/blob/main/AGENTS.md) link here instead of duplicating it, so one edit keeps every agent's map current.
 
 For the files the CLI installs into consumer projects, see the [current generated artifact index](./current-artifact-index.md) and the [current generated skill index](./current-skill-index.md).
 
@@ -54,11 +54,17 @@ For the files the CLI installs into consumer projects, see the [current generate
 
 | Document | Role |
 | --- | --- |
+| [Documentation site source](./index.md) | GitHub Pages landing page built by MkDocs Material |
 | [Japanese user guide (Preview)](./guide/ja/index.md) | Entry point for source-built Preview users |
 | [Japanese Getting Started](./guide/ja/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
 | [Japanese basic concepts](./guide/ja/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
 | [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
 | [Current generated artifact index](./current-artifact-index.md) | Current installation and lifecycle artifact surface |
+
+The documentation site is configured by `mkdocs.yml`, built with the pinned
+dependency in `requirements-docs.txt`, and deployed by
+`.github/workflows/pages.yml`. Run `python -m mkdocs build --strict` from the
+repository root to verify it locally.
 
 ## Design documents
 

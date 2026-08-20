@@ -10,12 +10,12 @@ collected in [Restraint mechanisms](../restraint-mechanisms.md). Reviewing the
 accepted product protocols against that list shows the restraint baseline is
 already present in three of the four authoring layers:
 
-- [`design-authoring`](../../../tools/specbind/assets/protocols/design-authoring.md)
+- [`design-authoring`](https://github.com/Huruikagi/specbind/blob/main/tools/specbind/assets/protocols/design-authoring.md)
   states that the right design is the smallest one that works, and rejects
   speculative extensibility and single-implementation indirection.
-- [`task-planning`](../../../tools/specbind/assets/protocols/task-planning.md)
+- [`task-planning`](https://github.com/Huruikagi/specbind/blob/main/tools/specbind/assets/protocols/task-planning.md)
   states that every task is work that will be done, with no aspirational entries.
-- [`task-implementation`](../../../tools/specbind/assets/protocols/task-implementation.md)
+- [`task-implementation`](https://github.com/Huruikagi/specbind/blob/main/tools/specbind/assets/protocols/task-implementation.md)
   forbids implementing adjacent work and requires the smallest decision that
   satisfies the requirement where the Design is silent.
 

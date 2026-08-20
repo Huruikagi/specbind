@@ -7,7 +7,7 @@ in `.specbind.json` and defaults to `.specbind` for a new installation.
 For the workflows that own these files, see the
 [current generated skill index](./current-skill-index.md). For their design
 history and detailed lifecycle, see the
-[target artifact catalog](./design/target-artifact-catalog.md).
+[target artifact catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-artifact-catalog.md).
 
 ## Installation surface
 

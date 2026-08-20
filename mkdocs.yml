@@ -1,0 +1,66 @@
+site_name: SpecBind
+site_description: Durable specifications bound to agent-assisted software delivery
+site_url: https://huruikagi.github.io/specbind/
+repo_url: https://github.com/Huruikagi/specbind
+repo_name: Huruikagi/specbind
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+site_dir: site
+strict: true
+exclude_docs: |
+  design/
+  repository-map.md
+  skill-forward-tests.md
+
+theme:
+  name: material
+  language: ja
+  features:
+    - content.code.copy
+    - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切り替える
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切り替える
+
+plugins:
+  - search:
+      lang: ja
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - ホーム: index.md
+  - ユーザーガイド:
+      - はじめに: guide/ja/index.md
+      - Getting Started: guide/ja/getting-started.md
+      - 基本概念: guide/ja/concepts.md
+  - リファレンス:
+      - スキル一覧: current-skill-index.md
+      - 成果物一覧: current-artifact-index.md
+  - GitHubリポジトリ: https://github.com/Huruikagi/specbind

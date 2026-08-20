@@ -8,8 +8,8 @@ syntax.
 For the files installed or maintained by these skills, see the
 [current generated artifact index](./current-artifact-index.md). For the design
 history behind the set, see the
-[target skill catalog](./design/target-skill-catalog.md) and
-[Decision 0075](./design/decisions/0075-v1-skill-and-orchestration-scope.md).
+[target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
+[Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
 Both supported agents receive the same 17 skills:
 

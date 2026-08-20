@@ -57,4 +57,4 @@ SpecBindはpre-1.0のPreviewです。このガイドは、release candidateま�
 
 ---
 
-[Getting Startedへ進む](./getting-started.md) | [リポジトリREADME](../../../README.md)
+[Getting Startedへ進む](./getting-started.md) | [GitHubリポジトリ](https://github.com/Huruikagi/specbind)

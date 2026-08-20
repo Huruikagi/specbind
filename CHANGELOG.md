@@ -15,6 +15,8 @@ SpecBind has not published a binary release yet.
   first Spec-backed workflow, and the core lifecycle concepts.
 - Fixed `specbind spec list` to report an empty project immediately after
   installation, before the first Spec directory exists.
+- Added a MkDocs Material documentation site and GitHub Pages deployment for
+  the Japanese Preview guide and current reference pages.
 
 ## Upstream history
 
