@@ -213,19 +213,14 @@ stop.
 Committing is the project's call, not a consequence of finishing a task — see
 the checkpoint step.
 
-## 7. Where the run ends
+## 7. Finish the implementation work
 
-### Spec-backed: stop at the tasks
+### Spec-backed: finish at the tasks
 
-When the requested tasks are recorded, report and stop. **Do not run the
-completion handshake.** `spec completion preflight` and `accept` belong to
-`specbind-validate-implementation`, and a milestone-wide convergence barrier
-comes before them.
+When the requested task outcomes are recorded, the implementation work is done.
+Proceed to the checkpoint step, then stop as Section 9 says.
 
-This is deliberate. You just spent the run convincing yourself each part was
-right, which makes you the worst-placed judge of whether the whole Spec is.
-
-### Direct: implement, review, checkpoint, and complete
+### Direct: implement and review
 
 There is no approved task plan to dispatch. Implement the Roadmap item's summary
 in this context, against the repository's existing conventions. Before writing,
@@ -246,28 +241,11 @@ diagnosis route as Spec-backed work.
 specbind protocol read task-review
 ```
 
-There is no later Spec-level validation for Direct work, so this run finishes
-the item. Run the checkpoint step below **before** the handshake: preflight
-requires the reviewed implementation at a clean committed `HEAD`, and reading
-the Git adapter after preflight is too late to establish that revision. Then
-run:
-
-```sh
-specbind milestone direct preflight <direct>
-specbind milestone direct complete <direct> --implementation-revision <revision>
-```
-
-Preflight needs a **clean committed `HEAD`**. Do not manufacture one. If the
-adapter gives no usable commit guidance, or you lack commit authority, say
-completion needs a commit and stop. The implementation may be complete while
-the Roadmap item remains pending; that is more honest than recording an
-unreviewed or unidentified revision.
-
 ## 8. Checkpoint, if the project asks
 
-For a Direct item this step runs before its completion handshake, as stated
-above. For a Spec-backed item it runs after the requested task outcomes have
-been recorded.
+This step runs after the implementation work above. For a Direct item it must
+therefore establish the clean committed revision **before** Section 9 runs the
+completion handshake. Do not skip ahead and return here afterwards.
 
 ```sh
 specbind adapter read git
@@ -290,6 +268,37 @@ When the adapter has guidance, follow it. It sets **policy, not permission**:
   is left exactly as it is.
 - Stop before the Git operation if the guidance is ambiguous, unsafe, or
   conflicts with something else you were told.
+
+## 9. Where the run ends
+
+### Spec-backed: stop after the checkpoint
+
+Report and stop. **Do not run the completion handshake.** `spec completion
+preflight` and `accept` belong to `specbind-validate-implementation`, and a
+milestone-wide convergence barrier comes before them.
+
+This is deliberate. You just spent the run convincing yourself each part was
+right, which makes you the worst-placed judge of whether the whole Spec is.
+
+### Direct: complete after the checkpoint
+
+There is no later Spec-level validation for Direct work, so this run finishes
+the item. Preflight needs the reviewed implementation at a **clean committed
+`HEAD`**. Do not manufacture one. If Section 8 produced no commit because the
+adapter gave no usable guidance or you lacked authority, say completion needs a
+commit and stop; the Roadmap item remains pending.
+
+Otherwise obtain the committed revision and run, in this order:
+
+```sh
+specbind milestone direct preflight <direct>
+specbind milestone direct complete <direct> --implementation-revision <revision>
+```
+
+Do not stop merely because the implementation commit succeeded. The successful
+handshake is what records the Direct item complete. If project policy also asks
+for lifecycle-state checkpoints, apply it once more to the CLI-owned Roadmap
+change after completion.
 
 ## Boundaries
 

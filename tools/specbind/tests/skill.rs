@@ -181,13 +181,25 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "specbind protocol read okf-authoring",
         "specbind template read spec implementation-notes/main",
         "`CANNOT_REVIEW`",
-        "**before** the handshake",
+        "Do not skip ahead and return here afterwards.",
+        "Do not stop merely because the implementation commit succeeded.",
     ] {
         assert!(
             body.contains(required),
             "implementation skill must contain {required}"
         );
     }
+
+    let checkpoint = body
+        .find("specbind adapter read git")
+        .expect("checkpoint command");
+    let handshake = body
+        .find("specbind milestone direct preflight <direct>")
+        .expect("Direct preflight command");
+    assert!(
+        checkpoint < handshake,
+        "the Direct workflow must present checkpoint before handshake"
+    );
 }
 
 #[test]
