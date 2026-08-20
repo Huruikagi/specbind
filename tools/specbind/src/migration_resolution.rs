@@ -18,7 +18,7 @@ use crate::{
     repository, yaml,
 };
 
-const STATE_RELATIVE: &str = ".specbind/state/cc-sdd-migration.yaml";
+pub(crate) const STATE_RELATIVE: &str = ".specbind/state/cc-sdd-migration.yaml";
 const STATE_PARENT: &str = ".specbind/state";
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
@@ -177,6 +177,12 @@ pub fn reconcile(project_root: &Path, plan: &mut MigrationPlan) {
     {
         action.kind = "keep";
     }
+    plan.actions.push(crate::migration::MigrationAction {
+        kind: "retire-resolution-after-cutover",
+        source: Some(STATE_RELATIVE.to_owned()),
+        target: None,
+        detail: "remove the accepted migration handshake during final apply".to_owned(),
+    });
     sort_findings(plan);
 }
 

@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The requirement to preserve `.kiro` after final cutover is superseded by
+[Decision 0127](./0127-retire-cc-sdd-source-at-final-cutover.md). Planning and
+guided authoring remain non-destructive toward the source.
+
 ## Context
 
 [Decision 0077](./0077-v1-installation-distribution-and-migration.md) makes
@@ -75,7 +79,7 @@ agent playbook. It must:
    from filenames alone;
 3. ask the user only for semantic choices that cannot be established from the
    repository;
-4. preserve `.kiro` and use Git as the recovery boundary;
+4. preserve the cc-sdd source during guided work and use Git as the recovery boundary for its final retirement;
 5. use normal SpecBind CLI operations and owning skills for target lifecycle
    state wherever those operations exist;
 6. refuse to translate legacy approval flags into SpecBind gate evidence;

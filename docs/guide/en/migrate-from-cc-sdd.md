@@ -17,13 +17,16 @@ ambiguous.
 ## Safety boundary
 
 - Inspect Git state and current changes first.
-- Do not delete, move, or overwrite the source `.kiro` tree.
+- Do not delete, move, or overwrite the source `.kiro` tree during planning or
+  agent-assisted work. Only final `--apply` retires it after Git checks.
 - Do not translate cc-sdd approval flags into SpecBind gate evidence.
 - Do not invent milestones, release history, Contracts, Requirement mappings,
   or completion evidence.
 - Keep legacy `kiro-*` agent assets until validation and user confirmation are
   complete.
-- Automatically retire only legacy agent assets tracked by Git.
+- Final cutover stops unless every file below `.kiro`, `.cc-sdd.json`, legacy
+  agent assets, and resolution state is tracked by Git. Ignored files are not
+  deleted.
 - Do not hand-edit CLI-owned state when a corresponding SpecBind operation
   exists.
 
@@ -35,8 +38,8 @@ Run this from the target project root:
 specbind migrate cc-sdd
 ```
 
-If every conversion is unambiguous, review the reported create, convert,
-preserve, and removal actions. `--apply` recomputes the plan and verifies a
+If every conversion is unambiguous, review the reported create, convert, and
+retirement actions. `--apply` recomputes the plan and verifies a
 committed, clean Git recovery boundary before applying known conversions. It
 stops rather than delete a legacy asset that Git cannot recover:
 
@@ -49,7 +52,8 @@ bypass it. Preserve the complete output, including finding codes, paths, and
 reasons.
 
 The current automatic subset installs SpecBind from `.cc-sdd.json` and retires
-exact known Codex or Claude Code `kiro-*` skills. It preserves `.kiro`. Any
+exact known Codex or Claude Code `kiro-*` skills plus the Git-tracked cc-sdd
+source at final cutover. Any
 legacy Spec produces `MIGRATE_SPEC_CONVERSION_REQUIRED`; the CLI does not guess
 its milestone or gate evidence.
 
@@ -144,7 +148,9 @@ finding.
 The CLI revalidates the sources and targets, computes its own fingerprints,
 and writes `.specbind/state/cc-sdd-migration.yaml`. Do not hand-edit this file.
 Review and commit it. A later source or target change makes the resolution
-stale and restores the original findings.
+stale and restores the original findings. This state is a temporary handshake:
+final `--apply` removes it with the cc-sdd source while Git retains its accepted
+revision.
 
 ## 6. Return to CLI validation
 
@@ -169,8 +175,10 @@ specbind spec status <spec>
 specbind milestone status
 ```
 
-From the clean commit containing the resolution record, apply the remaining
-deterministic work:
+From the clean commit containing the resolution record, perform final cutover.
+Running this command is the explicit retirement confirmation. The CLI
+revalidates every cleanup target and deletes nothing if any file is untracked,
+ignored, linked, or changed:
 
 ```sh
 specbind migrate cc-sdd --apply
@@ -178,14 +186,14 @@ specbind migrate cc-sdd --apply
 
 ## 7. Retire the legacy workflow
 
-Only after the converted state is valid and the user confirms cutover may the
-CLI remove exact known `kiro-*` agent assets and an exact known legacy
-quickstart block. Edited, mixed, or duplicate instructions require individual
-review and are never removed by keyword guessing.
+On success, the configured cc-sdd source root, `.cc-sdd.json`, exact known
+`kiro-*` skills, and resolution state are removed, leaving SpecBind as the only
+active workflow. A rerun returns `NO_CHANGE CC_SDD_MIGRATION_COMPLETE`.
 
-The original `.kiro` tree remains after migration. Git can recover the target
-changes if necessary, but do not let legacy and SpecBind skills update workflow
-state concurrently.
+Edited, mixed, or duplicate legacy text in `AGENTS.md` or `CLAUDE.md` is not
+removed by keyword guessing even though Git can recover it. Resolve and commit
+that semantic edit during guided work. If final cleanup encounters a filesystem
+error, restore the pre-cutover commit with Git before retrying.
 
 ## Finding codes
 
@@ -265,7 +273,8 @@ evidence.
 
 A known legacy agent asset is not a regular directory, an unknown `kiro-*`
 asset exists, or unsupported content exists directly under `.kiro`. Inspect it
-individually and keep it outside automatic conversion and removal.
+individually and record whether it is converted or intentionally not migrated.
+Git retains the source history after final cutover.
 
 ### MIGRATE_RESOLUTION_STALE / MIGRATE_RESOLUTION_STATE_INVALID {#migrate-resolution-stale}
 
@@ -273,6 +282,13 @@ A source, target, finding, or selected installation covered by the accepted
 resolution changed, or the CLI-owned state is invalid. Do not hand-edit the
 state. Review the current findings and accept a new external candidate with
 `--accept-resolution`.
+
+### MIGRATION_CLEANUP_TARGET_UNTRACKED / MIGRATION_CLEANUP_TARGET_UNSAFE {#migration-cleanup-target-unsafe}
+
+A final-cutover target contains an untracked or ignored file, a link or reparse
+point, or another unsafe shape. Commit needed content or move it outside the
+legacy root, then retry from a clean worktree. The CLI does not delete files
+that Git cannot recover.
 
 ---
 

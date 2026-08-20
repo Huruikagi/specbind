@@ -11,10 +11,12 @@ specbind migrate cc-sdd
 
     旧Specなどのsemantic findingはガイドに従って変換し、外部JSON候補を
     `--accept-resolution`でCLI所有の状態へ受け渡してから`--apply`へ戻ります。
+    最終`--apply`はGit追跡を確認し、cc-sdd sourceと一時stateを退役させます。
 
     Convert semantic findings such as legacy Specs through the guide, hand an
     external JSON candidate to CLI-owned state with `--accept-resolution`, then
-    return to `--apply`.
+    return to `--apply`. Final `--apply` verifies Git tracking and retires the
+    cc-sdd source plus temporary migration state.
 
 ## 日本語
 

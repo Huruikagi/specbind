@@ -19,12 +19,14 @@ SpecBindが自動で変換するのは、意味を機械的に確認できる入
 移行では、次の境界を必ず守ります。
 
 - 最初に、Gitの状態と変更内容を確認してから始める。
-- 移行元の`.kiro`ツリーは、削除も移動も上書きもしない。
+- 読み取り専用planとagent-assisted作業の間は、移行元の`.kiro`ツリーを削除・移動・
+  上書きしない。最終`--apply`だけがGit追跡を確認して退役させる。
 - cc-sddの承認を、SpecBindのGateの承認証拠としてコピーしない。
 - 分からないMilestone、リリース履歴、Contract、Requirementの対応関係を作り話で
   埋めない。
 - 旧`kiro-*`のエージェント資産は、変換後の検証とあなたの確認が済むまで残す。
-- 自動退役する旧agent資産はGitで追跡されているものに限る。
+- 最終退役する`.kiro`、`.cc-sdd.json`、旧agent資産、resolution stateの全ファイルが
+  Gitで追跡されていなければ停止する。ignored fileも削除しない。
 - CLIが所有する状態は、対応するSpecBindコマンドがある限り手編集しない。
 
 ## 1. 読み取り専用の計画を取得する
@@ -35,7 +37,7 @@ SpecBindが自動で変換するのは、意味を機械的に確認できる入
 specbind migrate cc-sdd
 ```
 
-すべてを一意に変換できる場合、CLIは作成・変換・保持・除去する予定の対象を
+すべてを一意に変換できる場合、CLIは作成・変換・退役する予定の対象を
 表示します。`--apply`は計画を再計算し、commit済みでcleanなGit状態を確認してから、
 既知の自動変換だけを適用します。退役対象がGit未追跡なら、回復できない削除を
 避けるため適用を停止します。
@@ -48,7 +50,7 @@ specbind migrate cc-sdd --apply
 ください。CLIが表示したfinding code、対象パス、理由を控えて、次の手順へ進みます。
 
 現在の自動適用範囲は、`.cc-sdd.json`からのSpecBind installと、Codex・Claude Codeの
-既知の`kiro-*` skillの退役です。`.kiro`は残ります。旧Specが1件でもあれば
+既知の`kiro-*` skillおよびGit追跡済みcc-sdd sourceの最終退役です。旧Specが1件でもあれば
 `MIGRATE_SPEC_CONVERSION_REQUIRED`で停止し、MilestoneやGate evidenceを推測しません。
 
 ## 2. エージェントに依頼する
@@ -138,7 +140,8 @@ specbind migrate cc-sdd --accept-resolution ../cc-sdd-resolution.json
 CLIはsourceとtargetを再検証し、fingerprintを自分で計算して
 `.specbind/state/cc-sdd-migration.yaml`へ保存します。このファイルは手編集せず、内容を
 レビューしてcommitしてください。sourceまたはtargetが後で変わればresolutionはstaleに
-なり、元のfindingが再表示されます。
+なり、元のfindingが再表示されます。このstateは一時的なhandshakeで、最終`--apply`が
+cc-sdd sourceと一緒に削除します。受理内容はGit履歴に残ります。
 
 ## 6. CLI検証へ戻る
 
@@ -163,7 +166,9 @@ specbind spec status <spec>
 specbind milestone status
 ```
 
-resolution recordをcommitしたcleanな状態で、残る決定的な処理を適用します。
+resolution recordをcommitしたcleanな状態で、最終cutoverを適用します。このコマンドの
+実行が退役の明示確認です。CLIは全cleanup targetを再検証し、1つでもuntracked、ignored、
+link、変更済みなら何も削除しません。
 
 ```sh
 specbind migrate cc-sdd --apply
@@ -171,14 +176,14 @@ specbind migrate cc-sdd --apply
 
 ## 7. 旧ワークフローを止める
 
-変換後の状態が有効だと確認でき、あなたが切り替えを承認したあとで、はじめて旧
-資産を取り除きます。取り除く対象は、CLIが計画した、内容が正確に分かっている
-`kiro-*`のエージェント資産と旧quickstartブロックだけです。編集済み・混在・重複
-した指示は、推測で消さずに1件ずつ確認します。
+成功すると、設定されたcc-sdd source root、`.cc-sdd.json`、既知の旧`kiro-*` skill、
+resolution stateが削除され、SpecBindだけがactive workflowとして残ります。再実行は
+`NO_CHANGE CC_SDD_MIGRATION_COMPLETE`です。
 
-元の`.kiro`ツリーは、移行後もそのまま残ります。元に戻したくなった場合は、Gitで
-SpecBind側の変更を確認して戻せます。ただし、旧スキルと新スキルを両方使って状態を
-更新することは避けてください。
+`AGENTS.md`や`CLAUDE.md`の編集済み・混在・重複した旧指示は、Gitで戻せる場合でもCLIが
+範囲を推測して消しません。agent-assisted作業中に意味を確認して編集・commitしてから
+最終cutoverへ進みます。cleanup中にfilesystem errorが起きた場合は、cutover直前のcommitを
+Gitで復元してから再実行してください。
 
 ## Finding code
 
@@ -253,14 +258,20 @@ Steeringとして検証してください。
 ### MIGRATE_LEGACY_AGENT_ASSET_INVALID / MIGRATE_LEGACY_AGENT_ASSET_UNKNOWN / MIGRATE_LEGACY_CONTENT_UNSUPPORTED {#migrate-legacy-content-unsupported}
 
 既知の旧agent資産が通常ディレクトリではない、未知の`kiro-*`資産がある、または
-`.kiro`直下に未対応の内容があります。対象を個別に調べ、自動除去や自動変換の
-対象に加えません。
+`.kiro`直下に未対応の内容があります。対象を個別に調べ、変換するか意図的に
+移行しないかをresolutionへ記録します。最終cutover後のsourceはGit履歴に残ります。
 
 ### MIGRATE_RESOLUTION_STALE / MIGRATE_RESOLUTION_STATE_INVALID {#migrate-resolution-stale}
 
 受理済みの移行判断に対応するsource、target、finding、または選択済みinstallが変わったか、
 CLI所有のstateが壊れています。stateを手編集せず、現在のfindingをもう一度レビューして、
 新しい外部候補を`--accept-resolution`で受理し直してください。
+
+### MIGRATION_CLEANUP_TARGET_UNTRACKED / MIGRATION_CLEANUP_TARGET_UNSAFE {#migration-cleanup-target-unsafe}
+
+最終cutoverの対象にGit未追跡またはignored file、link、reparse point、不正な対象が
+含まれています。必要な内容をcommitまたはlegacy root外へ移動し、cleanな状態で
+やり直してください。CLIは回復できないファイルを削除しません。
 
 ---
 

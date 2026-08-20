@@ -100,7 +100,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 
 ### 1. Contract capture
 
-- Complete for the accepted SpecBind interface: Decisions 0075 through 0126
+- Complete for the accepted SpecBind interface: Decisions 0075 through 0127
   classify the retained, replaced, and removed product behavior.
 - Current install and lifecycle fixtures cover clean and locally modified
   product assets, existing project-owned settings, custom roots, project
@@ -108,14 +108,14 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 - Initial migration fixtures now cover the historical `.cc-sdd.json`, legacy
   `.kiro` and `spec.json`, Codex and Claude Code skill detection, mixed language,
   multiple Specs, Design traceability, customized rules, no-write planning,
-  and guarded `--apply`. Automatic apply currently covers only finding-free
-  configuration and exact known Codex or Claude Code legacy skills. Spec and
-  task conversion, exact quick-start recognition, and platform-specific legacy
-  layouts remain outstanding.
+  and guarded `--apply`. Automatic apply covers finding-free configuration,
+  exact known Codex or Claude Code legacy skills, and recursively tracked
+  source retirement. Spec and task conversion, exact quick-start recognition,
+  and platform-specific legacy layouts remain agent-assisted or outstanding.
 - The accepted agent-assisted path is published in Japanese and English under
   `docs/guide/`; stable findings and language-aware guide selection are
-  implemented. Retry-safe recognition of guided target work remains
-  outstanding.
+  implemented, including accepted resolution freshness and deterministic
+  rejoin.
 
 ### 2. Read-only Rust core
 
@@ -138,15 +138,18 @@ the `.specbind.json` name introduced by the later repository-wide rename. The
 current `tools/cc-sdd` tree therefore remains a migration oracle for inherited
 artifact shapes, but Git history is authoritative for renamed brand-specific
 inputs. `--apply` now installs the unambiguous configuration-and-agent subset,
-retires exact known legacy skills only after successful installation, and
-recognizes its own converged target on retry. Legacy Spec conversion and
-other semantic conversion remain agent-authored. The CLI now accepts a strict
+retires exact known legacy skills and the recursively Git-tracked cc-sdd source
+only after successful installation, and recognizes completed cutover on retry.
+Legacy Spec conversion and other semantic conversion remain agent-authored.
+The CLI now accepts a strict
 external resolution candidate, persists CLI-computed source and target
 fingerprints, and reopens findings when that accepted work becomes stale.
 [Decision 0125](./decisions/0125-agent-assisted-cc-sdd-migration.md) defines the
 supported Pages handoff and deterministic rejoin boundary; [Decision
 0126](./decisions/0126-cli-owned-cc-sdd-migration-resolution.md) defines the
-accepted resolution lifecycle.
+accepted resolution lifecycle; [Decision
+0127](./decisions/0127-retire-cc-sdd-source-at-final-cutover.md) defines final
+source and handshake retirement.
 
 ### 4. Native SpecBind operations
 

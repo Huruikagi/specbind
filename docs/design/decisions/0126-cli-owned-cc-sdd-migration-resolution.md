@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The retained-source lifecycle below is superseded by [Decision
+0127](./0127-retire-cc-sdd-source-at-final-cutover.md): successful final
+`--apply` removes both the legacy source and this temporary resolution record.
+
 ## Context
 
 Decision 0125 requires agent-assisted migration to rejoin deterministic CLI
@@ -39,9 +43,9 @@ authority, trusting caller-supplied fingerprints, or making `.kiro` mutable.
   matches. Any mismatch restores the original findings and adds a stale or
   invalid resolution diagnostic.
 - The record is not gate evidence, approval evidence, completion evidence, or
-  release history. Release and milestone operations do not archive it. It
-  remains current while the preserved cc-sdd source is retained; retiring that
-  source and this record is a future explicit cleanup operation.
+  release history. Release and milestone operations do not archive it. It is a
+  temporary handshake removed with the legacy source by final `--apply` under
+  Decision 0127; Git retains the accepted revision.
 - Acceptance itself is a reviewable worktree change. The user commits it before
   `--apply`, which retains the clean committed recovery boundary before exact
   legacy-agent cleanup.

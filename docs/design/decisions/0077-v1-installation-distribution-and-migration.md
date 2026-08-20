@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Post-cutover preservation of the legacy source is superseded by [Decision
+0127](./0127-retire-cc-sdd-source-at-final-cutover.md). The read-only planning
+and fail-closed conversion boundaries remain accepted.
+
 ## Context
 
 The inherited TypeScript installer exposes compatibility aliases, manifests, overwrite policies, backups, profiles, and operating-system switches. SpecBind v1 is primarily invoked through agent skills after installation and needs a smaller, testable distribution surface.
@@ -38,7 +42,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 - Normal installation does not detect or interpret `.kiro`. Migration is invoked explicitly as `specbind migrate cc-sdd`.
 - `specbind migrate cc-sdd` is a read-only plan. `specbind migrate cc-sdd --apply` recomputes and applies that plan after agent or human confirmation and Git-clean validation.
-- Migration creates converted SpecBind artifacts without deleting the original `.kiro` tree. It imports only evidence and lifecycle state that can be proved; ambiguous active state returns to normal approval rather than receiving invented evidence.
+- Migration keeps the original cc-sdd source unchanged during planning and guided work. Final `--apply` retires only recursively Git-tracked legacy source after target validation under Decision 0127. It imports only evidence and lifecycle state that can be proved; ambiguous active state returns to normal approval rather than receiving invented evidence.
 - Known `kiro-*` agent asset directories are removed after successful conversion because concurrent old and new workflows are unsafe.
 - An exact known legacy quickstart block may be removed from root `AGENTS.md` or `CLAUDE.md`. Edited, mixed, or ambiguous legacy instructions stop migration for manual cleanup; migration never deletes text by guessing from `kiro` words.
 - The inherited TypeScript implementation moves temporarily from `tools/specbind` to `tools/cc-sdd` as a comparison and migration oracle. The Rust CLI is developed in `tools/specbind`; the temporary source is removed when Rust v1 meets its cutover gates.
@@ -65,4 +69,4 @@ binary distribution surface remain outstanding.
 - V1 has a small installation contract that can be tested in the environments the project actually controls.
 - Git replaces bespoke backup directories and overwrite prompts.
 - Project customization survives product updates, while generated agent resources can reliably advance.
-- Migration remains explicit, reviewable, and non-destructive toward the original `.kiro` artifacts.
+- Migration remains explicit and reviewable; destructive final cutover relies on the clean committed Git recovery boundary defined by Decision 0127.

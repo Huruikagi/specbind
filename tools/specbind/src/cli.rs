@@ -71,6 +71,12 @@ pub fn migrate_cc_sdd(start: &Path, apply: bool, accept_resolution: Option<&str>
         Ok(project_root) => project_root,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
+    if accept_resolution.is_none() && migration::source_absent_and_target_current(&project_root) {
+        return CommandOutput::no_change(
+            "CC_SDD_MIGRATION_COMPLETE",
+            "No cc-sdd source remains and the SpecBind target is current.",
+        );
+    }
     if let Some(source) = accept_resolution {
         let candidate =
             match read_external_input(&MIGRATION_RESOLUTION_INPUT, start, &project_root, source) {
@@ -121,16 +127,14 @@ pub fn migrate_cc_sdd(start: &Path, apply: bool, accept_resolution: Option<&str>
     }
     if apply {
         return match migration::apply(&project_root) {
-            Ok(outcome) if outcome.unchanged => CommandOutput::no_change(
-                "CC_SDD_MIGRATION_UP_TO_DATE",
-                "The deterministic cc-sdd migration target is already current.",
-            ),
             Ok(outcome) => CommandOutput::success(
                 format!(
-                    "OK CC_SDD_MIGRATION_APPLIED: Applied the deterministic cc-sdd migration.\n  Installed files: {}\n  Removed legacy assets: {}\n  Original {} tree remains intact.\n",
+                    "OK CC_SDD_MIGRATION_APPLIED: Applied the deterministic cc-sdd migration and completed cutover.\n  Installed files: {}\n  Removed legacy assets: {}\n  Removed legacy root: {}\n  Removed legacy config: {}\n  Removed resolution state: {}\n",
                     outcome.installed_files,
                     outcome.removed_legacy_assets,
-                    escape(&plan.legacy_root)
+                    escape(&outcome.removed_legacy_root),
+                    yes_no(outcome.removed_legacy_config),
+                    yes_no(outcome.removed_resolution_state)
                 )
                 .into_bytes(),
             ),
@@ -2631,6 +2635,10 @@ fn push_field(output: &mut String, label: &str, value: &str) {
     output.push_str(": ");
     output.push_str(&escape(value));
     output.push('\n');
+}
+
+fn yes_no(value: bool) -> &'static str {
+    if value { "yes" } else { "no" }
 }
 
 fn push_inline_list(output: &mut String, label: &str, values: &[String]) {

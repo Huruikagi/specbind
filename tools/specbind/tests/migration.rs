@@ -83,9 +83,7 @@ fn applies_and_rejoins_an_exact_deterministic_migration() {
         .success()
         .stdout(predicate::str::contains("OK CC_SDD_MIGRATION_APPLIED"))
         .stdout(predicate::str::contains("Removed legacy assets: 1"))
-        .stdout(predicate::str::contains(
-            "Original .kiro tree remains intact.",
-        ))
+        .stdout(predicate::str::contains("Removed legacy root: .kiro"))
         .stderr("");
 
     assert!(root.path().join(".specbind.json").is_file());
@@ -96,7 +94,8 @@ fn applies_and_rejoins_an_exact_deterministic_migration() {
             .is_file()
     );
     assert!(!root.path().join(".agents/skills/kiro-spec-init").exists());
-    assert!(root.path().join(".kiro").is_dir());
+    assert!(!root.path().join(".kiro").exists());
+    assert!(!root.path().join(".cc-sdd.json").exists());
 
     let mut rerun = Command::cargo_bin("specbind").expect("specbind binary should build");
     rerun
@@ -105,7 +104,7 @@ fn applies_and_rejoins_an_exact_deterministic_migration() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "NO_CHANGE CC_SDD_MIGRATION_UP_TO_DATE",
+            "NO_CHANGE CC_SDD_MIGRATION_COMPLETE",
         ))
         .stderr("");
 }
@@ -235,9 +234,45 @@ fn accepts_agent_resolution_and_rejoins_deterministic_apply() {
         .args(["migrate", "cc-sdd", "--apply"])
         .assert()
         .success()
-        .stdout(predicate::str::contains("OK CC_SDD_MIGRATION_APPLIED"));
+        .stdout(
+            predicate::str::contains("OK CC_SDD_MIGRATION_APPLIED")
+                .and(predicate::str::contains("Removed resolution state: yes")),
+        );
     assert!(!root.path().join(".agents/skills/kiro-spec-init").exists());
-    assert!(root.path().join(".kiro/settings/rules/project.md").exists());
+    assert!(!root.path().join(".kiro").exists());
+    assert!(!root.path().join(".cc-sdd.json").exists());
+    assert!(
+        !root
+            .path()
+            .join(".specbind/state/cc-sdd-migration.yaml")
+            .exists()
+    );
+}
+
+#[test]
+fn apply_refuses_ignored_legacy_files_that_git_cannot_recover() {
+    let root = migration_fixture("minimal");
+    write_file(root.path(), ".gitignore", ".kiro/settings/local.cache\n");
+    git_commit_all(root.path());
+    write_file(
+        root.path(),
+        ".kiro/settings/local.cache",
+        "machine-local legacy data\n",
+    );
+    let before = snapshot(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "MIGRATION_CLEANUP_TARGET_UNTRACKED .kiro/settings/local.cache",
+        ));
+
+    assert_eq!(before, snapshot(root.path()));
+    assert!(!root.path().join(".specbind.json").exists());
 }
 
 #[test]
@@ -349,6 +384,25 @@ fn reports_the_historical_default_root_when_cc_sdd_is_absent() {
         .stderr(predicate::str::contains(
             "MIGRATION_LEGACY_ROOT_NOT_FOUND .kiro:",
         ));
+}
+
+#[test]
+fn rejects_a_legacy_root_that_could_resolve_to_the_project_root() {
+    let root = migration_fixture("minimal");
+    write_file(
+        root.path(),
+        ".cc-sdd.json",
+        r#"{"version":1,"agent":"codex-skills","lang":"en","kiroDir":"."}"#,
+    );
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd", "--apply"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MIGRATION_LEGACY_CONFIG_INVALID"));
+    assert!(root.path().join(".kiro").exists());
 }
 
 fn migration_fixture(name: &str) -> TempDir {

@@ -56,7 +56,9 @@ pub struct MigrationPlan {
 pub struct MigrationOutcome {
     pub installed_files: usize,
     pub removed_legacy_assets: usize,
-    pub unchanged: bool,
+    pub removed_legacy_root: String,
+    pub removed_legacy_config: bool,
+    pub removed_resolution_state: bool,
 }
 
 /// Returns the unresolved source plan before any accepted semantic resolution
@@ -64,6 +66,31 @@ pub struct MigrationOutcome {
 /// older record to authorize its own replacement.
 pub(crate) fn unresolved_plan(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     plan_inner(project_root)
+}
+
+/// Reports a completed cutover when no default cc-sdd source remains and the
+/// installed `SpecBind` target is current.
+#[must_use]
+pub fn source_absent_and_target_current(project_root: &Path) -> bool {
+    if path_entry_present(&project_root.join(LEGACY_CONFIG))
+        || path_entry_present(&project_root.join(DEFAULT_LEGACY_ROOT))
+    {
+        return false;
+    }
+    install::plan(project_root, &InstallInputs::default()).is_ok_and(|plan| {
+        !plan.initial
+            && plan
+                .entries
+                .iter()
+                .all(|entry| entry.action == PlanAction::Keep)
+    })
+}
+
+fn path_entry_present(path: &Path) -> bool {
+    match fs::symlink_metadata(path) {
+        Ok(_) => true,
+        Err(error) => error.kind() != std::io::ErrorKind::NotFound,
+    }
 }
 
 impl MigrationPlan {
@@ -173,10 +200,10 @@ fn plan_inner(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
     }
 
     let mut actions = vec![MigrationAction {
-        kind: "preserve",
+        kind: "retire-source-after-cutover",
         source: Some(config.root.clone()),
         target: None,
-        detail: "the original cc-sdd tree remains unchanged".to_owned(),
+        detail: "remove the Git-tracked cc-sdd source only during final apply".to_owned(),
     }];
     let mut languages = BTreeSet::new();
     if let Some(language) = config.language {
@@ -225,25 +252,7 @@ fn plan_inner(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
             &mut findings,
         )?
     };
-    actions.insert(
-        1,
-        MigrationAction {
-            kind: if target_converged {
-                "keep"
-            } else if project_root.join(LEGACY_CONFIG).exists() {
-                "convert"
-            } else {
-                "create"
-            },
-            source: project_root
-                .join(LEGACY_CONFIG)
-                .exists()
-                .then(|| LEGACY_CONFIG.to_owned()),
-            target: Some(TARGET_CONFIG.to_owned()),
-            detail: "establish the strict SpecBind project configuration after assets exist"
-                .to_owned(),
-        },
-    );
+    insert_config_actions(project_root, target_converged, &mut actions);
 
     findings.sort();
     findings.dedup();
@@ -257,6 +266,41 @@ fn plan_inner(project_root: &Path) -> Result<MigrationPlan, MigrationIssues> {
         findings,
         target_converged,
     })
+}
+
+fn insert_config_actions(
+    project_root: &Path,
+    target_converged: bool,
+    actions: &mut Vec<MigrationAction>,
+) {
+    let legacy_config = project_root.join(LEGACY_CONFIG).exists();
+    actions.insert(
+        1,
+        MigrationAction {
+            kind: if target_converged {
+                "keep"
+            } else if legacy_config {
+                "convert"
+            } else {
+                "create"
+            },
+            source: legacy_config.then(|| LEGACY_CONFIG.to_owned()),
+            target: Some(TARGET_CONFIG.to_owned()),
+            detail: "establish the strict SpecBind project configuration before retiring the legacy config"
+                .to_owned(),
+        },
+    );
+    if legacy_config {
+        actions.insert(
+            2,
+            MigrationAction {
+                kind: "retire-config-after-cutover",
+                source: Some(LEGACY_CONFIG.to_owned()),
+                target: None,
+                detail: "remove the Git-tracked cc-sdd config during final apply".to_owned(),
+            },
+        );
+    }
 }
 
 fn inspect_scope_findings(
@@ -370,19 +414,17 @@ pub fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIssues> {
         .filter(|action| action.kind == "remove-after-cutover")
         .filter_map(|action| action.source.clone())
         .collect::<Vec<_>>();
-    if plan.target_converged && legacy_assets.is_empty() {
-        return Ok(MigrationOutcome {
-            installed_files: 0,
-            removed_legacy_assets: 0,
-            unchanged: true,
-        });
+    let legacy_config = path_exists(&project_root.join(LEGACY_CONFIG))?;
+    let resolution_state = path_exists(&project_root.join(migration_resolution::STATE_RELATIVE))?;
+    let mut cleanup_targets = legacy_assets.clone();
+    cleanup_targets.push(plan.legacy_root.clone());
+    if legacy_config {
+        cleanup_targets.push(LEGACY_CONFIG.to_owned());
     }
-    require_apply_repository(
-        project_root,
-        &install_plan,
-        &legacy_assets,
-        plan.target_converged,
-    )?;
+    if resolution_state {
+        cleanup_targets.push(migration_resolution::STATE_RELATIVE.to_owned());
+    }
+    require_apply_repository(project_root, &cleanup_targets)?;
     let installed_files = install_plan
         .entries
         .iter()
@@ -392,10 +434,19 @@ pub fn apply(project_root: &Path) -> Result<MigrationOutcome, MigrationIssues> {
     for relative in &legacy_assets {
         remove_legacy_asset(project_root, relative)?;
     }
+    remove_cleanup_target(project_root, &plan.legacy_root)?;
+    if legacy_config {
+        remove_cleanup_target(project_root, LEGACY_CONFIG)?;
+    }
+    if resolution_state {
+        remove_cleanup_target(project_root, migration_resolution::STATE_RELATIVE)?;
+    }
     Ok(MigrationOutcome {
         installed_files,
         removed_legacy_assets: legacy_assets.len(),
-        unchanged: false,
+        removed_legacy_root: plan.legacy_root,
+        removed_legacy_config: legacy_config,
+        removed_resolution_state: resolution_state,
     })
 }
 
@@ -822,9 +873,7 @@ fn inspect_agent_assets(
 
 fn require_apply_repository(
     project_root: &Path,
-    install_plan: &install::InstallPlan,
-    legacy_assets: &[String],
-    allow_expected_changes: bool,
+    cleanup_targets: &[String],
 ) -> Result<(), MigrationIssues> {
     let committed = repository::predicate(project_root, &["rev-parse", "--verify", "-q", "HEAD"])
         .map_err(|error| one_issue("MIGRATION_GIT_FAILED", None, error.to_string()))?;
@@ -835,72 +884,95 @@ fn require_apply_repository(
             "cc-sdd migration apply requires at least one commit",
         ));
     }
-    for relative in legacy_assets {
-        let tracked = repository::output_bytes(project_root, &["ls-files", "-z", "--", relative])
-            .map_err(|error| {
-            one_issue(
-                "MIGRATION_GIT_FAILED",
-                Some(relative.clone()),
-                error.to_string(),
-            )
-        })?;
-        if tracked.is_empty() {
-            return Err(one_issue(
-                "MIGRATION_LEGACY_ASSET_UNTRACKED",
-                Some(relative.clone()),
-                "legacy cleanup requires Git-tracked source files for recovery",
-            ));
-        }
+    for relative in cleanup_targets {
+        require_cleanup_target_tracked(project_root, relative)?;
     }
     let status = repository::output_bytes(
         project_root,
         &["status", "--porcelain=v1", "-z", "--untracked-files=all"],
     )
     .map_err(|error| one_issue("MIGRATION_GIT_FAILED", None, error.to_string()))?;
-    if status.is_empty() {
-        return Ok(());
+    if !status.is_empty() {
+        return Err(one_issue(
+            "MIGRATION_REPOSITORY_DIRTY",
+            None,
+            "cc-sdd migration apply requires a clean repository",
+        ));
     }
-    if allow_expected_changes && status_is_expected(&status, install_plan, legacy_assets)? {
-        return Ok(());
-    }
-    Err(one_issue(
-        "MIGRATION_REPOSITORY_DIRTY",
-        None,
-        "cc-sdd migration apply requires a clean repository",
-    ))
+    Ok(())
 }
 
-fn status_is_expected(
-    status: &[u8],
-    install_plan: &install::InstallPlan,
-    legacy_assets: &[String],
-) -> Result<bool, MigrationIssues> {
-    for record in status
-        .split(|byte| *byte == 0)
-        .filter(|record| !record.is_empty())
-    {
-        if record.len() < 4 {
-            return Ok(false);
-        }
-        let relative = std::str::from_utf8(&record[3..]).map_err(|_| {
+fn require_cleanup_target_tracked(
+    project_root: &Path,
+    relative: &str,
+) -> Result<(), MigrationIssues> {
+    let path = project_root.join(relative);
+    let metadata = fs::symlink_metadata(&path).map_err(|error| {
+        one_issue(
+            "MIGRATION_CLEANUP_TARGET_CHANGED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if is_link_like(&metadata) {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup targets must not contain links or reparse points",
+        ));
+    }
+    if metadata.is_file() {
+        return require_file_tracked(project_root, relative);
+    }
+    if !metadata.is_dir() {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup target must be a regular file or directory",
+        ));
+    }
+    for entry in fs::read_dir(&path).map_err(|error| {
+        one_issue(
+            "MIGRATION_CLEANUP_TARGET_CHANGED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })? {
+        let entry = entry.map_err(|error| {
             one_issue(
-                "MIGRATION_GIT_OUTPUT_INVALID",
-                None,
-                "Git status returned a non-UTF-8 path",
+                "MIGRATION_CLEANUP_TARGET_CHANGED",
+                Some(relative.to_owned()),
+                error.to_string(),
             )
         })?;
-        let installation_target = install_plan.entries.iter().any(|entry| {
-            relative == entry.path || relative.starts_with(&format!("{}/", entry.path))
-        });
-        let legacy_target = legacy_assets
-            .iter()
-            .any(|asset| relative == asset || relative.starts_with(&format!("{asset}/")))
-            || is_known_legacy_change(relative);
-        if !installation_target && !legacy_target {
-            return Ok(false);
-        }
+        let child = entry
+            .path()
+            .strip_prefix(project_root)
+            .expect("cleanup target stays below project root")
+            .to_string_lossy()
+            .replace('\\', "/");
+        require_cleanup_target_tracked(project_root, &child)?;
     }
-    Ok(true)
+    Ok(())
+}
+
+fn require_file_tracked(project_root: &Path, relative: &str) -> Result<(), MigrationIssues> {
+    let tracked = repository::output_bytes(project_root, &["ls-files", "-z", "--", relative])
+        .map_err(|error| {
+            one_issue(
+                "MIGRATION_GIT_FAILED",
+                Some(relative.to_owned()),
+                error.to_string(),
+            )
+        })?;
+    if tracked.is_empty() {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNTRACKED",
+            Some(relative.to_owned()),
+            "final cutover deletes only Git-tracked files",
+        ));
+    }
+    Ok(())
 }
 
 fn remove_legacy_asset(project_root: &Path, relative: &str) -> Result<(), MigrationIssues> {
@@ -954,12 +1026,71 @@ fn remove_legacy_asset(project_root: &Path, relative: &str) -> Result<(), Migrat
     })
 }
 
-fn is_known_legacy_change(relative: &str) -> bool {
-    [".agents/skills", ".claude/skills"].iter().any(|root| {
-        LEGACY_SKILLS.iter().any(|name| {
-            let target = format!("{root}/{name}");
-            relative == target || relative.starts_with(&format!("{target}/"))
-        })
+fn remove_cleanup_target(project_root: &Path, relative: &str) -> Result<(), MigrationIssues> {
+    require_cleanup_target_tracked(project_root, relative)?;
+    let status = repository::path_status(project_root, relative).map_err(|error| {
+        one_issue(
+            "MIGRATION_GIT_FAILED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if !status.is_empty() {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_CHANGED",
+            Some(relative.to_owned()),
+            "legacy cleanup target changed after the recovery boundary was established",
+        ));
+    }
+    let canonical_project = project_root
+        .canonicalize()
+        .map_err(|error| one_issue("MIGRATION_GIT_FAILED", None, error.to_string()))?;
+    let path = project_root.join(relative);
+    let canonical = path.canonicalize().map_err(|error| {
+        one_issue(
+            "MIGRATION_CLEANUP_TARGET_CHANGED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if canonical == canonical_project || !canonical.starts_with(&canonical_project) {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup target must stay below the project root",
+        ));
+    }
+    let metadata = fs::symlink_metadata(&path).map_err(|error| {
+        one_issue(
+            "MIGRATION_CLEANUP_TARGET_CHANGED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
+    })?;
+    if is_link_like(&metadata) {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup target must not be a link or reparse point",
+        ));
+    }
+    if metadata.is_dir() {
+        fs::remove_dir_all(path)
+    } else if metadata.is_file() {
+        fs::remove_file(path)
+    } else {
+        return Err(one_issue(
+            "MIGRATION_CLEANUP_TARGET_UNSAFE",
+            Some(relative.to_owned()),
+            "legacy cleanup target must be a regular file or directory",
+        ));
+    }
+    .map_err(|error| {
+        one_issue(
+            "MIGRATION_CLEANUP_REMOVE_FAILED",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )
     })
 }
 
@@ -1182,10 +1313,17 @@ fn normalize_legacy_root(value: &str) -> Result<String, MigrationIssues> {
         .chars()
         .all(|value| value.is_ascii_alphanumeric() || matches!(value, '.' | '_' | '-' | '/'));
     let trimmed = value.trim_end_matches('/');
+    let segments = trimmed.split('/').filter(|segment| !segment.is_empty());
     let invalid = trimmed.is_empty()
         || !allowed
         || Path::new(value).is_absolute()
-        || value.split('/').any(|segment| segment == "..");
+        || segments
+            .clone()
+            .any(|segment| segment == "." || segment == "..")
+        || segments
+            .clone()
+            .next()
+            .is_some_and(|segment| segment.eq_ignore_ascii_case(".git"));
     if invalid {
         Err(one_issue(
             "MIGRATION_LEGACY_CONFIG_INVALID",

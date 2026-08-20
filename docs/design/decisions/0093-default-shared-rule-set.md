@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The requirement to preserve the original `.kiro` tree after final cutover is
+superseded by Decision 0127. The classification and conversion boundaries in
+this decision remain accepted.
+
 ## Context
 
 Decision 0008 preserves cc-sdd's project-owned `settings/rules/` customization surface. Decision 0092 separates user-customizable rules from non-waivable product behavior, and Decision 0094 exposes shared immutable semantic baselines as CLI-readable product protocols. The exact project-owned default rule set still needs to exclude that protocol content.
@@ -91,7 +95,7 @@ The inherited files are classified as follows:
 
 `contract-principles.md` has no direct cc-sdd counterpart because SpecBind adds persistent typed Contracts. The former `okf-artifacts.md` installed rule is replaced by Decision 0094's immutable `okf-authoring` protocol.
 
-`specbind migrate cc-sdd` does not copy inherited rule files verbatim into the SpecBind default paths. The migration plan identifies legacy rule files that differ from their known cc-sdd defaults and reports them for manual policy review. The original `.kiro` tree remains intact. New SpecBind defaults are written only through the ordinary absent-target settings behavior, so a procedural cc-sdd file never silently becomes user-owned SpecBind policy.
+`specbind migrate cc-sdd` does not copy inherited rule files verbatim into the SpecBind default paths. The migration plan identifies legacy rule files that differ from their known cc-sdd defaults and reports them for manual policy review. The original `.kiro` tree remains intact during planning and semantic resolution, then Decision 0127 retires it only at the explicit final cutover. New SpecBind defaults are written only through the ordinary absent-target settings behavior, so a procedural cc-sdd file never silently becomes user-owned SpecBind policy.
 
 ## Consequences
 
