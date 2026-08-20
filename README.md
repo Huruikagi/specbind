@@ -1,27 +1,50 @@
 # SpecBind
 
-SpecBind is an experimental command system for binding durable specifications to agent-assisted software delivery.
+SpecBind is an experimental system for keeping durable software specifications bound to agent-assisted delivery, from intent through release.
 
-## Project status
+AI coding agents can implement quickly, but the reasoning around a change is easy to lose: requirements become one-off prompts, design decisions drift away from the code, and a later agent has to reconstruct what the product is supposed to do. SpecBind gives that reasoning a maintained home and makes it part of the delivery lifecycle.
 
-This repository was bootstrapped from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) and has been detached from the GitHub fork network. The canonical SpecBind CLI is now being implemented in Rust under [`tools/specbind/`](./tools/specbind/). The inherited TypeScript implementation remains under [`tools/cc-sdd/`](./tools/cc-sdd/) as a temporary migration and comparison oracle.
+## What SpecBind does
 
-The Rust CLI currently provides structured artifact loading and semantic validation, configured project-root resolution, recursive OKF artifact discovery with profile diagnostics, public `artifact list/read` text and raw-content commands, `template list/read spec` scaffold discovery and raw reads over project overrides and embedded official defaults, project-independent `protocol list/read` access to the twelve embedded product protocols, project-independent `schema list/read` access to the embedded structured-artifact schemas, `steering list/read` discovery of project-level guidance that fails closed on an incomplete collection, `adapter list/read` access to the closed set of project-owned operational adapters, `install` planning and guarded product-asset application including per-agent rendering of the embedded `specbind-status`, `specbind-discovery`, `specbind-requirements`, `specbind-design`, `specbind-tasks`, `specbind-contract-review`, `specbind-implement`, `specbind-review-task`, `specbind-debug`, `specbind-validate-implementation`, `specbind-verify-completion`, `specbind-validate-design`, and `specbind-release` skills and the marked project-instruction block, standalone `check traceability/contracts` gates with CI-usable exit status, public `tasks list/show` projections with derived execution state and effective dependencies, guarded `tasks complete/block/reopen` progress records, project-wide `spec list` enumeration that reports an unreadable Spec instead of failing, composed `spec status` lifecycle reporting, `milestone scope` reads of the current scope in the exact shape a replacement candidate takes, with the authored Roadmap body included only on request, active-scope `milestone status` stage, health, review, progress, dependency, and actionable-work reporting, guarded `milestone create`, `milestone update-scope`, and `milestone rebaseline` transitions, guarded `milestone bind-release` mutation with portable archive-target collision checks, focused `milestone review status` reporting and guarded `milestone review accept` candidate acceptance, guarded `spec requirements/design/tasks approve` and `invalidate` gate transitions, stateless `release preflight` readiness, guarded `release finalize` lifecycle closure with strict per-Spec log summaries and retry recovery, guarded Spec completion preflight/accept/invalidate commands, and guarded Direct preflight/complete commands. It also provides Markdown AST validation and canonical ID extraction for Requirements, Design body-marker equality, typed canonical Contract parsing and project-wide graph validation, active Roadmap parsing and normalized review-scope fingerprinting, strict Contract review candidate resolution, guarded accepted-state persistence, accepted-review freshness evaluation and later-boundary enforcement, cross-artifact Requirement existence and active Design/Task coverage, canonical gate-input resolution and fingerprints, cascading requirements/design/tasks freshness evaluation, Git- and task-aware completion freshness across same-revision multi-Spec metadata transitions, and target-only Git safety for release operations. Remaining lifecycle transitions and installation behavior are being implemented incrementally from the accepted design decisions. `milestone status` derives `release_ready` only when the same stateless preflight checks pass. Until the transition is complete, do not treat inherited cc-sdd behavior as the final SpecBind interface.
+SpecBind combines agent skills with a deterministic CLI:
 
-For concise snapshots of the current interface, see the [generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md). The proposed replacement is tracked separately in the [target skill catalog](./docs/design/target-skill-catalog.md), [target artifact catalog](./docs/design/target-artifact-catalog.md), and [target workflows](./docs/design/target-workflows.md).
+- **Skills own judgment.** Agents help discover the right scope, author requirements and designs, review contracts, plan tasks, implement changes, and evaluate results.
+- **The CLI owns invariants.** It validates artifacts and traceability, records approvals and task progress, detects stale downstream work, and guards lifecycle and release transitions.
+- **Specs stay alive.** A Spec describes a product capability across milestones and releases. Later changes update the same durable requirements, design, and external contract instead of starting from a disposable plan.
+- **Milestones make delivery explicit.** A Roadmap groups the work intended for a release, including dependencies across Specs and smaller Direct changes that do not need their own Spec.
+- **Contracts expose cross-Spec seams early.** A contract-first review happens before task planning, so ownership conflicts, dependency cycles, and integration assumptions surface before implementation.
 
-The [repository map](./docs/repository-map.md) indexes this repository's own source layout, design documents, and complete decision record.
+SpecBind is not a gate on every repository edit. Work enters the workflow when it belongs to a tracked delivery, changes behavior or boundaries owned by a Spec, or creates a new durable responsibility. Unrelated maintenance can remain ordinary work.
 
-## Direction
+## The lifecycle
 
-- Define a command system with its own naming and workflow conventions.
-- Keep spec-driven development practical for agentic software delivery.
-- Rework inherited components deliberately instead of maintaining drop-in compatibility with cc-sdd.
-- Stabilize migration and compatibility behavior before creating maintained documentation.
+The deliberate path is:
+
+```text
+discover scope
+  -> requirements
+  -> design and contract
+  -> contract review
+  -> tasks
+  -> implementation and verification
+  -> release
+```
+
+Approvals bind each phase to the exact inputs that were reviewed. If an upstream artifact changes, SpecBind marks the affected downstream evidence stale rather than letting an agent silently continue from an obsolete plan. Faster orchestration can reuse the same artifacts and guards without defining a weaker workflow.
+
+Projects can adapt document templates, shared rules, and Git or release guidance while keeping the product's validation and state transitions consistent. SpecBind supports Codex and Claude Code workflows, with English and Japanese as the v1 artifact languages.
+
+## Learn more
+
+- [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
+- [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
+- [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
+- [Generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md) are concise snapshots of the current interface.
+- [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
 
 ## Repository layout
 
-- `tools/specbind/` — canonical Rust workspace and future distributed `specbind` executable
+- `tools/specbind/` — canonical Rust workspace for the `specbind` executable
 - `tools/cc-sdd/` — inherited TypeScript migration oracle
 - `docs/design/` — target workflows, lifecycle models, and accepted design decisions
 
