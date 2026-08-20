@@ -1,122 +1,126 @@
 # 基本概念
 
-SpecBindは、エージェントにすべてを任せる仕組みでも、すべての変更に文書作成を
-要求する仕組みでもありません。意味を判断するエージェントと、状態を検証・記録する
-CLIを組み合わせ、仕様と実装の関係を長期的に保ちます。
+SpecBindは、エージェントにすべてを任せる仕組みでも、どんな変更にも文書作成を
+求める仕組みでもありません。意味を判断するエージェントと、状態を検証して記録
+するCLIを組み合わせることで、仕様と実装の関係を長く保ちます。
 
 ## SkillとCLI
 
-SpecBindでは責任を次のように分けます。
+SpecBindでは、責任を次のように分けています。
 
 | 担当 | 主な責任 |
 | --- | --- |
 | エージェントのSkill | スコープ判断、RequirementsやDesignの作成、レビュー、実装、結果の説明 |
-| `specbind` CLI | 構造検証、トレーサビリティ、承認証拠、進捗、状態遷移、release guard |
-| 利用者 | スコープの確定、必要な承認、プロジェクト固有の判断、公開結果の確認 |
+| `specbind` CLI | 構造検証、トレーサビリティ、承認の証拠、進捗、状態遷移、リリース前チェック |
+| あなた | スコープの確定、必要な承認、プロジェクト固有の判断、公開結果の確認 |
 
-SkillはCLIの状態を直接書き換えません。CLIも、Requirementsの意味が正しいか、
-Designが適切かといった判断を代行しません。両方の層を通すことで、機械的に正しい
-だけの仕様や、意味はもっともらしいが状態遷移を守っていない作業を防ぎます。
+SkillはCLIが持つ状態を直接書き換えません。逆にCLIは、Requirementsの意味が
+正しいか、Designが妥当かといった判断をしません。両方の層を必ず通すことで、
+形式だけ整った仕様や、内容はもっともらしいのに状態遷移を飛ばした作業を防ぎます。
 
 ## Spec
 
-Specは、プロジェクトが継続して所有する1つの能力または責任境界です。
+Specは、プロジェクトが持ち続ける1つの能力、あるいは責任の境界です。
 
-Specは変更ごとに使い捨てる計画ではありません。後続Milestoneで同じ能力を変更する
-場合は、同じSpecの完全な現在形としてRequirements、Design、Contractを更新します。
-リリース後もSpec自体は残り、次の変更の出発点になります。
+Specは変更のたびに使い捨てる計画書ではありません。あとのMilestoneで同じ能力を
+変更するときは、同じSpecのRequirements、Design、Contractを「現在の姿」として
+更新します。リリース後もSpecは残り、次の変更の出発点になります。
 
-既定のSpecディレクトリは`.specbind/specs/<spec>/`です。`<spec>`には責任を表す
-短いkebab-caseのIDを使います。
+Specの既定の置き場所は`.specbind/specs/<spec>/`です。`<spec>`には、その責任を
+表す短いkebab-caseのIDを使います。
 
 ## MilestoneとRoadmap
 
-Milestoneは、1回のリリースとして一緒に届ける作業のまとまりです。Spec-backed item、
-Direct item、項目間の依存関係、対象リリースをRoadmapに保持します。
+Milestoneは、1回のリリースとしてまとめて届ける作業の単位です。Spec-backed item、
+Direct item、項目どうしの依存関係、対象リリースをRoadmapに記録します。
 
-プロジェクトで同時にactiveにできるMilestoneは1つです。現在のRoadmapは
-`.specbind/steering/roadmap.md`にあり、CLIが状態を管理します。リリース完了時には
-release archiveへ移されます。
+同時にactiveにできるMilestoneは、プロジェクトごとに1つだけです。現在のRoadmapは
+`.specbind/steering/roadmap.md`にあり、状態はCLIが管理します。リリースが完了
+すると、Roadmapの内容はrelease archiveへ移ります。
 
-Milestoneに含めた作業は、単独なら通常作業になり得る小さな変更でも、同じリリース
-境界の中で追跡されます。
+いったんMilestoneに入れた作業は、単独なら通常の作業で済むような小さな変更でも、
+同じリリース境界の中で追跡します。
 
 ## Spec-backed itemとDirect item
 
-Discoveryは、ワークフローに入る作業を所有境界で分類します。
+Discoveryは、ワークフローに入ってきた作業を「誰が所有するか」で分類します。
 
 | 種類 | 選ばれる条件 | 持つもの |
 | --- | --- | --- |
 | 既存Specの更新 | 既存Specが所有する振る舞いや境界を変更する | 更新されたRequirements、Design、Contract、Tasks |
-| 新規Spec | プロジェクトに新しい永続的な責務を追加する | 新しいRequirements、Design、Contract、Tasks |
-| Direct | どのSpecにも属さず、Requirements、Design、Contractの変更を必要としない | Roadmap上の要約と完了状態 |
+| 新規Spec | プロジェクトに新しい責務を追加し、今後も持ち続ける | 新しいRequirements、Design、Contract、Tasks |
+| Direct | どのSpecにも属さず、Requirements、Design、Contractを変えない | Roadmap上の要約と完了状態 |
 
-分類は作業量ではなく所有権で決まります。大きな変更でも既存の1つの責任内なら
-既存Specの更新であり、小さな変更でも新しい責務を生むなら新規Specです。
+分類を決めるのは作業量ではなく所有権です。大きな変更でも、既存の1つの責任の中に
+収まるなら既存Specの更新です。逆に小さな変更でも、新しい責務が生まれるなら
+新規Specになります。
 
-Directとして始めた作業が、実際には仕様やContractの変更を必要とすると判明した
-場合は、そのまま成果物を追加せず、Discoveryへ戻して分類し直します。
+Directとして始めた作業が、実は仕様やContractの変更を必要とすると分かった場合は、
+その場で成果物を足さずに、Discoveryへ戻して分類をやり直します。
 
 ## 永続成果物とMilestone固有成果物
 
-Spec-backed itemの成果物には、リリース後も残るものと、active Milestoneの間だけ
+Spec-backed itemの成果物には、リリース後も残るものと、Milestoneがactiveな間だけ
 存在するものがあります。
 
 | 種類 | 代表例 | ライフサイクル |
 | --- | --- | --- |
-| 永続 | `spec.yaml`、`requirements.md`、`design.md`、`contract.md`、`log.md` | Specの現在形と履歴として残る |
-| Milestone固有 | `brief.md`、`research.md`、`tasks.yaml` | activeな変更を進め、release finalizationで片付けられる |
-| プロジェクト全体 | `steering/roadmap.md`、Steering文書、Contract review | 複数Specをまたぐスコープと判断を保持する |
+| 永続 | `spec.yaml`、`requirements.md`、`design.md`、`contract.md`、`log.md` | Specの現在の姿と履歴として残る |
+| Milestone固有 | `brief.md`、`research.md`、`tasks.yaml` | 進行中の変更を進めるために使い、リリース完了時に片付ける |
+| プロジェクト全体 | `steering/roadmap.md`、Steering文書、Contract review | 複数のSpecにまたがるスコープと判断を保持する |
 
-RequirementsとDesignは差分メモではなく、現在の有効な契約全体を表します。
-以前の記述を維持する場合も、その内容が現在形の文書に残ります。
+RequirementsとDesignは差分メモではありません。どちらも、現在有効な契約の全体を
+表します。以前から変えない記述も、そのまま現在の文書の中に残してください。
 
 ## Gateと承認
 
-Requirements、Design、TasksにはGateがあります。Gateの承認は、単なるチェック印では
-なく、レビューした入力のrevisionとfingerprintに結び付いた証拠です。
+Requirements、Design、TasksにはそれぞれGateがあります。Gateの承認は単なる
+チェック印ではなく、レビューした入力のrevisionとfingerprintに結び付いた証拠です。
 
-上流の成果物が変わると、影響を受ける下流の承認やcompletion evidenceは無効または
-staleになります。古いDesignやTasksのままエージェントが黙って進むことを防ぐためです。
+そのため、上流の成果物が変わると、影響を受ける下流の承認やcompletion evidenceは
+無効、または古い状態になります。エージェントが古いDesignやTasksのまま黙って
+進んでしまうのを防ぐための仕組みです。
 
 承認には2つの形があります。
 
-- **explicit** — 利用者がそのGateで内容を確認して承認する
-- **delegated** — `specbind-quick`など、名前付きの実行について事前に承認を委任する
+- **explicit** — あなたがそのGateで内容を確認して承認する
+- **delegated** — `specbind-quick`など、名前の付いた1回の実行に対して、承認を
+  あらかじめ委任する
 
-委任はレビューや検査を省略しません。また、承認済みGateの破棄やContract reviewの
-受理まで自動的に許可するものではありません。
+委任しても、レビューや検査は省略されません。また、承認済みGateを破棄したり、
+Contract reviewを受理したりする権限までは委任されません。
 
 ## Contract review
 
-Designは各Specの内部構造だけでなく、外部へ公開する責任、依存、ファイル所有境界を
-Contractとして維持します。
+Designには、そのSpecの内部構造だけでなく、外部へ公開する責任、依存、ファイルの
+所有境界も含まれます。この部分をContractとして維持します。
 
-Tasksを作る前に、active Milestone内の全SpecのContractをまとめてレビューします。
-単一SpecのMilestoneでも、このbarrierは省略されません。実装前に所有権の重複、循環
-依存、互換性の前提、統合上の抜けを発見するためです。
+Tasksを作る前に、activeなMilestoneに含まれる全SpecのContractをまとめてレビュー
+します。Specが1つしかないMilestoneでも、このレビューは省略しません。所有権の
+重複、循環依存、互換性の前提、統合時の抜けを、実装前に見つけるためです。
 
 ## Invalidationとrewind
 
-承認後に前提が変わった場合、該当する最も早いGateを明示的にinvalidateします。
+承認したあとで前提が変わったときは、影響を受ける中でいちばん手前のGateを、
+明示的にinvalidateします。
 
 ```text
-Requirements変更 -> Requirements Gateからやり直す
-Design/Contract変更 -> Design Gateからやり直す
-Tasksだけの変更 -> Tasks Gateからやり直す
+Requirementsが変わった -> Requirements Gateからやり直す
+Design/Contractが変わった -> Design Gateからやり直す
+Tasksだけが変わった -> Tasks Gateからやり直す
 ```
 
-Invalidateは下流の証拠も消します。これは失敗ではなく、変更された前提に対して
-古い承認を使わないための通常のrewindです。
+invalidateすると、下流の証拠も消えます。これは失敗ではなく、変わった前提に古い
+承認を使わないための、通常のrewindです。
 
-v1では、確立済みSpecからRequirement groupまたはAcceptance Criterionを削除する
-完全なretirement履歴はサポートされていません。既存Requirementの削除が必要な場合は、
-不完全な履歴を作らず、その操作の前で停止します。既存内容の更新と新しいRequirementの
-追加はサポートされます。
+なお、確立済みのSpecからRequirement groupやAcceptance Criterionを削除する場合、
+v1では完全なretirement履歴を残せません。既存Requirementの削除が必要になった
+ときは、履歴が欠けたまま進めず、その操作の手前で停止します。既存内容の更新と、
+新しいRequirementの追加は問題なく行えます。
 
 ## 通常のライフサイクル
 
-Spec-backed itemは、概ね次の順で進みます。
+Spec-backed itemは、だいたい次の順で進みます。
 
 ```text
 Discovery
@@ -130,21 +134,21 @@ Discovery
   -> Release
 ```
 
-`specbind-quick`はRequirementsからTasks承認までの確認回数を減らしますが、同じ
-成果物、レビュー、CLI guardを使用します。`specbind-implement`は1回に1つのRoadmap
-itemだけを実装します。v1では、Milestone全体を自動実装するオーケストレータは
-ありません。
+`specbind-quick`は、RequirementsからTasks承認までの確認回数を減らします。ただし、
+使う成果物、レビュー、CLIの検査は通常のワークフローと同じです。
+`specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。v1には、
+Milestone全体を自動で実装するオーケストレータはありません。
 
 ## プロジェクト固有の設定
 
-`.specbind/settings/`以下のテンプレート、ルール、adapterはプロジェクトが所有します。
-初回導入では既定値が作られますが、その後の`specbind install`は既存のプロジェクト
-設定を上書きしません。
+`.specbind/settings/`以下のテンプレート、ルール、adapterは、プロジェクトの
+持ち物です。初回の導入で既定値を作りますが、そのあと`specbind install`を実行
+しても、プロジェクト側の設定を上書きしません。
 
-一方、`.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`は製品管理です。
-`specbind install`を再実行すると、Gitがクリーンであることを確認したうえで、現在の
-埋め込み版へ更新されます。Skillファイルの直接編集は、サポートされるカスタマイズ
-方法ではありません。
+一方、`.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`はSpecBind製品
+側の持ち物です。`specbind install`を再実行すると、Gitがクリーンであることを
+確認したうえで、現在の埋め込み版へ更新します。Skillファイルを直接編集する
+やり方は、サポートしているカスタマイズ方法ではありません。
 
 ---
 

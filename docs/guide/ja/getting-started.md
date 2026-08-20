@@ -1,31 +1,32 @@
 # Getting Started
 
-このガイドでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
-Claude Codeを使って、最初の変更をスコープ確認から実装検証まで進めます。
+このページでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
+Claude Codeを使って、最初の変更をスコープの確認から実装の検証まで進めます。
 
-SpecBindはpre-1.0 Previewとして配布します。公開済みのrelease candidateを試す
-場合はバージョンを明示してインストーラを実行します。対応するGitHub Releaseが
-まだ公開されていない場合は、後述のソースビルドを使用します。
+SpecBindはv1.0前のプレビュー版として配布しています。公開済みのリリース候補版を
+試す場合は、バージョンを明示してインストーラを実行してください。対応する
+GitHub Releaseがまだない場合は、後述のソースビルドを使います。
 
 ## 1. 前提を確認する
 
-必要なものは次のとおりです。
+次のものを用意してください。
 
-- Gitで管理された、少なくとも1つのコミットがある対象プロジェクト
+- Gitで管理していて、コミットが1つ以上ある対象プロジェクト
 - CodexまたはClaude Code
 - Windows x64、またはWSL2上のLinux x64
 
-ソースからビルドする場合だけ、[Rustup](https://rustup.rs/)で導入したRust
-ツールチェーンが必要です。Windowsでのソースビルドには、Visual Studio Build
-Toolsの**Desktop development with C++**ワークロードとWindows SDKも必要です。
+ソースからビルドする場合は、これに加えて[Rustup](https://rustup.rs/)で入れた
+Rustツールチェーンが必要です。Windowsでソースビルドするには、Visual Studio
+Build Toolsの**Desktop development with C++**ワークロードとWindows SDKも
+入れてください。
 
-対象プロジェクトに未コミットの変更がある場合は、導入前に内容を確認し、通常の
-プロジェクト手順でコミットしてください。SpecBindはGitの履歴とクリーンな作業
-ツリーを、既存ファイルを置き換える操作の安全境界として利用します。
+対象プロジェクトに未コミットの変更が残っている場合は、導入前に内容を確認し、
+いつもの手順でコミットしておいてください。SpecBindは、既存ファイルを置き換える
+操作の安全境界として、Gitの履歴とクリーンな作業ツリーを利用します。
 
-## 2. Preview CLIをインストールする
+## 2. プレビュー版CLIをインストールする
 
-release candidateは最新版として暗黙選択されないため、バージョンを明示します。
+リリース候補版は最新版として自動では選ばれないため、バージョンを明示します。
 
 Windows PowerShell:
 
@@ -42,23 +43,24 @@ curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
 sh install.sh --version 0.1.0-rc.1
 ```
 
-インストーラはGitHub Releaseのarchiveと`SHA256SUMS`を取得し、checksumが一致
-した場合だけバイナリを配置します。既定の配置先は次のとおりです。
+インストーラはGitHub Releaseのアーカイブと`SHA256SUMS`を取得し、チェックサムが
+一致した場合だけバイナリを配置します。既定の配置先は次のとおりです。
 
 - Windows: `%LOCALAPPDATA%\SpecBind\bin\specbind.exe`
 - WSL2/Linux: `$HOME/.local/bin/specbind`
 
-永続的な`PATH`は変更しません。配置先が現在の`PATH`に含まれない場合は、現在の
-シェルに追加するためのコマンドを表示します。別の配置先を使う場合は、PowerShell
-では`-InstallDir`、Linuxでは`--install-dir`を指定します。
+インストーラは`PATH`を恒久的には変更しません。配置先が現在の`PATH`に入って
+いない場合は、いま使っているシェルに追加するためのコマンドを表示します。別の
+場所へ入れたい場合は、PowerShellでは`-InstallDir`、Linuxでは`--install-dir`を
+指定してください。
 
-インストール後に確認します。
+インストールできたか確認します。
 
 ```sh
 specbind --version
 ```
 
-### GitHub Release公開前にソースからビルドする
+### GitHub Releaseの公開前にソースからビルドする
 
 SpecBindリポジトリを取得し、Rustワークスペースでreleaseバイナリをビルドします。
 
@@ -68,12 +70,12 @@ cd specbind/tools/specbind
 cargo build --release
 ```
 
-生成されるバイナリは次の場所にあります。
+ビルドしたバイナリは次の場所にできます。
 
 - Windows: `target/release/specbind.exe`
 - WSL2/Linux: `target/release/specbind`
 
-ソースビルドしたバイナリのディレクトリを現在のシェルの`PATH`へ追加し、確認します。
+このディレクトリを、いま使っているシェルの`PATH`に追加して確認します。
 
 PowerShell:
 
@@ -89,13 +91,14 @@ export PATH="$(pwd)/target/release:$PATH"
 specbind --version
 ```
 
-この設定は現在のシェルだけに適用されます。CodexまたはClaude Codeを別のシェル
-から起動する場合も、そのプロセスから`specbind`を実行できるようにしてください。
+この設定が効くのは、いま使っているシェルの中だけです。CodexやClaude Codeを別の
+シェルから起動する場合は、そちらのプロセスからも`specbind`を実行できるように
+してください。
 
 ## 3. 対象プロジェクトへ導入する
 
-対象プロジェクトのルートへ移動します。最初にdry runで、作成されるファイルを
-確認します。
+対象プロジェクトのルートへ移動します。まずはdry runで、どんなファイルが作られる
+のかを確認します。
 
 Codexだけを使う場合:
 
@@ -103,56 +106,57 @@ Codexだけを使う場合:
 specbind install --dry-run --agent codex --language ja --project-instructions
 ```
 
-Claude Codeだけを使う場合は、`codex`を`claude-code`へ置き換えます。両方を
-使う場合は`--agent`を繰り返します。
+Claude Codeだけを使う場合は、`codex`を`claude-code`に置き換えてください。
+両方を使う場合は`--agent`を並べます。
 
 ```sh
 specbind install --dry-run --agent codex --agent claude-code --language ja --project-instructions
 ```
 
-`--language ja`は、SpecBindが管理する成果物のプロジェクト共通言語を日本語に
-設定します。`--project-instructions`は、ルートの`AGENTS.md`または`CLAUDE.md`に
-マーカー付きのSpecBind案内ブロックを追加します。既存の周囲の文章は保持されます。
+`--language ja`を付けると、SpecBindが管理する成果物の言語をプロジェクト全体で
+日本語にします。`--project-instructions`を付けると、ルートの`AGENTS.md`または
+`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。まわりに
+書いてある既存の文章はそのまま残ります。
 
-計画に問題がなければ、`--dry-run`を外して適用します。
+内容に問題がなければ、`--dry-run`を外して実際に適用します。
 
 ```sh
 specbind install --agent codex --language ja --project-instructions
 ```
 
-主に次のファイルが追加されます。
+主に、次のファイルが追加されます。
 
 ```text
 .specbind.json
 .specbind/settings/
 .agents/skills/specbind-*/       # Codex
 .claude/skills/specbind-*/       # Claude Code
-AGENTS.md / CLAUDE.md            # 指示統合を有効にした場合
+AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 ```
 
-生成内容をレビューし、対象プロジェクトの通常の手順でコミットしてください。
-SpecBindのインストーラ自体はコミットしません。
+生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
+インストーラ自体はコミットを行いません。
 
-エージェントが新しく導入したスキルを認識できるよう、導入後に対象プロジェクトで
-新しいCodexまたはClaude Codeのセッションを開始します。
+導入したら、対象プロジェクトでCodexまたはClaude Codeのセッションを開き直して
+ください。そうしないと、エージェントが新しいスキルを認識できません。
 
 ## 4. 最初の変更を選ぶ
 
-最初は、1つの明確な振る舞いを追加する、小さな変更を選びます。複数の機能や
-リリース作業をまとめて試すのは避けてください。
+最初は、1つの振る舞いを追加するだけの小さな変更を選んでください。複数の機能や
+リリース作業をまとめて試すのは避けます。
 
-このガイドでは、既存のCLIアプリケーションに次の変更を加える例を使います。
+このガイドでは、既存のCLIアプリケーションに次の変更を加える例で説明します。
 
 > 設定ファイルを検証し、問題のある項目と理由を表示する
 > `validate-config`コマンドを追加したい。
 
-この例は、プロジェクトが継続して所有する新しい振る舞いと境界を作るため、既存の
-Specがなければ新規Specとして分類される想定です。実際には、自分のプロジェクトに
-合う同程度の変更へ置き換えてください。
+この例は、プロジェクトが持ち続ける新しい振る舞いと境界を作るため、該当する
+既存Specがなければ新規Specに分類される想定です。実際に試すときは、自分の
+プロジェクトにある同じくらいの規模の変更に置き換えてください。
 
 ## 5. Discoveryでスコープを確認する
 
-エージェントに、変更内容とともにdiscoveryスキルを依頼します。
+変更内容を添えて、discoveryスキルをエージェントに依頼します。
 
 Codex:
 
@@ -168,31 +172,31 @@ Claude Code:
 validate-configコマンドを追加したい。
 ```
 
-Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読み、変更を次の
-いずれかへ分類します。
+Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読んだうえで、
+変更を次のどれかに分類します。
 
 - Direct
 - 既存Specの更新
 - 新規Spec
 
-新規Specの場合は、責務を表すkebab-caseのSpec ID、Milestoneのスコープ、依存関係を
-提示します。ここは残りのワークフローの前提になるため、分類と境界を読んでから
-明示的に承認してください。承認後、CLIがMilestoneを作成し、エージェントが
-`brief.md`を作成します。
+新規Specになった場合は、責務を表すkebab-caseのSpec ID、Milestoneのスコープ、
+依存関係を提示します。ここでの結論が以降のワークフロー全体の前提になるので、
+分類と境界を必ず読んでから承認してください。承認すると、CLIがMilestoneを作成し、
+エージェントが`brief.md`を書きます。
 
-途中で状態を確認したい場合は、次のように依頼できます。
+途中で状態を確認したくなったら、次のように依頼できます。
 
 ```text
 $specbind-status
 ```
 
-Claude Codeでは`/specbind-status`です。状態確認スキルは読み取り専用で、承認や
-成果物の修正は行いません。
+Claude Codeでは`/specbind-status`です。このスキルは読み取り専用で、承認したり
+成果物を書き換えたりはしません。
 
 ## 6. Tasks承認まで進める
 
 Discoveryが報告したSpec IDを使い、最初の1件はquickワークフローで進めます。
-以下ではSpec IDを`config-validation`と仮定します。
+ここではSpec IDが`config-validation`だったとします。
 
 Codex:
 
@@ -207,18 +211,18 @@ Claude Code:
 ```
 
 Quickは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
-Tasks承認後に停止します。開始時に、Requirements、Design、Tasksの各Gateを同じ
-実行内で委任承認してよいか確認されます。
+Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
+Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
 
-委任を承認しても、レビューやCLIの検査は省略されません。各Gateでの追加確認を
-1回の実行単位の確認へまとめるだけです。個別に内容を確認しながら進めたい場合は、
-委任を断り、各フェーズで明示的に承認できます。
+まとめて承認しても、レビューやCLIの検査は省略されません。各Gateで個別に行う
+確認を、1回の実行に対する確認へまとめるだけです。1つずつ内容を見ながら進めたい
+場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
 
-Quickが完了した時点では、実装はまだ始まっていません。
+Quickが終わった時点では、実装はまだ始まっていません。
 
 ## 7. 実装して検証する
 
-承認済みTasksを実装します。
+承認済みのTasksを実装します。
 
 Codex:
 
@@ -232,12 +236,12 @@ Claude Code:
 /specbind-implement config-validation
 ```
 
-Implementは1つのRoadmap itemだけを対象にし、実行可能なTaskを順に実装します。
+Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
 Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記録を行います。
-計画やDesignに問題が見つかった場合は、無理に実装を続けず、該当フェーズへ戻す
-ために停止します。
+計画やDesignの問題が見つかった場合は、無理に実装を続けず、該当フェーズへ戻す
+ためにいったん停止します。
 
-全Taskの完了後、Spec全体がRequirementsとDesignを満たしているか検証します。
+全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
 
 Codex:
 
@@ -251,21 +255,21 @@ Claude Code:
 /specbind-validate-implementation config-validation
 ```
 
-検証が`GO`になり、CLIがcompletion evidenceを受理すると、そのSpecの実装は完了です。
-最後に状態を確認します。
+検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
+完了です。最後に状態を確認します。
 
 ```text
 $specbind-status config-validation
 ```
 
-この時点ではMilestoneはまだリリースされていません。リリースにはプロジェクト固有の
-`.specbind/settings/adapters/release.md`を準備し、対象リリースを公開・検証できる
-状態にする必要があります。最初の試用では、実装検証までを完了地点にすることを
-推奨します。
+この時点では、Milestoneはまだリリースされていません。リリースするには、
+プロジェクト固有の`.specbind/settings/adapters/release.md`を用意し、対象
+リリースを実際に公開・検証できる状態にしておく必要があります。最初の試用では、
+実装の検証までを完了地点にすることをおすすめします。
 
 ## 8. 生成された成果物を見る
 
-既定では、Specの成果物は`.specbind/specs/<spec>/`に作られます。
+Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
 ```text
 .specbind/
@@ -279,11 +283,11 @@ $specbind-status config-validation
    └─ tasks.yaml
 ```
 
-`spec.yaml`、`roadmap.md`、`tasks.yaml`内の実行状態はCLIが所有します。状態を進める
-目的で手編集しないでください。Requirements、Design、Contract、Tasksの計画部分は、
-それぞれを所有するスキルを通して保守します。
+`spec.yaml`、`roadmap.md`、`tasks.yaml`に入っている実行状態は、CLIの持ち物です。
+状態を進める目的で手編集しないでください。Requirements、Design、Contract、
+Tasksの計画部分は、それぞれを所有するスキル経由で保守します。
 
-CLIから現在の状態を直接確認することもできます。
+現在の状態は、CLIから直接確認することもできます。
 
 ```sh
 specbind milestone status
