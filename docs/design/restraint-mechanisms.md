@@ -3,9 +3,10 @@
 Status: Partly accepted
 
 This page collects candidate mechanisms for suppressing over-engineering in
-projects that adopt SpecBind. Candidate A is accepted and implemented by
-[Decision 0121](./decisions/0121-requirements-coverage-is-not-slots.md). The
-rest are ideas, kept here so the options stay comparable when the topic is
+projects that adopt SpecBind. Candidates A and D are accepted and implemented by
+[Decision 0121](./decisions/0121-requirements-coverage-is-not-slots.md) and
+[Decision 0122](./decisions/0122-finding-disposition-and-deferred-destination.md).
+The rest are ideas, kept here so the options stay comparable when the topic is
 picked up again.
 
 ## Problem
@@ -85,15 +86,13 @@ Highest leverage, widest blast radius.
   involved, or the change exceeds an impact threshold. Keep the thresholds in a
   project-owned rule. Small implementation cost, large expected effect.
 
-### D. Review layer
+### D. Review layer — resolved by Decision 0122
 
-- Require severity on findings, and let only `blocking` findings hold a gate.
-- State in the protocol that a review may not introduce new Requirements. A
-  proposal leaves as a roadmap item instead.
-- Cap blocking findings per round and cap rounds, then return the judgment to a
-  person when a cap is reached.
-
-#### A severity floor needs a destination first
+The severity floor turned out to be half-present already: `task-review` states
+that naming, formatting, and unstated preferences are not rejecting on their
+own, and `design-validation` requires ranking by what would change the decision.
+What was missing was the destination, and the reason it was missing is the
+reason reviewers inflate severity.
 
 Field observation from cc-sdd: reviewers raise findings as critical because a
 finding is otherwise volatile. Nothing downstream picks up a non-blocking
@@ -102,29 +101,29 @@ is a rational adaptation to a missing destination, not reviewer error, and
 raising the floor alone does not remove it. Either reviewers keep inflating, or
 the observations are genuinely lost. Both outcomes are worse than today.
 
-SpecBind currently has no destination. `contract-review` states that there is no
-partial, conditional, or provisional acceptance and no field in which to record
-a caveat, so a finding is resolved or it blocks. `task-planning` says work worth
-doing later belongs to a future change, and no artifact holds a future change:
-the Roadmap is milestone-scoped and archived at release, Research and
-`tasks.yaml` are milestone-local and deleted at release, `log.md` is history,
-and steering carries durable convention rather than pending work.
+No SpecBind artifact held such an observation: the Roadmap is milestone-scoped
+and archived at release, Research and `tasks.yaml` are milestone-local and
+deleted at release, `log.md` is history, and steering carries durable convention
+rather than pending work.
 
-Design constraints if this is built:
+[Decision 0122](./decisions/0122-finding-disposition-and-deferred-destination.md)
+adds *Every finding gets a disposition* to `task-review`, `design-validation`,
+and `requirements-review`, and a `deferred` project adapter naming where a
+deferred finding is recorded. It deliberately excludes `contract-review`, whose
+prohibition on absorbing scope expansion a deferred lane would exit, and
+`completion-verification`, which is an evidence gate rather than a review.
 
-- **One-way.** A backlog an authoring agent reads becomes a scope source, which
-  reopens from the back door what Decision 0121 closed at the front. It must not
-  be an input to any authoring or review protocol.
-- **Human promotion only.** An item re-enters the workflow by being promoted to
-  the Roadmap, where ordinary discovery classification applies.
-- **Prefer an existing surface.** `settings/adapters/` can name where deferred
-  findings go, letting a project route them to its own tracker instead of
-  SpecBind growing one. Open question: an empty adapter leaves no destination
-  and restores the original incentive, so a minimal default sink may be needed.
+Two parts of the original sketch were dropped. Round and finding caps were
+rejected: a count limit can hide a genuine blocker, and Decision 0094 places
+review-loop limits in the owning skill. "A review may not introduce new
+Requirements" needed no new text, because `task-review` and `design-validation`
+already say it from their own directions.
 
-Consequently the severity floor and the destination are one unit of work.
-Shipping the floor alone degrades review quality; shipping the destination alone
-gives reviewers somewhere nobody is required to use.
+The constraint that shaped the design: a backlog an authoring agent reads
+becomes a scope source, which would reopen from the back door what Decision 0121
+closed at the front. The destination is written to, read only to avoid recording
+a duplicate, and re-enters the workflow only by a person putting an item on the
+Roadmap.
 
 ### E. Observation layer
 
@@ -137,7 +136,7 @@ Not restraint by itself, but its precondition.
 
 ## Suggested order
 
-1. ~~A~~ and D. A is done; D remains light to implement with no structural change.
+1. ~~A and D.~~ Both done.
 2. B's reverse traceability and orphan contract detection. SpecBind-specific
    strength, and mechanical rather than prompt-based.
 3. C's scale. Adopt only if 1 and 2 prove insufficient, because it propagates

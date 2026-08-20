@@ -79,8 +79,11 @@ it must do.
 ## Design validation
 - VERDICT: READY | NOT_READY
 - FINDINGS:
-  - <requirement or boundary at risk> — <where in the design> — <consequence>
+  - [BLOCKING|DEFERRED|RESOLVED] <requirement or boundary at risk> — <where in the design> — <consequence>
 ```
+
+Every finding carries a disposition. A finding with none is one nobody carries
+past this report.
 
 **There is no "cannot judge" verdict, and that is deliberate.** If you cannot
 judge readiness from the design as written, that is the finding — the design
@@ -99,6 +102,25 @@ determine which component owns retry, so tasks cannot be bounded" can.
 
 Rank by what would change the verdict, and say what the design does well when it
 is true.
+
+## 5. Record deferred findings
+
+A deferred finding needs the destination this project names, or it is not
+deferred — it is dropped, and the next review raises its successor as blocking
+to keep that from happening again.
+
+```sh
+specbind adapter read deferred
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means the project has no destination. Say so in one
+line and record nothing. Do not invent a place to put it.
+
+Unlike the Git adapter, the installed scaffold carries a working default, so
+follow its guidance as written unless the project emptied or replaced it. Write
+only what the adapter says to write. Read the destination only far enough to
+avoid recording the same finding twice; nothing in it is a source of work for
+you, and no entry there becomes work until a person puts it on the Roadmap.
 
 ## Boundaries
 

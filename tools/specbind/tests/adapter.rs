@@ -1,6 +1,6 @@
 use specbind::{adapter, config::ProjectLanguage};
 
-const ACCEPTED_SELECTORS: [&str; 2] = ["release", "git"];
+const ACCEPTED_SELECTORS: [&str; 3] = ["release", "git", "deferred"];
 
 #[test]
 fn accepts_a_closed_selector_set() {
@@ -14,6 +14,7 @@ fn accepts_a_closed_selector_set() {
     // existing. Only an accepted selector resolves.
     assert!(adapter::find("release").is_some());
     assert!(adapter::find("git").is_some());
+    assert!(adapter::find("deferred").is_some());
     for unknown in ["deploy", "release.md", "", "Release"] {
         assert!(
             adapter::find(unknown).is_none(),
@@ -58,6 +59,23 @@ fn localizes_every_scaffold_while_keeping_the_type_literal_english() {
                 entry.selector
             );
         }
+    }
+}
+
+#[test]
+fn states_that_the_deferred_destination_is_write_only() {
+    let deferred = adapter::find("deferred").expect("deferred adapter");
+    // A destination an authoring agent may read for work is a scope source, and
+    // would reopen from the back door what Decision 0121 closed at the front.
+    for scaffold in [
+        deferred.scaffold(ProjectLanguage::En),
+        deferred.scaffold(ProjectLanguage::Ja),
+    ] {
+        assert!(
+            scaffold.contains("Roadmap")
+                && (scaffold.contains("never reads") || scaffold.contains("読むことはなく")),
+            "{scaffold}"
+        );
     }
 }
 

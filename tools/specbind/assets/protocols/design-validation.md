@@ -102,6 +102,33 @@ who did not participate in it. Everything it needs to mean must be inside it.
 - Recognize what the Design does well when it is true. A review that only
   accumulates objections gives the author no signal about what to preserve.
 
+## Every finding gets a disposition
+
+A finding raised in this review ends in exactly one of three states, and the
+reviewer names which one. There is no fourth state in which a finding is
+mentioned in passing and then carried nowhere.
+
+- **Blocking.** It changes the verdict. It is resolved before the gate is
+  crossed.
+- **Resolved in place.** It was examined and needs no work, and the reason is
+  stated. A judgment made and explained is not an outstanding finding.
+- **Deferred.** It is real and actionable, it does not change the verdict, and
+  it is written to the destination this project names for deferred findings.
+
+A finding stated in the report and given no disposition is volatile: nothing
+downstream carries it, and a reviewer who knows this raises the next one as
+blocking to make it survive. Severity inflation is the predictable result of
+having nowhere to put a true observation, so the disposition is not optional
+bookkeeping.
+
+Deferring is not a way to pass a review that should not pass. A finding that
+changes the verdict is blocking whether or not it is convenient, and moving it
+to the destination does not settle it.
+
+A project that names no destination has none. State the deferred finding in the
+report and say that it is not recorded anywhere, rather than promoting it or
+discarding it silently.
+
 ## The verdict
 
 A Design is ready when every active Requirement is substantively realized, the

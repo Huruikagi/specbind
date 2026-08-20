@@ -49,6 +49,14 @@ static ADAPTERS: &[Adapter] = &[
         english: include_str!("../assets/adapters/en/git.md"),
         japanese: include_str!("../assets/adapters/ja/git.md"),
     },
+    Adapter {
+        selector: "deferred",
+        file_name: "deferred.md",
+        artifact_type: "SpecBind Deferred Findings Adapter",
+        purpose: "Project destination for a review finding that is real but does not hold a gate.",
+        english: include_str!("../assets/adapters/en/deferred.md"),
+        japanese: include_str!("../assets/adapters/ja/deferred.md"),
+    },
 ];
 
 /// Lists every accepted adapter.

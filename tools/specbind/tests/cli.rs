@@ -1093,7 +1093,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 44 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 45 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1108,7 +1108,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 44 create, 0 replace, 0 keep\n",
+                "\n  Summary: 45 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1177,7 +1177,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 25 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 26 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1226,10 +1226,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 27 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 28 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 27 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 28 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1372,7 +1372,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 26 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 27 created, 0 replaced, 1 kept\n",
         ));
 
     assert_eq!(
@@ -3574,9 +3574,10 @@ fn lists_accepted_adapters_with_project_presence() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK ADAPTER_LISTED: Found 2 accepted adapter(s).\n",
+            "OK ADAPTER_LISTED: Found 3 accepted adapter(s).\n",
             "  selector=release type=\"SpecBind Release Adapter\" path=settings/adapters/release.md present=no\n",
             "  selector=git type=\"SpecBind Git Adapter\" path=settings/adapters/git.md present=yes\n",
+            "  selector=deferred type=\"SpecBind Deferred Findings Adapter\" path=settings/adapters/deferred.md present=no\n",
         ))
         .stderr("");
 }

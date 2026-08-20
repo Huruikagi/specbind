@@ -60,11 +60,12 @@ Always return this block, whether a person or another run is reading it:
 ## Review
 - VERDICT: APPROVED | REJECTED | CANNOT_REVIEW
 - FINDINGS:
-  - <requirement or behavior at risk> — <where> — <consequence>
+  - [BLOCKING|DEFERRED|RESOLVED] <requirement or behavior at risk> — <where> — <consequence>
 ```
 
-`APPROVED` with findings attached is not a verdict; either they block it or they
-are noted as non-blocking and said to be so.
+Every finding carries a disposition. `APPROVED` with an undisposed finding
+attached is not a verdict, and a finding with no disposition is one nobody
+carries.
 
 Every `REJECTED` names what would make it approvable. Rank by what changes the
 verdict: wrong behavior, an unmet requirement, an unhandled case the requirement
@@ -76,6 +77,25 @@ Say what is right when it is true. A review that only accumulates objections
 leaves the next attempt rewriting work that was already correct.
 
 Uncertainty is never an approval.
+
+## 5. Record deferred findings
+
+A deferred finding needs the destination this project names, or it is not
+deferred — it is dropped, and the next review raises its successor as blocking
+to keep that from happening again.
+
+```sh
+specbind adapter read deferred
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means the project has no destination. Say so in one
+line and record nothing. Do not invent a place to put it.
+
+Unlike the Git adapter, the installed scaffold carries a working default, so
+follow its guidance as written unless the project emptied or replaced it. Write
+only what the adapter says to write. Read the destination only far enough to
+avoid recording the same finding twice; nothing in it is a source of work for
+you, and no entry there becomes work until a person puts it on the Roadmap.
 
 ## Boundaries
 

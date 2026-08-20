@@ -195,3 +195,4 @@ Accepted decisions are authoritative. A superseded decision is retained for hist
 | [0119](./design/decisions/0119-writing-while-a-completion-stands.md) | Accepted | One statement of what writing costs once a Spec holds accepted completion |
 | [0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md) | Accepted | Quick and batch orchestration, phase-specific dependency shape, and retry classification |
 | [0121](./design/decisions/0121-requirements-coverage-is-not-slots.md) | Accepted | Requirements coverage bounded to what the Spec owes |
+| [0122](./design/decisions/0122-finding-disposition-and-deferred-destination.md) | Accepted | Finding disposition and the project-named destination for deferred findings |
