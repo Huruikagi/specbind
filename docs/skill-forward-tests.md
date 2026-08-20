@@ -247,8 +247,10 @@ finally measured them. Every one of those runs was driven as Claude Code.
 | X1 | pass | |
 | X2, X4 | | |
 | X3 | pass | |
-| I1 – I5 | | |
-| RT1, RT2, DB1 | | |
+| I2, I3 | pass | |
+| I1, I4, I5 | | |
+| DB1 | pass | |
+| RT1, RT2 | | |
 | VD1, VD2 | | |
 | RL2, RL3 | | |
 | RL1 | pass | |
@@ -288,9 +290,27 @@ fixture was small enough that the driven context did not dispatch independent
 investigation, so this is a workflow result rather than a measurement of the
 design dispatch path.
 
+I2 and DB1 were measured on 2026-08-20 against `38920a0`, as Claude Code, and
+both passed. I2 dispatched a fresh implementer and diagnosis, categorized the
+approved Requirements/Design contradiction as `ARTIFACT`, left the task pending,
+and changed neither artifact. DB1 returned the same category directly and left
+the worktree byte-identical.
+
+I3 first exposed a harness defect: the scenario required a completed Direct
+item while leaving the Git adapter scaffold in place, which means commit
+nothing and makes the handshake's clean committed revision unobtainable. The
+`i3` recipe gained real Direct checkpoint policy in `1a10b00`. That build then
+exposed a skill defect rather than passing: the run committed the guide and
+stopped because the skill described checkpoint through a backward reference
+from an earlier handshake section. After the workflow was made physically
+linear, I3 passed against `d21590f`: the guide was committed, the Direct
+handshake ran, and `milestone status` reported 1/1 completed. The initial
+failure and its fix are retained here because a pass on retry is a finding, not
+a flake.
+
 The remaining design scenarios DS2 through DS6, tasks scenarios T1 and T3
-through T5, contract review scenarios X2 and X4, implementation scenarios I1
-through I5, review and debug scenarios RT1, RT2, and DB1, validation scenarios
+through T5, contract review scenarios X2 and X4, implementation scenarios I1,
+I4, and I5, review scenarios RT1 and RT2, validation scenarios
 VI1 through VI3, claim verification scenarios VC1 and VC2, design validation
 scenarios VD1 and VD2, and release scenarios RL2 and RL3 were specified after
 that run, together
