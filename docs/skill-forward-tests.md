@@ -245,36 +245,39 @@ Runs below span 2026-08-18 through 2026-08-20. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
-| Scenario | Claude Code | Codex |
-| --- | --- | --- |
-| D1, D2, D4, D5, D6, D8, D9, D10, D11, D12 | pass | |
-| R3 | pass | pass |
-| R1, R2, R4, R5 | pass | |
-| G1 | pass | pass |
-| C1, C2, C3 | pass | C1, C3 pass |
-| D3 | not measured — the confirmation answer authorized the whole feature, so later phases rewrote the files the discovery expectations check | |
-| D7 | not measured — at the time, no `specbind-tasks` skill was embedded, so nothing owned plan authoring and the run correctly stopped | not measured — the host safety review blocked the confirmed invalidation twice |
-| DS1 | | pass — workflow; no investigation dispatch |
-| DS2 – DS6 | | |
-| T1, T3, T4, T5 | | T4 pass |
-| T2 | pass | pass |
-| X1 | | pass |
-| X2, X4 | | X2 pass |
-| X3 | pass | |
-| I2, I3 | | pass |
-| I1, I4, I5 | | I1, I4 pass |
-| DB1 | | pass |
-| RT1, RT2 | | |
-| VD1, VD2 | | VD2 pass |
-| RL2, RL3 | | pass |
-| RL1 | pass | pass |
-| VI1 – VI3 | | pass |
-| VC1, VC2 | | pass |
+### Passing measurements
 
-An empty cell means that scenario has not been run under that agent. Codex now
-has targeted results for R3, G1, C1, C3, DS1, T2, T4, X1, X2, I1–I4, DB1,
-VD2, VI1–VI3, VC1–VC2, and RL1–RL3; the remaining empty Codex cells are still
-unmeasured.
+This table lists only recorded passes. A scenario absent from an agent's column
+has no recorded pass for that agent; it does not mean failure. Runs that stopped
+without a pass are listed separately below.
+
+| Workflow area | Claude Code passes | Codex passes |
+| --- | --- | --- |
+| Discovery | D1, D2, D4–D6, D8–D12 | None recorded |
+| Requirements | R1–R5 | R3 |
+| Gap analysis | G1 | G1 |
+| Checkpoint behavior | C1–C3 | C1, C3 |
+| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised) |
+| Tasks | T2 | T2, T4 |
+| Contract review | X3 | X1, X2 |
+| Implementation | None recorded | I1–I4 |
+| Debug | None recorded | DB1 |
+| Task review | None recorded | None recorded |
+| Design validation | None recorded | VD2 |
+| Implementation validation | None recorded | VI1–VI3 |
+| Claim verification | None recorded | VC1, VC2 |
+| Release | RL1 | RL1–RL3 |
+
+### Runs without a passing measurement
+
+| Scenario | Agent | Result | Why no pass was recorded |
+| --- | --- | --- | --- |
+| D3 | Claude Code | Not measured | The confirmation authorized the whole feature, so later phases rewrote the discovery artifacts before they could be judged. |
+| D7 | Claude Code | Not measured | No embedded `specbind-tasks` skill owned plan authoring at the time; the run correctly stopped. |
+| D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
+
+Scenarios not named in either table have not produced a recorded result for
+either agent. The tables are a measurement ledger, not a coverage checklist.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
