@@ -93,6 +93,12 @@ and the protocol it must read:
 specbind protocol read task-implementation
 ```
 
+After dispatch, let the implementer finish its work and verification and return
+the protocol's structured status. **Do not interrupt it, ask for an immediate
+return, or turn a progress check into a stop request.** Waiting for the result is
+part of the dispatch. An implementer that is forced to return before verification
+leaves a partial change that this workflow must treat as blocked.
+
 ### b) Parse the status block, never the prose
 
 Require a structured result with a status from a closed set:

@@ -195,6 +195,7 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "specbind protocol read okf-authoring",
         "specbind template read spec implementation-notes/main",
         "`CANNOT_REVIEW`",
+        "Do not interrupt it, ask for an immediate\nreturn",
         "Do not skip ahead and return here afterwards.",
         "Do not stop merely because the implementation commit succeeded.",
     ] {
