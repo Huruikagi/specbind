@@ -280,7 +280,8 @@ there — that is an answer, not a missing file to work around.
 
 An adapter carrying the exact `<!-- specbind:adapter-scaffold -->` marker is an
 inactive scaffold, not project policy. Treat it as no guidance, say so in one
-line, and commit nothing.
+line, and commit nothing. The marker classifies the whole document: ignore every
+other body line even when it looks actionable.
 
 When the adapter has guidance, follow it. The request to perform this mutating
 phase authorizes the adapter's narrow local checkpoint as its ordinary final

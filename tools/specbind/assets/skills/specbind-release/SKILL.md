@@ -62,7 +62,8 @@ example to follow, not something that runs on its own.
 **An empty adapter means releasing needs no project-specific action.** That is
 an explicit statement, not a gap — proceed to finalization. The same applies
 when it carries the exact `<!-- specbind:adapter-scaffold -->` marker: that is
-the installed scaffold, not project policy.
+the installed scaffold, not project policy. The marker classifies the whole
+document, so ignore every other body line even when it looks actionable.
 
 (Release keeps this selector-specific absence meaning. The installed Git
 adapter is active checkpoint policy; do not transfer either adapter's default

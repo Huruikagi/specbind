@@ -372,6 +372,11 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
             "{name} must recognize the dedicated adapter scaffold marker"
         );
         assert!(
+            body.contains("marker classifies the whole\ndocument")
+                || body.contains("marker classifies the whole document"),
+            "{name} must make the marker override the entire adapter body"
+        );
+        assert!(
             !body.contains("A legacy adapter may still carry"),
             "{name} must not preserve legacy adapter compatibility"
         );
