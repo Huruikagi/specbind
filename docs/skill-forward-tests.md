@@ -227,6 +227,34 @@ A scenario with no result for an agent has not been measured under it. There is
 no blank row to fill in and no expectation that every scenario is eventually run
 twice — the matrix is a record of what was observed, not a checklist.
 
+### Post-run usability debrief
+
+Pass or fail is established from the fixture, never from the driven agent's
+report. After that judgment is recorded, continue the same agent once more for a
+read-only usability debrief. Record `git status --short` before and after, and
+discard the debrief if it changed the fixture.
+
+Ask what made the agent hesitate, infer an unstated fact, take an unnecessary
+extra step, or risk choosing the wrong action. Name CLI, Skill, Template,
+Protocol, Adapter, diagnostics, and Other only as possible surfaces, not as a
+request to manufacture one complaint per category. The agent runs no commands
+and changes no files during this turn. Each observation uses this shape:
+
+```text
+- Surface: CLI | Skill | Template | Protocol | Adapter | Other
+- Friction: what was difficult or ambiguous
+- Evidence: the exact command, output, wording, or path encountered
+- Workaround: what the agent inferred or did to continue
+- Impact: cosmetic | extra-step | ambiguity | wrong-action-risk
+```
+
+These are qualitative observations, not scenario evidence and not accepted
+product defects. Reproduce an observation against the owning Decision, CLI, or
+asset before changing it. Repeated observations reveal systematic friction; a
+single `wrong-action-risk` is enough to investigate before starting another
+batch. Keep these observations out of the pass and no-passing-measurement
+tables.
+
 ### How much to re-run per agent
 
 Run the complete set once under a newly supported agent, to find out where it
@@ -278,6 +306,14 @@ without a pass are listed separately below.
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
+
+### Usability observations
+
+No post-run usability debrief has been recorded yet. Future observations are
+listed here separately from scenario measurements with the build, scenario,
+agent, surface, impact, concrete evidence, and workaround. A completed debrief
+with no finding is recorded as `none`, so absence of a row is not mistaken for
+an uneventful run.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed

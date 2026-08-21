@@ -157,6 +157,46 @@ A subagent's summary is a claim about what it did. It is usually accurate and it
 is not evidence. Every expectation in the scenario document is readable from the
 fixture; read it there.
 
+## Ask for a usability debrief after judgment
+
+Only after the fixture has been judged and the pass or failure recorded, ask the
+same driver for a qualitative usability debrief. Asking earlier contaminates the
+scenario: it teaches the agent which surfaces the maintainer cares about and can
+turn a naturally discovered ambiguity into a prompted answer.
+
+Record `git status --short` before the debrief. Then continue the same driver
+with this read-only follow-up; do not start a fresh agent, because the useful
+evidence is what this agent remembers hesitating over:
+
+```text
+The scenario result has already been judged. Do not run commands or change any
+files. Reflect only on the work you just completed.
+
+What made you hesitate, infer an unstated fact, take an unnecessary extra step,
+or risk choosing the wrong action? Consider the CLI, skill, template, protocol,
+adapter, diagnostics, and any other product surface that actually affected the
+work. Do not invent an issue for every category. If there was no friction, say
+"none".
+
+For each observation, report only:
+- Surface: CLI | Skill | Template | Protocol | Adapter | Other
+- Friction: what was difficult or ambiguous
+- Evidence: the exact command, output, wording, or path you encountered
+- Workaround: what you inferred or did to continue
+- Impact: cosmetic | extra-step | ambiguity | wrong-action-risk
+```
+
+After the answer, run `git status --short` again. A changed fixture means the
+debrief violated its read-only boundary; discard the observation, classify the
+mutation before cleanup, and do not fold it into the scenario result.
+
+The debrief is not pass/fail evidence and does not overturn a result already
+measured from the fixture. It is an exploratory observation. Record it
+separately, reproduce it against the owning contract before changing the
+product, and look for recurrence across scenarios or agents. One
+`wrong-action-risk` is enough to investigate before the next batch; lower-impact
+observations normally need either concrete reproduction or a repeated pattern.
+
 ## When something fails
 
 Decide which of these it is before changing anything:
@@ -186,8 +226,9 @@ explains it.
 ## Finishing
 
 Report per scenario: the agent it was driven as, pass or fail, the expectation
-that did not hold, and the state that was left behind. Then clean up the
-fixtures.
+that did not hold, and the state that was left behind. Report usability
+observations in their separate ledger section, including `none` when a debrief
+was completed without a finding. Then clean up the fixtures.
 
 Record any defect the run exposed against the decision or skill it belongs to,
 and update the scenario document when the run showed the procedure itself was
