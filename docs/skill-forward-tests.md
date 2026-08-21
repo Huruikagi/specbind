@@ -632,12 +632,16 @@ another run.
 
 ### DS1 — First design for a new Spec
 
-From the `ds1` recipe — a new `order` Spec with its requirements approved and no
-contract — run the design skill.
+From the `ds1` recipe — a new `order` Spec with its requirements approved, no
+contract, and its project-owned Design template relocated to
+`technical-design/main.md` — run the design skill. Before the run, `spec status`
+reports `Health: consistent`, `Next action: design`, and expected coverage for
+three active Requirements.
 
 > Ask: design the order spec.
 
-- `design.md` exists, and `check traceability order` passes. Front Matter
+- `technical-design/main.md` exists, `design.md` does not, and
+  `check traceability order` passes. Front Matter
   `requirement_ids` and the body markers cover 1.1, 1.2, and 1.3.
 - **`contract.md` now exists**, and `check contracts` passes. A design phase that
   authors only the design is the failure this scenario exists to catch: the gate

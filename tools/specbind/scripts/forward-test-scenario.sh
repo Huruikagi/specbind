@@ -497,8 +497,22 @@ ds1)
     specbind spec requirements approve order \
         --approval-mode explicit --requirement-ids 1.1,1.2,1.3 >/dev/null \
         || fail "could not approve the requirements gate"
+    # Put the project-owned Design scaffold somewhere its artifact_id does not
+    # reveal. A passing run must resolve the target instead of guessing
+    # `design.md` from earlier conventions.
+    mkdir -p .specbind/settings/templates/specs/technical-design
+    mv .specbind/settings/templates/specs/design.md \
+        .specbind/settings/templates/specs/technical-design/main.md
+    expect "the relocated Design template did not resolve to its custom target" \
+        'specbind template resolve spec order design/main | grep -q "Target path: specs/order/technical-design/main.md"'
     expect "order did not reach the design state" \
         'specbind spec status order | grep -q "State: design"'
+    expect "unstarted Design is still reported as inconsistent" \
+        'specbind spec status order | grep -q "Health: consistent"'
+    expect "status does not route the next workflow to Design" \
+        'specbind spec status order | grep -q "Next action: design"'
+    expect "status does not aggregate the expected Design coverage" \
+        'specbind spec status order | grep -q "Expected work: cover 3 active requirement(s) in Design"'
     expect "order already has a contract" \
         '! test -e .specbind/specs/order/contract.md'
     ;;
