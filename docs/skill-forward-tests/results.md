@@ -16,12 +16,12 @@ without a pass are listed separately below.
 
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
-| Discovery | D1, D2, D4–D6, D8–D12 | None recorded |
+| Discovery | D1, D2, D4–D6, D8–D12 | D4 |
 | Requirements | R1–R5 | R1, R3 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1, C3 |
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
-| Tasks | T2 | T2, T4 |
+| Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2 |
 | Implementation | None recorded | I1–I4 |
 | Debug | None recorded | DB1 |
@@ -42,6 +42,8 @@ without a pass are listed separately below.
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
 | C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |
 | R1 | Codex | Operator stopped | On `9cce3de`, the run produced a valid Requirements draft, but the controller began the usability debrief instead of continuing the required explicit-approval turn. The draft is evidence of neither a pass nor a product failure. |
+| S2 | Codex | Environment blocked | On `4738ca2`, bootstrap reached its required three-reader dispatch, but stale host agent threads exhausted the global limit. Steering remained empty and unchanged; no product authoring ran. |
+| T1 | Codex | Environment blocked | On `cc37049`, the corrected rule produced a one-task implementation-and-test proposal, but the host safety layer rejected `tasks.yaml` authoring twice, including after explicit Tasks approval. No artifact was written, so this is not a passing remeasurement. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
@@ -54,6 +56,12 @@ reproduced product ambiguity that still needs a disposition.
 | First seen | Scenario | Surface | Impact | Finding | Current handling | Next decision |
 | --- | --- | --- | --- | --- | --- | --- |
 | `59ebc5f` | C1 | CLI | ambiguity | Immediately after successful Discovery, `milestone status` reports the expected dirty workflow output under `Release blockers: WORKTREE_NOT_CLEAN`. A reader can briefly mistake later release readiness for a current-phase fault even though `Health: consistent`. | Compare the dirty paths with the just-authored Discovery outputs and follow `Health` plus `Actionable`. | Decide whether release blockers need a readiness-qualified heading or should be hidden before a release-relevant phase. |
+
+### Fixed, behavioral confirmation pending
+
+| First seen | Scenario | Finding | Resolution | Status |
+| --- | --- | --- | --- | --- |
+| `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
 
 ### Resolved usability findings
 
@@ -69,14 +77,25 @@ remain available in Git history.
 | `milestone create --scope -` required the agent to infer the scope document shape. | Discovery reads `scope/v1` before authoring the candidate. | `8646136` |
 | A quantity-limit change could be classified as ordinary implementation work. | Project instructions explicitly route observable validation rules, limits, rejected cases, and genuine uncertainty into SpecBind. | `59ebc5f` |
 | Forward-test instrumentation and phase confirmation could block or over-authorize a run. | Dispatch logging is opt-in, and guarded confirmation names the presented phase inputs and stopping boundary. | `694dca4`, `3ab817a` |
+| A newly discovered Spec reported missing Requirements as inconsistent state. | Requirements absence is expected work in the Requirements phase; Spec and milestone health stay consistent while strict traceability remains unchanged. | `a8cae47` |
 
 ### Active environment limitation
 
 Codex subagents can inherit host instructions, an older host CLI on `PATH`, or a
-skill registry that does not expose the fixture's installed skills. Japanese
-answers in an English fixture are one visible signal. These observations do not
-become product findings: judge the scenario from fixture state, and classify a
-run as environment-blocked when the product-managed skill was not exercised.
+skill registry that does not expose the fixture's installed skills. Stale agent
+threads can also exhaust nested-dispatch capacity, and the host safety layer can
+mistake skill-authored `tasks.yaml` plan content for prohibited CLI-owned
+execution-state editing. Japanese answers in an English fixture are one visible
+signal. These observations do not become product findings: judge the scenario
+from fixture state, and classify a run as environment-blocked when the
+product-managed skill was not exercised.
+
+The 2026-08-21 Codex batch on `4738ca2` measured D4 and T1 as passes and stopped
+S2 for the agent-thread environment limit. D4 exposed phase-relative
+Requirements health, and T1 exposed the missing test-grouping default. After
+both fixes, D4 passed again on `cc37049`; the fresh T1 driver proposed the
+correct combined task but was environment-blocked before it could author the
+plan.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
