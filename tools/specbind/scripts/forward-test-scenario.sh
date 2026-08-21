@@ -8,8 +8,8 @@
 # loudly rather than handing over a fixture that only looks right.
 #
 # This script owns starting state only. The request to give the agent and the
-# expectations to check afterwards live in docs/skill-forward-tests.md, which
-# stays the contract.
+# expectations to check afterwards are routed from the
+# docs/skill-forward-tests.md index. The scenario documents stay the contract.
 #
 # Usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja] [--instrument-dispatch]
 #
@@ -934,4 +934,4 @@ echo "Put the CLI on PATH before starting the session:"
 echo
 echo "    export PATH=\"$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
 echo
-echo "The request and the expectations are in docs/skill-forward-tests.md."
+echo "The docs/skill-forward-tests.md index routes to the request and expectations."

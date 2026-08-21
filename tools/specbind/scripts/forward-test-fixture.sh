@@ -7,7 +7,7 @@
 #
 # Usage: forward-test-fixture.sh <target-directory> [en|ja] [--instrument-dispatch]
 #
-# See docs/skill-forward-tests.md for what to do with the result.
+# See the docs/skill-forward-tests.md index for what to do with the result.
 
 set -eu
 
@@ -242,5 +242,5 @@ echo "Put the CLI on PATH before starting the session:"
 echo
 echo "    export PATH=\"$bin_dir:\$PATH\""
 echo
-echo "Then start an agent session with no prior context in that directory and run"
-echo "the scenarios in docs/skill-forward-tests.md."
+echo "Then start an agent session with no prior context in that directory."
+echo "The docs/skill-forward-tests.md index routes to the scenario contracts."

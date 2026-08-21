@@ -46,7 +46,8 @@ skills.
 - Registry and per-agent rendering: `tools/specbind/src/catalog/skill.rs`
 - Installation planning and refresh: `tools/specbind/src/installation/install.rs`
 - Mechanical conformance tests: `tools/specbind/tests/skill.rs` and `tools/specbind/tests/cli.rs`
-- Behavioral verification ledger: `docs/skill-forward-tests.md`
+- Behavioral verification index: `docs/skill-forward-tests.md`
+- Measurement ledger: `docs/skill-forward-tests/results.md`
 
 When a product skill changes, update its one embedded source and the applicable
 mechanical and forward tests. Both agent renderings are derived from that source.

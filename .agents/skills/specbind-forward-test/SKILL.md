@@ -5,10 +5,10 @@ description: Run the behavioral forward tests for SpecBind's embedded skills aga
 
 # Run the skill forward tests
 
-The scenarios and their expectations live in
-[docs/skill-forward-tests.md](../../../docs/skill-forward-tests.md). That
-document is the contract; this skill is how to execute it without rediscovering
-the operational traps each time.
+The [forward-test index](../../../docs/skill-forward-tests.md) routes to the
+scenario contracts and measurement ledger. The scenario documents are the
+contract; this skill is how to execute them without rediscovering the operational
+traps each time.
 
 This tests **product-managed skills** — the ones under
 `tools/specbind/assets/skills/` that get installed into consumer projects. It is

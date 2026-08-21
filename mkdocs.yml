@@ -13,6 +13,7 @@ exclude_docs: |
   design/
   repository-map.md
   skill-forward-tests.md
+  skill-forward-tests/
 
 theme:
   name: material
