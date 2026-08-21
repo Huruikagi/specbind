@@ -37,7 +37,7 @@ fn installs_each_adapter_below_the_accepted_root() {
 }
 
 #[test]
-fn localizes_every_scaffold_while_keeping_the_type_literal_english() {
+fn localizes_every_adapter_while_keeping_the_type_literal_english() {
     for entry in adapter::all() {
         let english = entry.scaffold(ProjectLanguage::En);
         let japanese = entry.scaffold(ProjectLanguage::Ja);
@@ -53,10 +53,11 @@ fn localizes_every_scaffold_while_keeping_the_type_literal_english() {
                 "{}: {scaffold}",
                 entry.selector
             );
-            if entry.selector == "deferred" {
+            if matches!(entry.selector, "git" | "deferred") {
                 assert!(
                     !scaffold.contains("specbind:instruction"),
-                    "deferred is active default policy, not an inactive scaffold"
+                    "{} is active default policy, not an inactive scaffold",
+                    entry.selector
                 );
             } else {
                 assert!(
@@ -87,7 +88,7 @@ fn states_that_the_deferred_destination_is_write_only() {
 }
 
 #[test]
-fn distinguishes_inactive_scaffolds_from_the_active_deferred_default() {
+fn distinguishes_active_defaults_from_inactive_scaffolds() {
     let root = tempfile::tempdir().expect("temporary spec root");
     fs::create_dir_all(root.path().join(adapter::ADAPTERS_ROOT)).expect("adapter directory");
     let git = adapter::find("git").expect("git adapter");
@@ -106,7 +107,7 @@ fn distinguishes_inactive_scaffolds_from_the_active_deferred_default() {
     )
     .expect("legacy deferred adapter");
 
-    assert_eq!(git.state(root.path()), Ok(adapter::AdapterState::Scaffold));
+    assert_eq!(git.state(root.path()), Ok(adapter::AdapterState::Active));
     assert_eq!(
         deferred.state(root.path()),
         Ok(adapter::AdapterState::Active)
@@ -141,6 +142,11 @@ fn states_that_the_git_adapter_grants_no_authority() {
         assert!(
             scaffold.contains("permission") || scaffold.contains("権限"),
             "{scaffold}"
+        );
+        assert!(
+            (scaffold.contains("local commit") || scaffold.contains("ローカルコミット"))
+                && (scaffold.contains("Do not push") || scaffold.contains("pushしません")),
+            "the working default must commit locally without pushing: {scaffold}"
         );
     }
 }

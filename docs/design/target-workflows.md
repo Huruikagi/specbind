@@ -13,8 +13,10 @@ The active implementation plan and progress use canonical `tasks.yaml` rather th
 Per-spec lifecycle metadata uses canonical `spec.yaml`; `.specbind.json` and the v1 installation surface remain outside that decision under [Decision 0014](./decisions/0014-structured-spec-metadata.md).
 
 Project-specific checkpoint, commit, branch, and push preferences come from the
-free-form `settings/adapters/git.md` accepted by Decision 0101. They apply only
-at workflow-owned eligible boundaries and never grant mutation authority.
+free-form `settings/adapters/git.md` accepted by Decisions 0101 and 0137. The
+installed default creates one local commit at each workflow-owned eligible
+boundary. The phase request authorizes that narrow checkpoint but not pushing,
+branch mutation, tags, publication, or history rewriting.
 
 Status: Draft
 

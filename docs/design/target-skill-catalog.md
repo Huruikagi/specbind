@@ -33,11 +33,13 @@ Related documents:
 - [Decision 0093: default shared-rule set](./decisions/0093-default-shared-rule-set.md)
 - [Decision 0094: embedded product protocols](./decisions/0094-embedded-product-protocols.md)
 - [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
+- [Decision 0137: active default Git checkpoints](./decisions/0137-active-default-git-checkpoints.md)
 
 Skills that may create Git checkpoints or push read the project-owned
-`settings/adapters/git.md` contract when present. The adapter may choose among
-eligible checkpoint boundaries, but it neither makes unaccepted work eligible
-nor grants Git mutation authority.
+`settings/adapters/git.md` contract when present. The active default chooses one
+local commit per eligible workflow unit. A request for that mutating phase
+authorizes only this narrow checkpoint; the adapter neither makes unaccepted
+work eligible nor grants push, branch, or history-rewriting authority.
 
 ## Status and change types
 

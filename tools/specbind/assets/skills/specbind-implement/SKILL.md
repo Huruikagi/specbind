@@ -265,7 +265,7 @@ with an ordinary fresh subagent as the fallback.
 specbind protocol read task-review
 ```
 
-## 8. Checkpoint, if the project asks
+## 8. Checkpoint
 
 This step runs after the implementation work above. For a Direct item it must
 therefore establish the clean committed revision **before** Section 9 runs the
@@ -275,17 +275,19 @@ completion handshake. Do not skip ahead and return here afterwards.
 specbind adapter read git
 ```
 
-`NO_CHANGE ADAPTER_ABSENT` means the project wants no commit from you. Stop
+`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. Stop
 there — that is an answer, not a missing file to work around.
 
-The same applies when the adapter still carries its `specbind:instruction`
-comments: that is the scaffold as installed, not policy the project wrote. Treat
-it as no guidance, say so in one line, and commit nothing.
+A legacy adapter may still carry `specbind:instruction` comments. That copy is
+an inactive scaffold, not policy the project wrote. Treat it as no guidance, say
+so in one line, and commit nothing.
 
-When the adapter has guidance, follow it. It sets **policy, not permission**:
+When the adapter has guidance, follow it. The request to perform this mutating
+phase authorizes the adapter's narrow local checkpoint as its ordinary final
+step. It does not authorize anything broader:
 
-- It grants no authority by existing. The user's request, the root agent
-  instructions, and your tool permissions still decide what you may do.
+- An explicit user or root instruction that forbids commits wins, and tool
+  permissions still apply.
 - Commit guidance is not push guidance. Push only where the adapter says to, and
   never force-push, rewrite history, or bypass a protected branch.
 - Stage only the paths this run produced. Unrelated work already in the worktree

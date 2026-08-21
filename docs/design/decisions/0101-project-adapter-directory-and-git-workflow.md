@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0137](./0137-active-default-git-checkpoints.md) supersedes the
+inactive installed Git scaffold and the claim that an ordinary phase request
+does not authorize its narrow local checkpoint. Missing, empty, and legacy
+scaffold adapters still mean no adapter-directed commit.
+
 ## Context
 
 SpecBind already has one project-owned operational adapter. Decisions 0002,

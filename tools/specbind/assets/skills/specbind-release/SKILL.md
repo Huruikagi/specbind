@@ -64,8 +64,9 @@ an explicit statement, not a gap — proceed to finalization. The same applies
 when it still carries its `specbind:instruction` comments: that is the scaffold
 as installed, not policy the project wrote.
 
-(This is the opposite default from the Git adapter, and both are right: no Git
-policy means don't commit; no release policy means nothing external is needed.)
+(Release keeps this selector-specific absence meaning. The installed Git
+adapter is active checkpoint policy; do not transfer either adapter's default
+to the other.)
 
 ## 3. Prepare
 

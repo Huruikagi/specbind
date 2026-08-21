@@ -26,7 +26,7 @@ agent's root instruction file. Existing project-owned settings are kept.
 | `{{SPEC_DIR}}/settings/rules/tasks-generation.md` | Project task-decomposition preferences. |
 | `{{SPEC_DIR}}/settings/rules/steering-principles.md` | Project steering-authoring preferences. |
 | `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
-| `{{SPEC_DIR}}/settings/adapters/git.md` | Optional project checkpoint, commit, and push guidance. |
+| `{{SPEC_DIR}}/settings/adapters/git.md` | Active default policy that commits each eligible workflow unit locally, without pushing or rewriting history. |
 | `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
 | `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 17 embedded skills. |
 | `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 17 embedded skills. |

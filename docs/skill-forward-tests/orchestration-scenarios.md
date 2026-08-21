@@ -121,39 +121,41 @@ Complete any batch run.
 
 ## Checkpoint scenarios
 
-Accepted by [Decision 0101](../design/decisions/0101-project-adapter-directory-and-git-workflow.md).
+Accepted by [Decisions 0101](../design/decisions/0101-project-adapter-directory-and-git-workflow.md)
+and [0137](../design/decisions/0137-active-default-git-checkpoints.md).
 
-### C1 — No adapter guidance means no commit
+### C1 — The installed default creates a local checkpoint
 
 Run D3 against the fixture as built, leaving the Git adapter exactly as installed.
 
 > Ask: carts should reject adding more than 99 of one SKU.
 
-- The milestone and brief exist.
-- **Nothing was committed.** `git log` has no new commit beyond the fixture's.
-- The run did not stop to ask what the commit policy should be. An adapter still
-  carrying its `specbind:instruction` comments is the scaffold, not policy, and
-  reads as no guidance. Asking about it is the failure: every freshly installed
-  project would hit it.
+- The milestone and Brief exist.
+- One new local commit contains the milestone and Brief paths produced by
+  Discovery.
+- The commit contains no unrelated path, the current branch is unchanged, and
+  no push was attempted. The fixture has no remote, so any push attempt is a
+  failure even when it cannot succeed.
+- The run did not stop to ask what the commit policy should be. The installed
+  adapter is active default policy.
 
-Repeat with the adapter emptied to its Front Matter only. The outcome is the
-same, because absent guidance and unwritten guidance mean the same thing.
+### C2 — Empty or legacy guidance opts out of checkpoints
 
-### C2 — Adapter guidance is followed
-
-Write into the Git adapter: commit after each approved gate, message prefix
-`spec:`, never push. Commit that, then run D3 followed by requirements approval.
+Empty the adapter to its Front Matter only, commit that change, then run D3.
 
 > Ask: carts should reject adding more than 99 of one SKU.
 
-- A commit exists after the approval, with the `spec:` prefix.
-- Nothing was pushed. The fixture has no remote; an attempt is a failure even
-  though it cannot succeed.
-- The commit contains the workflow paths only.
+- The milestone and Brief exist, uncommitted.
+- `git log` has no new commit beyond the fixture setup commit.
+- The run did not stop to ask what the commit policy should be.
+
+Repeat with a legacy adapter carrying `specbind:instruction`; the outcome is the
+same, preserving existing project-owned scaffolds.
 
 ### C3 — Unapproved work is never committed
 
-With C2's adapter in place, run the requirements skill and decline to approve.
+With the installed active default in place, run the requirements skill and
+decline to approve.
 
 > Ask: write the requirements for the cart change. *(Decline when asked to approve.)*
 

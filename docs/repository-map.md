@@ -255,3 +255,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0134](./design/decisions/0134-phase-relative-milestone-review-health.md) | Accepted | Absent milestone review treated as expected workflow work |
 | [0135](./design/decisions/0135-phase-relative-requirements-status.md) | Accepted | Absent Requirements treated as expected phase work |
 | [0136](./design/decisions/0136-phase-relative-worktree-blocker.md) | Accepted | Worktree cleanliness reported only when it blocks current progress |
+| [0137](./design/decisions/0137-active-default-git-checkpoints.md) | Accepted | Active local Git checkpoints for newly installed projects |
