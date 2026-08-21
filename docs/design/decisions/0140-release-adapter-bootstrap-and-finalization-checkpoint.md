@@ -53,8 +53,16 @@ affected completion handshake has been rerun.
 
 A Release adapter whose body is empty after Front Matter is different: it is an
 explicit project decision that no project-specific Prepare, Publish, Verify, or
-After-finalize action is required. It proceeds to core finalization. An active
-body is followed as project policy.
+After-finalize action is required. The skill skips those adapter stages,
+including external verification, and proceeds directly to core finalization;
+there is no project publication claim in that branch. An active body is followed
+as project policy.
+
+A project's Publish step may be a local annotated tag rather than an external
+publication. The Publish confirmation boundary still applies because the step
+establishes a release identity that later work may consume, but the skill states
+accurately whether the action stays local or leaves the repository. A local tag
+is not described as independently proving external publication.
 
 ### Finalization creates a separate local checkpoint
 

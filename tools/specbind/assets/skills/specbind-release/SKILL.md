@@ -111,7 +111,10 @@ This is prose, not a script. You perform what it says; a code block in it is an
 example to follow, not something that runs on its own.
 
 **An empty adapter means releasing needs no project-specific action.** That is
-an explicit statement, not a gap — proceed to finalization.
+an explicit statement, not a gap. Skip sections 3 through 6 and go directly to
+section 7, core finalization. There is no project publication claim to verify in
+this branch; the cannot-verify rule applies when active adapter guidance claims
+that Publish occurred.
 
 (Release keeps this selector-specific empty-body meaning. The installed Git
 adapter is active checkpoint policy; do not transfer either adapter's default
@@ -139,11 +142,14 @@ completion evidence.
 
 ## 4. Publish — confirm with the user first
 
-**This is the only irreversible, outward-facing action in the workflow.** A tag,
-a deployment, an upload, a submission — it leaves the repository and becomes
-visible to people you cannot reach.
+**This is the release-identity or outward-facing boundary in the workflow.** A
+project may define Publish as a local annotated tag, or as a deployment, upload,
+submission, or remote tag. A local tag has not left the repository, but it
+establishes the release identity that later work may consume. External actions
+also become visible to people you cannot reach.
 
-State what the adapter will do and to which version, and get confirmation.
+State what the adapter will do, whether it stays local or leaves the repository,
+and to which version, then get confirmation.
 
 Do this **even if the run began with broad instructions.** Authority to prepare a
 release is not authority to publish one.

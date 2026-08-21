@@ -156,6 +156,8 @@ local-tag procedure — ask for the milestone to be released.
 - `.specbind/settings/adapters/release.md` preserves its exact type, no longer
   contains `specbind:adapter-scaffold`, and reflects `RELEASING.md` rather than
   inventing a remote, credential, destination, or different release label.
+  Its tag target is the exact HEAD recorded before finalization, not an inferred
+  or later lifecycle-metadata commit.
 - Exactly one new local commit contains only the Release adapter. The worktree is
   clean and the current branch is unchanged.
 - The active milestone, Roadmap, Brief, Tasks, and completion evidence were not

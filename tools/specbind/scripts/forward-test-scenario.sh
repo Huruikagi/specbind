@@ -680,8 +680,8 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
                 echo "# Releasing"
                 echo
                 echo "1. Run \`sh scripts/test.sh\` and require a passing suite."
-                echo "2. Create an annotated local tag whose name is the bound release version."
-                echo "3. Verify the tag resolves to the release commit and rerun the suite from that tagged tree."
+                echo "2. Before SpecBind finalization, record the current HEAD and create an annotated local tag whose name is the bound release version and whose target is that exact HEAD."
+                echo "3. Verify the tag resolves to the recorded pre-finalization HEAD and rerun the suite from that tagged tree."
                 echo "4. No project-specific work is required after SpecBind finalization."
             } > RELEASING.md
             git add -A

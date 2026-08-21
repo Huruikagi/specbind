@@ -438,6 +438,8 @@ fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
         "Stop after bootstrap",
         "must run its completion handshake\n   again",
         "approval authorizes only replacing the adapter",
+        "Skip sections 3 through 6",
+        "A local tag has not left the repository",
         "Immediately before finalization, record `git status --short`",
         "Checkpoint only the finalized lifecycle metadata",
         "Publication approval does not authorize pushing this commit",
