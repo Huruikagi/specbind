@@ -12,6 +12,18 @@ this work belong to?** Everything else follows from that answer.
 You decide and confirm. The CLI performs every lifecycle and state change. The
 one thing you author is the brief for each Spec-backed item.
 
+## Non-negotiable first boundary
+
+The request to run this skill is **not** confirmation of the scope you have not
+presented yet. This remains true when the request says "ship", "go ahead", or
+"take it through release", supplies a precise change and version, or otherwise
+authorizes the desired outcome broadly.
+
+Your first response before any mutation presents the four-field scope proposal
+from step 5 and asks the user to confirm it. Only a later user reply that refers
+to that visible proposal authorizes Discovery to apply it. Do not infer this
+separate confirmation from the invocation.
+
 ## 1. Understand the request
 
 Restate the request in your own words and check it back with the user if

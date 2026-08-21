@@ -191,6 +191,10 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
         .expect("discovery skill")
         .body()
         .expect("discovery body");
+    let invocation = body
+        .find("The request to run this skill is **not** confirmation")
+        .expect("invocation is not confirmation rule");
+    let first_phase = body.find("## 1. Understand").expect("first phase");
     let payload = body
         .find("complete confirmation payload")
         .expect("complete confirmation payload instruction");
@@ -211,7 +215,8 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
         .expect("apply phase");
 
     assert!(
-        payload < work_items
+        invocation < first_phase
+            && payload < work_items
             && work_items < new_specs
             && new_specs < invalidations
             && invalidations < dependencies

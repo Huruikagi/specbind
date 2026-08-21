@@ -103,13 +103,16 @@ settings commit correctly made the accepted `cart` completion evidence stale.
 | HP1 | Codex | Product failure | On `2ec33fd`, a `gpt-5.6-terra` medium driver stopped for Discovery confirmation without presenting the whole scope plan its owning skill requires. The clean fixture stayed at commit `8f546b55b5631c0b070a014d9a3e8d6a2215161d` with no milestone or tag, `cart` idle, and one dispatch-log context. The missing plan made the first confirmation unapprovable, so no later journey phase was run. |
 | HP1 | Codex | Environment blocked | On `ef536c8`, the temp-directory driver was denied the required fixture-local dispatch-log write twice, including after the existing user authority was relayed. No product workflow ran. |
 | HP1 | Codex | Product failure | On `ef536c8`, a fresh workspace-local `gpt-5.6-terra` medium driver named the `cart` update but again omitted explicit empty New Specs, invalidations, and dependencies from its confirmation payload. It also tried `milestone create --scope` with prose before confirmation; the CLI rejected the path-like argument. The clean fixture stayed at `9f12ed713d4fe97842bca25583d51bb8408aaa17` with no milestone or tag, `cart` idle, and one dispatch-log context. |
+| HP1 | Codex | Product failure | On `4b44b63`, a fresh `gpt-5.6-terra` medium driver inferred that the initial "Ship" request approved scope before the required later confirmation, then created and committed the `cart` Discovery milestone. The fixture stopped clean at `753c44e6ab5cb53fa6e0d1909ebb915b935e5af0`, with `cart` in Requirements, no tag, and one dispatch-log context; no later HP1 phase was authorized. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-None.
+| First seen | Scenario | Finding | Status |
+| --- | --- | --- | --- |
+| `ef536c8` | HP1 | Two fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced on `4b44b63`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
 
 ### Fixed, behavioral confirmation pending
 
