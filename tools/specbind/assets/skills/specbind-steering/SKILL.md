@@ -104,9 +104,14 @@ identity. `document` is the scaffold for any other subject and deliberately
 declares none.
 
 Follow every scoped instruction the template returns. Omit `create` comments
-from the materialized artifact, and copy every `maintain` and `consume` comment
-unchanged. Existing documents already own their durable comments; preserve them
-when revising unrelated content.
+from the materialized artifact. Treat each `maintain` and `consume` comment as
+one indivisible block: copy its opening marker, complete body, and closing marker
+byte-for-byte. Never excerpt or rewrite it. Existing documents already own their
+durable comments; preserve them when revising unrelated content.
+
+Author guidance from established project evidence. Do not change source,
+configuration, or tests merely to make a statement in the new document true;
+that would expand a documentation request into implementation work.
 
 ### Bootstrap
 
@@ -156,6 +161,10 @@ Every document you touched must appear, with the selector you intended. **A
 document that does not appear was authored wrong** — bad Front Matter, wrong
 type, or a colliding identity. Fix it and list again. Do not report success on a
 document the CLI cannot see.
+
+For a newly materialized document, compare every retained instruction comment
+against the scaffold once more. Each complete durable block must still match;
+`create` must not remain.
 
 ## 6. Report
 
