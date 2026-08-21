@@ -257,7 +257,13 @@ template, and read the authoring protocol before you write:
 ```sh
 specbind template read spec brief
 specbind protocol read okf-authoring
+specbind milestone status
 ```
+
+The final status read is the protocol's check immediately before the first Brief
+write. If any participating Spec is `release_ready`, stop at the protocol's
+confirmation boundary before authoring. An earlier status read does not replace
+this check because applying the scope changed the milestone.
 
 Fill it from the request in the requester's own terms. Keep it short — the
 authoritative scope lives in requirements, and this document is not

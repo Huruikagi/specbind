@@ -133,6 +133,27 @@ fn discovery_reads_the_scope_schema_before_first_creation() {
 }
 
 #[test]
+fn discovery_rechecks_completion_immediately_before_brief_authoring() {
+    let body = skill::find("specbind-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("body");
+    let protocol = body
+        .find("specbind protocol read okf-authoring")
+        .expect("authoring protocol read");
+    let final_status = body
+        .rfind("specbind milestone status")
+        .expect("status read");
+    let fill = body
+        .find("Fill it from the request")
+        .expect("brief authoring instruction");
+    assert!(
+        protocol < final_status && final_status < fill,
+        "completion state must be checked after the protocol and before Brief authoring"
+    );
+}
+
+#[test]
 fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
     let body = skill::find("specbind-discovery")
         .expect("discovery skill")
