@@ -342,7 +342,16 @@ fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
         .expect("metadata");
     assert!(quick.description.contains("exactly one named or targeted"));
     assert!(quick.description.contains("approved plan in one go"));
-    assert!(quick.description.contains("do not use for every Spec"));
+    assert!(
+        quick
+            .description
+            .contains("including when it is the milestone's only Spec")
+    );
+    assert!(
+        quick
+            .description
+            .contains("do not use for an all-Spec request")
+    );
 
     let batch = skill::find("specbind-batch-plan")
         .expect("batch-plan")
@@ -353,7 +362,12 @@ fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
     assert!(
         batch
             .description
-            .contains("do not use for one named or targeted item")
+            .contains("even when it is the milestone's only Spec")
+    );
+    assert!(
+        batch
+            .description
+            .contains("explicitly requests every or all Specs")
     );
 }
 

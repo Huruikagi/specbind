@@ -1,10 +1,14 @@
 ---
 name: specbind-quick-plan
-description: Take exactly one named or targeted Spec-backed item through to an approved plan in one go, ending at Tasks approval. Use for one item; do not use for every Spec in a milestone.
+description: Take exactly one named or targeted Spec-backed item through to an approved plan in one go, ending at Tasks approval. Use whenever one item is named or targeted, including when it is the milestone's only Spec; do not use for an all-Spec request.
 argument-hint: "<spec>"
 ---
 
 # Take one item through to an approved task plan
+
+A named or targeted item always selects this one-item workflow. The fact that it
+is currently the milestone's only Spec does not turn the request into an
+all-Spec batch.
 
 Orchestrate the Requirements, Design, and Tasks phases for one Spec-backed item
 without stopping at each gate for a confirmation. **You orchestrate. Every

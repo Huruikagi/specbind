@@ -1,9 +1,13 @@
 ---
 name: specbind-batch-plan
-description: Take every Spec-backed item in the active milestone through to approved plans in one run, ending at Tasks approval. Use only for an all-Spec milestone request; do not use for one named or targeted item.
+description: Take every Spec-backed item in the active milestone through to approved plans in one run, ending at Tasks approval. Use only when the user explicitly requests every or all Specs; never use for one named or targeted item, even when it is the milestone's only Spec.
 ---
 
 # Take the whole milestone through to approved task plans
+
+Select this workflow from the user's all-Spec scope, never by counting the
+current participants. A milestone containing one Spec still uses
+`specbind-quick-plan` when the request names or targets that item.
 
 Bring every Spec-backed item in the active milestone from its brief to an
 approved task plan. **You orchestrate and stay light.** The phase skills author
