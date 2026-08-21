@@ -193,10 +193,22 @@ Present the whole plan and get explicit agreement:
 - dependencies between items
 
 Stopping for confirmation means presenting that complete confirmation payload
-in the same response. Never return only a statement that confirmation is
-required, a list of reads or commands, or a no-change summary. Until every
-applicable item above is visible to the user, you have not reached the
-confirmation boundary and there is nothing they can safely approve.
+in the same response. Render it with these four explicit fields, writing `None`
+when a field has no entries:
+
+```text
+Work items: <identity, kind, and reason for each>
+New Specs: <identity and owned responsibility for each, or None>
+Gate invalidations: <earliest gate and rework cost for each, or None>
+Dependencies: <edges between items, or None>
+```
+
+Then ask for confirmation of that proposal. Never return only a statement that
+confirmation is required, a list of reads or commands, or a no-change summary.
+Until all four fields are visible to the user, there is nothing they can safely
+approve. Do not run an invalidation, `milestone create`, `milestone
+update-scope`, or any artifact write before sending this payload and receiving
+the user's later reply.
 
 Scope is the decision the rest of the workflow is built on. Confirm it once here
 rather than discovering it was wrong three phases later.

@@ -197,12 +197,27 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
     let no_summary = body
         .find("or a no-change summary")
         .expect("no summary-only stop instruction");
+    let work_items = body.find("Work items:").expect("work items field");
+    let new_specs = body.find("New Specs:").expect("new Specs field");
+    let invalidations = body
+        .find("Gate invalidations:")
+        .expect("gate invalidations field");
+    let dependencies = body.find("Dependencies:").expect("dependencies field");
+    let no_mutation = body
+        .find("Do not run an invalidation")
+        .expect("no pre-confirmation mutation instruction");
     let apply = body
         .find("## 6. Apply, rewinds first")
         .expect("apply phase");
 
     assert!(
-        payload < no_summary && no_summary < apply,
+        payload < work_items
+            && work_items < new_specs
+            && new_specs < invalidations
+            && invalidations < dependencies
+            && dependencies < no_summary
+            && no_summary < no_mutation
+            && no_mutation < apply,
         "discovery must present the approvable payload before applying scope"
     );
 }
