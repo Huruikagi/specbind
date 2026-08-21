@@ -289,7 +289,7 @@ r1)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
     brief order \
         "Customers cannot cancel an order once placed." \
-        "Customers can cancel eligible orders after placement."
+        "Customers can cancel an order they placed before its cancellation window closes; a later cancellation is rejected."
     expect "order did not reach the requirements state" \
         'specbind spec status order | grep -q "State: requirements"'
     ;;
@@ -454,7 +454,7 @@ ds1)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
     brief order \
         "Customers cannot cancel an order once placed." \
-        "Customers can cancel eligible orders after placement."
+        "Customers can cancel an order they placed before its cancellation window closes; a later cancellation is rejected."
     # Requirements authored and approved deterministically. Only the design
     # phase is under test, and three runs starting from the same contract differ
     # in the request rather than in what the previous phase happened to write.

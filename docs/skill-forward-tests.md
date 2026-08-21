@@ -285,7 +285,7 @@ without a pass are listed separately below.
 | Requirements | R1–R5 | R3 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1, C3 |
-| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised) |
+| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
 | Tasks | T2 | T2, T4 |
 | Contract review | X3 | X1, X2 |
 | Implementation | None recorded | I1–I4 |
@@ -303,17 +303,31 @@ without a pass are listed separately below.
 | D3 | Claude Code | Not measured | The confirmation authorized the whole feature, so later phases rewrote the discovery artifacts before they could be judged. |
 | D7 | Claude Code | Not measured | No embedded `specbind-tasks` skill owned plan authoring at the time; the run correctly stopped. |
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
+| R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Usability observations
 
-No post-run usability debrief has been recorded yet. Future observations are
-listed here separately from scenario measurements with the build, scenario,
-agent, surface, impact, concrete evidence, and workaround. A completed debrief
-with no finding is recorded as `none`, so absence of a row is not mistaken for
-an uneventful run.
+The first post-run debrief batch ran on 2026-08-21 against `a5c14c8`, after the
+R1, DS2, and C1 fixtures had already been judged. `git status --short` was
+identical before and after every debrief.
+
+| Build | Scenario | Agent | Surface | Impact | Observation and evidence | Workaround | Contract check |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `a5c14c8` | R1 | Codex | Protocol | wrong-action-risk | The brief says only "eligible orders" while the Requirements review protocol says an unknown expectation must be escalated, not filled with a plausible guess. | The agent stopped without creating Requirements. | Reproduced; this is a scenario contradiction, not a product defect. |
+| `a5c14c8` | R1 | Codex | CLI | extra-step | The agent guessed `specbind spec show order --include-body`, which does not exist. | It read `spec --help`, then used `spec status` and `artifact read`. | Not a contract gap: the project instructions already say to run `specbind --help` when a command is unfamiliar. |
+| `a5c14c8` | R1 | Codex | Other | ambiguity | The harness says to append its instrumentation record "Before doing anything else", although that direction is learned only by reading `AGENTS.md`. | It appended the record immediately after reading the instruction. | Reproduced as harness wording only; it did not affect product behavior. |
+| `a5c14c8` | DS2 | Codex | Skill | ambiguity | `artifact list cart` reported no Design, but the Existing Spec branch says only to "revise the current design artifacts in place". | The agent borrowed the New Spec path-discovery commands, resolved `design/main`, and created the reported target. | Reproduced; the established-Spec-with-no-Design state has no explicit branch. |
+| `a5c14c8` | DS2 | Codex | CLI | wrong-action-risk | `check contracts` warned that `add-item` was unconsumed and said to confirm an external consumer or retire the seam, but the fixture provided no evidence with which to decide that. | The agent preserved the stable existing export. | Reproduced; preserving all four stable IDs was also the scenario requirement. |
+| `a5c14c8` | C1 | Codex | Other | wrong-action-risk | The agent read the `specbind-status` skill name as a `specbind status` CLI command and got an unknown-subcommand error. | It used `specbind milestone status`. | Not reproduced as written: `AGENTS.md` names the skill, not that CLI command. The similar names remain the observed source of the misread. |
+| `a5c14c8` | C1 | Codex | Skill | ambiguity | The driver confirmed "discovery for this cart change only" while the skill asks for explicit agreement to the whole plan. | The agent treated the phase-limited confirmation as authorization for the plan it had just presented. | Harness wording, not a demonstrated product defect. |
+| `a5c14c8` | C1 | Codex | CLI | extra-step | `milestone create --help` names `--scope <SCOPE>` but neither it nor the skill shows the JSON scope shape; the first stdin attempt reached EOF. | The agent inferred and supplied the scope document. | Reproduced; the skill shows `--scope -` without a complete input example. |
+| `a5c14c8` | C1 | Codex | CLI | wrong-action-risk | After successful discovery, `milestone status` reported `Health: inconsistent` and `CONTRACT_REVIEW_MISSING` even though its actionable phase was Requirements. | The agent trusted `Actionable: spec:cart action=requirements` and stopped at the requested boundary. | Reproduced; `spec status cart` was phase-relative and consistent, but milestone health still treated the later contract review as an inconsistency. |
+
+A completed debrief with no finding is recorded as `none`, so absence of a row
+is not mistaken for an uneventful run.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
@@ -615,6 +629,9 @@ From D4, run the requirements skill on the new Spec.
 
 > Ask: write the requirements for the new order spec.
 
+- The fixture defines the cancellation boundary: the customer may cancel an
+  order they placed before its cancellation window closes, and a later attempt
+  is rejected. The author does not have to invent what "eligible" means.
 - `requirements.md` now exists and validates: `check traceability <spec>` passes.
 - It is a complete contract for the responsibility, not a restatement of the
   brief's delta.

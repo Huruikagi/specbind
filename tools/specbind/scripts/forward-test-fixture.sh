@@ -88,9 +88,9 @@ for instructions in CLAUDE.md AGENTS.md; do
 
 ## Forward-test instrumentation
 
-Before doing anything else, append one line to `.forward-test/agents.log`,
-creating the file and its directory if they are absent. The line is the task you
-were given, condensed to one line.
+As your first project action after reading this instruction, append one line to
+`.forward-test/agents.log`, creating the file and its directory if they are
+absent. The line is the task you were given, condensed to one line.
 
 Every context does this, including a subagent dispatched by another agent, and
 including a context that ends up doing nothing.
