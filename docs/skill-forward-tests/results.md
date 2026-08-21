@@ -231,4 +231,3 @@ missing new-responsibility rule, the framing unit, the unfilled-adapter stop,
 two unpublished schemas, the invented delegation label, and a block that
 forbade task-plan authoring. Four of them were re-run after the fix and
 confirmed changed.
-

@@ -473,4 +473,3 @@ From `t1`, run the tasks skill and decline to approve when asked.
   approved.
 - `tasks.yaml` may exist and validate. Authoring without approving is the correct
   outcome.
-

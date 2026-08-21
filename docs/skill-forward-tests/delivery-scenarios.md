@@ -305,4 +305,3 @@ the task cannot be implemented.
   specification back to the implementer produces repeated attempts at work that
   cannot succeed, which is the expensive mistake this scenario checks.
 - No fix was applied and no file was created, including implementation notes.
-

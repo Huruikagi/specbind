@@ -267,4 +267,3 @@ differ: the ones that measure **stopping and confirmation** (D9, R3, R4, R5, DS3
 DS4, DS6), **whole-set reading** (D11, D12), and **checkpoint behavior** (C1, C2,
 C3). Scenarios that only check the artifacts an authoring phase produced (R1, R2,
 DS1, DS2) are the least agent-sensitive and a single sample covers them.
-
