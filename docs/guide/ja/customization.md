@@ -1,40 +1,38 @@
 # プロジェクトに合わせてカスタマイズする
 
-SpecBindのライフサイクルや検証を変えずに、成果物の書き方、プロジェクト固有の
-判断基準、運用手順、エージェントの能力配分をプロジェクトに合わせられます。
+SpecBindのライフサイクルと検証はそのままに、成果物の書き方、プロジェクト固有の
+判断基準、運用手順、役割ごとに使うモデルを、プロジェクトに合わせて調整できます。
 
-このページは、SpecBindがサポートするカスタマイズ面の入口です。将来の
-カスタマイズ用Skillから案内する場合も、まずこの分類を使い、実際の対象と内容は
-そのプロジェクトで`specbind` CLIから読み取ります。
+このページでは、何を変えたいときにどこを編集するのかをまとめます。
 
 ## 変更したいことから選ぶ
 
 | 変更したいこと | 編集する場所 | 主な確認方法 |
 | --- | --- | --- |
-| RequirementsやDesignなどの構成、見出し、例 | `{{SPEC_DIR}}/settings/templates/` | `specbind template list`、`specbind template read` |
-| Requirements、Design、Contract、Tasks、Steeringの書き方や判断基準 | `{{SPEC_DIR}}/settings/rules/` | 適用するSkillで成果物を作成・レビューする |
-| リリース、Git、保留した指摘の届け先 | `{{SPEC_DIR}}/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
-| プロジェクトについてエージェントが長く参照する知識 | `{{SPEC_DIR}}/steering/` | `specbind steering list`、`specbind steering read` |
-| Specの置き場所、成果物の言語、利用するエージェント | `.specbind.json`と`specbind install`のオプション | `specbind install --dry-run ...` |
-| 役割ごとのモデルと推論量 | `.specbind.json`の`agentRoles` | 設定後に`specbind install --dry-run` |
+| RequirementsやDesignなどの構成、見出し、例 | `.specbind/settings/templates/` | `specbind template list`、`specbind template read` |
+| Requirements、Design、Contract、Tasks、Steeringの書き方や判断基準 | `.specbind/settings/rules/` | 対応するSkillで成果物を作成・レビューする |
+| リリース、Git、保留した指摘の届け先 | `.specbind/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
+| プロジェクトについてエージェントが長く参照する知識 | `.specbind/steering/` | `specbind steering list`、`specbind steering read` |
+| Specの置き場所、成果物の言語、使うエージェント | `.specbind.json`と`specbind install`のオプション | `specbind install --dry-run ...` |
+| 役割ごとのモデルと推論の深さ | `.specbind.json`の`agentRoles` | 設定後に`specbind install --dry-run` |
 
-`{{SPEC_DIR}}`は`.specbind.json`の`specDir`です。新規プロジェクトの既定値は
-`.specbind`です。
+このページでは、Specの置き場所が既定値の`.specbind`である前提でパスを書きます。
+`.specbind.json`の`specDir`を変えている場合は、その値に読み替えてください。
 
 ## 成果物テンプレート
 
-テンプレートは、新しい成果物の構成と初期内容を決めるscaffoldです。見出し、節の
+テンプレートは、新しい成果物の構成と初期内容を決めるひな形です。見出し、節の
 分け方、例、テンプレート内の`specbind:instruction`コメントを調整できます。
 
-初回installでは、構成を変える理由が多い次の2つだけをプロジェクト設定として
-作成します。
+初回のinstallでプロジェクト側にコピーされるのは、構成を変えたくなることが多い
+次の2つだけです。
 
 - `settings/templates/specs/requirements.md`
 - `settings/templates/specs/design.md`
 
 Brief、Research、Contract、Implementation NotesのSpecテンプレートと、Steeringの
-テンプレートもバイナリに埋め込まれています。必要なプロジェクトだけが、CLIの一覧に
-表示される`template_path`へコピーして上書きできます。
+テンプレートもCLIに埋め込んであります。変更したいプロジェクトだけが、CLIの一覧に
+出てくる`template_path`へコピーして上書きしてください。
 
 ```sh
 specbind template list spec
@@ -43,87 +41,91 @@ specbind template list steering
 specbind template read steering document
 ```
 
-テンプレートを変えても、すでに存在する成果物は自動では書き換わりません。変更後に
-作る成果物から新しいテンプレートが使われます。
+テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
+成果物から、新しいテンプレートが使われます。
 
 !!! warning
-    `type`、`artifact_id`、必須の識別子や対応関係など、CLIが読む構造は残して
-    ください。自由に変えられるのは、機械可読な契約を保った範囲です。
+    `type`、`artifact_id`、必須の識別子や対応関係など、CLIが読み取る構造は残して
+    ください。自由に変えられるのは、この機械可読な部分を保った範囲だけです。
 
 ## 共有ルール
 
-共有ルールは、複数のエージェントで共通に使う、プロジェクト固有の執筆方針と判断
-基準です。強める、緩める、置き換える、削除することができます。
+共有ルールは、複数のエージェントが共通で参照する、プロジェクト固有の執筆方針と
+判断基準です。内容は強めても、緩めても、書き換えても、削除しても構いません。
 
-| ファイル | カスタマイズする内容 |
+| ファイル | 書けること |
 | --- | --- |
-| `ears-format.md` | RequirementsのEARS表現、主語、テスト可能性の好み |
-| `design-principles.md` | アーキテクチャ、インターフェース、データ、エラー処理、文書の詳しさ |
-| `contract-principles.md` | 所有境界、公開seam、互換性、依存方向のプロジェクト方針 |
-| `tasks-generation.md` | Taskの大きさ、分割、テスト作業、並列化の好み |
-| `steering-principles.md` | Steeringに残す知識の粒度、例、更新方針 |
+| `ears-format.md` | RequirementsのEARS表現、主語の立て方、テストしやすさの好み |
+| `design-principles.md` | アーキテクチャ、インターフェース、データ、エラー処理、記述の細かさ |
+| `contract-principles.md` | 所有境界、外部へ公開する接点、互換性、依存の向きに関する方針 |
+| `tasks-generation.md` | Taskの大きさ、分割の仕方、テスト作業の扱い、並列化の好み |
+| `steering-principles.md` | Steeringに残す知識の粒度、例の書き方、更新の方針 |
 
-v1のSkillが読むのは、この5つの既知のパスだけです。別名のルールファイルを追加しても
-自動では読み込まれません。ルールを変更しても、成果物の必須構造、Gate、承認、状態
-遷移、Skillの必須手順、CLIの検証を弱めることはできません。
+v1のSkillが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
+読み込まれません。
+
+また、ルールで弱められないものがあります。成果物の必須構造、Gate、承認、状態の
+遷移、Skillの必須手順、CLIの検証です。
 
 ## 運用adapter
 
-adapterは、プロジェクトごとに異なる運用を自然言語でエージェントへ伝える場所です。
-Markdownの本文は自由形式で、コードブロックを書いても自動実行されるhookには
+adapterは、プロジェクトごとに違う運用のやり方を、自然言語でエージェントに伝える
+場所です。本文は自由に書けます。コードブロックを書いても、自動実行されるフックには
 なりません。
 
 | ファイル | 伝える内容 |
 | --- | --- |
-| `release.md` | リリース準備、公開、検証、後片付け |
-| `git.md` | checkpointの単位、stage、commit message、branch、pushの方針 |
-| `deferred.md` | Gateを止めない実在の指摘を残すIssue tracker、wiki、ファイルなどの届け先 |
+| `release.md` | リリースの準備、公開、検証、後片付け |
+| `git.md` | どの単位で区切るか、ステージング、コミットメッセージ、ブランチ、pushの方針 |
+| `deferred.md` | Gateを止めるほどではない指摘を残す先（Issue tracker、wiki、ファイルなど） |
 
 ```sh
 specbind adapter list
 specbind adapter read git
 ```
 
-adapterは方針であり、権限ではありません。たとえば`git.md`にpush方針があっても、
-ユーザーの依頼や実行環境の権限なしにpushできるようにはなりません。v1は既知の3つの
-selectorだけを読み、`settings/adapters/`へ任意のファイルを置いて拡張する仕組みでは
-ありません。
+adapterはあくまで方針であり、権限ではありません。たとえば`git.md`にpushの方針を
+書いても、それだけでエージェントがpushできるようになるわけではなく、あなたの依頼と
+実行環境の権限が別途必要です。
+
+v1が読むのは上の3つだけです。`settings/adapters/`に好きなファイルを置いて種類を
+増やす仕組みではありません。
 
 ## Steering
 
-Steeringは、製品の目的、技術方針、構造、テスト方針、セキュリティ姿勢など、今後の
-作業でも参照するプロジェクトの知識です。作業中だけのメモや、すぐ変わる状態は置き
-ません。
+Steeringは、製品の目的、技術方針、構造、テスト方針、セキュリティの考え方など、
+これから先の作業でも参照するプロジェクトの知識です。作業中だけのメモや、すぐに
+変わる状態は書きません。
 
-`specbind-steering` Skillは、現在の一覧を確認したうえで、初期作成、既存文書の同期、
-1文書の追加を行います。既定の`product`、`tech`、`structure`は提案であり、名前の
-変更、統合、分割、採用しない選択ができます。
+`specbind-steering` Skillが、現在の一覧を確認したうえで、初期作成、既存文書の同期、
+1文書の追加を行います。既定の`product`、`tech`、`structure`という分け方は提案です。
+名前を変えても、統合しても、分割しても、使わなくても構いません。
 
 ```sh
 specbind steering list
 specbind steering read <selector>
 ```
 
-SteeringはGateやfreshnessの入力ではありません。ただし、accepted completionがある
-Milestoneの途中で編集するとcompletionの再検証が必要になることがあります。通常は
-Milestone開始から最初のcompletionまで、またはrelease finalize後に更新するのが
-扱いやすいタイミングです。
+SteeringはGateの入力ではなく、古くなったかどうかの判定にも使いません。ただし、
+completionを受理済みのMilestoneの途中で編集すると、completionの再検証が必要に
+なることがあります。Milestoneを始めてから最初のcompletionまでの間か、リリースの
+後片付けが終わったあとに更新すると、扱いやすくなります。
 
 ## プロジェクト設定と役割別モデル
 
-初回installでは、成果物の言語、利用するエージェント、Specの置き場所、ルート指示
+初回のinstallでは、成果物の言語、使うエージェント、Specの置き場所、ルート指示
 ファイルへの案内追加を選べます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --spec-dir .specbind --project-instructions
 ```
 
-`specDir`は初回install時に決め、v1では導入後に変更できません。言語と選択した
-エージェントはinstall時の指定として`.specbind.json`に保存されます。導入後に
-エージェントを追加することはできますが、削除とアンインストールはv1の対象外です。
+`specDir`は初回のinstallで決まり、v1では導入後に変更できません。言語と、選んだ
+エージェントは`.specbind.json`に保存されます。あとからエージェントを追加することは
+できますが、削除とアンインストールはv1では対応しません。
 
-実装、レビュー、調査などの役割ごとのコストと能力を変えたい場合は、
-`.specbind.json`の`agentRoles`でmodelを上書きします。Codexだけは
+実装、レビュー、調査といった役割ごとに、使うモデルを変えることもできます。
+`.specbind.json`の`agentRoles`で上書きしてください。Codexでは、あわせて
 `reasoningEffort`も指定できます。
 
 ```json
@@ -131,8 +133,8 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
   "agentRoles": {
     "codex": {
       "implementer": {
-        "model": "gpt-5.6-luna",
-        "reasoningEffort": "medium"
+        "model": "gpt-5.6-sol",
+        "reasoningEffort": "high"
       }
     },
     "claudeCode": {
@@ -144,39 +146,41 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 }
 ```
 
-変更後は、クリーンでcommit済みのリポジトリでdry runを確認してからinstallを再実行
-します。`.codex/agents/specbind-*.toml`や`.claude/agents/specbind-*.md`を直接編集する
-のではなく、設定から再生成してください。
+役割は`planner`、`implementer`、`reviewer`、`debugger`、`researcher`の5つです。
+指定しなかった役割には、SpecBindの既定のモデルが使われます。
+
+変更したら、リポジトリがクリーンな状態でdry runの結果を確認し、installを実行し
+直してください。`.codex/agents/specbind-*.toml`や`.claude/agents/specbind-*.md`は
+直接編集せず、設定から作り直します。
 
 ## カスタマイズできないもの
 
-次はSpecBindが管理する製品契約です。直接編集しても、サポートされたカスタマイズには
-なりません。
+次はSpecBindが管理している製品側の契約です。直接編集しても、サポートされた
+カスタマイズにはなりません。
 
 - `.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`のSkill本体
 - `.codex/agents/specbind-*.toml`と`.claude/agents/specbind-*.md`の役割定義
 - CLIが埋め込むprotocolとschema
-- Gate、承認、fingerprint、状態遷移、必須のトレーサビリティ
-- `spec.yaml`、`tasks.yaml`、Roadmapなど、CLIが所有する構造化状態
-- ルート指示ファイル内の`SpecBind`管理ブロック
+- Gate、承認、fingerprint、状態の遷移、必須のトレーサビリティ
+- `spec.yaml`、`tasks.yaml`、Roadmapなど、CLIが所有する構造化された状態
+- ルート指示ファイルの中の、SpecBind管理ブロック
 
-プロジェクト固有の方針を追加したいときは、Skill本体をforkせず、目的に応じて
-template、rule、adapter、Steeringのいずれかへ置きます。
+プロジェクト固有の方針を足したいときは、Skill本体を書き換えず、目的に応じて
+テンプレート、ルール、adapter、Steeringのどれかに置いてください。
 
-## カスタマイズSkillから参照する場合
+## 変更するときの進め方
 
-将来のカスタマイズ用Skillは、このページをユーザー向けの選択肢一覧として参照
-できます。実行時には、次の順序を守るとプロジェクトの現在の状態とずれません。
+どの面をカスタマイズする場合も、次の順で進めると現在の状態とずれません。
 
-1. 変更したい意図を確認し、template、rule、adapter、Steering、project configの
-   どれに属するかを決める。
-2. template、adapter、Steeringは対応するCLIの`list`と`read`で現在値を取得する。
-3. プロジェクト所有のファイルだけを編集し、製品管理ファイルは編集しない。
-4. 機械可読な構造と、カスタマイズできない製品契約を保つ。
-5. diffを提示し、対応するCLIの再読込、dry run、または実際のSkill workflowで
-   結果を確認する。
+1. 変えたい内容が、テンプレート、ルール、adapter、Steering、プロジェクト設定の
+   どれに当たるかを決める。
+2. テンプレート、adapter、Steeringは、対応するCLIの`list`と`read`で現在値を
+   確認してから編集する。
+3. 編集するのはプロジェクト所有のファイルだけにする。
+4. 機械可読な構造と、上に挙げた製品側の契約は壊さない。
+5. 変更後に、CLIの`read`、dry run、または実際のSkillの実行で結果を確認する。
 
-現在インストールされる全ファイルは
+インストールされるファイルの全体像は
 [現在の成果物一覧](../../current-artifact-index.md)で確認できます。
 
 ---
