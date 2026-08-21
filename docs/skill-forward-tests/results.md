@@ -100,6 +100,7 @@ settings commit correctly made the accepted `cart` completion evidence stale.
 | VD1 | Codex | Product failure | On `7307f7a`, the validator returned the expected `NOT_READY` for Research dependence but also raised inactive Requirements 2.1–2.2 as blocking Design omissions. The fresh `3d887b6` run scoped judgment to the active 4/4 set and passed. |
 | RL3 | Codex | Product failure | On `6a29ad7`, a fresh driver misclassified the explicit Front Matter-only Release adapter as an unconfigured scaffold. The classification order was made explicit and the fresh `f069aef` run finalized correctly. |
 | RL4 | Codex | Product failure | On `f069aef`, a fresh driver concluded that release documentation was absent without inspecting root `RELEASING.md`. `447c0c6` requires root release-document enumeration before that conclusion; the fresh run found it and passed. |
+| HP1 | Codex | Product failure | On `2ec33fd`, a `gpt-5.6-terra` medium driver stopped for Discovery confirmation without presenting the whole scope plan its owning skill requires. The clean fixture stayed at commit `8f546b55b5631c0b070a014d9a3e8d6a2215161d` with no milestone or tag, `cart` idle, and one dispatch-log context. The missing plan made the first confirmation unapprovable, so no later journey phase was run. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
