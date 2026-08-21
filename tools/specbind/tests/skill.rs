@@ -133,6 +133,21 @@ fn discovery_reads_the_scope_schema_before_first_creation() {
 }
 
 #[test]
+fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
+    let body = skill::find("specbind-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("discovery body");
+
+    assert!(
+        body.contains("`not_reached` is not approved")
+            && body.contains("existing Requirements artifact")
+            && body.contains("is approved."),
+        "discovery must distinguish an existing artifact from approved gate evidence"
+    );
+}
+
+#[test]
 fn every_named_protocol_selector_and_rule_path_exists() {
     for entry in skill::all() {
         let body = entry.body().expect("body");

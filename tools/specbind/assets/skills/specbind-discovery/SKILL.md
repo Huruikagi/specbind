@@ -176,6 +176,13 @@ earliest gate affected:
 
 Each rewind clears the downstream evidence too, so name only the earliest one.
 
+Use the gate states from `specbind spec status <spec>`. A gate reported as
+`not_reached` is not approved and must not be named or run as an invalidation.
+For an idle established Spec, the confirmed milestone mutation starts the new
+active change at Requirements; there is no prior gate to rewind first. An
+existing Requirements artifact does not by itself mean the Requirements gate
+is approved.
+
 ## 5. Confirm before changing anything
 
 Present the whole plan and get explicit agreement:
@@ -191,6 +198,11 @@ rather than discovering it was wrong three phases later.
 ## 6. Apply, rewinds first
 
 Perform every confirmed gate invalidation **before** creating or updating scope.
+
+Run only invalidations that the pre-confirmation status showed as approved and
+the user confirmed. `SPEC_*_STATE_INVALID` is not a harmless way to discover
+that no rewind was needed: stop on it rather than treating the rejected command
+as a completed invalidation.
 
 The reverse order is unsafe. Between the scope change and the rewind, the
 milestone already claims the new scope while a participating Spec still carries
