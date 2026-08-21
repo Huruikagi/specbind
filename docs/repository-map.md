@@ -249,3 +249,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0128](./design/decisions/0128-plan-orchestrator-names.md) | Accepted | Planning orchestrator names expose their Tasks-approval stopping point |
 | [0129](./design/decisions/0129-agent-role-capability-adapters.md) | Accepted | Agent-role capability adapters with project model overrides |
 | [0130](./design/decisions/0130-mise-github-backend-installation.md) | Accepted | Installation through mise's GitHub backend over the existing release assets |
+| [0131](./design/decisions/0131-okf-deferred-destination-and-adapter-state.md) | Accepted | Exact OKF-conformant deferred destination and visible adapter state |

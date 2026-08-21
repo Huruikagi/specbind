@@ -284,13 +284,14 @@ pub fn adapter_list(start: &Path) -> CommandOutput {
     };
     let mut details = Vec::new();
     for entry in adapter::all() {
-        match entry.present(&paths.specbind_root) {
-            Ok(installed) => details.push(format!(
-                "selector={} type=\"{}\" path={} present={}",
+        match entry.state(&paths.specbind_root) {
+            Ok(state) => details.push(format!(
+                "selector={} type=\"{}\" path={} present={} state={}",
                 escape(entry.selector),
                 escape(entry.artifact_type),
                 escape(&entry.path()),
-                present(installed)
+                present(state != adapter::AdapterState::Absent),
+                state.name()
             )),
             Err(error) => {
                 return CommandOutput::failure(

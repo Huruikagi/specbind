@@ -101,17 +101,17 @@ deferred — it is dropped, and the next review raises its successor as blocking
 to keep that from happening again.
 
 ```sh
+specbind adapter list
 specbind adapter read deferred
 ```
 
-`NO_CHANGE ADAPTER_ABSENT` means the project has no destination. Say so in one
-line and record nothing. Do not invent a place to put it.
-
-Unlike the Git adapter, the installed scaffold carries a working default, so
-follow its guidance as written unless the project emptied or replaced it. Write
-only what the adapter says to write. Read the destination only far enough to
-avoid recording the same finding twice; nothing in it is a source of work for
-you, and no entry there becomes work until a person puts it on the Roadmap.
+The listing must report `state=active` for `deferred` before you follow it.
+`state=absent` or `NO_CHANGE ADAPTER_ABSENT` means the project has no
+destination. Say so in one line and record nothing. Do not invent a place to put
+it. Write only what an active adapter says to write. Read the destination only
+far enough to avoid recording the same finding twice; nothing in it is a source
+of work for you, and no entry there becomes work until a person puts it on the
+Roadmap.
 
 ## Boundaries
 

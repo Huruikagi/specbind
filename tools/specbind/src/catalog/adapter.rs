@@ -28,6 +28,24 @@ pub struct Adapter {
     japanese: &'static str,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AdapterState {
+    Absent,
+    Scaffold,
+    Active,
+}
+
+impl AdapterState {
+    #[must_use]
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Absent => "absent",
+            Self::Scaffold => "scaffold",
+            Self::Active => "active",
+        }
+    }
+}
+
 /// The project tree that holds installed adapters.
 pub const ADAPTERS_ROOT: &str = "settings/adapters";
 
@@ -144,6 +162,32 @@ impl Adapter {
     pub fn present(self, specbind_root: &Path) -> Result<bool, AdapterError> {
         self.read(specbind_root).map(|content| content.is_some())
     }
+
+    /// Reports whether the project has active guidance rather than only an
+    /// installed authoring scaffold.
+    ///
+    /// Deferred is the compatibility exception accepted by Decision 0131: its
+    /// installed default is active, including older project-owned copies that
+    /// still carry an instruction comment.
+    pub fn state(self, specbind_root: &Path) -> Result<AdapterState, AdapterError> {
+        let Some(content) = self.read(specbind_root)? else {
+            return Ok(AdapterState::Absent);
+        };
+        if adapter_body(&content).is_empty()
+            || (self.selector != "deferred" && content.contains("specbind:instruction"))
+        {
+            Ok(AdapterState::Scaffold)
+        } else {
+            Ok(AdapterState::Active)
+        }
+    }
+}
+
+fn adapter_body(content: &str) -> &str {
+    content
+        .strip_prefix("---")
+        .and_then(|rest| rest.split_once("\n---"))
+        .map_or_else(|| content.trim(), |(_, body)| body.trim())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

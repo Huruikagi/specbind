@@ -84,6 +84,11 @@ specbind adapter list
 specbind adapter read git
 ```
 
+一覧の`state`は、ファイルがない`absent`、まだ書き換えられていない`scaffold`、実際に
+従う方針がある`active`を区別します。`deferred`には最初から動作する既定値があり、
+既定の`specDir`ではOKF準拠の`.specbind/deferred.md`へ全Specの保留指摘を記録します。
+この記録は作業キューではなく、人がRoadmapへ採用するまでスコープにはなりません。
+
 adapterはあくまで方針であり、権限ではありません。たとえば`git.md`にpushの方針を
 書いても、それだけでエージェントがpushできるようになるわけではなく、あなたの依頼と
 実行環境の権限が別途必要です。

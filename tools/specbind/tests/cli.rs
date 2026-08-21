@@ -3808,9 +3808,9 @@ fn lists_accepted_adapters_with_project_presence() {
         .success()
         .stdout(concat!(
             "OK ADAPTER_LISTED: Found 3 accepted adapter(s).\n",
-            "  selector=release type=\"SpecBind Release Adapter\" path=settings/adapters/release.md present=no\n",
-            "  selector=git type=\"SpecBind Git Adapter\" path=settings/adapters/git.md present=yes\n",
-            "  selector=deferred type=\"SpecBind Deferred Findings Adapter\" path=settings/adapters/deferred.md present=no\n",
+            "  selector=release type=\"SpecBind Release Adapter\" path=settings/adapters/release.md present=no state=absent\n",
+            "  selector=git type=\"SpecBind Git Adapter\" path=settings/adapters/git.md present=yes state=active\n",
+            "  selector=deferred type=\"SpecBind Deferred Findings Adapter\" path=settings/adapters/deferred.md present=no state=absent\n",
         ))
         .stderr("");
 }

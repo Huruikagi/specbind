@@ -1,3 +1,5 @@
+use std::fs;
+
 use specbind::{adapter, config::ProjectLanguage};
 
 const ACCEPTED_SELECTORS: [&str; 3] = ["release", "git", "deferred"];
@@ -51,13 +53,18 @@ fn localizes_every_scaffold_while_keeping_the_type_literal_english() {
                 "{}: {scaffold}",
                 entry.selector
             );
-            // The scaffold is a vessel the project fills, so it carries the
-            // authoring guidance that explains what to put in it.
-            assert!(
-                scaffold.contains("<!-- specbind:instruction"),
-                "{}: scaffold must carry authoring guidance",
-                entry.selector
-            );
+            if entry.selector == "deferred" {
+                assert!(
+                    !scaffold.contains("specbind:instruction"),
+                    "deferred is active default policy, not an inactive scaffold"
+                );
+            } else {
+                assert!(
+                    scaffold.contains("<!-- specbind:instruction"),
+                    "{}: scaffold must carry authoring guidance",
+                    entry.selector
+                );
+            }
         }
     }
 }
@@ -73,10 +80,53 @@ fn states_that_the_deferred_destination_is_write_only() {
     ] {
         assert!(
             scaffold.contains("Roadmap")
-                && (scaffold.contains("never reads") || scaffold.contains("読むことはなく")),
+                && (scaffold.contains("place to read") || scaffold.contains("読む場所では")),
             "{scaffold}"
         );
     }
+}
+
+#[test]
+fn distinguishes_inactive_scaffolds_from_the_active_deferred_default() {
+    let root = tempfile::tempdir().expect("temporary spec root");
+    fs::create_dir_all(root.path().join(adapter::ADAPTERS_ROOT)).expect("adapter directory");
+    let git = adapter::find("git").expect("git adapter");
+    let deferred = adapter::find("deferred").expect("deferred adapter");
+
+    fs::write(
+        root.path().join(git.path()),
+        git.scaffold(ProjectLanguage::En),
+    )
+    .expect("git scaffold");
+    fs::write(
+        root.path().join(deferred.path()),
+        // Old installed copies remain active even though they carried the
+        // generic inactive-scaffold marker.
+        "---\ntype: SpecBind Deferred Findings Adapter\n---\n<!-- specbind:instruction legacy -->\n## Destination\n\nAppend to `.specbind/deferred.md`.\n",
+    )
+    .expect("legacy deferred adapter");
+
+    assert_eq!(git.state(root.path()), Ok(adapter::AdapterState::Scaffold));
+    assert_eq!(
+        deferred.state(root.path()),
+        Ok(adapter::AdapterState::Active)
+    );
+    assert_eq!(
+        adapter::find("release")
+            .expect("release adapter")
+            .state(root.path()),
+        Ok(adapter::AdapterState::Absent)
+    );
+
+    fs::write(
+        root.path().join(deferred.path()),
+        "---\ntype: SpecBind Deferred Findings Adapter\n---\n",
+    )
+    .expect("empty deferred adapter");
+    assert_eq!(
+        deferred.state(root.path()),
+        Ok(adapter::AdapterState::Scaffold)
+    );
 }
 
 #[test]

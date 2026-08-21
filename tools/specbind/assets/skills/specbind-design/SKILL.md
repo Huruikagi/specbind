@@ -285,14 +285,15 @@ An observation that is real but does not hold this gate is a **deferred**
 finding under the protocol, and it needs the destination this project names:
 
 ```sh
+specbind adapter list
 specbind adapter read deferred
 ```
 
-`NO_CHANGE ADAPTER_ABSENT` means there is no destination: say so in one line and
-record nothing. Otherwise follow the adapter as written — unlike the Git
-adapter, its installed scaffold carries a working default. Nothing recorded
-there is a source of work for you; an entry re-enters this workflow only when a
-person puts it on the Roadmap.
+The listing must report `state=active` for `deferred` before you follow it.
+`state=absent` or `NO_CHANGE ADAPTER_ABSENT` means there is no destination: say
+so in one line and record nothing. Otherwise follow the adapter as written.
+Nothing recorded there is a source of work for you; an entry re-enters this
+workflow only when a person puts it on the Roadmap.
 
 ## 7. Approve
 
