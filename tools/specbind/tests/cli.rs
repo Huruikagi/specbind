@@ -71,6 +71,46 @@ fn reads_one_artifact_as_unwrapped_raw_markdown() {
 }
 
 #[test]
+fn projects_live_artifact_instructions_for_the_named_use() {
+    let root = project_fixture();
+    let content = concat!(
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\n",
+        "<!-- specbind:instruction maintain Preserve the request. -->\n",
+        "<!-- specbind:instruction consume Requirements owns scope. -->\n",
+    );
+    write(root.path(), ".specbind/specs/checkout/brief.md", content);
+
+    let mut maintain = Command::cargo_bin("specbind").expect("specbind binary should build");
+    maintain
+        .current_dir(root.path())
+        .args(["artifact", "read", "checkout", "brief", "--for", "maintain"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Preserve the request.")
+                .and(predicate::str::contains("Requirements owns scope.").not()),
+        );
+
+    let mut consume = Command::cargo_bin("specbind").expect("specbind binary should build");
+    consume
+        .current_dir(root.path())
+        .args(["artifact", "read", "checkout", "brief", "--for", "consume"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Requirements owns scope.")
+                .and(predicate::str::contains("Preserve the request.").not()),
+        );
+
+    let mut raw = Command::cargo_bin("specbind").expect("specbind binary should build");
+    raw.current_dir(root.path())
+        .args(["artifact", "read", "checkout", "brief"])
+        .assert()
+        .success()
+        .stdout(content);
+}
+
+#[test]
 fn reads_a_valid_selector_despite_unrelated_inventory_diagnostics() {
     let root = project_fixture();
     let content = "---\ntype: SpecBind Brief\n---\n# Checkout brief\n";
@@ -2001,7 +2041,7 @@ fn lists_and_reads_project_owned_spec_templates() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "<!-- specbind:instruction Describe one owned decision. -->",
+            "<!-- specbind:instruction maintain Describe one owned decision. -->",
         ))
         .stderr("");
 
@@ -2199,7 +2239,7 @@ fn write_template_fixture(root: &Path) {
     write(
         root,
         ".specbind/settings/templates/specs/brief.md",
-        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction State the requested outcome. -->\n",
+        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction maintain State the requested outcome. -->\n",
     );
     write(
         root,
@@ -2209,7 +2249,7 @@ fn write_template_fixture(root: &Path) {
     write(
         root,
         ".specbind/settings/templates/specs/technical-design/main.md",
-        "---\ntype: SpecBind Design\nartifact_id: main\n---\n# Design\n\n<!-- specbind:instruction Describe one owned decision. -->\n",
+        "---\ntype: SpecBind Design\nartifact_id: main\n---\n# Design\n\n<!-- specbind:instruction maintain Describe one owned decision. -->\n",
     );
 }
 
@@ -3825,6 +3865,38 @@ fn reads_one_steering_selector_as_raw_markdown() {
         .success()
         .stdout(content)
         .stderr("");
+}
+
+#[test]
+fn projects_steering_instructions_for_the_named_use() {
+    let root = project_fixture();
+    let content = format!(
+        "{}\n<!-- specbind:instruction maintain Revise current guidance. -->\n<!-- specbind:instruction consume Apply this constraint. -->\n",
+        steering_document("product", "Product").trim_end()
+    );
+    write(root.path(), ".specbind/steering/product.md", &content);
+
+    let mut maintain = Command::cargo_bin("specbind").expect("specbind binary should build");
+    maintain
+        .current_dir(root.path())
+        .args(["steering", "read", "product", "--for", "maintain"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Revise current guidance.")
+                .and(predicate::str::contains("Apply this constraint.").not()),
+        );
+
+    let mut consume = Command::cargo_bin("specbind").expect("specbind binary should build");
+    consume
+        .current_dir(root.path())
+        .args(["steering", "read", "product", "--for", "consume"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Apply this constraint.")
+                .and(predicate::str::contains("Revise current guidance.").not()),
+        );
 }
 
 #[test]

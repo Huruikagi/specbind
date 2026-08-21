@@ -61,7 +61,7 @@ Read **every** current Contract in the project, not only the participants':
 
 ```sh
 specbind spec list
-specbind artifact read <spec> contract
+specbind artifact read <spec> contract --for consume
 ```
 
 Then discover and read the same Contracts independently at the baseline. This

@@ -188,7 +188,7 @@ Skills read required selectors directly and use protocols as non-waivable semant
 
 ## Template read and validation model
 
-[Decision 0059](./decisions/0059-okf-artifact-templates.md) defines a separate `specbind template list/read` family for project-owned scaffolds. Template inventory mirrors logical artifact selectors but reports both source template and derived output paths. Raw reads retain `specbind:instruction` comments for the authoring agent, while materialization removes those nodes and rejects leaks in live artifacts.
+[Decision 0059](./decisions/0059-okf-artifact-templates.md) defines a separate `specbind template list/read` family for project-owned scaffolds. Template inventory mirrors logical artifact selectors but reports both source template and derived output paths. Raw reads retain scoped `specbind:instruction` comments for the authoring agent. Under [Decision 0139](./decisions/0139-scoped-artifact-instructions.md), materialization removes `create`, carries `maintain` and `consume` into live artifacts, and live reads can project either durable scope explicitly.
 
 The CLI owns template discovery, identity and path validation, collision checks, instruction-node recognition, and non-writing output-tree previews. In v1, maintainers follow customization guidance and edit project-owned settings directly; a dedicated customization skill is post-v1. Ordinary artifact workflows own materialization through their guarded lifecycle operation; template read commands never create or overwrite live artifacts.
 

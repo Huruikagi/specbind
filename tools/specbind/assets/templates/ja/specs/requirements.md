@@ -7,7 +7,7 @@ heading_labels:
 
 # 要件
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 現在のマイルストーンで依頼された差分だけではなく、この Spec の現在有効な振る舞いの契約全体を
 維持する。利用者またはシステムの必要性を「背景」に要約し、隣接する作業を暗黙に取り込まないよう
 「スコープ」で責任境界を明示する。

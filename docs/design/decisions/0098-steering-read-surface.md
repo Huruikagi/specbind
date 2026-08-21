@@ -39,7 +39,9 @@ specbind steering read <selector>
 
 They are the project-level counterparts of the Decision 0058 `artifact`
 commands, with the same division: `list` returns a compact inventory, `read`
-returns one document as raw UTF-8 Markdown with no result wrapper.
+returns one document as raw UTF-8 Markdown with no result wrapper. Decision 0139
+later adds explicit `--for maintain` and `--for consume` projections while
+preserving this raw behavior when the option is omitted.
 
 Neither command requires an active milestone. Steering outlives milestones, and
 guidance that could only be read while work was in flight would be unavailable

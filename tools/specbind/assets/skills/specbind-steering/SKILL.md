@@ -40,7 +40,7 @@ specbind steering list
 Then read every document it lists:
 
 ```sh
-specbind steering read <artifact_id>
+specbind steering read <artifact_id> --for maintain
 ```
 
 Never read `steering/` directly and never glob it. The selector is the
@@ -103,8 +103,10 @@ specbind protocol read okf-authoring
 identity. `document` is the scaffold for any other subject and deliberately
 declares none.
 
-**Remove every `specbind:instruction` comment** from what you write. Those are
-addressed to you and never appear in a materialized artifact.
+Follow every scoped instruction the template returns. Omit `create` comments
+from the materialized artifact, and copy every `maintain` and `consume` comment
+unchanged. Existing documents already own their durable comments; preserve them
+when revising unrelated content.
 
 ### Bootstrap
 

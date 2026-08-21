@@ -49,9 +49,9 @@ or contract to make a plan work.
 ## 2. Read
 
 ```sh
-specbind artifact read <spec> design/main
-specbind artifact read <spec> requirements
-specbind artifact read <spec> contract
+specbind artifact read <spec> design/main --for consume
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> contract --for consume
 ```
 
 Use `specbind artifact list <spec>` first when the Spec's design is split across

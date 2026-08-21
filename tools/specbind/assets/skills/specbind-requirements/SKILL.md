@@ -24,8 +24,8 @@ specbind steering list
 Read the Spec's brief, and read **every** steering document the listing named:
 
 ```sh
-specbind artifact read <spec> brief
-specbind steering read <selector>
+specbind artifact read <spec> brief --for consume
+specbind steering read <selector> --for consume
 ```
 
 Read all the steering, not a promising-looking subset. The listing gives you a
@@ -55,13 +55,13 @@ not a fault.
 - **Existing Spec** — read the current requirements and revise them in place:
 
   ```sh
-  specbind artifact read <spec> requirements
+  specbind artifact read <spec> requirements --for maintain
   ```
 
 Read the contract when the Spec has one, as context for the boundary it owns:
 
 ```sh
-specbind artifact read <spec> contract
+specbind artifact read <spec> contract --for consume
 ```
 
 Never author the contract here. A new Spec has none until the design phase runs,
@@ -85,6 +85,10 @@ Write constraints you took from steering **into the document**, in the
 requirements' own terms. Steering is not fingerprinted, so nothing detects a
 steering document that changes after this gate is approved. A requirement that
 merely points at guidance is a requirement whose meaning can drift silently.
+
+For a new document, omit `create` instructions and copy every `maintain` and
+`consume` instruction unchanged. For an existing document, preserve the durable
+comments already returned by the maintain projection.
 
 Keep technology, structure, and mechanism out. Those belong to design, which is
 also why steering that is technical in nature cannot be carried in this

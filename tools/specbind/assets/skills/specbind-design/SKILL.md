@@ -43,8 +43,8 @@ instead of the decision they would have made.
 ### Then read the inputs
 
 ```sh
-specbind artifact read <spec> requirements
-specbind artifact read <spec> brief
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> brief --for consume
 ```
 
 The requirements are the obligation you must realize. The brief is why this
@@ -53,7 +53,7 @@ milestone is changing it.
 Read **every** steering document the listing named:
 
 ```sh
-specbind steering read <selector>
+specbind steering read <selector> --for consume
 ```
 
 All of them, not a promising-looking subset. This is where the project's
@@ -94,7 +94,7 @@ side of it:
 
 ```sh
 specbind spec list
-specbind artifact read <other-spec> contract
+specbind artifact read <other-spec> contract --for consume
 ```
 
 ## 2. Investigate before you decide
@@ -177,11 +177,13 @@ specbind template read spec <design-selector>
 ```
 
 Write the authored document only to the reported `Target path`. Do not infer a
-filename from `artifact_id`, the Requirements path, or another Spec. Remove
-every `specbind:instruction` comment and add the live-only traceability fields
-while authoring.
+filename from `artifact_id`, the Requirements path, or another Spec. Follow and
+omit each `create` instruction, and copy every `maintain` and `consume`
+instruction unchanged into the live artifact. Add the live-only traceability
+fields while authoring.
 
-**A Design set exists** — revise the current design artifacts in place.
+**A Design set exists** — read every current design artifact with
+`--for maintain`, then revise those artifacts in place.
 
 The design set is the Spec's **complete current design**, persistent the way the
 requirements are. Fold this milestone's change into the document that owns that
@@ -234,7 +236,8 @@ A Spec with no cross-spec seams gets the canonical empty contract: five
 headings, no entries. That is a complete and deliberate statement, not a
 placeholder.
 
-**Contract exists** — revise it in place when this change adds, alters, or
+**Contract exists** — read it with `--for maintain`, then revise it in place
+when this change adds, alters, or
 removes a seam, and leave it **byte-identical** when it does not. Rewording an
 untouched entry is not free: the whole file is fingerprinted, so a cosmetic edit
 invalidates approval and forces a new contract review.

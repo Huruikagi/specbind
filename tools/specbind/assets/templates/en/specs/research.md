@@ -4,13 +4,21 @@ type: SpecBind Research
 
 # Research
 
-<!-- specbind:instruction
+<!-- specbind:instruction create
 Materialize this document only when an open question actually blocks Requirements
-or Design. Keep it as current milestone input rather than an append-only activity
-log. Record sources, findings, alternatives, and the decision each investigation
+or Design. Ordinary changes need no research document.
+-->
+
+<!-- specbind:instruction maintain
+Keep this as current milestone input rather than an append-only activity log.
+Record sources, findings, alternatives, and the decision each investigation
 supports. Move every conclusion needed after release into Requirements, Design,
-or Contract; those authoritative artifacts must not depend on this document.
-Remove sections that do not apply. Ordinary changes need no research document.
+or Contract, and remove sections that do not apply.
+-->
+
+<!-- specbind:instruction consume
+Treat this as milestone-local supporting evidence, not durable authority.
+Requirements, Design, and Contract must remain understandable without it.
 -->
 
 ## Summary

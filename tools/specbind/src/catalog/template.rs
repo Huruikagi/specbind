@@ -15,6 +15,7 @@ use crate::artifacts::{
     split_frontmatter,
 };
 use crate::config::ProjectLanguage;
+use crate::instruction;
 
 /// The project tree that scaffolds one Spec's artifacts.
 pub const SPEC_TEMPLATE_ROOT: &str = "settings/templates/specs";
@@ -278,7 +279,7 @@ fn resolve_template(
     output_path: Utf8PathBuf,
 ) -> Result<(Option<Template>, Vec<DiscoveryIssue>), Vec<DiscoveryIssue>> {
     let mut issues = validate_output_path(&output_path, template_path);
-    let (frontmatter, _body) = split_frontmatter(content).map_err(|message| {
+    let (frontmatter, body) = split_frontmatter(content).map_err(|message| {
         vec![issue(
             "TEMPLATE_FRONTMATTER_INVALID",
             Some(template_path.clone()),
@@ -314,6 +315,11 @@ fn resolve_template(
         return Ok((None, issues));
     };
 
+    issues.extend(
+        instruction::validate_template(body)
+            .into_iter()
+            .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
+    );
     issues.extend(validate_template_profile(kind, mapping, template_path));
     let artifact_id = collection_id(kind, mapping).map(str::to_owned);
     if matches!(
@@ -661,7 +667,7 @@ fn resolve_steering_template(
     template_path: &Utf8PathBuf,
     selector: String,
 ) -> Result<(Option<SteeringTemplate>, Vec<DiscoveryIssue>), Vec<DiscoveryIssue>> {
-    let (frontmatter, _body) = split_frontmatter(content).map_err(|message| {
+    let (frontmatter, body) = split_frontmatter(content).map_err(|message| {
         vec![issue(
             "TEMPLATE_FRONTMATTER_INVALID",
             Some(template_path.clone()),
@@ -712,6 +718,10 @@ fn resolve_steering_template(
     let output_path = artifact_id
         .as_ref()
         .map(|id| Utf8PathBuf::from(format!("steering/{id}.md")));
+    let issues = instruction::validate_template(body)
+        .into_iter()
+        .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message))
+        .collect();
     Ok((
         Some(SteeringTemplate {
             source,
@@ -721,7 +731,7 @@ fn resolve_steering_template(
             template_path: template_path.clone(),
             output_path,
         }),
-        vec![],
+        issues,
     ))
 }
 

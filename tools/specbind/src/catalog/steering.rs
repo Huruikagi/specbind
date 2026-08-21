@@ -14,6 +14,7 @@ use serde_json::Value;
 use walkdir::WalkDir;
 
 use crate::artifacts::{DiscoveryIssue, is_kebab_id, split_frontmatter};
+use crate::instruction;
 
 pub const TYPE_STEERING: &str = "SpecBind Steering";
 
@@ -108,8 +109,11 @@ pub fn discover(specbind_root: &Path) -> Result<SteeringInventory, String> {
             continue;
         };
         match classify(entry.path(), &path) {
-            Ok(Some(document)) => documents.push(document),
-            Ok(None) => {}
+            Ok((Some(document), mut found)) => {
+                documents.push(document);
+                issues.append(&mut found);
+            }
+            Ok((None, mut found)) => issues.append(&mut found),
             Err(fault) => issues.push(fault),
         }
     }
@@ -232,7 +236,7 @@ pub fn read(specbind_root: &Path, selector: &str) -> Result<String, SteeringRead
 fn classify(
     path: &Path,
     relative: &Utf8PathBuf,
-) -> Result<Option<SteeringDocument>, DiscoveryIssue> {
+) -> Result<(Option<SteeringDocument>, Vec<DiscoveryIssue>), DiscoveryIssue> {
     let content = match fs::read(path).map(String::from_utf8) {
         Ok(Ok(content)) => content,
         Ok(Err(_)) => {
@@ -250,7 +254,7 @@ fn classify(
             ));
         }
     };
-    let (frontmatter, _body) = split_frontmatter(&content).map_err(|message| {
+    let (frontmatter, body) = split_frontmatter(&content).map_err(|message| {
         issue(
             "STEERING_FRONTMATTER_INVALID",
             Some(relative.clone()),
@@ -283,7 +287,7 @@ fn classify(
             )
         })?;
     if artifact_type != TYPE_STEERING {
-        return Ok(None);
+        return Ok((None, vec![]));
     }
     let artifact_id = mapping
         .get("artifact_id")
@@ -296,11 +300,18 @@ fn classify(
                 "steering frontmatter requires a lowercase kebab-case artifact_id",
             )
         })?;
-    Ok(Some(SteeringDocument {
-        selector: artifact_id.to_owned(),
-        artifact_type: artifact_type.to_owned(),
-        path: relative.clone(),
-    }))
+    let issues = instruction::validate_live(body)
+        .into_iter()
+        .map(|fault| issue(fault.code, Some(relative.clone()), fault.message))
+        .collect();
+    Ok((
+        Some(SteeringDocument {
+            selector: artifact_id.to_owned(),
+            artifact_type: artifact_type.to_owned(),
+            path: relative.clone(),
+        }),
+        issues,
+    ))
 }
 
 fn relative(root: &Path, path: &Path) -> Option<Utf8PathBuf> {

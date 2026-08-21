@@ -448,13 +448,24 @@ pub fn steering_list(start: &Path) -> CommandOutput {
 
 /// Reads one steering selector as raw UTF-8 Markdown.
 #[must_use]
-pub fn steering_read(start: &Path, selector: &str) -> CommandOutput {
+pub fn steering_read(start: &Path, selector: &str, purpose: Option<&str>) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     match steering::read(&paths.specbind_root, selector) {
-        Ok(content) => CommandOutput::success(content.into_bytes()),
+        Ok(content) => {
+            let projected = match purpose {
+                Some("maintain") => {
+                    instruction::project(&content, instruction::InstructionScope::Maintain)
+                }
+                Some("consume") => {
+                    instruction::project(&content, instruction::InstructionScope::Consume)
+                }
+                _ => content,
+            };
+            CommandOutput::success(projected.into_bytes())
+        }
         Err(failure) => CommandOutput::failure(
             failure.code,
             failure.message,

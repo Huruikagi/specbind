@@ -17,6 +17,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/` — Rust CLI implementation
 - `tools/specbind/src/catalog.rs` and `catalog/` — facade and implementations for adapters, protocols, rules, skills, templates, and steering
 - `tools/specbind/src/documents.rs` and `documents/` — facade and implementations for Requirements, Design, Contract, Roadmap, and traceability semantics
+- `tools/specbind/src/documents/instruction.rs` — scoped managed-Markdown instruction parsing, validation, semantic masking, and read projection
 - `tools/specbind/src/foundation.rs` and `foundation/` — facade and implementations for configuration, fingerprints, and restricted YAML
 - `tools/specbind/src/installation.rs` and `installation/` — facade and implementations for installation, agent roles, and project instructions
 - `tools/specbind/src/lifecycle.rs` and `lifecycle/` — facade and implementations for guarded lifecycle operations
@@ -257,3 +258,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0136](./design/decisions/0136-phase-relative-worktree-blocker.md) | Accepted | Worktree cleanliness reported only when it blocks current progress |
 | [0137](./design/decisions/0137-active-default-git-checkpoints.md) | Accepted | Active local Git checkpoints for newly installed projects |
 | [0138](./design/decisions/0138-dedicated-adapter-scaffold-marker.md) | Accepted | Dedicated exact marker for inactive adapter scaffolds |
+| [0139](./design/decisions/0139-scoped-artifact-instructions.md) | Accepted | Lifecycle-scoped create, maintain, and consume instructions |

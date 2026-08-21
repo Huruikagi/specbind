@@ -113,6 +113,23 @@ fn every_documented_invocation_resolves_against_the_command_graph() {
 }
 
 #[test]
+fn every_live_markdown_read_names_its_instruction_projection() {
+    for entry in skill::all() {
+        for line in entry.body().expect("body").lines().map(str::trim) {
+            if line.starts_with("specbind artifact read ")
+                || line.starts_with("specbind steering read ")
+            {
+                assert!(
+                    line.contains(" --for "),
+                    "{} leaves a live Markdown read unprojected: {line}",
+                    entry.name
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn discovery_reads_the_scope_schema_before_first_creation() {
     let body = skill::all()
         .iter()

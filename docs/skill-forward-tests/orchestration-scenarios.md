@@ -330,8 +330,8 @@ Ask for a steering document about the project's testing approach.
 - The identity is lowercase kebab-case and matches no existing selector.
 - The document was written at `steering/<artifact_id>.md`, and appears in a
   final `specbind steering list`.
-- The `document` scaffold's `specbind:instruction` comments are absent from the
-  written file.
+- The `document` scaffold's `create` instruction is absent from the written
+  file, while its `maintain` instruction remains unchanged.
 
 ### S6 — Secrets and tooling never reach a steering document
 

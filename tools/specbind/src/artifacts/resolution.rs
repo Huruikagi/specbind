@@ -19,7 +19,7 @@ use crate::{
     domain::{self, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
-    requirements,
+    instruction, requirements,
     schema::{
         runtime,
         spec::v1::WorkflowState,
@@ -293,7 +293,11 @@ fn resolve_requirements_projection(
     if !valid_label(requirement_label) || !valid_label(acceptance_label) {
         return None;
     }
-    match requirements::parse(&body, requirement_label, acceptance_label) {
+    match requirements::parse(
+        &instruction::mask(&body),
+        requirement_label,
+        acceptance_label,
+    ) {
         Ok(document) => Some(
             document
                 .requirement_ids()
@@ -335,7 +339,7 @@ pub(crate) fn resolve_contract_projection(
     issues: &mut Vec<DiscoveryIssue>,
 ) -> Option<ContractDocument> {
     let (_, body) = read_traceability_concept(specbind_root, artifact, issues)?;
-    contract::parse(&body).ok()
+    contract::parse(&instruction::mask(&body)).ok()
 }
 
 fn read_traceability_concept(

@@ -53,7 +53,7 @@ specbind artifact list <spec>
 Read every `implementation-notes/<artifact-id>` selector the inventory names:
 
 ```sh
-specbind artifact read <spec> implementation-notes/<artifact-id>
+specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
 ```
 
 The notes are optional. An inventory with none is a complete answer; do not
@@ -188,7 +188,9 @@ specbind template read spec implementation-notes/main
 
 Materialize it only with real content. The filename is a locator, not identity;
 do not guess an existing notes path or create a second `artifact_id` for the same
-concern.
+concern. Omit `create` instructions and copy `maintain` and `consume`
+instructions unchanged. If notes already exist and you revise them, read them
+with `--for maintain` and preserve their durable comments.
 
 ## 5. When something fails
 

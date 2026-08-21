@@ -5,7 +5,7 @@ artifact_id: structure
 
 # Structure
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 Describe how this project is organized, at the level that tells a newcomer where
 their change belongs.
 

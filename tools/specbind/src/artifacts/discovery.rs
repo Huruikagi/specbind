@@ -12,7 +12,7 @@ use walkdir::WalkDir;
 use super::{
     Artifact, ArtifactInventory, ArtifactKind, DiscoveryIssue, SpecDiscovery, SpecEntryFault,
 };
-use crate::{contract, design, domain, requirements};
+use crate::{contract, design, domain, instruction, requirements};
 
 const TYPE_BRIEF: &str = "SpecBind Brief";
 const TYPE_RESEARCH: &str = "SpecBind Research";
@@ -287,13 +287,11 @@ fn inspect_concept(
         .count()
         + 1;
     let mut profile_issues = validate_profile(kind, mapping, body, body_start_line, path);
-    if contains_instruction(body) {
-        profile_issues.push(issue(
-            "ARTIFACT_TEMPLATE_INSTRUCTION_LEAK",
-            Some(path.clone()),
-            "live artifact contains a specbind:instruction template directive",
-        ));
-    }
+    profile_issues.extend(
+        instruction::validate_live(body)
+            .into_iter()
+            .map(|fault| issue(fault.code, Some(path.clone()), fault.message)),
+    );
     let artifact_id = collection_id(kind, mapping).map(str::to_owned);
     if matches!(
         kind,
@@ -322,6 +320,7 @@ fn validate_profile(
     path: &Utf8PathBuf,
 ) -> Vec<DiscoveryIssue> {
     let mut issues = Vec::new();
+    let semantic_body = instruction::mask(body);
     match kind {
         ArtifactKind::Brief
         | ArtifactKind::Research
@@ -349,7 +348,8 @@ fn validate_profile(
     if kind == ArtifactKind::Requirements
         && let Some((requirement_label, acceptance_criteria_label)) =
             validate_heading_labels(mapping, path, &mut issues)
-        && let Err(error) = requirements::parse(body, requirement_label, acceptance_criteria_label)
+        && let Err(error) =
+            requirements::parse(&semantic_body, requirement_label, acceptance_criteria_label)
     {
         issues.extend(error.issues.into_iter().map(|body_issue| {
             issue(
@@ -365,7 +365,7 @@ fn validate_profile(
     }
     if kind == ArtifactKind::Design
         && let Some(declared_ids) = validate_design_requirement_ids(mapping, path, &mut issues)
-        && let Err(error) = design::validate(body, &declared_ids)
+        && let Err(error) = design::validate(&semantic_body, &declared_ids)
     {
         issues.extend(error.issues.into_iter().map(|body_issue| {
             issue(
@@ -380,7 +380,7 @@ fn validate_profile(
         }));
     }
     if kind == ArtifactKind::Contract
-        && let Err(error) = contract::parse(body)
+        && let Err(error) = contract::parse(&semantic_body)
     {
         issues.extend(error.issues.into_iter().map(|body_issue| {
             issue(
@@ -607,13 +607,6 @@ fn artifact_order(artifact: &Artifact) -> (u8, &str) {
     (rank, artifact.artifact_id.as_deref().unwrap_or(""))
 }
 
-pub(crate) fn contains_instruction(body: &str) -> bool {
-    Parser::new(body).any(|event| match event {
-        Event::Html(value) | Event::InlineHtml(value) => is_instruction_comment(&value),
-        _ => false,
-    })
-}
-
 fn has_non_comment_content(body: &str) -> bool {
     Parser::new(body).any(|event| match event {
         Event::Text(value) | Event::Code(value) => !value.trim().is_empty(),
@@ -621,15 +614,6 @@ fn has_non_comment_content(body: &str) -> bool {
             !is_complete_comment(&value) && !value.trim().is_empty()
         }
         _ => false,
-    })
-}
-
-fn is_instruction_comment(value: &str) -> bool {
-    comment_content(value).is_some_and(|content| {
-        content
-            .trim()
-            .strip_prefix("specbind:instruction")
-            .is_some_and(|suffix| suffix.is_empty() || suffix.starts_with(char::is_whitespace))
     })
 }
 

@@ -38,7 +38,7 @@ review, because the verdict it produces will be trusted.
 ```sh
 specbind tasks show <spec> <task-id>
 specbind artifact list <spec>
-specbind artifact read <spec> requirements
+specbind artifact read <spec> requirements --for consume
 ```
 
 The inventory names every split Design and every
@@ -47,8 +47,8 @@ task and all Implementation Notes — a recorded trap may be exactly what this
 change walked into:
 
 ```sh
-specbind artifact read <spec> design/<artifact-id>
-specbind artifact read <spec> implementation-notes/<artifact-id>
+specbind artifact read <spec> design/<artifact-id> --for consume
+specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
 ```
 
 Read the requirement IDs the task carries **in the requirements' own words**,

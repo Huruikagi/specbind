@@ -102,8 +102,14 @@ pub enum Command {
 pub enum ArtifactCommand {
     /// List recognized artifacts for one canonical Spec ID.
     List { spec: String },
-    /// Read one logical artifact selector as raw UTF-8 Markdown.
-    Read { spec: String, selector: String },
+    /// Read one logical artifact selector, optionally projected for one audience.
+    Read {
+        spec: String,
+        selector: String,
+        /// Keep only durable instructions for this use; omit for exact raw Markdown.
+        #[arg(long = "for", value_parser = ["maintain", "consume"])]
+        purpose: Option<String>,
+    },
 }
 
 #[derive(Debug, Subcommand)]
@@ -183,8 +189,13 @@ pub enum AdapterCommand {
 pub enum SteeringCommand {
     /// List every recognized steering document.
     List,
-    /// Read one steering selector as raw UTF-8 Markdown.
-    Read { selector: String },
+    /// Read one steering selector, optionally projected for one audience.
+    Read {
+        selector: String,
+        /// Keep only durable instructions for this use; omit for exact raw Markdown.
+        #[arg(long = "for", value_parser = ["maintain", "consume"])]
+        purpose: Option<String>,
+    },
 }
 
 #[derive(Debug, Subcommand)]

@@ -4,6 +4,7 @@ use std::path::Path;
 use specbind::{
     artifacts,
     config::ProjectLanguage,
+    instruction,
     template::{self, TemplateSource},
 };
 use tempfile::TempDir;
@@ -41,6 +42,13 @@ fn embeds_one_official_template_per_artifact_type_in_every_language() {
                 .iter()
                 .all(|template| template.source == TemplateSource::Embedded)
         );
+        for selector in EXPECTED_SELECTORS {
+            let content = template::read_embedded(language, selector).expect("embedded template");
+            assert!(
+                instruction::validate_template(&content).is_empty(),
+                "{language:?} template {selector} has invalid scoped instructions"
+            );
+        }
     }
 }
 
@@ -112,7 +120,7 @@ fn materialized_requirements_and_design_satisfy_traceability() {
 }
 
 /// Writes every embedded template into one Spec exactly as an authoring agent
-/// would: at its declared output path, with instruction comments removed.
+/// would: at its declared output path, with only create instructions removed.
 fn materialize(specbind_root: &Path, language: ProjectLanguage) {
     for template in template::embedded_spec_templates(language) {
         let (content, _) =
@@ -149,7 +157,7 @@ fn strip_instructions(content: &str) -> String {
         let end = rest[start..]
             .find("-->")
             .map_or(rest.len(), |offset| start + offset + "-->".len());
-        if rest[start..end].contains("specbind:instruction") {
+        if rest[start..end].contains("specbind:instruction create") {
             output.push_str(&rest[..start]);
             rest = rest[end..].strip_prefix('\n').unwrap_or(&rest[end..]);
         } else {
@@ -189,6 +197,42 @@ fn project_owned_templates_override_the_embedded_default() {
         inventory.templates.len(),
         EXPECTED_SELECTORS.len(),
         "an override must not add a selector"
+    );
+}
+
+#[test]
+fn rejects_unscoped_and_unknown_template_instructions() {
+    let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
+    let template_root = root.path().join("settings/templates/specs");
+    fs::create_dir_all(&template_root).expect("create template directory");
+    fs::write(
+        template_root.join("brief.md"),
+        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction -->\n",
+    )
+    .expect("write unscoped template");
+    fs::write(
+        template_root.join("research.md"),
+        "---\ntype: SpecBind Research\n---\n<!-- specbind:instruction revise Unknown. -->\n",
+    )
+    .expect("write unknown-scope template");
+
+    let inventory = template::discover_spec_templates(root.path(), ProjectLanguage::En);
+    assert!(
+        inventory
+            .issues
+            .iter()
+            .any(|issue| issue.code == "INSTRUCTION_SCOPE_MISSING")
+    );
+    assert_eq!(
+        inventory
+            .issues
+            .iter()
+            .filter(|issue| matches!(
+                issue.code,
+                "INSTRUCTION_SCOPE_MISSING" | "INSTRUCTION_SCOPE_INVALID"
+            ))
+            .count(),
+        2
     );
 }
 

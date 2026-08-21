@@ -35,9 +35,11 @@ fn run_gate(start: &Path, gate: specbind::approval::Gate, command: GateCommand) 
 fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
     match command {
         ArtifactCommand::List { spec } => specbind::cli::artifact_list(start, &spec),
-        ArtifactCommand::Read { spec, selector } => {
-            specbind::cli::artifact_read(start, &spec, &selector)
-        }
+        ArtifactCommand::Read {
+            spec,
+            selector,
+            purpose,
+        } => specbind::cli::artifact_read(start, &spec, &selector, purpose.as_deref()),
     }
 }
 
@@ -131,7 +133,9 @@ fn run_adapter(start: &Path, command: AdapterCommand) -> CommandOutput {
 fn run_steering(start: &Path, command: SteeringCommand) -> CommandOutput {
     match command {
         SteeringCommand::List => specbind::cli::steering_list(start),
-        SteeringCommand::Read { selector } => specbind::cli::steering_read(start, &selector),
+        SteeringCommand::Read { selector, purpose } => {
+            specbind::cli::steering_read(start, &selector, purpose.as_deref())
+        }
     }
 }
 

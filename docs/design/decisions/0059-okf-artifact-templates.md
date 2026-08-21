@@ -24,23 +24,30 @@ SpecBind needs customizable template sets that can create several design artifac
 
 ## AI instruction comments
 
-- A Markdown HTML comment whose trimmed content begins with the exact token `specbind:instruction` is template-only natural-language guidance for the authoring agent.
+- [Decision 0139](./0139-scoped-artifact-instructions.md) refines the original
+  template-only directive into required `create`, `maintain`, and `consume`
+  scopes. The rules below establish the original syntax-tree and authority
+  boundary; Decision 0139 governs persistence and read projection.
+- A Markdown HTML comment whose trimmed content begins with the exact token `specbind:instruction` is scoped natural-language guidance for the authoring or consuming agent.
 - Both single-line and multiline forms are allowed:
 
   ```markdown
-  <!-- specbind:instruction Summarize the responsibility in one paragraph. -->
+  <!-- specbind:instruction maintain Summarize the responsibility in one paragraph. -->
 
-  <!-- specbind:instruction
+  <!-- specbind:instruction create
   Describe only decisions owned by this design artifact.
   Remove this section when the concern does not apply.
   -->
   ```
 
 - The directive is recognized from the Markdown syntax tree as a complete HTML comment node. Prefix-like text inside code fences, inline code, ordinary prose, or a different HTML comment is not an instruction.
-- `specbind:instruction` is allowed only in managed template Markdown. It is included when an agent reads the template and omitted from every materialized artifact. The `okf-authoring` protocol accepted by [Decision 0094](./0094-embedded-product-protocols.md) states this to the authoring agent, because a rule enforced only after the fact leaves the agent no way to comply the first time.
-- Template-source validation checks OKF structure, literal identity, path safety, multiplicity, directive syntax, and every target-profile invariant that can hold before authoring. The authoring operation removes instruction nodes and validates the completed output against the full live-artifact profile before writing it.
-- Live-artifact validation reports a template-instruction leak if such a directive remains anywhere in an authoritative artifact. Ordinary HTML comments remain ordinary content and are not stripped or rejected by this rule.
-- The CLI identifies, exposes, strips, and diagnoses instruction nodes but does not interpret whether their natural-language guidance is substantively correct.
+- A template read includes every scope. Materialization omits `create` and carries
+  `maintain` and `consume` into the live artifact under Decision 0139. The
+  `okf-authoring` protocol accepted by [Decision 0094](./0094-embedded-product-protocols.md) states this before the first write.
+- Template-source validation checks OKF structure, literal identity, path safety, multiplicity, directive syntax and scope, and every target-profile invariant that can hold before authoring. The authoring operation removes `create`, preserves durable instruction nodes, and validates the completed output against the full live-artifact profile before writing it.
+- Live-artifact validation reports a leak only for `create`; valid `maintain` and
+  `consume` comments are durable guidance. Ordinary HTML comments remain ordinary content and are not stripped or rejected by this rule.
+- The CLI identifies, exposes, projects, masks for semantic parsing, and diagnoses instruction nodes but does not interpret whether their natural-language guidance is substantively correct.
 - Required headings, IDs, mappings, and other machine contracts are never defined only through an instruction comment. CLI validation and artifact profiles remain authoritative.
 
 ## Template and rule boundary

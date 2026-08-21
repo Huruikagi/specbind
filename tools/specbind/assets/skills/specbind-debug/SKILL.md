@@ -49,15 +49,15 @@ Read what the system was supposed to do, not only what it did:
 specbind spec status <spec>
 specbind tasks show <spec> <task-id>
 specbind artifact list <spec>
-specbind artifact read <spec> requirements
+specbind artifact read <spec> requirements --for consume
 ```
 
 The inventory names split Designs and every
 `implementation-notes/<artifact-id>` selector. Read all that govern the failure:
 
 ```sh
-specbind artifact read <spec> design/<artifact-id>
-specbind artifact read <spec> implementation-notes/<artifact-id>
+specbind artifact read <spec> design/<artifact-id> --for consume
+specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
 ```
 
 An inventory with no notes is a complete answer. When notes exist, a recorded

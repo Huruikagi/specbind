@@ -33,7 +33,7 @@ Customization remains subject to the machine-readable contracts required by Spec
 
 The bundled CLI should report incompatible customizations with focused diagnostics. It must not silently reinterpret an unsupported structure or use agent-specific ad hoc parsing as a fallback.
 
-[Decision 0059](./0059-okf-artifact-templates.md) defines spec Markdown templates as final-form OKF artifact prototypes: relative template paths determine initial output paths, literal frontmatter determines machine identity, and explicit `specbind:instruction` HTML comments carry template-only AI guidance. Existing artifacts are never silently reconciled to later template edits.
+[Decision 0059](./0059-okf-artifact-templates.md) defines spec Markdown templates as final-form OKF artifact prototypes: relative template paths determine initial output paths, literal frontmatter determines machine identity, and explicit `specbind:instruction` HTML comments carry AI guidance. [Decision 0139](./0139-scoped-artifact-instructions.md) later distinguishes template-only `create` guidance from durable `maintain` and `consume` guidance copied into the live artifact. Existing artifacts are never silently reconciled to later template edits.
 
 [Decision 0092](./0092-template-skill-authoring-boundary.md) ensures that user-owned templates and rules can customize structure and authoring policy without becoming the sole authority for non-waivable skill behavior or deterministic CLI contracts.
 

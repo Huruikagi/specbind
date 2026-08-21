@@ -5,7 +5,7 @@ artifact_id: product
 
 # プロダクト
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 このプロジェクトが何のためにあり、誰のためのものかを書く。提案された変更がそもそもここに
 属するのかを、新規参加者が判断できる水準を目指す。
 

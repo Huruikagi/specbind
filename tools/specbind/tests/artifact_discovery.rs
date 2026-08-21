@@ -177,12 +177,12 @@ fn removes_ambiguous_duplicate_selectors_from_partial_inventory() {
 }
 
 #[test]
-fn detects_live_template_instruction_leaks() {
+fn rejects_create_instructions_but_accepts_durable_live_instructions() {
     let root = root();
     write(
         root.path(),
         "specs/example/brief.md",
-        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction Replace this. -->\n",
+        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction create Replace this. -->\n<!-- specbind:instruction maintain Keep this. -->\n<!-- specbind:instruction consume Read this. -->\n",
     );
 
     let inventory = discover_spec(root.path(), "example");
@@ -192,8 +192,9 @@ fn detects_live_template_instruction_leaks() {
         inventory
             .issues
             .iter()
-            .any(|issue| issue.code == "ARTIFACT_TEMPLATE_INSTRUCTION_LEAK")
+            .any(|issue| issue.code == "ARTIFACT_CREATE_INSTRUCTION_LEAK")
     );
+    assert_eq!(inventory.issues.len(), 1);
 }
 
 #[test]

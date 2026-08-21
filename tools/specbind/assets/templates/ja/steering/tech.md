@@ -5,7 +5,7 @@ artifact_id: tech
 
 # 技術
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 以降のすべての変更が引き継ぐ技術的な決定を、その理由とともに記録する。理由が失われた制約は、
 盲目的に守られるか、まとめて捨てられるかのどちらかになる。
 

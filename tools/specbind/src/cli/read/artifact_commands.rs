@@ -36,7 +36,12 @@ pub fn artifact_list(start: &Path, canonical_spec: &str) -> CommandOutput {
 }
 
 #[must_use]
-pub fn artifact_read(start: &Path, canonical_spec: &str, selector: &str) -> CommandOutput {
+pub fn artifact_read(
+    start: &Path,
+    canonical_spec: &str,
+    selector: &str,
+    purpose: Option<&str>,
+) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
@@ -77,24 +82,37 @@ pub fn artifact_read(start: &Path, canonical_spec: &str, selector: &str) -> Comm
         );
     }
     match fs::read(path) {
-        Ok(bytes) if std::str::from_utf8(&bytes).is_ok() => {
+        Ok(bytes) => {
+            let Ok(content) = String::from_utf8(bytes) else {
+                return CommandOutput::failure(
+                    "ARTIFACT_READ_NOT_UTF8",
+                    "Resolved artifact is not valid UTF-8.",
+                    vec![],
+                );
+            };
             let mut stderr = String::new();
             for issue in &inventory.issues {
                 stderr.push_str("  ");
                 stderr.push_str(&render_issue(issue));
                 stderr.push('\n');
             }
+            let stdout = match purpose {
+                Some("maintain") => {
+                    instruction::project(&content, instruction::InstructionScope::Maintain)
+                        .into_bytes()
+                }
+                Some("consume") => {
+                    instruction::project(&content, instruction::InstructionScope::Consume)
+                        .into_bytes()
+                }
+                _ => content.into_bytes(),
+            };
             CommandOutput {
-                stdout: bytes,
+                stdout,
                 stderr: stderr.into_bytes(),
                 success: true,
             }
         }
-        Ok(_) => CommandOutput::failure(
-            "ARTIFACT_READ_NOT_UTF8",
-            "Resolved artifact is not valid UTF-8.",
-            vec![],
-        ),
         Err(error) => CommandOutput::failure("ARTIFACT_READ_FAILED", error.to_string(), vec![]),
     }
 }

@@ -30,7 +30,7 @@ use crate::{
     config,
     contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
-    install, migration, migration_resolution,
+    install, instruction, migration, migration_resolution,
     milestone::{self, MilestoneIssue},
     milestone_scope,
     milestone_status::{self, MilestoneHealth, MilestoneStatusModel},

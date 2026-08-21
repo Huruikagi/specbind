@@ -39,9 +39,9 @@ markers is exactly what makes an unrealized requirement look covered.
 
 ```sh
 specbind artifact list <spec>
-specbind artifact read <spec> requirements
-specbind artifact read <spec> design/main
-specbind artifact read <spec> contract
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> design/main --for consume
+specbind artifact read <spec> contract --for consume
 ```
 
 Read every design artifact when the set is split. Read the research if the Spec

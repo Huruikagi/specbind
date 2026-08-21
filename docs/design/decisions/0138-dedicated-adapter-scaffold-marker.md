@@ -37,8 +37,9 @@ Adapter state is selector-independent:
 - `scaffold` when its body has no content or contains the exact scaffold marker;
 - `active` otherwise.
 
-`specbind:instruction` retains only its Decision 0059 template meaning. It has no
-special meaning in an adapter, and no legacy adapter interpretation is retained.
+`specbind:instruction` retains only its managed-Markdown meaning under Decisions
+0059 and 0139. It has no special meaning in an adapter, and no legacy adapter
+interpretation is retained.
 Active embedded defaults such as Git and deferred carry no scaffold marker. The
 inactive embedded release adapter carries the dedicated marker until the project
 replaces the scaffold with its own procedure.
@@ -50,8 +51,8 @@ absence contract.
 
 ## Consequences
 
-- Template materialization and leak detection remain unchanged and can speak
-  precisely about `specbind:instruction` as a template directive.
+- Managed-artifact instruction validation remains independent and can speak
+  precisely about `specbind:instruction` as a scoped Markdown directive.
 - Adapter state no longer depends on a substring search or a deferred-specific
   exception.
 - Existing development fixtures or project-owned copies using the old marker

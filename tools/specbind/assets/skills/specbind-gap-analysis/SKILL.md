@@ -132,10 +132,13 @@ If this is the first managed Markdown write in the run, read `okf-authoring` as
 directed above before materializing the artifact. Do not read it a second time
 when a Brief revision already required it.
 
-Remove every `specbind:instruction` comment. Materialize at the Spec's research
-path.
+Follow every scoped instruction the template returns. Omit `create` comments
+from the materialized artifact, copy every `maintain` and `consume` comment
+unchanged, and write it at the Spec's research path.
 
-**Replace an existing research document. Do not append to it.** Research states
+**Replace an existing research document. Do not append to it.** Read the current
+document with `artifact read <spec> research --for maintain` first and preserve
+its durable scoped comments. Research states
 the current view of the investigation; a document that accumulates every
 superseded finding makes the next reader work out which conclusions still hold.
 Git holds the earlier drafts.

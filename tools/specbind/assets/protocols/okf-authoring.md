@@ -35,25 +35,35 @@ An ordinary managed Markdown file is an OKF *concept document*.
   tool, or the project itself, may own it.
 - Do not add SpecBind-looking metadata that no accepted profile defines.
 
-## Template instruction comments
+## Scoped instruction comments
 
 A Markdown HTML comment whose trimmed content begins with the exact token
-`specbind:instruction` is guidance addressed to you, not content of the document
-you are producing.
+`specbind:instruction` is guidance addressed to you rather than ordinary
+document content. Every instruction names exactly one lifecycle scope.
 
 ```markdown
-<!-- specbind:instruction Summarize the responsibility in one paragraph. -->
+<!-- specbind:instruction create Choose one stable identity. -->
+<!-- specbind:instruction maintain Preserve established IDs while revising. -->
+<!-- specbind:instruction consume Treat this as context, not authority. -->
 ```
 
-- It appears only in managed templates. Reading a template returns it intact,
-  because it is the reason the template is worth reading.
-- Follow it while authoring, then **omit it from the artifact you write**. This
-  is the one thing you carry out of a template rather than into the document.
-- A leaked comment in a live artifact is a defect the CLI reports. It is not
-  inert decoration: a later reader cannot tell instruction from specification,
-  and the document stops being the artifact it claims to be.
-- Never write one into a live artifact yourself, and never leave one in place
-  when revising a document that has one.
+- `create` appears only in a template. Follow it during first materialization,
+  then omit it from the artifact.
+- `maintain` is durable revision guidance. Follow it during materialization and
+  every later revision, and copy or preserve the complete comment in the live
+  artifact.
+- `consume` is durable reader guidance. Copy or preserve the complete comment
+  in the live artifact; it is presented when a workflow reads that artifact as
+  input rather than revising it.
+- A template read returns every scope intact because materialization must carry
+  the durable comments forward. A live `artifact read` or `steering read` with
+  `--for maintain` or `--for consume` removes the other durable scope from the
+  returned projection. Omitting `--for` remains an exact raw read.
+- An unscoped or unknown instruction is invalid. A `create` comment leaked into
+  a live artifact is also invalid. Do not silently reinterpret either defect.
+- Scoped comments are not ordinary prose. Do not paraphrase one into the body,
+  and do not delete or rewrite a durable comment while revising unrelated
+  document content.
 
 A template may also carry scaffold headings with no content beneath them. Those
 are structure, not instruction: keep the ones the artifact needs and fill them.

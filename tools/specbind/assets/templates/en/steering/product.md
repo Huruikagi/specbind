@@ -5,7 +5,7 @@ artifact_id: product
 
 # Product
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 Describe what this project is for and who it serves, so a newcomer can tell
 whether a proposed change belongs here at all.
 

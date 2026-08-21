@@ -84,7 +84,7 @@ specbind steering list
 Then read **every** steering document the listing named:
 
 ```sh
-specbind steering read <selector>
+specbind steering read <selector> --for consume
 ```
 
 Read all of them, not a promising-looking subset. The listing carries only a
@@ -107,8 +107,8 @@ Read a specific Spec's requirements and contract only when you need to decide
 whether that Spec owns part of this request:
 
 ```sh
-specbind artifact read <spec> requirements
-specbind artifact read <spec> contract
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> contract --for consume
 ```
 
 Read them for the candidate Specs, never for all of them. Do not read designs or
@@ -269,6 +269,11 @@ Fill it from the request in the requester's own terms. Keep it short — the
 authoritative scope lives in requirements, and this document is not
 fingerprinted. When the Spec already has a brief in this milestone, **fold the
 new request into it** rather than adding a second one.
+
+On first materialization, omit `create` instructions and copy `maintain` and
+`consume` instructions unchanged. When folding into an existing brief, read it
+with `artifact read <spec> brief --for maintain` and preserve those durable
+comments.
 
 ### Record what steering decided
 

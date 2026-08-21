@@ -4,7 +4,7 @@ type: SpecBind Contract
 
 # Contract
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 この文書は他の Spec が依存する永続的な接合面であり、設計の要約ではない。
 以下の 5 つの節見出しは機械可読であり、名前と順序を厳密に保つ必要がある。日本語化しない。
 ID はインラインコードで囲んだ、安定した小文字ケバブケースとする。

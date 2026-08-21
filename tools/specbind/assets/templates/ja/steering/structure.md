@@ -5,7 +5,7 @@ artifact_id: structure
 
 # 構造
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 このプロジェクトがどう組織されているかを、新規参加者が自分の変更をどこに置くべきか判断できる
 粒度で書く。
 

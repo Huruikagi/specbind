@@ -5,7 +5,7 @@ artifact_id: main
 
 # Design
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 Add a Front Matter `requirement_ids` array listing every Requirement ID this
 document covers, and repeat each one in an italic body marker of the exact form
 `_Requirements: 1.1, 1.2_` next to the section that satisfies it. The Front Matter

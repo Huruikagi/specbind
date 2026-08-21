@@ -227,9 +227,11 @@ CLI-owned.
 
 ## Hints belong in instruction comments
 
-Decision 0059's `specbind:instruction` comments are template-only guidance,
-included when an agent reads a template and removed from every materialized
-artifact. They are available in the `steering` scope on the same terms.
+Decision 0139 later scopes Decision 0059's `specbind:instruction` comments.
+`create` guidance is removed during materialization, while `maintain` and
+`consume` guidance is copied into the Steering artifact and projected by its
+purpose-specific CLI reads. They are available in the `steering` template scope
+on the same terms as Spec templates.
 
 They carry what a template is genuinely better at than prose stored elsewhere:
 what this document is for, what a first version looks like, and the mistakes this

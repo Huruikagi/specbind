@@ -5,7 +5,7 @@ artifact_id: tech
 
 # Technology
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 Record the technology decisions every later change inherits, and why they were
 made. A constraint whose reason is lost gets followed superstitiously or thrown
 out wholesale.

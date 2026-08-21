@@ -24,7 +24,12 @@ A template owns the customizable shape and local affordances of one materialized
 - concise `specbind:instruction` guidance that explains how to fill, repeat, rename, or remove the scaffold immediately around it
 - reminders of exact machine-readable syntax that is easy to violate while filling that scaffold, such as Requirement headings, Design Requirement markers, and Contract entry shapes
 
-Template instructions are advisory input tied to the selected scaffold. They are removed during materialization, do not become live-artifact authority, and may not be the only place that states a SpecBind lifecycle rule, semantic minimum, approval obligation, or cross-artifact invariant.
+Template instructions are advisory input tied to the selected scaffold.
+[Decision 0139](./0139-scoped-artifact-instructions.md) later requires `create`
+guidance to be removed and durable `maintain` or `consume` guidance to be copied
+into the live artifact. No scope becomes semantic artifact authority, and an
+instruction may not be the only place that states a SpecBind lifecycle rule,
+semantic minimum, approval obligation, or cross-artifact invariant.
 
 A project may customize template structure and template-local guidance wherever the target artifact profile permits it. Such customization does not redefine what an artifact means, when it participates in the lifecycle, or what a product-managed workflow must establish.
 

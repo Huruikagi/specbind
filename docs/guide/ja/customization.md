@@ -52,6 +52,32 @@ specbind template resolve spec <spec> <selector>
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。
 
+`specbind:instruction`コメントには、用途を必ず1つ指定します。
+
+```markdown
+<!-- specbind:instruction create 初回の識別子を決める。 -->
+<!-- specbind:instruction maintain 既存IDを振り直さずに更新する。 -->
+<!-- specbind:instruction consume これは補助情報であり権威ではない。 -->
+```
+
+- `create`は初回作成時だけ従い、成果物には残しません。
+- `maintain`は初回作成時に成果物へコピーし、以後の更新時にも読み、残します。
+- `consume`も成果物へコピーし、その成果物を入力として参照するときだけ読みます。
+
+用途なし、または未知の用途はテンプレート診断になります。既存成果物は、作成時に
+コピーされた`maintain`と`consume`を自分で所有します。テンプレート側だけを変更しても、
+既存成果物の指示は変わりません。
+
+成果物またはSteeringを用途別に読むと、CLIは反対側の永続指示だけを除いて返します。
+`--for`を省略した場合は、指示コメントを含む元のMarkdownをそのまま返します。
+
+```sh
+specbind artifact read <spec> <selector> --for maintain
+specbind artifact read <spec> <selector> --for consume
+specbind steering read <selector> --for maintain
+specbind steering read <selector> --for consume
+```
+
 !!! warning
     `type`、`artifact_id`、必須の識別子や対応関係など、CLIが読み取る構造は残して
     ください。自由に変えられるのは、この機械可読な部分を保った範囲だけです。
@@ -129,7 +155,7 @@ Steeringは、製品の目的、技術方針、構造、テスト方針、セキ
 
 ```sh
 specbind steering list
-specbind steering read <selector>
+specbind steering read <selector> --for consume
 ```
 
 SteeringはGateの入力ではなく、古くなったかどうかの判定にも使いません。ただし、

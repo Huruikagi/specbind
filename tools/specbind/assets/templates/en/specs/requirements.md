@@ -7,7 +7,7 @@ heading_labels:
 
 # Requirements
 
-<!-- specbind:instruction
+<!-- specbind:instruction maintain
 Maintain the complete current behavioral contract for this Spec, not only the
 delta requested by the active milestone. Summarize the user or system need in
 Context, and make the ownership boundary explicit in Scope so adjacent work is

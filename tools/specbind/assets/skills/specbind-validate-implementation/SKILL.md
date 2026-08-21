@@ -49,9 +49,9 @@ before this handshake rather than after.
 ## 2. Read what completion would mean
 
 ```sh
-specbind artifact read <spec> requirements
-specbind artifact read <spec> design/main
-specbind artifact read <spec> contract
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> design/main --for consume
+specbind artifact read <spec> contract --for consume
 specbind tasks list <spec>
 specbind check traceability <spec>
 ```

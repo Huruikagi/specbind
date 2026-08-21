@@ -43,6 +43,12 @@ and Design are installed by default; a project can override any selector under
 reports the selected source and exact SpecBind-root-relative target path without
 writing it.
 
+Every template instruction explicitly names `create`, `maintain`, or `consume`.
+Materialization removes `create` and carries the two durable scopes into the
+live artifact. `artifact read` and `steering read` preserve exact raw Markdown
+by default and accept `--for maintain` or `--for consume` to omit the unrelated
+durable instruction scope.
+
 Twelve immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by
 `protocol list/read` and `schema list/read`; they are not installed as project
