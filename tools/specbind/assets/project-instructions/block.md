@@ -6,6 +6,9 @@ the only supported writer of machine state.
 
 - Work through the installed `specbind-*` skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
+- Use `specbind-steering` when the request creates or updates durable,
+  project-wide guidance, including conventions for testing, APIs, security, or
+  deployment. This route does not require a Spec or observable behavior change.
 - A request enters that flow when it changes a Spec's artifacts or observable
   behavior, including a validation rule, limit, or rejected case; modifies a path
   the Spec owns; adds a durable responsibility; or belongs to a delivery the
