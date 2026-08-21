@@ -30,7 +30,7 @@ without a pass are listed separately below.
 | Design validation | None recorded | VD1, VD2 |
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
-| Release | RL1 | RL1–RL3 |
+| Release | RL1 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q4 |
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
@@ -70,6 +70,17 @@ noncolliding `testing` identity, wrote only `steering/testing.md`, omitted the
 and finished with successful list, projected-read, and diff checks. A read-only
 debrief left the fixture state unchanged.
 
+RL3 and RL4 were re-measured on 2026-08-21 with fresh Codex drivers after the
+release-policy bootstrap and finalization-checkpoint contract changed. RL3
+passed on `d51a12a`: the Front Matter-only Release adapter was listed as active,
+the already bound `v1.4.0` milestone finalized without a publication claim, and
+one separate local commit contained only the lifecycle archive, log, and state
+changes. RL4 passed on `447c0c6`: the driver found root `RELEASING.md`, proposed
+the local-tag policy with its exact pre-finalization target, obtained
+configuration-only approval, committed only the Release adapter, and stopped
+without binding, tagging, publishing, pushing, or finalizing. The resulting
+settings commit correctly made the accepted `cart` completion evidence stale.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -86,6 +97,8 @@ debrief left the fixture state unchanged.
 | T1 | Codex | Environment blocked | On `cc37049`, the corrected rule produced a one-task implementation-and-test proposal, but the host safety layer rejected `tasks.yaml` authoring twice, including after explicit Tasks approval. No artifact was written, so this is not a passing remeasurement. |
 | D6 | Codex | Product failure | On `4256ab3`, the first Discovery correctly left its new Roadmap uncommitted under an unfilled Git adapter. The confirmed same-session addition then failed with `MILESTONE_ROADMAP_DIRTY`, leaving the original milestone and `cart`-only scope unchanged and creating no `order` Spec. |
 | VD1 | Codex | Product failure | On `7307f7a`, the validator returned the expected `NOT_READY` for Research dependence but also raised inactive Requirements 2.1–2.2 as blocking Design omissions. The fresh `3d887b6` run scoped judgment to the active 4/4 set and passed. |
+| RL3 | Codex | Product failure | On `6a29ad7`, a fresh driver misclassified the explicit Front Matter-only Release adapter as an unconfigured scaffold. The classification order was made explicit and the fresh `f069aef` run finalized correctly. |
+| RL4 | Codex | Product failure | On `f069aef`, a fresh driver concluded that release documentation was absent without inspecting root `RELEASING.md`. `447c0c6` requires root release-document enumeration before that conclusion; the fresh run found it and passed. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
@@ -112,6 +125,10 @@ remain available in Git history.
 | Design validation could treat Requirements retained outside the active milestone set as missing Design scope. | Validation fixes the review scope from status and traceability before reading prose and treats inactive Requirements as context only. | `3d887b6`, confirmed on `3d887b6` |
 | Contract review described the Direct-only stop as `not required`, while the public CLI prints `Status: not_applicable`. | The skill now names the exact public status and explains that it means no review is required. | `3d887b6`, confirmed on `3d887b6` |
 | Adapter state overloaded the template-only `specbind:instruction` token, used a raw substring check, and required a deferred-specific compatibility exception. | Inactive adapters use the exact Markdown comment `<!-- specbind:adapter-scaffold -->`; marker-like prose, code, longer comments, and the template token are ordinary adapter content. C2 confirmed marked Git policy opts out without asking or committing. | `ec20755`, confirmed on `fb87bb9` |
+| An untouched Release scaffold could be treated as an explicit no-op and let a first invocation finalize without configuring project policy. | Release now derives a complete adapter from repository evidence, obtains configuration-only approval, checkpoints only that adapter, invalidates affected completion evidence, and stops. | `a576cf6`, confirmed on `447c0c6` |
+| Successful `release finalize` left its lifecycle archive and log mutations outside a checkpoint. | Release snapshots the worktree before finalization, then uses active Git policy to create a separate local commit containing only newly changed finalization lifecycle paths; publication approval does not authorize pushing it. | `a576cf6`, confirmed on `d51a12a` |
+| Empty adapter content and an installed scaffold could both be reported as `state=scaffold`, contradicting the dedicated-marker contract and the Release empty-body meaning. | Skill classification checks the exact read result first, and `adapter list` now reports scaffold only for the exact dedicated marker; a Front Matter-only adapter is active. | `f069aef`, `d51a12a`, confirmed on `d51a12a` |
+| Release bootstrap could declare policy evidence absent after reading only `README.md`, even when root `RELEASING.md` existed. | Bootstrap enumerates root release-document candidates such as `RELEASE*`, `RELEASING*`, and `CHANGELOG*` before concluding that evidence is absent. | `447c0c6`, confirmed on `447c0c6` |
 | A marked adapter could retain actionable-looking scaffold text, leaving precedence implicit. | Every consuming Skill states that the marker classifies the whole document and all remaining body lines are ignored. | `3746108`, confirmed on `fb87bb9` |
 | Discovery read the authoring protocol before a Brief but did not repeat its completion-state check after applying milestone scope. | Discovery now runs `milestone status` after reading `okf-authoring` and immediately before the first Brief write. | `fb87bb9`, confirmed on `fb87bb9` |
 | An inactive installed Git scaffold left every accepted phase uncommitted and blocked a same-session scope addition at the Roadmap target guard. | New installs receive active local-checkpoint policy; C1 confirmed the narrow first commit and D6 continued through `update-scope` with the milestone identity, existing item, and Roadmap body preserved. | `c3a0ccf`, confirmed on `8a58244` |
