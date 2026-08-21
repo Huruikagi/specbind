@@ -81,6 +81,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese user guide (Preview)](./guide/ja/index.md) | Entry point for source-built Preview users |
 | [Japanese Getting Started](./guide/ja/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
 | [Japanese basic concepts](./guide/ja/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
+| [Japanese customization guide](./guide/ja/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
 | [cc-sdd migration entry](./guide/migration/cc-sdd.md) | Language-neutral entry for automatic and agent-assisted migration guidance |
 | [Japanese cc-sdd migration guide](./guide/ja/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
 | [English cc-sdd migration guide](./guide/en/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |

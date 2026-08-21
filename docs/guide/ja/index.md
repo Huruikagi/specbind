@@ -43,9 +43,10 @@ SpecBindはv1.0前のプレビュー版です。このガイドは、リリー�
 
 1. [Getting Started](./getting-started.md) — 導入から最初の変更を検証するまで
 2. [基本概念](./concepts.md) — Spec、Milestone、Direct、Gate、成果物
-3. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
-4. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
-5. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
+3. [カスタマイズ](./customization.md) — テンプレート、ルール、adapter、Steering、モデル設定
+4. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
+5. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
+6. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ## SpecBindを使う変更
 

@@ -150,6 +150,9 @@ Milestone全体を自動で実装するオーケストレータはありませ�
 確認したうえで、現在の埋め込み版へ更新します。Skillファイルを直接編集する
 やり方は、サポートしているカスタマイズ方法ではありません。
 
+どの設定に何を書くか、変更できない製品契約との境界、変更後の確認方法は
+[カスタマイズ](./customization.md)にまとめています。
+
 ---
 
-[ガイドの入口](./index.md) | [Getting Started](./getting-started.md)
+[ガイドの入口](./index.md) | [Getting Started](./getting-started.md) | [カスタマイズ](./customization.md)
