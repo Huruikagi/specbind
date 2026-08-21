@@ -526,6 +526,60 @@ fn reports_unstarted_design_as_expected_work_without_weakening_traceability() {
 }
 
 #[test]
+fn reports_unstarted_requirements_as_expected_work_without_weakening_traceability() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    fs::remove_file(root.path().join(".specbind/specs/checkout/requirements.md"))
+        .expect("remove the prewritten Requirements fixture");
+    fs::remove_file(root.path().join(".specbind/specs/checkout/design.md"))
+        .expect("remove the prewritten Design fixture");
+    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.md"))
+        .expect("remove the prewritten Contract fixture");
+
+    let mut status = Command::cargo_bin("specbind").expect("specbind binary should build");
+    status
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  State: requirements\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  Next action: requirements\n"))
+                .and(predicate::str::contains(
+                    "  Expected work: author Requirements\n",
+                ))
+                .and(predicate::str::contains("  Diagnostics: none\n"))
+                .and(predicate::str::contains("TRACEABILITY_REQUIREMENTS_UNAVAILABLE").not()),
+        )
+        .stderr("");
+
+    let mut milestone = Command::cargo_bin("specbind").expect("specbind binary should build");
+    milestone
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Health: consistent\n")
+                .and(predicate::str::contains(
+                    "    - spec:checkout action=requirements\n",
+                ))
+                .and(predicate::str::contains("MILESTONE_SPEC_INCONSISTENT").not()),
+        );
+
+    let mut traceability = Command::cargo_bin("specbind").expect("specbind binary should build");
+    traceability
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "TRACEABILITY_REQUIREMENTS_UNAVAILABLE",
+        ));
+}
+
+#[test]
 fn fails_status_when_spec_metadata_is_not_structurally_readable() {
     let root = project_fixture();
     write(

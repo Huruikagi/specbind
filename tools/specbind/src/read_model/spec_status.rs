@@ -72,6 +72,7 @@ pub struct SpecStatusModel {
     /// Decision 0078 keeps the review out of the per-Spec invariant.
     pub contract_review: Option<ReviewFreshnessStatus>,
     pub next_action: WorkflowAction,
+    pub expected_requirements_work: bool,
     pub expected_design_work: Option<ExpectedDesignWork>,
     /// Present once any gate is approved. Empty means every approval was
     /// explicit, which is why absence of the field and an empty list mean
@@ -137,6 +138,8 @@ pub fn resolve(
         .and_then(|resolution| resolution.report.as_ref())
         .and_then(coverage);
 
+    let expected_requirements_work = declared_state == Some(WorkflowState::Requirements)
+        && freshness.requirements.status == FreshnessStatus::NotReached;
     let expected_design_work =
         expected_design_work(declared_state, &freshness, traceability.as_ref());
     let diagnostics = collect_diagnostics(
@@ -145,6 +148,7 @@ pub fn resolve(
         traceability.as_ref(),
         &freshness,
         active.is_none(),
+        expected_requirements_work,
         expected_design_work.is_some(),
         canonical_spec,
     );
@@ -166,6 +170,7 @@ pub fn resolve(
         freshness,
         contract_review,
         next_action,
+        expected_requirements_work,
         expected_design_work,
         delegated_gates,
         task_model,
@@ -316,6 +321,7 @@ fn collect_diagnostics(
     traceability: Option<&artifacts::TraceabilityResolution>,
     freshness: &ArtifactFreshnessReport,
     idle: bool,
+    requirements_work_is_expected: bool,
     design_coverage_is_expected: bool,
     canonical_spec: &str,
 ) -> Vec<StatusDiagnostic> {
@@ -339,6 +345,9 @@ fn collect_diagnostics(
     }
     if idle {
         add_idle_diagnostics(&mut diagnostics, gate_resolution, canonical_spec);
+    }
+    if requirements_work_is_expected {
+        diagnostics.retain(|diagnostic| diagnostic.code != "TRACEABILITY_REQUIREMENTS_UNAVAILABLE");
     }
     if design_coverage_is_expected {
         diagnostics.retain(|diagnostic| diagnostic.code != "TRACEABILITY_DESIGN_COVERAGE_MISSING");

@@ -191,7 +191,9 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
         "Next action",
         spec_status::action_name(model.next_action),
     );
-    if let Some(expected) = model.expected_design_work {
+    if model.expected_requirements_work {
+        push_field(&mut output, "Expected work", "author Requirements");
+    } else if let Some(expected) = model.expected_design_work {
         push_field(
             &mut output,
             "Expected work",
