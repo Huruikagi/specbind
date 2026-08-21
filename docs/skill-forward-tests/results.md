@@ -16,7 +16,7 @@ without a pass are listed separately below.
 
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
-| Discovery | D1, D2, D4–D6, D8–D12 | D4 |
+| Discovery | D1, D2, D4–D6, D8–D12 | D4, D6 |
 | Requirements | R1–R5 | R1, R3 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1, C3 |
@@ -52,12 +52,7 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-This is a current worklist, not an append-only transcript. It contains only a
-reproduced product ambiguity that still needs a disposition.
-
-| First seen | Scenario | Surface | Impact | Finding | Current handling | Next decision |
-| --- | --- | --- | --- | --- | --- | --- |
-| `4256ab3` | D6 | CLI / Adapter | wrong-action-risk | `milestone update-scope` refuses the untracked Roadmap created by the immediately preceding Discovery, while an unfilled Git adapter requires that Discovery to commit nothing. The accepted same-session milestone-addition workflow therefore has no supported continuation. | Stop without committing or guessing a Git policy; keep the existing scope unchanged. | Decide whether `update-scope` can safely recognize the pending CLI-created Roadmap or whether the workflow needs an explicit user-owned checkpoint before scope expansion. |
+None. This section is the current worklist, not an append-only transcript.
 
 ### Fixed, behavioral confirmation pending
 
@@ -73,6 +68,8 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| An inactive installed Git scaffold left every accepted phase uncommitted and blocked a same-session scope addition at the Roadmap target guard. | New installs receive active local-checkpoint policy; C1 confirmed the narrow first commit and D6 continued through `update-scope` with the milestone identity, existing item, and Roadmap body preserved. | `c3a0ccf`, confirmed on `8a58244` |
+| Discovery drivers twice tried to invalidate Requirements for an idle Spec merely because its Requirements artifact existed. | Discovery now states that `not_reached` is not approved and that artifact presence is not gate evidence; the fresh C1 and D6 drivers proposed no invalidation. | `8a58244` |
 | An established Spec with no Design had no explicit target-resolution branch. | Design now branches on whether the Design set exists and resolves the selected template's target path. | `398bbf7` |
 | An unconsumed export warning could be read as authority to delete a stable seam. | Design preserves unchanged exports and requires evidence for a consumer or an explicit boundary change. | `9cce3de` |
 | Milestone health treated a future Contract review as a present inconsistency. | Milestone health is phase-relative while stale or invalid reviews remain inconsistent. | `17fa76a` |
@@ -105,6 +102,15 @@ change. Discovery produced one uncommitted `cart` Spec update and Brief, changed
 neither Requirements nor implementation, and created no commit. Milestone
 status reported consistent Requirements work and `Release readiness: not
 evaluated until validation` without `WORKTREE_NOT_CLEAN`.
+
+C1 and D6 were re-measured on `8a58244` as Codex after the installed Git adapter
+became active default policy. C1 created one local commit containing only the
+Roadmap, `cart/spec.yaml`, and its Brief; the worktree was clean, the branch was
+unchanged, and no remote existed. D6 then proved the continuation that had failed
+on `4256ab3`: the same-session addition kept the milestone ID, the original
+`cart` item and `# Roadmap` body, added the `cancellation` Spec, and committed
+only its state, Brief, and the updated Roadmap. Requirements and implementation
+remained untouched in both scenarios.
 
 The next Codex batch measured D6, Q4, and RL2 on `4256ab3`. D6 failed because
 the uncommitted Roadmap produced by its first Discovery could not pass the
