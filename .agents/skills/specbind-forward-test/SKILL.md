@@ -146,8 +146,11 @@ guarded CLI operations actually run.
 
 **Confirm the phase, not the project.** Refer explicitly to what the agent just
 presented and where to stop: "I approve the plan you just presented for Discovery
-only. Stop after Discovery." or "I approve the Requirements you just presented.
-Stop after Requirements." A bare "Proceed with that scope" can read as permission
+only. Stop after Discovery." or "I approve the Requirements and active Requirement
+ID selection you just presented. Stop after Requirements." If an authoring phase
+did not present every value its approval accepts, do not supply or infer the missing
+value for it; the scenario has not reached an approvable boundary. A bare "Proceed
+with that scope" can read as permission
 to build the whole thing: one run answered that way went from discovery through
 requirements, design, review, tasks, and implementation, which left every
 discovery expectation unmeasurable because later phases had legitimately changed

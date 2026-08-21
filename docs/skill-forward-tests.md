@@ -139,8 +139,10 @@ needs one. Discovery confirms scope before mutation; authoring phases may write 
 draft first and then confirm approval. A stop at the applicable boundary is the
 skill working, not failing. Answer by referring to what was just presented and
 name the stopping point: "I approve the plan you just presented for Discovery
-only. Stop after Discovery." or "I approve the Requirements you just presented.
-Stop after Requirements." A bare "go ahead" can authorize the whole feature,
+only. Stop after Discovery." or "I approve the Requirements and active Requirement
+ID selection you just presented. Stop after Requirements." If the run did not
+present every value its approval accepts, do not infer the missing value for it;
+the scenario has not reached an approvable boundary. A bare "go ahead" can authorize the whole feature,
 after which later phases legitimately rewrite the files an earlier scenario is
 checking.
 
@@ -287,7 +289,7 @@ without a pass are listed separately below.
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
 | Discovery | D1, D2, D4–D6, D8–D12 | None recorded |
-| Requirements | R1–R5 | R3 |
+| Requirements | R1–R5 | R1, R3 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1, C3 |
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
@@ -310,6 +312,8 @@ without a pass are listed separately below.
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
 | R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
+| C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |
+| R1 | Codex | Operator stopped | On `9cce3de`, the run produced a valid Requirements draft, but the controller began the usability debrief instead of continuing the required explicit-approval turn. The draft is evidence of neither a pass nor a product failure. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
@@ -325,6 +329,14 @@ documented signal that host instructions may still be visible. C1 answered in
 English; its checkpoint verdict was also re-read directly from the isolated
 fixture, including the unchanged Git history.
 
+The next Codex batch measured C1, DS2, and R1 on `9cce3de`. DS2 passed its
+artifact expectations. C1 failed by bypassing the workflow, and R1 was stopped
+by the controller at its valid draft boundary before approval. After the entry
+wording fix, fresh C1 and R1 fixtures on `59ebc5f` passed. All five debriefs were
+read-only: `git status --short` was identical before and after each one. Japanese
+answers in both R1 runs and the first DS2 run were retained as host-contamination
+signals rather than treated as fixture-local evidence.
+
 | Build | Scenario | Agent | Surface | Impact | Observation and evidence | Workaround | Contract check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `a5c14c8` | R1 | Codex | Protocol | wrong-action-risk | The brief says only "eligible orders" while the Requirements review protocol says an unknown expectation must be escalated, not filled with a plausible guess. | The agent stopped without creating Requirements. | Reproduced; this is a scenario contradiction, not a product defect. |
@@ -336,6 +348,18 @@ fixture, including the unchanged Git history.
 | `a5c14c8` | C1 | Codex | Skill | ambiguity | The driver confirmed "discovery for this cart change only" while the skill asks for explicit agreement to the whole plan. | The agent treated the phase-limited confirmation as authorization for the plan it had just presented. | Harness wording, not a demonstrated product defect. |
 | `a5c14c8` | C1 | Codex | CLI | extra-step | `milestone create --help` names `--scope <SCOPE>` but neither it nor the skill shows the JSON scope shape; the first stdin attempt reached EOF. | The agent inferred and supplied the scope document. | Reproduced; the skill shows `--scope -` without a complete input example. |
 | `a5c14c8` | C1 | Codex | CLI | wrong-action-risk | After successful discovery, `milestone status` reported `Health: inconsistent` and `CONTRACT_REVIEW_MISSING` even though its actionable phase was Requirements. | The agent trusted `Actionable: spec:cart action=requirements` and stopped at the requested boundary. | Reproduced; `spec status cart` was phase-relative and consistent, but milestone health still treated the later contract review as an inconsistency. |
+| `9cce3de` | C1 | Codex | Protocol | wrong-action-risk | The project instruction's “changes what a Spec owns” wording let a per-SKU quantity limit be classified as a small ordinary implementation change. | The agent implemented the cap directly. | Reproduced from the fixture; fixed in `59ebc5f` by naming observable validation rules, limits, and rejected cases and routing genuine uncertainty into Discovery. |
+| `9cce3de` | C1 | Codex | Other | ambiguity | The request did not prescribe an exception type, message, or mutation behavior on rejection. | The agent invented `ValueError` and pre-mutation validation. | Not a direct-work contract gap: these are Requirements and Design decisions the bypassed workflow should have owned. |
+| `9cce3de` | C1 | Codex | Other | extra-step | The minimal fixture had no test framework or dependency manifest. | The agent added `unittest` coverage and removed generated caches. | Fixture characteristic only; it became irrelevant when the corrected entry rule prevented implementation. |
+| `9cce3de` | DS2 | Codex | CLI | extra-step | The agent reported that `template resolve` was unavailable and used `template list` to find `technical-design/main.md`. | It read `output_path` from the listing. | Not reproduced with the fixture binary, which exposes `template resolve`; the driver picked up an older host CLI, so this is environment contamination. |
+| `9cce3de` | DS2 | Codex | Skill | wrong-action-risk | The request supplied no authority to approve the Design gate. | The agent left a validated draft and did not approve. | Expected guarded-boundary behavior, not a defect; DS2's artifact expectations passed. |
+| `9cce3de` | R1 | Codex | CLI | extra-step | The agent treated the `specbind-status` skill name as a `specbind status` command. | It read help and used `specbind spec status order`. | The fixture contains the named skill; the Japanese response and host command lookup are environment-contamination signals. |
+| `9cce3de` | R1 | Codex | Skill | ambiguity | The driver said the installed `specbind-*` skills were absent from its available-skill list. | It authored from the CLI, Brief, steering, and template. | The fixture contains `.agents/skills/specbind-requirements`; dynamic skill discovery was not exposed to this spawned driver, so the run did not prove the skill path. |
+| `9cce3de` | R1 | Codex | Template | wrong-action-risk | The Brief names an open and closed cancellation window but not its duration. | The agent left duration out of scope and specified behavior against the open/closed predicate. | Not a product gap: R1 deliberately supplies the observable boundary without asking Requirements to invent a duration. |
+| `59ebc5f` | C1 | Codex | Skill | extra-step | The agent tried requirements invalidation before scope creation even though the idle Spec held no approved gate. | It accepted `SPEC_REQUIREMENTS_STATE_INVALID` and continued with milestone creation. | Not a contract gap: Discovery limits invalidation to Specs that already hold approved gates; the agent combined two separate ordering rules. |
+| `59ebc5f` | C1 | Codex | CLI | ambiguity | The expected dirty Discovery result appeared among general release blockers as `WORKTREE_NOT_CLEAN`. | It compared the dirty paths with its own outputs and treated milestone health as authoritative. | Reproduced but not a health contradiction: the report says `Health: consistent`; release blockers describe later release readiness. |
+| `59ebc5f` | R1 | Codex | Protocol | wrong-action-risk | The cancellation-window duration was unspecified. | The agent specified behavior only while the window is open and after it closes. | Not a defect for the same R1 boundary reason recorded above. |
+| `59ebc5f` | R1 | Codex | Skill | ambiguity | The standard confirmation approved the Requirements but did not explicitly name the active Requirement ID selection. | The agent inferred all four authored criteria as active. | Reproduced in the harness wording; the confirmation now approves both the presented document and presented selection and forbids filling in an omitted value. |
 
 A completed debrief with no finding is recorded as `none`, so absence of a row
 is not mistaken for an uneventful run.
@@ -643,7 +667,10 @@ From D4, run the requirements skill on the new Spec.
 - The fixture defines the cancellation boundary: the customer may cancel an
   order they placed before its cancellation window closes, and a later attempt
   is rejected. The author does not have to invent what "eligible" means.
-- `requirements.md` now exists and validates: `check traceability <spec>` passes.
+- `requirements.md` now exists and is valid. Before approval, strict
+  `check traceability <spec>` passes while coverage is inactive; after approval,
+  it is expected to report missing Design coverage until Design is authored,
+  while `spec status <spec>` remains phase-relative and consistent.
 - It is a complete contract for the responsibility, not a restatement of the
   brief's delta.
 - No `contract.md` was created. That belongs to design.
