@@ -17,17 +17,17 @@ without a pass are listed separately below.
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
 | Discovery | D1, D2, D4–D6, D8–D12 | D4, D6 |
-| Requirements | R1–R5 | R1, R3 |
+| Requirements | R1–R5 | R1, R3, R4 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
-| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
+| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3 |
 | Tasks | T2 | T1, T2, T4 |
-| Contract review | X3 | X1, X2 |
+| Contract review | X3 | X1, X2, X4 |
 | Implementation | None recorded | I1–I4 |
 | Debug | None recorded | DB1 |
 | Task review | None recorded | RT1, RT2 |
-| Design validation | None recorded | VD2 |
+| Design validation | None recorded | VD1, VD2 |
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL3 |
@@ -41,6 +41,22 @@ measurement: marker precedence needed to state that the entire body is ignored,
 and Discovery needed to repeat the completion check immediately before Brief
 authoring. The final driver followed both rules and stopped in Requirements with
 all gates `not_reached`.
+
+C2 was re-measured on `7307f7a` after `scope/v1` began exposing its version as
+`const: 1`. The driver read that schema, created the confirmed cart milestone
+and Brief, recognized the exact adapter scaffold marker, made no commit, and
+left only the Roadmap, cart state, and Brief uncommitted. R4 declined approval
+after authoring a complete cart Requirements revision and left its gate
+`not_reached`. DS3 stopped on the stale Requirements gate without changing the
+Requirements, creating a Design, or invalidating evidence.
+
+X4 and VD1 were first measured on `7307f7a`. X4 passed but exposed that the
+contract-review skill called the CLI's `not_applicable` result "not required".
+VD1 returned `NOT_READY` for the intended Research dependency but also treated
+retained inactive Requirement IDs as missing Design scope. After both readings
+were fixed in `3d887b6`, fresh X4 and VD1 runs passed: X4 stopped immediately
+without a review artifact, and VD1 judged only the active 4/4 set, reported the
+Research deferral, and changed no artifact or lifecycle state.
 
 S5 was measured on 2026-08-21 as Codex with `gpt-5.6-terra` at medium
 reasoning. The first run on `3c1b91b`, and a metadata-only retry on `81cc473`,
@@ -69,6 +85,7 @@ debrief left the fixture state unchanged.
 | S2 | Codex | Environment blocked | On `4738ca2`, bootstrap reached its required three-reader dispatch, but stale host agent threads exhausted the global limit. Steering remained empty and unchanged; no product authoring ran. |
 | T1 | Codex | Environment blocked | On `cc37049`, the corrected rule produced a one-task implementation-and-test proposal, but the host safety layer rejected `tasks.yaml` authoring twice, including after explicit Tasks approval. No artifact was written, so this is not a passing remeasurement. |
 | D6 | Codex | Product failure | On `4256ab3`, the first Discovery correctly left its new Roadmap uncommitted under an unfilled Git adapter. The confirmed same-session addition then failed with `MILESTONE_ROADMAP_DIRTY`, leaving the original milestone and `cart`-only scope unchanged and creating no `order` Spec. |
+| VD1 | Codex | Product failure | On `7307f7a`, the validator returned the expected `NOT_READY` for Research dependence but also raised inactive Requirements 2.1–2.2 as blocking Design omissions. The fresh `3d887b6` run scoped judgment to the active 4/4 set and passed. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
@@ -81,7 +98,6 @@ None.
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
-| `3746108` | C2 | `scope/v1` required `schemaVersion` but exposed only `minimum: 0`, so an author had to infer that selector `scope/v1` meant value `1`. | `6d1d2e5` gives the generated `scope/v1` schema an explicit `const: 1`, matching the selector, runtime acceptance, and the other v1 structured-artifact schemas. | Rerun C2 with a fresh fixture to confirm authoring behavior. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
 
 ### Resolved usability findings
@@ -92,6 +108,9 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| `scope/v1` exposed only `minimum: 0` for `schemaVersion`, so an author had to infer the version from the selector. | The generated schema now fixes `schemaVersion` with `const: 1`, matching runtime acceptance and the other v1 schemas; C2 authored the candidate from the corrected schema. | `6d1d2e5`, confirmed on `7307f7a` |
+| Design validation could treat Requirements retained outside the active milestone set as missing Design scope. | Validation fixes the review scope from status and traceability before reading prose and treats inactive Requirements as context only. | `3d887b6`, confirmed on `3d887b6` |
+| Contract review described the Direct-only stop as `not required`, while the public CLI prints `Status: not_applicable`. | The skill now names the exact public status and explains that it means no review is required. | `3d887b6`, confirmed on `3d887b6` |
 | Adapter state overloaded the template-only `specbind:instruction` token, used a raw substring check, and required a deferred-specific compatibility exception. | Inactive adapters use the exact Markdown comment `<!-- specbind:adapter-scaffold -->`; marker-like prose, code, longer comments, and the template token are ordinary adapter content. C2 confirmed marked Git policy opts out without asking or committing. | `ec20755`, confirmed on `fb87bb9` |
 | A marked adapter could retain actionable-looking scaffold text, leaving precedence implicit. | Every consuming Skill states that the marker classifies the whole document and all remaining body lines are ignored. | `3746108`, confirmed on `fb87bb9` |
 | Discovery read the authoring protocol before a Brief but did not repeat its completion-state check after applying milestone scope. | Discovery now runs `milestone status` after reading `okf-authoring` and immediately before the first Brief write. | `fb87bb9`, confirmed on `fb87bb9` |
