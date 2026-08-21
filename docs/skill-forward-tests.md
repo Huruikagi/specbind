@@ -315,6 +315,11 @@ The first post-run debrief batch ran on 2026-08-21 against `a5c14c8`, after the
 R1, DS2, and C1 fixtures had already been judged. `git status --short` was
 identical before and after every debrief.
 
+The R1 and DS2 drivers answered in Japanese despite their English fixtures, the
+documented signal that host instructions may still be visible. C1 answered in
+English; its checkpoint verdict was also re-read directly from the isolated
+fixture, including the unchanged Git history.
+
 | Build | Scenario | Agent | Surface | Impact | Observation and evidence | Workaround | Contract check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `a5c14c8` | R1 | Codex | Protocol | wrong-action-risk | The brief says only "eligible orders" while the Requirements review protocol says an unknown expectation must be escalated, not filled with a plausible guess. | The agent stopped without creating Requirements. | Reproduced; this is a scenario contradiction, not a product defect. |
