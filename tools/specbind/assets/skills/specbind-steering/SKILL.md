@@ -1,6 +1,6 @@
 ---
 name: specbind-steering
-description: Maintain durable project guidance — bootstrap it from the codebase, bring it back in line after the code moved, or add one document on a new subject.
+description: Maintain durable project guidance — bootstrap it, synchronize it after code changes, or document a long-lived project convention such as testing, API, security, or deployment.
 argument-hint: "[what changed, or the subject to document]"
 ---
 
