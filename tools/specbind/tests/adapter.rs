@@ -129,7 +129,7 @@ fn distinguishes_active_defaults_from_inactive_scaffolds() {
     .expect("empty deferred adapter");
     assert_eq!(
         deferred.state(root.path()),
-        Ok(adapter::AdapterState::Scaffold)
+        Ok(adapter::AdapterState::Active)
     );
 }
 

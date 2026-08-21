@@ -177,7 +177,7 @@ impl Adapter {
         let Some(content) = self.read(specbind_root)? else {
             return Ok(AdapterState::Absent);
         };
-        if adapter_body(&content).is_empty() || contains_scaffold_marker(&content) {
+        if contains_scaffold_marker(&content) {
             Ok(AdapterState::Scaffold)
         } else {
             Ok(AdapterState::Active)
@@ -190,13 +190,6 @@ fn contains_scaffold_marker(content: &str) -> bool {
         Event::Html(value) | Event::InlineHtml(value) => value.trim() == SCAFFOLD_MARKER,
         _ => false,
     })
-}
-
-fn adapter_body(content: &str) -> &str {
-    content
-        .strip_prefix("---")
-        .and_then(|rest| rest.split_once("\n---"))
-        .map_or_else(|| content.trim(), |(_, body)| body.trim())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
