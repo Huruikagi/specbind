@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the
+legacy `specbind:instruction` compatibility behavior. Inactive adapter state now
+uses only the exact dedicated scaffold marker.
+
 ## Context
 
 Decision 0101 installs `settings/adapters/git.md` as an inactive scaffold.

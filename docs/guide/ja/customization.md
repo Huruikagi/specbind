@@ -97,6 +97,11 @@ specbind adapter read git
 既定の`specDir`ではOKF準拠の`.specbind/deferred.md`へ全Specの保留指摘を記録します。
 この記録は作業キューではなく、人がRoadmapへ採用するまでスコープにはなりません。
 
+未編集のひな形には、完全なHTMLコメント
+`<!-- specbind:adapter-scaffold -->`が入っています。このマーカーがある間は本文全体が
+方針として扱われません。内容を具体化したらマーカーを削除します。テンプレート用の
+`specbind:instruction`はアダプターの状態には影響しません。
+
 `git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contract reviewの
 受理、各実装Taskの完了など、Skillが定めた安全な完了単位ごとに、関係するパスだけを
 ローカルコミットします。現在のブランチを使い、既定ではpushやamendなどの履歴書き換えを

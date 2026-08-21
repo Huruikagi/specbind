@@ -139,7 +139,7 @@ Run D3 against the fixture as built, leaving the Git adapter exactly as installe
 - The run did not stop to ask what the commit policy should be. The installed
   adapter is active default policy.
 
-### C2 — Empty or legacy guidance opts out of checkpoints
+### C2 — Empty or marked scaffold guidance opts out of checkpoints
 
 Empty the adapter to its Front Matter only, commit that change, then run D3.
 
@@ -149,8 +149,8 @@ Empty the adapter to its Front Matter only, commit that change, then run D3.
 - `git log` has no new commit beyond the fixture setup commit.
 - The run did not stop to ask what the commit policy should be.
 
-Repeat with a legacy adapter carrying `specbind:instruction`; the outcome is the
-same, preserving existing project-owned scaffolds.
+Repeat with an adapter carrying the exact `<!-- specbind:adapter-scaffold -->`
+marker; the outcome is the same. Marker-like prose or code is not scaffold state.
 
 ### C3 — Unapproved work is never committed
 

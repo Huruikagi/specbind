@@ -11,7 +11,11 @@
 
 use std::{fs, path::Path};
 
+use pulldown_cmark::{Event, Parser};
+
 use crate::config::ProjectLanguage;
+
+const SCAFFOLD_MARKER: &str = "<!-- specbind:adapter-scaffold -->";
 
 /// One accepted adapter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -166,10 +170,6 @@ impl Adapter {
     /// Reports whether the project has active guidance rather than only an
     /// installed authoring scaffold.
     ///
-    /// Deferred is the compatibility exception accepted by Decision 0131: its
-    /// installed default is active, including older project-owned copies that
-    /// still carry an instruction comment.
-    ///
     /// # Errors
     ///
     /// Returns the same target-inspection and UTF-8 diagnostics as [`Self::read`].
@@ -177,14 +177,19 @@ impl Adapter {
         let Some(content) = self.read(specbind_root)? else {
             return Ok(AdapterState::Absent);
         };
-        if adapter_body(&content).is_empty()
-            || (self.selector != "deferred" && content.contains("specbind:instruction"))
-        {
+        if adapter_body(&content).is_empty() || contains_scaffold_marker(&content) {
             Ok(AdapterState::Scaffold)
         } else {
             Ok(AdapterState::Active)
         }
     }
+}
+
+fn contains_scaffold_marker(content: &str) -> bool {
+    Parser::new(content).any(|event| match event {
+        Event::Html(value) | Event::InlineHtml(value) => value.trim() == SCAFFOLD_MARKER,
+        _ => false,
+    })
 }
 
 fn adapter_body(content: &str) -> &str {

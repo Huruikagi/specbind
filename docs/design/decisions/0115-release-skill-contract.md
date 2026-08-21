@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the use
+of `specbind:instruction` to identify an installed adapter scaffold. Release now
+uses the exact dedicated `<!-- specbind:adapter-scaffold -->` marker.
+
 ## Context
 
 `specbind-release` is the first v1 skill with no cc-sdd predecessor — the

@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the
+shared instruction-marker rule and removes the deferred compatibility exception.
+All adapter selectors now use the same exact dedicated scaffold marker.
+
 ## Context
 
 [Decision 0122](./0122-finding-disposition-and-deferred-destination.md) gives

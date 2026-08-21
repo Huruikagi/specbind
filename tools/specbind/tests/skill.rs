@@ -353,6 +353,32 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
 }
 
 #[test]
+fn adapter_consumers_use_the_dedicated_scaffold_marker() {
+    for name in [
+        "specbind-discovery",
+        "specbind-requirements",
+        "specbind-design",
+        "specbind-tasks",
+        "specbind-contract-review",
+        "specbind-implement",
+        "specbind-release",
+    ] {
+        let body = skill::find(name)
+            .expect("adapter-consuming skill")
+            .body()
+            .expect("body");
+        assert!(
+            body.contains("<!-- specbind:adapter-scaffold -->"),
+            "{name} must recognize the dedicated adapter scaffold marker"
+        );
+        assert!(
+            !body.contains("A legacy adapter may still carry"),
+            "{name} must not preserve legacy adapter compatibility"
+        );
+    }
+}
+
+#[test]
 fn direct_debug_surface_can_report_an_undetermined_owner() {
     let body = skill::find("specbind-debug")
         .expect("debug skill")

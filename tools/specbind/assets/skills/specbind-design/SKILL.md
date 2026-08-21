@@ -381,10 +381,9 @@ specbind adapter read git
 `NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. Stop
 there — that is an answer, not a missing file to work around.
 
-A legacy adapter may still carry `specbind:instruction` comments. That copy is
-an inactive scaffold, not policy the project wrote. Treat it as no guidance, say
-so in one line, and commit nothing. Do not stop to ask about a file nobody has
-filled in.
+An adapter carrying the exact `<!-- specbind:adapter-scaffold -->` marker is an
+inactive scaffold, not project policy. Treat it as no guidance, say so in one
+line, and commit nothing. Do not stop to ask about a file nobody has filled in.
 
 When the adapter has guidance, follow it. The request to perform this mutating
 phase authorizes the adapter's narrow local checkpoint as its ordinary final

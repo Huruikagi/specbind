@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the use
+of `specbind:instruction` as adapter state and removes its compatibility
+interpretation. Inactive adapters now use the exact dedicated
+`<!-- specbind:adapter-scaffold -->` marker.
+
 [Decision 0137](./0137-active-default-git-checkpoints.md) supersedes the
 inactive installed Git scaffold and the claim that an ordinary phase request
 does not authorize its narrow local checkpoint. Missing, empty, and legacy

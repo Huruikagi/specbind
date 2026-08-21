@@ -55,17 +55,22 @@ fn localizes_every_adapter_while_keeping_the_type_literal_english() {
             );
             if matches!(entry.selector, "git" | "deferred") {
                 assert!(
-                    !scaffold.contains("specbind:instruction"),
+                    !scaffold.contains("specbind:adapter-scaffold"),
                     "{} is active default policy, not an inactive scaffold",
                     entry.selector
                 );
             } else {
                 assert!(
-                    scaffold.contains("<!-- specbind:instruction"),
-                    "{}: scaffold must carry authoring guidance",
+                    scaffold.contains("<!-- specbind:adapter-scaffold -->"),
+                    "{}: scaffold must carry its dedicated state marker",
                     entry.selector
                 );
             }
+            assert!(
+                !scaffold.contains("specbind:instruction"),
+                "{}: template instruction markers do not belong in adapters",
+                entry.selector
+            );
         }
     }
 }
@@ -101,11 +106,9 @@ fn distinguishes_active_defaults_from_inactive_scaffolds() {
     .expect("git scaffold");
     fs::write(
         root.path().join(deferred.path()),
-        // Old installed copies remain active even though they carried the
-        // generic inactive-scaffold marker.
-        "---\ntype: SpecBind Deferred Findings Adapter\n---\n<!-- specbind:instruction legacy -->\n## Destination\n\nAppend to `.specbind/deferred.md`.\n",
+        "---\ntype: SpecBind Deferred Findings Adapter\n---\n<!-- specbind:instruction ordinary prose now -->\n## Destination\n\nAppend to `.specbind/deferred.md`.\n",
     )
-    .expect("legacy deferred adapter");
+    .expect("active deferred adapter");
 
     assert_eq!(git.state(root.path()), Ok(adapter::AdapterState::Active));
     assert_eq!(
@@ -126,6 +129,42 @@ fn distinguishes_active_defaults_from_inactive_scaffolds() {
     .expect("empty deferred adapter");
     assert_eq!(
         deferred.state(root.path()),
+        Ok(adapter::AdapterState::Scaffold)
+    );
+}
+
+#[test]
+fn recognizes_only_the_exact_markdown_scaffold_comment() {
+    let root = tempfile::tempdir().expect("temporary spec root");
+    fs::create_dir_all(root.path().join(adapter::ADAPTERS_ROOT)).expect("adapter directory");
+    let release = adapter::find("release").expect("release adapter");
+    let target = root.path().join(release.path());
+
+    for active_body in [
+        "The text mentions specbind:adapter-scaffold.",
+        "<!-- specbind:adapter-scaffold with extra text -->",
+        "```markdown\n<!-- specbind:adapter-scaffold -->\n```",
+        "<!-- specbind:instruction legacy -->",
+    ] {
+        fs::write(
+            &target,
+            format!("---\ntype: SpecBind Release Adapter\n---\n{active_body}\n"),
+        )
+        .expect("active adapter");
+        assert_eq!(
+            release.state(root.path()),
+            Ok(adapter::AdapterState::Active),
+            "{active_body}"
+        );
+    }
+
+    fs::write(
+        &target,
+        "---\ntype: SpecBind Release Adapter\n---\n<!-- specbind:adapter-scaffold -->\n## Prepare\n",
+    )
+    .expect("inactive adapter scaffold");
+    assert_eq!(
+        release.state(root.path()),
         Ok(adapter::AdapterState::Scaffold)
     );
 }
