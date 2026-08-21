@@ -10,6 +10,10 @@ scenario contracts and measurement ledger. The scenario documents are the
 contract; this skill is how to execute them without rediscovering the operational
 traps each time.
 
+The index also routes to the deliberately expensive end-to-end journey. Use
+that journey only for cross-lifecycle changes or release-candidate confidence;
+do not add it to the ordinary per-skill batch.
+
 This tests **product-managed skills** — the ones under
 `tools/specbind/assets/skills/` that get installed into consumer projects. It is
 not about this repository's own workflow.
@@ -52,6 +56,20 @@ nonzero with a message when the precondition did not take. Use it rather than
 composing the state by hand; that is where a run silently becomes a different
 run. Add a recipe when a scenario needs one, and give it a check that fails when
 the setup is a no-op.
+
+The end-to-end journey has its own prepare-and-judge harness because it starts
+near the beginning of the lifecycle and its final state crosses several
+scenario families:
+
+```sh
+sh tools/specbind/scripts/forward-test-journey.sh prepare hp1 /tmp/sb-hp1 en
+# Drive the exact conversation in docs/skill-forward-tests/journey-scenarios.md.
+sh tools/specbind/scripts/forward-test-journey.sh judge hp1 /tmp/sb-hp1
+```
+
+Do not run `judge` after repairing the fixture by hand. A failed judgment is the
+measurement. Rebuild at a new target and rerun only when a fresh measurement is
+actually worth its agent cost.
 
 Scenarios with no recipe yet need a precondition set up first — an uncommitted edit, a
 broken steering document. **Do that from the shell**, not from a helper script in

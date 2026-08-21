@@ -32,6 +32,7 @@ without a pass are listed separately below.
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q4 |
+| End-to-end journey | None recorded | None recorded |
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
 Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit

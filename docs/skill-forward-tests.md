@@ -14,5 +14,6 @@ The suite is split by concern so measurement history does not obscure the proced
 | [Planning scenarios](./skill-forward-tests/planning-scenarios.md) | Discovery, Requirements, Design, Contract review, and Tasks |
 | [Delivery scenarios](./skill-forward-tests/delivery-scenarios.md) | Implementation, release, validation, task review, and debugging |
 | [Orchestration scenarios](./skill-forward-tests/orchestration-scenarios.md) | Quick/batch planning, checkpoints, gap analysis, steering, and failure handling |
+| [End-to-end journeys](./skill-forward-tests/journey-scenarios.md) | High-cost release-smoke scenarios that compose the whole workflow |
 
 Scenario definitions are the behavioral contract. The ledger records measurements against specific builds; it never rewrites a scenario merely to make a run pass.
