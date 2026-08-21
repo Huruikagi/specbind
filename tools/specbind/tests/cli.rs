@@ -794,6 +794,49 @@ fn reports_tasks_authored_before_the_required_milestone_review() {
 }
 
 #[test]
+fn reports_an_absent_future_review_without_a_health_diagnostic() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: requirements\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  Contract review: absent\n"))
+                .and(predicate::str::contains("CONTRACT_REVIEW_MISSING").not()),
+        )
+        .stderr("");
+}
+
+#[test]
+fn reports_an_absent_actionable_review_as_expected_work() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: contract_review\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  Contract review: absent\n"))
+                .and(predicate::str::contains("milestone action=contract_review"))
+                .and(predicate::str::contains("CONTRACT_REVIEW_MISSING").not()),
+        )
+        .stderr("");
+}
+
+#[test]
 fn accepts_a_stdin_review_candidate_and_reports_fresh_status() {
     let root = project_fixture();
     write_review_fixture(root.path());
@@ -2166,7 +2209,11 @@ fn creates_the_active_milestone_from_a_confirmed_scope() {
         .args(["milestone", "status"])
         .assert()
         .success()
-        .stdout(predicate::str::contains("  Spec states: requirements=1\n"));
+        .stdout(
+            predicate::str::contains("  Spec states: requirements=1\n")
+                .and(predicate::str::contains("CONTRACT_REVIEW_MISSING").not())
+                .and(predicate::str::contains("  Contract review: absent\n")),
+        );
 }
 
 #[test]

@@ -257,3 +257,8 @@ Examples include:
 - a partially applied release-finalization mutation
 
 `inconsistent` remains derived health. It is never written as a milestone phase, and the CLI never guesses a repair that changes user scope or discards project content.
+
+An absent contract review is expected workflow work rather than a consistency
+failure. Status still reports it as absent, makes the review actionable at the
+contract-review barrier, and keeps it as a release blocker. A stale or invalid
+accepted review remains inconsistent.

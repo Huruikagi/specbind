@@ -252,3 +252,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0131](./design/decisions/0131-okf-deferred-destination-and-adapter-state.md) | Accepted | Exact OKF-conformant deferred destination and visible adapter state |
 | [0132](./design/decisions/0132-target-aware-template-resolution.md) | Accepted | Target-aware Spec template path and provenance resolution |
 | [0133](./design/decisions/0133-phase-relative-spec-status.md) | Accepted | Phase-relative Spec health, expected work, and workflow action |
+| [0134](./design/decisions/0134-phase-relative-milestone-review-health.md) | Accepted | Absent milestone review treated as expected workflow work |

@@ -116,11 +116,13 @@ pub fn resolve(
     if let Some(diagnostic) = git.diagnostic.clone() {
         diagnostics.insert(diagnostic);
     }
-    diagnostics.extend(review.issues.iter().map(|issue| MilestoneDiagnostic {
-        code: issue.code,
-        path: issue.source.clone(),
-        message: issue.message.clone(),
-    }));
+    if review.status != ReviewFreshnessStatus::Missing {
+        diagnostics.extend(review.issues.iter().map(|issue| MilestoneDiagnostic {
+            code: issue.code,
+            path: issue.source.clone(),
+            message: issue.message.clone(),
+        }));
+    }
     let mut facts = spec_facts(project_root, specbind_root, &roadmap, &mut diagnostics);
     facts.extend(direct_facts(&roadmap));
     diagnose_unscoped_active_specs(specbind_root, &roadmap, &mut diagnostics);
