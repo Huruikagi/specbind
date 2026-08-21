@@ -75,14 +75,13 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-| First seen | Scenario | Finding | Evidence | Impact |
-| --- | --- | --- | --- | --- |
-| `3746108` | C2 | `scope/v1` requires `schemaVersion` but exposes only `minimum: 0`, so an author must infer that selector `scope/v1` means value `1`. | Reproduced with `specbind schema read scope/v1`; the C2 driver supplied `1` and creation succeeded. | ambiguity |
+None.
 
 ### Fixed, behavioral confirmation pending
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
+| `3746108` | C2 | `scope/v1` required `schemaVersion` but exposed only `minimum: 0`, so an author had to infer that selector `scope/v1` meant value `1`. | `6d1d2e5` gives the generated `scope/v1` schema an explicit `const: 1`, matching the selector, runtime acceptance, and the other v1 structured-artifact schemas. | Rerun C2 with a fresh fixture to confirm authoring behavior. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
 
 ### Resolved usability findings
