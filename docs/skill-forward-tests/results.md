@@ -20,6 +20,7 @@ without a pass are listed separately below.
 | Requirements | R1–R5 | R1, R3 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
+| Steering | None recorded | S5 |
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2 |
@@ -41,6 +42,18 @@ and Discovery needed to repeat the completion check immediately before Brief
 authoring. The final driver followed both rules and stopped in Requirements with
 all gates `not_reached`.
 
+S5 was measured on 2026-08-21 as Codex with `gpt-5.6-terra` at medium
+reasoning. The first run on `3c1b91b`, and a metadata-only retry on `81cc473`,
+classified the testing-guidance request as ordinary documentation and wrote a
+root `TESTING.md`. After project instructions routed durable project-wide
+guidance to Steering, the `d10e05e` run selected `testing` correctly but copied
+only part of the scaffold's `maintain` comment and added an unrequested test
+suite. The fresh `c6d21fd` run passed: it listed Steering before choosing the
+noncolliding `testing` identity, wrote only `steering/testing.md`, omitted the
+`create` comment, preserved the complete 658-byte `maintain` comment exactly,
+and finished with successful list, projected-read, and diff checks. A read-only
+debrief left the fixture state unchanged.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -51,6 +64,7 @@ all gates `not_reached`.
 | R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
 | C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |
+| S5 | Codex | Product failure | On `3c1b91b` and `81cc473`, durable testing guidance bypassed Steering and became root `TESTING.md`; `d10e05e` routed correctly but partially copied `maintain` and expanded into test implementation. The fresh `c6d21fd` run passed. |
 | R1 | Codex | Operator stopped | On `9cce3de`, the run produced a valid Requirements draft, but the controller began the usability debrief instead of continuing the required explicit-approval turn. The draft is evidence of neither a pass nor a product failure. |
 | S2 | Codex | Environment blocked | On `4738ca2`, bootstrap reached its required three-reader dispatch, but stale host agent threads exhausted the global limit. Steering remained empty and unchanged; no product authoring ran. |
 | T1 | Codex | Environment blocked | On `cc37049`, the corrected rule produced a one-task implementation-and-test proposal, but the host safety layer rejected `tasks.yaml` authoring twice, including after explicit Tasks approval. No artifact was written, so this is not a passing remeasurement. |
@@ -89,6 +103,8 @@ remain available in Git history.
 | Milestone health treated a future Contract review as a present inconsistency. | Milestone health is phase-relative while stale or invalid reviews remain inconsistent. | `17fa76a` |
 | `milestone create --scope -` required the agent to infer the scope document shape. | Discovery reads `scope/v1` before authoring the candidate. | `8646136` |
 | A quantity-limit change could be classified as ordinary implementation work. | Project instructions explicitly route observable validation rules, limits, rejected cases, and genuine uncertainty into SpecBind. | `59ebc5f` |
+| Durable project-wide guidance such as testing could be classified as ordinary documentation without opening the Steering skill. | Project instructions route testing, API, security, and deployment conventions to `specbind-steering`, independent of Spec or behavior changes. | `d10e05e`, confirmed on `c6d21fd` |
+| A materializer could excerpt a durable scaffold instruction or change project state merely to make new guidance true. | Steering treats each durable comment as an indivisible byte-for-byte block, verifies it against the scaffold, and forbids supporting implementation outside the documentation request. | `c6d21fd`, confirmed on `c6d21fd` |
 | Forward-test instrumentation and phase confirmation could block or over-authorize a run. | Dispatch logging is opt-in, and guarded confirmation names the presented phase inputs and stopping boundary. | `694dca4`, `3ab817a` |
 | A newly discovered Spec reported missing Requirements as inconsistent state. | Requirements absence is expected work in the Requirements phase; Spec and milestone health stay consistent while strict traceability remains unchanged. | `a8cae47` |
 | Discovery's expected dirty output appeared as a present Release blocker. | Worktree cleanliness is reported only when a clean revision would unlock current progress; release readiness is not evaluated before Validation. | `475f144` |
