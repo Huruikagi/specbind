@@ -186,6 +186,28 @@ fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
 }
 
 #[test]
+fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
+    let body = skill::find("specbind-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("discovery body");
+    let payload = body
+        .find("complete confirmation payload")
+        .expect("complete confirmation payload instruction");
+    let no_summary = body
+        .find("or a no-change summary")
+        .expect("no summary-only stop instruction");
+    let apply = body
+        .find("## 6. Apply, rewinds first")
+        .expect("apply phase");
+
+    assert!(
+        payload < no_summary && no_summary < apply,
+        "discovery must present the approvable payload before applying scope"
+    );
+}
+
+#[test]
 fn every_named_protocol_selector_and_rule_path_exists() {
     for entry in skill::all() {
         let body = entry.body().expect("body");

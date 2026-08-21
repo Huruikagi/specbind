@@ -192,6 +192,12 @@ Present the whole plan and get explicit agreement:
 - every gate that will be invalidated, and what that costs in rework
 - dependencies between items
 
+Stopping for confirmation means presenting that complete confirmation payload
+in the same response. Never return only a statement that confirmation is
+required, a list of reads or commands, or a no-change summary. Until every
+applicable item above is visible to the user, you have not reached the
+confirmation boundary and there is nothing they can safely approve.
+
 Scope is the decision the rest of the workflow is built on. Confirm it once here
 rather than discovering it was wrong three phases later.
 
