@@ -25,6 +25,20 @@ Build Toolsの**Desktop development with C++**ワークロードとWindows SDK�
 
 ## 2. プレビュー版CLIをインストールする
 
+miseを使っている場合は、WindowsとWSL2/Linuxのどちらでも次のコマンドで
+GitHub Releaseの対応するバイナリを導入できます。
+
+```sh
+mise use github:Huruikagi/specbind
+```
+
+このコマンドは、現在のディレクトリでmiseが選んだ設定ファイルへSpecBindを記録し、
+miseの管理する`PATH`から実行できるようにします。miseは`latest`に既定で最低公開
+期間を設けているため、最初のstableリリースの公開直後だけは、必要に応じて
+`mise use github:Huruikagi/specbind@0.1.0`のようにバージョンを明示してください。
+
+miseを使わない場合は、プラットフォーム別のインストーラを使います。
+
 Windows PowerShell:
 
 ```powershell
@@ -37,8 +51,9 @@ WSL2/Linux:
 curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
 ```
 
-インストーラはGitHub Releaseのアーカイブと`SHA256SUMS`を取得し、チェックサムが
-一致した場合だけバイナリを配置します。既定の配置先は次のとおりです。
+プラットフォーム別インストーラはGitHub Releaseのアーカイブと`SHA256SUMS`を
+取得し、チェックサムが一致した場合だけバイナリを配置します。既定の配置先は
+次のとおりです。
 
 - Windows: `%LOCALAPPDATA%\SpecBind\bin\specbind.exe`
 - WSL2/Linux: `$HOME/.local/bin/specbind`

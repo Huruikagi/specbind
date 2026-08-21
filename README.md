@@ -55,6 +55,20 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 The first binary release line is a pre-1.0 Preview for Windows x64 and Linux
 x64. The latest stable release can be installed without choosing a version.
 
+With [mise](https://mise.jdx.dev/), on either supported platform:
+
+```sh
+mise use github:Huruikagi/specbind
+```
+
+This installs the latest stable version eligible under your mise settings and
+records it in the mise configuration selected for the current directory. mise
+applies a minimum release age to `latest` by default, so during the first day
+after the first stable release, select it explicitly with
+`github:Huruikagi/specbind@0.1.0` if needed.
+
+Without mise, use the platform installer.
+
 Windows PowerShell:
 
 ```powershell

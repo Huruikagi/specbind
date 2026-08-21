@@ -176,3 +176,40 @@ jobs:
             dist/specbind-*.tar.gz \
             dist/SHA256SUMS \
             "${options[@]}"
+
+  mise-smoke:
+    name: Smoke-test mise (${{ matrix.os }})
+    needs: publish
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+
+    steps:
+      - name: Install mise
+        uses: jdx/mise-action@v4
+        with:
+          install: false
+          cache: false
+
+      - name: Install and run SpecBind through mise
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_MINIMUM_RELEASE_AGE: 0s
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $smoke = Join-Path $env:RUNNER_TEMP 'specbind-mise-smoke'
+          New-Item -ItemType Directory -Force -Path $smoke | Out-Null
+          Set-Location -LiteralPath $smoke
+
+          $tool = "github:$env:GITHUB_REPOSITORY"
+          mise use $tool
+          $actual = mise exec $tool --command "specbind --version"
+          $expected = "specbind $($env:RELEASE_TAG.Substring(1))"
+          if ($actual -ne $expected) {
+            throw "mise-installed archive reports '$actual'; expected '$expected'."
+          }

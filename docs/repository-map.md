@@ -248,3 +248,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0127](./design/decisions/0127-retire-cc-sdd-source-at-final-cutover.md) | Accepted | Git-guarded retirement of cc-sdd sources at final cutover |
 | [0128](./design/decisions/0128-plan-orchestrator-names.md) | Accepted | Planning orchestrator names expose their Tasks-approval stopping point |
 | [0129](./design/decisions/0129-agent-role-capability-adapters.md) | Accepted | Agent-role capability adapters with project model overrides |
+| [0130](./design/decisions/0130-mise-github-backend-installation.md) | Accepted | Installation through mise's GitHub backend over the existing release assets |
