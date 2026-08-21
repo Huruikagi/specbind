@@ -20,6 +20,20 @@ specbind adapter list
 specbind adapter read release
 ```
 
+Classify the exact read result before doing anything else:
+
+1. If the adapter exists, has the required Front Matter, has no scaffold marker,
+   and everything after Front Matter is whitespace, it is an **explicit empty
+   adapter**. Do not bootstrap it. Continue to core release under the empty-body
+   rule below.
+2. Only an absent adapter or one carrying the exact scaffold marker is
+   **unconfigured** and enters the bootstrap flow.
+3. Otherwise it is an active adapter and its body is project policy.
+
+Never infer that an adapter is unconfigured merely because it contains no
+instructions. The marker, not the lack of a body, distinguishes an installed
+scaffold from the explicit empty state.
+
 An absent adapter or one carrying the exact
 `<!-- specbind:adapter-scaffold -->` marker is **unconfigured**. Do not interpret
 its remaining body, bind a version, run release work, or finalize.
