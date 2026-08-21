@@ -207,6 +207,9 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
         .find("Gate invalidations:")
         .expect("gate invalidations field");
     let dependencies = body.find("Dependencies:").expect("dependencies field");
+    let dependency_boundary = body
+        .find("is not a work item")
+        .expect("dependency endpoint boundary");
     let no_mutation = body
         .find("Do not run an invalidation")
         .expect("no pre-confirmation mutation instruction");
@@ -220,7 +223,8 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
             && work_items < new_specs
             && new_specs < invalidations
             && invalidations < dependencies
-            && dependencies < no_summary
+            && dependencies < dependency_boundary
+            && dependency_boundary < no_summary
             && no_summary < no_mutation
             && no_mutation < apply,
         "discovery must present the approvable payload before applying scope"

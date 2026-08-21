@@ -19,10 +19,10 @@ presented yet. This remains true when the request says "ship", "go ahead", or
 "take it through release", supplies a precise change and version, or otherwise
 authorizes the desired outcome broadly.
 
-Your first response before any mutation presents the four-field scope proposal
-from step 5 and asks the user to confirm it. Only a later user reply that refers
-to that visible proposal authorizes Discovery to apply it. Do not infer this
-separate confirmation from the invocation.
+Your first response before any product or lifecycle mutation presents the
+four-field scope proposal from step 5 and asks the user to confirm it. Only a
+later user reply that refers to that visible proposal authorizes Discovery to
+apply it. Do not infer this separate confirmation from the invocation.
 
 ## 1. Understand the request
 
@@ -212,8 +212,12 @@ when a field has no entries:
 Work items: <identity, kind, and reason for each>
 New Specs: <identity and owned responsibility for each, or None>
 Gate invalidations: <earliest gate and rework cost for each, or None>
-Dependencies: <edges between items, or None>
+Dependencies: <edges only between the work-item identities above, or None>
 ```
+
+A release version, publication, phase, or gate is not a work item and never
+appears as a dependency endpoint. One work item therefore always reports
+`Dependencies: None`.
 
 Then ask for confirmation of that proposal. Never return only a statement that
 confirmation is required, a list of reads or commands, or a no-change summary.
