@@ -565,6 +565,10 @@ fn reports_unstarted_requirements_as_expected_work_without_weakening_traceabilit
                 .and(predicate::str::contains(
                     "    - spec:checkout action=requirements\n",
                 ))
+                .and(predicate::str::contains(
+                    "  Release readiness: not evaluated until validation\n",
+                ))
+                .and(predicate::str::contains("WORKTREE_NOT_CLEAN").not())
                 .and(predicate::str::contains("MILESTONE_SPEC_INCONSISTENT").not()),
         );
 
@@ -2687,6 +2691,82 @@ fn walks_every_gate_from_requirements_to_implementation() {
                 .and(predicate::str::contains(
                     "  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n",
                 )),
+        );
+}
+
+#[test]
+fn reports_worktree_dirt_only_when_a_clean_revision_would_unlock_progress() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    approve_design(root.path());
+
+    let mut review = Command::cargo_bin("specbind").expect("specbind binary should build");
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        gate_task_fixture(),
+    );
+    let mut approve_tasks = Command::cargo_bin("specbind").expect("specbind binary should build");
+    approve_tasks
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "tasks",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success();
+
+    let mut complete = Command::cargo_bin("specbind").expect("specbind binary should build");
+    complete
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1"])
+        .assert()
+        .success();
+
+    let mut dirty = Command::cargo_bin("specbind").expect("specbind binary should build");
+    dirty
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: implementation\n")
+                .and(predicate::str::contains("  Actionable: none\n"))
+                .and(predicate::str::contains(
+                    "  Current blockers: WORKTREE_NOT_CLEAN\n",
+                ))
+                .and(predicate::str::contains(
+                    "  Release readiness: not evaluated until validation\n",
+                ))
+                .and(predicate::str::contains("Release blockers:").not()),
+        );
+
+    commit_all(root.path());
+    let mut clean = Command::cargo_bin("specbind").expect("specbind binary should build");
+    clean
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: validation\n")
+                .and(predicate::str::contains(
+                    "    - spec:checkout action=validation\n",
+                ))
+                .and(predicate::str::contains("Current blockers:").not())
+                .and(predicate::str::contains("  Release blockers:")),
         );
 }
 

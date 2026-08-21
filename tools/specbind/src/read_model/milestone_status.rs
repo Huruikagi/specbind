@@ -70,6 +70,7 @@ pub struct MilestoneStatusModel {
     pub current_revision: Option<String>,
     pub items: Vec<MilestoneItemView>,
     pub actionable: Vec<MilestoneAction>,
+    pub current_blockers: Vec<String>,
     pub release_blockers: Vec<String>,
     pub diagnostics: Vec<MilestoneDiagnostic>,
 }
@@ -164,15 +165,22 @@ pub fn resolve(
         validation_checkout_ready,
         roadmap.target_release.is_some(),
     );
+    let current_blockers = if !validation_checkout_ready
+        && git.diagnostic.is_none()
+        && worktree_blocks_progress(
+            &facts,
+            review.status,
+            stage,
+            &actionable,
+            roadmap.target_release.is_some(),
+        ) {
+        vec!["WORKTREE_NOT_CLEAN".to_owned()]
+    } else {
+        Vec::new()
+    };
     let items = item_views(&facts, &implementation_complete);
-    let release_blockers = release_blockers(
-        &facts,
-        &roadmap,
-        review.status,
-        git.clean,
-        health,
-        all_specs_validated,
-    );
+    let release_blockers =
+        release_blockers(&facts, &roadmap, review.status, health, all_specs_validated);
     let (stage, release_blockers) =
         derive_release_readiness(project_root, specbind_root, stage, release_blockers);
     let spec_state_counts = spec_state_counts(&facts);
@@ -196,6 +204,7 @@ pub fn resolve(
         current_revision: validation_checkout_ready.then_some(git.revision).flatten(),
         items,
         actionable,
+        current_blockers,
         release_blockers,
         diagnostics: diagnostics.into_iter().collect(),
     }))
@@ -409,6 +418,7 @@ fn actionable_items(
             }
             ItemKind::Spec { model }
                 if model.as_deref().is_some_and(tasks_approved)
+                    && !model.as_deref().is_some_and(tasks_complete)
                     && !completion[&item.id]
                     && dependencies_ready(item, completion) =>
             {
@@ -457,6 +467,27 @@ fn actionable_items(
     actions
 }
 
+fn worktree_blocks_progress(
+    facts: &[ItemFacts],
+    review: ReviewFreshnessStatus,
+    current_stage: DeliveryStage,
+    current_actions: &[MilestoneAction],
+    release_bound: bool,
+) -> bool {
+    let completion = implementation_completion(facts, true);
+    let all_implemented = completion.values().all(|complete| *complete);
+    let stage = derive_stage(facts, review, &completion);
+    let actions = actionable_items(
+        facts,
+        review,
+        &completion,
+        all_implemented,
+        true,
+        release_bound,
+    );
+    stage != current_stage || actions != current_actions
+}
+
 fn push_action(actions: &mut Vec<MilestoneAction>, item: &ItemFacts, action: &'static str) {
     actions.push(MilestoneAction {
         item: item.id.clone(),
@@ -499,16 +530,12 @@ fn release_blockers(
     facts: &[ItemFacts],
     roadmap: &RoadmapDocument,
     review: ReviewFreshnessStatus,
-    clean: bool,
     health: MilestoneHealth,
     all_specs_validated: bool,
 ) -> Vec<String> {
     let mut blockers = Vec::new();
     if roadmap.target_release.is_none() {
         blockers.push("TARGET_RELEASE_UNBOUND".to_owned());
-    }
-    if !clean {
-        blockers.push("WORKTREE_NOT_CLEAN".to_owned());
     }
     if has_specs(facts) && review != ReviewFreshnessStatus::Fresh {
         blockers.push("CONTRACT_REVIEW_NOT_FRESH".to_owned());

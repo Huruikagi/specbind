@@ -238,7 +238,15 @@ A milestone status projection should remain concise while exposing enough struct
 - current Design wave candidates when in Design
 - current implementation-actionable items and their `waiting_for` predecessors
 - validation candidates and the common current revision
-- release blockers
+- current blockers that prevent an otherwise reachable action
+- release blockers from Validation onward
+
+Before Validation, release readiness is reported as not yet evaluated. A dirty
+worktree is ordinary during authoring and implementation, and appears as
+`WORKTREE_NOT_CLEAN` only when a clean committed revision would advance the
+derived stage or unlock more work. It is then a current workflow blocker, not a
+repository-wide release blocker. Release preflight and finalization retain their
+own accepted Git guards.
 
 The public command is `specbind milestone status`. It returns `OK MILESTONE_STATUS_REPORTED` for an active projection and `NO_CHANGE NO_ACTIVE_MILESTONE` when the active Roadmap is absent. The read model must not imply that a later wave is globally blocked when an independent item is currently actionable.
 

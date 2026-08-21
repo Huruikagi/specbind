@@ -98,7 +98,23 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     push_field(&mut output, "Baseline", &model.baseline_revision);
     render_milestone_items(model, &mut output);
     render_milestone_actions(model, &mut output);
-    push_inline_list(&mut output, "Release blockers", &model.release_blockers);
+    if !model.current_blockers.is_empty() {
+        push_inline_list(&mut output, "Current blockers", &model.current_blockers);
+    }
+    if matches!(
+        model.stage,
+        milestone_status::DeliveryStage::Validation
+            | milestone_status::DeliveryStage::ReleasePending
+            | milestone_status::DeliveryStage::ReleaseReady
+    ) {
+        push_inline_list(&mut output, "Release blockers", &model.release_blockers);
+    } else {
+        push_field(
+            &mut output,
+            "Release readiness",
+            "not evaluated until validation",
+        );
+    }
     render_milestone_diagnostics(model, &mut output);
     CommandOutput::success(output.into_bytes())
 }
