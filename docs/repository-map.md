@@ -259,3 +259,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0137](./design/decisions/0137-active-default-git-checkpoints.md) | Accepted | Active local Git checkpoints for newly installed projects |
 | [0138](./design/decisions/0138-dedicated-adapter-scaffold-marker.md) | Accepted | Dedicated exact marker for inactive adapter scaffolds |
 | [0139](./design/decisions/0139-scoped-artifact-instructions.md) | Accepted | Lifecycle-scoped create, maintain, and consume instructions |
+| [0140](./design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md) | Accepted | One-time Release adapter bootstrap and post-finalization metadata checkpoint |

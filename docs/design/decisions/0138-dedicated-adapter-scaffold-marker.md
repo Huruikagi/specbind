@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
+changes the Release selector's marked or absent state from no project-specific
+action to the one-time bootstrap branch. Empty unmarked Release content remains
+the explicit no-action state.
+
 ## Context
 
 Decision 0059 defines `specbind:instruction` as template-only guidance that is

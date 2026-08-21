@@ -20,8 +20,9 @@ type: SpecBind Git Adapter
 
 安全な完了単位ごとにローカルコミットを1つ作成します。完了したDiscovery、承認された
 Requirements・Design・Tasksの各Gate、受理されたContract review、完了した実装Taskが
-それぞれ1単位です。completionワークフローが要求する状態メタデータは別の
-チェックポイントにします。
+それぞれ1単位です。承認された初回のRelease adapter設定と、成功したリリース確定も
+それぞれ1単位です。completionとリリース確定の状態メタデータは、各ワークフローが
+要求するときは別のチェックポイントにします。
 
 ## 何を含めるか
 

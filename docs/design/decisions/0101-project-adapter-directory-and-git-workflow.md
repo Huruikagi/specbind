@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
+supersedes the untouched Release scaffold's no-action interpretation and adds
+the Release bootstrap and finalization checkpoints.
+
 [Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the use
 of `specbind:instruction` as adapter state and removes its compatibility
 interpretation. Inactive adapters now use the exact dedicated

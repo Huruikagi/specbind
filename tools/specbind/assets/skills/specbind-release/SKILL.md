@@ -12,10 +12,67 @@ option.
 You orchestrate; the CLI owns every mutation of SpecBind state. **SpecBind never
 verifies that a publication happened** — you and the user judge that.
 
-## 1. Bind the version, and do it early
+## 1. Read the state and bootstrap release policy once
 
 ```sh
 specbind milestone status
+specbind adapter list
+specbind adapter read release
+```
+
+An absent adapter or one carrying the exact
+`<!-- specbind:adapter-scaffold -->` marker is **unconfigured**. Do not interpret
+its remaining body, bind a version, run release work, or finalize.
+
+Inspect only repository evidence that can define this project's real release
+procedure: root agent instructions, package and version manifests, release
+workflows, build or packaging scripts, and existing release documentation. Do
+not edit any of them. Draft a complete replacement Release adapter that:
+
+- preserves the exact `type: SpecBind Release Adapter` Front Matter;
+- removes the scaffold marker;
+- gives concrete Prepare, Publish, Verify, and After-finalize guidance;
+- says `Nothing.` in a section that requires no action;
+- names fresh success evidence, not merely a command to run; and
+- never invents a version label, credential, destination, release channel, or
+  external verification capability the repository does not establish.
+
+When repository evidence cannot answer a material release question, ask the
+user. Do not turn a guess into durable project policy.
+
+Present the **entire proposed adapter** and state both boundaries before writing:
+
+1. approval authorizes only replacing the adapter and its narrow local
+   checkpoint — not binding, tagging, publishing, pushing, or finalizing; and
+2. the settings write is an ordinary project change, so every participating
+   Spec that already has accepted completion must run its completion handshake
+   again before release preflight can pass.
+
+After explicit approval, replace only the Release path reported by `adapter
+list` below the configured SpecBind root. If the project explicitly chooses no
+project-specific release work at all, preserve the Front Matter and remove the
+entire body instead. Then read the result back and confirm that the scaffold
+marker is absent.
+
+Read the Git adapter and inspect `git status --short`. When it has active
+guidance, follow it for one checkpoint containing only the Release adapter. The
+configuration approval authorizes this narrow local checkpoint as the ordinary
+final action of the bootstrap, but does not authorize push or history rewriting.
+If the adapter file cannot be separated safely, leave it uncommitted and report
+that fact.
+
+**Stop after bootstrap.** Report which completion handshakes must be rerun. Do
+not continue into any release step in this run, even when the user originally
+asked to release the milestone.
+
+An adapter whose body is empty after Front Matter and has no scaffold marker is
+different: it explicitly means this project needs no project-specific Prepare,
+Publish, Verify, or After-finalize action. Continue to core release. An active
+body is project policy; follow it below.
+
+## 2. Bind the version, and do it early
+
+```sh
 specbind release preflight
 ```
 
@@ -50,22 +107,13 @@ replacement — confirm it explicitly first.
 Then re-run `specbind release preflight` and resolve what it reports. **A
 preflight failure stops the run**; no adapter work happens until it passes.
 
-## 2. Read the project's release procedure
-
-```sh
-specbind adapter read release
-```
-
 This is prose, not a script. You perform what it says; a code block in it is an
 example to follow, not something that runs on its own.
 
 **An empty adapter means releasing needs no project-specific action.** That is
-an explicit statement, not a gap — proceed to finalization. The same applies
-when it carries the exact `<!-- specbind:adapter-scaffold -->` marker: that is
-the installed scaffold, not project policy. The marker classifies the whole
-document, so ignore every other body line even when it looks actionable.
+an explicit statement, not a gap — proceed to finalization.
 
-(Release keeps this selector-specific absence meaning. The installed Git
+(Release keeps this selector-specific empty-body meaning. The installed Git
 adapter is active checkpoint policy; do not transfer either adapter's default
 to the other.)
 
@@ -73,6 +121,21 @@ to the other.)
 
 Execute any applicable Prepare guidance. Repeatable and local — no confirmation
 needed. If it fails, stop here and report; nothing has left the repository.
+
+Prepare may build ignored packages, but a version bump, generated tracked file,
+or release-specific commit is an ordinary project change after accepted
+completion. The Release adapter owns whether such a commit is part of this
+project's procedure; it cannot keep the old completion evidence fresh. After
+Prepare, rerun:
+
+```sh
+specbind release preflight
+```
+
+If the project changed and preflight no longer passes, stop before Publish and
+report the affected completion handshakes. They must be rerun at the new
+revision. Never treat a successful Prepare commit as permission to publish stale
+completion evidence.
 
 ## 4. Publish — confirm with the user first
 
@@ -131,6 +194,10 @@ text becomes the Spec's permanent history.
 
 Keep it one line: no carriage return or line feed. Inline Markdown is fine.
 
+Immediately before finalization, record `git status --short`. Finalization
+targets must be clean, but unrelated dirty paths may exist and must remain
+untouched.
+
 ```sh
 specbind release finalize --log-entries -
 ```
@@ -150,7 +217,37 @@ array.
 headings, ordering, the canonical entry wrapper, and idempotent retry matching
 by milestone ID. A failed attempt is retryable and will not duplicate history.
 
-## 8. After finalize
+## 8. Checkpoint only the finalized lifecycle metadata
+
+After successful finalization, run `git status --short` again and compare it to
+the snapshot taken immediately before. The newly changed paths are the CLI's
+log, archive, idle-state, Brief, Research, Tasks, review, and Roadmap lifecycle
+transaction. They are post-publication metadata; the published tag or package
+may correctly point to the earlier verified implementation revision.
+
+```sh
+specbind adapter read git
+```
+
+`NO_CHANGE ADAPTER_ABSENT`, an empty Git adapter, or one carrying the exact
+`<!-- specbind:adapter-scaffold -->` marker means no adapter-directed commit.
+Leave the finalized metadata uncommitted and report it.
+
+With active guidance, follow it for one local checkpoint containing **only**
+the paths newly changed by finalization. Never include a path that was already
+dirty, unrelated work, or any After-finalize output. Check the staged diff and
+use a concise message describing the closed release.
+
+Publication approval does not authorize pushing this commit. Push only when the
+user explicitly requested it for the current run or an applicable project
+instruction independently requires it. Never amend, rewrite history, force-push,
+or move the published tag to include this later metadata commit.
+
+If the paths cannot be separated safely or the commit fails, the release is
+still finalized. Report the checkpoint failure separately and never rerun
+finalization merely to obtain a commit.
+
+## 9. After finalize
 
 Execute any applicable After-finalize guidance, and report its result
 separately. **A failure here is not a failed release** — the milestone is

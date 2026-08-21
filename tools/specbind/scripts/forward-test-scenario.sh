@@ -49,7 +49,8 @@
 #   vd1    an approved design that defers the bound to a research document
 #   rl1    cart released-ready but with no version bound yet
 #   rl2    rl3 plus a release adapter whose Verify step cannot succeed
-#   rl3    a milestone ready for release: bound, validated, preflight OK
+#   rl3    a milestone ready for release with an explicitly empty adapter body
+#   rl4    rl3 readiness with the installed Release scaffold and release docs
 
 set -eu
 
@@ -583,7 +584,7 @@ ds4 | t1 | t2 | x1 | vd1)
     fi
     ;;
 
-d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
+d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -609,7 +610,7 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
     case "$scenario" in
-    rl1 | rl2 | rl3)
+    rl1 | rl2 | rl3 | rl4)
         runner=$(python_runner)
         cart_tests "$runner"
         cart_cap_implemented
@@ -661,6 +662,31 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
             git add -A
             git -c user.name=Fixture -c user.email=fixture@example.invalid \
                 commit --quiet -m "State the project release policy"
+        elif [ "$scenario" = rl1 ] || [ "$scenario" = rl3 ]; then
+            # Front Matter only is the project's explicit no-project-action
+            # policy. It is intentionally different from the installed marker.
+            {
+                echo "---"
+                echo "type: SpecBind Release Adapter"
+                echo "---"
+            } > .specbind/settings/adapters/release.md
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Choose core-only release finalization"
+        elif [ "$scenario" = rl4 ]; then
+            # Repository evidence for the bootstrap driver to translate into
+            # the project-owned adapter without inventing an external remote.
+            {
+                echo "# Releasing"
+                echo
+                echo "1. Run \`sh scripts/test.sh\` and require a passing suite."
+                echo "2. Create an annotated local tag whose name is the bound release version."
+                echo "3. Verify the tag resolves to the release commit and rerun the suite from that tagged tree."
+                echo "4. No project-specific work is required after SpecBind finalization."
+            } > RELEASING.md
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Document the local release procedure"
         fi
         printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
             | specbind spec completion accept cart --evidence - >/dev/null \
@@ -680,6 +706,12 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3)
                 '! specbind adapter read release | grep -q "specbind:instruction"'
             expect "the fixture unexpectedly has a remote" \
                 '! git remote | grep -q .'
+        fi
+        if [ "$scenario" = rl4 ]; then
+            expect "the release scaffold was already configured" \
+                'specbind adapter read release | grep -q "specbind:adapter-scaffold"'
+            expect "the release documentation is missing" \
+                'test -e RELEASING.md'
         fi
         ;;
     vi1 | vi2 | vi3)

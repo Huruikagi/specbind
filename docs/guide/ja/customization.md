@@ -128,10 +128,18 @@ specbind adapter read git
 方針として扱われません。内容を具体化したらマーカーを削除します。テンプレート用の
 `specbind:instruction`はアダプターの状態には影響しません。
 
+`release.md`が未設定のままリリースを始めると、Release Skillがリポジトリ内のworkflow、
+version manifest、build script、既存ドキュメントを調べて具体案を提示します。承認した
+実行では`release.md`だけを保存・ローカルcommitして停止し、公開は行いません。この設定
+変更後はcompletionを再検証してから、改めてリリースします。プロジェクト固有の作業が
+本当に不要なら、Front Matterを残して本文を空にすることで明示できます。
+
 `git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contract reviewの
 受理、各実装Taskの完了など、Skillが定めた安全な完了単位ごとに、関係するパスだけを
 ローカルコミットします。現在のブランチを使い、既定ではpushやamendなどの履歴書き換えを
-行いません。自動コミットを望まない場合は`git.md`の本文を空にしてください。ファイルを
+行いません。初回のRelease adapter設定と、`release finalize`が生成するlog・archive・
+cleanupも、それぞれ公開対象とは別のローカルcommitになります。自動コミットを望まない
+場合は`git.md`の本文を空にしてください。ファイルを
 削除しても実行時は同じですが、次のinstallで既定値が再作成されます。既存のプロジェクト所有
 ファイルは、installを再実行しても上書きされません。
 

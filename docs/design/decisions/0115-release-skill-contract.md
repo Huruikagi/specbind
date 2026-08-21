@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
+supersedes the treatment of an untouched or absent Release adapter as an
+explicit no-op and adds the post-finalization Git checkpoint. An intentionally
+empty adapter body remains the explicit no-project-action state.
+
 [Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the use
 of `specbind:instruction` to identify an installed adapter scaffold. Release now
 uses the exact dedicated `<!-- specbind:adapter-scaffold -->` marker.

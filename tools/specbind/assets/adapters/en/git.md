@@ -19,8 +19,9 @@ Emptying or removing this file means SpecBind commits nothing on its own.
 
 Create one local commit after each eligible workflow unit: completed Discovery,
 each approved Requirements, Design, or Tasks gate, an accepted Contract review,
-and each completed implementation Task. Keep completion metadata in its own
-checkpoint when the completion workflow requires one.
+each completed implementation Task, a confirmed one-time Release adapter
+bootstrap, and successful release finalization. Keep completion and finalized
+release metadata in their own checkpoints when those workflows require one.
 
 ## What to include
 

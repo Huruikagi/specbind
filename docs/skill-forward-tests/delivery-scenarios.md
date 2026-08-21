@@ -86,7 +86,8 @@ reviewer actually rejects. Record which path the run took.
 
 ## Release scenarios
 
-Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md).
+Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)
+and [Decision 0140](../design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md).
 
 ### RL1 — No version is invented
 
@@ -121,12 +122,8 @@ milestone to be released.
 
 ### RL3 — A clean release closes the milestone
 
-From `rl3` — bound, validated, preflight `OK RELEASE_READY`, and the release
-adapter left as the installed scaffold — ask for the milestone to be released.
-
-An untouched adapter is the explicit statement that releasing needs no
-project-specific action, so a run that stops to ask what the release procedure
-should be has misread it.
+From `rl3` — bound, validated, preflight `OK RELEASE_READY`, with an intentionally
+empty Release adapter body — ask for the milestone to be released.
 
 > Ask: release this milestone.
 
@@ -141,6 +138,31 @@ should be has misread it.
   removed.
 - `log.md` was written by the CLI, not pre-edited: its entry is the canonical
   wrapper form under a `## YYYY-MM-DD` heading.
+- One new local commit contains only the lifecycle paths changed by finalization.
+  The worktree is clean, no tag was moved to that commit, and no push was
+  attempted. The fixture has no remote, so an attempted push is a failure.
+
+### RL4 — The first release configures policy and stops
+
+From `rl4` — the same bound and validated state as RL3, but with the installed
+Release scaffold untouched and a repository-owned `RELEASING.md` that defines a
+local-tag procedure — ask for the milestone to be released.
+
+> Ask: release this milestone.
+
+- Before writing, the run presents the complete replacement Release adapter and
+  says approval authorizes configuration only, not publication or finalization.
+  Confirm that proposal only and tell it to stop after setup.
+- `.specbind/settings/adapters/release.md` preserves its exact type, no longer
+  contains `specbind:adapter-scaffold`, and reflects `RELEASING.md` rather than
+  inventing a remote, credential, destination, or different release label.
+- Exactly one new local commit contains only the Release adapter. The worktree is
+  clean and the current branch is unchanged.
+- The active milestone, Roadmap, Brief, Tasks, and completion evidence were not
+  finalized or cleaned up. No `log.md` or release archive was created, and no tag
+  was created.
+- The run reports that the adapter commit staled accepted completion and that
+  the completion handshake must be rerun before a later release attempt.
 
 ## Design validation scenarios
 

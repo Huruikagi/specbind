@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
+adds two eligible Release units: the confirmed one-time adapter bootstrap and
+the lifecycle metadata produced by successful core finalization.
+
 [Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the
 legacy `specbind:instruction` compatibility behavior. Inactive adapter state now
 uses only the exact dedicated scaffold marker.

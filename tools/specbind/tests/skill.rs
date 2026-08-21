@@ -415,7 +415,9 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
         );
         assert!(
             body.contains("marker classifies the whole\ndocument")
-                || body.contains("marker classifies the whole document"),
+                || body.contains("marker classifies the whole document")
+                || (name == "specbind-release"
+                    && body.contains("Do not interpret\nits remaining body")),
             "{name} must make the marker override the entire adapter body"
         );
         assert!(
@@ -423,6 +425,44 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
             "{name} must not preserve legacy adapter compatibility"
         );
     }
+}
+
+#[test]
+fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
+    let body = skill::find("specbind-release")
+        .expect("release skill")
+        .body()
+        .expect("body");
+
+    for required in [
+        "Stop after bootstrap",
+        "must run its completion handshake\n   again",
+        "approval authorizes only replacing the adapter",
+        "Immediately before finalization, record `git status --short`",
+        "Checkpoint only the finalized lifecycle metadata",
+        "Publication approval does not authorize pushing this commit",
+        "move the published tag to include this later metadata commit",
+    ] {
+        assert!(
+            body.contains(required),
+            "release skill must contain {required}"
+        );
+    }
+
+    let finalize = body
+        .find("specbind release finalize --log-entries -")
+        .expect("finalization command");
+    let git = body[finalize..]
+        .find("specbind adapter read git")
+        .map(|offset| finalize + offset)
+        .expect("post-finalization Git adapter read");
+    let after_finalize = body
+        .find("## 9. After finalize")
+        .expect("After-finalize section");
+    assert!(
+        finalize < git && git < after_finalize,
+        "core metadata must checkpoint before project After-finalize work"
+    );
 }
 
 #[test]
