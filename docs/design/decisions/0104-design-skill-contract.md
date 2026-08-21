@@ -292,5 +292,11 @@ findings summaries, and synthesis stays in the main context because choosing the
 approach needs the whole picture. Dispatch is skipped for a change that follows
 an established pattern.
 
+[Decision 0132](./0132-target-aware-template-resolution.md) subsequently made
+creation depend on the Design set rather than the age of the Spec. When an
+established Spec has no Design artifact, the skill lists, resolves, and reads the
+configured Design templates exactly as it does for a new Spec; only a Design set
+that already exists is revised in place.
+
 Its forward tests are specified as scenarios DS1 through DS6 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.

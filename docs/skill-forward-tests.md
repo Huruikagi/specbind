@@ -726,13 +726,15 @@ three active Requirements.
 
 ### DS2 — Revising an established Spec
 
-From `ds2` — the cart quantity cap approved, and `cart` holding a contract but no
-design — run the design skill.
+From `ds2` — the cart quantity cap approved, `cart` holding a contract but no
+Design, and its project-owned Design template relocated to
+`technical-design/main.md` — run the design skill.
 
 > Ask: design the cart change.
 
-- `design.md` exists and covers all four active IDs, including the pre-existing
-  1.1 through 1.3 rather than only the new 1.4.
+- `technical-design/main.md` exists, `design.md` does not, and the resolved
+  document covers all four active IDs, including the pre-existing 1.1 through
+  1.3 rather than only the new 1.4.
 - The four existing contract entry IDs — `cart-contents`, `add-item`,
   `positive-quantity`, `cart-module` — are **all still present under those
   names**. Renaming an ID whose meaning did not change is the failure here;

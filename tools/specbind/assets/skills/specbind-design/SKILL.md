@@ -160,7 +160,8 @@ The project's `settings/rules/design-principles.md` and
 project-owned; if one is absent, the project removed it deliberately and the
 protocol still applies.
 
-**New Spec** — list the template set first:
+**No Design exists — whether the Spec is new or established** — list the
+template set first:
 
 ```sh
 specbind template list spec
@@ -180,7 +181,7 @@ filename from `artifact_id`, the Requirements path, or another Spec. Remove
 every `specbind:instruction` comment and add the live-only traceability fields
 while authoring.
 
-**Existing Spec** — revise the current design artifacts in place.
+**A Design set exists** — revise the current design artifacts in place.
 
 The design set is the Spec's **complete current design**, persistent the way the
 requirements are. Fold this milestone's change into the document that owns that

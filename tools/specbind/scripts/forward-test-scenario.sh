@@ -337,6 +337,17 @@ r4 | r5 | ds2 | ds3 | ds5 | x2)
         expect "the approved set does not carry the cap criterion" \
             'grep -q "\"1.4\"" .specbind/specs/cart/spec.yaml'
     fi
+    if [ "$scenario" = ds2 ]; then
+        # An established Spec can still be authoring its first Design. Relocate
+        # the project-owned template so the run must resolve that new set's
+        # target instead of treating "existing Spec" as "existing Design" or
+        # guessing design.md from the Requirements path.
+        mkdir -p .specbind/settings/templates/specs/technical-design
+        mv .specbind/settings/templates/specs/design.md \
+            .specbind/settings/templates/specs/technical-design/main.md
+        expect "the relocated Design template did not resolve to its custom target" \
+            'specbind template resolve spec cart design/main | grep -q "Target path: specs/cart/technical-design/main.md"'
+    fi
     if [ "$scenario" = ds3 ]; then
         # An edit after the approval, so the gate the design phase depends on is
         # stale rather than missing. The design skill must route this back
