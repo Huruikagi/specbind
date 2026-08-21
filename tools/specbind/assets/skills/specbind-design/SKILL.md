@@ -28,9 +28,10 @@ specbind steering list
 a current participant of the active milestone.
 
 A Spec that has reached the design state and has no design artifact yet reports
-`Health: inconsistent` with `TRACEABILITY_DESIGN_COVERAGE_MISSING` for every
-active requirement. That is what an unstarted design phase looks like — it is
-the work you are here to do, not a fault to repair.
+`Health: consistent`, `Next action: design`, and one aggregate `Expected work`
+line naming the uncovered active Requirement count. That is the work you are
+here to do. `check traceability` remains strict and lists each missing coverage
+entry until the Design is complete.
 
 If the requirements gate is not approved and fresh, stop and say so. Route the
 user to `specbind-requirements`.

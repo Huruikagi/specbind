@@ -419,7 +419,7 @@ fn reports_composed_spec_status_with_freshness_coverage_and_progress() {
         .assert()
         .success()
         .stdout(
-            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  Health: consistent\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Delegated gates: none\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next actionable: none\n  Blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
+            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  Health: consistent\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Next action: implementation\n  Delegated gates: none\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next task: none\n  Task blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
         )
         .stderr("");
 }
@@ -440,7 +440,7 @@ fn reports_a_clean_idle_spec_without_requiring_active_artifacts() {
         .assert()
         .success()
         .stdout(
-            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: idle\n  Milestone: none\n  Health: consistent\n  Gates: requirements=not_reached, design=not_reached, tasks=not_reached, completion=not_reached\n  Task progress: unavailable\n  Next actionable: none\n  Blockers: none\n  Requirement coverage: inactive\n  Diagnostics: none\n",
+            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: idle\n  Milestone: none\n  Health: consistent\n  Gates: requirements=not_reached, design=not_reached, tasks=not_reached, completion=not_reached\n  Next action: none\n  Task progress: unavailable\n  Next task: none\n  Task blockers: none\n  Requirement coverage: inactive\n  Diagnostics: none\n",
         )
         .stderr("");
 
@@ -482,6 +482,47 @@ fn reports_semantic_spec_contradictions_as_inconsistent_without_repairing() {
                 .and(predicate::str::contains("SPEC_STATE_GATE_EVIDENCE")),
         )
         .stderr("");
+}
+
+#[test]
+fn reports_unstarted_design_as_expected_work_without_weakening_traceability() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    fs::remove_file(root.path().join(".specbind/specs/checkout/design.md"))
+        .expect("remove the prewritten Design fixture");
+    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.md"))
+        .expect("remove the prewritten Contract fixture");
+
+    let mut status = Command::cargo_bin("specbind").expect("specbind binary should build");
+    status
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  State: design\n")
+                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  Next action: design\n"))
+                .and(predicate::str::contains(
+                    "  Expected work: cover 1 active requirement(s) in Design\n",
+                ))
+                .and(predicate::str::contains("  Next task: none\n"))
+                .and(predicate::str::contains("  Task blockers: none\n"))
+                .and(predicate::str::contains("  Diagnostics: none\n"))
+                .and(predicate::str::contains("TRACEABILITY_DESIGN_COVERAGE_MISSING").not()),
+        )
+        .stderr("");
+
+    let mut traceability = Command::cargo_bin("specbind").expect("specbind binary should build");
+    traceability
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "TRACEABILITY_DESIGN_COVERAGE_MISSING",
+        ));
 }
 
 #[test]

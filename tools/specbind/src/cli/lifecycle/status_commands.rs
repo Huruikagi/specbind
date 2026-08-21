@@ -186,6 +186,21 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
             spec_status::freshness_name(model.freshness.completion.status),
         ),
     );
+    push_field(
+        &mut output,
+        "Next action",
+        spec_status::action_name(model.next_action),
+    );
+    if let Some(expected) = model.expected_design_work {
+        push_field(
+            &mut output,
+            "Expected work",
+            &format!(
+                "cover {} active requirement(s) in Design",
+                expected.missing_coverage
+            ),
+        );
+    }
     if let Some(review) = model.contract_review {
         push_field(
             &mut output,
@@ -227,15 +242,15 @@ fn render_status_tasks(model: &SpecStatusModel, output: &mut String) {
                 tasks.blocked
             ),
         );
-        push_inline_list(output, "Next actionable", &tasks.actionable_ids);
+        push_inline_list(output, "Next task", &tasks.actionable_ids);
     } else {
         push_field(output, "Task progress", "unavailable");
-        push_field(output, "Next actionable", "none");
+        push_field(output, "Next task", "none");
     }
     if model.blockers.is_empty() {
-        push_field(output, "Blockers", "none");
+        push_field(output, "Task blockers", "none");
     } else {
-        output.push_str("  Blockers:\n");
+        output.push_str("  Task blockers:\n");
         for blocker in &model.blockers {
             writeln!(
                 output,

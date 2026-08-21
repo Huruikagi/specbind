@@ -45,6 +45,22 @@ pub struct DelegatedGate {
     pub workflow: String,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WorkflowAction {
+    None,
+    Requirements,
+    Design,
+    ContractReview,
+    Tasks,
+    Implementation,
+    Release,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExpectedDesignWork {
+    pub missing_coverage: usize,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecStatusModel {
     pub declared_state: Option<WorkflowState>,
@@ -55,6 +71,8 @@ pub struct SpecStatusModel {
     /// of something this Spec still needs. It never affects `health`, because
     /// Decision 0078 keeps the review out of the per-Spec invariant.
     pub contract_review: Option<ReviewFreshnessStatus>,
+    pub next_action: WorkflowAction,
+    pub expected_design_work: Option<ExpectedDesignWork>,
     /// Present once any gate is approved. Empty means every approval was
     /// explicit, which is why absence of the field and an empty list mean
     /// different things.
@@ -119,12 +137,15 @@ pub fn resolve(
         .and_then(|resolution| resolution.report.as_ref())
         .and_then(coverage);
 
+    let expected_design_work =
+        expected_design_work(declared_state, &freshness, traceability.as_ref());
     let diagnostics = collect_diagnostics(
         &spec_resolution.issues,
         &gate_resolution,
         traceability.as_ref(),
         &freshness,
         active.is_none(),
+        expected_design_work.is_some(),
         canonical_spec,
     );
     let health = if diagnostics.is_empty() {
@@ -133,6 +154,7 @@ pub fn resolve(
         ConsistencyHealth::Inconsistent
     };
     let contract_review = contract_review(project_root, specbind_root, declared_state);
+    let next_action = next_action(declared_state, &freshness, contract_review);
     let delegated_gates = active
         .and_then(|active| active.gate_evidence.as_ref())
         .map(delegated_gates);
@@ -143,12 +165,71 @@ pub fn resolve(
         health,
         freshness,
         contract_review,
+        next_action,
+        expected_design_work,
         delegated_gates,
         task_model,
         blockers,
         coverage,
         diagnostics,
     })
+}
+
+fn expected_design_work(
+    declared_state: Option<WorkflowState>,
+    freshness: &ArtifactFreshnessReport,
+    traceability: Option<&artifacts::TraceabilityResolution>,
+) -> Option<ExpectedDesignWork> {
+    if declared_state != Some(WorkflowState::Design)
+        || freshness.requirements.status != FreshnessStatus::Fresh
+        || freshness.design.status != FreshnessStatus::NotReached
+    {
+        return None;
+    }
+    let missing_coverage = traceability?
+        .inventory
+        .issues
+        .iter()
+        .filter(|issue| issue.code == "TRACEABILITY_DESIGN_COVERAGE_MISSING")
+        .count();
+    (missing_coverage > 0).then_some(ExpectedDesignWork { missing_coverage })
+}
+
+fn next_action(
+    declared_state: Option<WorkflowState>,
+    freshness: &ArtifactFreshnessReport,
+    contract_review: Option<ReviewFreshnessStatus>,
+) -> WorkflowAction {
+    match declared_state {
+        None => WorkflowAction::None,
+        Some(WorkflowState::Requirements) => WorkflowAction::Requirements,
+        Some(WorkflowState::Design) => {
+            if freshness.requirements.status == FreshnessStatus::Fresh {
+                WorkflowAction::Design
+            } else {
+                WorkflowAction::Requirements
+            }
+        }
+        Some(WorkflowState::Tasks) => {
+            if freshness.design.status != FreshnessStatus::Fresh {
+                WorkflowAction::Design
+            } else if contract_review.is_some_and(|status| status != ReviewFreshnessStatus::Fresh) {
+                WorkflowAction::ContractReview
+            } else {
+                WorkflowAction::Tasks
+            }
+        }
+        Some(WorkflowState::Implementation) => {
+            if freshness.tasks.status != FreshnessStatus::Fresh {
+                WorkflowAction::Tasks
+            } else if contract_review.is_some_and(|status| status != ReviewFreshnessStatus::Fresh) {
+                WorkflowAction::ContractReview
+            } else {
+                WorkflowAction::Implementation
+            }
+        }
+        Some(WorkflowState::ReleaseReady) => WorkflowAction::Release,
+    }
 }
 
 /// Collects every gate whose accepted evidence records delegated authority.
@@ -235,6 +316,7 @@ fn collect_diagnostics(
     traceability: Option<&artifacts::TraceabilityResolution>,
     freshness: &ArtifactFreshnessReport,
     idle: bool,
+    design_coverage_is_expected: bool,
     canonical_spec: &str,
 ) -> Vec<StatusDiagnostic> {
     let mut diagnostics = BTreeSet::new();
@@ -257,6 +339,9 @@ fn collect_diagnostics(
     }
     if idle {
         add_idle_diagnostics(&mut diagnostics, gate_resolution, canonical_spec);
+    }
+    if design_coverage_is_expected {
+        diagnostics.retain(|diagnostic| diagnostic.code != "TRACEABILITY_DESIGN_COVERAGE_MISSING");
     }
     diagnostics.into_iter().collect()
 }
@@ -334,5 +419,18 @@ pub fn freshness_name(status: FreshnessStatus) -> &'static str {
         FreshnessStatus::NotReached => "not_reached",
         FreshnessStatus::Fresh => "fresh",
         FreshnessStatus::Stale => "stale",
+    }
+}
+
+#[must_use]
+pub fn action_name(action: WorkflowAction) -> &'static str {
+    match action {
+        WorkflowAction::None => "none",
+        WorkflowAction::Requirements => "requirements",
+        WorkflowAction::Design => "design",
+        WorkflowAction::ContractReview => "contract_review",
+        WorkflowAction::Tasks => "tasks",
+        WorkflowAction::Implementation => "implementation",
+        WorkflowAction::Release => "release",
     }
 }
