@@ -19,7 +19,7 @@ without a pass are listed separately below.
 | Discovery | D1, D2, D4–D6, D8–D12 | D4, D6 |
 | Requirements | R1–R5 | R1, R3 |
 | Gap analysis | G1 | G1 |
-| Checkpoint behavior | C1–C3 | C1, C3 |
+| Checkpoint behavior | C1–C3 | C1–C3 |
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2 |
@@ -31,6 +31,15 @@ without a pass are listed separately below.
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL3 |
 | Planning orchestrators | None recorded | Q4 |
+
+C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
+Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit
+beyond fixture setup, and did not ask for checkpoint policy. Earlier passing
+runs on `ec20755` and `3746108` exposed two usability findings before the final
+measurement: marker precedence needed to state that the entire body is ignored,
+and Discovery needed to repeat the completion check immediately before Brief
+authoring. The final driver followed both rules and stopped in Requirements with
+all gates `not_reached`.
 
 ### Runs without a passing measurement
 
@@ -52,7 +61,9 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-None. This section is the current worklist, not an append-only transcript.
+| First seen | Scenario | Finding | Evidence | Impact |
+| --- | --- | --- | --- | --- |
+| `3746108` | C2 | `scope/v1` requires `schemaVersion` but exposes only `minimum: 0`, so an author must infer that selector `scope/v1` means value `1`. | Reproduced with `specbind schema read scope/v1`; the C2 driver supplied `1` and creation succeeded. | ambiguity |
 
 ### Fixed, behavioral confirmation pending
 
@@ -68,6 +79,9 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| Adapter state overloaded the template-only `specbind:instruction` token, used a raw substring check, and required a deferred-specific compatibility exception. | Inactive adapters use the exact Markdown comment `<!-- specbind:adapter-scaffold -->`; marker-like prose, code, longer comments, and the template token are ordinary adapter content. C2 confirmed marked Git policy opts out without asking or committing. | `ec20755`, confirmed on `fb87bb9` |
+| A marked adapter could retain actionable-looking scaffold text, leaving precedence implicit. | Every consuming Skill states that the marker classifies the whole document and all remaining body lines are ignored. | `3746108`, confirmed on `fb87bb9` |
+| Discovery read the authoring protocol before a Brief but did not repeat its completion-state check after applying milestone scope. | Discovery now runs `milestone status` after reading `okf-authoring` and immediately before the first Brief write. | `fb87bb9`, confirmed on `fb87bb9` |
 | An inactive installed Git scaffold left every accepted phase uncommitted and blocked a same-session scope addition at the Roadmap target guard. | New installs receive active local-checkpoint policy; C1 confirmed the narrow first commit and D6 continued through `update-scope` with the milestone identity, existing item, and Roadmap body preserved. | `c3a0ccf`, confirmed on `8a58244` |
 | Discovery drivers twice tried to invalidate Requirements for an idle Spec merely because its Requirements artifact existed. | Discovery now states that `not_reached` is not approved and that artifact presence is not gate evidence; the fresh C1 and D6 drivers proposed no invalidation. | `8a58244` |
 | An established Spec with no Design had no explicit target-resolution branch. | Design now branches on whether the Design set exists and resolves the selected template's target path. | `398bbf7` |
