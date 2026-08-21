@@ -16,6 +16,16 @@ fn creates_a_file_holding_only_the_block() {
     assert!(applied.content.starts_with("<!-- specbind:block -->\n"));
     assert!(applied.content.ends_with("<!-- /specbind:block -->\n"));
     assert!(applied.content.contains("This project uses SpecBind"));
+    assert!(
+        applied
+            .content
+            .contains("validation rule, limit, or rejected case")
+    );
+    assert!(
+        applied
+            .content
+            .contains("When that classification is genuinely unclear, enter the")
+    );
 }
 
 #[test]
