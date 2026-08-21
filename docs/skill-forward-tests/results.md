@@ -30,6 +30,7 @@ without a pass are listed separately below.
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL3 |
+| Planning orchestrators | None recorded | Q4 |
 
 ### Runs without a passing measurement
 
@@ -44,14 +45,19 @@ without a pass are listed separately below.
 | R1 | Codex | Operator stopped | On `9cce3de`, the run produced a valid Requirements draft, but the controller began the usability debrief instead of continuing the required explicit-approval turn. The draft is evidence of neither a pass nor a product failure. |
 | S2 | Codex | Environment blocked | On `4738ca2`, bootstrap reached its required three-reader dispatch, but stale host agent threads exhausted the global limit. Steering remained empty and unchanged; no product authoring ran. |
 | T1 | Codex | Environment blocked | On `cc37049`, the corrected rule produced a one-task implementation-and-test proposal, but the host safety layer rejected `tasks.yaml` authoring twice, including after explicit Tasks approval. No artifact was written, so this is not a passing remeasurement. |
+| D6 | Codex | Product failure | On `4256ab3`, the first Discovery correctly left its new Roadmap uncommitted under an unfilled Git adapter. The confirmed same-session addition then failed with `MILESTONE_ROADMAP_DIRTY`, leaving the original milestone and `cart`-only scope unchanged and creating no `order` Spec. |
 
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-None currently recorded. This remains a current worklist rather than an
-append-only transcript.
+This is a current worklist, not an append-only transcript. It contains only a
+reproduced product ambiguity that still needs a disposition.
+
+| First seen | Scenario | Surface | Impact | Finding | Current handling | Next decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| `4256ab3` | D6 | CLI / Adapter | wrong-action-risk | `milestone update-scope` refuses the untracked Roadmap created by the immediately preceding Discovery, while an unfilled Git adapter requires that Discovery to commit nothing. The accepted same-session milestone-addition workflow therefore has no supported continuation. | Stop without committing or guessing a Git policy; keep the existing scope unchanged. | Decide whether `update-scope` can safely recognize the pending CLI-created Roadmap or whether the workflow needs an explicit user-owned checkpoint before scope expansion. |
 
 ### Fixed, behavioral confirmation pending
 
@@ -99,6 +105,14 @@ change. Discovery produced one uncommitted `cart` Spec update and Brief, changed
 neither Requirements nor implementation, and created no commit. Milestone
 status reported consistent Requirements work and `Release readiness: not
 evaluated until validation` without `WORKTREE_NOT_CLEAN`.
+
+The next Codex batch measured D6, Q4, and RL2 on `4256ab3`. D6 failed because
+the uncommitted Roadmap produced by its first Discovery could not pass the
+confirmed `update-scope` target guard. Q4 passed: one explicit delegation drove
+the single `cart` Spec through all three planning gates, accepted one fresh
+Contract Review before Tasks approval, and stopped before implementation. RL2
+passed again by creating the approved local tag, failing origin verification,
+and preserving the active release-ready milestone without logs or archives.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
