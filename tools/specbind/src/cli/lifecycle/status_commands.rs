@@ -100,6 +100,17 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     render_milestone_actions(model, &mut output);
     if !model.current_blockers.is_empty() {
         push_inline_list(&mut output, "Current blockers", &model.current_blockers);
+        if model
+            .current_blockers
+            .iter()
+            .any(|blocker| blocker == "WORKTREE_NOT_CLEAN")
+        {
+            push_field(
+                &mut output,
+                "Worktree action",
+                "review and commit or otherwise reconcile current changes to continue",
+            );
+        }
     }
     if matches!(
         model.stage,

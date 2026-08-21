@@ -2748,6 +2748,9 @@ fn reports_worktree_dirt_only_when_a_clean_revision_would_unlock_progress() {
                     "  Current blockers: WORKTREE_NOT_CLEAN\n",
                 ))
                 .and(predicate::str::contains(
+                    "  Worktree action: review and commit or otherwise reconcile current changes to continue\n",
+                ))
+                .and(predicate::str::contains(
                     "  Release readiness: not evaluated until validation\n",
                 ))
                 .and(predicate::str::contains("Release blockers:").not()),

@@ -34,6 +34,7 @@ for a clean-revision boundary, status instead also renders:
 
 ```text
 Current blockers: WORKTREE_NOT_CLEAN
+Worktree action: review and commit or otherwise reconcile current changes to continue
 ```
 
 Once the milestone reaches Validation, `Release blockers` is rendered as the
