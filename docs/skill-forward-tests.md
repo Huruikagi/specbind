@@ -309,6 +309,16 @@ fixture was small enough that the driven context did not dispatch independent
 investigation, so this is a workflow result rather than a measurement of the
 design dispatch path.
 
+DS1 was re-measured on 2026-08-21 against `de2a99d`, as Codex using the default
+Terra/medium driver profile, after target-aware template resolution and
+phase-relative status were added. Its precondition reported a consistent
+unstarted Design with `Next action: design` and three expected coverage items.
+The project-owned Design template lived at `technical-design/main.md`; the run
+authored that exact target, did not create the conventional `design.md`, created
+the embedded Contract target, stopped for explicit approval, and then ended at
+`State: tasks` with Design fresh, traceability 3/3, a valid Contract graph, and
+no `tasks.yaml`. Investigation dispatch was not exercised.
+
 I2 and DB1 were measured on 2026-08-20 against `38920a0`, as Codex, and
 both passed. I2 dispatched a fresh implementer and diagnosis, categorized the
 approved Requirements/Design contradiction as `ARTIFACT`, left the task pending,
