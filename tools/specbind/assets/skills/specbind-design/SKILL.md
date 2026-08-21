@@ -268,6 +268,21 @@ Ownership overlaps and dependency cycles are warnings, because they are
 sometimes deliberate. Say why the overlap is acceptable, or treat it as a
 finding. Passing it silently to contract review is not a judgment.
 
+`CONTRACT_GRAPH_EXPORT_UNCONSUMED` is also a warning, not evidence that an
+export should be removed. The managed graph cannot see external consumers:
+
+- An existing export that this change does not alter stays byte-identical. Keep
+  its stable ID and carry the warning into the contract-review report; do not
+  retire an unrelated seam merely to silence the check.
+- For an export this change adds or alters, name the managed or external
+  consumer that needs it. If there is no consumer, state the deliberate reason
+  the project would pay for that boundary in advance. An answer the design
+  cannot establish is a finding for the user, not a plausible consumer to
+  invent.
+
+The later contract review owns the final cross-Spec judgment. This phase makes
+its own change defensible and preserves untouched current-state contracts.
+
 ## 6. Review your own design
 
 ```sh

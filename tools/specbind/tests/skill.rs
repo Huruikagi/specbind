@@ -202,6 +202,23 @@ fn reviewing_skills_require_an_explicit_finding_disposition() {
 }
 
 #[test]
+fn design_does_not_retire_an_export_only_to_silence_a_warning() {
+    let body = skill::find("specbind-design")
+        .expect("design skill")
+        .body()
+        .expect("body");
+
+    assert!(body.contains("`CONTRACT_GRAPH_EXPORT_UNCONSUMED` is also a warning"));
+    assert!(
+        body.contains("An existing export that this change does not alter stays byte-identical")
+    );
+    assert!(body.contains("do not\n  retire an unrelated seam merely to silence the check"));
+    assert!(
+        body.contains("For an export this change adds or alters, name the managed or external")
+    );
+}
+
+#[test]
 fn planning_orchestrators_handoff_their_delegation_identity() {
     for name in ["specbind-quick-plan", "specbind-batch-plan"] {
         let body = skill::find(name)

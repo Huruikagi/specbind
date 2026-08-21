@@ -298,5 +298,12 @@ established Spec has no Design artifact, the skill lists, resolves, and reads th
 configured Design templates exactly as it does for a new Spec; only a Design set
 that already exists is revised in place.
 
+[Decision 0123](./0123-reverse-traceability-and-unconsumed-seams.md) added the
+unconsumed-export warning after this contract was accepted. The skill now treats
+that warning as a review question rather than deletion authority: an untouched
+existing export remains byte-identical and is carried to contract review, while
+an export added or altered by the current change must name its consumer or state
+the deliberate reason for paying for the boundary in advance.
+
 Its forward tests are specified as scenarios DS1 through DS6 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.
