@@ -53,8 +53,7 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 ## Install the CLI
 
 The first binary release line is a pre-1.0 Preview for Windows x64 and Linux
-x64. Stable releases can be installed without choosing a version after the
-first stable `0.1.x` release is published.
+x64. The latest stable release can be installed without choosing a version.
 
 Windows PowerShell:
 
@@ -84,8 +83,7 @@ sh install.sh --version 0.1.0-rc.1
 Both installers verify the release archive against `SHA256SUMS`, install to the
 platform default, and leave persistent `PATH` changes to the user. Use
 `-InstallDir` on PowerShell or `--install-dir` on Linux to choose another
-location. Until the corresponding GitHub Release is published, use the source
-build instructions below.
+location.
 
 ## Development
 

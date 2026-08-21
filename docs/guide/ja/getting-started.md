@@ -3,9 +3,8 @@
 このページでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
 Claude Codeを使って、最初の変更をスコープの確認から実装の検証まで進めます。
 
-SpecBindはv1.0前のプレビュー版として配布しています。公開済みのリリース候補版を
-試す場合は、バージョンを明示してインストーラを実行してください。対応する
-GitHub Releaseがまだない場合は、後述のソースビルドを使います。
+SpecBindはv1.0前のプレビュー版として配布しています。インストーラは公開済みの
+最新stableリリースを選び、対応するバイナリをGitHub Releaseから取得します。
 
 ## 1. 前提を確認する
 
@@ -26,21 +25,16 @@ Build Toolsの**Desktop development with C++**ワークロードとWindows SDK�
 
 ## 2. プレビュー版CLIをインストールする
 
-リリース候補版は最新版として自動では選ばれないため、バージョンを明示します。
-
 Windows PowerShell:
 
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 `
-  -OutFile install.ps1
-.\install.ps1 -Version 0.1.0-rc.1
+irm https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 | iex
 ```
 
 WSL2/Linux:
 
 ```sh
-curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
-sh install.sh --version 0.1.0-rc.1
+curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
 ```
 
 インストーラはGitHub Releaseのアーカイブと`SHA256SUMS`を取得し、チェックサムが
@@ -60,7 +54,7 @@ sh install.sh --version 0.1.0-rc.1
 specbind --version
 ```
 
-### GitHub Releaseの公開前にソースからビルドする
+### ソースからビルドする
 
 SpecBindリポジトリを取得し、Rustワークスペースでreleaseバイナリをビルドします。
 

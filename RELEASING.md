@@ -28,8 +28,8 @@ must describe the same SemVer.
 Create and push one annotated tag whose name is `v` plus the Cargo version:
 
 ```sh
-git tag -a v0.1.0-rc.1 -m "SpecBind v0.1.0-rc.1"
-git push origin v0.1.0-rc.1
+git tag -a v0.1.0 -m "SpecBind v0.1.0"
+git push origin v0.1.0
 ```
 
 The release workflow verifies both native targets, creates the archives and
