@@ -26,8 +26,8 @@ specbind milestone scope
 
 Stop and report, rather than fixing, in these cases:
 
-- **`not required`** — a Direct-only milestone has no persistent seams to
-  review. Say so and stop.
+- **`Status: not_applicable`** — a Direct-only milestone has no persistent seams
+  to review. Say that the review is not required and stop.
 - **A participant is not ready** — acceptance needs every Spec-backed item to
   hold a fresh design gate and sit in the `tasks` state. Route the unready Spec
   to its phase. Never approve a gate to make this barrier passable.

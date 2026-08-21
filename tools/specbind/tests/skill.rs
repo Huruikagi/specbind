@@ -326,6 +326,9 @@ fn design_validation_puts_its_read_only_stop_rule_before_commands() {
 
     assert!(body.contains("Existing code is architectural context, not implementation evidence"));
     assert!(body.contains("do not\njudge whether the code already does"));
+    assert!(body.contains("Fix the review scope from the status output before reading prose"));
+    assert!(body.contains("do not report the Design incomplete"));
+    assert!(body.contains("inactive ID"));
 }
 
 #[test]
@@ -350,6 +353,7 @@ fn contract_review_uses_scope_and_type_based_historical_discovery() {
         .expect("body");
 
     assert!(body.contains("specbind milestone scope"));
+    assert!(body.contains("`Status: not_applicable`"));
     assert!(body.contains("git ls-tree -r --name-only <baseline>"));
     assert!(body.contains("`type` is `SpecBind Contract`"));
     assert!(!body.contains("git show <baseline>:.specbind/specs/<spec>/contract.md"));

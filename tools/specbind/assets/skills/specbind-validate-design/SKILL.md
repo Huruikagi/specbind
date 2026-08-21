@@ -30,6 +30,15 @@ specbind check contracts
 
 These are cheap, and a structural failure makes semantic review premature.
 
+**Fix the review scope from the status output before reading prose.** The
+`Requirement coverage: design N/N` count is over the active Requirement IDs for
+this milestone. The Requirements document is a complete persistent contract and
+may retain other IDs that this milestone does not deliver. Read those retained
+Requirements for context, but do not report the Design incomplete, expand its
+scope, or raise a finding merely because it does not realize an inactive ID.
+Validate only the active set represented by the Design traceability markers and
+the status coverage count.
+
 **They are not your review.** The CLI already verifies traceability markers,
 active requirement coverage, and contract structure — repeating them back is not
 a finding. It matters here more than anywhere: a complete set of traceability
