@@ -148,8 +148,10 @@ pub fn resolve(
         traceability.as_ref(),
         &freshness,
         active.is_none(),
-        expected_requirements_work,
-        expected_design_work.is_some(),
+        ExpectedWork {
+            requirements: expected_requirements_work,
+            design: expected_design_work.is_some(),
+        },
         canonical_spec,
     );
     let health = if diagnostics.is_empty() {
@@ -315,14 +317,19 @@ fn task_blockers(model: &TaskReadModel) -> Vec<TaskBlocker> {
         .collect()
 }
 
+#[derive(Clone, Copy)]
+struct ExpectedWork {
+    requirements: bool,
+    design: bool,
+}
+
 fn collect_diagnostics(
     spec_issues: &[DiscoveryIssue],
     gate_resolution: &artifacts::GateInputResolution,
     traceability: Option<&artifacts::TraceabilityResolution>,
     freshness: &ArtifactFreshnessReport,
     idle: bool,
-    requirements_work_is_expected: bool,
-    design_coverage_is_expected: bool,
+    expected_work: ExpectedWork,
     canonical_spec: &str,
 ) -> Vec<StatusDiagnostic> {
     let mut diagnostics = BTreeSet::new();
@@ -346,10 +353,10 @@ fn collect_diagnostics(
     if idle {
         add_idle_diagnostics(&mut diagnostics, gate_resolution, canonical_spec);
     }
-    if requirements_work_is_expected {
+    if expected_work.requirements {
         diagnostics.retain(|diagnostic| diagnostic.code != "TRACEABILITY_REQUIREMENTS_UNAVAILABLE");
     }
-    if design_coverage_is_expected {
+    if expected_work.design {
         diagnostics.retain(|diagnostic| diagnostic.code != "TRACEABILITY_DESIGN_COVERAGE_MISSING");
     }
     diagnostics.into_iter().collect()
