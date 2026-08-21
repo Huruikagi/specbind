@@ -7,7 +7,8 @@
     "schemaVersion": {
       "type": "integer",
       "format": "uint64",
-      "minimum": 0
+      "minimum": 0,
+      "const": 1
     },
     "workItems": {
       "$ref": "#/$defs/WorkItemsDocument"

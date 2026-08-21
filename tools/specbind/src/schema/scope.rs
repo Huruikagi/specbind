@@ -18,6 +18,7 @@ pub mod v1 {
         description = "Transient input for milestone create and update-scope. Identity, baseline, release binding, and Direct completion status are never accepted from the caller."
     )]
     pub struct ScopeDocument {
+        #[schemars(extend("const" = 1))]
         pub schema_version: u64,
         pub work_items: WorkItemsDocument,
         /// Free-form Roadmap Markdown body. Omitting it preserves the current

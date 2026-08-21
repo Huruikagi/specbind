@@ -12,17 +12,37 @@ use specbind::yaml;
 #[test]
 fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
     let cases = [
-        ("spec/v1", SPEC_V1_SCHEMA_JSON, generate::spec_v1()),
-        ("tasks/v1", TASKS_V1_SCHEMA_JSON, generate::tasks_v1()),
-        ("scope/v1", SCOPE_V1_SCHEMA_JSON, generate::scope_v1()),
+        (
+            "spec/v1",
+            SPEC_V1_SCHEMA_JSON,
+            generate::spec_v1(),
+            "/$defs/SchemaVersion/const",
+        ),
+        (
+            "tasks/v1",
+            TASKS_V1_SCHEMA_JSON,
+            generate::tasks_v1(),
+            "/$defs/SchemaVersion/const",
+        ),
+        (
+            "scope/v1",
+            SCOPE_V1_SCHEMA_JSON,
+            generate::scope_v1(),
+            "/properties/schemaVersion/const",
+        ),
     ];
 
-    for (name, checked_in, generated) in cases {
+    for (name, checked_in, generated, version_const) in cases {
         let expected = generate::to_pretty_json(&generated).expect("schema should serialize");
         assert_eq!(checked_in, expected, "checked-in {name} schema is stale");
 
         let value: serde_json::Value =
             serde_json::from_str(checked_in).expect("checked-in schema should be JSON");
+        assert_eq!(
+            value.pointer(version_const),
+            Some(&serde_json::json!(1)),
+            "{name} must identify its version with schemaVersion const 1"
+        );
         jsonschema::draft202012::meta::validate(&value)
             .unwrap_or_else(|error| panic!("{name} schema is not valid Draft 2020-12: {error}"));
     }
