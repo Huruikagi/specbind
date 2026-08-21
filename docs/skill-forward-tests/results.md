@@ -50,12 +50,8 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-This is a current worklist, not an append-only transcript. It contains only a
-reproduced product ambiguity that still needs a disposition.
-
-| First seen | Scenario | Surface | Impact | Finding | Current handling | Next decision |
-| --- | --- | --- | --- | --- | --- | --- |
-| `59ebc5f` | C1 | CLI | ambiguity | Immediately after successful Discovery, `milestone status` reports the expected dirty workflow output under `Release blockers: WORKTREE_NOT_CLEAN`. A reader can briefly mistake later release readiness for a current-phase fault even though `Health: consistent`. | Compare the dirty paths with the just-authored Discovery outputs and follow `Health` plus `Actionable`. | Decide whether release blockers need a readiness-qualified heading or should be hidden before a release-relevant phase. |
+None currently recorded. This remains a current worklist rather than an
+append-only transcript.
 
 ### Fixed, behavioral confirmation pending
 
@@ -78,6 +74,7 @@ remain available in Git history.
 | A quantity-limit change could be classified as ordinary implementation work. | Project instructions explicitly route observable validation rules, limits, rejected cases, and genuine uncertainty into SpecBind. | `59ebc5f` |
 | Forward-test instrumentation and phase confirmation could block or over-authorize a run. | Dispatch logging is opt-in, and guarded confirmation names the presented phase inputs and stopping boundary. | `694dca4`, `3ab817a` |
 | A newly discovered Spec reported missing Requirements as inconsistent state. | Requirements absence is expected work in the Requirements phase; Spec and milestone health stay consistent while strict traceability remains unchanged. | `a8cae47` |
+| Discovery's expected dirty output appeared as a present Release blocker. | Worktree cleanliness is reported only when a clean revision would unlock current progress; release readiness is not evaluated before Validation. | `475f144` |
 
 ### Active environment limitation
 
@@ -96,6 +93,12 @@ Requirements health, and T1 exposed the missing test-grouping default. After
 both fixes, D4 passed again on `cc37049`; the fresh T1 driver proposed the
 correct combined task but was environment-blocked before it could author the
 plan.
+
+C1 was re-measured on `475f144` as Codex after the phase-relative worktree
+change. Discovery produced one uncommitted `cart` Spec update and Brief, changed
+neither Requirements nor implementation, and created no commit. Milestone
+status reported consistent Requirements work and `Release readiness: not
+evaluated until validation` without `WORKTREE_NOT_CLEAN`.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed
