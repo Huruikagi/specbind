@@ -112,4 +112,10 @@ All five default rules are authored as embedded installation assets under `tools
 
 The contents are rewritten for the Decision 0092 boundary rather than copied from cc-sdd: each file states that the project owns it, names the CLI contract or protocol that stays authoritative, and carries preferences plus review questions instead of workflow control. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs.
 
+The task-generation default makes its test-grouping preference actionable:
+tests stay with the behavior task unless verification spans several earlier
+tasks or a separately reviewable system boundary. Projects may replace that
+preference, but a fresh installation no longer asks the planner to invent which
+of two unnamed conventions the project chose.
+
 Applying an installation, the v1 skills that load these rules, and the tests proving absence and customization cannot weaken the product baseline are separate increments.

@@ -56,13 +56,15 @@ repeating it in every task.
 
 ## Test work
 
-Choose one convention and hold to it:
+By default, write tests as part of the task that introduces the behavior. Split
+verification into its own task only when it spans behavior delivered by several
+earlier tasks or forms a separately reviewable system boundary. Do not create a
+second task merely to restate the completion criteria of one implementation
+task.
 
-- tests written as part of the task that introduces the behavior, or
-- tests grouped as their own task when they span several behaviors
-
-Mixing both in one plan makes coverage hard to see. This project's choice, and
-any deliberate exception, belongs here.
+Mixing both conventions without that boundary makes coverage hard to see. A
+project that prefers another convention should replace this paragraph and name
+any deliberate exceptions here.
 
 ## Parallelization
 

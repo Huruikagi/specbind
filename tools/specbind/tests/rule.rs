@@ -52,3 +52,17 @@ fn every_default_rule_is_an_okf_rule_concept() {
         }
     }
 }
+
+#[test]
+fn task_generation_chooses_a_default_test_grouping_convention() {
+    let content = rule::defaults()
+        .iter()
+        .find(|entry| entry.file_name == "tasks-generation.md")
+        .expect("task-generation rule")
+        .content();
+
+    assert!(content.contains("write tests as part of the task that introduces the behavior"));
+    assert!(content.contains("Split\nverification into its own task only when"));
+    assert!(content.contains("behavior delivered by several\nearlier tasks"));
+    assert!(content.contains("Do not create a\nsecond task merely to restate"));
+}
