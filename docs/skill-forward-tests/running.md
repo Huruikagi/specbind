@@ -256,6 +256,18 @@ single `wrong-action-risk` is enough to investigate before starting another
 batch. Keep these observations out of the pass and no-passing-measurement
 tables.
 
+The usability ledger is a triaged worklist, not an append-only debrief archive:
+
+- keep reproduced, unresolved product findings in the open table;
+- move a fixed finding to the compact resolved table with its fixing build;
+- retain an environment limitation only while it still affects interpretation;
+- remove duplicates, one-off non-defects, fixture-only workarounds, and `none`
+  observations after the run itself is recorded.
+
+Git history preserves the raw wording when it is needed later. The current
+document should answer what remains actionable without requiring readers to
+re-evaluate every past debrief.
+
 ### How much to re-run per agent
 
 Run the complete set once under a newly supported agent, to find out where it

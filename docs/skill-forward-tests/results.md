@@ -46,51 +46,37 @@ without a pass are listed separately below.
 Scenarios not named in either table have not produced a recorded result for
 either agent. The tables are a measurement ledger, not a coverage checklist.
 
-### Usability observations
+### Open usability findings
 
-The first post-run debrief batch ran on 2026-08-21 against `a5c14c8`, after the
-R1, DS2, and C1 fixtures had already been judged. `git status --short` was
-identical before and after every debrief.
+This is a current worklist, not an append-only transcript. It contains only a
+reproduced product ambiguity that still needs a disposition.
 
-The R1 and DS2 drivers answered in Japanese despite their English fixtures, the
-documented signal that host instructions may still be visible. C1 answered in
-English; its checkpoint verdict was also re-read directly from the isolated
-fixture, including the unchanged Git history.
+| First seen | Scenario | Surface | Impact | Finding | Current handling | Next decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| `59ebc5f` | C1 | CLI | ambiguity | Immediately after successful Discovery, `milestone status` reports the expected dirty workflow output under `Release blockers: WORKTREE_NOT_CLEAN`. A reader can briefly mistake later release readiness for a current-phase fault even though `Health: consistent`. | Compare the dirty paths with the just-authored Discovery outputs and follow `Health` plus `Actionable`. | Decide whether release blockers need a readiness-qualified heading or should be hidden before a release-relevant phase. |
 
-The next Codex batch measured C1, DS2, and R1 on `9cce3de`. DS2 passed its
-artifact expectations. C1 failed by bypassing the workflow, and R1 was stopped
-by the controller at its valid draft boundary before approval. After the entry
-wording fix, fresh C1 and R1 fixtures on `59ebc5f` passed. All five debriefs were
-read-only: `git status --short` was identical before and after each one. Japanese
-answers in both R1 runs and the first DS2 run were retained as host-contamination
-signals rather than treated as fixture-local evidence.
+### Resolved usability findings
 
-| Build | Scenario | Agent | Surface | Impact | Observation and evidence | Workaround | Contract check |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `a5c14c8` | R1 | Codex | Protocol | wrong-action-risk | The brief says only "eligible orders" while the Requirements review protocol says an unknown expectation must be escalated, not filled with a plausible guess. | The agent stopped without creating Requirements. | Reproduced; this is a scenario contradiction, not a product defect. |
-| `a5c14c8` | R1 | Codex | CLI | extra-step | The agent guessed `specbind spec show order --include-body`, which does not exist. | It read `spec --help`, then used `spec status` and `artifact read`. | Not a contract gap: the project instructions already say to run `specbind --help` when a command is unfamiliar. |
-| `a5c14c8` | R1 | Codex | Other | ambiguity | The harness says to append its instrumentation record "Before doing anything else", although that direction is learned only by reading `AGENTS.md`. | It appended the record immediately after reading the instruction. | Reproduced as harness wording only; it did not affect product behavior. |
-| `a5c14c8` | DS2 | Codex | Skill | ambiguity | `artifact list cart` reported no Design, but the Existing Spec branch says only to "revise the current design artifacts in place". | The agent borrowed the New Spec path-discovery commands, resolved `design/main`, and created the reported target. | Reproduced; the established-Spec-with-no-Design state has no explicit branch. |
-| `a5c14c8` | DS2 | Codex | CLI | wrong-action-risk | `check contracts` warned that `add-item` was unconsumed and said to confirm an external consumer or retire the seam, but the fixture provided no evidence with which to decide that. | The agent preserved the stable existing export. | Reproduced; preserving all four stable IDs was also the scenario requirement. |
-| `a5c14c8` | C1 | Codex | Other | wrong-action-risk | The agent read the `specbind-status` skill name as a `specbind status` CLI command and got an unknown-subcommand error. | It used `specbind milestone status`. | Not reproduced as written: `AGENTS.md` names the skill, not that CLI command. The similar names remain the observed source of the misread. |
-| `a5c14c8` | C1 | Codex | Skill | ambiguity | The driver confirmed "discovery for this cart change only" while the skill asks for explicit agreement to the whole plan. | The agent treated the phase-limited confirmation as authorization for the plan it had just presented. | Harness wording, not a demonstrated product defect. |
-| `a5c14c8` | C1 | Codex | CLI | extra-step | `milestone create --help` names `--scope <SCOPE>` but neither it nor the skill shows the JSON scope shape; the first stdin attempt reached EOF. | The agent inferred and supplied the scope document. | Reproduced; the skill shows `--scope -` without a complete input example. |
-| `a5c14c8` | C1 | Codex | CLI | wrong-action-risk | After successful discovery, `milestone status` reported `Health: inconsistent` and `CONTRACT_REVIEW_MISSING` even though its actionable phase was Requirements. | The agent trusted `Actionable: spec:cart action=requirements` and stopped at the requested boundary. | Reproduced; `spec status cart` was phase-relative and consistent, but milestone health still treated the later contract review as an inconsistency. |
-| `9cce3de` | C1 | Codex | Protocol | wrong-action-risk | The project instruction's “changes what a Spec owns” wording let a per-SKU quantity limit be classified as a small ordinary implementation change. | The agent implemented the cap directly. | Reproduced from the fixture; fixed in `59ebc5f` by naming observable validation rules, limits, and rejected cases and routing genuine uncertainty into Discovery. |
-| `9cce3de` | C1 | Codex | Other | ambiguity | The request did not prescribe an exception type, message, or mutation behavior on rejection. | The agent invented `ValueError` and pre-mutation validation. | Not a direct-work contract gap: these are Requirements and Design decisions the bypassed workflow should have owned. |
-| `9cce3de` | C1 | Codex | Other | extra-step | The minimal fixture had no test framework or dependency manifest. | The agent added `unittest` coverage and removed generated caches. | Fixture characteristic only; it became irrelevant when the corrected entry rule prevented implementation. |
-| `9cce3de` | DS2 | Codex | CLI | extra-step | The agent reported that `template resolve` was unavailable and used `template list` to find `technical-design/main.md`. | It read `output_path` from the listing. | Not reproduced with the fixture binary, which exposes `template resolve`; the driver picked up an older host CLI, so this is environment contamination. |
-| `9cce3de` | DS2 | Codex | Skill | wrong-action-risk | The request supplied no authority to approve the Design gate. | The agent left a validated draft and did not approve. | Expected guarded-boundary behavior, not a defect; DS2's artifact expectations passed. |
-| `9cce3de` | R1 | Codex | CLI | extra-step | The agent treated the `specbind-status` skill name as a `specbind status` command. | It read help and used `specbind spec status order`. | The fixture contains the named skill; the Japanese response and host command lookup are environment-contamination signals. |
-| `9cce3de` | R1 | Codex | Skill | ambiguity | The driver said the installed `specbind-*` skills were absent from its available-skill list. | It authored from the CLI, Brief, steering, and template. | The fixture contains `.agents/skills/specbind-requirements`; dynamic skill discovery was not exposed to this spawned driver, so the run did not prove the skill path. |
-| `9cce3de` | R1 | Codex | Template | wrong-action-risk | The Brief names an open and closed cancellation window but not its duration. | The agent left duration out of scope and specified behavior against the open/closed predicate. | Not a product gap: R1 deliberately supplies the observable boundary without asking Requirements to invent a duration. |
-| `59ebc5f` | C1 | Codex | Skill | extra-step | The agent tried requirements invalidation before scope creation even though the idle Spec held no approved gate. | It accepted `SPEC_REQUIREMENTS_STATE_INVALID` and continued with milestone creation. | Not a contract gap: Discovery limits invalidation to Specs that already hold approved gates; the agent combined two separate ordering rules. |
-| `59ebc5f` | C1 | Codex | CLI | ambiguity | The expected dirty Discovery result appeared among general release blockers as `WORKTREE_NOT_CLEAN`. | It compared the dirty paths with its own outputs and treated milestone health as authoritative. | Reproduced but not a health contradiction: the report says `Health: consistent`; release blockers describe later release readiness. |
-| `59ebc5f` | R1 | Codex | Protocol | wrong-action-risk | The cancellation-window duration was unspecified. | The agent specified behavior only while the window is open and after it closes. | Not a defect for the same R1 boundary reason recorded above. |
-| `59ebc5f` | R1 | Codex | Skill | ambiguity | The standard confirmation approved the Requirements but did not explicitly name the active Requirement ID selection. | The agent inferred all four authored criteria as active. | Reproduced in the harness wording; the confirmation now approves both the presented document and presented selection and forbids filling in an omitted value. |
+Resolved rows retain only the behavior that changed and the build carrying the
+fix. Detailed observations, discarded non-defects, and fixture-only workarounds
+remain available in Git history.
 
-A completed debrief with no finding is recorded as `none`, so absence of a row
-is not mistaken for an uneventful run.
+| Finding | Resolution | Fixed in |
+| --- | --- | --- |
+| An established Spec with no Design had no explicit target-resolution branch. | Design now branches on whether the Design set exists and resolves the selected template's target path. | `398bbf7` |
+| An unconsumed export warning could be read as authority to delete a stable seam. | Design preserves unchanged exports and requires evidence for a consumer or an explicit boundary change. | `9cce3de` |
+| Milestone health treated a future Contract review as a present inconsistency. | Milestone health is phase-relative while stale or invalid reviews remain inconsistent. | `17fa76a` |
+| `milestone create --scope -` required the agent to infer the scope document shape. | Discovery reads `scope/v1` before authoring the candidate. | `8646136` |
+| A quantity-limit change could be classified as ordinary implementation work. | Project instructions explicitly route observable validation rules, limits, rejected cases, and genuine uncertainty into SpecBind. | `59ebc5f` |
+| Forward-test instrumentation and phase confirmation could block or over-authorize a run. | Dispatch logging is opt-in, and guarded confirmation names the presented phase inputs and stopping boundary. | `694dca4`, `3ab817a` |
+
+### Active environment limitation
+
+Codex subagents can inherit host instructions, an older host CLI on `PATH`, or a
+skill registry that does not expose the fixture's installed skills. Japanese
+answers in an English fixture are one visible signal. These observations do not
+become product findings: judge the scenario from fixture state, and classify a
+run as environment-blocked when the product-managed skill was not exercised.
 
 D5 failed first and passed after the framing rule was corrected. R5 was blocked
 once by a recipe that built a state its own request contradicted, and passed

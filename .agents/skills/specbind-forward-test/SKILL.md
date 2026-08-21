@@ -212,6 +212,13 @@ product, and look for recurrence across scenarios or agents. One
 `wrong-action-risk` is enough to investigate before the next batch; lower-impact
 observations normally need either concrete reproduction or a repeated pattern.
 
+Treat the usability ledger as a triaged worklist, not an append-only transcript.
+Keep reproduced unresolved product findings, compact resolved findings to their
+behavior change and fixing build, and retain environment limitations only while
+they affect interpretation. Remove duplicates, one-off non-defects, fixture-only
+workarounds, and `none` observations after the run itself is recorded; Git
+history preserves their raw wording.
+
 ## When something fails
 
 Decide which of these it is before changing anything:
@@ -241,9 +248,9 @@ explains it.
 ## Finishing
 
 Report per scenario: the agent it was driven as, pass or fail, the expectation
-that did not hold, and the state that was left behind. Report usability
-observations in their separate ledger section, including `none` when a debrief
-was completed without a finding. Then clean up the fixtures.
+that did not hold, and the state that was left behind. Report actionable
+usability observations in their separate ledger section and triage non-findings
+under the retention rule above. Then clean up the fixtures.
 
 Record any defect the run exposed against the decision or skill it belongs to,
 and update the scenario document when the run showed the procedure itself was
