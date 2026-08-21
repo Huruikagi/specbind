@@ -113,6 +113,26 @@ fn every_documented_invocation_resolves_against_the_command_graph() {
 }
 
 #[test]
+fn discovery_reads_the_scope_schema_before_first_creation() {
+    let body = skill::all()
+        .iter()
+        .find(|entry| entry.name == "specbind-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("discovery body");
+    let schema = body
+        .find("specbind schema read scope/v1")
+        .expect("scope schema read");
+    let create = body
+        .find("specbind milestone create --scope -")
+        .expect("milestone creation");
+    assert!(
+        schema < create,
+        "discovery must learn the strict candidate shape before the mutating command"
+    );
+}
+
+#[test]
 fn every_named_protocol_selector_and_rule_path_exists() {
     for entry in skill::all() {
         let body = entry.body().expect("body");

@@ -125,6 +125,11 @@ list/read` expose them. Neither command takes a project path, so
 project-independence is structural rather than a documented promise; a test runs
 both from a directory that is no SpecBind project at all.
 
+`specbind-discovery` reads `scope/v1` before authoring the first milestone
+candidate. Updating an active milestone instead starts from `milestone scope`,
+whose output is already the exact accepted replacement shape under Decision
+0097.
+
 The read is asserted to be byte-identical to `TASKS_V1_SCHEMA_JSON`, which
 `cargo run --example generate_schemas -- --check` already holds equal to the
 generated output of the wire model. An unversioned `tasks` selector is refused,

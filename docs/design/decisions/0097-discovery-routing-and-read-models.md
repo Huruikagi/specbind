@@ -311,6 +311,11 @@ The skill carries the Decision 0098 steering reads and the deliberate
 renamed `steering` route and an unknown `--with-body` option, so neither
 documented invocation can drift from the command graph unnoticed.
 
+For first creation, the skill also reads the `scope/v1` schema accepted by
+Decision 0103 before authoring the transient candidate. Active-scope replacement
+continues to start from `milestone scope`, so both paths obtain their structure
+from the CLI rather than from duplicated prose.
+
 `tools/specbind/src/read_model/spec_list.rs` lists Specs from a shared enumeration lifted
 out of the Contract graph resolver into `artifacts::discover_spec_ids`, which
 reports a rejected entry as a structured fault so each caller names it in its own

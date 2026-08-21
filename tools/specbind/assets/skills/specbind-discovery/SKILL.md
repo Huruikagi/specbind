@@ -201,8 +201,13 @@ about to be rewound.
 Then apply the scope. With no active milestone:
 
 ```sh
+specbind schema read scope/v1
 specbind milestone create --scope -
 ```
+
+Author the candidate against the schema you just read. `--help` describes the
+transport, not the strict document shape; do not probe a mutating command with
+guessed JSON to discover its fields.
 
 With one already active, compose the complete replacement from the current value
 rather than writing it from scratch:
