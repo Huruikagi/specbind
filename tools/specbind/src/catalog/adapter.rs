@@ -169,6 +169,10 @@ impl Adapter {
     /// Deferred is the compatibility exception accepted by Decision 0131: its
     /// installed default is active, including older project-owned copies that
     /// still carry an instruction comment.
+    ///
+    /// # Errors
+    ///
+    /// Returns the same target-inspection and UTF-8 diagnostics as [`Self::read`].
     pub fn state(self, specbind_root: &Path) -> Result<AdapterState, AdapterError> {
         let Some(content) = self.read(specbind_root)? else {
             return Ok(AdapterState::Absent);
