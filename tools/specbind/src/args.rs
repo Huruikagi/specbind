@@ -143,6 +143,13 @@ pub enum TemplateCommand {
         scope: String,
         selector: String,
     },
+    /// Resolve one template to its exact target path for an existing Spec.
+    Resolve {
+        #[arg(value_parser = ["spec"])]
+        scope: String,
+        spec: String,
+        selector: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]

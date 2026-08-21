@@ -41,6 +41,14 @@ specbind template list steering
 specbind template read steering document
 ```
 
+特定Specへ新しく配置するパスまで確認する場合は、次の読み取り専用コマンドを使います。
+
+```sh
+specbind template resolve spec <spec> <selector>
+```
+
+結果にはtemplateの`Source`と、SpecBindルート相対の完全な`Target path`が含まれます。
+
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。
 

@@ -115,6 +115,65 @@ pub fn template_read_spec(start: &Path, selector: &str) -> CommandOutput {
 }
 
 #[must_use]
+pub fn template_resolve_spec(start: &Path, canonical_spec: &str, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let spec = artifacts::resolve_spec(&paths.specbind_root, canonical_spec);
+    if spec.wire.is_none() {
+        return CommandOutput::failure(
+            "TEMPLATE_TARGET_SPEC_INVALID",
+            format!("Cannot resolve a template target for spec {canonical_spec}."),
+            spec.issues.iter().map(render_issue).collect(),
+        );
+    }
+    let inventory = template::discover_spec_templates(&paths.specbind_root, paths.language);
+    if !inventory.issues.is_empty() {
+        return CommandOutput::failure(
+            "TEMPLATE_RESOLVE_FAILED",
+            "Spec template inventory has diagnostics.",
+            inventory.issues.iter().map(render_issue).collect(),
+        );
+    }
+    let Some(resolved) = inventory
+        .templates
+        .iter()
+        .find(|template| template.selector == selector)
+    else {
+        return CommandOutput::failure(
+            "TEMPLATE_SELECTOR_NOT_FOUND",
+            format!("Selector {selector} does not resolve to a spec template."),
+            inventory
+                .templates
+                .iter()
+                .map(|template| format!("available selector {}", escape(&template.selector)))
+                .collect(),
+        );
+    };
+    let target_path = format!("specs/{canonical_spec}/{}", resolved.output_path);
+    let mut output = format!(
+        "OK TEMPLATE_RESOLVED: Resolved template {} for spec {}.\n  Selector: {}\n  Source: {}\n  Type: {}\n",
+        escape(selector),
+        escape(canonical_spec),
+        escape(&resolved.selector),
+        resolved.source.name(),
+        escape(&resolved.artifact_type),
+    );
+    if let Some(artifact_id) = &resolved.artifact_id {
+        push_field(&mut output, "Artifact ID", artifact_id);
+    }
+    push_field(
+        &mut output,
+        "Template path",
+        resolved.template_path.as_str(),
+    );
+    push_field(&mut output, "Output path", resolved.output_path.as_str());
+    push_field(&mut output, "Target path", &target_path);
+    CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
 pub fn template_list_steering(start: &Path) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,

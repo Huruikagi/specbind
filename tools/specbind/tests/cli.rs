@@ -1825,6 +1825,11 @@ fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
 fn lists_and_reads_project_owned_spec_templates() {
     let root = project_fixture();
     write_template_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
 
     let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
     list.current_dir(root.path())
@@ -1856,6 +1861,43 @@ fn lists_and_reads_project_owned_spec_templates() {
         .stdout(predicate::str::contains(
             "<!-- specbind:instruction Describe one owned decision. -->",
         ))
+        .stderr("");
+
+    let mut resolve = Command::cargo_bin("specbind").expect("specbind binary should build");
+    resolve
+        .current_dir(root.path())
+        .args(["template", "resolve", "spec", "checkout", "design/main"])
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK TEMPLATE_RESOLVED: Resolved template design/main for spec checkout.\n",
+            "  Selector: design/main\n",
+            "  Source: project\n",
+            "  Type: SpecBind Design\n",
+            "  Artifact ID: main\n",
+            "  Template path: settings/templates/specs/technical-design/main.md\n",
+            "  Output path: technical-design/main.md\n",
+            "  Target path: specs/checkout/technical-design/main.md\n",
+        ))
+        .stderr("");
+
+    let embedded_root = project_fixture();
+    write(
+        embedded_root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    let mut embedded = Command::cargo_bin("specbind").expect("specbind binary should build");
+    embedded
+        .current_dir(embedded_root.path())
+        .args(["template", "resolve", "spec", "checkout", "contract"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Source: embedded\n").and(predicate::str::contains(
+                "  Target path: specs/checkout/contract.md\n",
+            )),
+        )
         .stderr("");
 }
 

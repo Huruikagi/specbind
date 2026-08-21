@@ -39,7 +39,9 @@ The binary also embeds six Spec scaffolds (`brief`, `research`, `requirements`,
 scaffolds (`product`, `tech`, `structure`, and author-identified `document`) in
 English and Japanese. `template list/read` exposes all of them. Only Requirements
 and Design are installed by default; a project can override any selector under
-`settings/templates/` deliberately.
+`settings/templates/` deliberately. `template resolve spec <spec> <selector>`
+reports the selected source and exact SpecBind-root-relative target path without
+writing it.
 
 Twelve immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by

@@ -159,11 +159,25 @@ The project's `settings/rules/design-principles.md` and
 project-owned; if one is absent, the project removed it deliberately and the
 protocol still applies.
 
-**New Spec** — start from the template:
+**New Spec** — list the template set first:
 
 ```sh
-specbind template read spec design/main
+specbind template list spec
 ```
+
+The listing is the complete initial Design decomposition and also tells you
+whether each scaffold is `project` or `embedded`. For every listed
+`design/<artifact_id>` selector, resolve and read it:
+
+```sh
+specbind template resolve spec <spec> <design-selector>
+specbind template read spec <design-selector>
+```
+
+Write the authored document only to the reported `Target path`. Do not infer a
+filename from `artifact_id`, the Requirements path, or another Spec. Remove
+every `specbind:instruction` comment and add the live-only traceability fields
+while authoring.
 
 **Existing Spec** — revise the current design artifacts in place.
 
@@ -206,8 +220,13 @@ absence of cross-spec impact.
 **No contract yet** — including every Spec this milestone created:
 
 ```sh
+specbind template resolve spec <spec> contract
 specbind template read spec contract
 ```
+
+Write the authored Contract only to the reported `Target path`. The `Source`
+field explains whether its scaffold is project-owned or embedded; both use the
+same raw read command.
 
 A Spec with no cross-spec seams gets the canonical empty contract: five
 headings, no entries. That is a complete and deliberate statement, not a
