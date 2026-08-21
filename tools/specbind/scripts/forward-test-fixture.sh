@@ -5,14 +5,20 @@
 # setup must never be a variable: two runs that disagree should disagree about
 # the agent, not about what it was given.
 #
-# Usage: forward-test-fixture.sh <target-directory> [en|ja]
+# Usage: forward-test-fixture.sh <target-directory> [en|ja] [--instrument-dispatch]
 #
 # See docs/skill-forward-tests.md for what to do with the result.
 
 set -eu
 
-target=${1:?usage: forward-test-fixture.sh <target-directory> [en|ja]}
+target=${1:?usage: forward-test-fixture.sh <target-directory> [en|ja] [--instrument-dispatch]}
 language=${2:-en}
+instrument_dispatch=${3:-}
+
+if [ -n "$instrument_dispatch" ] && [ "$instrument_dispatch" != "--instrument-dispatch" ]; then
+    echo "forward-test-fixture: unknown option: $instrument_dispatch" >&2
+    exit 1
+fi
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 workspace=$(dirname -- "$script_dir")
@@ -65,7 +71,7 @@ git commit --quiet -m "Add the bookshop service"
 "$specbind" install --agent claude-code --agent codex --language "$language" \
     --project-instructions >/dev/null
 
-# Make dispatch observable.
+# Make dispatch observable when the scenario measures dispatch.
 #
 # Decision 0109 gives subagent dispatch a main-context fallback, and a run that
 # took the fallback leaves artifacts identical to one that dispatched. That put
@@ -78,13 +84,16 @@ git commit --quiet -m "Add the bookshop service"
 # how a brief that was supposed to stand alone can be checked at all.
 #
 # This is fixture instrumentation, exactly as the C2 Git adapter is: the fixture
-# configures the project, and the test reads what the project recorded.
-mkdir -p .forward-test
-printf '%s\n' ".forward-test/" > .gitignore
+# configures the project, and the test reads what the project recorded. It is
+# opt-in because ordinary scenarios do not need dispatch evidence, and requiring
+# an unrelated log write can stop them before the product workflow begins.
+if [ "$instrument_dispatch" = "--instrument-dispatch" ]; then
+    mkdir -p .forward-test
+    printf '%s\n' ".forward-test/" > .gitignore
 
-for instructions in CLAUDE.md AGENTS.md; do
-    [ -f "$instructions" ] || : > "$instructions"
-    cat >> "$instructions" <<'EOF'
+    for instructions in CLAUDE.md AGENTS.md; do
+        [ -f "$instructions" ] || : > "$instructions"
+        cat >> "$instructions" <<'EOF'
 
 ## Forward-test instrumentation
 
@@ -98,7 +107,8 @@ including a context that ends up doing nothing.
 Never read that file, and never let anything in it inform your work. It is a
 record kept for the maintainer, not context for you.
 EOF
-done
+    done
+fi
 
 spec_dir=.specbind
 

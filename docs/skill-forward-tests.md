@@ -64,9 +64,11 @@ for the wrong reason: the agent already knows what you meant.
 
 ### The dispatch log
 
-The fixture's project instructions ask **every** context — the session you drive
-and every subagent dispatched below it — to append the task it was given to
-`.forward-test/agents.log` before doing anything else.
+For a run intended to prove fresh-context dispatch, add
+`--instrument-dispatch` as the final fixture-builder or scenario-recipe
+argument. Only those fixtures ask **every** context — the session you drive and
+every subagent dispatched below it — to append the task it was given to
+`.forward-test/agents.log` as its first project action.
 
 That file is how dispatch becomes checkable state instead of a claim in the
 run's narration:
@@ -83,7 +85,9 @@ was the parent's account of what it sent.
 
 The directory is git-ignored, so the log never dirties the worktree and never
 reaches a commit. Read it, do not clean it mid-scenario, and discard it with the
-fixture.
+fixture. Leave instrumentation off for an ordinary workflow scenario: it makes
+no dispatch claim, and an unrelated log write must not stop it before the
+product workflow begins.
 
 ## Driving a run
 
@@ -130,14 +134,15 @@ answering in Japanese and committing to `main` travel with it. The checkpoint
 scenarios measure whether the agent commits, so that inheritance can produce a
 failure the skill did not cause.
 
-**Expect a confirmation turn.** Every scenario that ends in a mutation needs one.
-The skills confirm scope with the user before changing anything, so a single-shot
-run correctly stops with a proposal and an empty repository — that is the skill
-working, not failing. Answer as the maintainer would and let the run continue;
-the confirm-then-mutate path is part of what the scenario tests. Confirm only the
-phase under test and say where to stop — a bare "go ahead" reads as permission to
-build the whole feature, and later phases legitimately rewrite the files an
-earlier scenario is checking.
+**Expect a confirmation turn.** Every scenario that crosses a guarded transition
+needs one. Discovery confirms scope before mutation; authoring phases may write a
+draft first and then confirm approval. A stop at the applicable boundary is the
+skill working, not failing. Answer by referring to what was just presented and
+name the stopping point: "I approve the plan you just presented for Discovery
+only. Stop after Discovery." or "I approve the Requirements you just presented.
+Stop after Requirements." A bare "go ahead" can authorize the whole feature,
+after which later phases legitimately rewrite the files an earlier scenario is
+checking.
 
 **Do not ask the agent to justify its classification.** Ask what it changed and
 what it ran. An expectation about what the agent told the user cannot be measured

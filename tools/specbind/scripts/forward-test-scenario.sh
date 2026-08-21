@@ -11,7 +11,7 @@
 # expectations to check afterwards live in docs/skill-forward-tests.md, which
 # stays the contract.
 #
-# Usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja]
+# Usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja] [--instrument-dispatch]
 #
 # Scenarios:
 #   base   the fixture as built, nothing added
@@ -53,13 +53,23 @@
 
 set -eu
 
-scenario=${1:?usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja]}
-target=${2:?usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja]}
+scenario=${1:?usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja] [--instrument-dispatch]}
+target=${2:?usage: forward-test-scenario.sh <scenario> <target-directory> [en|ja] [--instrument-dispatch]}
 language=${3:-en}
+instrument_dispatch=${4:-}
+
+if [ -n "$instrument_dispatch" ] && [ "$instrument_dispatch" != "--instrument-dispatch" ]; then
+    echo "forward-test-scenario: unknown option: $instrument_dispatch" >&2
+    exit 1
+fi
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 
-sh "$script_dir/forward-test-fixture.sh" "$target" "$language" >/dev/null
+if [ "$instrument_dispatch" = "--instrument-dispatch" ]; then
+    sh "$script_dir/forward-test-fixture.sh" "$target" "$language" "$instrument_dispatch" >/dev/null
+else
+    sh "$script_dir/forward-test-fixture.sh" "$target" "$language" >/dev/null
+fi
 cd "$target"
 PATH="$(CDPATH= cd -- .specbind/bin && pwd):$PATH"
 export PATH

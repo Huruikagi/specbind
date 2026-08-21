@@ -61,6 +61,13 @@ native interpreter invoked from it does not, so a script that opens
 precondition that silently did not apply turns a scenario into a different one.
 Verify the precondition with a command before launching the run.
 
+Add `--instrument-dispatch` as the final builder or recipe argument only when
+the run is intended to prove fresh-context dispatch. It injects the ignored
+`.forward-test/agents.log` instruction used to distinguish dispatch from the
+main-context fallback. Ordinary workflow scenarios leave it off: they have no
+dispatch claim to prove, and an unrelated instrumentation write must not block
+the product workflow before it starts.
+
 ## Driving a run
 
 Use a subagent with no prior context.
@@ -126,20 +133,25 @@ sentence because you requested it. Read that from what the run said on its own.
 
 ## Expect a confirmation turn
 
-Every scenario ending in a mutation has one. The skills confirm scope before
-changing anything, so a first pass correctly stops with a proposal and an
-unchanged repository. That is the skill working.
+Every scenario that crosses a guarded transition has one. Discovery confirms
+scope before its mutation; authoring phases may write a draft first and then
+confirm its approval. A first pass that stops at the applicable boundary is the
+skill working. Judge the draft and guarded state appropriate to that phase
+instead of assuming the whole repository must still be unchanged.
 
 Answer as the maintainer would, then let it finish. Continue the same subagent
 rather than starting a new one, so it keeps the state it gathered. The
 confirm-then-mutate path is part of what the scenario tests, and it is where the
 guarded CLI operations actually run.
 
-**Confirm the phase, not the project.** Say what the scenario needs confirmed and
-where to stop. "Proceed with that scope" reads as permission to build the whole
-thing: one run answered that way went from discovery through requirements,
-design, review, tasks, and implementation, which left every discovery expectation
-unmeasurable because later phases had legitimately changed the same files.
+**Confirm the phase, not the project.** Refer explicitly to what the agent just
+presented and where to stop: "I approve the plan you just presented for Discovery
+only. Stop after Discovery." or "I approve the Requirements you just presented.
+Stop after Requirements." A bare "Proceed with that scope" can read as permission
+to build the whole thing: one run answered that way went from discovery through
+requirements, design, review, tasks, and implementation, which left every
+discovery expectation unmeasurable because later phases had legitimately changed
+the same files.
 
 ## Judge from the fixture, never from the report
 
