@@ -41,7 +41,11 @@ its remaining body, bind a version, run release work, or finalize.
 Inspect only repository evidence that can define this project's real release
 procedure: root agent instructions, package and version manifests, release
 workflows, build or packaging scripts, and existing release documentation. Do
-not edit any of them. Draft a complete replacement Release adapter that:
+not edit any of them. Before concluding that release documentation is absent,
+enumerate the repository-root files and inspect matching release documents such
+as `RELEASE*`, `RELEASING*`, and `CHANGELOG*` (case-insensitively), in addition
+to linked documentation. Do not rely on `README.md` being the only entry point.
+Draft a complete replacement Release adapter that:
 
 - preserves the exact `type: SpecBind Release Adapter` Front Matter;
 - removes the scaffold marker;

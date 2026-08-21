@@ -439,6 +439,7 @@ fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
         "must run its completion handshake\n   again",
         "approval authorizes only replacing the adapter",
         "Never infer that an adapter is unconfigured",
+        "Do not rely on `README.md` being the only entry point",
         "Skip sections 3 through 6",
         "A local tag has not left the repository",
         "Immediately before finalization, record `git status --short`",
