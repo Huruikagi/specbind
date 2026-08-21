@@ -50,3 +50,12 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 - Direct work has an explicit implementation owner without adding another public skill.
 - Quick-plan and batch-plan improve throughput without defining weaker lifecycle semantics.
 - A later milestone orchestrator can coordinate multiple Spec and Direct items without changing the v1 per-item implementation contract.
+
+## Follow-up tracking
+
+- Milestone-wide implementation orchestration is tracked by
+  [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+- A guided customization skill is tracked by
+  [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
+
+These links record post-v1 work without expanding the fixed v1 skill catalog.

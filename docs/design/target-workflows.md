@@ -55,7 +55,10 @@ Requirements recorded so far:
 - A release closes a milestone, not the specs involved in that milestone.
 - Improvements to the existing-spec update route will be specified incrementally.
 
-Capability retirement remains explicitly outside v1. Other routing and invalidation rules are defined by the per-Spec state machine and the accepted skill boundary.
+Capability retirement remains explicitly outside v1 and is tracked as
+[Issue #7](https://github.com/Huruikagi/specbind/issues/7). Other routing and
+invalidation rules are defined by the per-Spec state machine and the accepted
+skill boundary.
 
 ## Milestone and release lifecycle
 
@@ -87,7 +90,11 @@ No active milestone
 - Abandoning the entire unreleased milestone requires explicit user confirmation and reconciled specs before milestone-local artifacts and active-change metadata are cleared. It creates no release-log entry or release-roadmap archive by default.
 - Reversing released behavior is new work in a new milestone and returns through the normal release path.
 
-These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md). Discovery confirms the intent and the Rust CLI owns the guarded milestone-state mutation.
+These rules are accepted in [Decision 0005](./decisions/0005-active-change-abandonment.md).
+Discovery confirms the intent. The public guarded removal and abandonment
+operations are not implemented yet and are tracked by
+[Issue #8](https://github.com/Huruikagi/specbind/issues/8); until they exist,
+discovery stops instead of editing lifecycle state directly.
 
 The portable release contract owns gated and idempotent spec finalization. Project-specific packaging, versioning, publishing, and verification instructions come from `{{SPEC_DIR}}/settings/adapters/release.md`; see [Decision 0002](./decisions/0002-project-release-adapter.md).
 
@@ -137,6 +144,11 @@ User request
             -> per-spec tasks approval
             -> stop; implementation remains per-item in v1
 ```
+
+Milestone-wide implementation orchestration after this stopping point is
+tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9). It must
+compose the existing per-item implementation contract rather than define a
+second progress or validation model.
 
 ## Existing-system work
 
@@ -188,25 +200,35 @@ The first concrete checker validates active Requirement ID traceability across `
 
 ## Approval and automation model
 
-The future workflow needs an explicit answer for each transition:
+The implemented workflow gives each transition an explicit authority and
+freshness answer:
 
-| Transition | Current target question |
+| Transition | Current contract |
 | --- | --- |
-| Discovery -> spec work | Is the selected route confirmed by the user? |
-| Requirements -> design | Did the review pass, and does current-revision evidence record valid explicit or delegated approval? |
-| Design -> tasks | Did technical and contract review pass, and is approval authorized for the current revision? |
-| Tasks -> implementation | Did task review pass, and is approval authorized for the current task revision? |
-| Implementation -> completion | Which reviews and fresh verification evidence are required? |
-| Milestone -> release | What proves every required milestone item is ready? |
-| Release version assignment | Is a concrete target version bound to the active milestone? |
-| Release -> milestone closed | Did the release succeed before `roadmap.md` is archived out of `steering/`? |
+| Discovery -> spec work | Discovery obtains confirmation, then the CLI creates or updates the confirmed Roadmap scope. |
+| Requirements -> design | Current-revision Requirements approval records explicit or named run-scoped delegated authority. |
+| Design -> tasks | Current-revision Design approval is followed by one fresh milestone Contract review before Tasks approval. |
+| Tasks -> implementation | Current-revision Tasks approval and the fresh Contract-review barrier authorize implementation entry. |
+| Implementation -> completion | Task progress, implementation validation, and the Decision 0086 completion handshake establish accepted completion. |
+| Milestone -> release | `release preflight` derives whole-milestone readiness from current authoritative state. |
+| Release version assignment | `milestone bind-release` owns initial binding and explicit confirmed rebinding. |
+| Release -> milestone closed | The release skill verifies project release success before `release finalize` archives the Roadmap last. |
 
 Accelerated and batch workflows may automate transitions, but they should reuse the same phase contracts rather than define competing document formats or success criteria.
 
 An accelerated workflow keeps run-scoped `delegated` authorization for named future gates in its orchestration context; it does not add a project artifact. Each gate still runs its normal checks and emits the same approval event as the deliberate path. Delegation only removes the extra confirmation pause after a passing gate. `--non-interactive` does not imply approval and stops when neither valid explicit approval nor in-scope delegated authorization is available.
 
-## Topics to resolve next
+## Tracked follow-up work
 
-1. Define the initial `specbind check traceability` contract and diagnostic schema.
-2. Turn the accepted Spec and milestone events into concrete public CLI commands and stable result codes.
-3. Refine discovery's existing-Spec update and scope-reconciliation operations from implementation experience.
+The original traceability, gate, review, completion, and release command topics
+now have accepted contracts and public CLI implementations. Remaining lifecycle
+extensions are tracked explicitly:
+
+- guarded active-Spec scope removal and milestone abandonment in
+  [Issue #8](https://github.com/Huruikagi/specbind/issues/8);
+- milestone-wide implementation orchestration in
+  [Issue #9](https://github.com/Huruikagi/specbind/issues/9);
+- established-Spec decomposition and responsibility migration in
+  [Issue #6](https://github.com/Huruikagi/specbind/issues/6);
+- capability and Spec retirement in
+  [Issue #7](https://github.com/Huruikagi/specbind/issues/7).

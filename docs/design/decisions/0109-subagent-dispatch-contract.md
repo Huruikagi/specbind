@@ -158,15 +158,12 @@ surface when a role's instructions grow beyond what a brief should carry, or
 when a project needs to pin capability per role; either is a later decision with
 its own naming, refresh, and customization questions.
 
-The second trigger already has a named intent: per-role Codex model selection is
-wanted after v1, with a reference implementation the maintainer points at in
+The second trigger had a named intent: per-role Codex model selection, with a
+reference implementation in
 [pc-build-planner@ba18a76](https://github.com/Huruikagi/pc-build-planner/commit/ba18a76dd32f467db5d784e97cf726713f6b4791).
-The inherited tree also shows the shape — cc-sdd's `spec-reviewer.toml` already
-carries `model` and `model_reasoning_effort`. Recording it here keeps the
-deferral honest: this surface is expected to arrive, and nothing in this
-decision's dispatch contract needs to change when it does, because a registered
-role would supply capability and a durable description while the brief and
-protocol selector stay exactly as they are.
+Decision 0129 has since implemented that surface through stable registered roles
+and structured project overrides. As anticipated here, the dispatch brief and
+protocol selector did not change when role capability became configurable.
 
 ### Retrofit
 

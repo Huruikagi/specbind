@@ -125,3 +125,10 @@ It replaces `baseline_revision`, changes nothing else in the Roadmap, and remove
 ## Implementation status
 
 Implemented. `tools/specbind/src/lifecycle/milestone/` owns the three transitions. The scope candidate loader decodes the strict version-1 camelCase document, and every work-item rule is enforced by rendering the Roadmap and validating it through the authoritative parser, so a written Roadmap is exactly what the parser accepts. Creation requires a clean committed repository and no active Roadmap, generates the UUID v7, captures `HEAD` as the baseline, initializes each participating `spec.yaml` in `requirements` state, and writes the Roadmap last. Scope update preserves the body when the candidate omits it, carries completed Direct status across retained identities, refuses to drop an active Spec or a completed Direct item, initializes added participants, and removes the accepted review only when the Spec-backed projection changes. Rebaseline validates an explicit full ancestor revision against a clean repository, preserves the body and scope, and always removes the accepted review. No command materializes Brief, Requirements, Contract, Design, or Research Markdown.
+
+## Follow-up tracking
+
+The separate guarded reconciliation surface for active-Spec scope removal and
+full milestone abandonment is tracked by
+[Issue #8](https://github.com/Huruikagi/specbind/issues/8). Until that surface
+exists, the implemented scope update continues to refuse those removals.

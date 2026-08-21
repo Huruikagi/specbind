@@ -179,6 +179,11 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ## Post-v1 candidates
 
-- A milestone-wide implementation orchestrator with dependency-wave and subagent coordination.
-- A dedicated customization convenience skill over the stable shared settings surface.
-- Agent removal and uninstall workflows.
+- A milestone-wide implementation orchestrator with dependency-wave and
+  subagent coordination, tracked by
+  [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+- A dedicated customization convenience skill over the stable shared settings
+  surface, tracked by
+  [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
+- Agent removal and uninstall workflows, tracked by
+  [Issue #11](https://github.com/Huruikagi/specbind/issues/11).

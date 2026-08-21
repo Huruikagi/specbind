@@ -113,9 +113,15 @@ Status: Accepted and implemented for the v1 artifact set
 | `log.md` | Persists per spec as the OKF reserved update log for released changes. | Release finalization workflow. | Accepted | Has no frontmatter. For a Spec-backed milestone, AI supplies one delivered-change summary per participating spec and the CLI inserts its canonical entry under newest-first ISO dates. Direct-only milestones do not update per-Spec logs. Release version is the human-facing label, milestone ID is secondary trace metadata, and abandoned work is omitted. |
 | `spec.yaml` | Represents lifecycle, active-change metadata, active Requirement IDs, and gate evidence. | Spec lifecycle workflows. | Accepted | The only canonical per-spec metadata artifact; its target states and events are defined in the spec state machine and must represent released / no-active-change without requiring a brief artifact or `tasks.yaml`. |
 
-## Open questions
+## Tracked follow-up questions
 
-- How are superseded or removed product capabilities reflected in long-lived specs?
-- Should projects be able to opt into a separate audit artifact for abandoned, unreleased milestones?
-- Post-v1, should canonical spec identity expand from one portable path segment to an OKF-aligned namespace path below `specs/` (for example, `commerce/checkout`), so the namespace prefix groups every concept owned by that spec without adding an opaque ID?
-- Can the same namespace model extend the existing type-based Markdown placement flexibility to spec namespaces and currently fixed structured artifacts without making current filenames the semantic identity?
+- Superseded or removed product capabilities and durable retired identity are
+  tracked by [Issue #7](https://github.com/Huruikagi/specbind/issues/7).
+- An optional audit artifact for abandoned, unreleased milestones remains an
+  open design choice within
+  [Issue #8](https://github.com/Huruikagi/specbind/issues/8); it is not part of
+  the default release archive.
+- Expanding canonical Spec identity from one portable segment to an OKF-aligned
+  namespace such as `commerce/checkout`, including placement of fixed
+  structured artifacts, is tracked by
+  [Issue #14](https://github.com/Huruikagi/specbind/issues/14).

@@ -63,9 +63,11 @@ selected agent. The project-instruction block specified by Decision 0099 is
 planned and applied for each selected agent when the setting is enabled. TTY
 prompting for missing inputs is not implemented, so an initial installation
 requires explicit agent and language values. Explicit cc-sdd migration now has
-a read-only inventory and a guarded automatic apply subset for unambiguous
-configuration and exact known legacy skills. Legacy Spec conversion and the
-binary distribution surface remain outstanding.
+a read-only inventory, CLI-validated agent-assisted semantic resolution, and a
+guarded final cutover that retires the exact legacy source under Decisions 0125
+through 0127. Windows x64 and Linux x64 release assets, checksums, installer
+smoke tests, and stable publication are implemented under Decision 0124;
+Decision 0130 adds installation through mise's GitHub backend.
 
 ## Consequences
 
@@ -73,3 +75,15 @@ binary distribution surface remain outstanding.
 - Git replaces bespoke backup directories and overwrite prompts.
 - Project customization survives product updates, while generated agent resources can reliably advance.
 - Migration remains explicit and reviewable; destructive final cutover relies on the clean committed Git recovery boundary defined by Decision 0127.
+
+## Follow-up tracking
+
+- Agent removal and guarded project uninstall are tracked by
+  [Issue #11](https://github.com/Huruikagi/specbind/issues/11).
+- Tested macOS and Linux ARM64 release targets are tracked by
+  [Issue #12](https://github.com/Huruikagi/specbind/issues/12).
+- Guarded binary self-update is tracked by
+  [Issue #13](https://github.com/Huruikagi/specbind/issues/13).
+
+Code signing, notarization, and additional package-manager channels remain
+options rather than committed work.

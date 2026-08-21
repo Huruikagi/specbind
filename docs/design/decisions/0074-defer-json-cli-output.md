@@ -24,3 +24,9 @@ Structured JSON remains appropriate for owned artifact schemas and for the Decis
 - Agent context remains small without requiring response-envelope schemas for every command.
 - Multi-artifact consumers issue separate selector reads in v1 after using the compact text inventory.
 - Adding JSON output later is an additive CLI capability but requires an explicit versioned contract rather than inheriting an accidental v1 shape.
+
+## Follow-up tracking
+
+The additive post-v1 JSON result surface is tracked by
+[Issue #5](https://github.com/Huruikagi/specbind/issues/5). This tracking link
+does not reserve a response shape or change the v1 decision above.

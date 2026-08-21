@@ -176,7 +176,15 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 
 ## V1 distribution boundary
 
-V1 officially supports Windows x64 and Linux x64 as tested through WSL2. Native macOS ARM64, macOS Intel, and Linux ARM64 are deferred until corresponding test environments exist. GitHub Releases and the two installer scripts are the only primary distribution channel. Homebrew, WinGet, Scoop, Cargo installation, npm launchers, self-update, code signing, and notarization are post-v1 options.
+V1 officially supports Windows x64 and Linux x64 as tested through WSL2.
+Native macOS ARM64, macOS Intel, and Linux ARM64 remain deferred until
+corresponding test environments exist and are tracked by
+[Issue #12](https://github.com/Huruikagi/specbind/issues/12). GitHub Releases,
+the two installer scripts, and the Decision 0130 mise GitHub backend are the
+current distribution channels. Homebrew, WinGet, Scoop, Cargo installation,
+npm launchers, code signing, and notarization remain uncommitted post-v1
+options. Guarded binary self-update is tracked separately by
+[Issue #13](https://github.com/Huruikagi/specbind/issues/13).
 
 The installers verify the selected archive against `SHA256SUMS`, install to the platform default or `--install-dir`, and print an exact PATH follow-up when needed. They do not modify shell profiles. `specbind --version` reports the installed version.
 

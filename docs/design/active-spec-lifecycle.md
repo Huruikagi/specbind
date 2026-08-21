@@ -246,8 +246,13 @@ The project-local append-only Change Brief behavior is the observed problem, not
 - contract review: read contracts first and deepen into affected specs only when boundaries change or remain ambiguous.
 - `specbind-release`: perform gated, idempotent finalization after release success.
 
-Batch update and evidence-recording responsibilities are required, but their final skill boundaries are not yet decided.
+Quick-plan and batch-plan boundaries through Tasks approval are fixed by
+Decision 0120. Implementation remains one Roadmap item per
+`specbind-implement` invocation; a milestone-wide implementation orchestrator
+is tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 
 ## Open questions
 
-- Whether projects need an opt-in audit record for abandoned, unreleased milestones.
+- Whether projects need an opt-in audit record for abandoned, unreleased
+  milestones remains part of
+  [Issue #8](https://github.com/Huruikagi/specbind/issues/8).
