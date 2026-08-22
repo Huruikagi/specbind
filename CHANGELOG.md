@@ -4,6 +4,25 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 0.2.0 - 2026-08-22
+
+- Added supported installation through mise's GitHub backend, including
+  release-workflow smoke tests on Windows and Linux.
+- Made milestone and Spec status diagnostics phase-aware so expected future
+  work is distinguished from actionable blockers.
+- Added lifecycle-scoped artifact instructions, target-aware template
+  resolution, and clearer steering and deferred-finding ownership.
+- Enabled safe local Git checkpoints by default for eligible workflow units,
+  while keeping push, branch changes, and unrelated work outside that policy.
+- Added Release adapter bootstrapping, explicit empty-policy handling, complete
+  release-procedure discovery, and guarded finalization checkpoints.
+- Strengthened Discovery, Requirements, Design, Tasks, implementation, and
+  validation skills with cleaner handoffs and independently verifiable evidence.
+- Split the forward-test handbook into focused scenario and results documents,
+  and added end-to-end journey fixtures for release-workflow verification.
+- Tightened the `scope/v1` generated schema so its version field accepts only
+  schema version 1.
+
 ## 0.1.0 - 2026-08-21
 
 - Published the first stable pre-1.0 binary release for Windows x64 and Linux

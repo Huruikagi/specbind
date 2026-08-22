@@ -34,8 +34,8 @@ mise use github:Huruikagi/specbind
 
 このコマンドは、現在のディレクトリでmiseが選んだ設定ファイルへSpecBindを記録し、
 miseの管理する`PATH`から実行できるようにします。miseは`latest`に既定で最低公開
-期間を設けているため、最初のstableリリースの公開直後だけは、必要に応じて
-`mise use github:Huruikagi/specbind@0.1.0`のようにバージョンを明示してください。
+期間を設けているため、stableリリースの公開直後は、必要に応じて
+`mise use github:Huruikagi/specbind@0.2.0`のようにバージョンを明示してください。
 
 miseを使わない場合は、プラットフォーム別のインストーラを使います。
 

@@ -64,8 +64,8 @@ mise use github:Huruikagi/specbind
 This installs the latest stable version eligible under your mise settings and
 records it in the mise configuration selected for the current directory. mise
 applies a minimum release age to `latest` by default, so during the first day
-after the first stable release, select it explicitly with
-`github:Huruikagi/specbind@0.1.0` if needed.
+after a stable release, select it explicitly with
+`github:Huruikagi/specbind@0.2.0` if needed.
 
 Without mise, use the platform installer.
 
