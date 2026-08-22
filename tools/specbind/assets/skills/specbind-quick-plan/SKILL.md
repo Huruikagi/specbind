@@ -106,6 +106,15 @@ and do not proceed to Tasks without an accepted review.
 
 Every dispatch returns a status. **The status decides what happens next.**
 
+Success covers the owning phase's whole contract, including its
+adapter-directed checkpoint. Require the returned status to say whether that
+checkpoint was committed, intentionally absent/scaffolded, or failed. Before
+dispatching the next phase, independently run `git status --short` and require
+that no paths produced by the completed phase remain dirty. A fresh gate with
+uncommitted Requirements, Design, Contract, `tasks.yaml`, or `spec.yaml` is not
+a clean handoff and not a successful phase result. Stop and report it; the
+orchestrator must not create a checkpoint owned by the dispatched phase.
+
 | What came back | What you do |
 | --- | --- |
 | No usable status — missing, ambiguous, or replaced by narrative | Re-dispatch **once**, asking only for the status |

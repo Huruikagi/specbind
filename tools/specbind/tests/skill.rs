@@ -335,6 +335,22 @@ fn planning_orchestrators_handoff_their_delegation_identity() {
 }
 
 #[test]
+fn planning_orchestrators_require_clean_checkpointed_phase_handoffs() {
+    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
+        let orchestrator = skill::find(selector).expect("planning orchestrator");
+        let body = orchestrator.body().expect("orchestrator body");
+
+        assert!(body.contains("adapter-directed checkpoint"), "{selector}");
+        assert!(body.contains("git status --short"), "{selector}");
+        assert!(body.contains("clean handoff"), "{selector}");
+        assert!(
+            body.contains("must not create a checkpoint owned by the dispatched phase"),
+            "{selector}"
+        );
+    }
+}
+
+#[test]
 fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
     let quick = skill::find("specbind-quick-plan")
         .expect("quick-plan")
