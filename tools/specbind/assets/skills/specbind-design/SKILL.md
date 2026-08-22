@@ -112,6 +112,13 @@ tasks that cannot be executed as written.
 A question that blocks choosing the approach is resolved or escalated now. It
 cannot be deferred into the design as an open item.
 
+Inspect the project's applicable verification command and test paths as part of
+the repository investigation. Confirm that each named command exists. If it does
+not, the Design must explicitly own creation of the missing script or test
+interface and include that path in the change boundary. Do not describe a change
+as confined to source files while relying on verification infrastructure that
+the repository does not yet contain.
+
 ### Dispatch the independent parts
 
 When the investigation is large enough that reading it all here would crowd out

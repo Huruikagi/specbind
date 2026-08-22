@@ -110,3 +110,15 @@ fn task_planning_requires_each_task_to_be_verifiable_when_actionable() {
     assert!(content.contains("test interface does not\n  exist yet"));
     assert!(content.contains("later verification task cannot retroactively"));
 }
+
+#[test]
+fn design_authoring_reconciles_verification_with_the_change_boundary() {
+    let content = protocol::read("design-authoring")
+        .expect("design authoring protocol")
+        .content();
+
+    assert!(content.contains("Verification has an implementation boundary"));
+    assert!(content.contains("required command or test interface is absent"));
+    assert!(content.contains("confined to one source path"));
+    assert!(content.contains("verification strategy is executable"));
+}

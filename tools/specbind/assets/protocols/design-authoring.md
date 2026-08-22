@@ -139,12 +139,28 @@ understand the change.
 - Unresolved questions that survive into the Design are recorded as open
   questions rather than resolved by implication.
 
+## Verification has an implementation boundary
+
+A testing strategy must match the repository that will execute it. Identify the
+applicable verification command and the paths that currently implement it.
+
+- When the command and test interface exist, state how this change extends them.
+- When a required command or test interface is absent, the Design must decide
+  which path this change creates and include that path in its owned change
+  boundary.
+- Never claim that implementation is confined to one source path while the
+  testing strategy depends on a missing script or test path outside it.
+
+Leaving the verification foundation undecided moves an architectural choice
+into Tasks or implementation, where neither phase owns it.
+
 ## Readiness
 
 A Design is ready for review when the approach was chosen against the whole
 requirement set, nothing in it is unnecessary, the owned boundary is explicit,
-every active Requirement and the affected Contract are genuinely realized, and
-the document can be understood on its own.
+every active Requirement and the affected Contract are genuinely realized, the
+verification strategy is executable within its stated change boundary, and the
+document can be understood on its own.
 
 Structural validity and complete traceability markers are preconditions, not
 evidence of any of the above.

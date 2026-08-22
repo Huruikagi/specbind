@@ -382,6 +382,16 @@ fn tasks_skill_audits_verification_readiness_before_approval() {
 }
 
 #[test]
+fn design_skill_investigates_the_real_verification_foundation() {
+    let design = skill::find("specbind-design").expect("design skill");
+    let body = design.body().expect("design body");
+
+    assert!(body.contains("Confirm that each named command exists"));
+    assert!(body.contains("own creation of the missing script or test\ninterface"));
+    assert!(body.contains("confined to source files"));
+}
+
+#[test]
 fn design_validation_puts_its_read_only_stop_rule_before_commands() {
     let body = skill::find("specbind-validate-design")
         .expect("design validation skill")
