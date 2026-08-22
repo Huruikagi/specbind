@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-21. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-22. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -32,7 +32,7 @@ without a pass are listed separately below.
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q4 |
-| End-to-end journey | None recorded | None recorded |
+| End-to-end journey | None recorded | HP1 |
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
 Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit
@@ -82,6 +82,17 @@ configuration-only approval, committed only the Release adapter, and stopped
 without binding, tagging, publishing, pushing, or finalizing. The resulting
 settings commit correctly made the accepted `cart` completion evidence stale.
 
+HP1 passed on 2026-08-22 with a fresh `gpt-5.6-terra` medium Codex driver against
+`4ce7e87`. The journey confirmed Discovery, delegated `specbind-quick-plan`
+Requirements/Design/Tasks gates, independent Design validation before approval,
+two reviewed implementation tasks, the expected pre-completion release blocker,
+exact completion evidence, Publish confirmation, detached tagged-tree testing,
+and finalization. The judge passed every expectation at final commit
+`b0a5eed605572b01ab93d27cb17c407b357fcbf3`; annotated tag `v1.4.0` points to
+`85adbb501a942249c94ca1dd7b525adbcdf6083f`, before finalization, and the fixture
+recorded eleven dispatch contexts. The final fixture was clean, had no remote,
+and retained the required release archives and cart log.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -119,6 +130,7 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 | First seen | Scenario | Finding | Status |
 | --- | --- | --- | --- |
 | `ef536c8` | HP1 | Two fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced on `4b44b63`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
+| `4ce7e87` | HP1 | The Git adapter says each completed implementation Task is an eligible workflow unit, while `specbind-implement` reaches its checkpoint only after all requested task outcomes are recorded; the passing driver combined two task completions into one commit. | Investigate checkpoint timing ownership before the next implementation-forward-test batch; HP1's artifact and release judge passed, but it does not assert one commit per Task. |
 
 ### Fixed, behavioral confirmation pending
 
