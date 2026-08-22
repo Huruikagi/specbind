@@ -372,6 +372,16 @@ fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
 }
 
 #[test]
+fn tasks_skill_audits_verification_readiness_before_approval() {
+    let tasks = skill::find("specbind-tasks").expect("tasks skill");
+    let body = tasks.body().expect("tasks body");
+
+    assert!(body.contains("execution-readiness audit"));
+    assert!(body.contains("canonical test command that is currently\nabsent"));
+    assert!(body.contains("do not approve a plan that implements behavior first"));
+}
+
+#[test]
 fn design_validation_puts_its_read_only_stop_rule_before_commands() {
     let body = skill::find("specbind-validate-design")
         .expect("design validation skill")

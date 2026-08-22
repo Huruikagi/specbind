@@ -150,6 +150,20 @@ mapped to an executable task.
 Both are read-only. Run them before you present anything, so a structural fault
 is something you fixed rather than something the approval refused.
 
+Then perform the execution-readiness audit the schema cannot perform. For every
+task, identify the checks that apply when that task finishes and require one of
+these to be true:
+
+- the verification command or test interface already exists,
+- this same task creates or updates it together with the behavior, or
+- an earlier task establishes it before this task becomes actionable.
+
+A later test task does not make an earlier behavior task verifiable. In
+particular, when the project names a canonical test command that is currently
+absent, do not approve a plan that implements behavior first and creates that
+command later. Combine the behavior and its tests, or place genuine test
+scaffolding first, then rerun both CLI checks.
+
 ## 5. Revising a plan that has recorded progress
 
 If the Spec is in `implementation`, tasks may already be completed or blocked,

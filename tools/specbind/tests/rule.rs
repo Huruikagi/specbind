@@ -65,4 +65,6 @@ fn task_generation_chooses_a_default_test_grouping_convention() {
     assert!(content.contains("Split\nverification into its own task only when"));
     assert!(content.contains("behavior delivered by several\nearlier tasks"));
     assert!(content.contains("Do not create a\nsecond task merely to restate"));
+    assert!(content.contains("canonical test command or test interface does not exist yet"));
+    assert!(content.contains("Never put that setup in a later task"));
 }

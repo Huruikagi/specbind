@@ -99,3 +99,14 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
         debug.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
     );
 }
+
+#[test]
+fn task_planning_requires_each_task_to_be_verifiable_when_actionable() {
+    let content = protocol::read("task-planning")
+        .expect("task planning protocol")
+        .content();
+
+    assert!(content.contains("independently finishable and verifiable"));
+    assert!(content.contains("test interface does not\n  exist yet"));
+    assert!(content.contains("later verification task cannot retroactively"));
+}

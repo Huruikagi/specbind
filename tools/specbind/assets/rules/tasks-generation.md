@@ -62,6 +62,11 @@ earlier tasks or forms a separately reviewable system boundary. Do not create a
 second task merely to restate the completion criteria of one implementation
 task.
 
+When the project's canonical test command or test interface does not exist yet,
+the first behavior task that needs it creates it together with its coverage, or
+an earlier foundation task establishes it. Never put that setup in a later task:
+the behavior task must be verifiable before it can be completed.
+
 Mixing both conventions without that boundary makes coverage hard to see. A
 project that prefers another convention should replace this paragraph and name
 any deliberate exceptions here.

@@ -55,6 +55,11 @@ which it is complete.
 - Each task must be executable as bounded work by someone who reads it together
   with the Design. A task that requires knowledge held only by its author is not
   a task yet.
+- Each task must be independently finishable and verifiable when it becomes
+  actionable. If an applicable verification command or test interface does not
+  exist yet, the task must create it or depend on an earlier task that does. A
+  later verification task cannot retroactively make an earlier behavior task
+  completable.
 - Each task must build on what precedes it and connect to the system. Work that
   produces something nothing else uses is either misordered or unnecessary.
 - Progress incrementally. A task that jumps several steps at once cannot be
