@@ -84,6 +84,11 @@ set **before** running anything, then run those exact commands.
   execute, and never submit a check whose exit status you did not see.
 - The CLI cannot detect this. It accepts command text and cannot know whether
   anything ran, so the honesty of the record rests entirely here.
+- Preserve the executed command verbatim in `mechanicalChecks.command`, including
+  environment assignments, the complete argument string, and quoting needed to
+  identify what ran. A label, shortened form, placeholder, or reconstructed
+  equivalent is not evidence. Compare the JSON candidate with the command you
+  executed before calling `completion accept`.
 - A failing check is `NO-GO`. Never swap in a cheaper command that passes,
   narrow a check, or skip a case to reach green.
 - A declared canonical command that is missing or cannot execute is

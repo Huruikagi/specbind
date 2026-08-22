@@ -74,9 +74,9 @@ is a configuration or environment failure, not permission to change models.
 | Order | Skill | Produces |
 | --- | --- | --- |
 | 1 | `specbind-requirements` | Requirements, and the requirements gate |
-| 2 | `specbind-design` | Design set, Contract |
+| 2 | `specbind-design` without Design-gate authority | Design set, Contract; stop before approval and checkpoint |
 | 3 | `specbind-validate-design` | An independent verdict on that design |
-| 4 | — | Design gate approval |
+| 4 | `specbind-design` with delegated authority | Design gate approval and its checkpoint |
 | 5 | `specbind-contract-review` | The milestone's accepted contract review |
 | 6 | `specbind-tasks` | `tasks.yaml`, and the tasks gate |
 
@@ -84,6 +84,14 @@ is a configuration or environment failure, not permission to change models.
 between authoring and approval, and this is the run's substitute for the reading
 a user would otherwise do at the gate. A `NO-GO` stops the run for the design
 skill to address; it is not advisory.
+
+Do not give the authoring dispatch Design-gate authority. Its expected
+stopped-by-design result is the unapproved Design ready for independent review,
+not a failed phase. Only after the validator returns `READY` do you re-dispatch
+`specbind-design` with the authorized workflow name to approve and checkpoint
+the unchanged reviewed Design. If Design is already approved before validation,
+the order is lost: stop rather than treating a later verdict as retroactive
+approval evidence.
 
 Gap analysis is not on this path. Run `specbind-gap-analysis` first if the work
 is brownfield and the ground is unfamiliar — this skill does not decide that for

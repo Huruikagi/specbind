@@ -122,3 +122,13 @@ fn design_authoring_reconciles_verification_with_the_change_boundary() {
     assert!(content.contains("confined to one source path"));
     assert!(content.contains("verification strategy is executable"));
 }
+
+#[test]
+fn completion_verification_preserves_the_exact_executed_command() {
+    let content = protocol::read("completion-verification")
+        .expect("completion verification protocol")
+        .content();
+
+    assert!(content.contains("preserve the exact executed command\nstring"));
+    assert!(content.contains("shortened argument, placeholder"));
+}

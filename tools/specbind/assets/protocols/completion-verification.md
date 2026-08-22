@@ -40,6 +40,9 @@ verification scope is wide enough to show the fix introduced nothing new.
 
 **A command passed.** Actual output and exit status from this run. Not inferred
 from a different command, and not remembered from an earlier one.
+When the command becomes durable evidence, preserve the exact executed command
+string. A descriptive label, shortened argument, placeholder, or equivalent
+command does not identify the evidence that produced the observed result.
 
 **A whole implementation is complete.** This is the strictest claim and needs
 all of:

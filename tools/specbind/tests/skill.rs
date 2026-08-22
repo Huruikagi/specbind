@@ -351,6 +351,29 @@ fn planning_orchestrators_require_clean_checkpointed_phase_handoffs() {
 }
 
 #[test]
+fn planning_orchestrators_validate_design_before_delegated_approval() {
+    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
+        let orchestrator = skill::find(selector).expect("planning orchestrator");
+        let body = orchestrator.body().expect("orchestrator body");
+
+        assert!(body.contains("without Design-gate authority"), "{selector}");
+        assert!(body.contains("Only"), "{selector}");
+        assert!(body.contains("retroactive"), "{selector}");
+    }
+}
+
+#[test]
+fn implementation_validation_preserves_exact_executed_command_text() {
+    let validation =
+        skill::find("specbind-validate-implementation").expect("implementation validation skill");
+    let body = validation.body().expect("validation body");
+
+    assert!(body.contains("Preserve the executed command verbatim"));
+    assert!(body.contains("shortened form, placeholder"));
+    assert!(body.contains("Compare the JSON candidate"));
+}
+
+#[test]
 fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
     let quick = skill::find("specbind-quick-plan")
         .expect("quick-plan")

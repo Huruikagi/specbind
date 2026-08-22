@@ -88,14 +88,22 @@ is a configuration or environment failure, not permission to change models.
 Per item, in order:
 
 1. `specbind-requirements` — Requirements and its gate
-2. `specbind-design` — Design set and Contract
+2. `specbind-design` without Design-gate authority — Design set and Contract;
+   stop before approval and checkpoint
 3. `specbind-validate-design` — an independent verdict
-4. design gate approval
+4. re-dispatch `specbind-design` with delegated authority for Design gate
+   approval and its checkpoint
 
 **Design validation is not optional, and not something batch skips because it is
 running many items.** With gates delegated nothing pauses between authoring and
 approval, and this run produces more unreviewed material than any other. A
 `NO-GO` stops that item.
+
+Do not give an authoring dispatch Design-gate authority. Its expected
+stopped-by-design result is an unapproved Design ready for independent review,
+not a failed phase. Only a `READY` verdict permits the approval dispatch. If a
+Design is already approved before validation, stop; a later verdict cannot
+retroactively restore the required order.
 
 Then, once **every** participating Spec holds current design approval:
 
