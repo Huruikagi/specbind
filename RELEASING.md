@@ -4,11 +4,22 @@ SpecBind binaries are published by the tag-triggered GitHub Actions release
 workflow. The tag, Cargo version, CLI version, archive names, and release title
 must describe the same SemVer.
 
+Starting with `1.0.0`, stable releases in one executable major preserve the
+forward-upgrade compatibility surface defined by [Decision
+0144](./docs/design/decisions/0144-major-version-compatibility-and-migration.md).
+A breaking release increments the executable major version, identifies the
+breaking surfaces, and includes a documented migration route from the latest
+stable release of the immediately preceding major. Artifact `schema_version`
+values remain independent of executable SemVer.
+
 ## Prepare a release
 
 1. Choose the version. Use prereleases such as `0.1.0-rc.1` while validating a
    release line; do not publish a prerelease from a Cargo package that reports
    the final version.
+   For a stable `1.x` or later release, classify compatibility-surface changes
+   against Decision 0144. A breaking change belongs to the next major and its
+   migration route must be ready before publication.
 2. Update `tools/specbind/Cargo.toml`, `tools/specbind/Cargo.lock`, the CLI
    version assertion, and `CHANGELOG.md` together.
 3. Run the complete Rust verification set from `tools/specbind/`:

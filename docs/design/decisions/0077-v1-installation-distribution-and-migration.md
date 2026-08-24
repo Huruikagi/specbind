@@ -14,10 +14,12 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 ### Product distribution
 
-- The public Rust release line and compatibility policy are defined by
-  [Decision 0124](./0124-pre-1.0-binary-release-line.md). The v1 product
+- The public Rust release line is defined by [Decision
+  0124](./0124-pre-1.0-binary-release-line.md), and the compatibility promise
+  beginning at executable `1.0.0` is defined by [Decision
+  0144](./0144-major-version-compatibility-and-migration.md). The v1 product
   contract and versioned artifact schemas do not require the executable to
-  start at SemVer `1.0.0`.
+  start at SemVer `1.0.0` or advance with its major version.
 - V1 ships GitHub Release binaries only for Windows x64 and Linux x64 tested under WSL2. Each release documents the exact locally tested environments.
 - macOS ARM64, macOS Intel, and Linux ARM64 are post-v1 targets.
 - PowerShell and shell installer scripts download the selected binary. `--version` pins an explicit release; omission selects the latest stable release, and prereleases require an explicit version.
