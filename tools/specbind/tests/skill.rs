@@ -374,6 +374,24 @@ fn planning_orchestrators_require_clean_checkpointed_phase_handoffs() {
 }
 
 #[test]
+fn planning_orchestrators_bound_the_unapproved_design_handoff() {
+    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
+        let orchestrator = skill::find(selector).expect("planning orchestrator");
+        let body = orchestrator.body().expect("orchestrator body");
+
+        assert!(body.contains("one deliberate exception"), "{selector}");
+        assert!(body.contains("Design artifact paths"), "{selector}");
+        assert!(body.contains("Contract path"), "{selector}");
+        assert!(body.contains("`spec.yaml`"), "{selector}");
+        assert!(body.contains("After `READY`"), "{selector}");
+        assert!(
+            body.contains("normal clean handoff is mandatory"),
+            "{selector}"
+        );
+    }
+}
+
+#[test]
 fn planning_orchestrators_validate_design_before_delegated_approval() {
     for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
         let orchestrator = skill::find(selector).expect("planning orchestrator");

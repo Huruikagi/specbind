@@ -122,6 +122,16 @@ Design result that identifies a requirements rewind or another user-owned
 decision is a deliberate stop, as is a repeated `NO-GO` after that bounded
 revision. The orchestrator never repairs the artifacts itself.
 
+The validator must have a draft to read, while the Design skill cannot
+checkpoint that draft before approval. This makes the handoff from Design
+authoring to independent validation the single bounded exception to the normal
+clean-checkpoint rule: only the Design artifact paths and that Spec's Contract
+may be dirty, and they must be the paths the authoring run reports. Machine
+state, generated outputs, unrelated paths, and artifacts from earlier phases
+still stop the run. After `READY`, the Design approval dispatch owns the
+checkpoint and must restore the ordinary clean handoff before contract review.
+Batch never combines several Specs' drafts into one dirty validation handoff.
+
 It applies to batch as much as to quick. The hole is identical, and batch is the
 higher-volume path, so exempting it would put the weaker check on the run that
 produces more.
@@ -198,6 +208,8 @@ touched.
   removing pauses rather than from removing review.
 - A correctable validation finding gets one Design-owned revision and a fresh
   independent verdict instead of being mistaken for a user confirmation gate.
+- Independent validation can inspect the required unapproved draft without
+  weakening clean handoffs before or after that exact boundary.
 
 ## Implementation status
 

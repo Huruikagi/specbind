@@ -99,6 +99,16 @@ the unchanged reviewed Design. If Design is already approved before validation,
 the order is lost: stop rather than treating a later verdict as retroactive
 approval evidence.
 
+That unapproved Design handoff is the one deliberate exception to the general
+clean-checkpoint rule below. Before validation, require the dirty set to contain
+only this phase's Design artifact paths and this Spec's Contract path, exactly as
+reported by the Design author; no `spec.yaml`, unrelated path, generated output,
+or earlier phase artifact may be dirty. The validator is read-only and reviews
+that draft in place. After `READY`, the approval re-dispatch owns the Design
+checkpoint, and the normal clean handoff is mandatory before contract review.
+Do not demand a checkpoint the Design skill is forbidden to create before
+approval, and do not let this exception survive past approval.
+
 Gap analysis is not on this path. Run `specbind-gap-analysis` first if the work
 is brownfield and the ground is unfamiliar — this skill does not decide that for
 you.
@@ -120,7 +130,8 @@ and do not proceed to Tasks without an accepted review.
 
 Every dispatch returns a status. **The status decides what happens next.**
 
-Success covers the owning phase's whole contract, including its
+Except for the explicitly bounded unapproved-Design handoff above, success
+covers the owning phase's whole contract, including its
 adapter-directed checkpoint. Require the returned status to say whether that
 checkpoint was committed, intentionally absent/scaffolded, or failed. Before
 dispatching the next phase, independently run `git status --short` and require

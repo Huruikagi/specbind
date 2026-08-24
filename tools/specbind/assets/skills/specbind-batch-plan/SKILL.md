@@ -111,6 +111,16 @@ not a failed phase. Only a `READY` verdict permits the approval dispatch. If a
 Design is already approved before validation, stop; a later verdict cannot
 retroactively restore the required order.
 
+That unapproved Design handoff is the one deliberate exception to the general
+clean-checkpoint rule below. Before validating an item, require its dirty set to
+contain only the Design artifact paths and that Spec's Contract path reported by
+its Design author. No `spec.yaml`, unrelated item, generated output, or earlier
+phase artifact may be dirty. The validator reviews that draft in place and is
+read-only. After `READY`, the approval re-dispatch owns the checkpoint and the
+normal clean handoff is mandatory before the global contract-review barrier.
+Do not demand a pre-approval checkpoint the Design skill is forbidden to make,
+and never mix drafts from several items in one dirty handoff.
+
 Then, once **every** participating Spec holds current design approval:
 
 5. `specbind-contract-review` — once, for the milestone
@@ -136,7 +146,8 @@ working.
 
 Every dispatch returns a status. **The status decides what happens next.**
 
-Success covers the owning phase's whole contract, including its
+Except for the explicitly bounded unapproved-Design handoff above, success
+covers the owning phase's whole contract, including its
 adapter-directed checkpoint. Require the returned status to say whether that
 checkpoint was committed, intentionally absent/scaffolded, or failed. Before
 dispatching dependent work, independently run `git status --short` and require
