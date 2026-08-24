@@ -386,6 +386,21 @@ fn planning_orchestrators_validate_design_before_delegated_approval() {
 }
 
 #[test]
+fn planning_orchestrators_route_design_no_go_through_one_owned_revision() {
+    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
+        let orchestrator = skill::find(selector).expect("planning orchestrator");
+        let body = orchestrator.body().expect("orchestrator body");
+
+        assert!(body.contains("validator verdict"), "{selector}");
+        assert!(body.contains("phase status"), "{selector}");
+        assert!(body.contains("one revision"), "{selector}");
+        assert!(body.contains("fresh validation"), "{selector}");
+        assert!(body.contains("requirements rewind"), "{selector}");
+        assert!(body.contains("Never approve"), "{selector}");
+    }
+}
+
+#[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
         skill::find("specbind-validate-implementation").expect("implementation validation skill");

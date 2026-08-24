@@ -82,8 +82,14 @@ is a configuration or environment failure, not permission to change models.
 
 **Design validation is not optional here.** With gates delegated, nothing pauses
 between authoring and approval, and this is the run's substitute for the reading
-a user would otherwise do at the gate. A `NO-GO` stops the run for the design
-skill to address; it is not advisory.
+a user would otherwise do at the gate. A `NO-GO` blocks approval; it is not
+advisory. It is a validator verdict, not a phase status: send its complete
+findings back to `specbind-design` for one revision, then dispatch fresh validation
+of the revised draft. If the Design skill says the finding needs a
+requirements rewind or another decision the user owns, stop and report that
+deliberate result. If the fresh validator repeats `NO-GO`, stop after that one
+revision and report the remaining findings. Never approve the draft that was
+rejected, and never repair either artifact in the orchestrator.
 
 Do not give the authoring dispatch Design-gate authority. Its expected
 stopped-by-design result is the unapproved Design ready for independent review,

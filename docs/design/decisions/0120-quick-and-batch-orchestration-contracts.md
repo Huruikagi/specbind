@@ -114,6 +114,14 @@ approval. This is the accelerated flow's substitute for the reading a user would
 otherwise do at the gate, and it reuses an existing contract rather than
 inventing a quick-plan-specific sanity review the way the inherited skill did.
 
+A validator `NO-GO` is not itself a phase status and does not make an
+independently fixable draft a user-owned decision. The orchestrator returns the
+complete findings to the owning Design skill for one revision, then validates
+the revised draft in a fresh context. Approval remains blocked throughout. A
+Design result that identifies a requirements rewind or another user-owned
+decision is a deliberate stop, as is a repeated `NO-GO` after that bounded
+revision. The orchestrator never repairs the artifacts itself.
+
 It applies to batch as much as to quick. The hole is identical, and batch is the
 higher-volume path, so exempting it would put the weaker check on the run that
 produces more.
@@ -188,6 +196,8 @@ touched.
   it, which is what makes the phase skills' stop conditions worth having.
 - An accelerated run is checked by design validation, so the speed comes from
   removing pauses rather than from removing review.
+- A correctable validation finding gets one Design-owned revision and a fresh
+  independent verdict instead of being mistaken for a user confirmation gate.
 
 ## Implementation status
 

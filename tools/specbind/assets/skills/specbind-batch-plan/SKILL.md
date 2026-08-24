@@ -97,7 +97,13 @@ Per item, in order:
 **Design validation is not optional, and not something batch skips because it is
 running many items.** With gates delegated nothing pauses between authoring and
 approval, and this run produces more unreviewed material than any other. A
-`NO-GO` stops that item.
+`NO-GO` blocks approval for that item. It is a validator verdict, not a phase status:
+return its complete findings to that item's `specbind-design` run for
+one revision, then dispatch a fresh validation. Stop the item immediately if
+the Design skill says the finding needs a requirements rewind or another
+decision the user owns; also stop it if the fresh validator repeats `NO-GO`.
+Never approve the rejected draft, repair its artifacts in the orchestrator, or
+let remediation for one item change another item's scope.
 
 Do not give an authoring dispatch Design-gate authority. Its expected
 stopped-by-design result is an unapproved Design ready for independent review,
