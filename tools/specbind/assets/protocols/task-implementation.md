@@ -64,6 +64,17 @@ never executed is not finished, whatever the diff looks like.
 - Never weaken a check to make it pass. Deleting an assertion, loosening a
   tolerance, or skipping a test to reach green is a failure of the task.
 
+Verification must leave a clean handoff. Capture `git status --short` before
+and after the applicable checks. Prevent caches, coverage data, reports, or
+other disposable outputs when the command supports it. Otherwise remove only
+outputs that this task's verification created and whose generated ownership is
+certain. Never clean up a pre-existing or unrelated path. If ownership is
+unclear, report the task blocked instead of guessing.
+
+`READY_FOR_REVIEW` means the remaining worktree changes are the deliberate task
+implementation and its intended tests or scripts. New command-generated
+leftovers are not ready for review merely because they are untracked.
+
 ## Stop rather than guess
 
 Three situations end the task without completing it, and all three are ordinary

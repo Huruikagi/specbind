@@ -121,6 +121,14 @@ infer success because nothing said otherwise.
   diagnose
 - `BLOCKED` → diagnose
 
+Before accepting `READY_FOR_REVIEW`, compare the worktree with the snapshot
+from before dispatch. New caches, reports, coverage data, or other verification
+leftovers outside the intended `CHANGED` paths make the result not ready. Send
+the exact generated paths back to a fresh implementer within the normal retry
+limit so it can prevent their creation or remove only outputs created by this
+task. The orchestrator never deletes them itself. If generated ownership is not
+certain, diagnose and stop rather than cleaning a possibly unrelated path.
+
 ### c) Review
 
 Default is `required` for Spec-backed work, `inline` for Direct. `--review
@@ -232,6 +240,11 @@ have confirmed no dependency or boundary conflict.
 state.** Those destroy work the user has not seen, and what they leave behind is
 indistinguishable from work that was never done. Report the partial change and
 stop.
+
+Removing only disposable outputs known to have been created by this task's own
+verification is part of producing the clean handoff required by the
+task-implementation protocol; it is not permission to rescue pre-existing or
+unrelated work.
 
 Committing is the project's call, not a consequence of finishing a task — see
 the checkpoint step.

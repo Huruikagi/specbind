@@ -87,6 +87,8 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
         .expect("task implementation protocol")
         .content();
     assert!(implementation.contains("- STATUS: READY_FOR_REVIEW | BLOCKED | NEEDS_CONTEXT"));
+    assert!(implementation.contains("Verification must leave a clean handoff"));
+    assert!(implementation.contains("Never clean up a pre-existing or unrelated path"));
 
     let review = protocol::read("task-review")
         .expect("task review protocol")

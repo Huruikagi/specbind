@@ -180,6 +180,14 @@ of that state. Those actions destroy work the user has not seen, and the state
 they produce is indistinguishable from work that was never done. It reports the
 partial change and stops.
 
+This does not preserve disposable outputs that the current task's own
+verification just created. The implementation protocol requires a status
+snapshot and a clean handoff: when ownership is certain, the implementer
+prevents or removes only its generated caches, coverage data, or reports before
+returning `READY_FOR_REVIEW`. The orchestrator does not clean them on the
+implementer's behalf, and uncertainty remains a stop rather than authority to
+delete.
+
 Committing is adapter-governed under Decision 0101 and is not implied by
 completing a task.
 
