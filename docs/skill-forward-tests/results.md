@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-22. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-24. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -21,6 +21,7 @@ without a pass are listed separately below.
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
+| Existing-implementation adoption | None recorded | A1, A2 |
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2, X4 |
@@ -70,6 +71,16 @@ noncolliding `testing` identity, wrote only `steering/testing.md`, omitted the
 `create` comment, preserved the complete 658-byte `maintain` comment exactly,
 and finished with successful list, projected-read, and diff checks. A read-only
 debrief left the fixture state unchanged.
+
+A1 and A2 were measured on 2026-08-24 as Codex with fresh `gpt-5.6-terra`
+medium drivers against `d9a1833`. A1 stopped on
+`ADOPTION_STEERING_REQUIRED`, named the separate Steering bootstrap route, and
+left no dossier, milestone, or Spec. A2 returned the full fixture HEAD
+`c15a2fb288168d60d766746c666fe243128d59db`, read all four Steering documents,
+and proposed separate `cart` and `order` Specs with their dependency, selected
+scope, unmanaged area, and uncertainties. It stopped at the first confirmation
+with no dossier, milestone, Spec, Brief, or Research. Both worktrees remained
+clean; A2's instrumentation recorded the driver and two fresh readers.
 
 RL3 and RL4 were re-measured on 2026-08-21 with fresh Codex drivers after the
 release-policy bootstrap and finalization-checkpoint contract changed. RL3
