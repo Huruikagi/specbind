@@ -14,7 +14,7 @@ values remain independent of executable SemVer.
 
 ## Prepare a release
 
-1. Choose the version. Use prereleases such as `0.1.0-rc.1` while validating a
+1. Choose the version. Use prereleases such as `1.0.0-rc.1` while validating a
    release line; do not publish a prerelease from a Cargo package that reports
    the final version.
    For a stable `1.x` or later release, classify compatibility-surface changes
@@ -72,7 +72,7 @@ For a prerelease, download the script before passing a version:
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 `
   -OutFile install.ps1
-.\install.ps1 -Version 0.1.0-rc.1
+.\install.ps1 -Version 1.0.0-rc.1
 ```
 
 Linux x64:
@@ -86,7 +86,7 @@ For a prerelease:
 
 ```sh
 curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
-sh install.sh --version 0.1.0-rc.1
+sh install.sh --version 1.0.0-rc.1
 ```
 
 In each environment, confirm `specbind --version`, create a temporary Git

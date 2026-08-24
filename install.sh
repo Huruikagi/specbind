@@ -13,7 +13,7 @@ Install the SpecBind Linux x64 binary from GitHub Releases.
 Usage: install.sh [--version <VERSION>] [--install-dir <DIRECTORY>]
 
 Without --version, the latest non-prerelease is installed. Prereleases require
-an explicit version such as 0.1.0-rc.1. The script verifies SHA256SUMS and does
+an explicit version such as 1.0.0-rc.1. The script verifies SHA256SUMS and does
 not modify PATH or shell profiles.
 EOF
 }

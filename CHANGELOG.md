@@ -4,9 +4,17 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0-rc.1 - 2026-08-24
+
 - Added a Steering-first existing-project adoption workflow with a clean Git
   evidence preflight, revision-pinned reverse-discovery dossier, confirmed Spec
   boundary handoff, and normal Requirements/Design lifecycle continuation.
+- Added guarded removal of one installed agent and explicit project uninstall
+  modes that retain or remove durable SpecBind knowledge.
+- Normalized the Japanese public documentation hierarchy and established
+  Japanese-first authoring with an English-default final publication structure.
+- Defined forward-upgrade compatibility within an executable major version and
+  required a documented migration route for future breaking major releases.
 
 ## 0.2.0 - 2026-08-22
 

@@ -52,8 +52,8 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 
 ## Install the CLI
 
-The first binary release line is a pre-1.0 Preview for Windows x64 and Linux
-x64. The latest stable release can be installed without choosing a version.
+The current binary release remains a Preview for Windows x64 and Linux x64.
+The latest stable release can be installed without choosing a version.
 
 With [mise](https://mise.jdx.dev/), on either supported platform:
 
@@ -86,12 +86,12 @@ version explicitly when testing a release candidate:
 
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 0.1.0-rc.1
+.\install.ps1 -Version 1.0.0-rc.1
 ```
 
 ```sh
 curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
-sh install.sh --version 0.1.0-rc.1
+sh install.sh --version 1.0.0-rc.1
 ```
 
 Both installers verify the release archive against `SHA256SUMS`, install to the
