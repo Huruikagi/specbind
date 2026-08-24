@@ -142,6 +142,19 @@ approved, not a detail derived quietly at the end.
 Present the document and the selection. Revise on feedback rather than approving
 something you know to be weak.
 
+For an existing Spec, the review includes a mandatory preservation audit before
+approval. Compare the authored file with the current Requirements you read at
+the start (and inspect `git diff -- <requirements-path>` when Git is available).
+Account for every pre-existing requirement group and acceptance criterion by its
+original ID: it must still be present as that live identity, with only the
+in-place revision this milestone actually needs. Context, Scope, and Objective
+must also continue to describe unaffected owned behavior. A rewritten document
+that silently narrows the Spec is not ready even when its new criteria are
+well-formed. If any existing obligation disappeared, stop before approval;
+restore it unless the requested result truly needs retirement, in which case use
+the unsupported-retirement stop above. Never use the approve command as the
+operation that reveals this loss.
+
 When the review has findings, report each one in this shape:
 
 ```text

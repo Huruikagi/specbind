@@ -401,6 +401,19 @@ fn planning_orchestrators_route_design_no_go_through_one_owned_revision() {
 }
 
 #[test]
+fn requirements_audits_existing_obligations_before_approval() {
+    let requirements = skill::find("specbind-requirements").expect("requirements skill");
+    let body = requirements.body().expect("requirements body");
+
+    assert!(body.contains("mandatory preservation audit before\napproval"));
+    assert!(body.contains("git diff -- <requirements-path>"));
+    assert!(body.contains("every pre-existing requirement group and acceptance criterion"));
+    assert!(body.contains("Context, Scope, and Objective"));
+    assert!(body.contains("stop before approval"));
+    assert!(body.contains("Never use the approve command"));
+}
+
+#[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
         skill::find("specbind-validate-implementation").expect("implementation validation skill");

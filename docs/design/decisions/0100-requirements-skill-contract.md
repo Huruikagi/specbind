@@ -54,6 +54,13 @@ only its discovery-authored Brief when this skill starts. The two paths differ:
   in place, keeping the document the Spec's complete current contract as the
   review protocol requires.
 
+Before approving an existing Spec, the skill performs a preservation audit
+against the Requirements it read at entry, using the file diff when Git is
+available. Every pre-existing group and criterion must still have its original
+live identity unless the request needs retirement, which remains an explicit
+unsupported stop. Context, Scope, and Objective must not silently narrow away
+unaffected owned behavior. Approval is not a probe for discovering that loss.
+
 The Contract is read when present, as context for the boundary this Spec owns.
 It is never authored here: Decision 0092 gives the design phase that artifact,
 so a new Spec has none until Design runs.
@@ -222,8 +229,9 @@ embedded and installed, carrying the conditional reads and the new-versus-
 existing Spec branch, whole-set steering reading with its stop condition and the
 requirement to write constraints into the document, the active-selection rule
 with its stated bias toward inclusion, the retirement stop with the revise-and-add
-cases it leaves open, the two forms of approval authority, the repeated-objection
-stopping rule, and confirmed self-invalidation when the gate is already approved.
+cases it leaves open, the pre-approval preservation audit for existing Specs,
+the two forms of approval authority, the repeated-objection stopping rule, and
+confirmed self-invalidation when the gate is already approved.
 
 The Decision 0096 conformance check covers its invocations; it was confirmed to
 reject both a renamed `spec requirements invalidate` route and an unknown
