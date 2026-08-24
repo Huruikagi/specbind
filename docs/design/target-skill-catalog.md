@@ -185,5 +185,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - A dedicated customization convenience skill over the stable shared settings
   surface, tracked by
   [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
-- Agent removal and uninstall workflows, tracked by
-  [Issue #11](https://github.com/Huruikagi/specbind/issues/11).
+
+Agent removal and project uninstall are intentionally CLI-only under Decision
+0141. Their plan-by-default commands provide the exact confirmation surface, so
+they do not add a dedicated product-managed Skill.

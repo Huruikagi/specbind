@@ -30,7 +30,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - `specbind install` is the initial project installer and the idempotent product-asset refresh command. The name `update` remains available for a future binary self-update operation.
 - V1 install inputs are agent selection, `en|ja` language, `specDir` with `.specbind` as the default, optional project-instruction integration, and `--dry-run`.
 - V1 removes public manifest, OS, profile, overwrite, backup, `--yes`, `--kiro-dir`, and other inherited compatibility options.
-- Agent selection is additive and may contain Codex, Claude Code, or both. Agent removal and uninstall are post-v1.
+- Agent selection through install is additive and may contain Codex, Claude Code, or both. Decision 0141 later adds separate guarded agent-removal and project-uninstall commands without changing install semantics.
 - `.specbind.json` is version-controlled and contains `schemaVersion`, `specDir`, `language`, `agents`, and optional `projectInstructions: true`. False project-instruction state may be represented by absence.
 - [Decision 0129](./0129-agent-role-capability-adapters.md) later adds optional
   `agentRoles` capability overrides without changing the configuration schema
@@ -78,8 +78,8 @@ Decision 0130 adds installation through mise's GitHub backend.
 
 ## Follow-up tracking
 
-- Agent removal and guarded project uninstall are tracked by
-  [Issue #11](https://github.com/Huruikagi/specbind/issues/11).
+- Agent removal and guarded project uninstall are accepted and implemented by
+  [Decision 0141](./0141-guarded-agent-removal-and-project-uninstall.md).
 - Tested macOS and Linux ARM64 release targets are tracked by
   [Issue #12](https://github.com/Huruikagi/specbind/issues/12).
 - Guarded binary self-update is tracked by

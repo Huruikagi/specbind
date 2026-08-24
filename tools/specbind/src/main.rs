@@ -71,6 +71,29 @@ fn run_install(
     }
 }
 
+fn run_remove_agent(start: &Path, agent: &str, apply: bool) -> CommandOutput {
+    let agent = specbind::install::Agent::parse(agent)
+        .expect("clap restricts remove-agent to supported agents");
+    if apply {
+        specbind::cli::remove_agent_apply(start, agent)
+    } else {
+        specbind::cli::remove_agent_plan(start, agent)
+    }
+}
+
+fn run_uninstall(start: &Path, knowledge: &str, apply: bool) -> CommandOutput {
+    let knowledge = match knowledge {
+        "retain" => specbind::removal::KnowledgePolicy::Retain,
+        "remove" => specbind::removal::KnowledgePolicy::Remove,
+        _ => unreachable!("clap restricts uninstall knowledge policy"),
+    };
+    if apply {
+        specbind::cli::uninstall_apply(start, knowledge)
+    } else {
+        specbind::cli::uninstall_plan(start, knowledge)
+    }
+}
+
 fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
     match command {
         CheckCommand::Traceability { spec } => specbind::cli::check_traceability(start, &spec),
@@ -249,6 +272,8 @@ fn main() -> ExitCode {
             spec_dir,
             project_instructions,
         ),
+        Command::RemoveAgent { agent, apply } => run_remove_agent(&start, &agent, apply),
+        Command::Uninstall { knowledge, apply } => run_uninstall(&start, &knowledge, apply),
         Command::Protocol { command } => match command {
             ProtocolCommand::List => specbind::cli::protocol_list(),
             ProtocolCommand::Read { selector } => specbind::cli::protocol_read(&selector),

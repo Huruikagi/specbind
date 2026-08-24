@@ -63,6 +63,7 @@ nav:
       - Getting Started: guide/ja/getting-started.md
       - 基本概念: guide/ja/concepts.md
       - カスタマイズ: guide/ja/customization.md
+      - Agentの削除とアンインストール: guide/ja/uninstall.md
   - cc-sddから移行:
       - ガイド入口: guide/migration/cc-sdd.md
       - 日本語: guide/ja/migrate-from-cc-sdd.md

@@ -30,8 +30,8 @@ SpecBindはv1.0前のプレビュー版です。このガイドは、リリー�
   ください。対応するリリースがまだない場合は、ソースからビルドします。
 - `specbind migrate cc-sdd`は、読み取り専用計画、agent-assisted resolutionの受理、
   guarded `--apply`まで利用できます。
-- エージェントの削除と、プロジェクトからのアンインストールは、v1では対応
-  しません。
+- エージェントの削除と、durable knowledgeの保持または削除を明示する
+  プロジェクトアンインストールを利用できます。
 - CLI、スキル、ガイドの細部は、正式リリースまでに変わる可能性があります。
 
 既存の`.kiro`プロジェクトは、通常の`specbind install`では変換されません。
@@ -44,9 +44,10 @@ SpecBindはv1.0前のプレビュー版です。このガイドは、リリー�
 1. [Getting Started](./getting-started.md) — 導入から最初の変更を検証するまで
 2. [基本概念](./concepts.md) — Spec、Milestone、Direct、Gate、成果物
 3. [カスタマイズ](./customization.md) — テンプレート、ルール、adapter、Steering、モデル設定
-4. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
-5. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
-6. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
+4. [Agentの削除とアンインストール](./uninstall.md) — exact plan、knowledge保持・削除、復元
+5. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
+6. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
+7. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ## SpecBindを使う変更
 

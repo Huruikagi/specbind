@@ -41,6 +41,23 @@ pub enum Command {
         #[arg(long)]
         project_instructions: bool,
     },
+    /// Plan or apply removal of one selected agent integration.
+    RemoveAgent {
+        #[arg(value_parser = ["claude-code", "codex"])]
+        agent: String,
+        /// Apply the freshly recomputed guarded plan.
+        #[arg(long)]
+        apply: bool,
+    },
+    /// Plan or apply guarded removal of the project integration.
+    Uninstall {
+        /// Explicit policy for the complete durable `SpecBind` knowledge bundle.
+        #[arg(long, value_parser = ["retain", "remove"])]
+        knowledge: String,
+        /// Apply the freshly recomputed guarded plan.
+        #[arg(long)]
+        apply: bool,
+    },
     /// Read the immutable product protocols embedded in this binary.
     Protocol {
         #[command(subcommand)]

@@ -15,6 +15,14 @@ history and detailed lifecycle, see the
 product-managed skills, and optionally maintains a marked block in each selected
 agent's root instruction file. Existing project-owned settings are kept.
 
+`specbind remove-agent` plans by default and removes only one selected agent's
+exact product-managed Skills, role files, marked instruction block, and config
+entries when rerun with `--apply`. `specbind uninstall --knowledge retain|remove`
+likewise plans before applying and requires an explicit choice to retain or
+remove the configured complete `{{SPEC_DIR}}` knowledge bundle. Both operations
+use `.specbind.json` as the final completion marker and never uninstall the
+machine-level binary.
+
 | Target | Current behavior |
 | --- | --- |
 | `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, optional project-instruction integration, and optional agent-role capability overrides. |
@@ -89,6 +97,7 @@ Contract-review state keep their accepted fixed structured paths.
 ## Sources of truth
 
 - Installation plan and ownership behavior: `tools/specbind/src/installation/install.rs`
+- Agent removal and project uninstall behavior: `tools/specbind/src/installation/removal.rs`
 - Embedded templates, rules, adapters, protocols, and skills: `tools/specbind/assets/`
 - Artifact discovery and lifecycle I/O: `tools/specbind/src/artifacts.rs`
 - Structured wire models and generated schemas: `tools/specbind/src/schema/` and `tools/specbind/schemas/`

@@ -57,8 +57,9 @@ not authorize transitions.
 
 ### Installation and catalogs
 
-`installation/` owns installation planning, agent-role rendering, and the
-project-instruction block. `catalog/` owns the closed product/project
+`installation/` owns installation planning, exact guarded agent removal and
+project uninstall, agent-role rendering, and the project-instruction block.
+`catalog/` owns the closed product/project
 registries for adapters, protocols, rules, skills, templates, and steering.
 Their root facade modules preserve the existing public crate paths.
 

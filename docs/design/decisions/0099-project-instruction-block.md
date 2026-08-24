@@ -153,10 +153,11 @@ the installer's preference.
 Disabling project instructions stops maintaining the block. It does not remove
 one that exists.
 
-Removal deletes text from a project-owned file, and Decision 0077 defers
-uninstall and agent removal past v1 for exactly that reason. The block is
-plainly marked and trivially removable by hand, so the installer gains nothing
-by taking that risk on the user's behalf.
+`specbind install` never interprets disabling as removal. Decision 0141 later
+adds separate plan-by-default `remove-agent` and `uninstall` commands. Those
+commands may remove only this exact valid marked region behind committed,
+tracked, clean, non-link guards; they preserve every byte outside it and stop on
+malformed or repeated markers.
 
 ### Guards
 

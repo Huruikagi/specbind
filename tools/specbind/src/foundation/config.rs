@@ -181,7 +181,7 @@ fn git_project_root(start: &Path) -> Result<PathBuf, ConfigError> {
     Ok(PathBuf::from(root.trim()))
 }
 
-fn validate_spec_dir(value: &str) -> Result<(), ConfigError> {
+pub(crate) fn validate_spec_dir(value: &str) -> Result<(), ConfigError> {
     let path = Path::new(value);
     let invalid = value.is_empty()
         || value.contains('\\')

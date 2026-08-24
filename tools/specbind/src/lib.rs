@@ -18,7 +18,7 @@ pub use catalog::{adapter, protocol, rule, skill, steering, template};
 pub use documents::{contract, design, instruction, requirements, roadmap, traceability};
 pub use foundation::{config, fingerprint, yaml};
 pub(crate) use infrastructure::{guarded_fs, repository};
-pub use installation::{agent_role, install, project_instructions};
+pub use installation::{agent_role, install, project_instructions, removal};
 pub use lifecycle::{
     approval, completion, cross_spec_review, milestone, release, release_finalize, release_log,
     task_progress,

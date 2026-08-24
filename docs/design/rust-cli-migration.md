@@ -131,6 +131,10 @@ behavior.
 product-asset refresh, project-owned template, rule, and adapter preservation,
 and optional marked project-instruction blocks. Initial installation still
 requires explicit agent and language values; TTY prompting is outstanding.
+Decision 0141 adds plan-by-default `remove-agent` and `uninstall` commands with
+an explicit `retain|remove` durable-knowledge policy, exact catalog targets,
+Git/filesystem guards, deterministic retry classification, and config-last
+completion.
 
 `specbind migrate cc-sdd` now implements the read-only, fail-closed inventory
 and plan. It reads the original cc-sdd configuration name `.cc-sdd.json`, not

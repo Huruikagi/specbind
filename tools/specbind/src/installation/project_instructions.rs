@@ -95,6 +95,44 @@ pub fn apply(current: Option<&str>) -> Result<Application, MarkerError> {
     }
 }
 
+/// Removes the one managed block while preserving every byte outside it.
+///
+/// `None` means no block was present. Malformed or repeated markers fail
+/// closed for the same reason as installation: project-owned text must never
+/// be interpreted by guessing.
+///
+/// # Errors
+///
+/// Returns a diagnostic when the markers are unpaired, reversed, or repeated.
+pub fn remove(current: &str) -> Result<Option<String>, MarkerError> {
+    let opens = marker_lines(current, OPEN);
+    let closes = marker_lines(current, CLOSE);
+    match (opens.len(), closes.len()) {
+        (0, 0) => Ok(None),
+        (1, 1) => {
+            let (start, _) = opens[0];
+            let (close_start, close_end) = closes[0];
+            if close_start < start {
+                return Err(MarkerError {
+                    code: "PROJECT_INSTRUCTIONS_MARKERS_REVERSED",
+                    message: "the closing SpecBind marker precedes the opening marker".to_owned(),
+                });
+            }
+            Ok(Some(format!(
+                "{}{}",
+                &current[..start],
+                &current[close_end..]
+            )))
+        }
+        (opens, closes) => Err(MarkerError {
+            code: "PROJECT_INSTRUCTIONS_MARKERS_INVALID",
+            message: format!(
+                "expected one opening and one closing SpecBind marker, found {opens} and {closes}"
+            ),
+        }),
+    }
+}
+
 /// Appends the block, separated from existing content by exactly one blank line.
 fn append(current: &str) -> String {
     if current.trim().is_empty() {

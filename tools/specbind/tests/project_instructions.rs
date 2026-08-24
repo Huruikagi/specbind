@@ -130,3 +130,39 @@ fn counts_a_marker_inside_a_code_fence() {
         project_instructions::apply(Some(documented)).expect_err("an unpaired marker stops");
     assert_eq!(error.code, "PROJECT_INSTRUCTIONS_MARKERS_INVALID");
 }
+
+#[test]
+fn removal_preserves_every_byte_outside_the_marked_region() {
+    let existing = "# Project\r\n\r\nBefore.\r\n\r\n<!-- specbind:block -->\r\nstale\r\n<!-- /specbind:block -->\r\n\r\nAfter.\r\n";
+    let removed = project_instructions::remove(existing)
+        .expect("valid block removes cleanly")
+        .expect("block exists");
+    assert_eq!(removed, "# Project\r\n\r\nBefore.\r\n\r\n\r\nAfter.\r\n");
+}
+
+#[test]
+fn removal_distinguishes_absence_and_a_block_only_file() {
+    assert_eq!(
+        project_instructions::remove("# Project\n").expect("no markers is valid"),
+        None
+    );
+    assert_eq!(
+        project_instructions::remove(&project_instructions::block())
+            .expect("block-only file is valid"),
+        Some(String::new())
+    );
+}
+
+#[test]
+fn removal_rejects_the_same_ambiguous_marker_shapes_as_installation() {
+    for content in [
+        "<!-- specbind:block -->\nbody\n",
+        "<!-- /specbind:block -->\nbody\n",
+        "<!-- /specbind:block -->\n<!-- specbind:block -->\n",
+    ] {
+        assert!(
+            project_instructions::remove(content).is_err(),
+            "{content:?}"
+        );
+    }
+}

@@ -35,6 +35,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
 - `tools/specbind/src/artifacts/resolution.rs` — typed Spec and Task loads, gate-input resolution, fingerprints, and traceability projections
 - `tools/specbind/src/installation/install.rs` — installation planning, guarded asset application, and repository guards
+- `tools/specbind/src/installation/removal.rs` — exact agent-removal and project-uninstall planning, Git/filesystem guards, and config-last apply
 - `tools/specbind/src/installation/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex and Claude Code rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
 - `tools/specbind/src/migration/inventory.rs` — read-only historical cc-sdd inventory and conversion planning
@@ -260,3 +261,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0138](./design/decisions/0138-dedicated-adapter-scaffold-marker.md) | Accepted | Dedicated exact marker for inactive adapter scaffolds |
 | [0139](./design/decisions/0139-scoped-artifact-instructions.md) | Accepted | Lifecycle-scoped create, maintain, and consume instructions |
 | [0140](./design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md) | Accepted | One-time Release adapter bootstrap and post-finalization metadata checkpoint |
+| [0141](./design/decisions/0141-guarded-agent-removal-and-project-uninstall.md) | Accepted | Exact planned agent removal and explicit durable-knowledge uninstall policy |

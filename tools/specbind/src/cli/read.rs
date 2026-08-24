@@ -4,6 +4,7 @@ mod artifact_commands;
 mod catalog_commands;
 mod install_commands;
 mod project_commands;
+mod removal_commands;
 
 pub use artifact_commands::{artifact_list, artifact_read, check_contracts, check_traceability};
 pub use catalog_commands::{
@@ -13,6 +14,9 @@ pub use catalog_commands::{
 };
 pub use install_commands::{install_apply, install_dry_run};
 pub use project_commands::{milestone_scope, spec_list};
+pub use removal_commands::{
+    remove_agent_apply, remove_agent_plan, uninstall_apply, uninstall_plan,
+};
 
 fn present(value: bool) -> &'static str {
     if value { "yes" } else { "no" }

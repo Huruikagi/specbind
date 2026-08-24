@@ -3,3 +3,4 @@
 pub mod agent_role;
 pub mod install;
 pub mod project_instructions;
+pub mod removal;
