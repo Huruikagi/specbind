@@ -26,6 +26,16 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("When that classification is genuinely unclear, enter the")
     );
+    assert!(
+        applied
+            .content
+            .contains("use `specbind-validate-implementation`")
+    );
+    assert!(
+        applied
+            .content
+            .contains("Do not answer that question from status")
+    );
 }
 
 #[test]

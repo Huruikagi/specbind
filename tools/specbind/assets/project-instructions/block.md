@@ -6,6 +6,9 @@ the only supported writer of machine state.
 
 - Work through the installed `specbind-*` skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
+- When every Task for a named Spec is complete and the user asks whether that
+  Spec is done, complete, or ready, use `specbind-validate-implementation`.
+  Do not answer that question from status or consequence-free claim checking.
 - Use `specbind-steering` when the request creates or updates durable,
   project-wide guidance, including conventions for testing, APIs, security, or
   deployment. This route does not require a Spec or observable behavior change.

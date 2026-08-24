@@ -630,6 +630,11 @@ fn implementation_completion_questions_route_to_validation_not_status() {
         .metadata()
         .expect("validation metadata");
     assert!(validation.description.contains("active Requirement IDs"));
+    assert!(
+        validation
+            .description
+            .contains("whether a named Spec with every Task complete is done")
+    );
 
     let status = skill::find("specbind-status")
         .expect("status skill")
