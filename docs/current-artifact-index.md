@@ -55,7 +55,9 @@ Every template instruction explicitly names `create`, `maintain`, or `consume`.
 Materialization removes `create` and carries the two durable scopes into the
 live artifact. `artifact read` and `steering read` preserve exact raw Markdown
 by default and accept `--for maintain` or `--for consume` to omit the unrelated
-durable instruction scope.
+durable instruction scope. `rule list/read` expose the five fixed project-owned
+rule selectors without scanning the directory; rule reads provide the same raw,
+maintain, and consume modes and reject live `create` instructions.
 
 Twelve immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by

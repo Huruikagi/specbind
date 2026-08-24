@@ -62,10 +62,15 @@ Then the standard:
 specbind protocol read design-validation
 ```
 
-The project's `settings/rules/design-principles.md` and
-`settings/rules/contract-principles.md` state its own preferences. They are
-project-owned; if absent, the project removed them deliberately and the protocol
-still applies.
+Read the project's design and seam preferences through its rule surface:
+
+```text
+specbind rule read design-principles --for consume
+specbind rule read contract-principles --for consume
+```
+
+`NO_CHANGE RULE_ABSENT` means that customization is absent; the protocol still
+applies. Any `ERROR` line stops this validation.
 
 When judging whether the design fits the system it enters requires real
 investigation of the existing code, dispatch that as a fresh subagent with a

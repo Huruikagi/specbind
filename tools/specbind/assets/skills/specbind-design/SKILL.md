@@ -162,10 +162,15 @@ specbind protocol read design-authoring
 specbind protocol read okf-authoring
 ```
 
-The project's `settings/rules/design-principles.md` and
-`settings/rules/contract-principles.md` state its own preferences. They are
-project-owned; if one is absent, the project removed it deliberately and the
-protocol still applies.
+Read the project's design and seam preferences through its rule surface:
+
+```text
+specbind rule read design-principles --for consume
+specbind rule read contract-principles --for consume
+```
+
+`NO_CHANGE RULE_ABSENT` means that customization is absent; the protocol still
+applies. Any `ERROR` line stops this workflow.
 
 **No Design exists — whether the Spec is new or established** — list the
 template set first:

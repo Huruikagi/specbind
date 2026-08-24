@@ -38,8 +38,15 @@ An `ERROR` line from `steering list` or `steering read` stops you. An analysis
 built against a knowingly partial view of the project's constraints is worse than
 none, because it is persuasive.
 
-Read `settings/rules/design-principles.md`, and `contract-principles.md` when
-boundaries are in scope. They are the project's own preferences.
+Read the project's own preferences through its rule surface:
+
+```text
+specbind rule read design-principles --for consume
+specbind rule read contract-principles --for consume
+```
+
+The second read is required when boundaries are in scope. `NO_CHANGE
+RULE_ABSENT` means no customization; any `ERROR` line stops the analysis.
 
 **Requirements is an input, not a precondition.** This skill runs before
 Requirements exist as readily as after. Discovery deliberately refuses technical

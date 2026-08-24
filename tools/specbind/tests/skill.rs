@@ -141,6 +141,7 @@ fn every_live_markdown_read_names_its_instruction_projection() {
         for line in entry.body().expect("body").lines().map(str::trim) {
             if line.starts_with("specbind artifact read ")
                 || line.starts_with("specbind steering read ")
+                || line.starts_with("specbind rule read ")
             {
                 assert!(
                     line.contains(" --for "),
@@ -255,7 +256,7 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
 }
 
 #[test]
-fn every_named_protocol_selector_and_rule_path_exists() {
+fn every_named_protocol_and_rule_selector_exists() {
     for entry in skill::all() {
         let body = entry.body().expect("body");
         for selector in tokens_after(body, "specbind protocol read ") {
@@ -265,16 +266,18 @@ fn every_named_protocol_selector_and_rule_path_exists() {
                 entry.name
             );
         }
-        for path in rule_paths(body) {
-            let file = path.rsplit('/').next().unwrap_or_default();
+        for selector in tokens_after(body, "specbind rule read ") {
             assert!(
-                rule::defaults()
-                    .iter()
-                    .any(|default| default.file_name == file),
-                "{}: {path} is not an installed default rule",
+                rule::find(&selector).is_some(),
+                "{}: unknown rule selector {selector}",
                 entry.name
             );
         }
+        assert!(
+            !body.contains("settings/rules/"),
+            "{} reads project rules by path instead of through the CLI",
+            entry.name
+        );
     }
 }
 
@@ -852,13 +855,5 @@ fn tokens_after(body: &str, prefix: &str) -> Vec<String> {
         .filter_map(|(_, rest)| rest.split_whitespace().next())
         .map(|token| token.trim_matches('`').to_owned())
         .filter(|token| !is_metavariable(token))
-        .collect()
-}
-
-fn rule_paths(body: &str) -> Vec<String> {
-    body.split_whitespace()
-        .map(|token| token.trim_matches(['`', '.', ',', ')', '(']))
-        .filter(|token| token.contains("settings/rules/"))
-        .map(ToOwned::to_owned)
         .collect()
 }

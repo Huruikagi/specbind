@@ -63,6 +63,30 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 
 A skill reads each applicable file at most once per invocation. It does not silently substitute an embedded rule when a project file is absent, because the installed file is the user-owned policy source. Absence means that no project customization from that rule is applied; core protocol, skill, and CLI behavior remains intact.
 
+Skills resolve those project files through the read-only CLI surface rather
+than by joining `settings/rules/` paths themselves:
+
+```text
+specbind rule list
+specbind rule read <selector>
+specbind rule read <selector> --for maintain
+specbind rule read <selector> --for consume
+```
+
+Selectors are the five accepted filenames without `.md`. `list` enumerates
+that closed set rather than scanning the directory and reports each rule's
+type, path, and project presence. `read` returns the project's exact raw UTF-8
+Markdown when no purpose is supplied. Absence is the successful `NO_CHANGE
+RULE_ABSENT` result, leaving the owning skill to apply the semantics above; an
+unknown selector is never made meaningful by a similarly named file.
+
+Rules are live managed Markdown under Decision 0139. They may carry durable
+`maintain` and `consume` instructions, but not template-only `create`
+instructions. Purpose projection preserves ordinary Markdown and the requested
+instruction scope exactly while omitting the other durable scope. Invalid
+instruction syntax, a `create` leak, a link-like or non-regular target, and
+non-UTF-8 content fail the read rather than returning partial policy.
+
 V1 does not recursively load additional `settings/rules/**/*.md` files. Arbitrary automatic loading would make relevance and conflict precedence depend on filenames or directory order. A future extensible rule profile may add stable IDs, applicability selectors, and deterministic ordering through a separate decision. Until then, projects customize the five known files and use ordinary steering artifacts for additional durable project guidance.
 
 ### Installation and refresh
@@ -108,7 +132,7 @@ The inherited files are classified as follows:
 
 ## Implementation status
 
-All five default rules are authored as embedded installation assets under `tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as create-or-keep entries alongside the Decision 0091 templates. Each is a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`, applicability, priority, or enablement field, and the one English set serves both configured artifact languages.
+All five default rules are authored as embedded installation assets under `tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as create-or-keep entries alongside the Decision 0091 templates. Each is a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`, applicability, priority, or enablement field, and the one English set serves both configured artifact languages. `rule list/read` expose the fixed selector set and project copies, including the Decision 0139 purpose projections; current consuming skills request `--for consume` and never resolve the settings path themselves.
 
 The contents are rewritten for the Decision 0092 boundary rather than copied from cc-sdd: each file states that the project owns it, names the CLI contract or protocol that stays authoritative, and carries preferences plus review questions instead of workflow control. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs.
 

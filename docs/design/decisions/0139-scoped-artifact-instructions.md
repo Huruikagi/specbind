@@ -39,8 +39,9 @@ after the `specbind:instruction` token:
 - A bare `specbind:instruction` and every unknown scope are invalid. There is no
   compatibility interpretation because an implicit default would hide a missed
   classification.
-- A `create` instruction in a live Spec or Steering artifact is a leak and makes
-  that artifact invalid. `maintain` and `consume` are valid live comments.
+- A `create` instruction in a live Spec, Steering, or Rule artifact is a leak
+  and makes that artifact invalid. `maintain` and `consume` are valid live
+  comments.
 - Artifact-profile parsers mask every valid scoped instruction before evaluating
   semantic Markdown grammar. The persisted bytes, including durable comments,
   still participate in ordinary artifact fingerprints.
@@ -63,6 +64,8 @@ specbind artifact read <spec> <selector> --for maintain
 specbind artifact read <spec> <selector> --for consume
 specbind steering read <selector> --for maintain
 specbind steering read <selector> --for consume
+specbind rule read <selector> --for maintain
+specbind rule read <selector> --for consume
 ```
 
 The CLI preserves all non-instruction bytes and the requested instruction scope
@@ -79,12 +82,13 @@ handling guidance local to this artifact.
 ## Implementation status
 
 Implemented. The Rust document boundary parses, validates, masks, and projects
-scoped instruction comments. Spec and Steering discovery reject missing or
-unknown scopes and live `create` leaks. The CLI exposes explicit maintain and
-consume projections while preserving the raw-read contract. Official English
-and Japanese templates classify every instruction; materializing Skills carry
-durable comments into live artifacts, revising Skills request maintain
-projections, and consuming Skills request consume projections.
+scoped instruction comments. Spec and Steering discovery and the fixed Rule
+read surface reject missing or unknown scopes and live `create` leaks. The CLI
+exposes explicit maintain and consume projections while preserving the raw-read
+contract. Official English and Japanese templates classify every instruction;
+materializing Skills carry durable comments into live artifacts, revising
+Skills request maintain projections, and consuming Skills request consume
+projections.
 
 ## Consequences
 

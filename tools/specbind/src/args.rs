@@ -88,6 +88,11 @@ pub enum Command {
         #[command(subcommand)]
         command: AdapterCommand,
     },
+    /// List or read project-owned shared rules.
+    Rule {
+        #[command(subcommand)]
+        command: RuleCommand,
+    },
     /// List or read project-level steering documents.
     Steering {
         #[command(subcommand)]
@@ -205,6 +210,19 @@ pub enum AdapterCommand {
     List,
     /// Read one adapter selector as raw UTF-8 Markdown.
     Read { selector: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum RuleCommand {
+    /// List every accepted shared rule and whether the project has it.
+    List,
+    /// Read one rule selector, optionally projected for one audience.
+    Read {
+        selector: String,
+        /// Keep only durable instructions for this use; omit for exact raw Markdown.
+        #[arg(long = "for", value_parser = ["maintain", "consume"])]
+        purpose: Option<String>,
+    },
 }
 
 #[derive(Debug, Subcommand)]

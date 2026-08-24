@@ -9,6 +9,14 @@ const ACCEPTED_RULES: [&str; 5] = [
     "steering-principles.md",
 ];
 
+const ACCEPTED_SELECTORS: [&str; 5] = [
+    "ears-format",
+    "design-principles",
+    "contract-principles",
+    "tasks-generation",
+    "steering-principles",
+];
+
 #[test]
 fn embeds_exactly_the_accepted_default_rule_set() {
     let names = rule::defaults()
@@ -17,11 +25,24 @@ fn embeds_exactly_the_accepted_default_rule_set() {
         .collect::<Vec<_>>();
 
     assert_eq!(names, ACCEPTED_RULES);
+
+    let selectors = rule::defaults()
+        .iter()
+        .map(|entry| entry.selector)
+        .collect::<Vec<_>>();
+    assert_eq!(selectors, ACCEPTED_SELECTORS);
+    for selector in ACCEPTED_SELECTORS {
+        assert!(rule::find(selector).is_some());
+    }
+    for unknown in ["deployment", "ears-format.md", "", "Ears-format"] {
+        assert!(rule::find(unknown).is_none(), "{unknown} must not resolve");
+    }
 }
 
 #[test]
 fn every_default_rule_is_an_okf_rule_concept() {
     for entry in rule::defaults() {
+        assert_eq!(entry.selector, entry.file_name.trim_end_matches(".md"));
         let content = entry.content();
         assert!(
             content.starts_with("---\ntype: SpecBind Rule\n---\n"),

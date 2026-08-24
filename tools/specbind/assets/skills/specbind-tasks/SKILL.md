@@ -85,10 +85,15 @@ If you find you cannot write the plan without consulting steering, that is a
 finding about the **design**: it does not yet determine the work. Report it and
 return to design rather than patching around it.
 
-The project's `settings/rules/tasks-generation.md` is a shared rule, not
-steering. Read it — it states this project's task sizing, decomposition order,
-test-work convention, and known conflict areas. It is project-owned; if it is
-absent, the project removed it deliberately and the protocol still applies.
+Read the project's task-planning preferences through its rule surface:
+
+```text
+specbind rule read tasks-generation --for consume
+```
+
+This shared rule, not steering, states task sizing, decomposition order,
+test-work convention, and known conflict areas. `NO_CHANGE RULE_ABSENT` means no
+customization; the protocol still applies. Any `ERROR` line stops planning.
 
 ## 3. Write the plan
 

@@ -400,6 +400,112 @@ pub fn adapter_read(start: &Path, selector: &str) -> CommandOutput {
     }
 }
 
+/// Lists the fixed shared-rule set and whether each project copy is present.
+///
+/// Unknown files below `settings/rules/` are not extensions and are never
+/// listed. Present rules must carry valid durable managed instructions.
+#[must_use]
+pub fn rule_list(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let mut details = Vec::new();
+    for entry in rule::defaults() {
+        match entry.read(&paths.specbind_root) {
+            Ok(content) => {
+                if let Some(content) = &content {
+                    let issues = instruction::validate_live(content);
+                    if !issues.is_empty() {
+                        return CommandOutput::failure(
+                            "RULE_LIST_FAILED",
+                            "Cannot inspect project rules.",
+                            issues
+                                .iter()
+                                .map(|issue| {
+                                    format!("{} {}: {}", issue.code, entry.path(), issue.message)
+                                })
+                                .collect(),
+                        );
+                    }
+                }
+                details.push(format!(
+                    "selector={} type=\"SpecBind Rule\" path={} present={}",
+                    escape(entry.selector),
+                    escape(&entry.path()),
+                    present(content.is_some())
+                ));
+            }
+            Err(error) => {
+                return CommandOutput::failure(
+                    "RULE_LIST_FAILED",
+                    "Cannot inspect project rules.",
+                    vec![format!("{} {}", error.code, error.message)],
+                );
+            }
+        }
+    }
+    let mut output = format!(
+        "OK RULE_LISTED: Found {} accepted rule(s).\n",
+        details.len()
+    );
+    for detail in details {
+        output.push_str("  ");
+        output.push_str(&detail);
+        output.push('\n');
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+/// Reads one project-owned rule as raw or purpose-projected UTF-8 Markdown.
+///
+/// Absence is a successful no-change result because product protocols remain
+/// authoritative when the project supplies no customization.
+#[must_use]
+pub fn rule_read(start: &Path, selector: &str, purpose: Option<&str>) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let Some(entry) = rule::find(selector) else {
+        return CommandOutput::failure(
+            "RULE_READ_INVALID",
+            format!("unknown rule selector: {selector}"),
+            vec![],
+        );
+    };
+    match entry.read(&paths.specbind_root) {
+        Ok(Some(content)) => {
+            let issues = instruction::validate_live(&content);
+            if !issues.is_empty() {
+                return CommandOutput::failure(
+                    "RULE_READ_FAILED",
+                    format!("Rule {selector} has invalid managed instructions."),
+                    issues
+                        .iter()
+                        .map(|issue| format!("{} {}", issue.code, issue.message))
+                        .collect(),
+                );
+            }
+            let projected = match purpose {
+                Some("maintain") => {
+                    instruction::project(&content, instruction::InstructionScope::Maintain)
+                }
+                Some("consume") => {
+                    instruction::project(&content, instruction::InstructionScope::Consume)
+                }
+                _ => content,
+            };
+            CommandOutput::success(projected.into_bytes())
+        }
+        Ok(None) => CommandOutput::no_change(
+            "RULE_ABSENT",
+            &format!("The project has no {selector} rule."),
+        ),
+        Err(error) => CommandOutput::failure(error.code, error.message, vec![]),
+    }
+}
+
 /// Lists every recognized steering document.
 ///
 /// Any per-document fault returns the unambiguously discovered documents as

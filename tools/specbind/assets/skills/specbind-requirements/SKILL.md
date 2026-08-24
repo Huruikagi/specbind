@@ -77,9 +77,14 @@ specbind protocol read requirements-review
 specbind protocol read okf-authoring
 ```
 
-The project's `settings/rules/ears-format.md` states how this project prefers
-requirements to be phrased. It is project-owned; if it is absent, the project
-removed it deliberately and the protocol still applies.
+Read the project's phrasing preferences through the project-owned rule surface:
+
+```text
+specbind rule read ears-format --for consume
+```
+
+`NO_CHANGE RULE_ABSENT` means the project supplies no customization; the
+protocol still applies. Any `ERROR` line stops this workflow.
 
 Write constraints you took from steering **into the document**, in the
 requirements' own terms. Steering is not fingerprinted, so nothing detects a

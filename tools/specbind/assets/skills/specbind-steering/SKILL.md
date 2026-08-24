@@ -56,10 +56,15 @@ to be incomplete. You are the exception, and only for repair:
   authoring alongside it.
 - Every other read still goes through the commands above.
 
-Read the project's `settings/rules/steering-principles.md` once. It is user-owned
-policy about what belongs inside a steering document — granularity, examples,
-what to leave out. If it is absent, no customization applies and you proceed on
-the contract here.
+Read the project's steering-authoring policy once through its rule surface:
+
+```text
+specbind rule read steering-principles --for consume
+```
+
+It covers granularity, examples, and what to leave out. `NO_CHANGE RULE_ABSENT`
+means no customization and you proceed on the contract here. Any `ERROR` line
+stops this workflow.
 
 ## 3. Understand the codebase before writing about it
 

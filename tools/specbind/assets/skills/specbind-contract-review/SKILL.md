@@ -83,10 +83,15 @@ location in a default installation.
 **The difference is the entry point.** A run that never established what changed
 has not performed the review, however carefully it read the current graph.
 
-The project's `settings/rules/contract-principles.md` states this project's seam
-policy — shared ownership, compatibility posture, generated boundaries,
-dependency direction. It is project-owned; if absent, the project removed it
-deliberately and the protocol still applies.
+Read the project's seam policy through its project-owned rule surface:
+
+```text
+specbind rule read contract-principles --for consume
+```
+
+It covers shared ownership, compatibility posture, generated boundaries, and
+dependency direction. `NO_CHANGE RULE_ABSENT` means no customization; the
+protocol still applies. Any `ERROR` line stops the review.
 
 Do not read steering here. Whether a design followed project guidance belongs to
 the design phase and to `specbind-validate-design`. Your question is whether the

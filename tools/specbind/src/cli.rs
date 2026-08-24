@@ -37,7 +37,7 @@ use crate::{
     protocol,
     release_finalize::{self, FinalizeIssue},
     release_readiness::{self, MutationTargetState, ReleaseDiagnostic},
-    schema,
+    rule, schema,
     spec_list::{self, SpecHealth},
     spec_status::{self, ConsistencyHealth, SpecStatusModel},
     steering,

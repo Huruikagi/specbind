@@ -8,7 +8,7 @@ use clap::Parser as _;
 use specbind::args::{
     AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command, DirectCommand,
     GateCommand, MigrateCommand, MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand,
-    SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
+    RuleCommand, SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
     TemplateCommand,
 };
 use specbind::cli::CommandOutput;
@@ -153,6 +153,15 @@ fn run_adapter(start: &Path, command: AdapterCommand) -> CommandOutput {
     }
 }
 
+fn run_rule(start: &Path, command: RuleCommand) -> CommandOutput {
+    match command {
+        RuleCommand::List => specbind::cli::rule_list(start),
+        RuleCommand::Read { selector, purpose } => {
+            specbind::cli::rule_read(start, &selector, purpose.as_deref())
+        }
+    }
+}
+
 fn run_steering(start: &Path, command: SteeringCommand) -> CommandOutput {
     match command {
         SteeringCommand::List => specbind::cli::steering_list(start),
@@ -289,6 +298,7 @@ fn main() -> ExitCode {
         Command::Tasks { command } => run_tasks(&start, command),
         Command::Schema { command } => run_schema(command),
         Command::Adapter { command } => run_adapter(&start, command),
+        Command::Rule { command } => run_rule(&start, command),
         Command::Steering { command } => run_steering(&start, command),
         Command::Adoption { command } => run_adoption(&start, &command),
         Command::Spec { command } => run_spec(&start, command),

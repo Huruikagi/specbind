@@ -10,7 +10,7 @@ SpecBindのライフサイクルと検証はそのままに、成果物の書き
 | 変更したいこと | 編集する場所 | 主な確認方法 |
 | --- | --- | --- |
 | RequirementsやDesignなどの構成、見出し、例 | `.specbind/settings/templates/` | `specbind template list`、`specbind template read` |
-| Requirements、Design、Contract、Tasks、Steeringの書き方や判断基準 | `.specbind/settings/rules/` | 対応するSkillで成果物を作成・レビューする |
+| Requirements、Design、Contract、Tasks、Steeringの書き方や判断基準 | `.specbind/settings/rules/` | `specbind rule list`、`specbind rule read` |
 | リリース、Git、保留した指摘の届け先 | `.specbind/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
 | プロジェクトについてエージェントが長く参照する知識 | `.specbind/steering/` | `specbind steering list`、`specbind steering read` |
 | Specの置き場所、成果物の言語、使うエージェント | `.specbind.json`と`specbind install`のオプション | `specbind install --dry-run ...` |
@@ -97,6 +97,19 @@ specbind steering read <selector> --for consume
 
 v1のSkillが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
 読み込まれません。
+
+```sh
+specbind rule list
+specbind rule read ears-format --for consume
+specbind rule read ears-format --for maintain
+```
+
+一覧は既知の5件と、各ファイルがプロジェクトに存在するかを返します。Skillが判断基準
+として使うときは`--for consume`、ルール自体を更新するときは`--for maintain`を指定します。
+省略すると、指示コメントを含むMarkdownをそのまま返します。ルール内でも
+`specbind:instruction maintain`と`consume`を使用できますが、初回作成専用の`create`は
+使用できません。ファイルがない場合は`NO_CHANGE RULE_ABSENT`となり、製品protocolは
+引き続き適用されます。
 
 また、ルールで弱められないものがあります。成果物の必須構造、Gate、承認、状態の
 遷移、Skillの必須手順、CLIの検証です。
