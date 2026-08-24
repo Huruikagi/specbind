@@ -148,6 +148,16 @@ bounds this at two rounds; after that the task is blocked with the outstanding
 findings as its reason. `CANNOT_REVIEW` is not a rejection to retry blindly: it
 enters diagnosis with the reason the review subject could not be determined.
 
+Fresh implementers also obey the project-local instruction files that govern
+their working directory. Ordinary non-destructive bookkeeping required by those
+instructions, such as appending an instrumentation context marker inside the
+project, is part of the authorized implementation run and does not require a
+second user confirmation merely because it is not product source. Explicit
+user/root prohibitions, tool-enforced approval, destructive actions, external
+publication, and credential boundaries still win. The dispatch brief states
+this so a corrective implementer does not misclassify mandatory local operating
+state as a missing product decision.
+
 ### Failure has one route, and it is bounded
 
 `BLOCKED`, an unresolved need for context, `CANNOT_REVIEW`, and a review

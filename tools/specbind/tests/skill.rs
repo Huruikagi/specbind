@@ -585,6 +585,16 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
 }
 
 #[test]
+fn implementation_dispatch_carries_project_local_operating_authority() {
+    let implement = skill::find("specbind-implement").expect("implement skill");
+    let body = implement.body().expect("implement body");
+
+    assert!(body.contains("project-local instruction files"));
+    assert!(body.contains("required\n  non-destructive bookkeeping inside the project"));
+    assert!(body.contains("does not need a second user approval"));
+}
+
+#[test]
 fn adapter_consumers_use_the_dedicated_scaffold_marker() {
     for name in [
         "specbind-discovery",

@@ -94,6 +94,9 @@ Give it a brief that stands alone — it saw nothing you saw:
 - the design artifacts that govern this work
 - the project's applicable verification commands
 - any implementation notes bearing on this task's boundary
+- the project-local instruction files it must obey, including that required
+  non-destructive bookkeeping inside the project is ordinary task execution and
+  does not need a second user approval
 
 and the protocol it must read:
 

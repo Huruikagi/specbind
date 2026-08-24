@@ -12,6 +12,22 @@ prerequisite guards.
 You are implementing **one task**. Finishing it is the whole assignment; the
 plan's remaining work is not yours.
 
+## Obey project-local operating instructions
+
+Read and follow the instruction files that govern the task's working directory.
+The user's request to implement the task authorizes ordinary, non-destructive
+project-local bookkeeping those instructions require as part of doing the work,
+such as appending a context marker to an instrumentation or audit log inside the
+project. Do not stop to ask for a second approval merely because that required
+write is not a product source change. Perform it at the point the project
+instruction requires, keep it out of `CHANGED` when it is ignored operational
+state, and continue the task.
+
+This does not override an explicit user or root prohibition, tool-enforced
+approval, or the destructive/external-action boundary. If a project instruction
+requires deletion, publication, credentials, or another action outside the
+task's normal local execution authority, stop and report the exact action.
+
 ## Build the definition of done before writing code
 
 The task states an outcome. Before changing anything, establish what would
