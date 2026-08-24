@@ -440,6 +440,9 @@ fn implementation_validation_preserves_exact_executed_command_text() {
     assert!(body.contains("Preserve the executed command verbatim"));
     assert!(body.contains("shortened form, placeholder"));
     assert!(body.contains("Compare the JSON candidate"));
+    assert!(body.contains("Around each canonical project command"));
+    assert!(body.contains("Do not clean between the command"));
+    assert!(body.contains("command itself becomes repeatably clean"));
 }
 
 #[test]

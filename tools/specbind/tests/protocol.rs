@@ -93,6 +93,9 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
     assert!(implementation.contains("ordinary, non-destructive\nproject-local bookkeeping"));
     assert!(implementation.contains("Do not stop to ask for a second approval"));
     assert!(implementation.contains("destructive/external-action boundary"));
+    assert!(implementation.contains("cleanup after the run is not enough"));
+    assert!(implementation.contains("Run that exact public command again"));
+    assert!(implementation.contains("repeat invocation recreates untracked"));
 
     let review = protocol::read("task-review")
         .expect("task review protocol")
@@ -137,4 +140,7 @@ fn completion_verification_preserves_the_exact_executed_command() {
 
     assert!(content.contains("preserve the exact executed command\nstring"));
     assert!(content.contains("shortened argument, placeholder"));
+    assert!(content.contains("repeatable clean\ninvocation"));
+    assert!(content.contains("without cleanup between the command"));
+    assert!(content.contains("exit code is zero"));
 }

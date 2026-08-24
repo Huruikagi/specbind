@@ -87,6 +87,15 @@ outputs that this task's verification created and whose generated ownership is
 certain. Never clean up a pre-existing or unrelated path. If ownership is
 unclear, report the task blocked instead of guessing.
 
+When this task creates or changes a canonical verification command or script,
+cleanup after the run is not enough. Run that exact public command again from a
+clean status snapshot without an after-the-fact cleanup step, and require the
+Git status to remain unchanged. A future validator, release checkout, or user
+will rerun the command without the implementer's cleanup context. Configure the
+command itself to suppress, redirect into ignored output, or remove only its own
+disposable files before it exits. If a repeat invocation recreates untracked
+caches or reports, the task is not `READY_FOR_REVIEW`.
+
 `READY_FOR_REVIEW` means the remaining worktree changes are the deliberate task
 implementation and its intended tests or scripts. New command-generated
 leftovers are not ready for review merely because they are untracked.

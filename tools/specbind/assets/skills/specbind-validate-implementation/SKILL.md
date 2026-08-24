@@ -91,6 +91,11 @@ set **before** running anything, then run those exact commands.
   executed before calling `completion accept`.
 - A failing check is `NO-GO`. Never swap in a cheaper command that passes,
   narrow a check, or skip a case to reach green.
+- Around each canonical project command, capture `git status --short`
+  immediately before and after. Do not clean between the command and the second
+  snapshot. A zero exit code that creates caches, reports, or other untracked
+  output is `NO-GO`; name the paths and return them to implementation so the
+  command itself becomes repeatably clean.
 - A declared canonical command that is missing or cannot execute is
   `MANUAL_VERIFY_REQUIRED`. Stop: do not invoke its underlying test runner
   directly, reconstruct what the script probably did, or substitute a command

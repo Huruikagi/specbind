@@ -44,6 +44,15 @@ When the command becomes durable evidence, preserve the exact executed command
 string. A descriptive label, shortened argument, placeholder, or equivalent
 command does not identify the evidence that produced the observed result.
 
+For a canonical project command, passing also requires a repeatable clean
+invocation. Capture `git status --short` immediately before and after the exact
+command, without cleanup between the command and the after-snapshot. New caches,
+coverage data, reports, or other untracked output make the completion claim
+`Not verified` even when the exit code is zero. Do not delete those outputs in
+the validator to manufacture a clean result; report the exact paths so
+implementation can make the command itself clean for future release and user
+runs.
+
 **A whole implementation is complete.** This is the strictest claim and needs
 all of:
 

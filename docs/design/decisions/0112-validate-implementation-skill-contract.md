@@ -74,6 +74,13 @@ A failing check is `NO-GO`. A check that cannot be identified or executed is
 `MANUAL_VERIFY_REQUIRED`. Neither is repaired by choosing a different command
 that passes.
 
+The validator also snapshots Git status immediately before and after every
+canonical project command, with no cleanup in between. A zero exit code that
+leaves new caches, reports, or other untracked output is `NO-GO`: release and
+user runs repeat the command without this validator's cleanup context. The
+validator reports the paths and leaves repair to implementation rather than
+deleting evidence to manufacture a clean completion.
+
 ### Independent dimensions are dispatched
 
 The validation dimensions — full-suite results, runtime liveness, active

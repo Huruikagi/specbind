@@ -198,6 +198,13 @@ returning `READY_FOR_REVIEW`. The orchestrator does not clean them on the
 implementer's behalf, and uncertainty remains a stop rather than authority to
 delete.
 
+A task that creates or changes the canonical verification command has a stronger
+obligation: the command itself must be repeatably clean. The implementer reruns
+the exact public command from a clean snapshot and may not rely on a separate
+post-run cleanup that future validators, release checkouts, and users will not
+perform. Recreated untracked caches or reports keep the task out of
+`READY_FOR_REVIEW` until the command suppresses or owns their disposal.
+
 Committing is adapter-governed under Decision 0101 and is not implied by
 completing a task.
 
