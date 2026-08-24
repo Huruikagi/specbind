@@ -67,6 +67,13 @@ applies a minimum release age to `latest` by default, so during the first day
 after a stable release, select it explicitly with
 `github:Huruikagi/specbind@0.2.0` if needed.
 
+Prereleases are never selected as `latest`. Install this release candidate
+explicitly:
+
+```sh
+mise use github:Huruikagi/specbind@1.0.0-rc.1
+```
+
 Without mise, use the platform installer.
 
 Windows PowerShell:

@@ -206,10 +206,11 @@ jobs:
           New-Item -ItemType Directory -Force -Path $smoke | Out-Null
           Set-Location -LiteralPath $smoke
 
-          $tool = "github:$env:GITHUB_REPOSITORY"
+          $version = $env:RELEASE_TAG.Substring(1)
+          $tool = "github:$env:GITHUB_REPOSITORY@$version"
           mise use $tool
           $actual = mise exec $tool --command "specbind --version"
-          $expected = "specbind $($env:RELEASE_TAG.Substring(1))"
+          $expected = "specbind $version"
           if ($actual -ne $expected) {
             throw "mise-installed archive reports '$actual'; expected '$expected'."
           }
