@@ -547,6 +547,10 @@ fn contract_review_uses_scope_and_type_based_historical_discovery() {
     assert!(body.contains("`Status: not_applicable`"));
     assert!(body.contains("git ls-tree -r --name-only <baseline>"));
     assert!(body.contains("`type` is `SpecBind Contract`"));
+    assert!(body.contains("Do not ask the user to repeat a decision already explicit"));
+    assert!(
+        body.contains("Ask only when the impact introduces a choice the request did not settle")
+    );
     assert!(!body.contains("git show <baseline>:.specbind/specs/<spec>/contract.md"));
 }
 

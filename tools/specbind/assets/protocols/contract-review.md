@@ -66,6 +66,12 @@ that impact is part of this review. There is no closed list of dispositions and
 no mechanism that will detect it. Name the affected consumer, state the impact,
 and bring it to the user when the change requires a decision they own.
 
+The delivery request is evidence of a decision when it explicitly asks for the
+exported behavior under review. In that case, record the requested disposition
+and any possible unmanaged impact; do not stop merely to ask the user to confirm
+the same behavior again. Stop only when repository or project evidence exposes
+an additional consumer or compatibility choice the request did not settle.
+
 Silence here is the most expensive failure mode in the review, because nothing
 downstream will catch it.
 
@@ -80,7 +86,10 @@ report is a warning.
   section above states, and it turns the warning into a recorded fact.
 - When there is no consumer at all, the seam is a boundary the project is paying
   for in advance. Say so. Whether it is retired now, retired later, or kept for a
-  stated reason is the user's decision, not a detail to leave unremarked.
+  stated reason is the user's decision, not a detail to leave unremarked. A
+  delivery request that directly uses or changes that export is already a stated
+  reason to keep it for the milestone; record that reason instead of asking for
+  duplicate confirmation.
 - An export added by the change under review deserves the question directly:
   what depends on it today?
 

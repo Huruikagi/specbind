@@ -108,6 +108,14 @@ shape, an operational contract — none of these are Specs, and nothing will
 detect the impact. Name the affected consumer, state the impact, and bring it to
 the user when the change requires a decision they own.
 
+Do not ask the user to repeat a decision already explicit in the delivery
+request. If the requested behavior itself changes an exported seam, repository
+evidence finds no managed consumer, and no external consumer is identified by
+the project, record the possible unmanaged impact and the user's requested
+disposition in the assessment. Likewise, a request that directly uses or changes
+an existing unconsumed export is evidence to keep that seam for this milestone.
+Ask only when the impact introduces a choice the request did not settle.
+
 Silence here is the one finding with no downstream check that might catch it.
 
 ### Go deeper only when the conclusion depends on it

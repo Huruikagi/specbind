@@ -136,6 +136,14 @@ review, and notes that nothing will detect it. This skill is where that becomes
 an action: it names the affected consumer, states the impact, and brings it to
 the user when the change requires a decision they own.
 
+The delivery request can already contain that decision. When it explicitly asks
+for the changed exported behavior, the review records the requested disposition
+and possible unmanaged impact instead of asking the user to reconfirm the same
+choice. It stops only for an additional consumer or compatibility choice that
+the request and project evidence did not settle. Directly requesting use or
+change of an otherwise unconsumed export is also a stated reason to keep that
+seam for the milestone.
+
 Silence here cannot be recovered later. Every other finding has some downstream
 check that might catch it; this one has none.
 
