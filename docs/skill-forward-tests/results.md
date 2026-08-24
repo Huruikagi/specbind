@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-24. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-25. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -103,6 +103,18 @@ and finalization. The judge passed every expectation at final commit
 `85adbb501a942249c94ca1dd7b525adbcdf6083f`, before finalization, and the fixture
 recorded eleven dispatch contexts. The final fixture was clean, had no remote,
 and retained the required release archives and cart log.
+
+HP1 passed again on 2026-08-25 with a fresh `gpt-5.6-terra` medium Codex driver
+against release-candidate build `0f4aee6`. The journey completed Discovery,
+delegated planning, independent Design validation, contract review, repeatably
+clean implementation verification, completion, annotated local tagging,
+detached tagged-tree verification, and finalization. The mechanical judge passed
+every expectation at final commit
+`97d3cf9b8173bc160a509bc3c2996ce99c462c36`; annotated tag `v1.4.0` points to
+`29d24bbd50dd09a4ee0fbcfca0de4ccd42a9b658`, before finalization, and the
+fixture recorded eleven fresh dispatch contexts. The canonical seven-test run
+passed during judgment, the final worktree was clean, and the fixture retained
+no remote.
 
 ### Runs without a passing measurement
 
