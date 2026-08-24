@@ -265,3 +265,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0140](./design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md) | Accepted | One-time Release adapter bootstrap and post-finalization metadata checkpoint |
 | [0141](./design/decisions/0141-guarded-agent-removal-and-project-uninstall.md) | Accepted | Exact planned agent removal and explicit durable-knowledge uninstall policy |
 | [0142](./design/decisions/0142-bilingual-documentation-authoring-and-publishing.md) | Accepted | Japanese-first documentation authoring and English-default bilingual publishing hierarchy |
+| [0143](./design/decisions/0143-existing-implementation-adoption.md) | Accepted | Steering-first adoption of existing implementations through evidence-backed reverse discovery |

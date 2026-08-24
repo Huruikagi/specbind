@@ -6,8 +6,8 @@ use std::{
 
 use clap::Parser as _;
 use specbind::args::{
-    AdapterCommand, ArtifactCommand, CheckCommand, Cli, Command, DirectCommand, GateCommand,
-    MigrateCommand, MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand,
+    AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command, DirectCommand,
+    GateCommand, MigrateCommand, MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand,
     SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
     TemplateCommand,
 };
@@ -162,6 +162,12 @@ fn run_steering(start: &Path, command: SteeringCommand) -> CommandOutput {
     }
 }
 
+fn run_adoption(start: &Path, command: &AdoptionCommand) -> CommandOutput {
+    match command {
+        AdoptionCommand::Preflight => specbind::cli::adoption_preflight(start),
+    }
+}
+
 fn run_spec(start: &Path, command: SpecCommand) -> CommandOutput {
     match command {
         SpecCommand::List => specbind::cli::spec_list(start),
@@ -284,6 +290,7 @@ fn main() -> ExitCode {
         Command::Schema { command } => run_schema(command),
         Command::Adapter { command } => run_adapter(&start, command),
         Command::Steering { command } => run_steering(&start, command),
+        Command::Adoption { command } => run_adoption(&start, &command),
         Command::Spec { command } => run_spec(&start, command),
         Command::Milestone { command } => run_milestone(&start, command),
         Command::Release { command } => run_release(&start, command),

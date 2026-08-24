@@ -120,7 +120,7 @@ Golden generated-tree fixtures should identify the accepted decision that explai
 ### 2. Read-only Rust core
 
 Implemented. The Rust workspace owns the CLI, configuration, embedded schemas,
-templates, protocols, rules, adapters, and all seventeen product skills. It
+templates, protocols, rules, adapters, and all eighteen product skills. It
 provides artifact discovery, structural and semantic validation, deterministic
 read models, dry-run installation planning, concise diagnostics, and stable exit
 behavior.

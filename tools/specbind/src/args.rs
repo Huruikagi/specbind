@@ -93,6 +93,11 @@ pub enum Command {
         #[command(subcommand)]
         command: SteeringCommand,
     },
+    /// Prepare guarded adoption of specifications from an existing implementation.
+    Adoption {
+        #[command(subcommand)]
+        command: AdoptionCommand,
+    },
     /// Inspect Spec lifecycle and consistency.
     Spec {
         #[command(subcommand)]
@@ -213,6 +218,12 @@ pub enum SteeringCommand {
         #[arg(long = "for", value_parser = ["maintain", "consume"])]
         purpose: Option<String>,
     },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum AdoptionCommand {
+    /// Return the clean committed source revision after adoption prerequisites pass.
+    Preflight,
 }
 
 #[derive(Debug, Subcommand)]

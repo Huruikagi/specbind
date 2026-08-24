@@ -1,7 +1,8 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 17] = [
+const ACCEPTED_SKILLS: [&str; 18] = [
+    "specbind-adopt-existing",
     "specbind-batch-plan",
     "specbind-contract-review",
     "specbind-debug",
@@ -90,6 +91,28 @@ fn installs_each_skill_to_the_accepted_target() {
         assert_eq!(
             entry.target(Agent::Codex),
             format!(".agents/skills/{}/SKILL.md", entry.name)
+        );
+    }
+}
+
+#[test]
+fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
+    let body = skill::find("specbind-adopt-existing")
+        .expect("adoption skill")
+        .body()
+        .expect("body");
+    for required in [
+        "specbind adoption preflight",
+        "specbind-discovery",
+        "source_revision",
+        "Existing code and tests are **evidence**",
+        "stop immediately",
+        "Do not author `requirements.md` here.",
+        "specbind-requirements <spec>",
+    ] {
+        assert!(
+            body.contains(required),
+            "adoption skill must contain {required}"
         );
     }
 }

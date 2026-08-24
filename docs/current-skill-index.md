@@ -11,13 +11,14 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Both supported agents receive the same 17 skills:
+Both supported agents receive the same 18 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
 
 | Skill | Current role |
 | --- | --- |
+| `specbind-adopt-existing` | Establish new Spec boundaries and confirmed Brief intent from a selected existing implementation while retaining revision-pinned evidence. |
 | `specbind-discovery` | Confirm milestone scope, classify Direct, existing-Spec, and new-Spec work, delegate state changes to the CLI, and author Briefs. |
 | `specbind-requirements` | Maintain the complete current behavioral contract, select the milestone's active Requirement IDs, and approve the Requirements gate. |
 | `specbind-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |

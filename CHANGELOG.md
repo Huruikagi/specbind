@@ -4,6 +4,10 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added a Steering-first existing-project adoption workflow with a clean Git
+  evidence preflight, revision-pinned reverse-discovery dossier, confirmed Spec
+  boundary handoff, and normal Requirements/Design lifecycle continuation.
+
 ## 0.2.0 - 2026-08-22
 
 - Added supported installation through mise's GitHub backend, including

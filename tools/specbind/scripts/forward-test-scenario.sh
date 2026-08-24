@@ -15,6 +15,8 @@
 #
 # Scenarios:
 #   base   the fixture as built, nothing added
+#   a1     an initial-adoption project with no Specs and no Steering
+#   a2     an initial-adoption project with no Specs and complete Steering
 #   d9     base plus an uncommitted edit to an owned file
 #   d12    base plus a steering document that cannot be parsed
 #   r1     milestone scoping a new `order` Spec, with its brief written
@@ -276,6 +278,47 @@ leave_dirty=no
 
 case "$scenario" in
 base)
+    ;;
+
+a1 | a2)
+    rm -rf .specbind/specs
+    if [ "$scenario" = a1 ]; then
+        rm -rf .specbind/steering
+        mkdir -p .specbind/steering
+    else
+        cat > .specbind/steering/product.md <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: product
+---
+
+# Product
+
+The bookshop lets a customer collect intended purchases and place an order.
+Adoption must preserve the distinction between a mutable cart and a committed
+order. Payment and fulfilment are outside the current product.
+EOF
+        cat > .specbind/steering/technology.md <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: technology
+---
+
+# Technology
+
+The service is a Python codebase. Repository-local tests are the verification
+surface; adoption documents current behavior but does not change source code.
+EOF
+    fi
+    expect "the adoption fixture still has a persistent Spec" \
+        'specbind spec list | grep -q "Found 0 spec(s)"'
+    if [ "$scenario" = a1 ]; then
+        expect "the no-Steering fixture still lists guidance" \
+            'specbind steering list | grep -q "Found 0 steering document(s)"'
+    else
+        expect "the adoption Steering baseline is incomplete" \
+            'specbind steering list | grep -q "Found 4 steering document(s)"'
+    fi
     ;;
 
 d9)

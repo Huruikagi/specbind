@@ -179,6 +179,11 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ## Post-v1 candidates
 
+- Existing-implementation adoption from Issue #2 is implemented by
+  `specbind-adopt-existing` under Decision 0143. It establishes confirmed Brief
+  and Research inputs, then returns to the ordinary phase skills rather than
+  adding reverse variants for each phase.
+
 - A milestone-wide implementation orchestrator with dependency-wave and
   subagent coordination, tracked by
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9).

@@ -2,6 +2,41 @@
 
 [Back to the forward-test index](../skill-forward-tests.md). These cover quick/batch planning, checkpoints, gap analysis, steering, and failure handling.
 
+## Existing-implementation adoption scenarios
+
+Accepted by [Decision 0143](../design/decisions/0143-existing-implementation-adoption.md).
+
+### A1 — Adoption stops at a missing Steering baseline
+
+Prepare `a1`, then ask:
+
+> Adopt the existing cart and order implementation into SpecBind Specs.
+
+- The agent discovers the installed adoption workflow and runs
+  `specbind adoption preflight`.
+- It stops on `ADOPTION_STEERING_REQUIRED` and routes the maintainer to Steering
+  bootstrap.
+- It does not scan the implementation deeply, create the adoption dossier,
+  create a milestone, or create a Spec.
+- The worktree remains clean.
+
+### A2 — Adoption proposes boundaries before writing
+
+Prepare `a2` with dispatch instrumentation, then ask:
+
+> Adopt the existing cart and order implementation into SpecBind Specs. Stop
+> when you need my first confirmation.
+
+- Preflight succeeds and the returned full source revision is the fixture HEAD.
+- Every Steering document is read, and fresh readers map the repository before
+  the driver synthesizes the boundary proposal.
+- The proposal names `cart` and `order` responsibilities, their dependency or
+  seam, the selected adoption scope, unmanaged area, and uncertainties.
+- No dossier, milestone, Spec, Brief, or Research is written before the user
+  confirms the boundary set.
+- The worktree remains clean. With instrumentation, the agent log records the
+  driver plus at least two fresh readers.
+
 ## Quick-plan and batch-plan scenarios
 
 Accepted by [Decision 0120](../design/decisions/0120-quick-and-batch-orchestration-contracts.md).

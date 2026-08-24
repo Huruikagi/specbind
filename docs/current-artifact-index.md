@@ -36,8 +36,8 @@ machine-level binary.
 | `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
 | `{{SPEC_DIR}}/settings/adapters/git.md` | Active default policy that commits each eligible workflow unit locally, without pushing or rewriting history. |
 | `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
-| `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 17 embedded skills. |
-| `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 17 embedded skills. |
+| `.claude/skills/<skill>/SKILL.md` | Product-managed Claude Code rendering of each of the 18 embedded skills. |
+| `.agents/skills/<skill>/SKILL.md` | Product-managed Codex rendering of each of the 18 embedded skills. |
 | `.codex/agents/specbind-*.toml` | Product-managed Codex role adapters for planning, implementation, review, diagnosis, and bounded research; model capability may be overridden through `.specbind.json`. |
 | `.claude/agents/specbind-*.md` | Product-managed Claude Code role adapters for the same five roles; model capability may be overridden through `.specbind.json`. |
 | `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
@@ -66,6 +66,7 @@ settings.
 
 | Artifact or path | Current lifecycle and owner |
 | --- | --- |
+| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by `specbind-adopt-existing`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
 | `{{SPEC_DIR}}/deferred.md` | Optional project-wide OKF concept created by the default deferred adapter when the first non-blocking finding is recorded. It is not a gate, fingerprint input, lifecycle artifact, or source of work. |
 | `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope. |
 | `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `specbind-steering` and selected by `artifact_id`. |

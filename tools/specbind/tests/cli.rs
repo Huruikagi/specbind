@@ -1275,7 +1275,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 55 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 57 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1290,7 +1290,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 55 create, 0 replace, 0 keep\n",
+                "\n  Summary: 57 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1359,7 +1359,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 31 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 32 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1408,10 +1408,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 33 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 34 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 33 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 34 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1786,7 +1786,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 32 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 33 created, 0 replaced, 1 kept\n",
         ));
 
     assert_eq!(

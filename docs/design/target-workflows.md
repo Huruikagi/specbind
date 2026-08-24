@@ -155,7 +155,12 @@ second progress or validation model.
 ```text
 Existing repository
   -> project guidance bootstrap or sync
-  -> discovery
+  -> for an initial brownfield adoption: guarded adoption preflight
+       -> shallow repository map
+       -> confirmed candidate Spec boundaries
+       -> discovery creates the confirmed Specs and Briefs
+       -> per-Spec evidence, reconciliation, Brief, and Research handoff
+  -> ordinary discovery
        -> direct change
        -> update an existing spec
        -> create a new spec
@@ -165,7 +170,10 @@ Existing repository
             -> integration validation
 ```
 
-The target contract should state when project guidance and gap analysis are optional, recommended, or required. They should not become implicit prerequisites merely because they exist as skills.
+Project guidance remains optional for ordinary work. It is mandatory for the
+explicit initial brownfield-adoption workflow accepted by Decision 0143 because
+reverse discovery needs a confirmed project-wide coordinate system before code
+layout can be judged as a durable Spec boundary. Gap analysis remains optional.
 
 ## Responsibility boundaries
 

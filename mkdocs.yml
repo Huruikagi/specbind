@@ -64,6 +64,7 @@ nav:
       - ユーザーガイド:
           - Getting Started: ja/guide/getting-started.md
           - 基本概念: ja/guide/concepts.md
+          - 既存実装を採用する: ja/guide/adopt-existing.md
           - カスタマイズ: ja/guide/customization.md
           - Agentの削除とアンインストール: ja/guide/uninstall.md
       - cc-sddから移行: ja/guide/migrate-from-cc-sdd.md
