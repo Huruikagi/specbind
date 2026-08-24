@@ -10,6 +10,7 @@ site_dir: site
 strict: true
 exclude_docs: |
   architecture.md
+  documentation-authoring.md
   design/
   repository-map.md
   skill-forward-tests.md
@@ -57,16 +58,17 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - ホーム: index.md
-  - ユーザーガイド:
-      - はじめに: guide/ja/index.md
-      - Getting Started: guide/ja/getting-started.md
-      - 基本概念: guide/ja/concepts.md
-      - カスタマイズ: guide/ja/customization.md
-      - Agentの削除とアンインストール: guide/ja/uninstall.md
+  - ドキュメント: index.md
+  - 日本語:
+      - ホーム: ja/index.md
+      - ユーザーガイド:
+          - Getting Started: ja/guide/getting-started.md
+          - 基本概念: ja/guide/concepts.md
+          - カスタマイズ: ja/guide/customization.md
+          - Agentの削除とアンインストール: ja/guide/uninstall.md
+      - cc-sddから移行: ja/guide/migrate-from-cc-sdd.md
   - cc-sddから移行:
       - ガイド入口: guide/migration/cc-sdd.md
-      - 日本語: guide/ja/migrate-from-cc-sdd.md
       - English: guide/en/migrate-from-cc-sdd.md
   - リファレンス:
       - スキル一覧: current-skill-index.md

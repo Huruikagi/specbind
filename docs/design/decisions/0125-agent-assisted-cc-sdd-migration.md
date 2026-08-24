@@ -6,6 +6,10 @@ The requirement to preserve `.kiro` after final cutover is superseded by
 [Decision 0127](./0127-retire-cc-sdd-source-at-final-cutover.md). Planning and
 guided authoring remain non-destructive toward the source.
 
+The Japanese guide path below is superseded by
+[Decision 0142](./0142-bilingual-documentation-authoring-and-publishing.md).
+CLI output uses the new canonical path.
+
 ## Context
 
 [Decision 0077](./0077-v1-installation-distribution-and-migration.md) makes
@@ -58,7 +62,7 @@ When automatic migration cannot proceed, the CLI:
 The stable documentation entry points are:
 
 - `https://huruikagi.github.io/specbind/guide/migration/cc-sdd/`
-- `https://huruikagi.github.io/specbind/guide/ja/migrate-from-cc-sdd/`
+- `https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/`
 - `https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/`
 
 The CLI may deep-link to an explicitly assigned heading anchor for a finding.

@@ -13,7 +13,7 @@ use crate::{
 
 pub const GUIDE_NEUTRAL: &str = "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/";
 pub const GUIDE_EN: &str = "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/";
-pub const GUIDE_JA: &str = "https://huruikagi.github.io/specbind/guide/ja/migrate-from-cc-sdd/";
+pub const GUIDE_JA: &str = "https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/";
 
 pub(super) const LEGACY_CONFIG: &str = ".cc-sdd.json";
 pub(super) const TARGET_CONFIG: &str = ".specbind.json";

@@ -54,6 +54,36 @@ fn routes_semantic_findings_to_the_neutral_agent_guide() {
 }
 
 #[test]
+fn routes_japanese_semantic_findings_to_the_canonical_japanese_guide() {
+    let root = migration_fixture("guided");
+    write_file(
+        root.path(),
+        ".cc-sdd.json",
+        r#"{"version":1,"agent":"claude-code-skills","lang":"ja","kiroDir":".kiro"}"#,
+    );
+    let checkout_metadata_path = root.path().join(".kiro/specs/checkout/spec.json");
+    let checkout_metadata = fs::read_to_string(&checkout_metadata_path)
+        .expect("read checkout metadata")
+        .replace(r#""language": "en""#, r#""language": "ja""#);
+    fs::write(checkout_metadata_path, checkout_metadata).expect("write checkout metadata");
+    let before = snapshot(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["migrate", "cc-sdd"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("ERROR MANUAL_MIGRATION_REQUIRED"))
+        .stderr(predicate::str::contains(
+            "https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/",
+        ));
+
+    assert_eq!(before, snapshot(root.path()));
+}
+
+#[test]
 fn apply_requires_a_clean_committed_recovery_boundary() {
     let root = migration_fixture("minimal");
     let before = snapshot(root.path());

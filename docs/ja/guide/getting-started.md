@@ -345,4 +345,4 @@ specbind artifact list csv-export
 
 ---
 
-[ガイドの入口](./index.md) | [基本概念](./concepts.md)
+[ガイドの入口](../index.md) | [基本概念](./concepts.md)

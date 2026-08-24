@@ -79,13 +79,15 @@ in [Implementation architecture](./architecture.md).
 
 | Document | Role |
 | --- | --- |
-| [Documentation site source](./index.md) | GitHub Pages landing page built by MkDocs Material |
-| [Japanese user guide (Preview)](./guide/ja/index.md) | Entry point for source-built Preview users |
-| [Japanese Getting Started](./guide/ja/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
-| [Japanese basic concepts](./guide/ja/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
-| [Japanese customization guide](./guide/ja/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
+| [Documentation site transition entry](./index.md) | GitHub Pages landing page while the English root tree is prepared |
+| [Documentation authoring policy](./documentation-authoring.md) | Japanese-first source policy, final bilingual path mapping, and contributor verification |
+| [Japanese user guide (Preview)](./ja/index.md) | Entry point for source-built Preview users |
+| [Japanese Getting Started](./ja/guide/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
+| [Japanese basic concepts](./ja/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
+| [Japanese customization guide](./ja/guide/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
+| [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [cc-sdd migration entry](./guide/migration/cc-sdd.md) | Language-neutral entry for automatic and agent-assisted migration guidance |
-| [Japanese cc-sdd migration guide](./guide/ja/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
+| [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
 | [English cc-sdd migration guide](./guide/en/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
 | [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
 | [Current generated artifact index](./current-artifact-index.md) | Current installation and lifecycle artifact surface |
@@ -262,3 +264,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0139](./design/decisions/0139-scoped-artifact-instructions.md) | Accepted | Lifecycle-scoped create, maintain, and consume instructions |
 | [0140](./design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md) | Accepted | One-time Release adapter bootstrap and post-finalization metadata checkpoint |
 | [0141](./design/decisions/0141-guarded-agent-removal-and-project-uninstall.md) | Accepted | Exact planned agent removal and explicit durable-knowledge uninstall policy |
+| [0142](./design/decisions/0142-bilingual-documentation-authoring-and-publishing.md) | Accepted | Japanese-first documentation authoring and English-default bilingual publishing hierarchy |

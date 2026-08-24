@@ -63,7 +63,7 @@ CodexまたはClaude Codeに、CLIの出力全体とこのページのURLを渡�
 守ってください。証明できない承認・完了状態を作らず、最後にCLI検証へ戻って
 ください。
 
-https://huruikagi.github.io/specbind/guide/ja/migrate-from-cc-sdd/
+https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/
 ```
 
 エージェントには、既存の`AGENTS.md`や`CLAUDE.md`を含むリポジトリ側の指示も
@@ -275,4 +275,4 @@ CLI所有のstateが壊れています。stateを手編集せず、現在のfind
 
 ---
 
-[移行ガイド入口](../migration/cc-sdd.md) | [English](../en/migrate-from-cc-sdd.md)
+[移行ガイド入口](../../guide/migration/cc-sdd.md) | [English](../../guide/en/migrate-from-cc-sdd.md)

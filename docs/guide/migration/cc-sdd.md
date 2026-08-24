@@ -27,7 +27,7 @@ CLIが`MANUAL_MIGRATION_REQUIRED`を返したら、CLIの出力全体と日本�
 CodexまたはClaude Codeに渡してください。エージェントは、移行の完了を宣言する前に、
 必ずSpecBind CLIの検証へ戻ります。
 
-- [日本語のマイグレーションガイド](../ja/migrate-from-cc-sdd.md)
+- [日本語のマイグレーションガイド](../../ja/guide/migrate-from-cc-sdd.md)
 
 ## English
 

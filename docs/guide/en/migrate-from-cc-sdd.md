@@ -292,4 +292,4 @@ that Git cannot recover.
 
 ---
 
-[Migration entry](../migration/cc-sdd.md) | [日本語](../ja/migrate-from-cc-sdd.md)
+[Migration entry](../migration/cc-sdd.md) | [日本語](../../ja/guide/migrate-from-cc-sdd.md)

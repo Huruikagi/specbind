@@ -245,4 +245,4 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 
 ---
 
-[ガイドの入口](./index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](../../current-artifact-index.md)
+[ガイドの入口](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](../../current-artifact-index.md)

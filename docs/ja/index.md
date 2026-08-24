@@ -17,8 +17,8 @@ Requirements、Design、Contract、Tasksをその場限りのプロンプトで�
 - 1つの振る舞いの変更を、スコープの確認から実装の検証まで通しで試したい
 - プレビュー版のバイナリ、またはソースビルドを試せる
 
-まず[Getting Started](./getting-started.md)を進めてください。途中で出てくる
-用語や役割分担は[基本概念](./concepts.md)にまとめています。
+まず[Getting Started](./guide/getting-started.md)を進めてください。途中で出てくる
+用語や役割分担は[基本概念](./guide/concepts.md)にまとめています。
 
 ## 現在の公開状態
 
@@ -37,17 +37,17 @@ SpecBindはv1.0前のプレビュー版です。このガイドは、リリー�
 既存の`.kiro`プロジェクトは、通常の`specbind install`では変換されません。
 移行機能を提供するまでは、同じプロジェクト上で試さないでください。移行時に
 守る安全境界と、エージェントに任せる手順は
-[cc-sddマイグレーションガイド](./migrate-from-cc-sdd.md)で先行公開しています。
+[cc-sddマイグレーションガイド](./guide/migrate-from-cc-sdd.md)で先行公開しています。
 
 ## 最初に読むページ
 
-1. [Getting Started](./getting-started.md) — 導入から最初の変更を検証するまで
-2. [基本概念](./concepts.md) — Spec、Milestone、Direct、Gate、成果物
-3. [カスタマイズ](./customization.md) — テンプレート、ルール、adapter、Steering、モデル設定
-4. [Agentの削除とアンインストール](./uninstall.md) — exact plan、knowledge保持・削除、復元
-5. [現在のスキル一覧](../../current-skill-index.md) — インストールされる全スキル
-6. [現在の成果物一覧](../../current-artifact-index.md) — 作成・管理されるファイル
-7. [cc-sddから移行する](./migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
+1. [Getting Started](./guide/getting-started.md) — 導入から最初の変更を検証するまで
+2. [基本概念](./guide/concepts.md) — Spec、Milestone、Direct、Gate、成果物
+3. [カスタマイズ](./guide/customization.md) — テンプレート、ルール、adapter、Steering、モデル設定
+4. [Agentの削除とアンインストール](./guide/uninstall.md) — exact plan、knowledge保持・削除、復元
+5. [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
+6. [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
+7. [cc-sddから移行する](./guide/migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ## SpecBindを使う変更
 
@@ -64,4 +64,4 @@ SpecBindのワークフローで進めます。
 
 ---
 
-[Getting Startedへ進む](./getting-started.md) | [GitHubリポジトリ](https://github.com/Huruikagi/specbind)
+[Getting Startedへ進む](./guide/getting-started.md) | [GitHubリポジトリ](https://github.com/Huruikagi/specbind)

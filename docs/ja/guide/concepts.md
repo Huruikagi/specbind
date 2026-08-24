@@ -155,4 +155,4 @@ Milestone全体を自動で実装するオーケストレータはありませ�
 
 ---
 
-[ガイドの入口](./index.md) | [Getting Started](./getting-started.md) | [カスタマイズ](./customization.md)
+[ガイドの入口](../index.md) | [Getting Started](./getting-started.md) | [カスタマイズ](./customization.md)

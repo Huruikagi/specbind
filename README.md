@@ -37,7 +37,7 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 ## Learn more
 
 - [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
-- [Japanese user guide (Preview)](./docs/guide/ja/index.md) walks through the current pre-1.0 preview from project installation to a first verified implementation.
+- [Japanese user guide (Preview)](./docs/ja/index.md) walks through the current pre-1.0 preview from project installation to a first verified implementation.
 - [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
 - [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
 - [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
