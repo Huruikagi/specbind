@@ -53,6 +53,63 @@ fn embeds_one_official_template_per_artifact_type_in_every_language() {
 }
 
 #[test]
+fn embeds_one_milestone_roadmap_template_in_every_language() {
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        let inventory = template::discover_milestone_templates(root.path(), language);
+        assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+        assert_eq!(inventory.templates.len(), 1);
+        let roadmap = &inventory.templates[0];
+        assert_eq!(roadmap.selector, "roadmap");
+        assert_eq!(roadmap.artifact_type, "SpecBind Roadmap");
+        assert_eq!(roadmap.source, TemplateSource::Embedded);
+        let (content, _) = template::read_milestone_template(root.path(), language, "roadmap")
+            .expect("read embedded milestone template");
+        assert!(content.contains("type: SpecBind Roadmap"));
+        assert!(instruction::validate_template(&content).is_empty());
+    }
+}
+
+#[test]
+fn project_milestone_template_overrides_the_embedded_default() {
+    let root = tempfile::tempdir().expect("temporary SpecBind root");
+    let target = root.path().join("settings/templates/roadmap.md");
+    fs::create_dir_all(target.parent().expect("template parent")).expect("create parent");
+    let content = "---\ntype: SpecBind Roadmap\n---\n# Custom roadmap\n";
+    fs::write(&target, content).expect("write project milestone template");
+
+    let (read, inventory) =
+        template::read_milestone_template(root.path(), ProjectLanguage::En, "roadmap")
+            .expect("read project milestone template");
+    assert_eq!(read, content);
+    assert!(inventory.issues.is_empty());
+    assert_eq!(inventory.templates[0].source, TemplateSource::Project);
+    assert_eq!(
+        inventory.templates[0].template_path.as_str(),
+        "settings/templates/roadmap.md"
+    );
+}
+
+#[test]
+fn milestone_template_rejects_cli_owned_frontmatter() {
+    let root = tempfile::tempdir().expect("temporary SpecBind root");
+    let target = root.path().join("settings/templates/roadmap.md");
+    fs::create_dir_all(target.parent().expect("template parent")).expect("create parent");
+    fs::write(
+        &target,
+        "---\ntype: SpecBind Roadmap\nwork_items: {}\n---\n# Roadmap\n",
+    )
+    .expect("write invalid project milestone template");
+
+    let inventory = template::discover_milestone_templates(root.path(), ProjectLanguage::En);
+    assert!(inventory.templates.is_empty());
+    assert_eq!(
+        inventory.issues[0].code,
+        "TEMPLATE_ROADMAP_MACHINE_FIELD_FORBIDDEN"
+    );
+}
+
+#[test]
 fn materialized_embedded_templates_are_recognized_live_artifacts() {
     for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
         let root = tempfile::tempdir().expect("temporary SpecBind root");

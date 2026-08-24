@@ -247,13 +247,20 @@ about to be rewound.
 Then apply the scope. With no active milestone:
 
 ```sh
+specbind template read milestone roadmap
+specbind protocol read okf-authoring
 specbind schema read scope/v1
 specbind milestone create --scope -
 ```
 
-Author the candidate against the schema you just read. `--help` describes the
-transport, not the strict document shape; do not probe a mutating command with
-guessed JSON to discover its fields.
+Author the candidate against the schema you just read. Materialize the Roadmap
+template's Markdown body into the candidate's `body`: apply its `create`
+guidance without copying that instruction, preserve `maintain` and `consume`
+instructions, and fill the scaffold with the confirmed milestone-wide request,
+boundaries, decomposition reasoning, and dependency rationale. Front Matter
+from the template never enters `body`; the milestone command owns the live
+Front Matter. `--help` describes the transport, not the strict document shape;
+do not probe a mutating command with guessed JSON to discover its fields.
 
 With one already active, compose the complete replacement from the current value
 rather than writing it from scratch:
@@ -265,6 +272,10 @@ specbind milestone update-scope --scope -
 
 `update-scope` takes a **complete** replacement, so start from what
 `milestone scope` emitted and add to it.
+
+Do not reapply the Roadmap template to an active milestone. The existing body is
+current authority; a later project template edit affects the next Roadmap, not
+one already in progress.
 
 The default read carries no `body`, and an omitted body preserves the roadmap
 prose already written. Use the complete form only when you intend to change that

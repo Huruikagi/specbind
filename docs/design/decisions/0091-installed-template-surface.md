@@ -45,3 +45,7 @@ Implemented. The embedded set and per-selector override resolution make
 `template list spec` and `template read spec <selector>` behave as accepted.
 `specbind install` creates only the Requirements and Design defaults when they
 are absent and keeps every existing project-owned template unchanged.
+
+Decision 0145 later widens the installed surface with a project-owned milestone
+Roadmap body template. It does not change this Decision's six-template Spec
+inventory or the Requirements-and-Design subset installed from that inventory.

@@ -106,9 +106,15 @@ fn run_template(start: &Path, command: TemplateCommand) -> CommandOutput {
         TemplateCommand::List { scope } if scope == "steering" => {
             specbind::cli::template_list_steering(start)
         }
+        TemplateCommand::List { scope } if scope == "milestone" => {
+            specbind::cli::template_list_milestone(start)
+        }
         TemplateCommand::List { scope: _ } => specbind::cli::template_list_spec(start),
         TemplateCommand::Read { scope, selector } if scope == "steering" => {
             specbind::cli::template_read_steering(start, &selector)
+        }
+        TemplateCommand::Read { scope, selector } if scope == "milestone" => {
+            specbind::cli::template_read_milestone(start, &selector)
         }
         TemplateCommand::Read { scope: _, selector } => {
             specbind::cli::template_read_spec(start, &selector)

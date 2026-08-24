@@ -115,6 +115,77 @@ pub fn template_read_spec(start: &Path, selector: &str) -> CommandOutput {
 }
 
 #[must_use]
+pub fn template_list_milestone(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let inventory = template::discover_milestone_templates(&paths.specbind_root, paths.language);
+    if !inventory.issues.is_empty() {
+        let mut details = inventory
+            .templates
+            .iter()
+            .map(render_milestone_template)
+            .collect::<Vec<_>>();
+        details.extend(inventory.issues.iter().map(render_issue));
+        return CommandOutput::failure(
+            "TEMPLATE_LIST_FAILED",
+            "Milestone template inventory has diagnostics.",
+            details,
+        );
+    }
+    let mut output = format!(
+        "OK TEMPLATE_LISTED: Found {} recognized milestone template(s).\n",
+        inventory.templates.len()
+    );
+    for template in &inventory.templates {
+        output.push_str("  ");
+        output.push_str(&render_milestone_template(template));
+        output.push('\n');
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn template_read_milestone(start: &Path, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match template::read_milestone_template(&paths.specbind_root, paths.language, selector) {
+        Ok((content, inventory)) => {
+            let mut stderr = String::new();
+            for issue in &inventory.issues {
+                stderr.push_str("  ");
+                stderr.push_str(&render_issue(issue));
+                stderr.push('\n');
+            }
+            CommandOutput {
+                stdout: content.into_bytes(),
+                stderr: stderr.into_bytes(),
+                success: true,
+            }
+        }
+        Err(inventory) => {
+            let resolved = inventory
+                .templates
+                .iter()
+                .any(|template| template.selector == selector);
+            let code = if resolved {
+                "TEMPLATE_READ_FAILED"
+            } else {
+                "TEMPLATE_SELECTOR_NOT_FOUND"
+            };
+            CommandOutput::failure(
+                code,
+                format!("Selector {selector} does not resolve to a readable milestone template."),
+                inventory.issues.iter().map(render_issue).collect(),
+            )
+        }
+    }
+}
+
+#[must_use]
 pub fn template_resolve_spec(start: &Path, canonical_spec: &str, selector: &str) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
@@ -269,6 +340,16 @@ fn render_steering_template(template: &template::SteeringTemplate) -> String {
     }
     .expect("writing to a String cannot fail");
     output
+}
+
+fn render_milestone_template(template: &template::MilestoneTemplate) -> String {
+    format!(
+        "selector={} source={} type=\"{}\" template_path={} body_target=steering/roadmap.md",
+        escape(&template.selector),
+        template.source.name(),
+        escape(&template.artifact_type),
+        escape(template.template_path.as_str())
+    )
 }
 
 fn render_template(template: &template::Template) -> String {

@@ -167,12 +167,12 @@ pub enum CheckCommand {
 pub enum TemplateCommand {
     /// List recognized artifact templates in one scope.
     List {
-        #[arg(value_parser = ["spec", "steering"])]
+        #[arg(value_parser = ["spec", "steering", "milestone"])]
         scope: String,
     },
     /// Read one template selector as raw UTF-8 Markdown.
     Read {
-        #[arg(value_parser = ["spec", "steering"])]
+        #[arg(value_parser = ["spec", "steering", "milestone"])]
         scope: String,
         selector: String,
     },

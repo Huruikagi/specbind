@@ -1275,7 +1275,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 57 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 58 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1290,7 +1290,10 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 57 create, 0 replace, 0 keep\n",
+                "- create .specbind/settings/templates/roadmap.md [template]\n",
+            ))
+            .and(predicate::str::contains(
+                "\n  Summary: 58 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1359,7 +1362,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 32 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 33 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1408,10 +1411,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 34 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 35 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 34 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 35 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1424,6 +1427,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
     for relative in [
         ".specbind/settings/templates/specs/requirements.md",
         ".specbind/settings/templates/specs/design.md",
+        ".specbind/settings/templates/roadmap.md",
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/steering-principles.md",
     ] {
@@ -1778,6 +1782,11 @@ fn never_overwrites_project_owned_settings_when_applying() {
         ".specbind/settings/rules/ears-format.md",
         "---\ntype: SpecBind Rule\n---\n# Project owned\n",
     );
+    write(
+        root.path(),
+        ".specbind/settings/templates/roadmap.md",
+        "---\ntype: SpecBind Roadmap\n---\n# Project roadmap\n",
+    );
 
     let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
     apply
@@ -1786,13 +1795,18 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 33 created, 0 replaced, 1 kept\n",
+            "\n  Summary: 33 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(
         fs::read_to_string(root.path().join(".specbind/settings/rules/ears-format.md"))
             .expect("preserved rule"),
         "---\ntype: SpecBind Rule\n---\n# Project owned\n"
+    );
+    assert_eq!(
+        fs::read_to_string(root.path().join(".specbind/settings/templates/roadmap.md"))
+            .expect("preserved roadmap template"),
+        "---\ntype: SpecBind Roadmap\n---\n# Project roadmap\n"
     );
     let template = fs::read_to_string(
         root.path()
@@ -2080,6 +2094,35 @@ fn lists_and_reads_project_owned_spec_templates() {
                 "  Target path: specs/checkout/contract.md\n",
             )),
         )
+        .stderr("");
+}
+
+#[test]
+fn lists_and_reads_the_project_owned_milestone_template() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/settings/templates/roadmap.md",
+        "---\ntype: SpecBind Roadmap\n---\n# Project Roadmap\n\n## Change request\n",
+    );
+
+    let mut list = Command::cargo_bin("specbind").expect("specbind binary should build");
+    list.current_dir(root.path())
+        .args(["template", "list", "milestone"])
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK TEMPLATE_LISTED: Found 1 recognized milestone template(s).\n",
+            "  selector=roadmap source=project type=\"SpecBind Roadmap\" template_path=settings/templates/roadmap.md body_target=steering/roadmap.md\n",
+        ))
+        .stderr("");
+
+    let mut read = Command::cargo_bin("specbind").expect("specbind binary should build");
+    read.current_dir(root.path())
+        .args(["template", "read", "milestone", "roadmap"])
+        .assert()
+        .success()
+        .stdout("---\ntype: SpecBind Roadmap\n---\n# Project Roadmap\n\n## Change request\n")
         .stderr("");
 }
 

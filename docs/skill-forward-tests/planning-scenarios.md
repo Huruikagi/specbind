@@ -151,6 +151,24 @@ Then ask for the D4 work. Confirm `specbind steering list` reports
 - The agent reported the steering fault rather than proceeding on the documents
   it could read.
 
+### D13 — A project-owned Roadmap body template is materialized
+
+From a fresh fixture, replace `settings/templates/roadmap.md` with a valid
+project-owned template whose body has the distinctive heading `## Delivery
+promise`, one `create` instruction, and one `maintain` instruction. Commit that
+settings change so the repository is clean, then ask for the D3 work.
+
+> Ask: carts should reject adding more than 99 of one SKU.
+
+- The scope has one `specUpdates` entry for `cart`, and the Roadmap body contains
+  `## Delivery promise` filled with the milestone-wide request.
+- The live Roadmap contains the template's `maintain` instruction and does not
+  contain its `create` instruction.
+- The Roadmap's live Front Matter contains the CLI-generated milestone fields
+  and work-item index. Template Front Matter was not copied into the body.
+- `.specbind/settings/templates/roadmap.md` is byte-identical to its committed
+  precondition. Discovery reads the template; it does not rewrite settings.
+
 ## Requirements scenarios
 
 Accepted by [Decision 0100](../design/decisions/0100-requirements-skill-contract.md).

@@ -565,6 +565,43 @@ fn template_entries(
             expected_current: None,
         });
     }
+    let roadmap_relative = format!(
+        "{}/{}",
+        resolved.spec_dir,
+        template::MILESTONE_ROADMAP_TEMPLATE_PATH
+    );
+    let roadmap_target = project_root.join(&roadmap_relative);
+    let roadmap_action = match fs::symlink_metadata(&roadmap_target) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+        Ok(_) => PlanAction::Keep,
+        Err(error) => {
+            return Err(one_issue(
+                "INSTALL_TARGET_UNREADABLE",
+                Some(roadmap_relative),
+                error.to_string(),
+            ));
+        }
+    };
+    let roadmap_content = (roadmap_action == PlanAction::Create)
+        .then(|| {
+            template::read_embedded_milestone(resolved.language).ok_or_else(|| {
+                one_issue(
+                    "INSTALL_ASSET_UNAVAILABLE",
+                    Some(roadmap_relative.clone()),
+                    "embedded milestone template content is unavailable",
+                )
+            })
+        })
+        .transpose()?;
+    entries.push(PlanEntry {
+        action: roadmap_action,
+        path: roadmap_relative,
+        category: "template",
+        detail: (roadmap_action == PlanAction::Keep)
+            .then(|| "project-owned settings are never overwritten".to_owned()),
+        content: roadmap_content,
+        expected_current: None,
+    });
     Ok(entries)
 }
 

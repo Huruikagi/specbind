@@ -164,12 +164,15 @@ fn discovery_reads_the_scope_schema_before_first_creation() {
     let schema = body
         .find("specbind schema read scope/v1")
         .expect("scope schema read");
+    let roadmap_template = body
+        .find("specbind template read milestone roadmap")
+        .expect("Roadmap template read");
     let create = body
         .find("specbind milestone create --scope -")
         .expect("milestone creation");
     assert!(
-        schema < create,
-        "discovery must learn the strict candidate shape before the mutating command"
+        roadmap_template < schema && schema < create,
+        "discovery must read the Roadmap scaffold and strict candidate shape before mutation"
     );
 }
 

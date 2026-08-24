@@ -24,11 +24,16 @@ SpecBindのライフサイクルと検証はそのままに、成果物の書き
 テンプレートは、新しい成果物の構成と初期内容を決めるひな形です。見出し、節の
 分け方、例、テンプレート内の`specbind:instruction`コメントを調整できます。
 
-初回のinstallでプロジェクト側にコピーされるのは、構成を変えたくなることが多い
-次の2つだけです。
+初回のinstallでプロジェクト側にコピーされるのは、構成をプロジェクトで所有する
+次の3つです。
 
 - `settings/templates/specs/requirements.md`
 - `settings/templates/specs/design.md`
+- `settings/templates/roadmap.md`
+
+Roadmapテンプレートは、マイルストーン全体の変更要求、境界、分解判断、依存関係の
+理由を書く本文だけをカスタマイズします。`milestone_id`、baseline、target release、
+work itemはCLIが所有するため、このテンプレートには書けません。
 
 Brief、Research、Contract、Implementation NotesのSpecテンプレートと、Steeringの
 テンプレートもCLIに埋め込んであります。変更したいプロジェクトだけが、CLIの一覧に
@@ -39,6 +44,8 @@ specbind template list spec
 specbind template read spec requirements
 specbind template list steering
 specbind template read steering document
+specbind template list milestone
+specbind template read milestone roadmap
 ```
 
 特定Specへ新しく配置するパスまで確認する場合は、次の読み取り専用コマンドを使います。
