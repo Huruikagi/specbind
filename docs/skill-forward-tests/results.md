@@ -138,6 +138,14 @@ tests, and only Task 2's transition. Mechanical judgment found `cart` still in
 implementation with 2/2 Tasks completed, no completion evidence, a clean
 worktree, and four passing tests.
 
+I6 passed again on 2026-08-26 against `46dd074`. Starting from fixture commit
+`67d4f69`, the fresh driver produced exactly two Task checkpoints at `45b1222`
+and `05124f0`, with only the corresponding progress transition in each. The
+fixture remained in implementation with 2/2 Tasks completed, no completion
+evidence, a clean worktree, and four passing tests. Its post-judgment debrief did
+not repeat the earlier `specbind-status` to `specbind status` command
+translation.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -180,9 +188,7 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-| First seen | Scenario | Finding | Status |
-| --- | --- | --- | --- |
-| `ef536c8` | HP1 | Fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced again by I6 on `243c0f9`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
+None.
 
 ### Fixed, behavioral confirmation pending
 
@@ -198,6 +204,7 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| Fresh drivers could translate the installed Skill identifier `specbind-status` into the nonexistent CLI command `specbind status`. | Project instructions state that hyphenated `specbind-*` names are Skill identifiers, must be selected through the agent platform, and must not be translated into CLI syntax; the selected Skill owns its commands. A fresh I6 debrief did not reproduce the confusion. | `46dd074`, confirmed on `46dd074` |
 | Completed implementation Tasks could be accumulated and combined into one checkpoint even though the default Git adapter names each Task as one workflow unit. | Task execution is sequential, and every completed Task resolves its own adapter-directed checkpoint before the next Task is selected. I6 confirmed two requested Tasks become two commits with one progress transition each. | `243c0f9`, confirmed on `243c0f9` |
 | `scope/v1` exposed only `minimum: 0` for `schemaVersion`, so an author had to infer the version from the selector. | The generated schema now fixes `schemaVersion` with `const: 1`, matching runtime acceptance and the other v1 schemas; C2 authored the candidate from the corrected schema. | `6d1d2e5`, confirmed on `7307f7a` |
 | Design validation could treat Requirements retained outside the active milestone set as missing Design scope. | Validation fixes the review scope from status and traceability before reading prose and treats inactive Requirements as context only. | `3d887b6`, confirmed on `3d887b6` |
