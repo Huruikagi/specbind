@@ -30,6 +30,11 @@ documents plus one established `cart` Spec. It refuses to touch an existing
 directory; delete and rebuild between scenarios rather than reusing a dirtied
 one.
 
+The fixture carries the ordinary Python bytecode ignores (`__pycache__/` and
+`*.py[cod]`). Disposable interpreter caches are not product findings merely
+because the synthetic project omitted a normal repository baseline. Scenarios
+still fail on tracked or otherwise unignored generated output.
+
 Pass `ja` as the second argument to exercise the localized surface.
 
 Scenarios that start from something further along have a recipe that builds and

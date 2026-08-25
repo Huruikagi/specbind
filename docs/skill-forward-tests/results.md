@@ -183,8 +183,6 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 | First seen | Scenario | Finding | Status |
 | --- | --- | --- | --- |
 | `ef536c8` | HP1 | Fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced again by I6 on `243c0f9`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
-| `a81826b` | HP1 | A completion validator added a direct Python liveness probe whose default bytecode write made the otherwise clean implementation fail completion on generated `src/__pycache__/`. | Investigate whether validation guidance should require non-writing probe forms such as `python -B` up front; the run correctly returned `NO-GO`, repaired the finding, and passed only after clean revalidation. |
-| `243c0f9` | I6 | A dispatched task reviewer ran the canonical Python tests without the documented `-B`, generated two `__pycache__` directories, and forced cleanup plus a fresh review before Task 2 could checkpoint. The no-write stop rule is explicit in `specbind-review-task`, but the implementation dispatcher tells the reviewer only to read the shared `task-review` protocol, which lacks that rule. | Reproduced in the first I6 run; investigate moving the non-writing command and before/after worktree contract into the protocol actually supplied to dispatched reviewers. |
 
 ### Fixed, behavioral confirmation pending
 

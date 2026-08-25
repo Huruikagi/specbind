@@ -65,6 +65,13 @@ def place(cart, customer):
     return {"customer": customer, "lines": dict(cart), "status": "placed"}
 EOF
 
+# Match the ordinary baseline of a Python repository. Interpreter bytecode is
+# disposable local state, not a product-managed workflow output.
+cat > .gitignore <<'EOF'
+__pycache__/
+*.py[cod]
+EOF
+
 git add -A
 git commit --quiet -m "Add the bookshop service"
 
@@ -89,7 +96,7 @@ git commit --quiet -m "Add the bookshop service"
 # an unrelated log write can stop them before the product workflow begins.
 if [ "$instrument_dispatch" = "--instrument-dispatch" ]; then
     mkdir -p .forward-test
-    printf '%s\n' ".forward-test/" > .gitignore
+    printf '%s\n' ".forward-test/" >> .gitignore
 
     for instructions in CLAUDE.md AGENTS.md; do
         [ -f "$instructions" ] || : > "$instructions"
@@ -231,6 +238,11 @@ printf '%s\n' "bin/" > "$spec_dir/.gitignore"
 
 git add -A
 git commit --quiet -m "Install SpecBind and seed project state"
+
+git check-ignore --quiet src/__pycache__/fixture.pyc || {
+    echo "forward-test-fixture: Python bytecode ignore baseline is missing" >&2
+    exit 1
+}
 
 bin_dir=$(CDPATH= cd -- "$spec_dir/bin" && pwd)
 
