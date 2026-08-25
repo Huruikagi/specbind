@@ -16,7 +16,7 @@ without a pass are listed separately below.
 
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
-| Discovery | D1, D2, D4–D6, D8–D12 | D4, D6 |
+| Discovery | D1, D2, D4–D6, D8–D12 | D4, D6, D13 |
 | Requirements | R1–R5 | R1, R3, R4 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
@@ -232,6 +232,18 @@ on `4256ab3`: the same-session addition kept the milestone ID, the original
 `cart` item and `# Roadmap` body, added the `cancellation` Spec, and committed
 only its state, Brief, and the updated Roadmap. Requirements and implementation
 remained untouched in both scenarios.
+
+D13 passed on `acf4dd3` as Codex with `gpt-5.6-terra` at medium reasoning. A
+committed project-owned Roadmap template replaced the default body with a
+distinctive `Delivery promise`: Discovery filled that section with the
+milestone-wide cart request, removed the `create` instruction, retained the
+`maintain` instruction, and let the CLI generate the complete live Front Matter.
+The settings template remained byte-identical, the one-item `cart` scope was
+consistent in Requirements, and the Git adapter left a clean local checkpoint.
+The driver reported in Japanese against the English fixture, so host-instruction
+contamination remained visible; fixture state was re-read mechanically and
+satisfied every D13 expectation. The read-only usability debrief reported no
+friction and left the worktree unchanged.
 
 The next Codex batch measured D6, Q4, and RL2 on `4256ab3`. D6 failed because
 the uncommitted Roadmap produced by its first Discovery could not pass the
