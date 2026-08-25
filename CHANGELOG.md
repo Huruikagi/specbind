@@ -4,6 +4,13 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0-rc.2 - 2026-08-25
+
+- Added project-owned Rule discovery and read commands with raw, maintainer,
+  and consumer projections for safe agent customization.
+- Added customizable Roadmap body templates while keeping lifecycle metadata
+  and state transitions owned by SpecBind.
+
 ## 1.0.0-rc.1 - 2026-08-24
 
 - Added a Steering-first existing-project adoption workflow with a clean Git

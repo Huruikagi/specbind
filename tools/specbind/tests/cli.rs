@@ -25,7 +25,7 @@ fn reports_version() {
         .arg("--version")
         .assert()
         .success()
-        .stdout("specbind 1.0.0-rc.1\n");
+        .stdout("specbind 1.0.0-rc.2\n");
 }
 
 #[test]
