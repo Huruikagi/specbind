@@ -19,6 +19,16 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
+            .contains("identify installed Skills, not\n  shell commands")
+    );
+    assert!(
+        applied
+            .content
+            .contains("do not translate a\n  Skill name into a `specbind ...` command")
+    );
+    assert!(
+        applied
+            .content
             .contains("validation rule, limit, or rejected case")
     );
     assert!(

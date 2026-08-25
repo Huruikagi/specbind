@@ -4,7 +4,11 @@ This project uses SpecBind for spec-driven development. The `specbind` CLI owns
 the specification lifecycle: it validates artifacts, records approvals, and is
 the only supported writer of machine state.
 
-- Work through the installed `specbind-*` skills. Use `specbind-discovery` to
+- Hyphenated names such as `specbind-status` identify installed Skills, not
+  shell commands. Select them through the agent platform; do not translate a
+  Skill name into a `specbind ...` command. CLI syntax comes from the selected
+  Skill.
+- Work through those installed `specbind-*` Skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
 - When every Task for a named Spec is complete and the user asks whether that
   Spec is done, complete, or ready, use `specbind-validate-implementation`.
