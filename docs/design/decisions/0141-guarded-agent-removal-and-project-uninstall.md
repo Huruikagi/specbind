@@ -117,3 +117,9 @@ recoverable from the pre-apply revision.
 Implemented by `tools/specbind/src/installation/removal.rs`, the
 `remove-agent` and `uninstall` command surfaces, focused Git-fixture integration
 tests, and the public uninstall guide.
+
+[Decision 0147](./0147-generic-agent-shared-surfaces.md) later extends the
+closed command value set with `generic` and refines exact ownership for paths
+shared with Codex: removal deletes only targets not required by the remaining
+selected Agent set, while preserving this Decision's guards and config-last
+boundary.

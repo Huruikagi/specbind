@@ -157,6 +157,131 @@ fn refuses_to_remove_the_last_agent() {
 }
 
 #[test]
+fn removing_codex_retains_surfaces_shared_with_generic() {
+    let root = installed(&["codex", "generic"], true);
+
+    command(root.path())
+        .args(["remove-agent", "codex"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "retain .agents/skills/specbind-status/SKILL.md [skill]",
+        ))
+        .stdout(predicate::str::contains(
+            "remove .codex/agents/specbind-planner.toml [agent-role]",
+        ))
+        .stdout(predicate::str::contains(
+            "retain AGENTS.md [project-instructions]",
+        ));
+
+    command(root.path())
+        .args(["remove-agent", "codex", "--apply"])
+        .assert()
+        .success();
+
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .is_file()
+    );
+    assert!(root.path().join("AGENTS.md").is_file());
+    assert!(
+        !root
+            .path()
+            .join(".codex/agents/specbind-planner.toml")
+            .exists()
+    );
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains("generic"));
+    assert!(!config.contains("codex"));
+}
+
+#[test]
+fn removing_generic_retains_surfaces_required_by_codex() {
+    let root = installed(&["codex", "generic"], true);
+
+    command(root.path())
+        .args(["remove-agent", "generic", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "retain .agents/skills/specbind-status/SKILL.md [skill]",
+        ))
+        .stdout(predicate::str::contains(
+            "retain AGENTS.md [project-instructions]",
+        ));
+
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .is_file()
+    );
+    assert!(
+        root.path()
+            .join(".codex/agents/specbind-planner.toml")
+            .is_file()
+    );
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains("codex"));
+    assert!(!config.contains("generic"));
+}
+
+#[test]
+fn removing_generic_drops_only_its_unshared_surfaces() {
+    let root = installed(&["generic", "claude-code"], true);
+
+    command(root.path())
+        .args(["remove-agent", "generic", "--apply"])
+        .assert()
+        .success();
+
+    assert!(
+        !root
+            .path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .exists()
+    );
+    assert_eq!(
+        fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md"),
+        "# Project\n\nCodex rules.\n\n"
+    );
+    assert!(
+        root.path()
+            .join(".claude/skills/specbind-status/SKILL.md")
+            .is_file()
+    );
+    assert!(root.path().join("CLAUDE.md").is_file());
+}
+
+#[test]
+fn uninstall_deduplicates_generic_and_codex_shared_surfaces() {
+    let root = installed(&["generic", "codex"], true);
+
+    command(root.path())
+        .args(["uninstall", "--knowledge", "retain", "--apply"])
+        .assert()
+        .success();
+
+    assert!(!root.path().join(".specbind.json").exists());
+    assert!(
+        !root
+            .path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .exists()
+    );
+    assert!(
+        !root
+            .path()
+            .join(".codex/agents/specbind-planner.toml")
+            .exists()
+    );
+    assert_eq!(
+        fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md"),
+        "# Project\n\nCodex rules.\n\n"
+    );
+}
+
+#[test]
 fn uninstall_retain_keeps_the_complete_spec_dir_and_surrounding_instructions() {
     let root = installed(&["codex"], true);
     let durable = root.path().join(".specbind/specs/example/requirements.md");

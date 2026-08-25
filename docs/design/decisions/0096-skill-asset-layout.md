@@ -179,3 +179,8 @@ and both drift cases were re-confirmed to fail afterwards.
 Protocol-selector and shared-rule checks are implemented but currently match
 nothing, because `specbind-status` consumes neither surface. They become
 exercised with the first skill that does.
+
+[Decision 0147](./0147-generic-agent-shared-surfaces.md) later adds `generic`
+as another consumer of the portable Codex-shaped rendering at
+`.agents/skills/<name>/SKILL.md` and deduplicates that shared target when Codex
+and generic are selected together.

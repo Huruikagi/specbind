@@ -1542,6 +1542,95 @@ fn installs_product_managed_skills_for_each_selected_agent() {
 }
 
 #[test]
+fn installs_generic_shared_surfaces_once_without_generic_roles() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    let output = apply
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "generic",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+            "--project-instructions",
+        ])
+        .output()
+        .expect("generic install should run");
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let stdout = String::from_utf8(output.stdout).expect("UTF-8 output");
+    assert_eq!(
+        stdout
+            .matches(".agents/skills/specbind-status/SKILL.md [skill]")
+            .count(),
+        1,
+        "shared Skill target must be planned once: {stdout}"
+    );
+    assert_eq!(
+        stdout.matches("AGENTS.md [project-instructions]").count(),
+        1,
+        "shared instruction target must be planned once: {stdout}"
+    );
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .is_file()
+    );
+    assert!(root.path().join("AGENTS.md").is_file());
+    assert!(
+        root.path()
+            .join(".codex/agents/specbind-implementer.toml")
+            .is_file(),
+        "Codex still receives its host-specific roles"
+    );
+    assert!(
+        !root.path().join(".generic/agents").exists(),
+        "generic defines no host-specific role surface"
+    );
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains(r#""agents": ["codex", "generic"]"#));
+}
+
+#[test]
+fn installs_generic_without_any_host_specific_roles() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = Command::cargo_bin("specbind").expect("specbind binary should build");
+    apply
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "generic",
+            "--language",
+            "ja",
+            "--project-instructions",
+        ])
+        .assert()
+        .success();
+
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-status/SKILL.md")
+            .is_file()
+    );
+    assert!(root.path().join("AGENTS.md").is_file());
+    assert!(!root.path().join(".codex/agents").exists());
+    assert!(!root.path().join(".claude/agents").exists());
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains(r#""agents": ["generic"]"#));
+}
+
+#[test]
 fn installs_codex_roles_with_cost_aware_defaults() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);

@@ -21,13 +21,20 @@ planには、Codex用のproduct-managed Skills、5つのrole定義、`AGENTS.md`
 Claude Code連携、`.specbind/`以下のSpecsやsettings、marker外の
 `AGENTS.md`本文は保持されます。
 
+`generic`も選ばれている場合、Codexと共有する`.agents/skills/`以下のmanaged
+Skill targetsと`AGENTS.md`のmarked blockは`retain`として表示され、Codex固有の
+role定義だけが削除されます。
+逆に`generic`を外してCodexが残る場合も、共有targetは保持され、設定だけが更新
+されます。削除後に残るAgentのどれも必要としないexact targetだけが削除されます。
+
 内容を確認したら適用します。
 
 ```powershell
 specbind remove-agent codex --apply
 ```
 
-Claude Codeを外す場合は`claude-code`を指定します。最後の1 agentはこの
+Claude Codeを外す場合は`claude-code`、共通形式の連携を外す場合は`generic`を
+指定します。最後の1 agentはこの
 コマンドでは削除できません。プロジェクト全体のアンインストールを使い、
 durable knowledgeを残すか削除するか明示してください。
 

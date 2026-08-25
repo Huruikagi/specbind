@@ -221,3 +221,7 @@ or reversed markers including one inside a code fence. An install-level test
 confirms both agent files are written, the project's own content survives, a
 second run reports `NO_CHANGE`, no entry is planned when the setting is off, and
 a malformed marker fails the plan while leaving the file untouched.
+
+[Decision 0147](./0147-generic-agent-shared-surfaces.md) later adds `generic`
+as another consumer of root `AGENTS.md`. Installation and removal treat that
+marked block as one shared target when Codex and generic are both selected.

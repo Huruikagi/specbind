@@ -204,7 +204,7 @@ impl Skill {
     pub fn target(self, agent: Agent) -> String {
         let root = match agent {
             Agent::ClaudeCode => ".claude/skills",
-            Agent::Codex => ".agents/skills",
+            Agent::Codex | Agent::Generic => ".agents/skills",
         };
         format!("{root}/{}/SKILL.md", self.name)
     }

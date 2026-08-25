@@ -29,7 +29,7 @@ pub enum Command {
         #[arg(long)]
         dry_run: bool,
         /// Supported agent to install; repeat to select several.
-        #[arg(long = "agent", value_parser = ["claude-code", "codex"])]
+        #[arg(long = "agent", value_parser = ["claude-code", "codex", "generic"])]
         agents: Vec<String>,
         /// Project-global artifact language.
         #[arg(long, value_parser = ["en", "ja"])]
@@ -43,7 +43,7 @@ pub enum Command {
     },
     /// Plan or apply removal of one selected agent integration.
     RemoveAgent {
-        #[arg(value_parser = ["claude-code", "codex"])]
+        #[arg(value_parser = ["claude-code", "codex", "generic"])]
         agent: String,
         /// Apply the freshly recomputed guarded plan.
         #[arg(long)]

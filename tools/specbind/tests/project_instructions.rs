@@ -6,6 +6,7 @@ fn writes_each_agent_its_own_instruction_file() {
     // reads only its own.
     assert_eq!(project_instructions::target(Agent::ClaudeCode), "CLAUDE.md");
     assert_eq!(project_instructions::target(Agent::Codex), "AGENTS.md");
+    assert_eq!(project_instructions::target(Agent::Generic), "AGENTS.md");
 }
 
 #[test]

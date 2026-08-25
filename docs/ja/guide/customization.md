@@ -229,7 +229,12 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 
 `specDir`は初回のinstallで決まり、v1では導入後に変更できません。言語と、選んだ
 エージェントは`.specbind.json`に保存されます。あとからエージェントを追加することは
-できますが、削除とアンインストールはv1では対応しません。
+できます。1つのAgentを外すときは`specbind remove-agent`、連携全体を外すときは
+`specbind uninstall`を使います。詳しくは[Agentの削除とプロジェクトの
+アンインストール](./uninstall.md)を参照してください。
+
+`.agents/skills/`と`AGENTS.md`の共通形式だけを導入する場合は`--agent generic`を
+指定します。`generic`には役割定義がないため、`agentRoles`の対象にはできません。
 
 実装、レビュー、調査といった役割ごとに、使うモデルを変えることもできます。
 `.specbind.json`の`agentRoles`で上書きしてください。Codexでは、あわせて

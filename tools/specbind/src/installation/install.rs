@@ -24,6 +24,7 @@ const DEFAULT_SPEC_DIR: &str = ".specbind";
 pub enum Agent {
     ClaudeCode,
     Codex,
+    Generic,
 }
 
 impl Agent {
@@ -32,6 +33,7 @@ impl Agent {
         match self {
             Self::ClaudeCode => "claude-code",
             Self::Codex => "codex",
+            Self::Generic => "generic",
         }
     }
 
@@ -40,6 +42,7 @@ impl Agent {
         match value {
             "claude-code" => Some(Self::ClaudeCode),
             "codex" => Some(Self::Codex),
+            "generic" => Some(Self::Generic),
             _ => None,
         }
     }
@@ -703,8 +706,12 @@ fn project_instruction_entries(
         return Ok(vec![]);
     }
     let mut entries = Vec::new();
+    let mut planned = std::collections::BTreeSet::new();
     for agent in &resolved.agents {
         let relative = project_instructions::target(*agent);
+        if !planned.insert(relative) {
+            continue;
+        }
         let target = project_root.join(relative);
         let current = match fs::read(&target) {
             Ok(bytes) => Some(String::from_utf8(bytes).map_err(|_| {
@@ -761,9 +768,13 @@ fn skill_entries(
     resolved: &ResolvedInputs,
 ) -> Result<Vec<PlanEntry>, InstallIssues> {
     let mut entries = Vec::new();
+    let mut planned = std::collections::BTreeSet::new();
     for agent in &resolved.agents {
         for skill in skill::all() {
             let relative = skill.target(*agent);
+            if !planned.insert(relative.clone()) {
+                continue;
+            }
             let rendered = skill.render(*agent).map_err(|error| {
                 one_issue(
                     "INSTALL_ASSET_UNAVAILABLE",

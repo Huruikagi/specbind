@@ -13,7 +13,7 @@ Requirements、Design、Contract、Tasksをその場限りのプロンプトで�
 次のような場合に読んでください。
 
 - Gitで管理している既存プロジェクトがある
-- CodexまたはClaude Codeを使っている
+- Codex、Claude Code、または`.agents/skills/`と`AGENTS.md`に対応するcoding agentを使っている
 - 1つの振る舞いの変更を、スコープの確認から実装の検証まで通しで試したい
 - プレビュー版のバイナリ、またはソースビルドを試せる
 

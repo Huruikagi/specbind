@@ -1,7 +1,8 @@
 # Getting Started
 
-このページでは、既存のGitプロジェクトにSpecBindを導入し、Codexまたは
-Claude Codeを使って、最初の変更をスコープの確認から実装の検証まで進めます。
+このページでは、既存のGitプロジェクトにSpecBindを導入し、Codex、Claude Code、
+または共通形式に対応するcoding agentを使って、最初の変更をスコープの確認から
+実装の検証まで進めます。
 
 SpecBindはv1.0前のプレビュー版として配布しています。インストーラは公開済みの
 最新stableリリースを選び、対応するバイナリをGitHub Releaseから取得します。
@@ -11,7 +12,7 @@ SpecBindはv1.0前のプレビュー版として配布しています。イン�
 次のものを用意してください。
 
 - Gitで管理していて、コミットが1つ以上ある対象プロジェクト
-- CodexまたはClaude Code
+- Codex、Claude Code、または`.agents/skills/`と`AGENTS.md`に対応するcoding agent
 - Windows x64、またはWSL2上のLinux x64
 
 ソースからビルドする場合は、これに加えて[Rustup](https://rustup.rs/)で入れた
@@ -116,7 +117,17 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 ```
 
 Claude Codeだけを使う場合は、`codex`を`claude-code`に置き換えてください。
-両方を使う場合は`--agent`を並べます。
+共通形式に対応する別のcoding agentでは、`generic`に置き換えます。
+
+```sh
+specbind install --dry-run --agent generic --language ja --project-instructions
+```
+
+`generic`が保証するのは`.agents/skills/`のAgent Skillsと、ルート`AGENTS.md`の
+案内ブロックだけです。サブエージェント定義は作りません。利用するagentがこの2つの
+場所を自動検出するかは、そのagentのドキュメントで確認してください。
+
+複数を使う場合は`--agent`を並べます。
 
 ```sh
 specbind install --dry-run --agent codex --agent claude-code --language ja --project-instructions
@@ -138,7 +149,7 @@ specbind install --agent codex --language ja --project-instructions
 ```text
 .specbind.json
 .specbind/settings/
-.agents/skills/specbind-*/       # Codex
+.agents/skills/specbind-*/       # Codexとgenericで共有
 .codex/agents/specbind-*.toml    # Codexの役割別モデル設定
 .claude/skills/specbind-*/       # Claude Code
 .claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
@@ -149,6 +160,8 @@ CodexとClaude Codeのどちらでも、実装・レビューなどの役割ご�
 モデルが設定されます。通常は変更不要です。プロジェクトでコストと能力の配分を
 変える場合だけ、`.specbind.json`の`agentRoles`を上書きしてから、クリーンな
 リポジトリで`specbind install`を再実行します。
+`generic`には共通のサブエージェント形式がないため、役割定義と`agentRoles`は
+ありません。
 
 ```json
 {
@@ -176,8 +189,11 @@ Claude Codeのサブエージェント定義には推論強度の項目がない
 生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
 インストーラ自体はコミットを行いません。
 
-導入したら、対象プロジェクトでCodexまたはClaude Codeのセッションを開き直して
-ください。そうしないと、エージェントが新しいスキルを認識できません。
+導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
+そうしないと、エージェントが新しいスキルを認識できないことがあります。
+以下ではCodexの`$`とClaude Codeの`/`を使って呼び出し例を示します。`generic`を
+選んだ場合、`specbind-*`というSkill名は同じですが、呼び出し方はagentごとに
+異なります。利用するagentのSkill選択または自動Discoveryの方法に読み替えてください。
 
 ## 4. 最初の変更を選ぶ
 

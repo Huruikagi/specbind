@@ -25,7 +25,7 @@ pub struct MarkerError {
 pub fn target(agent: Agent) -> &'static str {
     match agent {
         Agent::ClaudeCode => "CLAUDE.md",
-        Agent::Codex => "AGENTS.md",
+        Agent::Codex | Agent::Generic => "AGENTS.md",
     }
 }
 

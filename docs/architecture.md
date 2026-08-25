@@ -59,6 +59,9 @@ not authorize transitions.
 
 `installation/` owns installation planning, exact guarded agent removal and
 project uninstall, agent-role rendering, and the project-instruction block.
+Derived Agent assets are materialized as the union of the selected Agent
+profiles. Removal recomputes that union for the remaining profiles so shared
+generic and Codex paths are retained without persistent reference counts.
 `catalog/` owns the closed product/project
 registries for adapters, protocols, rules, skills, templates, and steering.
 Their root facade modules preserve the existing public crate paths.

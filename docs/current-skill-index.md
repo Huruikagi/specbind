@@ -11,10 +11,15 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Both supported agents receive the same 18 skills:
+Every supported Agent profile receives the same 18 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
+- Generic: `.agents/skills/<skill>/SKILL.md`; invocation is defined by the
+  compatible host rather than by SpecBind
+
+Selecting both Codex and generic installs each shared `.agents/skills/` target
+once.
 
 | Skill | Current role |
 | --- | --- |

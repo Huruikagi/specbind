@@ -1,6 +1,6 @@
 //! Guarded removal of one agent integration or the complete project integration.
 
-use std::{fmt, fs, path::Path};
+use std::{collections::BTreeSet, fmt, fs, path::Path};
 
 use serde_json::Value;
 
@@ -134,8 +134,13 @@ pub fn plan_agent(project_root: &Path, agent: Agent) -> Result<RemovalPlan, Remo
         ));
     }
     require_commit(project_root)?;
-    let mut entries = agent_entries(project_root, agent, installed.project_instructions)?;
     installed.agents.retain(|selected| *selected != agent);
+    let mut entries = agent_entries(
+        project_root,
+        &[agent],
+        &installed.agents,
+        installed.project_instructions,
+    )?;
     update_config_value(&mut installed.value, agent, &installed.agents)?;
     entries.push(config_update_entry(project_root, &installed)?);
     validate_repository_state(project_root, &entries, None)?;
@@ -166,14 +171,12 @@ pub fn plan_uninstall(
         });
     };
     require_commit(project_root)?;
-    let mut entries = Vec::new();
-    for agent in &installed.agents {
-        entries.extend(agent_entries(
-            project_root,
-            *agent,
-            installed.project_instructions,
-        )?);
-    }
+    let mut entries = agent_entries(
+        project_root,
+        &installed.agents,
+        &[],
+        installed.project_instructions,
+    )?;
     match knowledge {
         KnowledgePolicy::Retain => entries.push(RemovalEntry {
             action: RemovalAction::Retain,
@@ -284,43 +287,149 @@ fn apply_plan(project_root: &Path, plan: &RemovalPlan) -> Result<(), RemovalIssu
 
 fn agent_entries(
     project_root: &Path,
-    agent: Agent,
+    removed: &[Agent],
+    remaining: &[Agent],
     project_instructions_enabled: bool,
 ) -> Result<Vec<RemovalEntry>, RemovalIssues> {
     let mut entries = Vec::new();
-    for embedded in skill::all() {
-        entries.push(file_entry(
-            project_root,
-            &embedded.target(agent),
-            "skill",
-            "exact product-managed skill target",
-        )?);
+    let mut planned = BTreeSet::new();
+    for agent in removed {
+        for embedded in skill::all() {
+            let path = embedded.target(*agent);
+            if !planned.insert(path.clone()) {
+                continue;
+            }
+            if remaining
+                .iter()
+                .any(|selected| embedded.target(*selected) == path)
+            {
+                entries.push(retained_entry(
+                    project_root,
+                    &path,
+                    "skill",
+                    "remaining selected agent requires this shared skill target",
+                )?);
+            } else {
+                entries.push(file_entry(
+                    project_root,
+                    &path,
+                    "skill",
+                    "exact product-managed skill target",
+                )?);
+            }
+        }
+        for role in agent_role::all() {
+            let Some(path) = role_target(*agent, role) else {
+                continue;
+            };
+            if !planned.insert(path.clone()) {
+                continue;
+            }
+            entries.push(file_entry(
+                project_root,
+                &path,
+                "agent-role",
+                "exact product-managed agent-role target",
+            )?);
+        }
+        for root in [Some(skill_root(*agent)), role_root(*agent)]
+            .into_iter()
+            .flatten()
+        {
+            if !planned.insert(root.to_owned()) {
+                continue;
+            }
+            if remaining
+                .iter()
+                .any(|selected| skill_root(*selected) == root || role_root(*selected) == Some(root))
+            {
+                entries.push(retained_entry(
+                    project_root,
+                    root,
+                    "container",
+                    "remaining selected agent requires this shared container",
+                )?);
+            } else {
+                entries.push(container_entry(project_root, root)?);
+            }
+        }
+        let instruction_path = project_instructions::target(*agent);
+        if planned.insert(instruction_path.to_owned()) {
+            if project_instructions_enabled
+                && remaining
+                    .iter()
+                    .any(|selected| project_instructions::target(*selected) == instruction_path)
+            {
+                entries.push(retained_entry(
+                    project_root,
+                    instruction_path,
+                    "project-instructions",
+                    "remaining selected agent requires this shared instruction block",
+                )?);
+            } else {
+                entries.push(instruction_entry(
+                    project_root,
+                    instruction_path,
+                    project_instructions_enabled,
+                )?);
+            }
+        }
     }
-    for role in agent_role::all() {
-        let path = match agent {
-            Agent::Codex => role.target(),
-            Agent::ClaudeCode => role.claude_target(),
-        };
-        entries.push(file_entry(
-            project_root,
-            &path,
-            "agent-role",
-            "exact product-managed agent-role target",
-        )?);
-    }
-    for root in match agent {
-        Agent::Codex => [".agents/skills", ".codex/agents"],
-        Agent::ClaudeCode => [".claude/skills", ".claude/agents"],
-    } {
-        entries.push(container_entry(project_root, root)?);
-    }
-    let instruction_path = project_instructions::target(agent);
-    entries.push(instruction_entry(
-        project_root,
-        instruction_path,
-        project_instructions_enabled,
-    )?);
     Ok(entries)
+}
+
+fn role_target(agent: Agent, role: &agent_role::AgentRole) -> Option<String> {
+    match agent {
+        Agent::ClaudeCode => Some(role.claude_target()),
+        Agent::Codex => Some(role.target()),
+        Agent::Generic => None,
+    }
+}
+
+fn skill_root(agent: Agent) -> &'static str {
+    match agent {
+        Agent::ClaudeCode => ".claude/skills",
+        Agent::Codex | Agent::Generic => ".agents/skills",
+    }
+}
+
+fn role_root(agent: Agent) -> Option<&'static str> {
+    match agent {
+        Agent::ClaudeCode => Some(".claude/agents"),
+        Agent::Codex => Some(".codex/agents"),
+        Agent::Generic => None,
+    }
+}
+
+fn retained_entry(
+    project_root: &Path,
+    relative: &str,
+    category: &'static str,
+    detail: &str,
+) -> Result<RemovalEntry, RemovalIssues> {
+    match fs::symlink_metadata(project_root.join(relative)) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(RemovalEntry {
+            action: RemovalAction::Absent,
+            path: relative.to_owned(),
+            category,
+            detail: "shared target is already absent".to_owned(),
+            mutation: Mutation::None,
+            expected_current: None,
+        }),
+        Err(error) => Err(one_issue(
+            "REMOVAL_TARGET_UNREADABLE",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )),
+        Ok(_) => Ok(RemovalEntry {
+            action: RemovalAction::Retain,
+            path: relative.to_owned(),
+            category,
+            detail: detail.to_owned(),
+            mutation: Mutation::None,
+            expected_current: None,
+        }),
+    }
 }
 
 fn container_entry(project_root: &Path, relative: &str) -> Result<RemovalEntry, RemovalIssues> {
@@ -568,11 +677,15 @@ fn update_config_value(
                 .collect(),
         ),
     );
-    if let Some(roles) = object.get_mut("agentRoles").and_then(Value::as_object_mut) {
-        roles.remove(match removed {
-            Agent::Codex => "codex",
-            Agent::ClaudeCode => "claudeCode",
-        });
+    let role_key = match removed {
+        Agent::Codex => Some("codex"),
+        Agent::ClaudeCode => Some("claudeCode"),
+        Agent::Generic => None,
+    };
+    if let Some(role_key) = role_key
+        && let Some(roles) = object.get_mut("agentRoles").and_then(Value::as_object_mut)
+    {
+        roles.remove(role_key);
         if roles.is_empty() {
             object.remove("agentRoles");
         }

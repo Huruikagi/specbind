@@ -47,7 +47,7 @@ fn embeds_the_accepted_skill_set_with_valid_metadata() {
 fn renders_only_the_accepted_front_matter_per_agent() {
     for entry in skill::all() {
         let body = entry.body().expect("body");
-        for agent in [Agent::ClaudeCode, Agent::Codex] {
+        for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
             let rendered = entry.render(agent).expect("rendered skill");
             assert!(
                 rendered.ends_with(body),
@@ -70,7 +70,7 @@ fn renders_only_the_accepted_front_matter_per_agent() {
                     entry.name
                 );
             }
-            if agent == Agent::Codex {
+            if matches!(agent, Agent::Codex | Agent::Generic) {
                 assert!(
                     !frontmatter.contains("argument-hint"),
                     "{}: Codex Front Matter is name and description only",
@@ -90,6 +90,10 @@ fn installs_each_skill_to_the_accepted_target() {
         );
         assert_eq!(
             entry.target(Agent::Codex),
+            format!(".agents/skills/{}/SKILL.md", entry.name)
+        );
+        assert_eq!(
+            entry.target(Agent::Generic),
             format!(".agents/skills/{}/SKILL.md", entry.name)
         );
     }
