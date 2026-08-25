@@ -71,7 +71,7 @@ Prereleases are never selected as `latest`. Install this release candidate
 explicitly:
 
 ```sh
-mise use github:Huruikagi/specbind@1.0.0-rc.1
+mise use github:Huruikagi/specbind@1.0.0-rc.2
 ```
 
 Without mise, use the platform installer.
@@ -93,12 +93,12 @@ version explicitly when testing a release candidate:
 
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 1.0.0-rc.1
+.\install.ps1 -Version 1.0.0-rc.2
 ```
 
 ```sh
 curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
-sh install.sh --version 1.0.0-rc.1
+sh install.sh --version 1.0.0-rc.2
 ```
 
 Both installers verify the release archive against `SHA256SUMS`, install to the
