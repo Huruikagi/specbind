@@ -56,7 +56,7 @@ static PROTOCOLS: &[Protocol] = &[
     },
     Protocol {
         selector: "task-planning",
-        purpose: "Coverage, executability, dependency, completion-detail, boundary, and safe-parallel judgment over the structured Task contract.",
+        purpose: "Coverage, executability, dependency, completion-detail, and boundary judgment over the structured Task contract.",
         content: include_str!("../../assets/protocols/task-planning.md"),
     },
     Protocol {

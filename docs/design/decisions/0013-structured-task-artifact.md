@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes the prerelease `parallel` field; ordered Tasks and sparse additive
+`depends_on` remain the v1 dependency model.
+
 ## Context
 
 The inherited cc-sdd workflow stores the active implementation plan and its progress in `tasks.md`. Although the file is Markdown, workflows already depend on an implicit machine structure:

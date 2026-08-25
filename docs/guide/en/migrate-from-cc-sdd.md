@@ -99,7 +99,7 @@ The agent limits its work to the findings reported by the CLI.
 | `spec.json` | `spec.yaml` | Validate the complete phase and approval combination; do not recreate gate evidence |
 | `requirements.md` | `SpecBind Requirements` | Validate Requirement IDs from recognized headings and Acceptance Criteria |
 | `design.md` | `SpecBind Design` | Make Front Matter and body-marker Requirement mappings equal |
-| `tasks.md` | `tasks.yaml` | Convert only supported task grammar and preserve only provable progress |
+| `tasks.md` | `tasks.yaml` | Convert only supported task grammar, preserve only provable progress, and drop `(P)` into conservative target order |
 | Implementation Notes | `implementation-notes.md` | Separate non-empty durable notes |
 | steering | `SpecBind Steering` | Confirm document responsibility and a stable `artifact_id` |
 | legacy rules | new project-owned rules | Review differences as policy; do not copy whole procedural files |

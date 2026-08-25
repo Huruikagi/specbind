@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+supersedes concurrent Task dispatch and places the adapter decision for a
+completed Task inside its per-Task cycle.
+
 ## Context
 
 [Decision 0075](./0075-v1-skill-and-orchestration-scope.md) fixes what

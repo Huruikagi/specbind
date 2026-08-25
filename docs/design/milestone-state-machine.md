@@ -131,7 +131,7 @@ An item is implementation-actionable when:
 
 The actionable set is the current implementation wave. Completing and committing items may expose the next wave. Wave numbers are derived display information and are never persisted.
 
-Within one Spec, task dependencies and `parallel: true` control task-level actionability. Roadmap waves do not replace that local scheduler.
+Within one Spec, plan order and explicit task dependencies control task-level actionability. Roadmap waves do not replace that local scheduler.
 
 ### Validation
 

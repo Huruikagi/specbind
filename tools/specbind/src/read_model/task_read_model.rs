@@ -242,27 +242,15 @@ struct TaskFields<'a> {
 }
 
 fn fields(task: &ExecutableTask) -> TaskFields<'_> {
-    match task {
-        ExecutableTask::Parallel(task) => TaskFields {
-            id: &task.id.0,
-            title: &task.title.0,
-            details: task.details.as_ref(),
-            completion_criteria: task.completion_criteria.as_ref(),
-            requirement_ids: &task.requirement_ids,
-            boundaries: Some(&task.boundaries),
-            contracts: task.contracts.as_ref(),
-            depends_on: task.depends_on.as_ref(),
-        },
-        ExecutableTask::Sequential(task) => TaskFields {
-            id: &task.id.0,
-            title: &task.title.0,
-            details: task.details.as_ref(),
-            completion_criteria: task.completion_criteria.as_ref(),
-            requirement_ids: &task.requirement_ids,
-            boundaries: task.boundaries.as_ref(),
-            contracts: task.contracts.as_ref(),
-            depends_on: task.depends_on.as_ref(),
-        },
+    TaskFields {
+        id: &task.id.0,
+        title: &task.title.0,
+        details: task.details.as_ref(),
+        completion_criteria: task.completion_criteria.as_ref(),
+        requirement_ids: &task.requirement_ids,
+        boundaries: task.boundaries.as_ref(),
+        contracts: task.contracts.as_ref(),
+        depends_on: task.depends_on.as_ref(),
     }
 }
 
@@ -289,9 +277,7 @@ fn effective_dependencies(
         match item {
             PlanItem::Task(task) => {
                 let entry = dependencies.entry(task_id(task).to_owned()).or_default();
-                if !is_parallel(task) {
-                    entry.extend(preceding_top.iter().cloned());
-                }
+                entry.extend(preceding_top.iter().cloned());
                 entry.extend(references(fields(task).depends_on));
                 preceding_top = vec![task_id(task).to_owned()];
             }
@@ -300,9 +286,7 @@ fn effective_dependencies(
                 for task in &group.tasks {
                     let entry = dependencies.entry(task_id(task).to_owned()).or_default();
                     entry.extend(preceding_top.iter().cloned());
-                    if !is_parallel(task)
-                        && let Some(prerequisite) = &preceding_sibling
-                    {
+                    if let Some(prerequisite) = &preceding_sibling {
                         entry.insert(prerequisite.clone());
                     }
                     entry.extend(references(fields(task).depends_on));
@@ -321,8 +305,4 @@ fn effective_dependencies(
 
 fn task_id(task: &ExecutableTask) -> &str {
     fields(task).id
-}
-
-fn is_parallel(task: &ExecutableTask) -> bool {
-    matches!(task, ExecutableTask::Parallel(_))
 }

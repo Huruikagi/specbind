@@ -598,6 +598,29 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
 }
 
 #[test]
+fn implementation_workflow_is_sequential_and_checkpoints_each_completed_task() {
+    let body = skill::find("specbind-implement")
+        .expect("implementation skill")
+        .body()
+        .expect("body");
+
+    for required in [
+        "Task execution is sequential.",
+        "One task per cycle. Do not batch.",
+        "Only a task recorded `completed` is an eligible implementation checkpoint.",
+        "before selecting another task",
+        "Never defer\nseveral eligible Task checkpoints to the end of the run.",
+    ] {
+        assert!(
+            body.contains(required),
+            "implementation skill must contain {required}"
+        );
+    }
+
+    assert!(!body.contains("`parallel: true`"));
+}
+
+#[test]
 fn implementation_dispatch_carries_project_local_operating_authority() {
     let implement = skill::find("specbind-implement").expect("implement skill");
     let body = implement.body().expect("implement body");

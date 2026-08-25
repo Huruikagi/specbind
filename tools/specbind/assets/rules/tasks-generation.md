@@ -71,19 +71,8 @@ Mixing both conventions without that boundary makes coverage hard to see. A
 project that prefers another convention should replace this paragraph and name
 any deliberate exceptions here.
 
-## Parallelization
-
-Mark work parallel only when it is genuinely independent; the product baseline
-lists the conditions. Being conservative costs elapsed time, while being wrong
-costs correctness, so prefer sequential when uncertain.
-
-When this project has areas that are known to conflict — generated files, a
-shared migration sequence, a lock file — list them here so planners stop
-rediscovering them.
-
 ## Review questions
 
 - Could someone else pick up this task from the plan and the Design alone?
 - Does each task leave the system in a state worth committing?
 - Is the order the real dependency order, or the order they were thought of?
-- Does any pair of parallel tasks touch the same place?

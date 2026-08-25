@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+supersedes the `parallel` exception. The v1 plan is now fully ordered;
+`depends_on` only adds prerequisites.
+
 ## Context
 
 The inherited cc-sdd task plan uses document order as its conservative dependency default. `(P)` marks a reviewed exception that may run in parallel, while `_Depends:_` records non-obvious prerequisites. Requiring an AI author to replace that model with a complete dependency graph would create precise-looking but potentially incomplete scheduling data and make ordinary task generation harder to review.

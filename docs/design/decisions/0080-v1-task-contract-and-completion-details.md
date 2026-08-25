@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+supersedes Task-level concurrent actionability. Boundaries remain scope and
+review evidence, not a scheduling claim.
+
 ## Context
 
 The accepted structured Task plan leaves `boundaries` and `contracts` as unconstrained strings, assigns semantic completion-criteria judgment partly to Rust, and omits working directory from mechanical evidence. The Git completion handshake also returns redundant fingerprints even though every authoritative input is version-controlled and the complete worktree must remain clean.

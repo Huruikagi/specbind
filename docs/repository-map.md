@@ -268,3 +268,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0143](./design/decisions/0143-existing-implementation-adoption.md) | Accepted | Steering-first adoption of existing implementations through evidence-backed reverse discovery |
 | [0144](./design/decisions/0144-major-version-compatibility-and-migration.md) | Accepted | Executable-major compatibility boundary and required migration route between majors |
 | [0145](./design/decisions/0145-customizable-roadmap-body-template.md) | Accepted | Installed project-owned template for milestone-wide Roadmap prose |
+| [0146](./design/decisions/0146-sequential-v1-tasks-and-per-task-checkpoints.md) | Accepted | Sequential v1 Tasks and one default checkpoint per completed Task |

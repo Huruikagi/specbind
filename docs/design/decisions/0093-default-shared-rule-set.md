@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes parallelization preferences from the retained task-generation rule.
+
 The requirement to preserve the original `.kiro` tree after final cutover is
 superseded by Decision 0127. The classification and conversion boundaries in
 this decision remain accepted.

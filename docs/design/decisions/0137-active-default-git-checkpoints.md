@@ -6,6 +6,10 @@ Status: Accepted
 adds two eligible Release units: the confirmed one-time adapter bootstrap and
 the lifecycle metadata produced by successful core finalization.
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+places each completed implementation Task's default checkpoint inside that
+Task's cycle instead of after all requested Task outcomes.
+
 [Decision 0138](./0138-dedicated-adapter-scaffold-marker.md) supersedes the
 legacy `specbind:instruction` compatibility behavior. Inactive adapter state now
 uses only the exact dedicated scaffold marker.

@@ -394,10 +394,7 @@ fn plan_tasks(item: &PlanItem) -> Vec<&ExecutableTask> {
 }
 
 fn task_id(task: &ExecutableTask) -> &str {
-    match task {
-        ExecutableTask::Parallel(task) => &task.id.0,
-        ExecutableTask::Sequential(task) => &task.id.0,
-    }
+    &task.id.0
 }
 
 fn validate_worktree_status(

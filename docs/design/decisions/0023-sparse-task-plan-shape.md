@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes the prerelease `parallel` field and its separate wire variant before
+stable v1.
+
 ## Context
 
 Decisions 0019 through 0022 establish ordered execution, positional IDs, conditionally optional completion criteria, and the absence of optional tasks. The remaining plan shape needs to preserve cc-sdd's useful task content without filling YAML with false booleans and empty arrays.

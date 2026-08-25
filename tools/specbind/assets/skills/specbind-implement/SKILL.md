@@ -67,9 +67,10 @@ in plan order.
 **Do not start a task the read model says is waiting.** `tasks complete` would
 refuse it anyway; picking it means your plan and the real plan already disagree.
 
-`parallel: true` permits concurrency, never requires it. Run sequentially unless
-the boundaries are clearly disjoint — path overlap is a warning, not proof of
-safety, and sequential costs time while concurrent conflict costs correctness.
+Task execution is sequential. Finish one task's implementation, review, recorded
+outcome, durable notes, and checkpoint decision before selecting the next task.
+The plan order is the dependency order; do not dispatch several tasks into one
+shared worktree at once.
 
 ## 4. The per-task cycle
 
@@ -203,6 +204,39 @@ concern. Omit `create` instructions and copy `maintain` and `consume`
 instructions unchanged. If notes already exist and you revise them, read them
 with `--for maintain` and preserve their durable comments.
 
+### f) Checkpoint the completed task
+
+Only a task recorded `completed` is an eligible implementation checkpoint. Read
+the project policy now, before selecting another task:
+
+```sh
+specbind adapter read git
+```
+
+`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. An adapter
+carrying the exact `<!-- specbind:adapter-scaffold -->` marker is also inactive:
+say so in one line and commit nothing. Neither result turns into a request for
+new policy.
+
+When the adapter has guidance, follow it for **this task now**. The request to
+perform this mutating phase authorizes that narrow local checkpoint as the
+ordinary final step of this task's cycle. Stage only:
+
+- the deliberate implementation and test paths produced for this task
+- the `tasks.yaml` execution-state change produced by `tasks complete`
+- Implementation Notes created or revised from this task's durable finding
+
+Never include another task, unrelated work, completion metadata, rejected work,
+or partial implementation. An explicit user or root instruction that forbids
+commits wins, and tool permissions still apply. Commit guidance is not push
+guidance; never force-push or rewrite history. If the paths cannot be separated
+safely, stop before the Git operation and report the completed task as
+uncommitted.
+
+Record whether the checkpoint committed, was intentionally absent or inactive,
+or failed. Then re-read `tasks list` before selecting the next task. Never defer
+several eligible Task checkpoints to the end of the run.
+
 ## 5. When something fails
 
 `BLOCKED`, unresolved `NEEDS_CONTEXT`, `CANNOT_REVIEW`, and a rejection surviving
@@ -235,9 +269,8 @@ unresolved. A blocked task is a legitimate outcome.
 
 ## 6. Never rescue the worktree
 
-A blocked task stops this Spec's run whenever partial source changes remain.
-Later independent tasks may continue **only** when the worktree is clean and you
-have confirmed no dependency or boundary conflict.
+A blocked task stops this Spec's run. It is not an eligible completed-Task
+checkpoint, and partial source changes are never committed as a workaround.
 
 **Never `git reset`, stash, revert, or create a WIP commit to get out of that
 state.** Those destroy work the user has not seen, and what they leave behind is
@@ -249,15 +282,16 @@ verification is part of producing the clean handoff required by the
 task-implementation protocol; it is not permission to rescue pre-existing or
 unrelated work.
 
-Committing is the project's call, not a consequence of finishing a task — see
-the checkpoint step.
+Committing remains the project's call — the completed-task checkpoint step reads
+and follows that policy inside each cycle.
 
 ## 7. Finish the implementation work
 
 ### Spec-backed: finish at the tasks
 
 When the requested task outcomes are recorded, the implementation work is done.
-Proceed to the checkpoint step, then stop as Section 9 says.
+Every completed task has already crossed its own checkpoint decision. Stop as
+Section 9 says.
 
 ### Direct: implement and review
 
@@ -283,11 +317,12 @@ with an ordinary fresh subagent as the fallback.
 specbind protocol read task-review
 ```
 
-## 8. Checkpoint
+## 8. Checkpoint a Direct item
 
-This step runs after the implementation work above. For a Direct item it must
-therefore establish the clean committed revision **before** Section 9 runs the
-completion handshake. Do not skip ahead and return here afterwards.
+This step is only for a Direct item. Spec-backed Task checkpoints already ran
+inside Section 4. A Direct item must establish the clean committed revision
+**before** Section 9 runs the completion handshake.
+Do not skip ahead and return here afterwards.
 
 ```sh
 specbind adapter read git
@@ -316,7 +351,7 @@ step. It does not authorize anything broader:
 
 ## 9. Where the run ends
 
-### Spec-backed: stop after the checkpoint
+### Spec-backed: stop after the requested task cycles
 
 Report and stop. **Do not run the completion handshake.** `spec completion
 preflight` and `accept` belong to `specbind-validate-implementation`, and a

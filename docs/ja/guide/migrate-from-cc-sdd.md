@@ -94,7 +94,7 @@ https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/
 | `spec.json` | `spec.yaml` | phaseとapprovalの組合せを検査する。Gateの承認証拠は作り直さない |
 | `requirements.md` | `SpecBind Requirements` | 既知の見出しとAcceptance CriteriaからRequirement IDを検証する |
 | `design.md` | `SpecBind Design` | Front Matterと本文markerのRequirement対応を一致させる |
-| `tasks.md` | `tasks.yaml` | 既知のtask記法だけを変換し、証明できる進捗だけを引き継ぐ |
+| `tasks.md` | `tasks.yaml` | 既知のtask記法だけを変換し、証明できる進捗だけを引き継ぎ、`(P)`は保持せずtargetの順序へ直列化する |
 | Implementation Notes | `implementation-notes.md` | 中身があり、今後も残す価値のあるノートだけを切り出す |
 | steering | `SpecBind Steering` | 文書の責務と、安定した`artifact_id`を確認する |
 | 旧ルール | 新しいプロジェクト所有のルール | 既定値との差分を方針としてレビューする。ファイルを丸ごとコピーしない |

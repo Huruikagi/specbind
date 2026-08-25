@@ -65,15 +65,8 @@ pub mod v1 {
     }
 
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-    #[serde(untagged)]
-    pub enum ExecutableTask {
-        Parallel(ParallelTask),
-        Sequential(SequentialTask),
-    }
-
-    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
     #[serde(deny_unknown_fields)]
-    pub struct SequentialTask {
+    pub struct ExecutableTask {
         pub id: TaskReference,
         pub kind: TaskKind,
         pub title: NonEmptyString,
@@ -115,54 +108,11 @@ pub mod v1 {
         pub depends_on: Option<TaskReferenceList>,
     }
 
-    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-    #[serde(deny_unknown_fields)]
-    pub struct ParallelTask {
-        pub id: TaskReference,
-        pub kind: TaskKind,
-        pub title: NonEmptyString,
-        #[serde(
-            default,
-            skip_serializing_if = "Option::is_none",
-            deserialize_with = "deserialize_optional_non_null"
-        )]
-        #[schemars(with = "NonEmptyStringList")]
-        pub details: Option<NonEmptyStringList>,
-        #[serde(
-            default,
-            skip_serializing_if = "Option::is_none",
-            deserialize_with = "deserialize_optional_non_null"
-        )]
-        #[schemars(with = "NonEmptyStringList")]
-        pub completion_criteria: Option<NonEmptyStringList>,
-        pub requirement_ids: UniqueNonEmptyStringList,
-        pub boundaries: UniqueNonEmptyStringList,
-        #[serde(
-            default,
-            skip_serializing_if = "Option::is_none",
-            deserialize_with = "deserialize_optional_non_null"
-        )]
-        #[schemars(with = "UniqueNonEmptyStringList")]
-        pub contracts: Option<UniqueNonEmptyStringList>,
-        pub parallel: ParallelMarker,
-        #[serde(
-            default,
-            skip_serializing_if = "Option::is_none",
-            deserialize_with = "deserialize_optional_non_null"
-        )]
-        #[schemars(with = "TaskReferenceList")]
-        pub depends_on: Option<TaskReferenceList>,
-    }
-
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
     pub enum TaskKind {
         #[serde(rename = "task")]
         Task,
     }
-
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-    #[serde(transparent)]
-    pub struct ParallelMarker(#[schemars(extend("const" = true))] pub bool);
 
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
     #[serde(transparent)]

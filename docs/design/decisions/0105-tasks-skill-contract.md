@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes `parallel` authoring and approval disclosure from this workflow.
+
 ## Context
 
 The task plan is the most completely specified artifact SpecBind has.

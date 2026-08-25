@@ -97,7 +97,7 @@ static DEFAULT_RULES: &[DefaultRule] = &[
     DefaultRule {
         selector: "tasks-generation",
         file_name: "tasks-generation.md",
-        purpose: "Project preferences for task sizing, decomposition, completion detail, test grouping, and parallelization.",
+        purpose: "Project preferences for task sizing, decomposition, completion detail, and test grouping.",
         content: include_str!("../../assets/rules/tasks-generation.md"),
     },
     DefaultRule {

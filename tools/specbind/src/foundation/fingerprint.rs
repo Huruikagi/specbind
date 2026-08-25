@@ -84,20 +84,10 @@ fn normalize_task_plan(plan: &mut tasks::v1::TaskPlan) {
 }
 
 fn normalize_task(task: &mut tasks::v1::ExecutableTask) {
-    match task {
-        tasks::v1::ExecutableTask::Parallel(task) => {
-            sort_strings(&mut task.requirement_ids.0);
-            sort_strings(&mut task.boundaries.0);
-            sort_optional_strings(task.contracts.as_mut().map(|values| &mut values.0));
-            sort_task_references(task.depends_on.as_mut());
-        }
-        tasks::v1::ExecutableTask::Sequential(task) => {
-            sort_strings(&mut task.requirement_ids.0);
-            sort_optional_strings(task.boundaries.as_mut().map(|values| &mut values.0));
-            sort_optional_strings(task.contracts.as_mut().map(|values| &mut values.0));
-            sort_task_references(task.depends_on.as_mut());
-        }
-    }
+    sort_strings(&mut task.requirement_ids.0);
+    sort_optional_strings(task.boundaries.as_mut().map(|values| &mut values.0));
+    sort_optional_strings(task.contracts.as_mut().map(|values| &mut values.0));
+    sort_task_references(task.depends_on.as_mut());
 }
 
 fn sort_optional_strings(values: Option<&mut Vec<String>>) {

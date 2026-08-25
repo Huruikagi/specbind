@@ -121,7 +121,7 @@ specbind steering read <selector> --for consume
 | `ears-format.md` | RequirementsのEARS表現、主語の立て方、テストしやすさの好み |
 | `design-principles.md` | アーキテクチャ、インターフェース、データ、エラー処理、記述の細かさ |
 | `contract-principles.md` | 所有境界、外部へ公開する接点、互換性、依存の向きに関する方針 |
-| `tasks-generation.md` | Taskの大きさ、分割の仕方、テスト作業の扱い、並列化の好み |
+| `tasks-generation.md` | Taskの大きさ、分割の仕方、テスト作業の扱い |
 | `steering-principles.md` | Steeringに残す知識の粒度、例の書き方、更新の方針 |
 
 v1のSkillが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
@@ -184,6 +184,11 @@ cleanupも、それぞれ公開対象とは別のローカルcommitになりま�
 場合は`git.md`の本文を空にしてください。ファイルを
 削除しても実行時は同じですが、次のinstallで既定値が再作成されます。既存のプロジェクト所有
 ファイルは、installを再実行しても上書きされません。
+
+実装Taskはplanの順に1件ずつ実行します。1回の依頼で複数Taskを進める場合も、各Taskの
+実装、レビュー、CLIへの完了記録が終わった直後に、そのTaskだけのチェックポイントを
+作ってから次へ進みます。複数Taskの完了を最後の1commitへまとめるのは既定動作では
+ありません。Spec全体のcompletion記録は、Taskの実装commitとは別です。
 
 adapterはあくまで方針であり、広い権限を与えるものではありません。変更を伴うSkillの依頼は
 既定のローカルチェックポイントまでを含みますが、`git.md`にpushの方針を書いても、それだけで

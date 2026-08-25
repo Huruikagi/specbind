@@ -67,10 +67,7 @@ fn validate(document: &wire::TasksDocument) -> Vec<super::SemanticIssue> {
 }
 
 fn validate_requirement_ids(task: &ExecutableTask, issues: &mut Vec<super::SemanticIssue>) {
-    let ids = match task {
-        ExecutableTask::Parallel(value) => &value.requirement_ids.0,
-        ExecutableTask::Sequential(value) => &value.requirement_ids.0,
-    };
+    let ids = &task.requirement_ids.0;
     if ids
         .iter()
         .any(|id| super::parse_requirement_id(id).is_none())
@@ -118,9 +115,7 @@ fn validate_references(
                     for prerequisite in &preceding_top {
                         graph.add_edge(*prerequisite, task_id(task), ());
                     }
-                    if !is_parallel(task)
-                        && let Some(prerequisite) = preceding_sibling
-                    {
+                    if let Some(prerequisite) = preceding_sibling {
                         graph.add_edge(prerequisite, task_id(task), ());
                     }
                     add_explicit_edges(&mut graph, tasks, task, issues);
@@ -145,10 +140,8 @@ fn add_implicit_edges<'a>(
     preceding: &[&'a str],
     task: &'a ExecutableTask,
 ) {
-    if !is_parallel(task) {
-        for prerequisite in preceding {
-            graph.add_edge(*prerequisite, task_id(task), ());
-        }
+    for prerequisite in preceding {
+        graph.add_edge(*prerequisite, task_id(task), ());
     }
 }
 
@@ -201,22 +194,12 @@ fn validate_execution(
 }
 
 fn task_id(task: &ExecutableTask) -> &str {
-    match task {
-        ExecutableTask::Parallel(value) => &value.id.0,
-        ExecutableTask::Sequential(value) => &value.id.0,
-    }
-}
-
-fn is_parallel(task: &ExecutableTask) -> bool {
-    matches!(task, ExecutableTask::Parallel(_))
+    &task.id.0
 }
 
 fn depends_on(task: &ExecutableTask) -> BTreeSet<&str> {
-    let references = match task {
-        ExecutableTask::Parallel(value) => value.depends_on.as_ref(),
-        ExecutableTask::Sequential(value) => value.depends_on.as_ref(),
-    };
-    references
+    task.depends_on
+        .as_ref()
         .into_iter()
         .flat_map(|values| &values.0)
         .map(|reference| reference.0.as_str())

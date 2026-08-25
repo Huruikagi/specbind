@@ -94,30 +94,12 @@ the ones that follow, and execution state and completion evidence reference
 those numbers. Restructuring an approved plan is legitimate; doing it for
 cosmetic reasons is not.
 
-## Boundaries make parallel safety decidable
-
-A task declares the area it touches so that overlap can be seen rather than
-guessed. Boundaries are what turn parallel-safety from an opinion into a check.
-
-Mark a task parallel-capable only when all of the following hold:
-
-- it has no data or output dependency on work that is still pending
-- it touches no file or mutable resource that a concurrent task also touches
-- everything it requires is already complete, not merely scheduled earlier
-- its declared boundary does not overlap a concurrent task's boundary
-- it can be verified independently, without another task's work being present
-
-If any condition is uncertain, the task is not parallel. Sequential execution of
-work that could have been concurrent costs time; concurrent execution of work
-that conflicts costs correctness. State the blocking relationship explicitly
-rather than leaving the reader to wonder why two similar tasks differ.
-
 ## Readiness
 
 A plan is ready when every active Requirement is genuinely delivered, each task
 is executable bounded work with decidable completion, the order reflects the
-real dependencies, explicit declarations cover exactly the relationships order
-does not, and every parallel marking survives all five conditions above.
+real dependencies, and explicit declarations cover exactly the relationships
+order does not.
 
 Schema validity and complete requirement references are preconditions, not
 evidence of any of the above.

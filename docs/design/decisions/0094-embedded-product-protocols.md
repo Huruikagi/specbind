@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes safe-parallel judgment from `task-planning`; its other ownership stays
+unchanged.
+
 ## Context
 
 Decision 0092 separates user-owned templates and shared rules from product-managed skills and deterministic CLI behavior. Decision 0093 then classifies the inherited cc-sdd rule files, placing user-adjustable authoring preferences in `settings/rules/` and moving procedural material toward the owning skills.

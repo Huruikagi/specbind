@@ -12,7 +12,6 @@ plan:
             - "1.1"
           boundaries:
             - src/component-a/**
-          parallel: true
         - id: "1.2"
           kind: task
           title: Integrate component A

@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
+removes `parallel` from the prerelease task-plan projection before stable v1.
+
 ## Context
 
 Gate evidence needs stable comparisons for human-authored Markdown, structured task plans, and the active Requirement ID set. These inputs change for different reasons and should not all be reduced through one generic file-normalization rule.

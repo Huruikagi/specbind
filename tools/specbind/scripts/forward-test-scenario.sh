@@ -42,6 +42,7 @@
 #   x4     d10's state: a Direct-only milestone that needs no review
 #   i3     a Direct item still pending, for the run under test to implement
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
+#   i6     cart in implementation with two sequential Tasks to checkpoint apart
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
@@ -627,7 +628,7 @@ ds4 | t1 | t2 | x1 | vd1)
     fi
     ;;
 
-d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -639,19 +640,43 @@ d7 | t4 | i4 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
         cart_design_approved
     fi
     contract_review_accepted
-    {
-        echo "schema_version: 1"
-        echo "plan:"
-        echo "  items:"
-        echo "    - id: '1'"
-        echo "      kind: task"
-        echo "      title: Enforce the quantity bounds"
-        echo "      requirement_ids: ['1.1', '1.2', '1.3', '1.4']"
-    } > .specbind/specs/cart/tasks.yaml
+    if [ "$scenario" = i6 ]; then
+        {
+            echo "schema_version: 1"
+            echo "plan:"
+            echo "  items:"
+            echo "    - id: '1'"
+            echo "      kind: task"
+            echo "      title: Establish canonical coverage for current cart behavior"
+            echo "      details:"
+            echo "        - Add the project test command and cover recording, increasing, and the lower bound"
+            echo "      requirement_ids: ['1.1', '1.2', '1.3']"
+            echo "    - id: '2'"
+            echo "      kind: task"
+            echo "      title: Enforce and verify the upper quantity bound"
+            echo "      requirement_ids: ['1.4']"
+        } > .specbind/specs/cart/tasks.yaml
+    else
+        {
+            echo "schema_version: 1"
+            echo "plan:"
+            echo "  items:"
+            echo "    - id: '1'"
+            echo "      kind: task"
+            echo "      title: Enforce the quantity bounds"
+            echo "      requirement_ids: ['1.1', '1.2', '1.3', '1.4']"
+        } > .specbind/specs/cart/tasks.yaml
+    fi
     specbind spec tasks approve cart --approval-mode explicit >/dev/null \
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    if [ "$scenario" = i6 ]; then
+        expect "the two-task checkpoint fixture does not have two pending Tasks" \
+            'specbind tasks list cart | grep -q "0 completed, 2 pending, 0 blocked"'
+        expect "Task 2 is not waiting behind Task 1" \
+            'specbind tasks list cart | grep -q "\[pending waiting\] 2 "'
+    fi
     case "$scenario" in
     rl1 | rl2 | rl3 | rl4)
         runner=$(python_runner)

@@ -636,14 +636,8 @@ fn task_requirement_sets(tasks: &Tasks) -> Vec<TaskRequirementSet> {
 }
 
 fn task_requirement_set(task: &ExecutableTask) -> TaskRequirementSet {
-    match task {
-        ExecutableTask::Parallel(task) => TaskRequirementSet {
-            task_id: task.id.0.clone(),
-            requirement_ids: task.requirement_ids.0.clone(),
-        },
-        ExecutableTask::Sequential(task) => TaskRequirementSet {
-            task_id: task.id.0.clone(),
-            requirement_ids: task.requirement_ids.0.clone(),
-        },
+    TaskRequirementSet {
+        task_id: task.id.0.clone(),
+        requirement_ids: task.requirement_ids.0.clone(),
     }
 }

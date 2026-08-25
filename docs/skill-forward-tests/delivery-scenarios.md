@@ -84,6 +84,23 @@ reviewer actually rejects. Record which path the run took.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
 
+### I6 — Two requested Tasks produce two default checkpoints
+
+From `i6` — `cart` in implementation with two approved sequential Tasks and the
+installed default Git adapter — record the starting `HEAD`, then ask for the
+planned work to be implemented.
+
+> Ask: implement the planned cart work.
+
+- Task 1 and Task 2 are both recorded **completed**, in plan order, and `cart`
+  remains in `implementation`; no Spec completion handshake ran.
+- Exactly two implementation commits follow the recorded starting `HEAD`.
+- The first commit contains Task 1's implementation paths and the `tasks.yaml`
+  transition recording only Task 1 completed. The second contains Task 2's paths
+  and the transition recording Task 2 completed.
+- No commit combines both previously unrecorded Task outcomes, and the final
+  worktree is clean.
+
 ## Release scenarios
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)

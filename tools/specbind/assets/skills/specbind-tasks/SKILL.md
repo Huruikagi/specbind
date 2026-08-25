@@ -68,7 +68,7 @@ specbind schema read tasks/v1
 ```
 
 Tasks has no template. The schema **is** the structure, and it is strict:
-unknown fields fail, empty arrays fail, `parallel: false` fails. Writing from a
+unknown fields and empty arrays fail. Writing from a
 remembered shape means debugging validation errors against a document you could
 have read first.
 
@@ -102,8 +102,7 @@ specbind protocol read task-planning
 ```
 
 The protocol owns the judgment: coverage is delivery rather than mapping, every
-task is work that will be done, order carries the dependencies, and a
-`parallel: true` marking must survive all five of its conditions.
+task is work that will be done, and order carries the dependencies.
 
 Write `tasks.yaml` at the Spec's directory. A few things the schema enforces and
 the protocol assumes:
@@ -115,7 +114,6 @@ the protocol assumes:
 - `requirement_ids` is required on every executable task and non-empty.
 - Omit `details`, `completion_criteria`, `boundaries`, `contracts`, and
   `depends_on` rather than writing them empty.
-- `parallel: true` requires a non-empty `boundaries`.
 - `depends_on` names only tasks in this same file. A cross-spec dependency is a
   roadmap or contract edge, never a Task ID.
 
@@ -194,12 +192,8 @@ completed work is not.
 
 ## 6. Review and revise
 
-Present the plan: the decomposition and its order, which active requirements each
-task delivers, and **every task marked `parallel: true` with the boundary that
-justifies it**.
-
-Call the parallel markings out explicitly. Overlap between them is a warning, not
-a rejection, so this is exactly the part the CLI will not refuse on your behalf.
+Present the plan: the decomposition and its order, and which active requirements
+each task delivers.
 
 Revise on feedback rather than approving something you know to be weak. Stop and
 ask the user when the same objection survives one revision — a repeated objection
@@ -319,5 +313,5 @@ Delegation authorizes accepting gates, not discarding accepted work.
   report it and let the user decide, because discarding an authored plan is their
   call.
 - Report in the project's language: the decomposition, the order and why, which
-  requirements each task delivers, any parallel markings, whether the work was
+  requirements each task delivers, whether the work was
   committed, and what runs next.
