@@ -25,7 +25,7 @@ without a pass are listed separately below.
 | Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2, X4 |
-| Implementation | None recorded | I1–I4 |
+| Implementation | None recorded | I1–I4, I6 |
 | Debug | None recorded | DB1 |
 | Task review | None recorded | RT1, RT2 |
 | Design validation | None recorded | VD1, VD2 |
@@ -129,6 +129,15 @@ evidence passed. The English fixture again received Japanese driver responses,
 and one nested validator missed the fixture CLI on `PATH`; fixture state and the
 rc.2 binary's actual command surface were therefore re-read mechanically.
 
+I6 passed on 2026-08-25 with a fresh `gpt-5.6-terra` medium Codex driver
+against `243c0f9`. Starting from fixture commit `e805c6b`, the driver completed
+both sequential Tasks in exactly two local implementation commits. Commit
+`073bca5` contained Task 1's implementation, tests, canonical test command, and
+only Task 1's progress transition; `9f722e2` contained Task 2's implementation,
+tests, and only Task 2's transition. Mechanical judgment found `cart` still in
+implementation with 2/2 Tasks completed, no completion evidence, a clean
+worktree, and four passing tests.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -173,9 +182,9 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 | First seen | Scenario | Finding | Status |
 | --- | --- | --- | --- |
-| `ef536c8` | HP1 | Two fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced on `4b44b63`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
-| `4ce7e87` | HP1 | The Git adapter says each completed implementation Task is an eligible workflow unit, while `specbind-implement` reaches its checkpoint only after all requested task outcomes are recorded; passing drivers combined two task completions into one commit. | Reproduced on `a81826b`; investigate checkpoint timing ownership before the next implementation-forward-test batch. HP1's artifact and release judge passed, but it does not assert one commit per Task. |
+| `ef536c8` | HP1 | Fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced again by I6 on `243c0f9`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
 | `a81826b` | HP1 | A completion validator added a direct Python liveness probe whose default bytecode write made the otherwise clean implementation fail completion on generated `src/__pycache__/`. | Investigate whether validation guidance should require non-writing probe forms such as `python -B` up front; the run correctly returned `NO-GO`, repaired the finding, and passed only after clean revalidation. |
+| `243c0f9` | I6 | A dispatched task reviewer ran the canonical Python tests without the documented `-B`, generated two `__pycache__` directories, and forced cleanup plus a fresh review before Task 2 could checkpoint. The no-write stop rule is explicit in `specbind-review-task`, but the implementation dispatcher tells the reviewer only to read the shared `task-review` protocol, which lacks that rule. | Reproduced in the first I6 run; investigate moving the non-writing command and before/after worktree contract into the protocol actually supplied to dispatched reviewers. |
 
 ### Fixed, behavioral confirmation pending
 
@@ -191,6 +200,7 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| Completed implementation Tasks could be accumulated and combined into one checkpoint even though the default Git adapter names each Task as one workflow unit. | Task execution is sequential, and every completed Task resolves its own adapter-directed checkpoint before the next Task is selected. I6 confirmed two requested Tasks become two commits with one progress transition each. | `243c0f9`, confirmed on `243c0f9` |
 | `scope/v1` exposed only `minimum: 0` for `schemaVersion`, so an author had to infer the version from the selector. | The generated schema now fixes `schemaVersion` with `const: 1`, matching runtime acceptance and the other v1 schemas; C2 authored the candidate from the corrected schema. | `6d1d2e5`, confirmed on `7307f7a` |
 | Design validation could treat Requirements retained outside the active milestone set as missing Design scope. | Validation fixes the review scope from status and traceability before reading prose and treats inactive Requirements as context only. | `3d887b6`, confirmed on `3d887b6` |
 | Contract review described the Direct-only stop as `not required`, while the public CLI prints `Status: not_applicable`. | The skill now names the exact public status and explains that it means no review is required. | `3d887b6`, confirmed on `3d887b6` |
