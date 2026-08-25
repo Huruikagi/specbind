@@ -116,6 +116,19 @@ fixture recorded eleven fresh dispatch contexts. The canonical seven-test run
 passed during judgment, the final worktree was clean, and the fixture retained
 no remote.
 
+HP1 passed on 2026-08-25 against release-candidate build `a81826b` with the
+same fresh Codex driver profile. The mechanical judge passed every expectation
+at final commit `17379d70a35afd699e8565af2e99f60039294a05`; annotated tag
+`v1.4.0` points to `5db18a12a571afa29412f3b4c72f1f3ad8675570`, before
+finalization, and the fixture recorded twelve dispatch contexts. The five-test
+canonical command passed during judgment, the final worktree was clean, and no
+remote existed. Completion first returned `NO-GO` after an additional Python
+liveness probe generated `src/__pycache__/`; the same driver removed the output,
+re-ran the probe with `python -B`, and accepted completion only after the clean
+evidence passed. The English fixture again received Japanese driver responses,
+and one nested validator missed the fixture CLI on `PATH`; fixture state and the
+rc.2 binary's actual command surface were therefore re-read mechanically.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -161,7 +174,8 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 | First seen | Scenario | Finding | Status |
 | --- | --- | --- | --- |
 | `ef536c8` | HP1 | Two fresh drivers read the project instruction's installed `specbind-status` Skill as a CLI command (`specbind-status` or `specbind status`) before finding the on-disk Skill and using its actual status reads. | Reproduced on `4b44b63`; investigate how the project instruction distinguishes Skill invocation from CLI syntax without teaching a platform-specific command form. |
-| `4ce7e87` | HP1 | The Git adapter says each completed implementation Task is an eligible workflow unit, while `specbind-implement` reaches its checkpoint only after all requested task outcomes are recorded; the passing driver combined two task completions into one commit. | Investigate checkpoint timing ownership before the next implementation-forward-test batch; HP1's artifact and release judge passed, but it does not assert one commit per Task. |
+| `4ce7e87` | HP1 | The Git adapter says each completed implementation Task is an eligible workflow unit, while `specbind-implement` reaches its checkpoint only after all requested task outcomes are recorded; passing drivers combined two task completions into one commit. | Reproduced on `a81826b`; investigate checkpoint timing ownership before the next implementation-forward-test batch. HP1's artifact and release judge passed, but it does not assert one commit per Task. |
+| `a81826b` | HP1 | A completion validator added a direct Python liveness probe whose default bytecode write made the otherwise clean implementation fail completion on generated `src/__pycache__/`. | Investigate whether validation guidance should require non-writing probe forms such as `python -B` up front; the run correctly returned `NO-GO`, repaired the finding, and passed only after clean revalidation. |
 
 ### Fixed, behavioral confirmation pending
 
