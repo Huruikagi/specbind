@@ -14,7 +14,31 @@ fn reports_help() {
         .success()
         .stdout(predicate::str::starts_with(
             "Bind durable specifications to agent-assisted software delivery.",
+        ))
+        .stdout(predicate::str::contains(
+            "Report bugs or suggest improvements with `specbind feedback`.",
         ));
+}
+
+#[test]
+fn reports_feedback_routes_without_requiring_a_project() {
+    let outside = tempfile::tempdir().expect("temporary directory");
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+
+    command
+        .current_dir(outside.path())
+        .arg("feedback")
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK FEEDBACK_REPORTED: SpecBind feedback routes.\n",
+            "  Bug report: https://github.com/Huruikagi/specbind/issues/new?template=bug-report.yml\n",
+            "  Improvement proposal: https://github.com/Huruikagi/specbind/issues/new?template=improvement.yml\n",
+            "  Include: specbind --version, the command, and the complete output\n",
+            "  Privacy: Remove secrets and private project content before submitting\n",
+            "  No information has been transmitted.\n",
+        ))
+        .stderr("");
 }
 
 #[test]

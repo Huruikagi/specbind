@@ -81,6 +81,23 @@ impl CommandOutput {
     }
 }
 
+/// Reports the public feedback routes without opening a browser or transmitting data.
+#[must_use]
+pub fn feedback() -> CommandOutput {
+    CommandOutput::success(
+        concat!(
+            "OK FEEDBACK_REPORTED: SpecBind feedback routes.\n",
+            "  Bug report: https://github.com/Huruikagi/specbind/issues/new?template=bug-report.yml\n",
+            "  Improvement proposal: https://github.com/Huruikagi/specbind/issues/new?template=improvement.yml\n",
+            "  Include: specbind --version, the command, and the complete output\n",
+            "  Privacy: Remove secrets and private project content before submitting\n",
+            "  No information has been transmitted.\n",
+        )
+        .as_bytes()
+        .to_vec(),
+    )
+}
+
 fn render_milestone_diagnostic(diagnostic: &milestone_status::MilestoneDiagnostic) -> String {
     let path = diagnostic
         .path

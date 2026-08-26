@@ -1,0 +1,65 @@
+name: Improvement proposal / 改善提案
+description: Suggest an improvement to a SpecBind workflow or interface. / ワークフローやインターフェースの改善を提案します。
+title: "[Improvement]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve SpecBind. 日本語でも英語でも提案できます。
+
+        Describe the problem before prescribing a solution so the product boundary remains clear.
+        解決策だけでなく、最初に困っていることを説明してください。
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or friction / 困っていること
+      description: What is difficult today, and who encounters it? / 現在何が難しく、誰がその問題に遭遇しますか。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: workflow
+    attributes:
+      label: Workflow area / 対象ワークフロー
+      options:
+        - Installation or removal / 導入・削除
+        - Discovery or planning / Discovery・計画
+        - Requirements, Design, or Tasks / Requirements・Design・Tasks
+        - Implementation or validation / 実装・検証
+        - Milestone or release / Milestone・リリース
+        - Migration or adoption / 移行・既存実装の採用
+        - Documentation / ドキュメント
+        - Other / その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome / 望ましい結果
+      description: Describe the result you want without requiring one implementation. / 実装方法を限定せず、望む結果を記載してください。
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior / 提案する振る舞い
+      description: Optional. Commands, examples, or interaction details are welcome. / 任意です。コマンド例や操作案も歓迎します。
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds / 代替案・回避策
+      description: Optional. Explain what you use today and its tradeoffs. / 任意です。現在の方法とその難点を記載してください。
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks / 送信前の確認
+      options:
+        - label: I searched existing issues for a similar proposal. / 同様の提案が既にないか確認しました。
+          required: true
+        - label: I removed secrets and private project content. / 秘密情報と非公開のプロジェクト内容を除去しました。
+          required: true

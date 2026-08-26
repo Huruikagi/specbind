@@ -66,6 +66,7 @@ nav:
           - 基本概念: ja/guide/concepts.md
           - 既存実装を採用する: ja/guide/adopt-existing.md
           - カスタマイズ: ja/guide/customization.md
+          - バグ報告と改善提案: ja/guide/feedback.md
           - Agentの削除とアンインストール: ja/guide/uninstall.md
       - cc-sddから移行: ja/guide/migrate-from-cc-sdd.md
   - cc-sddから移行:

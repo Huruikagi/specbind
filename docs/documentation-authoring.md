@@ -16,6 +16,7 @@ docs/ja/index.md
 docs/ja/guide/getting-started.md
 docs/ja/guide/concepts.md
 docs/ja/guide/customization.md
+docs/ja/guide/feedback.md
 docs/ja/guide/uninstall.md
 docs/ja/guide/migrate-from-cc-sdd.md
 ```

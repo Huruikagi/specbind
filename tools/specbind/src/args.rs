@@ -9,7 +9,8 @@ use clap::{Parser, Subcommand};
 #[command(
     name = "specbind",
     version,
-    about = "Bind durable specifications to agent-assisted software delivery."
+    about = "Bind durable specifications to agent-assisted software delivery.",
+    after_help = "Feedback:\n  Report bugs or suggest improvements with `specbind feedback`."
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -18,6 +19,8 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Show where and how to report bugs or suggest improvements.
+    Feedback,
     /// List or read discovered `SpecBind` artifacts.
     Artifact {
         #[command(subcommand)]

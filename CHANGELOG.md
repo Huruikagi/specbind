@@ -4,6 +4,9 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added an offline `specbind feedback` entry point and bilingual GitHub Issue
+  Forms for structured bug reports and improvement proposals.
+
 ## 1.0.0-rc.2 - 2026-08-25
 
 - Added project-owned Rule discovery and read commands with raw, maintainer,

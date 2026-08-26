@@ -44,10 +44,11 @@ SpecBindはv1.0前のプレビュー版です。このガイドは、リリー�
 1. [Getting Started](./guide/getting-started.md) — 導入から最初の変更を検証するまで
 2. [基本概念](./guide/concepts.md) — Spec、Milestone、Direct、Gate、成果物
 3. [カスタマイズ](./guide/customization.md) — テンプレート、ルール、adapter、Steering、モデル設定
-4. [Agentの削除とアンインストール](./guide/uninstall.md) — exact plan、knowledge保持・削除、復元
-5. [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
-6. [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
-7. [cc-sddから移行する](./guide/migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
+4. [バグ報告と改善提案](./guide/feedback.md) — CLIの入口、Issue Form、公開前の注意
+5. [Agentの削除とアンインストール](./guide/uninstall.md) — exact plan、knowledge保持・削除、復元
+6. [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
+7. [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
+8. [cc-sddから移行する](./guide/migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ## SpecBindを使う変更
 

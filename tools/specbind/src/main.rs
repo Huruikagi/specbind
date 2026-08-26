@@ -278,6 +278,7 @@ fn main() -> ExitCode {
         }
     };
     let output = match cli.command {
+        Command::Feedback => specbind::cli::feedback(),
         Command::Artifact { command } => run_artifact(&start, command),
         Command::Install {
             dry_run,

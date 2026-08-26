@@ -1,0 +1,96 @@
+name: Bug report / バグ報告
+description: Report reproducible behavior that appears incorrect. / 再現可能な不具合を報告します。
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve SpecBind. 日本語でも英語でも報告できます。
+
+        Remove secrets and private project content from every field before submitting.
+        送信前に、秘密情報や非公開のプロジェクト内容をすべての項目から取り除いてください。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary / 概要
+      description: Briefly describe what went wrong. / 何が問題だったかを簡潔に記載してください。
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: SpecBind version / バージョン
+      description: Paste the complete output of `specbind --version`. / コマンドの出力全体を貼り付けてください。
+      placeholder: specbind 1.0.0-rc.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment / 実行環境
+      options:
+        - Windows x64
+        - WSL2 Linux x64
+        - Other / その他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation method / インストール方法
+      options:
+        - mise
+        - install.ps1
+        - install.sh
+        - Release archive / リリースアーカイブ
+        - Built from source / ソースからビルド
+        - Other / その他
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Command / 実行したコマンド
+      description: Remove sensitive arguments before submitting. / 機密性のある引数は除去してください。
+      placeholder: specbind milestone status
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps / 再現手順
+      description: Provide the smallest sequence that reproduces the problem. / 問題を再現できる最小限の手順を記載してください。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / 期待した結果
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and complete output / 実際の結果と出力全体
+      description: Preserve stable diagnostic codes, but remove secrets and private content. / 診断コードは残し、秘密情報や非公開内容は除去してください。
+      render: shell
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks / 送信前の確認
+      options:
+        - label: I searched existing issues for the same problem. / 同じ問題が既に報告されていないか確認しました。
+          required: true
+        - label: I removed secrets and private project content. / 秘密情報と非公開のプロジェクト内容を除去しました。
+          required: true
