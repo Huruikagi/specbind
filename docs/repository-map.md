@@ -114,7 +114,7 @@ repository root to verify it locally.
 | [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
 | [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement ledger, and scenario contracts for embedded skills |
 
-This repository's own agent skills live in `.agents/skills/`: `specbind-new-agent` for adding coding-agent support, and `specbind-forward-test` for running the behavioral verification above. They are development assets and are never installed into a consumer project.
+This repository's behavioral verification skill lives at `.agents/skills/specbind-forward-test/`. It is a development asset and is never installed into a consumer project.
 
 ## Decision records
 

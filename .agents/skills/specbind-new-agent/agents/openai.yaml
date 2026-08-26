@@ -1,4 +1,0 @@
-interface:
-  display_name: "SpecBind New Agent"
-  short_description: "Add or migrate specbind agent support using SOP workflow"
-  default_prompt: "Follow docs/specbind/sop-new-agent.md to add support for a new coding agent in specbind, including research, planning, implementation, verification, and migration notes for already supported skill-based agents."
