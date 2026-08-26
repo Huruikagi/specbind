@@ -89,7 +89,8 @@ pub fn feedback() -> CommandOutput {
             "OK FEEDBACK_REPORTED: SpecBind feedback routes.\n",
             "  Bug report: https://github.com/Huruikagi/specbind/issues/new?template=bug-report.yml\n",
             "  Improvement proposal: https://github.com/Huruikagi/specbind/issues/new?template=improvement.yml\n",
-            "  Include: specbind --version, the command, and the complete output\n",
+            "  Include: specbind --version, the affected command or Skill, and reproduction steps\n",
+            "  Evidence: Relevant sanitized output or artifacts\n",
             "  Privacy: Remove secrets and private project content before submitting\n",
             "  No information has been transmitted.\n",
         )

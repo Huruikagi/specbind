@@ -10,6 +10,20 @@ body:
         Describe the problem before prescribing a solution so the product boundary remains clear.
         解決策だけでなく、最初に困っていることを説明してください。
 
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface / 対象領域
+      options:
+        - CLI
+        - Product-managed Skill or orchestration / 製品管理のSkill・オーケストレーション
+        - Agent integration or installed assets / Agent連携・インストール済みファイル
+        - Artifact, template, rule, or protocol / 成果物・テンプレート・ルール・プロトコル
+        - Documentation / ドキュメント
+        - Multiple or other surfaces / 複数・その他
+    validations:
+      required: true
+
   - type: textarea
     id: problem
     attributes:
@@ -25,6 +39,7 @@ body:
       options:
         - Installation or removal / 導入・削除
         - Discovery or planning / Discovery・計画
+        - Skill routing or orchestration / Skillルーティング・オーケストレーション
         - Requirements, Design, or Tasks / Requirements・Design・Tasks
         - Implementation or validation / 実装・検証
         - Milestone or release / Milestone・リリース

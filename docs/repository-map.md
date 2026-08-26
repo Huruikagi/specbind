@@ -85,7 +85,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese Getting Started](./ja/guide/getting-started.md) | Project installation and the first Spec-backed change through implementation validation |
 | [Japanese basic concepts](./ja/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
 | [Japanese customization guide](./ja/guide/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
-| [Japanese feedback guide](./ja/guide/feedback.md) | Offline CLI feedback entry point, public Issue Forms, and privacy guidance |
+| [Japanese feedback guide](./ja/guide/feedback.md) | Offline product feedback entry point for CLI, Skill, integration, and documentation reports |
 | [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [cc-sdd migration entry](./guide/migration/cc-sdd.md) | Language-neutral entry for automatic and agent-assisted migration guidance |
 | [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
@@ -271,4 +271,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0145](./design/decisions/0145-customizable-roadmap-body-template.md) | Accepted | Installed project-owned template for milestone-wide Roadmap prose |
 | [0146](./design/decisions/0146-sequential-v1-tasks-and-per-task-checkpoints.md) | Accepted | Sequential v1 Tasks and one default checkpoint per completed Task |
 | [0147](./design/decisions/0147-generic-agent-shared-surfaces.md) | Accepted | Generic `.agents/skills` and `AGENTS.md` integration with remaining-Agent shared ownership |
-| [0148](./design/decisions/0148-cli-feedback-and-issue-forms.md) | Accepted | Offline CLI feedback routing to bilingual public Issue Forms |
+| [0148](./design/decisions/0148-cli-feedback-and-issue-forms.md) | Accepted | Offline product feedback routing to bilingual public Issue Forms |

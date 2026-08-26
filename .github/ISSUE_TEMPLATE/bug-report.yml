@@ -7,8 +7,24 @@ body:
       value: |
         Thank you for helping improve SpecBind. 日本語でも英語でも報告できます。
 
+        This form covers the CLI, product-managed Skills, agent integrations, and documentation.
+        CLI、製品管理のSkill、Agent連携、ドキュメントの問題を報告できます。
+
         Remove secrets and private project content from every field before submitting.
         送信前に、秘密情報や非公開のプロジェクト内容をすべての項目から取り除いてください。
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface / 問題がある領域
+      options:
+        - CLI
+        - Product-managed Skill or orchestration / 製品管理のSkill・オーケストレーション
+        - Agent integration or installed assets / Agent連携・インストール済みファイル
+        - Documentation / ドキュメント
+        - Unsure or multiple surfaces / 不明・複数領域
+    validations:
+      required: true
 
   - type: textarea
     id: summary
@@ -27,37 +43,25 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     id: environment
     attributes:
-      label: Environment / 実行環境
-      options:
-        - Windows x64
-        - WSL2 Linux x64
-        - Other / その他
-    validations:
-      required: true
-
-  - type: dropdown
-    id: installation
-    attributes:
-      label: Installation method / インストール方法
-      options:
-        - mise
-        - install.ps1
-        - install.sh
-        - Release archive / リリースアーカイブ
-        - Built from source / ソースからビルド
-        - Other / その他
+      label: Environment and agent / 環境とAgent
+      description: Include the OS, installation method, coding agent or client, and its version when relevant. / OS、インストール方法、関係するコーディングAgentやクライアントとそのバージョンを記載してください。
+      placeholder: |
+        OS: Windows 11 x64
+        Installation: mise
+        Agent or client: Codex
+        Agent or client version: ...
     validations:
       required: true
 
   - type: input
-    id: command
+    id: entrypoint
     attributes:
-      label: Command / 実行したコマンド
-      description: Remove sensitive arguments before submitting. / 機密性のある引数は除去してください。
-      placeholder: specbind milestone status
+      label: Related command or Skill / 関連するコマンドまたはSkill
+      description: Name the command, Skill, or installed asset involved. Use unknown if you cannot identify it. / 関係するコマンド、Skill、インストール済みファイルを記載してください。不明な場合はunknownと記載します。
+      placeholder: specbind milestone status or specbind-discovery
     validations:
       required: true
 
@@ -65,7 +69,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction steps / 再現手順
-      description: Provide the smallest sequence that reproduces the problem. / 問題を再現できる最小限の手順を記載してください。
+      description: Provide the smallest sequence that reproduces the problem. For a Skill problem, include the original sanitized request. / 最小限の再現手順を記載してください。Skillの問題では、機密情報を除去した元の依頼も含めます。
     validations:
       required: true
 
@@ -79,9 +83,8 @@ body:
   - type: textarea
     id: actual
     attributes:
-      label: Actual behavior and complete output / 実際の結果と出力全体
-      description: Preserve stable diagnostic codes, but remove secrets and private content. / 診断コードは残し、秘密情報や非公開内容は除去してください。
-      render: shell
+      label: Actual behavior and evidence / 実際の結果と証拠
+      description: Include relevant sanitized CLI output, generated artifacts, or Git diff. Preserve stable diagnostic codes. / 機密情報を除去したCLI出力、生成された成果物、Git差分などを含め、診断コードは残してください。
     validations:
       required: true
 
