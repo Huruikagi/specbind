@@ -51,7 +51,9 @@ exposes all of them. Requirements, Design, and the Roadmap body template are
 installed by default; a project can override any other selector under
 `settings/templates/` deliberately. `template resolve spec <spec> <selector>`
 reports the selected source and exact SpecBind-root-relative target path without
-writing it.
+writing it. `template render spec <spec> <selector>` returns a materialization
+scaffold with the CLI-owned `{{spec}}` variable replaced by the canonical Spec
+identity while preserving instruction comments.
 
 Every template instruction explicitly names `create`, `maintain`, or `consume`.
 Materialization removes `create` and carries the two durable scopes into the
@@ -60,6 +62,13 @@ by default and accept `--for maintain` or `--for consume` to omit the unrelated
 durable instruction scope. `rule list/read` expose the five fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
 maintain, and consume modes and reject live `create` instructions.
+
+Spec templates may use the single built-in `{{spec}}` rendering variable in
+their Markdown body. Every use requires exactly one
+`specbind:instruction create bind=spec` comment. Template discovery rejects
+missing, duplicate, unknown, unused, or Front Matter bindings, and live artifact
+discovery rejects an unresolved variable. More general customization remains
+tracked by [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
 
 Twelve immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by

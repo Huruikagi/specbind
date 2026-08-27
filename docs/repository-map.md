@@ -272,3 +272,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0146](./design/decisions/0146-sequential-v1-tasks-and-per-task-checkpoints.md) | Accepted | Sequential v1 Tasks and one default checkpoint per completed Task |
 | [0147](./design/decisions/0147-generic-agent-shared-surfaces.md) | Accepted | Generic `.agents/skills` and `AGENTS.md` integration with remaining-Agent shared ownership |
 | [0148](./design/decisions/0148-cli-feedback-and-issue-forms.md) | Accepted | Offline product feedback routing to bilingual public Issue Forms |
+| [0149](./design/decisions/0149-bound-spec-template-rendering-variable.md) | Accepted | Canonical Spec identity rendering bound to explicit create guidance |

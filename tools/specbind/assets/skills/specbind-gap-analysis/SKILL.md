@@ -132,7 +132,7 @@ forgetting.
 If you write it:
 
 ```sh
-specbind template read spec research
+specbind template render spec <spec> research
 ```
 
 If this is the first managed Markdown write in the run, read `okf-authoring` as

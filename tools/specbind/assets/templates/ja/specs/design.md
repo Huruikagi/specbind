@@ -3,7 +3,12 @@ type: SpecBind Design
 artifact_id: main
 ---
 
-# 設計
+<!-- specbind:instruction create bind=spec
+CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
+識別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` の設計
 
 <!-- specbind:instruction maintain
 この文書が扱う Requirement ID をすべて列挙した `requirement_ids` 配列を Front Matter に

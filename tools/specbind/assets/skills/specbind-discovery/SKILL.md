@@ -300,7 +300,7 @@ where `specDir` is the value configured in `.specbind.json`. Start from the
 template, and read the authoring protocol before you write:
 
 ```sh
-specbind template read spec brief
+specbind template render spec <spec> brief
 specbind protocol read okf-authoring
 specbind milestone status
 ```
@@ -315,10 +315,11 @@ authoritative scope lives in requirements, and this document is not
 fingerprinted. When the Spec already has a brief in this milestone, **fold the
 new request into it** rather than adding a second one.
 
-On first materialization, omit `create` instructions and copy `maintain` and
-`consume` instructions unchanged. When folding into an existing brief, read it
-with `artifact read <spec> brief --for maintain` and preserve those durable
-comments.
+The render command substitutes CLI-owned template variables and preserves every
+instruction comment. On first materialization, omit `create` instructions and
+copy `maintain` and `consume` instructions unchanged. When folding into an
+existing brief, read it with `artifact read <spec> brief --for maintain` and
+preserve those durable comments.
 
 ### Record what steering decided
 

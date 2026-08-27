@@ -49,7 +49,7 @@ not a fault.
   contract from the brief:
 
   ```sh
-  specbind template read spec requirements
+  specbind template render spec <spec> requirements
   ```
 
 - **Existing Spec** — read the current requirements and revise them in place:

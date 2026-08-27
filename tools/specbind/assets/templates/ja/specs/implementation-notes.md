@@ -3,7 +3,12 @@ type: SpecBind Implementation Notes
 artifact_id: main
 ---
 
-# 実装メモ
+<!-- specbind:instruction create bind=spec
+CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
+識別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` の実装メモ
 
 <!-- specbind:instruction maintain
 次にこの変更を実装する担当者のための、永続的な自由記述メモ。

@@ -1,10 +1,15 @@
 //! Scoped agent instructions embedded in managed Markdown comments.
 
-use std::ops::Range;
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    ops::Range,
+};
 
 use pulldown_cmark::{Event, Parser};
 
 const PREFIX: &str = "specbind:instruction";
+const SPEC_VARIABLE: &str = "spec";
+const SPEC_TOKEN: &str = "{{spec}}";
 
 /// The lifecycle audience named by one managed instruction comment.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -38,13 +43,51 @@ pub struct InstructionIssue {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Instruction {
     scope: InstructionScope,
+    binding: Option<String>,
     range: Range<usize>,
 }
 
 /// Validates every instruction in a managed template body.
 #[must_use]
 pub fn validate_template(body: &str) -> Vec<InstructionIssue> {
-    inspect(body).1
+    let (instructions, mut issues) = inspect(body);
+    if instructions
+        .iter()
+        .any(|instruction| instruction.binding.is_some())
+        || !rendering_variables(&mask_instruction_ranges(body, &instructions)).is_empty()
+    {
+        issues.push(InstructionIssue {
+            code: "TEMPLATE_VARIABLE_SCOPE_INVALID",
+            message:
+                "rendering variables and bindings are supported only by Spec artifact templates"
+                    .to_owned(),
+        });
+    }
+    issues
+}
+
+/// Validates scoped instructions and rendering-variable bindings in a Spec
+/// artifact template.
+#[must_use]
+pub fn validate_spec_template(body: &str) -> Vec<InstructionIssue> {
+    let (instructions, mut issues) = inspect(body);
+    issues.extend(validate_bindings(body, &instructions));
+    issues
+}
+
+/// Rejects rendering variables from template Front Matter.
+///
+/// Machine identity remains literal under Decision 0059. V1 variables are
+/// deliberately limited to the Markdown body.
+#[must_use]
+pub fn validate_template_frontmatter(frontmatter: &str) -> Vec<InstructionIssue> {
+    rendering_variables(frontmatter)
+        .into_iter()
+        .map(|name| InstructionIssue {
+            code: "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
+            message: format!("template rendering variable {name} is forbidden in Front Matter"),
+        })
+        .collect()
 }
 
 /// Validates every instruction in a live artifact body.
@@ -63,7 +106,34 @@ pub fn validate_live(body: &str) -> Vec<InstructionIssue> {
             message: "live artifact contains a template-only create instruction".to_owned(),
         });
     }
+    if !rendering_variables(&mask_instruction_ranges(body, &instructions)).is_empty() {
+        issues.push(InstructionIssue {
+            code: "ARTIFACT_TEMPLATE_VARIABLE_LEAK",
+            message: "live artifact contains an unresolved template rendering variable".to_owned(),
+        });
+    }
     issues
+}
+
+/// Renders the one v1 built-in variable outside managed instruction comments.
+///
+/// The caller validates the template before rendering and supplies the already
+/// validated canonical Spec identity. Instruction comments remain byte-exact so
+/// an authoring agent can still consume `create` guidance before omitting it.
+#[must_use]
+pub fn render_spec(content: &str, canonical_spec: &str) -> String {
+    let (instructions, _) = inspect(content);
+    let mut output = String::with_capacity(content.len());
+    let mut cursor = 0;
+    for instruction in instructions {
+        output.push_str(
+            &content[cursor..instruction.range.start].replace(SPEC_TOKEN, canonical_spec),
+        );
+        output.push_str(&content[instruction.range.clone()]);
+        cursor = instruction.range.end;
+    }
+    output.push_str(&content[cursor..].replace(SPEC_TOKEN, canonical_spec));
+    output
 }
 
 /// Removes scoped instruction comments not addressed to `scope`.
@@ -130,9 +200,128 @@ fn inspect(content: &str) -> (Vec<Instruction>, Vec<InstructionIssue>) {
             });
             continue;
         };
-        instructions.push(Instruction { scope, range });
+        let binding = remainder
+            .split_whitespace()
+            .nth(1)
+            .and_then(|token| token.strip_prefix("bind="))
+            .map(ToOwned::to_owned);
+        if binding.as_deref().is_some_and(str::is_empty) {
+            issues.push(InstructionIssue {
+                code: "INSTRUCTION_BINDING_INVALID",
+                message: "specbind:instruction bind must name a variable".to_owned(),
+            });
+        }
+        if binding.is_some() && scope != InstructionScope::Create {
+            issues.push(InstructionIssue {
+                code: "INSTRUCTION_BINDING_SCOPE_INVALID",
+                message: "only a create instruction may bind a template rendering variable"
+                    .to_owned(),
+            });
+        }
+        instructions.push(Instruction {
+            scope,
+            binding,
+            range,
+        });
     }
     (instructions, issues)
+}
+
+fn validate_bindings(body: &str, instructions: &[Instruction]) -> Vec<InstructionIssue> {
+    let mut issues = Vec::new();
+    let variables = rendering_variables(&mask_instruction_ranges(body, instructions));
+    let mut bindings: BTreeMap<&str, usize> = BTreeMap::new();
+    for instruction in instructions {
+        let Some(binding) = instruction.binding.as_deref() else {
+            continue;
+        };
+        if binding != SPEC_VARIABLE {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_UNKNOWN",
+                message: format!(
+                    "unknown template rendering variable {binding}; expected {SPEC_VARIABLE}"
+                ),
+            });
+        }
+        *bindings.entry(binding).or_default() += 1;
+    }
+    for (binding, count) in &bindings {
+        if *count > 1 {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_BINDING_DUPLICATE",
+                message: format!(
+                    "template rendering variable {binding} is bound by more than one create instruction"
+                ),
+            });
+        }
+        if !variables.contains(*binding) {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_BINDING_UNUSED",
+                message: format!(
+                    "create instruction binds unused template rendering variable {binding}"
+                ),
+            });
+        }
+    }
+    for variable in variables {
+        if variable != SPEC_VARIABLE {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_UNKNOWN",
+                message: format!(
+                    "unknown template rendering variable {variable}; expected {SPEC_VARIABLE}"
+                ),
+            });
+        }
+        if !bindings.contains_key(variable.as_str()) {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_BINDING_MISSING",
+                message: format!(
+                    "template rendering variable {variable} requires exactly one create instruction with bind={variable}"
+                ),
+            });
+        }
+    }
+    issues.sort_by(|left, right| {
+        left.code
+            .cmp(right.code)
+            .then(left.message.cmp(&right.message))
+    });
+    issues.dedup();
+    issues
+}
+
+fn rendering_variables(content: &str) -> BTreeSet<String> {
+    let mut variables = BTreeSet::new();
+    let mut rest = content;
+    while let Some(start) = rest.find("{{") {
+        let after = &rest[start + 2..];
+        let Some(end) = after.find("}}") else {
+            break;
+        };
+        let name = &after[..end];
+        if !name.is_empty()
+            && name
+                .bytes()
+                .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+            && name.as_bytes()[0].is_ascii_lowercase()
+        {
+            variables.insert(name.to_owned());
+        }
+        rest = &after[end + 2..];
+    }
+    variables
+}
+
+fn mask_instruction_ranges(content: &str, instructions: &[Instruction]) -> String {
+    let mut bytes = content.as_bytes().to_vec();
+    for instruction in instructions {
+        for byte in &mut bytes[instruction.range.clone()] {
+            if !matches!(*byte, b'\r' | b'\n') {
+                *byte = b' ';
+            }
+        }
+    }
+    String::from_utf8_lossy(&bytes).into_owned()
 }
 
 fn comment_ranges(content: &str) -> Vec<Range<usize>> {
@@ -208,6 +397,78 @@ mod tests {
             validate_live("<!-- specbind:instruction create Start. -->")[0].code,
             "ARTIFACT_CREATE_INSTRUCTION_LEAK"
         );
+    }
+
+    #[test]
+    fn requires_one_create_binding_for_each_rendering_variable() {
+        let valid = concat!(
+            "<!-- specbind:instruction create bind=spec\n",
+            "Render the canonical Spec identity.\n",
+            "-->\n",
+            "# `{{spec}}` Requirements\n",
+        );
+        assert!(validate_spec_template(valid).is_empty());
+
+        let missing = validate_spec_template("# `{{spec}}` Requirements\n");
+        assert_eq!(missing[0].code, "TEMPLATE_VARIABLE_BINDING_MISSING");
+
+        let unused = validate_spec_template(
+            "<!-- specbind:instruction create bind=spec Render the identity. -->\n# Requirements\n",
+        );
+        assert_eq!(unused[0].code, "TEMPLATE_VARIABLE_BINDING_UNUSED");
+
+        let duplicate = validate_spec_template(concat!(
+            "<!-- specbind:instruction create bind=spec First. -->\n",
+            "<!-- specbind:instruction create bind=spec Second. -->\n",
+            "# `{{spec}}` Requirements\n",
+        ));
+        assert!(
+            duplicate
+                .iter()
+                .any(|issue| issue.code == "TEMPLATE_VARIABLE_BINDING_DUPLICATE")
+        );
+
+        let durable = validate_spec_template(concat!(
+            "<!-- specbind:instruction maintain bind=spec Keep it. -->\n",
+            "# `{{spec}}` Requirements\n",
+        ));
+        assert!(
+            durable
+                .iter()
+                .any(|issue| issue.code == "INSTRUCTION_BINDING_SCOPE_INVALID")
+        );
+    }
+
+    #[test]
+    fn rejects_rendering_variables_outside_spec_artifact_templates() {
+        let issues = validate_template(concat!(
+            "<!-- specbind:instruction create bind=spec Use it. -->\n",
+            "# `{{spec}}` Steering\n",
+        ));
+        assert!(
+            issues
+                .iter()
+                .any(|issue| issue.code == "TEMPLATE_VARIABLE_SCOPE_INVALID")
+        );
+    }
+
+    #[test]
+    fn renders_spec_without_rewriting_instruction_comments() {
+        let source = concat!(
+            "<!-- specbind:instruction create bind=spec\n",
+            "Keep the literal token `{{spec}}` documented here.\n",
+            "-->\n",
+            "# `{{spec}}` Requirements\n",
+        );
+        let rendered = render_spec(source, "source-price-refresh");
+        assert!(rendered.contains("literal token `{{spec}}`"));
+        assert!(rendered.contains("# `source-price-refresh` Requirements"));
+    }
+
+    #[test]
+    fn live_artifacts_reject_unresolved_rendering_variables() {
+        let issues = validate_live("# `{{spec}}` Requirements\n");
+        assert_eq!(issues[0].code, "ARTIFACT_TEMPLATE_VARIABLE_LEAK");
     }
 
     #[test]

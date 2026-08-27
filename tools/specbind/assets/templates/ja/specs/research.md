@@ -2,7 +2,12 @@
 type: SpecBind Research
 ---
 
-# リサーチ
+<!-- specbind:instruction create bind=spec
+CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
+識別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` のリサーチ
 
 <!-- specbind:instruction create
 Requirements や Design を実際に止めている未解決の問いがある場合にだけ作成する。

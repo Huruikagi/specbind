@@ -185,7 +185,7 @@ whether each scaffold is `project` or `embedded`. For every listed
 
 ```sh
 specbind template resolve spec <spec> <design-selector>
-specbind template read spec <design-selector>
+specbind template render spec <spec> <design-selector>
 ```
 
 Write the authored document only to the reported `Target path`. Do not infer a
@@ -237,7 +237,7 @@ absence of cross-spec impact.
 
 ```sh
 specbind template resolve spec <spec> contract
-specbind template read spec contract
+specbind template render spec <spec> contract
 ```
 
 Write the authored Contract only to the reported `Target path`. The `Source`

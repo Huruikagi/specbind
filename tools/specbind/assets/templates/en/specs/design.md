@@ -3,7 +3,12 @@ type: SpecBind Design
 artifact_id: main
 ---
 
-# Design
+<!-- specbind:instruction create bind=spec
+The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
+the artifact remains identifiable when read outside its directory.
+-->
+
+# `{{spec}}` Design
 
 <!-- specbind:instruction maintain
 Add a Front Matter `requirement_ids` array listing every Requirement ID this

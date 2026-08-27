@@ -71,7 +71,9 @@ pub fn discover_spec_templates(
     language: ProjectLanguage,
 ) -> TemplateInventory {
     let (mut templates, mut issues) = discover_project_templates(specbind_root);
-    for embedded in embedded_spec_templates(language) {
+    let (embedded_templates, mut embedded_issues) = discover_embedded_spec_templates(language);
+    issues.append(&mut embedded_issues);
+    for embedded in embedded_templates {
         if templates
             .iter()
             .any(|template| template.selector == embedded.selector)
@@ -103,14 +105,21 @@ pub fn installed_default_templates(language: ProjectLanguage) -> Vec<Template> {
 /// Resolves only the official defaults embedded in this binary.
 #[must_use]
 pub fn embedded_spec_templates(language: ProjectLanguage) -> Vec<Template> {
+    discover_embedded_spec_templates(language).0
+}
+
+fn discover_embedded_spec_templates(
+    language: ProjectLanguage,
+) -> (Vec<Template>, Vec<DiscoveryIssue>) {
     let root = match language {
         ProjectLanguage::En => "en/specs",
         ProjectLanguage::Ja => "ja/specs",
     };
     let Some(directory) = EMBEDDED_TEMPLATES.get_dir(root) else {
-        return vec![];
+        return (vec![], vec![]);
     };
     let mut templates = Vec::new();
+    let mut issues = Vec::new();
     for file in directory.files() {
         let Some(path) = file.path().to_str() else {
             continue;
@@ -126,16 +135,20 @@ pub fn embedded_spec_templates(language: ProjectLanguage) -> Vec<Template> {
         let Some(content) = file.contents_utf8() else {
             continue;
         };
-        if let Ok((Some(template), _)) = resolve_template(
+        match resolve_template(
             content,
             TemplateSource::Embedded,
             &template_path,
             output_path,
         ) {
-            templates.push(template);
+            Ok((Some(template), mut found)) => {
+                templates.push(template);
+                issues.append(&mut found);
+            }
+            Ok((None, mut found)) | Err(mut found) => issues.append(&mut found),
         }
     }
-    templates
+    (templates, issues)
 }
 
 /// Reads one embedded default by selector without touching a project.
@@ -316,7 +329,12 @@ fn resolve_template(
     };
 
     issues.extend(
-        instruction::validate_template(body)
+        instruction::validate_template_frontmatter(frontmatter)
+            .into_iter()
+            .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
+    );
+    issues.extend(
+        instruction::validate_spec_template(body)
             .into_iter()
             .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
     );
@@ -472,6 +490,35 @@ pub fn read_spec_template(
             }
         }
     }
+}
+
+/// Renders one Spec template with the CLI-owned canonical Spec identity.
+///
+/// The raw read contract remains unchanged. Rendering refuses a partial or
+/// invalid template inventory and leaves instruction comments intact.
+///
+/// # Errors
+///
+/// Returns deterministic template or canonical-identity diagnostics.
+pub fn render_spec_template(
+    specbind_root: &Path,
+    language: ProjectLanguage,
+    canonical_spec: &str,
+    requested: &str,
+) -> Result<String, TemplateInventory> {
+    let (content, inventory) = read_spec_template(specbind_root, language, requested)?;
+    if !inventory.issues.is_empty() {
+        return Err(inventory);
+    }
+    if !crate::artifacts::canonical_id(canonical_spec) {
+        return Err(with_issue(
+            inventory,
+            "TEMPLATE_RENDER_SPEC_INVALID",
+            &Utf8PathBuf::from(SPEC_TEMPLATE_ROOT),
+            format!("canonical spec ID is invalid: {canonical_spec}"),
+        ));
+    }
+    Ok(instruction::render_spec(&content, canonical_spec))
 }
 
 /// The project tree that scaffolds steering documents.
@@ -718,10 +765,15 @@ fn resolve_steering_template(
     let output_path = artifact_id
         .as_ref()
         .map(|id| Utf8PathBuf::from(format!("steering/{id}.md")));
-    let issues = instruction::validate_template(body)
+    let mut issues = instruction::validate_template_frontmatter(frontmatter)
         .into_iter()
         .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message))
-        .collect();
+        .collect::<Vec<_>>();
+    issues.extend(
+        instruction::validate_template(body)
+            .into_iter()
+            .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
+    );
     Ok((
         Some(SteeringTemplate {
             source,
@@ -1060,6 +1112,11 @@ fn resolve_milestone_template(
         )
     })
     .collect::<Vec<_>>();
+    issues.extend(
+        instruction::validate_template_frontmatter(frontmatter)
+            .into_iter()
+            .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
+    );
     issues.extend(
         instruction::validate_template(body)
             .into_iter()

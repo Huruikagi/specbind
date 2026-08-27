@@ -195,7 +195,7 @@ Update the applicable discovered notes artifact in place. When none exists and
 the knowledge is durable enough to justify one, start from the default scaffold:
 
 ```sh
-specbind template read spec implementation-notes/main
+specbind template render spec <spec> implementation-notes/main
 ```
 
 Materialize it only with real content. The filename is a locator, not identity;

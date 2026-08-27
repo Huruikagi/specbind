@@ -2,7 +2,12 @@
 type: SpecBind Research
 ---
 
-# Research
+<!-- specbind:instruction create bind=spec
+The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
+the artifact remains identifiable when read outside its directory.
+-->
+
+# `{{spec}}` Research
 
 <!-- specbind:instruction create
 Materialize this document only when an open question actually blocks Requirements

@@ -5,7 +5,12 @@ heading_labels:
   acceptance_criteria: 受け入れ基準
 ---
 
-# 要件
+<!-- specbind:instruction create bind=spec
+CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
+識別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` の要件
 
 <!-- specbind:instruction maintain
 現在のマイルストーンで依頼された差分だけではなく、この Spec の現在有効な振る舞いの契約全体を

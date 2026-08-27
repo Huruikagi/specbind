@@ -42,6 +42,7 @@ Brief、Research、Contract、Implementation NotesのSpecテンプレートと�
 ```sh
 specbind template list spec
 specbind template read spec requirements
+specbind template render spec <spec> requirements
 specbind template list steering
 specbind template read steering document
 specbind template list milestone
@@ -55,6 +56,29 @@ specbind template resolve spec <spec> <selector>
 ```
 
 結果にはtemplateの`Source`と、SpecBindルート相対の完全な`Target path`が含まれます。
+
+Spec成果物を初めて作るときは、raw templateを直接コピーせず、対象Specを指定して
+renderします。SpecテンプレートのMarkdown本文では、組み込み変数`{{spec}}`だけを
+使用できます。CLIはこれを正規のSpec identityで展開し、instructionコメントは
+エージェントが作成指示を読めるよう、そのまま返します。
+
+```sh
+specbind template render spec <spec> <selector>
+```
+
+変数を使うテンプレートには、対応する`create` instructionがちょうど1つ必要です。
+
+```markdown
+<!-- specbind:instruction create bind=spec
+`spec`は対象Specの正規identity。タイトルに残す。
+-->
+
+# `{{spec}}` の要件
+```
+
+変数とbindingの欠落、重複、未使用、未知の名前、Front Matterでの使用はテンプレート
+診断になります。未展開の変数が残った成果物も無効です。`template read`は比較や編集の
+ため、変数を含む元のテンプレートを引き続きbyte-exactに返します。
 
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。

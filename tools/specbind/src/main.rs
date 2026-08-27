@@ -119,6 +119,11 @@ fn run_template(start: &Path, command: TemplateCommand) -> CommandOutput {
         TemplateCommand::Read { scope: _, selector } => {
             specbind::cli::template_read_spec(start, &selector)
         }
+        TemplateCommand::Render {
+            scope: _,
+            spec,
+            selector,
+        } => specbind::cli::template_render_spec(start, &spec, &selector),
         TemplateCommand::Resolve {
             scope: _,
             spec,

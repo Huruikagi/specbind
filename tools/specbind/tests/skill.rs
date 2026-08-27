@@ -575,7 +575,7 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "specbind artifact list <spec>",
         "specbind artifact read <spec> implementation-notes/<artifact-id>",
         "specbind protocol read okf-authoring",
-        "specbind template read spec implementation-notes/main",
+        "specbind template render spec <spec> implementation-notes/main",
         "`CANNOT_REVIEW`",
         "Do not interrupt it, ask for an immediate\nreturn",
         "New caches, reports, coverage data",

@@ -3,7 +3,12 @@ type: SpecBind Implementation Notes
 artifact_id: main
 ---
 
-# Implementation Notes
+<!-- specbind:instruction create bind=spec
+The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
+the artifact remains identifiable when read outside its directory.
+-->
+
+# `{{spec}}` Implementation Notes
 
 <!-- specbind:instruction maintain
 Persistent free-form memory for whoever implements this change next. Record the

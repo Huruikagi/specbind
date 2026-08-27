@@ -2,7 +2,12 @@
 type: SpecBind Brief
 ---
 
-# Brief
+<!-- specbind:instruction create bind=spec
+The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
+the artifact remains identifiable when read outside its directory.
+-->
+
+# `{{spec}}` Brief
 
 <!-- specbind:instruction maintain
 Capture the requested change in the requester's own terms. Keep it short and

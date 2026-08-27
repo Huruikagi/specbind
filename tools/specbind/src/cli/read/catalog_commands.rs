@@ -115,6 +115,38 @@ pub fn template_read_spec(start: &Path, selector: &str) -> CommandOutput {
 }
 
 #[must_use]
+pub fn template_render_spec(start: &Path, canonical_spec: &str, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match template::render_spec_template(
+        &paths.specbind_root,
+        paths.language,
+        canonical_spec,
+        selector,
+    ) {
+        Ok(content) => CommandOutput::success(content.into_bytes()),
+        Err(inventory) => {
+            let resolved = inventory
+                .templates
+                .iter()
+                .any(|template| template.selector == selector);
+            let code = if resolved {
+                "TEMPLATE_RENDER_FAILED"
+            } else {
+                "TEMPLATE_SELECTOR_NOT_FOUND"
+            };
+            CommandOutput::failure(
+                code,
+                format!("Selector {selector} does not resolve to a renderable spec template."),
+                inventory.issues.iter().map(render_issue).collect(),
+            )
+        }
+    }
+}
+
+#[must_use]
 pub fn template_list_milestone(start: &Path) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,

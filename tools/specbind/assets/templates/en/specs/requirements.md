@@ -5,7 +5,12 @@ heading_labels:
   acceptance_criteria: Acceptance Criteria
 ---
 
-# Requirements
+<!-- specbind:instruction create bind=spec
+The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
+the artifact remains identifiable when read outside its directory.
+-->
+
+# `{{spec}}` Requirements
 
 <!-- specbind:instruction maintain
 Maintain the complete current behavioral contract for this Spec, not only the
