@@ -186,6 +186,21 @@ CodexとClaude Codeのどちらでも、実装・レビューなどの役割ご�
 Claude Codeのサブエージェント定義には推論強度の項目がないため、
 `agentRoles.claudeCode`で指定できるのは`model`だけです。
 
+### CLI更新後にSkillを更新する
+
+新しいバージョンのSpecBind CLIを導入したら、対象プロジェクトのルートでinstallを
+再実行します。オプションを省略すると、既存の`.specbind.json`に記録されたAgent、
+言語、Specの置き場所などを引き継ぎます。
+
+```sh
+specbind install --dry-run
+specbind install
+```
+
+再実行には、少なくとも1つのcommitがあり、変更のないGitリポジトリが必要です。
+SpecBindが管理するSkillは新しいCLIの埋め込み版へ更新され、新しく追加された対象は
+作成されます。`.specbind/settings/`以下のプロジェクト固有設定は上書きされません。
+
 生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
 インストーラ自体はコミットを行いません。
 
