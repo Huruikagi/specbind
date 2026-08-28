@@ -32,7 +32,7 @@ without a pass are listed separately below.
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL4 |
-| Planning orchestrators | None recorded | Q4 |
+| Planning orchestrators | None recorded | Q0, Q4 |
 | End-to-end journey | None recorded | HP1 |
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
@@ -43,6 +43,16 @@ measurement: marker precedence needed to state that the entire body is ignored,
 and Discovery needed to repeat the completion check immediately before Brief
 authoring. The final driver followed both rules and stopped in Requirements with
 all gates `not_reached`.
+
+Q0 was measured as Codex on 2026-08-28 with `gpt-5.6-terra` at medium reasoning.
+The first run on `dd8793f` inferred named `cart` scope from the milestone's only
+participant and edited Requirements. After quick-plan metadata and installed
+project instructions routed ambiguous accelerated planning to scope selection,
+the fresh `4bdba02` run read only milestone status, presented named/all intent,
+and stopped. The fixture remained at setup commit `56a9956`, with every gate
+`not_reached` and a clean worktree. Its read-only debrief left state unchanged
+and restated the intentional single-participant ambiguity the explicit scope
+rule had resolved, so no usability finding was retained.
 
 R1 was re-measured as Codex on 2026-08-28 against the working tree based on
 `92a7705`, including Decision 0150. The driver replaced the deliberately invalid

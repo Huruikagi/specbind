@@ -105,10 +105,23 @@ requirements skill stops and asks before invalidating.
 - The stop was reported as the answer. **No re-dispatch was attempted.**
 - Delegation did not carry the invalidation. The run asked.
 
+### B0 — Explicit all-Spec intent selects the same quick-plan workflow
+
+Run against any active milestone, including one with a single participating
+Spec.
+
+> Ask: take every spec in this milestone through to approved plans.
+
+- The exact complete Spec-backed scope and the Requirements, Design, and Tasks
+  delegated gates are presented before phase work starts.
+- The workflow identity presented for durable gate evidence is
+  `specbind-quick-plan`; no removed batch workflow is selected or suggested.
+- The run stops for the one delegation confirmation before authoring.
+
 ### B1 — Requirements are not serialized behind dependencies
 
-Run quick-plan in all scope on a milestone whose roadmap has a dependency chain across three
-Spec-backed items.
+Run quick-plan in all scope on a milestone whose roadmap has a dependency chain
+across three Spec-backed items.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -138,7 +151,8 @@ Watch the commands during an all-scope quick-plan run.
 
 ### B4 — One unfinished item stops the barrier, and scope is not touched
 
-Run quick-plan in all scope on a three-Spec milestone where one Spec's design cannot complete.
+Run quick-plan in all scope on a three-Spec milestone where one Spec's design
+cannot complete.
 
 > Ask: take every spec in this milestone through to approved plans.
 
