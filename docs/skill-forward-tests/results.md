@@ -32,7 +32,7 @@ without a pass are listed separately below.
 | Implementation validation | None recorded | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
 | Release | RL1 | RL1–RL4 |
-| Planning orchestrators | None recorded | Q0, Q4 |
+| Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
@@ -53,6 +53,15 @@ and stopped. The fixture remained at setup commit `56a9956`, with every gate
 `not_reached` and a clean worktree. Its read-only debrief left state unchanged
 and restated the intentional single-participant ambiguity the explicit scope
 rule had resolved, so no usability finding was retained.
+
+B0 was measured with the same Codex profile on fresh build `c0af39f`. An
+explicit every-Spec request selected all scope even though the fixture had only
+one participant, presented `cart` plus the Requirements, Design, and Tasks gates
+under the `specbind-quick-plan` workflow identity, and stopped for delegation
+without authoring. The fixture remained at setup commit `df144a7`, every gate
+was `not_reached`, and the worktree stayed clean before and after the read-only
+debrief. Its observations restated the intentional delegation boundary and the
+fixture-only PATH setup, so no usability finding was retained.
 
 R1 was re-measured as Codex on 2026-08-28 against the working tree based on
 `92a7705`, including Decision 0150. The driver replaced the deliberately invalid
