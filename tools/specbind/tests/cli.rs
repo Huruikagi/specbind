@@ -1300,7 +1300,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 72 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 82 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1318,7 +1318,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/roadmap.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 72 create, 0 replace, 0 keep\n",
+                "\n  Summary: 82 create, 0 replace, 0 keep\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -1388,7 +1388,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 41 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 46 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1437,10 +1437,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 43 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 48 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 43 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 48 created, 0 replaced, 0 kept\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
@@ -1461,8 +1461,11 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
+        ".agents/skills/specbind-adopt-existing/references/start.md",
         ".agents/skills/specbind-configure/SKILL.md",
         ".agents/skills/specbind-configure/references/aftercare.md",
+        ".agents/skills/specbind-implement/references/direct.md",
+        ".agents/skills/specbind-release/references/bootstrap-release-adapter.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
@@ -1523,6 +1526,12 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     for relative in [
         ".claude/skills/specbind-configure/references/aftercare.md",
         ".agents/skills/specbind-configure/references/aftercare.md",
+        ".claude/skills/specbind-adopt-existing/references/start.md",
+        ".agents/skills/specbind-adopt-existing/references/start.md",
+        ".claude/skills/specbind-implement/references/spec-backed.md",
+        ".agents/skills/specbind-implement/references/spec-backed.md",
+        ".claude/skills/specbind-release/references/bootstrap-release-adapter.md",
+        ".agents/skills/specbind-release/references/bootstrap-release-adapter.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
@@ -2011,7 +2020,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 41 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 46 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(

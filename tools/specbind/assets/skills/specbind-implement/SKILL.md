@@ -25,221 +25,22 @@ The kind decides the whole run:
 need requirements, design, or a contract, the premise that made it Direct has
 failed. Stop and report that it needs rerouting through discovery.
 
-## 2. Check the prerequisites
+For either kind, `milestone status` must show this item's implementation-phase
+predecessors complete. If not, stop and say so. Route to the owning phase.
 
-For a Spec-backed item:
+## 2. Load only the item's procedure
 
-```sh
-specbind spec status <spec>
-```
+Read the directly applicable reference completely before changing anything:
 
-It must report `State: implementation` with `requirements=fresh, design=fresh,
-tasks=fresh`. For either kind, `milestone status` must show this item's
-implementation-phase predecessors complete.
+- For a Spec-backed item, read [Spec-backed implementation](references/spec-backed.md).
+  It owns the approved-plan prerequisite, Task selection, sequential per-Task
+  cycles, progress, notes, completed-Task checkpoints, and stopping point. Do not
+  load the Direct procedure.
+- For a Direct item, read [Direct implementation](references/direct.md). It owns
+  implementation and review against the Roadmap summary, its checkpoint, and
+  the Direct completion handshake. Do not load the Spec-backed Task cycle.
 
-If not, stop and say so. Route to the owning phase. **Never** approve a gate,
-revise the plan, or edit requirements, design, or the contract to make a task
-implementable. A task that cannot be implemented as written is a finding about
-the plan or the design — that is a real outcome, not an obstacle.
-
-## 3. Select the work (Spec-backed)
-
-```sh
-specbind tasks list <spec>
-specbind tasks show <spec> <task-id>
-specbind artifact list <spec>
-```
-
-Read every `implementation-notes/<artifact-id>` selector the inventory names:
-
-```sh
-specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
-```
-
-The notes are optional. An inventory with none is a complete answer; do not
-materialize an empty placeholder.
-
-The read model already marks each task `pending actionable` or `pending
-waiting` and names its effective prerequisites. Resolve what the user asked for
-— a task, a group, a set, or "continue" — against the actionable set, and work
-in plan order.
-
-**Do not start a task the read model says is waiting.** `tasks complete` would
-refuse it anyway; picking it means your plan and the real plan already disagree.
-
-Task execution is sequential. Finish one task's implementation, review, recorded
-outcome, durable notes, and checkpoint decision before selecting the next task.
-The plan order is the dependency order; do not dispatch several tasks into one
-shared worktree at once.
-
-## 4. The per-task cycle
-
-**One task per cycle. Do not batch.** One recorded completion is one judgment;
-running three tasks and recording three completions at the end records judgments
-you never separately made.
-
-### a) Dispatch a fresh implementer
-
-Use the registered `specbind-implementer` role when the host provides it;
-otherwise dispatch an ordinary fresh subagent with the same brief and protocol.
-The role selects capability, not scope or authority.
-Fallback is only for an absent role. If a registered role exists but its
-configured model cannot start, report a configuration or environment failure;
-do not silently change its capability. This applies to every registered role in
-this run.
-
-Give it a brief that stands alone — it saw nothing you saw:
-
-- the task: title, details, completion criteria
-- the requirement IDs it carries, and the artifact paths to read them from
-- the design artifacts that govern this work
-- the project's applicable verification commands
-- any implementation notes bearing on this task's boundary
-- the project-local instruction files it must obey, including that required
-  non-destructive bookkeeping inside the project is ordinary task execution and
-  does not need a second user approval
-
-and the protocol it must read:
-
-```sh
-specbind protocol read task-implementation
-```
-
-After dispatch, let the implementer finish its work and verification and return
-the protocol's structured status. **Do not interrupt it, ask for an immediate
-return, or turn a progress check into a stop request.** Waiting for the result is
-part of the dispatch. An implementer that is forced to return before verification
-leaves a partial change that this workflow must treat as blocked.
-
-### b) Parse the status block, never the prose
-
-Require a structured result with a status from a closed set:
-`READY_FOR_REVIEW`, `BLOCKED`, `NEEDS_CONTEXT`.
-
-The exact block is fixed by the protocol. If it is missing, ambiguous, or
-replaced with narrative, **re-dispatch once asking only for the block.** Never
-infer success because nothing said otherwise.
-
-- `READY_FOR_REVIEW` → review it
-- `NEEDS_CONTEXT` → re-dispatch once with what it asked for; still unresolved →
-  diagnose
-- `BLOCKED` → diagnose
-
-Before accepting `READY_FOR_REVIEW`, compare the worktree with the snapshot
-from before dispatch. New caches, reports, coverage data, or other verification
-leftovers outside the intended `CHANGED` paths make the result not ready. Send
-the exact generated paths back to a fresh implementer within the normal retry
-limit so it can prevent their creation or remove only outputs created by this
-task. The orchestrator never deletes them itself. If generated ownership is not
-certain, diagnose and stop rather than cleaning a possibly unrelated path.
-
-### c) Review
-
-Default is `required` for Spec-backed work, `inline` for Direct. `--review
-required|inline|off` is run-scoped, and plain requests like "skip review" mean
-`off`. When ambiguous, keep the default.
-
-**`required` means a fresh dispatch.** Give the reviewer the diff and the
-artifact paths — not the implementer's account of what it did — and:
-
-Use the registered `specbind-reviewer` role when available, with an ordinary
-fresh subagent as the fallback.
-
-```sh
-specbind protocol read task-review
-```
-
-The value is independence. A reviewer that watched the work be justified is not
-a check on whether it is right.
-
-`inline` applies the same protocol in your own context. It is weaker, which is
-why it is not the default for Spec-backed work.
-
-Verdicts are `APPROVED`, `REJECTED`, or `CANNOT_REVIEW`. A rejection goes back
-to a fresh implementer with the findings — **at most two rounds**. After that
-the task is blocked, with the outstanding findings as the reason.
-
-`CANNOT_REVIEW` is not a rejection to retry blindly. It enters diagnosis with
-the reason the subject could not be judged.
-
-### d) Record
-
-```sh
-specbind tasks complete <spec> <task-id>
-specbind tasks block <spec> <task-id> --reason <reason>
-```
-
-One task per invocation. Never edit `tasks.yaml` to record progress.
-
-### e) Note what outlives the task
-
-Write implementation notes when the run found something the **next** agent needs:
-a non-obvious constraint, a dependency that behaved unlike the plan assumed, a
-trap that would otherwise be repeated.
-
-The bar is durability, not activity. A note restating what the task did is noise
-— the plan and Git already have that.
-
-**A diagnosis that found something durable is recorded here, by you.** The debug
-run writes nothing, and its report is run-scoped: what it learned about a trap
-survives only if you write it down. That is how the next task avoids the same
-issue instead of rediscovering it.
-
-Before creating or rewriting the managed Markdown, read its authoring contract:
-
-```sh
-specbind protocol read okf-authoring
-```
-
-Update the applicable discovered notes artifact in place. When none exists and
-the knowledge is durable enough to justify one, start from the default scaffold:
-
-```sh
-specbind template read spec implementation-notes/main
-```
-
-Follow every `create bind=<name>` instruction once and replace every reference
-to that name with the same resolved value. Materialize it only with real
-content. The filename is a locator, not identity;
-do not guess an existing notes path or create a second `artifact_id` for the same
-concern. Omit `create` instructions and copy `maintain` and `consume`
-instructions unchanged. If notes already exist and you revise them, read them
-with `--for maintain` and preserve their durable comments.
-
-### f) Checkpoint the completed task
-
-Only a task recorded `completed` is an eligible implementation checkpoint. Read
-the project policy now, before selecting another task:
-
-```sh
-specbind adapter read git
-```
-
-`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. An adapter
-carrying the exact `<!-- specbind:adapter-scaffold -->` marker is also inactive:
-say so in one line and commit nothing. Neither result turns into a request for
-new policy.
-
-When the adapter has guidance, follow it for **this task now**. The request to
-perform this mutating phase authorizes that narrow local checkpoint as the
-ordinary final step of this task's cycle. Stage only:
-
-- the deliberate implementation and test paths produced for this task
-- the `tasks.yaml` execution-state change produced by `tasks complete`
-- Implementation Notes created or revised from this task's durable finding
-
-Never include another task, unrelated work, completion metadata, rejected work,
-or partial implementation. An explicit user or root instruction that forbids
-commits wins, and tool permissions still apply. Commit guidance is not push
-guidance; never force-push or rewrite history. If the paths cannot be separated
-safely, stop before the Git operation and report the completed task as
-uncommitted.
-
-Record whether the checkpoint committed, was intentionally absent or inactive,
-or failed. Then re-read `tasks list` before selecting the next task. Never defer
-several eligible Task checkpoints to the end of the run.
-
-## 5. When something fails
+## 3. When something fails
 
 `BLOCKED`, unresolved `NEEDS_CONTEXT`, `CANNOT_REVIEW`, and a rejection surviving
 two rounds all go to the same place: **a fresh dispatch that receives the
@@ -269,7 +70,7 @@ inherits the reasoning that just failed reproduces it.
 When the rounds are spent, record the task blocked with a reason naming what is
 unresolved. A blocked task is a legitimate outcome.
 
-## 6. Never rescue the worktree
+## 4. Never rescue the worktree
 
 A blocked task stops this Spec's run. It is not an eligible completed-Task
 checkpoint, and partial source changes are never committed as a workaround.
@@ -286,101 +87,6 @@ unrelated work.
 
 Committing remains the project's call — the completed-task checkpoint step reads
 and follows that policy inside each cycle.
-
-## 7. Finish the implementation work
-
-### Spec-backed: finish at the tasks
-
-When the requested task outcomes are recorded, the implementation work is done.
-Every completed task has already crossed its own checkpoint decision. Stop as
-Section 9 says.
-
-### Direct: implement and review
-
-There is no approved task plan to dispatch. Implement the Roadmap item's summary
-in this context, against the repository's existing conventions. Before writing,
-state the observable done condition and the applicable project checks. If the
-summary leaves a product or architecture decision you cannot make narrowly,
-stop and route it through discovery; Direct is not permission to invent the
-missing canonical artifacts.
-
-Review the resulting diff under the run's selected mode. `inline` applies the
-correctness and weakened-verification standard from `task-review` here, using
-the Roadmap summary as the obligation. `required` dispatches a fresh reviewer
-with that summary, the actual diff, the checks, and the protocol; `off` skips
-only this run-scoped review. A rejection may return to implementation at most
-twice. `CANNOT_REVIEW` and an unresolved rejection enter the same bounded
-diagnosis route as Spec-backed work.
-
-When `required`, use the registered `specbind-reviewer` role when available,
-with an ordinary fresh subagent as the fallback.
-
-```sh
-specbind protocol read task-review
-```
-
-## 8. Checkpoint a Direct item
-
-This step is only for a Direct item. Spec-backed Task checkpoints already ran
-inside Section 4. A Direct item must establish the clean committed revision
-**before** Section 9 runs the completion handshake.
-Do not skip ahead and return here afterwards.
-
-```sh
-specbind adapter read git
-```
-
-`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. Stop
-there — that is an answer, not a missing file to work around.
-
-An adapter carrying the exact `<!-- specbind:adapter-scaffold -->` marker is an
-inactive scaffold, not project policy. Treat it as no guidance, say so in one
-line, and commit nothing. The marker classifies the whole document: ignore every
-other body line even when it looks actionable.
-
-When the adapter has guidance, follow it. The request to perform this mutating
-phase authorizes the adapter's narrow local checkpoint as its ordinary final
-step. It does not authorize anything broader:
-
-- An explicit user or root instruction that forbids commits wins, and tool
-  permissions still apply.
-- Commit guidance is not push guidance. Push only where the adapter says to, and
-  never force-push, rewrite history, or bypass a protected branch.
-- Stage only the paths this run produced. Unrelated work already in the worktree
-  is left exactly as it is.
-- Stop before the Git operation if the guidance is ambiguous, unsafe, or
-  conflicts with something else you were told.
-
-## 9. Where the run ends
-
-### Spec-backed: stop after the requested task cycles
-
-Report and stop. **Do not run the completion handshake.** `spec completion
-preflight` and `accept` belong to `specbind-validate-implementation`, and a
-milestone-wide convergence barrier comes before them.
-
-This is deliberate. You just spent the run convincing yourself each part was
-right, which makes you the worst-placed judge of whether the whole Spec is.
-
-### Direct: complete after the checkpoint
-
-There is no later Spec-level validation for Direct work, so this run finishes
-the item. Preflight needs the reviewed implementation at a **clean committed
-`HEAD`**. Do not manufacture one. If Section 8 produced no commit because the
-adapter gave no usable guidance or you lacked authority, say completion needs a
-commit and stop; the Roadmap item remains pending.
-
-Otherwise obtain the committed revision and run, in this order:
-
-```sh
-specbind milestone direct preflight <direct>
-specbind milestone direct complete <direct> --implementation-revision <revision>
-```
-
-Do not stop merely because the implementation commit succeeded. The successful
-handshake is what records the Direct item complete. If project policy also asks
-for lifecycle-state checkpoints, apply it once more to the CLI-owned Roadmap
-change after completion.
 
 ## Boundaries
 

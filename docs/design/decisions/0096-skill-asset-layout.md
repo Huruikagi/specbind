@@ -193,5 +193,6 @@ and generic are selected together.
 
 [Decision 0154](./0154-guided-configuration-workflow.md) later generalizes the
 renderer and exact-target removal logic from a single file to the complete known
-Skill package. `specbind-configure` is the first package with conditional
-references.
+Skill package. `specbind-configure` introduced conditional references;
+`specbind-adopt-existing`, `specbind-implement`, and `specbind-release` also use
+them for mutually exclusive invocations or a separately stopping branch.

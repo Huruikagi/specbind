@@ -142,6 +142,17 @@ static SKILLS: &[Skill] = &[
     },
 ];
 
+static ADOPT_EXISTING_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/resume.md",
+        source: include_str!("../../assets/skills/specbind-adopt-existing/references/resume.md"),
+    },
+    SkillResource {
+        relative_path: "references/start.md",
+        source: include_str!("../../assets/skills/specbind-adopt-existing/references/start.md"),
+    },
+];
+
 static CONFIGURE_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/adapters.md",
@@ -172,6 +183,24 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
         ),
     },
 ];
+
+static IMPLEMENT_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/direct.md",
+        source: include_str!("../../assets/skills/specbind-implement/references/direct.md"),
+    },
+    SkillResource {
+        relative_path: "references/spec-backed.md",
+        source: include_str!("../../assets/skills/specbind-implement/references/spec-backed.md"),
+    },
+];
+
+static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
+    relative_path: "references/bootstrap-release-adapter.md",
+    source: include_str!(
+        "../../assets/skills/specbind-release/references/bootstrap-release-adapter.md"
+    ),
+}];
 
 /// Lists every embedded skill.
 #[must_use]
@@ -257,7 +286,10 @@ impl Skill {
     #[must_use]
     pub fn resources(self) -> &'static [SkillResource] {
         match self.name {
+            "specbind-adopt-existing" => ADOPT_EXISTING_RESOURCES,
             "specbind-configure" => CONFIGURE_RESOURCES,
+            "specbind-implement" => IMPLEMENT_RESOURCES,
+            "specbind-release" => RELEASE_RESOURCES,
             _ => &[],
         }
     }

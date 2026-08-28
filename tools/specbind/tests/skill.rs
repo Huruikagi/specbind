@@ -100,39 +100,38 @@ fn installs_each_skill_to_the_accepted_target() {
 }
 
 #[test]
-fn configure_skill_carries_only_directly_routed_reference_files() {
-    let configure = skill::find("specbind-configure").expect("configuration skill");
-    let resources = configure.resources();
-    assert_eq!(resources.len(), 6);
-    let body = configure.body().expect("body");
-    for resource in resources {
-        assert!(resource.relative_path.starts_with("references/"));
-        assert!(!resource.relative_path.contains(".."));
-        assert!(
-            body.contains(resource.relative_path),
-            "entrypoint must directly route {}",
-            resource.relative_path
-        );
-        assert!(!resource.content().trim().is_empty());
-    }
-    for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
-        let files = configure.render_files(agent).expect("rendered package");
-        assert_eq!(files.len(), 7);
-        assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
-        assert!(
-            files
-                .iter()
-                .any(|file| file.target.ends_with("/references/aftercare.md"))
-        );
+fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
+    for (name, expected_resources) in [
+        ("specbind-adopt-existing", 2),
+        ("specbind-configure", 6),
+        ("specbind-implement", 2),
+        ("specbind-release", 1),
+    ] {
+        let entry = skill::find(name).expect("progressive skill package");
+        let resources = entry.resources();
+        assert_eq!(resources.len(), expected_resources, "{name}");
+        let body = entry.body().expect("body");
+        for resource in resources {
+            assert!(resource.relative_path.starts_with("references/"));
+            assert!(!resource.relative_path.contains(".."));
+            assert!(
+                body.contains(resource.relative_path),
+                "{name} entrypoint must directly route {}",
+                resource.relative_path
+            );
+            assert!(!resource.content().trim().is_empty());
+        }
+        for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
+            let files = entry.render_files(agent).expect("rendered package");
+            assert_eq!(files.len(), expected_resources + 1, "{name}");
+            assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
+        }
     }
 }
 
 #[test]
 fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
-    let body = skill::find("specbind-adopt-existing")
-        .expect("adoption skill")
-        .body()
-        .expect("body");
+    let body = skill_package_text("specbind-adopt-existing");
     for required in [
         "specbind adoption preflight",
         "specbind-discovery",
@@ -328,6 +327,11 @@ fn skill_documents(entry: skill::Skill) -> Vec<&'static str> {
         .collect()
 }
 
+fn skill_package_text(name: &str) -> String {
+    let entry = skill::find(name).unwrap_or_else(|| panic!("missing skill {name}"));
+    skill_documents(entry).join("\n")
+}
+
 #[test]
 fn every_registered_role_named_by_a_skill_exists_and_every_role_is_consumed() {
     let mut accepted = agent_role::all()
@@ -337,13 +341,15 @@ fn every_registered_role_named_by_a_skill_exists_and_every_role_is_consumed() {
     accepted.sort();
     let mut consumed = Vec::new();
     for entry in skill::all() {
-        for role in tokens_after(entry.body().expect("body"), "registered `") {
-            assert!(
-                accepted.contains(&role),
-                "{}: unknown registered role {role}",
-                entry.name
-            );
-            consumed.push(role);
+        for document in skill_documents(*entry) {
+            for role in tokens_after(document, "registered `") {
+                assert!(
+                    accepted.contains(&role),
+                    "{}: unknown registered role {role}",
+                    entry.name
+                );
+                consumed.push(role);
+            }
         }
     }
     consumed.sort();
@@ -595,10 +601,7 @@ fn contract_review_uses_scope_and_type_based_historical_discovery() {
 
 #[test]
 fn implementation_workflow_carries_notes_and_all_failure_routes() {
-    let body = skill::find("specbind-implement")
-        .expect("implementation skill")
-        .body()
-        .expect("body");
+    let body = skill_package_text("specbind-implement");
 
     for required in [
         "specbind artifact list <spec>",
@@ -641,10 +644,7 @@ fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
         "specbind-implement",
         "specbind-steering",
     ] {
-        let body = skill::find(name)
-            .unwrap_or_else(|| panic!("missing authoring skill {name}"))
-            .body()
-            .expect("skill body");
+        let body = skill_package_text(name);
         let same_value = body.contains("same resolved value") || body.contains("same\nvalue");
         assert!(
             body.contains("`create bind=<name>`") && body.contains("every reference") && same_value,
@@ -655,10 +655,7 @@ fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
 
 #[test]
 fn implementation_workflow_is_sequential_and_checkpoints_each_completed_task() {
-    let body = skill::find("specbind-implement")
-        .expect("implementation skill")
-        .body()
-        .expect("body");
+    let body = skill_package_text("specbind-implement");
 
     for required in [
         "Task execution is sequential.",
@@ -678,8 +675,7 @@ fn implementation_workflow_is_sequential_and_checkpoints_each_completed_task() {
 
 #[test]
 fn implementation_dispatch_carries_project_local_operating_authority() {
-    let implement = skill::find("specbind-implement").expect("implement skill");
-    let body = implement.body().expect("implement body");
+    let body = skill_package_text("specbind-implement");
 
     assert!(body.contains("project-local instruction files"));
     assert!(body.contains("required\n  non-destructive bookkeeping inside the project"));
@@ -697,10 +693,7 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
         "specbind-implement",
         "specbind-release",
     ] {
-        let body = skill::find(name)
-            .expect("adapter-consuming skill")
-            .body()
-            .expect("body");
+        let body = skill_package_text(name);
         assert!(
             body.contains("<!-- specbind:adapter-scaffold -->"),
             "{name} must recognize the dedicated adapter scaffold marker"
@@ -721,10 +714,7 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
 
 #[test]
 fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
-    let body = skill::find("specbind-release")
-        .expect("release skill")
-        .body()
-        .expect("body");
+    let body = skill_package_text("specbind-release");
 
     for required in [
         "Stop after bootstrap",

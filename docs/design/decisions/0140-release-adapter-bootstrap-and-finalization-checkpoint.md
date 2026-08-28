@@ -102,7 +102,8 @@ adapter cannot bypass the required completion handshake and fresh preflight.
 
 ## Implementation status
 
-Implemented. The embedded Release skill owns the bootstrap and finalization
-checkpoint branches, the default Git adapter names both eligible units, and the
-release forward-test scenarios cover the first-run stop and the clean finalized
-checkpoint.
+Implemented. The embedded Release package owns the bootstrap and finalization
+checkpoint branches. Its entrypoint directly loads the bootstrap reference only
+for an absent or scaffold-marked Release adapter and stops that invocation. The
+default Git adapter names both eligible units, and the release forward-test
+scenarios cover the first-run stop and the clean finalized checkpoint.

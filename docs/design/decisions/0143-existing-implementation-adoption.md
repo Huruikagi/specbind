@@ -215,6 +215,8 @@ work where the approved Requirements and current code differ.
 
 Implemented. `specbind adoption preflight` enforces the deterministic initial
 guards and returns the committed evidence revision. The embedded
-`specbind-adopt-existing` skill owns the two-invocation dossier workflow,
-Steering and source-drift stops, boundary confirmation, per-Spec reconciliation,
-and handoff to the existing Discovery and phase owners.
+`specbind-adopt-existing` package owns the two-invocation dossier workflow. Its
+entrypoint selects the directly linked Start or Resume reference from dossier
+presence while retaining the shared boundaries. The package owns Steering and
+source-drift stops, boundary confirmation, per-Spec reconciliation, and handoff
+to the existing Discovery and phase owners.

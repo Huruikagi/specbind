@@ -267,9 +267,11 @@ precedes lifecycle completion.
 
 ## Implementation status
 
-Implemented. `tools/specbind/assets/skills/specbind-implement/SKILL.md` is
-embedded and installed, and the `task-implementation`, `task-review`, and
-`debug` protocols are embedded.
+Implemented. The `tools/specbind/assets/skills/specbind-implement/` package is
+embedded and installed. Its entrypoint keeps the shared review, diagnosis, and
+authority controls and directly routes the mutually exclusive Spec-backed and
+Direct procedures under `references/`. The `task-implementation`, `task-review`,
+and `debug` protocols are embedded.
 
 Its forward tests are specified as scenarios I1 through I5 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.
