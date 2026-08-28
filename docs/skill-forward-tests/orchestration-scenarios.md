@@ -43,9 +43,10 @@ Accepted by [Decision 0153](../design/decisions/0153-unified-quick-plan-orchestr
 
 ### Q0 — A bare invocation asks for scope without starting work
 
-Invoke quick-plan directly without a Spec or explicit all-Spec request.
+Request accelerated planning without naming a Spec or explicitly requesting all
+Specs.
 
-> Ask: run quick-plan.
+> Ask: take the active work through to an approved plan in one go.
 
 - The Skill may read milestone status and presents the named-Spec and all-Spec
   choices, then stops for the answer.
