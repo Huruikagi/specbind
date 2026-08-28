@@ -27,7 +27,8 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
-- `tools/specbind/src/cli.rs` — shared CLI output contract, rendering helpers, and command-family re-exports
+- `tools/specbind/src/cli.rs` — transport facade and command-family re-exports
+- `tools/specbind/src/cli/output.rs` — shared CLI output contract, stream routing, escaping, and text-layout helpers
 - `tools/specbind/src/cli/` — stable command-family facades for migration, reads, tasks, external input, and lifecycle operations
 - `tools/specbind/src/cli/read/` — artifact/check, installation, catalog, and project-scope read command execution/rendering
 - `tools/specbind/src/cli/lifecycle/` — completion, gate, milestone mutation, release, contract-review, and status command execution/rendering
