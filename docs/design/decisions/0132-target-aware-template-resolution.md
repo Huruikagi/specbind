@@ -34,10 +34,8 @@ diagnostics. It resolves one selector and reports:
 
 - selector, source, type, and optional `artifact_id`;
 - `template_path` and template-relative `output_path`;
-- `target_path`, the exact SpecBind-root-relative path
-  `specs/<spec>/<output_path>`.
-- `project_path`, the exact project-root-relative path formed by prefixing the
-  configured `specDir` to `target_path`.
+- `project_path`, the exact project-root-relative path
+  `<specDir>/specs/<spec>/<output_path>`.
 
 The operation never creates, overwrites, or validates a completed live
 artifact. Its result is authoring location information, not mutation authority.

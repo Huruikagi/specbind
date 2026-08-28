@@ -249,7 +249,6 @@ pub fn template_resolve_spec(start: &Path, canonical_spec: &str, selector: &str)
         resolved.template_path.as_str(),
     );
     push_field(&mut output, "Output path", resolved.output_path.as_str());
-    push_field(&mut output, "Target path", &target_path);
     push_field(&mut output, "Project path", &project_path);
     CommandOutput::success(output.into_bytes())
 }

@@ -52,9 +52,8 @@ one milestone `roadmap` scaffold in English and Japanese. `template list/read`
 exposes all of them. Requirements, main Design, conditional UI Design, and the
 Roadmap body template are installed by default; a project can override any other selector under
 `settings/templates/` deliberately. `template resolve spec <spec> <selector>`
-reports the selected source, exact SpecBind-root-relative target path, and
-project-root-relative project path without writing it. `template read`
-validates and returns the raw scaffold, including
+reports the selected source and exact project-root-relative project path without
+writing it. `template read` validates and returns the raw scaffold, including
 its variables and instruction comments; the authoring agent materializes it.
 
 `template list spec` reports Design candidates rather than ordering every one
