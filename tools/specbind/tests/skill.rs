@@ -439,6 +439,9 @@ fn requirements_audits_existing_obligations_before_approval() {
     assert!(body.contains("Context, Scope, and Objective"));
     assert!(body.contains("stop before approval"));
     assert!(body.contains("Never use the approve command"));
+    assert!(body.contains("including its opening marker, body, and closing marker"));
+    assert!(body.contains("Never invent aliases such as `R2.AC1`"));
+    assert!(body.contains("specbind check traceability <spec>"));
 }
 
 #[test]
@@ -575,7 +578,7 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "specbind artifact list <spec>",
         "specbind artifact read <spec> implementation-notes/<artifact-id>",
         "specbind protocol read okf-authoring",
-        "specbind template render spec <spec> implementation-notes/main",
+        "specbind template read spec implementation-notes/main",
         "`CANNOT_REVIEW`",
         "Do not interrupt it, ask for an immediate\nreturn",
         "New caches, reports, coverage data",
@@ -599,6 +602,29 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         checkpoint < handshake,
         "the Direct workflow must present checkpoint before handshake"
     );
+}
+
+#[test]
+fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
+    for name in [
+        "specbind-discovery",
+        "specbind-requirements",
+        "specbind-design",
+        "specbind-gap-analysis",
+        "specbind-adopt-existing",
+        "specbind-implement",
+        "specbind-steering",
+    ] {
+        let body = skill::find(name)
+            .unwrap_or_else(|| panic!("missing authoring skill {name}"))
+            .body()
+            .expect("skill body");
+        let same_value = body.contains("same resolved value") || body.contains("same\nvalue");
+        assert!(
+            body.contains("`create bind=<name>`") && body.contains("every reference") && same_value,
+            "{name} must own agent-bound template materialization"
+        );
+    }
 }
 
 #[test]

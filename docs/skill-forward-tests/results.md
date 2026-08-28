@@ -17,7 +17,7 @@ without a pass are listed separately below.
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
 | Discovery | D1, D2, D4–D6, D8–D12 | D4, D6, D13 |
-| Requirements | R1–R5 | R1, R3, R4 |
+| Requirements | R1–R5 | R1, R3, R4, R6 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
@@ -55,6 +55,20 @@ only cancellation, while the complete-current-contract instruction led the
 driver to inspect `src/orders.py` and infer that order placement also belongs in
 the new Spec. That source-authority boundary should be investigated separately;
 it did not alter this scenario's fail-closed scaffold measurement.
+
+R6 was measured as Codex with `gpt-5.6-terra` at medium reasoning. On `a0f901d`
+the driver resolved both Unicode-variable references correctly but lost the
+durable `maintain` comment and initially proposed noncanonical active IDs, so no
+pass was recorded. After the Requirements skill paired binding substitution
+with byte-exact durable-comment copying and explicit positional ID guidance, a
+fresh run on `238b210` passed: `fixture-day` appeared exactly twice, no variable
+or `create` instruction remained, the complete `maintain` comment survived, and
+the project-owned template stayed byte-identical. Requirements approval used
+the four authored canonical IDs and left the Spec healthy in Design with only
+the expected missing-Design coverage diagnostics. The read-only debrief left
+the fixture state unchanged; its two observations restated an intentionally
+unspecified product-policy boundary and an already-conditional Contract read,
+so neither was retained as an actionable finding.
 
 C2 was re-measured on `7307f7a` after `scope/v1` began exposing its version as
 `const: 1`. The driver read that schema, created the confirmed cart milestone
@@ -167,6 +181,7 @@ translation.
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
 | R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
+| R6 | Codex | Product failure | On `a0f901d`, the driver correctly resolved the Unicode `作成日` binding once to `fixture-day` and replaced both references without changing the template, but first proposed noncanonical `R2.AC1`-style active IDs and omitted the template's complete `maintain` comment from the live Requirements. After correction it approved `2.1`-`2.3`; the fixture reached Design with the expected coverage diagnostics, but the durable-comment loss prevented a pass. |
 | C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |
 | S5 | Codex | Product failure | On `3c1b91b` and `81cc473`, durable testing guidance bypassed Steering and became root `TESTING.md`; `d10e05e` routed correctly but partially copied `maintain` and expanded into test implementation. The fresh `c6d21fd` run passed. |
 | R1 | Codex | Operator stopped | On `9cce3de`, the run produced a valid Requirements draft, but the controller began the usability debrief instead of continuing the required explicit-approval turn. The draft is evidence of neither a pass nor a product failure. |

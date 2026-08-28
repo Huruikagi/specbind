@@ -1,6 +1,6 @@
 # 0149: Bind the canonical Spec identity to a template rendering variable
 
-Status: Accepted
+Status: Superseded by 0151
 
 ## Context
 

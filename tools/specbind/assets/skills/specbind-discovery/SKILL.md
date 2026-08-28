@@ -254,13 +254,15 @@ specbind milestone create --scope -
 ```
 
 Author the candidate against the schema you just read. Materialize the Roadmap
-template's Markdown body into the candidate's `body`: apply its `create`
-guidance without copying that instruction, preserve `maintain` and `consume`
-instructions, and fill the scaffold with the confirmed milestone-wide request,
-boundaries, decomposition reasoning, and dependency rationale. Front Matter
-from the template never enters `body`; the milestone command owns the live
-Front Matter. `--help` describes the transport, not the strict document shape;
-do not probe a mutating command with guessed JSON to discover its fields.
+template's Markdown body into the candidate's `body`: resolve every
+`create bind=<name>` once, replace every reference to that name with the same
+value, apply its remaining `create` guidance without copying that instruction,
+preserve `maintain` and `consume` instructions, and fill the scaffold with the
+confirmed milestone-wide request, boundaries, decomposition reasoning, and
+dependency rationale. Front Matter from the template never enters `body`; the
+milestone command owns the live Front Matter. `--help` describes the transport,
+not the strict document shape; do not probe a mutating command with guessed JSON
+to discover its fields.
 
 With one already active, compose the complete replacement from the current value
 rather than writing it from scratch:
@@ -300,7 +302,7 @@ where `specDir` is the value configured in `.specbind.json`. Start from the
 template, and read the authoring protocol before you write:
 
 ```sh
-specbind template render spec <spec> brief
+specbind template read spec brief
 specbind protocol read okf-authoring
 specbind milestone status
 ```
@@ -315,14 +317,14 @@ authoritative scope lives in requirements, and this document is not
 fingerprinted. When the Spec already has a brief in this milestone, **fold the
 new request into it** rather than adding a second one.
 
-The rendered title and instruction comments are not a valid Brief by
+The template title and instruction comments are not a valid Brief by
 themselves. Include substantive request content before the first write.
 
-The render command substitutes CLI-owned template variables and preserves every
-instruction comment. On first materialization, omit `create` instructions and
-copy `maintain` and `consume` instructions unchanged. When folding into an
-existing brief, read it with `artifact read <spec> brief --for maintain` and
-preserve those durable comments.
+On first materialization, follow every `create bind=<name>` instruction once,
+replace every reference to that name with the same resolved value, and omit the
+`create` instruction. Copy `maintain` and `consume` instructions unchanged. When
+folding into an existing brief, read it with
+`artifact read <spec> brief --for maintain` and preserve those durable comments.
 
 ### Record what steering decided
 

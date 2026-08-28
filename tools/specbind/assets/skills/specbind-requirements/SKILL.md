@@ -49,12 +49,16 @@ not a fault.
   contract from the brief:
 
   ```sh
-  specbind template render spec <spec> requirements
+  specbind template read spec requirements
   ```
 
-  The rendered Requirements section is deliberately empty and is not a valid
-  live artifact. Replace it with at least one real Requirement and Acceptance
-  Criterion before the first write; never persist the scaffold as completion.
+  Follow every `create bind=<name>` instruction once, replace every reference
+  to that name with the same resolved value, and omit the `create` instruction
+  from the live artifact. Copy each complete `maintain` and `consume` comment,
+  including its opening marker, body, and closing marker, byte-for-byte. The
+  Requirements section is deliberately empty and is not a valid live artifact.
+  Replace it with at least one real Requirement and Acceptance Criterion before
+  the first write; never persist the scaffold as completion.
 
 - **Existing Spec** — read the current requirements and revise them in place:
 
@@ -145,6 +149,13 @@ against the set you chose.
 
 State the selection and why each ID is in it. This is part of what gets
 approved, not a detail derived quietly at the end.
+
+Use only the canonical positional form the Requirements parser derives: group
+number plus acceptance-criterion list position, such as `2.1`, `2.2`, and
+`2.3`. Never invent aliases such as `R2.AC1`. Before presenting the selection,
+run `specbind check traceability <spec>` against the authored draft; while the
+active set is still absent, it must recognize the full Requirements document
+without a Requirements diagnostic.
 
 ## 4. Review and revise
 

@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Note: Decision 0151 supersedes this Decision's built-in-variable clauses. The
+fail-closed scaffold and live-content requirements remain accepted.
+
 ## Context
 
 Decision 0149 makes the owning Spec visible in rendered artifact titles, but a

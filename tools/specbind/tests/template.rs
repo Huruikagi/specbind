@@ -96,6 +96,49 @@ fn project_milestone_template_overrides_the_embedded_default() {
 }
 
 #[test]
+fn non_spec_templates_accept_agent_bound_variables() {
+    let root = tempfile::tempdir().expect("temporary SpecBind root");
+    let milestone = root.path().join("settings/templates/roadmap.md");
+    fs::create_dir_all(milestone.parent().expect("milestone parent")).expect("create parent");
+    fs::write(
+        milestone,
+        concat!(
+            "---\ntype: SpecBind Roadmap\n---\n",
+            "<!-- specbind:instruction create bind=対象読者 Ask who will read it. -->\n",
+            "# {{対象読者}}向けRoadmap\n",
+        ),
+    )
+    .expect("write milestone template");
+
+    let steering = root.path().join("settings/templates/steering/audience.md");
+    fs::create_dir_all(steering.parent().expect("steering parent")).expect("create parent");
+    fs::write(
+        steering,
+        concat!(
+            "---\ntype: SpecBind Steering\nartifact_id: audience\n---\n",
+            "<!-- specbind:instruction create bind=対象読者 Ask who will read it. -->\n",
+            "# {{対象読者}}向けGuidance\n",
+        ),
+    )
+    .expect("write steering template");
+
+    let milestone_inventory =
+        template::discover_milestone_templates(root.path(), ProjectLanguage::En);
+    assert!(
+        milestone_inventory.issues.is_empty(),
+        "{:?}",
+        milestone_inventory.issues
+    );
+    let steering_inventory =
+        template::discover_steering_templates(root.path(), ProjectLanguage::En);
+    assert!(
+        steering_inventory.issues.is_empty(),
+        "{:?}",
+        steering_inventory.issues
+    );
+}
+
+#[test]
 fn milestone_template_rejects_cli_owned_frontmatter() {
     let root = tempfile::tempdir().expect("temporary SpecBind root");
     let target = root.path().join("settings/templates/roadmap.md");
@@ -185,15 +228,19 @@ fn materialized_requirements_and_design_satisfy_traceability() {
 /// would: at its declared output path, with only create instructions removed.
 fn materialize(specbind_root: &Path, language: ProjectLanguage) {
     for template in template::embedded_spec_templates(language) {
-        let content =
-            template::render_spec_template(specbind_root, language, "checkout", &template.selector)
-                .expect("rendered embedded template content");
+        let content = template::read_spec_template(specbind_root, language, &template.selector)
+            .expect("read embedded template content")
+            .0;
         let target = specbind_root
             .join("specs/checkout")
             .join(template.output_path.as_std_path());
         fs::create_dir_all(target.parent().expect("template parent"))
             .expect("create spec directory");
-        let scaffold = strip_instructions(&content);
+        let scaffold = strip_instructions(&resolve_default_bindings(
+            &content,
+            "checkout",
+            template.artifact_id.as_deref(),
+        ));
         let authored = complete_required_content(&template.selector, language, &scaffold);
         fs::write(target, authored).expect("write materialized artifact");
     }
@@ -240,9 +287,11 @@ fn unfilled_default_scaffolds_fail_closed() {
                 .into_iter()
                 .find(|template| template.selector == selector)
                 .expect("embedded template");
+            let content = template::read_spec_template(root.path(), language, selector)
+                .expect("read template")
+                .0;
             let rendered =
-                template::render_spec_template(root.path(), language, "checkout", selector)
-                    .expect("render template");
+                resolve_default_bindings(&content, "checkout", template.artifact_id.as_deref());
             let target = root
                 .path()
                 .join("specs/checkout")
@@ -262,7 +311,7 @@ fn unfilled_default_scaffolds_fail_closed() {
 }
 
 #[test]
-fn renders_the_canonical_spec_identity_and_preserves_create_guidance() {
+fn reads_agent_bound_variables_and_preserves_create_guidance() {
     for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
         for selector in [
             "brief",
@@ -272,39 +321,25 @@ fn renders_the_canonical_spec_identity_and_preserves_create_guidance() {
             "implementation-notes/main",
         ] {
             let root = tempfile::tempdir().expect("temporary SpecBind root");
-            let rendered = template::render_spec_template(
-                root.path(),
-                language,
-                "source-price-refresh",
-                selector,
-            )
-            .expect("render template");
-            assert!(rendered.contains("`source-price-refresh`"));
-            assert!(!rendered.contains("# `{{spec}}`"));
-            assert!(rendered.contains("specbind:instruction create bind=spec"));
+            let raw = template::read_spec_template(root.path(), language, selector)
+                .expect("read template")
+                .0;
+            assert!(raw.contains("{{spec}}"));
+            assert!(raw.contains("specbind:instruction create bind=spec"));
             if matches!(selector, "design/main" | "implementation-notes/main") {
-                assert!(rendered.contains("`main`"));
-                assert!(!rendered.contains("{{artifact_id}}"));
-                assert!(rendered.contains("specbind:instruction create bind=artifact_id"));
+                assert!(raw.contains("{{artifact_id}}"));
+                assert!(raw.contains("specbind:instruction create bind=artifact_id"));
             }
         }
     }
 }
 
 #[test]
-fn rejects_unbound_unknown_and_frontmatter_rendering_variables() {
+fn accepts_arbitrary_bound_variables_and_rejects_binding_faults() {
     let cases = [
         (
             "---\ntype: SpecBind Brief\n---\n# `{{spec}}` Brief\n",
             "TEMPLATE_VARIABLE_BINDING_MISSING",
-        ),
-        (
-            concat!(
-                "---\ntype: SpecBind Brief\n---\n",
-                "<!-- specbind:instruction create bind=title Choose it. -->\n",
-                "# `{{title}}` Brief\n",
-            ),
-            "TEMPLATE_VARIABLE_UNKNOWN",
         ),
         (
             concat!(
@@ -313,14 +348,6 @@ fn rejects_unbound_unknown_and_frontmatter_rendering_variables() {
                 "# Brief\n",
             ),
             "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
-        ),
-        (
-            concat!(
-                "---\ntype: SpecBind Brief\n---\n",
-                "<!-- specbind:instruction create bind=artifact_id Use it. -->\n",
-                "# `{{artifact_id}}` Brief\n",
-            ),
-            "TEMPLATE_VARIABLE_UNAVAILABLE",
         ),
     ];
     for (content, expected) in cases {
@@ -334,6 +361,29 @@ fn rejects_unbound_unknown_and_frontmatter_rendering_variables() {
             "expected {expected}: {:?}",
             inventory.issues
         );
+    }
+
+    let root = tempfile::tempdir().expect("temporary SpecBind root");
+    let target = root.path().join("settings/templates/specs/brief.md");
+    fs::create_dir_all(target.parent().expect("template parent")).expect("create parent");
+    fs::write(
+        target,
+        concat!(
+            "---\ntype: SpecBind Brief\n---\n",
+            "<!-- specbind:instruction create bind=今日の天気 Fetch Tokyo weather. -->\n",
+            "{{今日の天気}}の日に作成。{{今日の天気}}に合わせる。\n",
+        ),
+    )
+    .expect("write arbitrary variable template");
+    let inventory = template::discover_spec_templates(root.path(), ProjectLanguage::En);
+    assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+}
+
+fn resolve_default_bindings(content: &str, spec: &str, artifact_id: Option<&str>) -> String {
+    let content = content.replace("{{spec}}", spec);
+    match artifact_id {
+        Some(artifact_id) => content.replace("{{artifact_id}}", artifact_id),
+        None => content,
     }
 }
 

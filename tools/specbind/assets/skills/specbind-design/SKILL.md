@@ -185,14 +185,15 @@ whether each scaffold is `project` or `embedded`. For every listed
 
 ```sh
 specbind template resolve spec <spec> <design-selector>
-specbind template render spec <spec> <design-selector>
+specbind template read spec <design-selector>
 ```
 
 Write the authored document only to the reported `Target path`. Do not infer a
-filename from `artifact_id`, the Requirements path, or another Spec. Follow and
-omit each `create` instruction, and copy every `maintain` and `consume`
-instruction unchanged into the live artifact. Add the live-only traceability
-fields while authoring.
+filename from `artifact_id`, the Requirements path, or another Spec. Follow each
+`create bind=<name>` instruction once, replace every reference to that name with
+the same resolved value, and omit the `create` instruction. Copy every
+`maintain` and `consume` instruction unchanged into the live artifact. Add the
+live-only traceability fields while authoring.
 
 **A Design set exists** — read every current design artifact with
 `--for maintain`, then revise those artifacts in place.
@@ -237,7 +238,7 @@ absence of cross-spec impact.
 
 ```sh
 specbind template resolve spec <spec> contract
-specbind template render spec <spec> contract
+specbind template read spec contract
 ```
 
 Write the authored Contract only to the reported `Target path`. The `Source`

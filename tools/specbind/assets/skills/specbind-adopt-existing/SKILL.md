@@ -237,11 +237,13 @@ Before the first managed Markdown write, read:
 ```sh
 specbind protocol read okf-authoring
 specbind template resolve spec <spec> research
-specbind template render spec <spec> research
+specbind template read spec research
 ```
 
-Write or replace the Spec's Research from the resolved scaffold. Preserve its
-durable scoped instructions. Include the observation claims, exact evidence,
+Write or replace the Spec's Research from the resolved scaffold. Follow every
+`create bind=<name>` instruction once, replace every reference to that name with
+the same resolved value, and omit the `create` instruction. Preserve its durable
+scoped instructions. Include the observation claims, exact evidence,
 dispositions, and destinations needed by Design. Research remains background,
 not authority, and is deleted at release.
 

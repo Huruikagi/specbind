@@ -20,6 +20,7 @@
 #   d9     base plus an uncommitted edit to an owned file
 #   d12    base plus a steering document that cannot be parsed
 #   r1     milestone scoping a new `order` Spec, with its brief written
+#   r6     r1 plus a Requirements template with one repeated Unicode variable
 #   r3     milestone scoping a `cart` update that removes behavior, brief written
 #   r4     milestone scoping the `cart` quantity cap, brief written
 #   r5     r4 with the requirements gate already approved
@@ -340,11 +341,39 @@ d12)
         '! specbind steering list'
     ;;
 
-r1)
+r1 | r6)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
     brief order \
         "Customers cannot cancel an order once placed." \
         "Customers can cancel an order they placed before its cancellation window closes; a later cancellation is rejected."
+    if [ "$scenario" = r6 ]; then
+        cat > .specbind/settings/templates/specs/requirements.md <<'EOF'
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+
+<!-- specbind:instruction create bind=作成日
+Resolve `作成日` to the exact literal value `fixture-day`.
+-->
+
+# Requirements prepared on {{作成日}}
+
+Prepared on {{作成日}}.
+
+<!-- specbind:instruction maintain
+Keep this as the Spec's complete current behavioral contract.
+-->
+
+## Requirements
+EOF
+        expect "the repeated Unicode variable template was not accepted" \
+            'specbind template read spec requirements | grep -q "{{作成日}}"'
+        expect "the Unicode variable does not have two references" \
+            'test "$(grep -o "{{作成日}}" .specbind/settings/templates/specs/requirements.md | wc -l | tr -d " ")" = 2'
+    fi
     expect "order did not reach the requirements state" \
         'specbind spec status order | grep -q "State: requirements"'
     ;;

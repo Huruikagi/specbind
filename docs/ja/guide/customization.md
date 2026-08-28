@@ -42,7 +42,7 @@ Brief、Research、Contract、Implementation NotesのSpecテンプレートと�
 ```sh
 specbind template list spec
 specbind template read spec requirements
-specbind template render spec <spec> requirements
+specbind template read spec requirements
 specbind template list steering
 specbind template read steering document
 specbind template list milestone
@@ -57,36 +57,37 @@ specbind template resolve spec <spec> <selector>
 
 結果にはtemplateの`Source`と、SpecBindルート相対の完全な`Target path`が含まれます。
 
-Spec成果物を初めて作るときは、raw templateを直接コピーせず、対象Specを指定して
-renderします。SpecテンプレートのMarkdown本文では、組み込み変数`{{spec}}`を
-使用できます。DesignやImplementation Notesのようなcollectionテンプレートでは、
-Front Matterの`artifact_id`を表す`{{artifact_id}}`も使用できます。CLIはこれらを
-検証済みのidentityで展開し、instructionコメントはエージェントが作成指示を読める
-よう、そのまま返します。
+成果物を初めて作るときは、raw templateとその`create` instructionをエージェントが
+読み、materializeします。Markdown本文では、プロジェクトが任意の変数を
+`{{変数名}}`の形式で定義できます。変数名は空ではなく、空白と波括弧を含まない
+必要がありますが、日本語を含むUnicode名を使用できます。
 
 ```sh
-specbind template render spec <spec> <selector>
+specbind template read spec <selector>
 ```
 
-変数を使うテンプレートには、対応する`create` instructionがちょうど1つ必要です。
+異なる変数名ごとに、対応する`create` instructionがちょうど1つ必要です。同じ変数は
+本文で何度参照しても構いません。エージェントはbindingの指示を1回実行し、すべての
+同名参照を同じ値で置換します。CLIは値を持たず、名前の対応だけを検証します。
 
 ```markdown
-<!-- specbind:instruction create bind=spec
-`spec`は対象Specの正規identity。タイトルに残す。
+<!-- specbind:instruction create bind=今日の天気
+利用可能なMCPで、作成時点の東京の天気を取得する。
 -->
 
-# `{{spec}}` の要件
+{{今日の天気}}の日に作成。
+{{今日の天気}}に合わせた注意事項を記載する。
 ```
 
-collectionテンプレートで`{{artifact_id}}`を使う場合も、同様に
-`specbind:instruction create bind=artifact_id`を1つ対応づけます。singletonテンプレート
-には`artifact_id`がないため、この変数は使用できません。
+既定テンプレートの`spec`と`artifact_id`も特別な組み込み変数ではありません。それぞれの
+`create bind` instructionが、現在のauthoring contextやリテラルなFront Matterから値を
+取得するようエージェントへ指示します。
 
-変数とbindingの欠落、重複、未使用、未知の名前、Front Matterでの使用はテンプレート
-診断になります。未展開の変数が残った成果物も無効です。`template read`は比較や編集の
-ため、変数を含む元のテンプレートを引き続きbyte-exactに返します。
+変数とbindingの欠落、bindingの重複や未使用、`create`以外でのbinding、Front Matterでの
+使用はテンプレート診断になります。未展開の変数が残った成果物も無効です。
+`template read`は変数とinstructionを含む元のテンプレートをbyte-exactに返します。
 
-render結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
+read結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
 Requirementsは実際のRequirementとAcceptance Criterionを書くまで検証に失敗します。
 Brief、Research、Implementation Notesも、見出しやコメントだけでは有効になりません。
 作成指示に従って実内容を埋め、`create`コメントを除いてからlive artifactとして

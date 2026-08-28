@@ -492,44 +492,6 @@ pub fn read_spec_template(
     }
 }
 
-/// Renders one Spec template with the CLI-owned canonical Spec identity.
-///
-/// The raw read contract remains unchanged. Rendering refuses a partial or
-/// invalid template inventory and leaves instruction comments intact.
-///
-/// # Errors
-///
-/// Returns deterministic template or canonical-identity diagnostics.
-pub fn render_spec_template(
-    specbind_root: &Path,
-    language: ProjectLanguage,
-    canonical_spec: &str,
-    requested: &str,
-) -> Result<String, TemplateInventory> {
-    let (content, inventory) = read_spec_template(specbind_root, language, requested)?;
-    if !inventory.issues.is_empty() {
-        return Err(inventory);
-    }
-    if !crate::artifacts::canonical_id(canonical_spec) {
-        return Err(with_issue(
-            inventory,
-            "TEMPLATE_RENDER_SPEC_INVALID",
-            &Utf8PathBuf::from(SPEC_TEMPLATE_ROOT),
-            format!("canonical spec ID is invalid: {canonical_spec}"),
-        ));
-    }
-    let artifact_id = inventory
-        .templates
-        .iter()
-        .find(|template| template.selector == requested)
-        .and_then(|template| template.artifact_id.as_deref());
-    Ok(instruction::render_spec(
-        &content,
-        canonical_spec,
-        artifact_id,
-    ))
-}
-
 /// The project tree that scaffolds steering documents.
 pub const STEERING_TEMPLATE_ROOT: &str = "settings/templates/steering";
 

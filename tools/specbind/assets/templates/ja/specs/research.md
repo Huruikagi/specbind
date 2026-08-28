@@ -3,8 +3,9 @@ type: SpecBind Research
 ---
 
 <!-- specbind:instruction create bind=spec
-CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
-識別できるよう、タイトルに残す。
+`spec`を現在のauthoring contextにある正規のSpec identityとして解決する。
+すべての`{{spec}}`参照をその同じ値で置換し、ディレクトリ外で読んでも対象を
+識別できるようタイトルに残す。
 -->
 
 # `{{spec}}` のリサーチ

@@ -240,6 +240,22 @@ for another behavior change.
 - After confirmation, `spec status cart` shows the gate cleared and
   `requirement_ids: null`.
 
+### R6 — Project-defined variables are resolved once for every reference
+
+From the `r6` recipe — R1 with a project-owned Requirements template that binds
+the Unicode variable `作成日` and references it twice — run the requirements
+skill on `order`.
+
+> Ask: write the requirements for the new order spec.
+
+- `requirements.md` is valid and contains the binding's exact value
+  `fixture-day` twice.
+- Neither `{{作成日}}` nor any `create` instruction remains in the live
+  artifact. The template itself remains unchanged.
+- The normal R1 semantic contract and approval expectations still hold. A run
+  that merely copies the template, substitutes only one reference, or invents a
+  different value fails this scenario.
+
 ## Design scenarios
 
 Accepted by [Decision 0104](../design/decisions/0104-design-skill-contract.md).

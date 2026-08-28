@@ -108,11 +108,13 @@ specbind protocol read okf-authoring
 identity. `document` is the scaffold for any other subject and deliberately
 declares none.
 
-Follow every scoped instruction the template returns. Omit `create` comments
-from the materialized artifact. Treat each `maintain` and `consume` comment as
-one indivisible block: copy its opening marker, complete body, and closing marker
-byte-for-byte. Never excerpt or rewrite it. Existing documents already own their
-durable comments; preserve them when revising unrelated content.
+Follow every scoped instruction the template returns. Resolve every
+`create bind=<name>` once, replace every reference to that name with the same
+value, and omit `create` comments from the materialized artifact. Treat each
+`maintain` and `consume` comment as one indivisible block: copy its opening
+marker, complete body, and closing marker byte-for-byte. Never excerpt or
+rewrite it. Existing documents already own their durable comments; preserve
+them when revising unrelated content.
 
 Author guidance from established project evidence. Do not change source,
 configuration, or tests merely to make a statement in the new document true;

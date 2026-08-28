@@ -4,13 +4,15 @@ artifact_id: main
 ---
 
 <!-- specbind:instruction create bind=spec
-CLI は `spec` を正規の Spec identity で展開する。ディレクトリ外で読んでも対象を
-識別できるよう、タイトルに残す。
+`spec`を現在のauthoring contextにある正規のSpec identityとして解決する。
+すべての`{{spec}}`参照をその同じ値で置換し、ディレクトリ外で読んでも対象を
+識別できるようタイトルに残す。
 -->
 
 <!-- specbind:instruction create bind=artifact_id
-CLI は `artifact_id` を Front Matter のリテラルな collection identity から展開する。
-分割した設計文書を区別できるよう、タイトルに残す。
+`artifact_id`をこのテンプレートのFront Matterにあるリテラルなcollection identityとして
+解決する。すべての`{{artifact_id}}`参照をその同じ値で置換し、分割した設計文書を
+区別できるようタイトルに残す。
 -->
 
 # `{{spec}}` の設計 — `{{artifact_id}}`

@@ -4,13 +4,15 @@ artifact_id: main
 ---
 
 <!-- specbind:instruction create bind=spec
-The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
-the artifact remains identifiable when read outside its directory.
+Resolve `spec` to the canonical Spec identity in the current authoring context.
+Replace every `{{spec}}` reference with that exact value and keep it in the
+title so the artifact remains identifiable when read outside its directory.
 -->
 
 <!-- specbind:instruction create bind=artifact_id
-The CLI renders `artifact_id` from the literal collection identity in Front
-Matter. Keep it in the title so split Design documents remain distinguishable.
+Resolve `artifact_id` to the literal collection identity in this template's
+Front Matter. Replace every `{{artifact_id}}` reference with that exact value
+and keep it in the title so split Design documents remain distinguishable.
 -->
 
 # `{{spec}}` Design — `{{artifact_id}}`

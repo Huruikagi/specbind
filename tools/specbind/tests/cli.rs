@@ -2320,61 +2320,6 @@ fn falls_back_to_embedded_defaults_in_the_configured_language() {
                 .and(predicate::str::contains("specbind:instruction")),
         );
 
-    let mut render = Command::cargo_bin("specbind").expect("specbind binary should build");
-    render
-        .current_dir(root.path())
-        .args([
-            "template",
-            "render",
-            "spec",
-            "source-price-refresh",
-            "requirements",
-        ])
-        .assert()
-        .success()
-        .stdout(
-            predicate::str::contains("# `source-price-refresh` Requirements")
-                .and(predicate::str::contains("{{spec}}").not())
-                .and(predicate::str::contains(
-                    "specbind:instruction create bind=spec",
-                )),
-        )
-        .stderr("");
-
-    let mut render_collection =
-        Command::cargo_bin("specbind").expect("specbind binary should build");
-    render_collection
-        .current_dir(root.path())
-        .args([
-            "template",
-            "render",
-            "spec",
-            "source-price-refresh",
-            "design/main",
-        ])
-        .assert()
-        .success()
-        .stdout(
-            predicate::str::contains("# `source-price-refresh` Design — `main`")
-                .and(predicate::str::contains("{{artifact_id}}").not())
-                .and(predicate::str::contains(
-                    "specbind:instruction create bind=artifact_id",
-                )),
-        )
-        .stderr("");
-
-    let mut invalid_spec = Command::cargo_bin("specbind").expect("specbind binary should build");
-    invalid_spec
-        .current_dir(root.path())
-        .args(["template", "render", "spec", "Not-A-Spec", "requirements"])
-        .assert()
-        .failure()
-        .stdout("")
-        .stderr(
-            predicate::str::starts_with("ERROR TEMPLATE_RENDER_FAILED:")
-                .and(predicate::str::contains("TEMPLATE_RENDER_SPEC_INVALID")),
-        );
-
     write(
         root.path(),
         ".specbind.json",

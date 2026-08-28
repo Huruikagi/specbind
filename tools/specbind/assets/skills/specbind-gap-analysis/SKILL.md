@@ -132,16 +132,18 @@ forgetting.
 If you write it:
 
 ```sh
-specbind template render spec <spec> research
+specbind template read spec research
 ```
 
 If this is the first managed Markdown write in the run, read `okf-authoring` as
 directed above before materializing the artifact. Do not read it a second time
 when a Brief revision already required it.
 
-Follow every scoped instruction the template returns. Omit `create` comments
-from the materialized artifact, copy every `maintain` and `consume` comment
-unchanged, and write it at the Spec's research path.
+Follow every scoped instruction the template returns. Resolve every
+`create bind=<name>` once, replace every reference to that name with the same
+value, omit `create` comments from the materialized artifact, copy every
+`maintain` and `consume` comment unchanged, and write it at the Spec's research
+path.
 
 Do not persist the rendered heading as an empty placeholder. A live Research
 artifact requires substantive findings; when none are useful, keep it absent.

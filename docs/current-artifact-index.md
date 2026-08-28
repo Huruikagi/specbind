@@ -51,10 +51,8 @@ exposes all of them. Requirements, Design, and the Roadmap body template are
 installed by default; a project can override any other selector under
 `settings/templates/` deliberately. `template resolve spec <spec> <selector>`
 reports the selected source and exact SpecBind-root-relative target path without
-writing it. `template render spec <spec> <selector>` returns a materialization
-scaffold with the CLI-owned `{{spec}}` variable replaced by the canonical Spec
-identity and, for collections, the template's literal `artifact_id`, while
-preserving instruction comments.
+writing it. `template read` validates and returns the raw scaffold, including
+its variables and instruction comments; the authoring agent materializes it.
 
 Every template instruction explicitly names `create`, `maintain`, or `consume`.
 Materialization removes `create` and carries the two durable scopes into the
@@ -64,16 +62,17 @@ durable instruction scope. `rule list/read` expose the five fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
 maintain, and consume modes and reject live `create` instructions.
 
-Spec templates may use the built-in `{{spec}}` rendering variable in their
-Markdown body. Collection templates may additionally use `{{artifact_id}}`.
-Every use requires exactly one corresponding
-`specbind:instruction create bind=<variable>` comment. Template discovery
-rejects unavailable, missing, duplicate, unknown, unused, or Front Matter
-bindings, and live artifact discovery rejects an unresolved variable. The
+Managed template bodies may define project-owned `{{variable}}` references.
+Every distinct name requires exactly one corresponding
+`specbind:instruction create bind=<variable>` comment, while that name may be
+referenced any number of times. The agent resolves each binding once and uses
+the same value for all of its references; the CLI does not provide built-ins or
+substitute values. Template discovery rejects missing, duplicate, unused, or
+Front Matter bindings, and live artifact discovery rejects an unresolved
+variable. The
 default Requirements scaffold deliberately has no dummy live Requirement, and
 heading-only Brief, Research, or Implementation Notes artifacts fail live
-validation. More general customization remains tracked by
-[Issue #10](https://github.com/Huruikagi/specbind/issues/10).
+validation.
 
 Twelve immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by

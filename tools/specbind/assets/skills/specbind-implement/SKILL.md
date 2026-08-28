@@ -195,10 +195,12 @@ Update the applicable discovered notes artifact in place. When none exists and
 the knowledge is durable enough to justify one, start from the default scaffold:
 
 ```sh
-specbind template render spec <spec> implementation-notes/main
+specbind template read spec implementation-notes/main
 ```
 
-Materialize it only with real content. The filename is a locator, not identity;
+Follow every `create bind=<name>` instruction once and replace every reference
+to that name with the same resolved value. Materialize it only with real
+content. The filename is a locator, not identity;
 do not guess an existing notes path or create a second `artifact_id` for the same
 concern. Omit `create` instructions and copy `maintain` and `consume`
 instructions unchanged. If notes already exist and you revise them, read them
