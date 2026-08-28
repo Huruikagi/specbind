@@ -22,7 +22,7 @@ without a pass are listed separately below.
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
 | Existing-implementation adoption | None recorded | A1, A2 |
-| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3 |
+| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS7, DS8 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2, X4 |
 | Implementation | None recorded | I1–I4, I6 |
@@ -69,6 +69,30 @@ the expected missing-Design coverage diagnostics. The read-only debrief left
 the fixture state unchanged; its two observations restated an intentionally
 unspecified product-policy boundary and an already-conditional Contract read,
 so neither was retained as an actionable finding.
+
+DS7 and DS8 were measured as Codex on 2026-08-28 with `gpt-5.6-terra` at
+medium reasoning for the rule-selected Design template set. The first `effbd28`
+runs stopped before authoring: DS7 inferred the active Roadmap as a Steering
+selector, while DS8 lacked the parser grammar and error contract needed to
+choose a design. After the Skill limited Steering reads to exact listed
+selectors and the DS8 fixture supplied those semantics, both passed on
+`b5f17ae`: DS7 selected `design/main` and `design/ui`; DS8 selected only
+`design/main`; both reached 1/1 traceability with a complete Contract and fresh
+Design gate.
+
+The DS7 pass exposed a wrong-action risk after judgment: `template resolve`
+reported only a SpecBind-root-relative target, and the driver first wrote under
+the project-root `specs/` directory before repairing the placement. Builds
+`58f7c39` and `774a426` added one project-root-relative `Project path` and then
+removed the competing `Target path`. One intervening run was discarded because
+the driver approval prompt said to stop "immediately" and truncated the
+Design checkpoint. A fresh `774a426` run then correctly stopped because DS7
+still omitted the UI host, data-owner, and verification foundation; the fixture
+was repaired rather than weakening Design's fail-closed discovery rule. The
+final DS7 run on `7ff63a9` selected both Design artifacts, wrote only their
+reported `.specbind/specs/dashboard/` project paths, passed traceability and the
+Contract graph, recorded a fresh explicit Design gate, checkpointed commit
+`b880344`, and ended clean at `Next action: contract_review` without Tasks.
 
 C2 was re-measured on `7307f7a` after `scope/v1` began exposing its version as
 `const: 1`. The driver read that schema, created the confirmed cart milestone
