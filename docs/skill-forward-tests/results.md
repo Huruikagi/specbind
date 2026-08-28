@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-25. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-28. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -204,6 +204,7 @@ translation.
 | D7 | Claude Code | Not measured | No embedded `specbind-tasks` skill owned plan authoring at the time; the run correctly stopped. |
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
 | R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
+| Q0 | Codex | Product failure | On `dd8793f`, the fresh `gpt-5.6-terra` medium driver inferred named `cart` scope from the milestone's only participant and routed directly to Requirements. It added criterion 1.4 to `requirements.md` while leaving every gate `not_reached`, instead of presenting named/all scope choices without authoring. The quick-plan metadata and installed project instructions now route ambiguous accelerated-planning requests to the orchestrator before an actionable phase. |
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
 | R6 | Codex | Product failure | On `a0f901d`, the driver correctly resolved the Unicode `作成日` binding once to `fixture-day` and replaced both references without changing the template, but first proposed noncanonical `R2.AC1`-style active IDs and omitted the template's complete `maintain` comment from the live Requirements. After correction it approved `2.1`-`2.3`; the fixture reached Design with the expected coverage diagnostics, but the durable-comment loss prevented a pass. |
 | C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |

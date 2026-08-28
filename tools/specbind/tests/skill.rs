@@ -448,9 +448,10 @@ fn planning_orchestrator_metadata_exposes_named_all_and_bare_scope_behavior() {
         .expect("quick-plan")
         .metadata()
         .expect("metadata");
+    assert!(quick.description.contains("whenever the user asks"));
     assert!(quick.description.contains("one named Spec"));
-    assert!(quick.description.contains("every Spec-backed item"));
-    assert!(quick.description.contains("bare invocation asks"));
+    assert!(quick.description.contains("explicitly all Specs"));
+    assert!(quick.description.contains("neither scope is stated"));
     assert_eq!(quick.argument_hint.as_deref(), Some("[<spec> | --all]"));
     assert!(skill::find("specbind-batch-plan").is_none());
 }
@@ -465,6 +466,7 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
     assert!(body.contains("stop for the answer before any phase dispatch"));
     assert!(body.contains("Do not infer all scope from the number\nof participants"));
     assert!(body.contains("Scope selection is not delegated-gate authorization"));
+    assert!(body.contains("Do not infer the current\nactionable phase and start it directly"));
 }
 
 #[test]

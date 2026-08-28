@@ -1,10 +1,16 @@
 ---
 name: specbind-quick-plan
-description: Take one named Spec or, when explicitly requested, every Spec-backed item in the active milestone through to approved plans, ending at Tasks approval. A bare invocation asks which scope the user intends before doing work.
+description: Orchestrate accelerated planning whenever the user asks to take active work through approved plans in one go or reduce approval pauses. Supports one named Spec or explicitly all Specs; when neither scope is stated, ask before any phase work.
 argument-hint: "[<spec> | --all]"
 ---
 
 # Take an explicit scope through to approved task plans
+
+Select this Skill before any individual phase Skill whenever the request asks to
+take active work through an approved plan in one go or otherwise accelerate
+planning from Requirements through Tasks approval. This routing applies even
+when the request names neither a Spec nor all Specs. Do not infer the current
+actionable phase and start it directly; establish planning scope first.
 
 Orchestrate accelerated planning for either one named Spec or every Spec-backed
 participant in the active milestone. **You orchestrate and stay light.** The

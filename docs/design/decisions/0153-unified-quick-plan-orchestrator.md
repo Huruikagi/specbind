@@ -50,6 +50,11 @@ may read `specbind milestone status` to present the available scope, but it does
 not dispatch a phase, author an artifact, or approve a gate. It asks the user to
 choose one named Spec or all Specs and stops for the answer.
 
+The installed project instructions route any request to take active work through
+an approved plan in one go or reduce approval pauses to `specbind-quick-plan`
+before an individual phase Skill. Missing scope selects the orchestrator so it
+can ask; it is not a reason to infer the current actionable phase and begin it.
+
 The Skill never infers all scope from participant count. One participating Spec
 still leaves two different user intents: target that item, or select the complete
 milestone Spec set. Direct items are displayed as outside planning scope rather

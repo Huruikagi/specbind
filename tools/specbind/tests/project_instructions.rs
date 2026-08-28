@@ -47,6 +47,16 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("Do not answer that question from status")
     );
+    assert!(
+        applied
+            .content
+            .contains("Use `specbind-quick-plan` when the user asks")
+    );
+    assert!(
+        applied
+            .content
+            .contains("do not start the currently actionable phase directly")
+    );
 }
 
 #[test]
