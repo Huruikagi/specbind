@@ -1,9 +1,8 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 18] = [
+const ACCEPTED_SKILLS: [&str; 17] = [
     "specbind-adopt-existing",
-    "specbind-batch-plan",
     "specbind-contract-review",
     "specbind-debug",
     "specbind-design",
@@ -351,81 +350,66 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
 }
 
 #[test]
-fn planning_orchestrators_handoff_their_delegation_identity() {
-    for name in ["specbind-quick-plan", "specbind-batch-plan"] {
-        let body = skill::find(name)
-            .expect("planning orchestrator")
-            .body()
-            .expect("body");
-        assert!(body.contains("The request to run this skill is **not** that confirmation"));
-        assert!(
-            body.contains(&format!("workflow name\n`{name}`"))
-                || body.contains(&format!("workflow name `{name}`"))
-        );
-        assert!(body.contains("authorized gate names"));
-        assert!(body.contains("authorization omitted from the dispatch does not reach it"));
-    }
+fn planning_orchestrator_handoffs_its_delegation_identity() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("body");
+    assert!(body.contains("request to run this skill is **not**"));
+    assert!(body.contains("workflow name `specbind-quick-plan`"));
+    assert!(body.contains("authorized gate names"));
+    assert!(body.contains("authorization omitted"));
+    assert!(body.contains("from the dispatch does not reach it"));
 }
 
 #[test]
-fn planning_orchestrators_require_clean_checkpointed_phase_handoffs() {
-    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
-        let orchestrator = skill::find(selector).expect("planning orchestrator");
-        let body = orchestrator.body().expect("orchestrator body");
-
-        assert!(body.contains("adapter-directed checkpoint"), "{selector}");
-        assert!(body.contains("git status --short"), "{selector}");
-        assert!(body.contains("clean handoff"), "{selector}");
-        assert!(
-            body.contains("must not create a checkpoint owned by the dispatched phase"),
-            "{selector}"
-        );
-    }
+fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+    assert!(body.contains("adapter-directed checkpoint"));
+    assert!(body.contains("git status --short"));
+    assert!(body.contains("clean handoff"));
+    assert!(body.contains("must not\ncreate a checkpoint owned by the dispatched phase"));
 }
 
 #[test]
-fn planning_orchestrators_bound_the_unapproved_design_handoff() {
-    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
-        let orchestrator = skill::find(selector).expect("planning orchestrator");
-        let body = orchestrator.body().expect("orchestrator body");
-
-        assert!(body.contains("one deliberate exception"), "{selector}");
-        assert!(body.contains("Design artifact paths"), "{selector}");
-        assert!(body.contains("Contract path"), "{selector}");
-        assert!(body.contains("`spec.yaml`"), "{selector}");
-        assert!(body.contains("After `READY`"), "{selector}");
-        assert!(
-            body.contains("normal clean handoff is mandatory"),
-            "{selector}"
-        );
-    }
+fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+    assert!(body.contains("one deliberate exception"));
+    assert!(body.contains("Design artifact paths"));
+    assert!(body.contains("Contract path"));
+    assert!(body.contains("`spec.yaml`"));
+    assert!(body.contains("After `READY`"));
+    assert!(body.contains("normal clean handoff is mandatory"));
 }
 
 #[test]
-fn planning_orchestrators_validate_design_before_delegated_approval() {
-    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
-        let orchestrator = skill::find(selector).expect("planning orchestrator");
-        let body = orchestrator.body().expect("orchestrator body");
-
-        assert!(body.contains("without Design-gate authority"), "{selector}");
-        assert!(body.contains("Only"), "{selector}");
-        assert!(body.contains("retroactive"), "{selector}");
-    }
+fn planning_orchestrator_validates_design_before_delegated_approval() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+    assert!(body.contains("without Design-gate authority"));
+    assert!(body.contains("Only"));
+    assert!(body.contains("retroactively"));
 }
 
 #[test]
-fn planning_orchestrators_route_design_no_go_through_one_owned_revision() {
-    for selector in ["specbind-quick-plan", "specbind-batch-plan"] {
-        let orchestrator = skill::find(selector).expect("planning orchestrator");
-        let body = orchestrator.body().expect("orchestrator body");
-
-        assert!(body.contains("validator verdict"), "{selector}");
-        assert!(body.contains("phase status"), "{selector}");
-        assert!(body.contains("one revision"), "{selector}");
-        assert!(body.contains("fresh validation"), "{selector}");
-        assert!(body.contains("requirements rewind"), "{selector}");
-        assert!(body.contains("Never approve"), "{selector}");
-    }
+fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+    assert!(body.contains("validator\nverdict, not a phase status"));
+    assert!(body.contains("one revision"));
+    assert!(body.contains("fresh validation"));
+    assert!(body.contains("requirements rewind"));
+    assert!(body.contains("Never approve"));
 }
 
 #[test]
@@ -459,40 +443,39 @@ fn implementation_validation_preserves_exact_executed_command_text() {
 }
 
 #[test]
-fn planning_orchestrator_metadata_routes_one_item_and_all_items_exclusively() {
+fn planning_orchestrator_metadata_exposes_named_all_and_bare_scope_behavior() {
     let quick = skill::find("specbind-quick-plan")
         .expect("quick-plan")
         .metadata()
         .expect("metadata");
-    assert!(quick.description.contains("exactly one named or targeted"));
-    assert!(quick.description.contains("approved plan in one go"));
-    assert!(
-        quick
-            .description
-            .contains("including when it is the milestone's only Spec")
-    );
-    assert!(
-        quick
-            .description
-            .contains("do not use for an all-Spec request")
-    );
+    assert!(quick.description.contains("one named Spec"));
+    assert!(quick.description.contains("every Spec-backed item"));
+    assert!(quick.description.contains("bare invocation asks"));
+    assert_eq!(quick.argument_hint.as_deref(), Some("[<spec> | --all]"));
+    assert!(skill::find("specbind-batch-plan").is_none());
+}
 
-    let batch = skill::find("specbind-batch-plan")
-        .expect("batch-plan")
-        .metadata()
-        .expect("metadata");
-    assert!(batch.description.contains("every Spec-backed item"));
-    assert!(batch.description.contains("approved plans in one run"));
-    assert!(
-        batch
-            .description
-            .contains("even when it is the milestone's only Spec")
-    );
-    assert!(
-        batch
-            .description
-            .contains("explicitly requests every or all Specs")
-    );
+#[test]
+fn planning_orchestrator_requires_explicit_scope_without_mutation() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("body");
+    assert!(body.contains("neither a named target nor explicit all-Spec intent"));
+    assert!(body.contains("stop for the answer before any phase dispatch"));
+    assert!(body.contains("Do not infer all scope from the number\nof participants"));
+    assert!(body.contains("Scope selection is not delegated-gate authorization"));
+}
+
+#[test]
+fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
+    let body = skill::find("specbind-quick-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("body");
+    assert!(body.contains("Never expand named\nscope"));
+    assert!(body.contains("outside-scope blocker"));
+    assert!(body.contains("Once **every participating Spec**"));
 }
 
 #[test]

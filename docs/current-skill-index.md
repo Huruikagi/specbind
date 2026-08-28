@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Every supported Agent profile receives the same 18 skills:
+Every supported Agent profile receives the same 17 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
@@ -39,8 +39,7 @@ once.
 | `specbind-release` | Bind the release, execute project release guidance, verify the result, and finalize the complete milestone. |
 | `specbind-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
 | `specbind-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
-| `specbind-quick-plan` | Take one Spec-backed item from Brief through Tasks approval with one bounded delegated-gate authorization. |
-| `specbind-batch-plan` | Take every Spec-backed milestone item through Tasks approval while respecting phase dependencies and the global Contract-review barrier. |
+| `specbind-quick-plan` | Take one named Spec or every Spec-backed milestone item through Tasks approval with explicit scope and one bounded delegated-gate authorization. |
 
 There are no `kiro-*` compatibility aliases. Milestone and Spec initialization
 are deterministic CLI operations invoked by `specbind-discovery`, not separate

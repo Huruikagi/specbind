@@ -246,8 +246,8 @@ The project-local append-only Change Brief behavior is the observed problem, not
 - contract review: read contracts first and deepen into affected specs only when boundaries change or remain ambiguous.
 - `specbind-release`: perform gated, idempotent finalization after release success.
 
-Quick-plan and batch-plan boundaries through Tasks approval are fixed by
-Decision 0120. Implementation remains one Roadmap item per
+Quick-plan's named and all-Spec scope modes through Tasks approval are fixed by
+Decision 0153. Implementation remains one Roadmap item per
 `specbind-implement` invocation; a milestone-wide implementation orchestrator
 is tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 

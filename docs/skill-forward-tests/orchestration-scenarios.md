@@ -1,6 +1,6 @@
 # Orchestration and supporting forward-test scenarios
 
-[Back to the forward-test index](../skill-forward-tests.md). These cover quick/batch planning, checkpoints, gap analysis, steering, and failure handling.
+[Back to the forward-test index](../skill-forward-tests.md). These cover quick-plan scope modes, checkpoints, gap analysis, steering, and failure handling.
 
 ## Existing-implementation adoption scenarios
 
@@ -37,9 +37,21 @@ Prepare `a2` with dispatch instrumentation, then ask:
 - The worktree remains clean. With instrumentation, the agent log records the
   driver plus at least two fresh readers.
 
-## Quick-plan and batch-plan scenarios
+## Quick-plan scenarios
 
-Accepted by [Decision 0120](../design/decisions/0120-quick-and-batch-orchestration-contracts.md).
+Accepted by [Decision 0153](../design/decisions/0153-unified-quick-plan-orchestrator.md).
+
+### Q0 — A bare invocation asks for scope without starting work
+
+Invoke quick-plan directly without a Spec or explicit all-Spec request.
+
+> Ask: run quick-plan.
+
+- The Skill may read milestone status and presents the named-Spec and all-Spec
+  choices, then stops for the answer.
+- No phase is dispatched, no artifact is authored, and no gate is approved.
+- It does not infer all scope from the number of participating Specs.
+- Selecting scope alone is not treated as delegated-gate authorization.
 
 ### Q1 — Delegation is authorized once, and recorded
 
@@ -94,7 +106,7 @@ requirements skill stops and asks before invalidating.
 
 ### B1 — Requirements are not serialized behind dependencies
 
-Run batch-plan on a milestone whose roadmap has a dependency chain across three
+Run quick-plan in all scope on a milestone whose roadmap has a dependency chain across three
 Spec-backed items.
 
 > Ask: take every spec in this milestone through to approved plans.
@@ -105,7 +117,7 @@ Spec-backed items.
 
 ### B2 — The barrier is one global step, and Tasks are parallel after it
 
-Continue B1 to completion.
+Continue the all-scope B1 run to completion.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -115,7 +127,7 @@ Continue B1 to completion.
 
 ### B3 — Waves are read, not computed
 
-Watch the commands during a batch run.
+Watch the commands during an all-scope quick-plan run.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -125,7 +137,7 @@ Watch the commands during a batch run.
 
 ### B4 — One unfinished item stops the barrier, and scope is not touched
 
-Run batch-plan on a three-Spec milestone where one Spec's design cannot complete.
+Run quick-plan in all scope on a three-Spec milestone where one Spec's design cannot complete.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -137,7 +149,7 @@ Run batch-plan on a three-Spec milestone where one Spec's design cannot complete
 
 ### B5 — Direct items are reported, not absorbed
 
-Run batch-plan on a milestone containing both Spec-backed and Direct items.
+Run quick-plan in all scope on a milestone containing both Spec-backed and Direct items.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -147,7 +159,7 @@ Run batch-plan on a milestone containing both Spec-backed and Direct items.
 
 ### B6 — The run stops at Tasks approval
 
-Complete any batch run.
+Complete any all-scope quick-plan run.
 
 > Ask: take every spec in this milestone through to approved plans.
 

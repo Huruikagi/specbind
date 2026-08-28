@@ -1,6 +1,6 @@
 # 0128: Name the planning orchestrators by their stopping point
 
-Status: Accepted
+Status: Superseded by 0153
 
 ## Context
 

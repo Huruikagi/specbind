@@ -34,6 +34,7 @@ Related documents:
 - [Decision 0094: embedded product protocols](./decisions/0094-embedded-product-protocols.md)
 - [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
 - [Decision 0137: active default Git checkpoints](./decisions/0137-active-default-git-checkpoints.md)
+- [Decision 0153: unified quick-plan orchestrator](./decisions/0153-unified-quick-plan-orchestrator.md)
 
 Skills that may create Git checkpoints or push read the project-owned
 `settings/adapters/git.md` contract when present. The active default chooses one
@@ -60,10 +61,9 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
 | `kiro-impl` | `specbind-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
 | `kiro-review` | `specbind-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
-| `kiro-spec-batch` | `specbind-batch-plan` | Change | Implemented | Bring all Spec-backed milestone items through Tasks approval without implementation. |
 | `kiro-spec-design` | `specbind-design` | Change | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
 | `kiro-spec-init` | None | Remove | Implemented | Initialization is a deterministic Rust CLI operation invoked by discovery. |
-| `kiro-spec-quick` | `specbind-quick-plan` | Change | Implemented | Bring one Spec-backed item through Tasks approval using delegated gates. |
+| `kiro-spec-quick` and `kiro-spec-batch` | `specbind-quick-plan` | Merge | Implemented | Bring one named Spec or every Spec-backed milestone item through Tasks approval using one explicit scope and delegated gates. |
 | `kiro-spec-requirements` | `specbind-requirements` | Change | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
 | `kiro-spec-status` | `specbind-status` | Change | Implemented | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
 | `kiro-spec-tasks` | `specbind-tasks` | Change | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |

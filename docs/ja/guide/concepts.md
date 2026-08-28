@@ -134,7 +134,9 @@ Discovery
   -> Release
 ```
 
-`specbind-quick-plan`は、RequirementsからTasks承認までの確認回数を減らします。ただし、
+`specbind-quick-plan`は、RequirementsからTasks承認までの確認回数を減らします。Specを
+指定するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを
+対象にします。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。ただし、
 使う成果物、レビュー、CLIの検査は通常のワークフローと同じです。
 `specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。v1には、
 Milestone全体を自動で実装するオーケストレータはありません。

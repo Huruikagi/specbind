@@ -243,7 +243,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0117](./design/decisions/0117-steering-authoring-contract.md) | Accepted | Steering authoring, in-place synchronization, and the steering template scope |
 | [0118](./design/decisions/0118-gap-analysis-skill-contract.md) | Accepted | Gap analysis before Requirements, the request-mediated influence path, and marked conclusions |
 | [0119](./design/decisions/0119-writing-while-a-completion-stands.md) | Accepted | One statement of what writing costs once a Spec holds accepted completion |
-| [0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md) | Accepted | Quick-plan and batch-plan orchestration, phase-specific dependency shape, and retry classification |
+| [0120](./design/decisions/0120-quick-and-batch-orchestration-contracts.md) | Superseded by 0153 | Quick-plan and batch-plan orchestration, phase-specific dependency shape, and retry classification |
 | [0121](./design/decisions/0121-requirements-coverage-is-not-slots.md) | Accepted | Requirements coverage bounded to what the Spec owes |
 | [0122](./design/decisions/0122-finding-disposition-and-deferred-destination.md) | Accepted | Finding disposition and the project-named destination for deferred findings |
 | [0123](./design/decisions/0123-reverse-traceability-and-unconsumed-seams.md) | Accepted | Reverse task-scope traceability and unconsumed exported seams |
@@ -251,7 +251,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0125](./design/decisions/0125-agent-assisted-cc-sdd-migration.md) | Accepted | Agent-assisted cc-sdd migration and GitHub Pages handoff contract |
 | [0126](./design/decisions/0126-cli-owned-cc-sdd-migration-resolution.md) | Accepted | CLI-owned accepted cc-sdd migration resolution and freshness contract |
 | [0127](./design/decisions/0127-retire-cc-sdd-source-at-final-cutover.md) | Accepted | Git-guarded retirement of cc-sdd sources at final cutover |
-| [0128](./design/decisions/0128-plan-orchestrator-names.md) | Accepted | Planning orchestrator names expose their Tasks-approval stopping point |
+| [0128](./design/decisions/0128-plan-orchestrator-names.md) | Superseded by 0153 | Planning orchestrator names expose their Tasks-approval stopping point |
 | [0129](./design/decisions/0129-agent-role-capability-adapters.md) | Accepted | Agent-role capability adapters with project model overrides |
 | [0130](./design/decisions/0130-mise-github-backend-installation.md) | Accepted | Installation through mise's GitHub backend over the existing release assets |
 | [0131](./design/decisions/0131-okf-deferred-destination-and-adapter-state.md) | Accepted | Exact OKF-conformant deferred destination and visible adapter state |
@@ -276,3 +276,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0150](./design/decisions/0150-attributable-fail-closed-default-scaffolds.md) | Accepted | Collection identity rendering and fail-closed default scaffolds |
 | [0151](./design/decisions/0151-agent-bound-template-variables.md) | Accepted | Project-defined template variables resolved through bound agent instructions |
 | [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |
+| [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Accepted | One quick-plan orchestrator with explicit named and all-Spec scope modes |

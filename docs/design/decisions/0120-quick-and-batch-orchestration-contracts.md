@@ -1,6 +1,6 @@
 # 0120: Fix the quick-plan and batch-plan orchestration contracts
 
-Status: Accepted
+Status: Superseded by 0153
 
 ## Context
 

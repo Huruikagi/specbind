@@ -50,10 +50,6 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../../assets/skills/specbind-adopt-existing/SKILL.md"),
     },
     Skill {
-        name: "specbind-batch-plan",
-        source: include_str!("../../assets/skills/specbind-batch-plan/SKILL.md"),
-    },
-    Skill {
         name: "specbind-contract-review",
         source: include_str!("../../assets/skills/specbind-contract-review/SKILL.md"),
     },
