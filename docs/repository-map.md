@@ -273,3 +273,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0147](./design/decisions/0147-generic-agent-shared-surfaces.md) | Accepted | Generic `.agents/skills` and `AGENTS.md` integration with remaining-Agent shared ownership |
 | [0148](./design/decisions/0148-cli-feedback-and-issue-forms.md) | Accepted | Offline product feedback routing to bilingual public Issue Forms |
 | [0149](./design/decisions/0149-bound-spec-template-rendering-variable.md) | Accepted | Canonical Spec identity rendering bound to explicit create guidance |
+| [0150](./design/decisions/0150-attributable-fail-closed-default-scaffolds.md) | Accepted | Collection identity rendering and fail-closed default scaffolds |

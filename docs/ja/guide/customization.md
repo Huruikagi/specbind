@@ -58,9 +58,11 @@ specbind template resolve spec <spec> <selector>
 結果にはtemplateの`Source`と、SpecBindルート相対の完全な`Target path`が含まれます。
 
 Spec成果物を初めて作るときは、raw templateを直接コピーせず、対象Specを指定して
-renderします。SpecテンプレートのMarkdown本文では、組み込み変数`{{spec}}`だけを
-使用できます。CLIはこれを正規のSpec identityで展開し、instructionコメントは
-エージェントが作成指示を読めるよう、そのまま返します。
+renderします。SpecテンプレートのMarkdown本文では、組み込み変数`{{spec}}`を
+使用できます。DesignやImplementation Notesのようなcollectionテンプレートでは、
+Front Matterの`artifact_id`を表す`{{artifact_id}}`も使用できます。CLIはこれらを
+検証済みのidentityで展開し、instructionコメントはエージェントが作成指示を読める
+よう、そのまま返します。
 
 ```sh
 specbind template render spec <spec> <selector>
@@ -76,9 +78,19 @@ specbind template render spec <spec> <selector>
 # `{{spec}}` の要件
 ```
 
+collectionテンプレートで`{{artifact_id}}`を使う場合も、同様に
+`specbind:instruction create bind=artifact_id`を1つ対応づけます。singletonテンプレート
+には`artifact_id`がないため、この変数は使用できません。
+
 変数とbindingの欠落、重複、未使用、未知の名前、Front Matterでの使用はテンプレート
 診断になります。未展開の変数が残った成果物も無効です。`template read`は比較や編集の
 ため、変数を含む元のテンプレートを引き続きbyte-exactに返します。
+
+render結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
+Requirementsは実際のRequirementとAcceptance Criterionを書くまで検証に失敗します。
+Brief、Research、Implementation Notesも、見出しやコメントだけでは有効になりません。
+作成指示に従って実内容を埋め、`create`コメントを除いてからlive artifactとして
+検証・保存してください。
 
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。

@@ -8,7 +8,12 @@ The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
 the artifact remains identifiable when read outside its directory.
 -->
 
-# `{{spec}}` Implementation Notes
+<!-- specbind:instruction create bind=artifact_id
+The CLI renders `artifact_id` from the literal collection identity in Front
+Matter. Keep it in the title so separate note collections remain distinguishable.
+-->
+
+# `{{spec}}` Implementation Notes — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
 Persistent free-form memory for whoever implements this change next. Record the

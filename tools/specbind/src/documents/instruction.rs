@@ -10,6 +10,8 @@ use pulldown_cmark::{Event, Parser};
 const PREFIX: &str = "specbind:instruction";
 const SPEC_VARIABLE: &str = "spec";
 const SPEC_TOKEN: &str = "{{spec}}";
+const ARTIFACT_ID_VARIABLE: &str = "artifact_id";
+const ARTIFACT_ID_TOKEN: &str = "{{artifact_id}}";
 
 /// The lifecycle audience named by one managed instruction comment.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -69,9 +71,13 @@ pub fn validate_template(body: &str) -> Vec<InstructionIssue> {
 /// Validates scoped instructions and rendering-variable bindings in a Spec
 /// artifact template.
 #[must_use]
-pub fn validate_spec_template(body: &str) -> Vec<InstructionIssue> {
+pub fn validate_spec_template(body: &str, artifact_id: Option<&str>) -> Vec<InstructionIssue> {
     let (instructions, mut issues) = inspect(body);
-    issues.extend(validate_bindings(body, &instructions));
+    issues.extend(validate_bindings(
+        body,
+        &instructions,
+        artifact_id.is_some(),
+    ));
     issues
 }
 
@@ -115,24 +121,31 @@ pub fn validate_live(body: &str) -> Vec<InstructionIssue> {
     issues
 }
 
-/// Renders the one v1 built-in variable outside managed instruction comments.
+/// Renders the built-in Spec-template variables outside managed instruction
+/// comments.
 ///
 /// The caller validates the template before rendering and supplies the already
 /// validated canonical Spec identity. Instruction comments remain byte-exact so
 /// an authoring agent can still consume `create` guidance before omitting it.
 #[must_use]
-pub fn render_spec(content: &str, canonical_spec: &str) -> String {
+pub fn render_spec(content: &str, canonical_spec: &str, artifact_id: Option<&str>) -> String {
     let (instructions, _) = inspect(content);
     let mut output = String::with_capacity(content.len());
     let mut cursor = 0;
     for instruction in instructions {
-        output.push_str(
-            &content[cursor..instruction.range.start].replace(SPEC_TOKEN, canonical_spec),
-        );
+        output.push_str(&render_segment(
+            &content[cursor..instruction.range.start],
+            canonical_spec,
+            artifact_id,
+        ));
         output.push_str(&content[instruction.range.clone()]);
         cursor = instruction.range.end;
     }
-    output.push_str(&content[cursor..].replace(SPEC_TOKEN, canonical_spec));
+    output.push_str(&render_segment(
+        &content[cursor..],
+        canonical_spec,
+        artifact_id,
+    ));
     output
 }
 
@@ -227,7 +240,11 @@ fn inspect(content: &str) -> (Vec<Instruction>, Vec<InstructionIssue>) {
     (instructions, issues)
 }
 
-fn validate_bindings(body: &str, instructions: &[Instruction]) -> Vec<InstructionIssue> {
+fn validate_bindings(
+    body: &str,
+    instructions: &[Instruction],
+    has_artifact_id: bool,
+) -> Vec<InstructionIssue> {
     let mut issues = Vec::new();
     let variables = rendering_variables(&mask_instruction_ranges(body, instructions));
     let mut bindings: BTreeMap<&str, usize> = BTreeMap::new();
@@ -235,12 +252,19 @@ fn validate_bindings(body: &str, instructions: &[Instruction]) -> Vec<Instructio
         let Some(binding) = instruction.binding.as_deref() else {
             continue;
         };
-        if binding != SPEC_VARIABLE {
+        if binding != SPEC_VARIABLE && binding != ARTIFACT_ID_VARIABLE {
             issues.push(InstructionIssue {
                 code: "TEMPLATE_VARIABLE_UNKNOWN",
                 message: format!(
-                    "unknown template rendering variable {binding}; expected {SPEC_VARIABLE}"
+                    "unknown template rendering variable {binding}; expected {SPEC_VARIABLE} or {ARTIFACT_ID_VARIABLE}"
                 ),
+            });
+        }
+        if binding == ARTIFACT_ID_VARIABLE && !has_artifact_id {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_UNAVAILABLE",
+                message: "template rendering variable artifact_id requires a literal collection artifact_id"
+                    .to_owned(),
             });
         }
         *bindings.entry(binding).or_default() += 1;
@@ -264,12 +288,22 @@ fn validate_bindings(body: &str, instructions: &[Instruction]) -> Vec<Instructio
         }
     }
     for variable in variables {
-        if variable != SPEC_VARIABLE {
+        if variable != SPEC_VARIABLE && variable != ARTIFACT_ID_VARIABLE {
             issues.push(InstructionIssue {
                 code: "TEMPLATE_VARIABLE_UNKNOWN",
                 message: format!(
-                    "unknown template rendering variable {variable}; expected {SPEC_VARIABLE}"
+                    "unknown template rendering variable {variable}; expected {SPEC_VARIABLE} or {ARTIFACT_ID_VARIABLE}"
                 ),
+            });
+        }
+        if variable == ARTIFACT_ID_VARIABLE
+            && !has_artifact_id
+            && !bindings.contains_key(variable.as_str())
+        {
+            issues.push(InstructionIssue {
+                code: "TEMPLATE_VARIABLE_UNAVAILABLE",
+                message: "template rendering variable artifact_id requires a literal collection artifact_id"
+                    .to_owned(),
             });
         }
         if !bindings.contains_key(variable.as_str()) {
@@ -288,6 +322,14 @@ fn validate_bindings(body: &str, instructions: &[Instruction]) -> Vec<Instructio
     });
     issues.dedup();
     issues
+}
+
+fn render_segment(segment: &str, canonical_spec: &str, artifact_id: Option<&str>) -> String {
+    let rendered = segment.replace(SPEC_TOKEN, canonical_spec);
+    match artifact_id {
+        Some(artifact_id) => rendered.replace(ARTIFACT_ID_TOKEN, artifact_id),
+        None => rendered,
+    }
 }
 
 fn rendering_variables(content: &str) -> BTreeSet<String> {
@@ -407,31 +449,38 @@ mod tests {
             "-->\n",
             "# `{{spec}}` Requirements\n",
         );
-        assert!(validate_spec_template(valid).is_empty());
+        assert!(validate_spec_template(valid, None).is_empty());
 
-        let missing = validate_spec_template("# `{{spec}}` Requirements\n");
+        let missing = validate_spec_template("# `{{spec}}` Requirements\n", None);
         assert_eq!(missing[0].code, "TEMPLATE_VARIABLE_BINDING_MISSING");
 
         let unused = validate_spec_template(
             "<!-- specbind:instruction create bind=spec Render the identity. -->\n# Requirements\n",
+            None,
         );
         assert_eq!(unused[0].code, "TEMPLATE_VARIABLE_BINDING_UNUSED");
 
-        let duplicate = validate_spec_template(concat!(
-            "<!-- specbind:instruction create bind=spec First. -->\n",
-            "<!-- specbind:instruction create bind=spec Second. -->\n",
-            "# `{{spec}}` Requirements\n",
-        ));
+        let duplicate = validate_spec_template(
+            concat!(
+                "<!-- specbind:instruction create bind=spec First. -->\n",
+                "<!-- specbind:instruction create bind=spec Second. -->\n",
+                "# `{{spec}}` Requirements\n",
+            ),
+            None,
+        );
         assert!(
             duplicate
                 .iter()
                 .any(|issue| issue.code == "TEMPLATE_VARIABLE_BINDING_DUPLICATE")
         );
 
-        let durable = validate_spec_template(concat!(
-            "<!-- specbind:instruction maintain bind=spec Keep it. -->\n",
-            "# `{{spec}}` Requirements\n",
-        ));
+        let durable = validate_spec_template(
+            concat!(
+                "<!-- specbind:instruction maintain bind=spec Keep it. -->\n",
+                "# `{{spec}}` Requirements\n",
+            ),
+            None,
+        );
         assert!(
             durable
                 .iter()
@@ -460,9 +509,28 @@ mod tests {
             "-->\n",
             "# `{{spec}}` Requirements\n",
         );
-        let rendered = render_spec(source, "source-price-refresh");
+        let rendered = render_spec(source, "source-price-refresh", None);
         assert!(rendered.contains("literal token `{{spec}}`"));
         assert!(rendered.contains("# `source-price-refresh` Requirements"));
+    }
+
+    #[test]
+    fn binds_and_renders_artifact_id_only_for_collection_templates() {
+        let source = concat!(
+            "<!-- specbind:instruction create bind=spec Use the Spec identity. -->\n",
+            "<!-- specbind:instruction create bind=artifact_id Use the artifact identity. -->\n",
+            "# `{{spec}}` Design — `{{artifact_id}}`\n",
+        );
+        assert!(validate_spec_template(source, Some("persistence")).is_empty());
+        let rendered = render_spec(source, "checkout", Some("persistence"));
+        assert!(rendered.contains("# `checkout` Design — `persistence`"));
+
+        let unavailable = validate_spec_template(source, None);
+        assert!(
+            unavailable
+                .iter()
+                .any(|issue| issue.code == "TEMPLATE_VARIABLE_UNAVAILABLE")
+        );
     }
 
     #[test]

@@ -5,7 +5,7 @@ use std::fs;
 use std::path::Path;
 
 use camino::Utf8PathBuf;
-use pulldown_cmark::{Event, Parser};
+use pulldown_cmark::{Event, Parser, Tag, TagEnd};
 use serde_json::{Map, Value};
 use walkdir::WalkDir;
 
@@ -394,18 +394,25 @@ fn validate_profile(
             )
         }));
     }
-    if kind == ArtifactKind::Research && body.trim().is_empty() {
+    if kind == ArtifactKind::Brief && !has_substantive_content(body) {
+        issues.push(issue(
+            "ARTIFACT_BRIEF_BODY_EMPTY",
+            Some(path.clone()),
+            "brief body must contain substantive non-heading, non-comment content",
+        ));
+    }
+    if kind == ArtifactKind::Research && !has_substantive_content(body) {
         issues.push(issue(
             "ARTIFACT_RESEARCH_BODY_EMPTY",
             Some(path.clone()),
-            "research body must be non-empty",
+            "research body must contain substantive non-heading, non-comment content",
         ));
     }
-    if kind == ArtifactKind::ImplementationNotes && !has_non_comment_content(body) {
+    if kind == ArtifactKind::ImplementationNotes && !has_substantive_content(body) {
         issues.push(issue(
             "ARTIFACT_IMPLEMENTATION_NOTES_BODY_EMPTY",
             Some(path.clone()),
-            "implementation-notes body must contain non-comment content",
+            "implementation-notes body must contain substantive non-heading, non-comment content",
         ));
     }
     issues
@@ -607,14 +614,25 @@ fn artifact_order(artifact: &Artifact) -> (u8, &str) {
     (rank, artifact.artifact_id.as_deref().unwrap_or(""))
 }
 
-fn has_non_comment_content(body: &str) -> bool {
-    Parser::new(body).any(|event| match event {
-        Event::Text(value) | Event::Code(value) => !value.trim().is_empty(),
-        Event::Html(value) | Event::InlineHtml(value) => {
-            !is_complete_comment(&value) && !value.trim().is_empty()
+fn has_substantive_content(body: &str) -> bool {
+    let body = instruction::mask(body);
+    let mut in_heading = false;
+    for event in Parser::new(&body) {
+        match event {
+            Event::Start(Tag::Heading { .. }) => in_heading = true,
+            Event::End(TagEnd::Heading(_)) => in_heading = false,
+            Event::Text(value) | Event::Code(value) if !in_heading && !value.trim().is_empty() => {
+                return true;
+            }
+            Event::Html(value) | Event::InlineHtml(value)
+                if !in_heading && !is_complete_comment(&value) && !value.trim().is_empty() =>
+            {
+                return true;
+            }
+            _ => {}
         }
-        _ => false,
-    })
+    }
+    false
 }
 
 fn is_complete_comment(value: &str) -> bool {

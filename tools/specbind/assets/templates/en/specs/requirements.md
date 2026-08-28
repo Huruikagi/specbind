@@ -40,10 +40,9 @@ requirement.
 
 ## Requirements
 
-### Requirement 1: Name the capability
-
-**Objective:** State who needs this capability and why.
-
-#### Acceptance Criteria
-
-1. State one observable, checkable outcome.
+<!-- specbind:instruction create
+Replace this empty section with at least one real Requirement before writing the
+live artifact. Use `### Requirement N: Title`, an optional objective, then
+`#### Acceptance Criteria` and a non-empty ordered list. The empty scaffold is
+deliberately not a valid live Requirements artifact.
+-->

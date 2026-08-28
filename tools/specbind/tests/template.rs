@@ -43,9 +43,14 @@ fn embeds_one_official_template_per_artifact_type_in_every_language() {
                 .all(|template| template.source == TemplateSource::Embedded)
         );
         for selector in EXPECTED_SELECTORS {
+            let resolved = templates
+                .iter()
+                .find(|template| template.selector == selector)
+                .expect("resolved embedded template");
             let content = template::read_embedded(language, selector).expect("embedded template");
             assert!(
-                instruction::validate_spec_template(&content).is_empty(),
+                instruction::validate_spec_template(&content, resolved.artifact_id.as_deref())
+                    .is_empty(),
                 "{language:?} template {selector} has invalid scoped instructions or bindings"
             );
         }
@@ -188,7 +193,71 @@ fn materialize(specbind_root: &Path, language: ProjectLanguage) {
             .join(template.output_path.as_std_path());
         fs::create_dir_all(target.parent().expect("template parent"))
             .expect("create spec directory");
-        fs::write(target, strip_instructions(&content)).expect("write materialized artifact");
+        let scaffold = strip_instructions(&content);
+        let authored = complete_required_content(&template.selector, language, &scaffold);
+        fs::write(target, authored).expect("write materialized artifact");
+    }
+}
+
+fn complete_required_content(selector: &str, language: ProjectLanguage, scaffold: &str) -> String {
+    let addition = match (selector, language) {
+        ("brief", ProjectLanguage::En) => "\nRequested change.\n",
+        ("brief", ProjectLanguage::Ja) => "\n依頼された変更。\n",
+        ("research", ProjectLanguage::En) => "\nDurable finding.\n",
+        ("research", ProjectLanguage::Ja) => "\n保持する調査結果。\n",
+        ("requirements", ProjectLanguage::En) => concat!(
+            "\n### Requirement 1: Checkout\n\n",
+            "#### Acceptance Criteria\n\n",
+            "1. Checkout works.\n",
+        ),
+        ("requirements", ProjectLanguage::Ja) => concat!(
+            "\n### 要件 1: チェックアウト\n\n",
+            "#### 受け入れ基準\n\n",
+            "1. チェックアウトが動作する。\n",
+        ),
+        ("implementation-notes/main", ProjectLanguage::En) => "\nRemember this.\n",
+        ("implementation-notes/main", ProjectLanguage::Ja) => "\nこの知識を保持する。\n",
+        _ => "",
+    };
+    format!("{}{}", scaffold.trim_end(), addition)
+}
+
+#[test]
+fn unfilled_default_scaffolds_fail_closed() {
+    let cases = [
+        ("brief", "ARTIFACT_BRIEF_BODY_EMPTY"),
+        ("research", "ARTIFACT_RESEARCH_BODY_EMPTY"),
+        ("requirements", "REQUIREMENTS_GROUP_MISSING"),
+        (
+            "implementation-notes/main",
+            "ARTIFACT_IMPLEMENTATION_NOTES_BODY_EMPTY",
+        ),
+    ];
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        for (selector, expected) in cases {
+            let root = tempfile::tempdir().expect("temporary SpecBind root");
+            let template = template::embedded_spec_templates(language)
+                .into_iter()
+                .find(|template| template.selector == selector)
+                .expect("embedded template");
+            let rendered =
+                template::render_spec_template(root.path(), language, "checkout", selector)
+                    .expect("render template");
+            let target = root
+                .path()
+                .join("specs/checkout")
+                .join(template.output_path.as_std_path());
+            fs::create_dir_all(target.parent().expect("template parent"))
+                .expect("create spec directory");
+            fs::write(target, strip_instructions(&rendered)).expect("write unfilled scaffold");
+
+            let inventory = artifacts::discover_spec(root.path(), "checkout");
+            assert!(
+                inventory.issues.iter().any(|issue| issue.code == expected),
+                "{language:?} {selector} should report {expected}: {:?}",
+                inventory.issues
+            );
+        }
     }
 }
 
@@ -213,6 +282,11 @@ fn renders_the_canonical_spec_identity_and_preserves_create_guidance() {
             assert!(rendered.contains("`source-price-refresh`"));
             assert!(!rendered.contains("# `{{spec}}`"));
             assert!(rendered.contains("specbind:instruction create bind=spec"));
+            if matches!(selector, "design/main" | "implementation-notes/main") {
+                assert!(rendered.contains("`main`"));
+                assert!(!rendered.contains("{{artifact_id}}"));
+                assert!(rendered.contains("specbind:instruction create bind=artifact_id"));
+            }
         }
     }
 }
@@ -239,6 +313,14 @@ fn rejects_unbound_unknown_and_frontmatter_rendering_variables() {
                 "# Brief\n",
             ),
             "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
+        ),
+        (
+            concat!(
+                "---\ntype: SpecBind Brief\n---\n",
+                "<!-- specbind:instruction create bind=artifact_id Use it. -->\n",
+                "# `{{artifact_id}}` Brief\n",
+            ),
+            "TEMPLATE_VARIABLE_UNAVAILABLE",
         ),
     ];
     for (content, expected) in cases {

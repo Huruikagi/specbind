@@ -8,7 +8,12 @@ CLI は `spec` を正規の Spec identity で展開する。ディレクトリ�
 識別できるよう、タイトルに残す。
 -->
 
-# `{{spec}}` の実装メモ
+<!-- specbind:instruction create bind=artifact_id
+CLI は `artifact_id` を Front Matter のリテラルな collection identity から展開する。
+分けて保持する実装メモを区別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` の実装メモ — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
 次にこの変更を実装する担当者のための、永続的な自由記述メモ。

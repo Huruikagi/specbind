@@ -143,6 +143,9 @@ Follow every scoped instruction the template returns. Omit `create` comments
 from the materialized artifact, copy every `maintain` and `consume` comment
 unchanged, and write it at the Spec's research path.
 
+Do not persist the rendered heading as an empty placeholder. A live Research
+artifact requires substantive findings; when none are useful, keep it absent.
+
 **Replace an existing research document. Do not append to it.** Read the current
 document with `artifact read <spec> research --for maintain` first and preserve
 its durable scoped comments. Research states

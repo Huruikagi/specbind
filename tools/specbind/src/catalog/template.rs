@@ -327,6 +327,7 @@ fn resolve_template(
     let Some(kind) = recognized_kind(artifact_type) else {
         return Ok((None, issues));
     };
+    let artifact_id = collection_id(kind, mapping).map(str::to_owned);
 
     issues.extend(
         instruction::validate_template_frontmatter(frontmatter)
@@ -334,12 +335,11 @@ fn resolve_template(
             .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
     );
     issues.extend(
-        instruction::validate_spec_template(body)
+        instruction::validate_spec_template(body, artifact_id.as_deref())
             .into_iter()
             .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message)),
     );
     issues.extend(validate_template_profile(kind, mapping, template_path));
-    let artifact_id = collection_id(kind, mapping).map(str::to_owned);
     if matches!(
         kind,
         ArtifactKind::Design | ArtifactKind::ImplementationNotes
@@ -518,7 +518,16 @@ pub fn render_spec_template(
             format!("canonical spec ID is invalid: {canonical_spec}"),
         ));
     }
-    Ok(instruction::render_spec(&content, canonical_spec))
+    let artifact_id = inventory
+        .templates
+        .iter()
+        .find(|template| template.selector == requested)
+        .and_then(|template| template.artifact_id.as_deref());
+    Ok(instruction::render_spec(
+        &content,
+        canonical_spec,
+        artifact_id,
+    ))
 }
 
 /// The project tree that scaffolds steering documents.

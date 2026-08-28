@@ -8,7 +8,12 @@ The CLI renders `spec` as the canonical Spec identity. Keep it in the title so
 the artifact remains identifiable when read outside its directory.
 -->
 
-# `{{spec}}` Design
+<!-- specbind:instruction create bind=artifact_id
+The CLI renders `artifact_id` from the literal collection identity in Front
+Matter. Keep it in the title so split Design documents remain distinguishable.
+-->
+
+# `{{spec}}` Design — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
 Add a Front Matter `requirement_ids` array listing every Requirement ID this

@@ -44,6 +44,18 @@ and Discovery needed to repeat the completion check immediately before Brief
 authoring. The final driver followed both rules and stopped in Requirements with
 all gates `not_reached`.
 
+R1 was re-measured as Codex on 2026-08-28 against the working tree based on
+`92a7705`, including Decision 0150. The driver replaced the deliberately invalid
+empty Requirements scaffold with five real criteria, passed strict traceability
+before approval, approved active IDs `2.1`–`2.3`, and checkpointed only
+`requirements.md` and `spec.yaml`. The resulting Spec was healthy in Design with
+the expected missing-Design coverage diagnostics and no Contract. The clean
+post-judgment debrief exposed one unresolved wrong-action risk: the Brief names
+only cancellation, while the complete-current-contract instruction led the
+driver to inspect `src/orders.py` and infer that order placement also belongs in
+the new Spec. That source-authority boundary should be investigated separately;
+it did not alter this scenario's fail-closed scaffold measurement.
+
 C2 was re-measured on `7307f7a` after `scope/v1` began exposing its version as
 `const: 1`. The driver read that schema, created the confirmed cart milestone
 and Brief, recognized the exact adapter scaffold marker, made no commit, and

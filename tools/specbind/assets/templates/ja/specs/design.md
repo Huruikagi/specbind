@@ -8,7 +8,12 @@ CLI は `spec` を正規の Spec identity で展開する。ディレクトリ�
 識別できるよう、タイトルに残す。
 -->
 
-# `{{spec}}` の設計
+<!-- specbind:instruction create bind=artifact_id
+CLI は `artifact_id` を Front Matter のリテラルな collection identity から展開する。
+分割した設計文書を区別できるよう、タイトルに残す。
+-->
+
+# `{{spec}}` の設計 — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
 この文書が扱う Requirement ID をすべて列挙した `requirement_ids` 配列を Front Matter に

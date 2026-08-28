@@ -182,7 +182,7 @@ fn rejects_create_instructions_but_accepts_durable_live_instructions() {
     write(
         root.path(),
         "specs/example/brief.md",
-        "---\ntype: SpecBind Brief\n---\n<!-- specbind:instruction create Replace this. -->\n<!-- specbind:instruction maintain Keep this. -->\n<!-- specbind:instruction consume Read this. -->\n",
+        "---\ntype: SpecBind Brief\n---\nRequest details.\n<!-- specbind:instruction create Replace this. -->\n<!-- specbind:instruction maintain Keep this. -->\n<!-- specbind:instruction consume Read this. -->\n",
     );
 
     let inventory = discover_spec(root.path(), "example");

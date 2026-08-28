@@ -59,12 +59,12 @@ fn lists_discovered_artifacts_with_the_text_result_contract() {
     write(
         root.path(),
         ".specbind/specs/checkout/brief.md",
-        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n",
     );
     write(
         root.path(),
         ".specbind/specs/checkout/research.md",
-        "---\ntype: SpecBind Research\n---\n# Research\n",
+        "---\ntype: SpecBind Research\n---\n# Research\n\nFinding.\n",
     );
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
@@ -82,7 +82,7 @@ fn lists_discovered_artifacts_with_the_text_result_contract() {
 #[test]
 fn reads_one_artifact_as_unwrapped_raw_markdown() {
     let root = project_fixture();
-    let content = "---\ntype: SpecBind Brief\n---\n# Checkout brief\n";
+    let content = "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n";
     write(root.path(), ".specbind/specs/checkout/brief.md", content);
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
@@ -99,7 +99,7 @@ fn reads_one_artifact_as_unwrapped_raw_markdown() {
 fn projects_live_artifact_instructions_for_the_named_use() {
     let root = project_fixture();
     let content = concat!(
-        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\n",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n\n",
         "<!-- specbind:instruction maintain Preserve the request. -->\n",
         "<!-- specbind:instruction consume Requirements owns scope. -->\n",
     );
@@ -138,7 +138,7 @@ fn projects_live_artifact_instructions_for_the_named_use() {
 #[test]
 fn reads_a_valid_selector_despite_unrelated_inventory_diagnostics() {
     let root = project_fixture();
-    let content = "---\ntype: SpecBind Brief\n---\n# Checkout brief\n";
+    let content = "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n";
     write(root.path(), ".specbind/specs/checkout/brief.md", content);
     write(
         root.path(),
@@ -162,7 +162,7 @@ fn keeps_failed_raw_reads_off_stdout_and_reports_stable_codes() {
     write(
         root.path(),
         ".specbind/specs/checkout/brief.md",
-        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n",
     );
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
@@ -183,7 +183,7 @@ fn reports_partial_inventory_and_rejects_unsafe_spec_roots() {
     write(
         root.path(),
         ".specbind/specs/checkout/brief.md",
-        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n",
     );
     write(
         root.path(),
@@ -2313,7 +2313,10 @@ fn falls_back_to_embedded_defaults_in_the_configured_language() {
         .stdout(
             predicate::str::contains("type: SpecBind Requirements")
                 .and(predicate::str::contains("requirement: Requirement"))
-                .and(predicate::str::contains("### Requirement 1:"))
+                .and(predicate::str::contains("### Requirement 1:").not())
+                .and(predicate::str::contains(
+                    "deliberately not a valid live Requirements artifact",
+                ))
                 .and(predicate::str::contains("specbind:instruction")),
         );
 
@@ -2334,6 +2337,28 @@ fn falls_back_to_embedded_defaults_in_the_configured_language() {
                 .and(predicate::str::contains("{{spec}}").not())
                 .and(predicate::str::contains(
                     "specbind:instruction create bind=spec",
+                )),
+        )
+        .stderr("");
+
+    let mut render_collection =
+        Command::cargo_bin("specbind").expect("specbind binary should build");
+    render_collection
+        .current_dir(root.path())
+        .args([
+            "template",
+            "render",
+            "spec",
+            "source-price-refresh",
+            "design/main",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("# `source-price-refresh` Design — `main`")
+                .and(predicate::str::contains("{{artifact_id}}").not())
+                .and(predicate::str::contains(
+                    "specbind:instruction create bind=artifact_id",
                 )),
         )
         .stderr("");
@@ -2363,8 +2388,10 @@ fn falls_back_to_embedded_defaults_in_the_configured_language() {
         .success()
         .stdout(
             predicate::str::contains("requirement: 要件")
-                .and(predicate::str::contains("### 要件 1:"))
-                .and(predicate::str::contains("#### 受け入れ基準")),
+                .and(predicate::str::contains("### 要件 1:").not())
+                .and(predicate::str::contains(
+                    "意図的に有効なlive Requirementsではない",
+                )),
         );
 }
 

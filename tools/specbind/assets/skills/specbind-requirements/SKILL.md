@@ -52,6 +52,10 @@ not a fault.
   specbind template render spec <spec> requirements
   ```
 
+  The rendered Requirements section is deliberately empty and is not a valid
+  live artifact. Replace it with at least one real Requirement and Acceptance
+  Criterion before the first write; never persist the scaffold as completion.
+
 - **Existing Spec** — read the current requirements and revise them in place:
 
   ```sh

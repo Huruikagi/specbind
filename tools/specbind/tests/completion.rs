@@ -410,12 +410,12 @@ fn spec_fixture() -> TempDir {
     write(
         root.path(),
         ".specbind/specs/checkout/brief.md",
-        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n",
+        "---\ntype: SpecBind Brief\n---\n# Checkout brief\n\nRequested change.\n",
     );
     write(
         root.path(),
         ".specbind/specs/checkout/research.md",
-        "---\ntype: SpecBind Research\n---\n# Checkout research\n",
+        "---\ntype: SpecBind Research\n---\n# Checkout research\n\nFinding.\n",
     );
     write(
         root.path(),
