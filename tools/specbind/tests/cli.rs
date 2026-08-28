@@ -2190,6 +2190,7 @@ fn lists_and_reads_project_owned_spec_templates() {
             "  Template path: settings/templates/specs/technical-design/main.md\n",
             "  Output path: technical-design/main.md\n",
             "  Target path: specs/checkout/technical-design/main.md\n",
+            "  Project path: .specbind/specs/checkout/technical-design/main.md\n",
         ))
         .stderr("");
 
@@ -2206,9 +2207,13 @@ fn lists_and_reads_project_owned_spec_templates() {
         .assert()
         .success()
         .stdout(
-            predicate::str::contains("  Source: embedded\n").and(predicate::str::contains(
-                "  Target path: specs/checkout/contract.md\n",
-            )),
+            predicate::str::contains("  Source: embedded\n")
+                .and(predicate::str::contains(
+                    "  Target path: specs/checkout/contract.md\n",
+                ))
+                .and(predicate::str::contains(
+                    "  Project path: .specbind/specs/checkout/contract.md\n",
+                )),
         )
         .stderr("");
 }

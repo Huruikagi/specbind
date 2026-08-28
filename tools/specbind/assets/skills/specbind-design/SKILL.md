@@ -210,8 +210,10 @@ specbind template resolve spec <spec> <design-selector>
 specbind template read spec <design-selector>
 ```
 
-Write the authored document only to the reported `Target path`. Do not infer a
-filename from `artifact_id`, the Requirements path, or another Spec. Follow each
+`Target path` is relative to the configured SpecBind root. For project file
+operations, write the authored document only to the reported `Project path`,
+which already includes that root. Do not infer a filename from `artifact_id`,
+the Requirements path, or another Spec. Follow each
 `create bind=<name>` instruction once, replace every reference to that name with
 the same resolved value, and omit the `create` instruction. Copy every
 `maintain` and `consume` instruction unchanged into the live artifact. Add the
@@ -268,9 +270,9 @@ specbind template resolve spec <spec> contract
 specbind template read spec contract
 ```
 
-Write the authored Contract only to the reported `Target path`. The `Source`
-field explains whether its scaffold is project-owned or embedded; both use the
-same raw read command.
+Write the authored Contract only to the reported `Project path`; do not prepend
+or remove the configured SpecBind root. The `Source` field explains whether its
+scaffold is project-owned or embedded; both use the same raw read command.
 
 A Spec with no cross-spec seams gets the canonical empty contract: five
 headings, no entries. That is a complete and deliberate statement, not a

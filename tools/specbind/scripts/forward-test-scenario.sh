@@ -422,7 +422,7 @@ r4 | r5 | ds2 | ds3 | ds5 | x2)
         mv .specbind/settings/templates/specs/design.md \
             .specbind/settings/templates/specs/technical-design/main.md
         expect "the relocated Design template did not resolve to its custom target" \
-            'specbind template resolve spec cart design/main | grep -q "Target path: specs/cart/technical-design/main.md"'
+            'specbind template resolve spec cart design/main | grep -q "Project path: .specbind/specs/cart/technical-design/main.md"'
     fi
     if [ "$scenario" = ds3 ]; then
         # An edit after the approval, so the gate the design phase depends on is
@@ -601,7 +601,7 @@ ds1)
     mv .specbind/settings/templates/specs/design.md \
         .specbind/settings/templates/specs/technical-design/main.md
     expect "the relocated Design template did not resolve to its custom target" \
-        'specbind template resolve spec order design/main | grep -q "Target path: specs/order/technical-design/main.md"'
+        'specbind template resolve spec order design/main | grep -q "Project path: .specbind/specs/order/technical-design/main.md"'
     expect "order did not reach the design state" \
         'specbind spec status order | grep -q "State: design"'
     expect "unstarted Design is still reported as inconsistent" \

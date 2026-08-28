@@ -36,15 +36,17 @@ diagnostics. It resolves one selector and reports:
 - `template_path` and template-relative `output_path`;
 - `target_path`, the exact SpecBind-root-relative path
   `specs/<spec>/<output_path>`.
+- `project_path`, the exact project-root-relative path formed by prefixing the
+  configured `specDir` to `target_path`.
 
 The operation never creates, overwrites, or validates a completed live
 artifact. Its result is authoring location information, not mutation authority.
 `template read` remains the raw-content operation and gains no wrapper.
 
 When `specbind-design` creates a new Design set, it lists the resolved Spec
-templates first, selects every `design/<artifact_id>` entry, resolves each
-target, reads each body, and writes the authored result only to the reported
-target. It resolves the Contract target the same way. The listing makes
+templates first, applies Decision 0152's selection Rule, resolves each selected
+entry, reads its body, and writes the authored result only to the reported
+`project_path`. It resolves the Contract target the same way. The listing makes
 project-owned versus embedded provenance visible without requiring different
 read syntax for the two sources.
 

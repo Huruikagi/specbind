@@ -67,7 +67,9 @@ specbind template read milestone roadmap
 specbind template resolve spec <spec> <selector>
 ```
 
-結果にはtemplateの`Source`と、SpecBindルート相対の完全な`Target path`が含まれます。
+結果にはtemplateの`Source`、SpecBindルート相対の`Target path`、設定済みSpec rootを
+含むプロジェクトルート相対の`Project path`が含まれます。ファイル操作では
+`Project path`をそのまま使用します。
 
 成果物を初めて作るときは、raw templateとその`create` instructionをエージェントが
 読み、materializeします。Markdown本文では、プロジェクトが任意の変数を

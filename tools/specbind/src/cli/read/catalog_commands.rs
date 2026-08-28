@@ -223,6 +223,15 @@ pub fn template_resolve_spec(start: &Path, canonical_spec: &str, selector: &str)
         );
     };
     let target_path = format!("specs/{canonical_spec}/{}", resolved.output_path);
+    let Ok(spec_root) = paths.specbind_root.strip_prefix(&paths.project_root) else {
+        return CommandOutput::failure(
+            "SPEC_ROOT_INVALID",
+            "configured specDir must remain below the resolved project root",
+            vec![],
+        );
+    };
+    let spec_root = spec_root.to_string_lossy().replace('\\', "/");
+    let project_path = format!("{spec_root}/{target_path}");
     let mut output = format!(
         "OK TEMPLATE_RESOLVED: Resolved template {} for spec {}.\n  Selector: {}\n  Source: {}\n  Type: {}\n",
         escape(selector),
@@ -241,6 +250,7 @@ pub fn template_resolve_spec(start: &Path, canonical_spec: &str, selector: &str)
     );
     push_field(&mut output, "Output path", resolved.output_path.as_str());
     push_field(&mut output, "Target path", &target_path);
+    push_field(&mut output, "Project path", &project_path);
     CommandOutput::success(output.into_bytes())
 }
 
