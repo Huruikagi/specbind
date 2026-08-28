@@ -56,7 +56,11 @@ Read **every** steering document the listing named:
 specbind steering read <selector> --for consume
 ```
 
-All of them, not a promising-looking subset. This is where the project's
+Use only the exact selectors reported by `steering list`. Do not infer a
+selector from a path or filename: in particular, the active Roadmap is not a
+Steering selector and `steering read roadmap` is invalid.
+
+Read all listed selectors, not a promising-looking subset. This is where the project's
 technical guidance finally lands: the requirements phase is required to keep
 technology, structure, and mechanism out of its document, so a constraint on how
 this project builds things cannot have reached you through it. If you also read

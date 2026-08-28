@@ -631,8 +631,8 @@ ds7 | ds8)
         desired="A library-only parser returns one normalized identifier or a typed invalid-input error without changing any user interface."
         context="Internal callers need one stable parsing boundary."
         title="Parse a catalog identifier"
-        objective="A caller can normalize a catalog identifier through one library API."
-        criterion="The parser returns the normalized identifier for valid input and a typed invalid-input error otherwise; no screen, interaction, or user-visible UI behavior changes."
+        objective="A caller can normalize a catalog identifier through one library API without inventing input or error semantics."
+        criterion="The library function parse_catalog_identifier accepts exactly three ASCII letters, a hyphen, and four digits case-insensitively, returns the same identifier with its letters uppercased, and otherwise returns an InvalidCatalogIdentifier error carrying the original input; no screen, interaction, or user-visible UI behavior changes."
     fi
     milestone "{\"schemaVersion\":1,\"workItems\":{\"newSpecs\":[{\"spec\":\"$spec\",\"summary\":\"$summary\"}]}}"
     brief "$spec" "$problem" "$desired"
