@@ -620,16 +620,10 @@ ds7 | ds8)
         summary="Add a customer account overview screen."
         problem="Customers cannot see their account status in one place."
         desired="A responsive account overview screen shows status, recent activity, loading, empty, and error states with accessible navigation."
-        context="A signed-in customer needs a visual overview of their account."
+        context="A signed-in customer needs a visual overview of their account. The established project boundary is a Python standard-library renderer that accepts a caller-supplied account snapshot containing account status and recent activity, returns one semantic HTML fragment, keeps presentation CSS in src/dashboard.css, and uses unittest without adding dependencies; transport and data fetching are outside this repository."
         title="Show the account overview screen"
         objective="A customer can understand their account status from one accessible screen."
         criterion="The account overview screen presents account status and recent activity with defined loading, empty, error, responsive, and keyboard-navigation behavior."
-        {
-            echo
-            echo "## Dashboard foundation"
-            echo
-            echo "The dashboard is a Python standard-library feature. Its renderer receives a caller-supplied account snapshot containing account status and recent activity, then returns one semantic HTML fragment; transport and data fetching stay outside this repository. Keep presentation CSS in src/dashboard.css and verify rendering with unittest without adding dependencies."
-        } >> README.md
     else
         spec=parser
         summary="Expose a library function that parses catalog identifiers."
@@ -685,7 +679,7 @@ ds7 | ds8)
         'specbind rule read design-template-selection --for consume | grep -q "design/ui"'
     if [ "$scenario" = ds7 ]; then
         expect "the dashboard Design fixture does not define its implementation foundation" \
-            'grep -q "caller-supplied account snapshot" README.md'
+            'grep -q "caller-supplied account snapshot" .specbind/specs/dashboard/requirements.md'
     fi
     ;;
 
