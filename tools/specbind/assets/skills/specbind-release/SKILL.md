@@ -38,8 +38,11 @@ An absent adapter or one carrying the exact
 `<!-- specbind:adapter-scaffold -->` marker is **unconfigured**. Do not interpret
 its remaining body, bind a version, run release work, or finalize. Read
 [Bootstrap the Release adapter](references/bootstrap-release-adapter.md)
-completely, follow it, and stop this invocation at its stated boundary. Do not
-load or continue through the core release procedure in the same run.
+completely and follow it. Investigate and present the complete replacement
+proposal before stopping for explicit approval; the absence of that approval is
+not a reason to omit the proposal. After an approved adapter replacement and its
+narrow checkpoint, stop the invocation. Do not load or continue through the core
+release procedure in the same run.
 
 An adapter whose body is empty after Front Matter and has no scaffold marker is
 different: it explicitly means this project needs no project-specific Prepare,
