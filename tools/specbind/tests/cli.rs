@@ -1300,7 +1300,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 58 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 72 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1318,8 +1318,9 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/roadmap.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 58 create, 0 replace, 0 keep\n",
-            )),
+                "\n  Summary: 72 create, 0 replace, 0 keep\n",
+            ))
+            .and(predicate::str::contains("Next:").not()),
         )
         .stderr("");
 
@@ -1387,7 +1388,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 34 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 41 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1436,10 +1437,13 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 36 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 43 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 36 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 43 created, 0 replaced, 0 kept\n",
+            ))
+            .and(predicate::str::contains(
+                "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
             )),
         )
         .stderr("");
@@ -1457,6 +1461,8 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
+        ".agents/skills/specbind-configure/SKILL.md",
+        ".agents/skills/specbind-configure/references/aftercare.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
@@ -1477,7 +1483,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .args(["install"])
         .assert()
         .success()
-        .stdout(predicate::str::starts_with("NO_CHANGE INSTALL_UP_TO_DATE:"))
+        .stdout(
+            predicate::str::starts_with("NO_CHANGE INSTALL_UP_TO_DATE:")
+                .and(predicate::str::contains("Next:").not()),
+        )
         .stderr("");
 }
 
@@ -1511,6 +1520,12 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         .expect("rendered Claude Code skill");
     let codex = fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
         .expect("rendered Codex skill");
+    for relative in [
+        ".claude/skills/specbind-configure/references/aftercare.md",
+        ".agents/skills/specbind-configure/references/aftercare.md",
+    ] {
+        assert!(root.path().join(relative).is_file(), "missing {relative}");
+    }
     assert!(
         claude.starts_with("---\nname: specbind-status\n"),
         "{claude}"
@@ -1566,6 +1581,74 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         codex,
         "a refresh restores the product asset"
     );
+}
+
+#[test]
+fn shows_the_complete_configuration_without_claiming_global_readiness() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    let mut install = Command::cargo_bin("specbind").expect("specbind binary should build");
+    install
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success();
+
+    let mut show = Command::cargo_bin("specbind").expect("specbind binary should build");
+    show.current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with(
+                "OK CONFIGURATION_SHOWN: Current SpecBind configuration.\n",
+            )
+            .and(predicate::str::contains("    Agents: codex\n"))
+            .and(predicate::str::contains(
+                "    codex/implementer: state=default model=gpt-5.6-terra reasoning_effort=medium\n",
+            ))
+            .and(predicate::str::contains(
+                "    spec/requirements: current-default\n",
+            ))
+            .and(predicate::str::contains(
+                "    design-template-selection: current-default\n",
+            ))
+            .and(predicate::str::contains("    release: scaffold\n"))
+            .and(predicate::str::contains("    Documents: 0\n"))
+            .and(predicate::str::contains(
+                "    - Release adapter is not configured\n",
+            ))
+            .and(predicate::str::contains(
+                "    - no Steering documents are present\n",
+            ))
+            .and(predicate::str::contains("READY").not())
+            .and(predicate::str::contains("CONFIGURED").not()),
+        )
+        .stderr("");
+
+    write(
+        root.path(),
+        ".specbind/settings/rules/design-template-selection.md",
+        concat!(
+            "---\ntype: SpecBind Rule\n---\n# Selection\n\n",
+            "## `design/main`\n\nMode: required\n\nAlways.\n",
+        ),
+    );
+    let mut invalid = Command::cargo_bin("specbind").expect("specbind binary should build");
+    invalid
+        .current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR CONFIGURATION_SHOW_FAILED: Cannot summarize the current SpecBind configuration.\n",
+            )
+            .and(predicate::str::contains(
+                "RULE_DESIGN_TEMPLATE_SELECTOR_MISSING design/ui",
+            )),
+        );
 }
 
 #[test]
@@ -1726,6 +1809,23 @@ fn applies_only_project_capability_overrides_to_codex_roles() {
         .expect("overridden reviewer role");
     assert!(reviewer.contains("model = \"gpt-5.6-terra\""));
     assert!(reviewer.contains("model_reasoning_effort = \"high\""));
+
+    let mut show = Command::cargo_bin("specbind").expect("specbind binary should build");
+    show.current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains(
+                "    codex/implementer: state=overridden model=gpt-5.6-luna reasoning_effort=low\n",
+            )
+            .and(predicate::str::contains(
+                "    codex/reviewer: state=overridden model=gpt-5.6-terra reasoning_effort=high\n",
+            ))
+            .and(predicate::str::contains(
+                "    codex/planner: state=default model=gpt-5.6-terra reasoning_effort=medium\n",
+            )),
+        );
 }
 
 #[test]
@@ -1911,7 +2011,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 34 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 41 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(

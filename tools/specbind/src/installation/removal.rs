@@ -293,29 +293,35 @@ fn agent_entries(
 ) -> Result<Vec<RemovalEntry>, RemovalIssues> {
     let mut entries = Vec::new();
     let mut planned = BTreeSet::new();
+    let remaining_skill_targets = remaining
+        .iter()
+        .flat_map(|agent| {
+            skill::all()
+                .iter()
+                .flat_map(move |embedded| embedded.targets(*agent))
+        })
+        .collect::<BTreeSet<_>>();
     for agent in removed {
         for embedded in skill::all() {
-            let path = embedded.target(*agent);
-            if !planned.insert(path.clone()) {
-                continue;
-            }
-            if remaining
-                .iter()
-                .any(|selected| embedded.target(*selected) == path)
-            {
-                entries.push(retained_entry(
-                    project_root,
-                    &path,
-                    "skill",
-                    "remaining selected agent requires this shared skill target",
-                )?);
-            } else {
-                entries.push(file_entry(
-                    project_root,
-                    &path,
-                    "skill",
-                    "exact product-managed skill target",
-                )?);
+            for path in embedded.targets(*agent) {
+                if !planned.insert(path.clone()) {
+                    continue;
+                }
+                if remaining_skill_targets.contains(&path) {
+                    entries.push(retained_entry(
+                        project_root,
+                        &path,
+                        "skill",
+                        "remaining selected agent requires this shared skill target",
+                    )?);
+                } else {
+                    entries.push(file_entry(
+                        project_root,
+                        &path,
+                        "skill",
+                        "exact product-managed skill target",
+                    )?);
+                }
             }
         }
         for role in agent_role::all() {

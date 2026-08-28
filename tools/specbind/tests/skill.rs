@@ -1,9 +1,10 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 17] = [
+const ACCEPTED_SKILLS: [&str; 18] = [
     "specbind-adopt-existing",
     "specbind-contract-review",
+    "specbind-configure",
     "specbind-debug",
     "specbind-design",
     "specbind-discovery",
@@ -99,6 +100,34 @@ fn installs_each_skill_to_the_accepted_target() {
 }
 
 #[test]
+fn configure_skill_carries_only_directly_routed_reference_files() {
+    let configure = skill::find("specbind-configure").expect("configuration skill");
+    let resources = configure.resources();
+    assert_eq!(resources.len(), 6);
+    let body = configure.body().expect("body");
+    for resource in resources {
+        assert!(resource.relative_path.starts_with("references/"));
+        assert!(!resource.relative_path.contains(".."));
+        assert!(
+            body.contains(resource.relative_path),
+            "entrypoint must directly route {}",
+            resource.relative_path
+        );
+        assert!(!resource.content().trim().is_empty());
+    }
+    for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
+        let files = configure.render_files(agent).expect("rendered package");
+        assert_eq!(files.len(), 7);
+        assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
+        assert!(
+            files
+                .iter()
+                .any(|file| file.target.ends_with("/references/aftercare.md"))
+        );
+    }
+}
+
+#[test]
 fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
     let body = skill::find("specbind-adopt-existing")
         .expect("adoption skill")
@@ -127,9 +156,11 @@ fn every_documented_invocation_resolves_against_the_command_graph() {
     let root = Cli::command();
     let mut checked = 0;
     for entry in skill::all() {
-        for invocation in invocations(entry.body().expect("body")) {
-            resolve(&root, entry.name, &invocation);
-            checked += 1;
+        for document in skill_documents(*entry) {
+            for invocation in invocations(document) {
+                resolve(&root, entry.name, &invocation);
+                checked += 1;
+            }
         }
     }
     assert!(
@@ -141,16 +172,18 @@ fn every_documented_invocation_resolves_against_the_command_graph() {
 #[test]
 fn every_live_markdown_read_names_its_instruction_projection() {
     for entry in skill::all() {
-        for line in entry.body().expect("body").lines().map(str::trim) {
-            if line.starts_with("specbind artifact read ")
-                || line.starts_with("specbind steering read ")
-                || line.starts_with("specbind rule read ")
-            {
-                assert!(
-                    line.contains(" --for "),
-                    "{} leaves a live Markdown read unprojected: {line}",
-                    entry.name
-                );
+        for document in skill_documents(*entry) {
+            for line in document.lines().map(str::trim) {
+                if line.starts_with("specbind artifact read ")
+                    || line.starts_with("specbind steering read ")
+                    || line.starts_with("specbind rule read ")
+                {
+                    assert!(
+                        line.contains(" --for "),
+                        "{} leaves a live Markdown read unprojected: {line}",
+                        entry.name
+                    );
+                }
             }
         }
     }
@@ -265,19 +298,21 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
 fn every_named_protocol_and_rule_selector_exists() {
     for entry in skill::all() {
         let body = entry.body().expect("body");
-        for selector in tokens_after(body, "specbind protocol read ") {
-            assert!(
-                protocol::read(&selector).is_some(),
-                "{}: unknown protocol selector {selector}",
-                entry.name
-            );
-        }
-        for selector in tokens_after(body, "specbind rule read ") {
-            assert!(
-                rule::find(&selector).is_some(),
-                "{}: unknown rule selector {selector}",
-                entry.name
-            );
+        for document in skill_documents(*entry) {
+            for selector in tokens_after(document, "specbind protocol read ") {
+                assert!(
+                    protocol::read(&selector).is_some(),
+                    "{}: unknown protocol selector {selector}",
+                    entry.name
+                );
+            }
+            for selector in tokens_after(document, "specbind rule read ") {
+                assert!(
+                    rule::find(&selector).is_some(),
+                    "{}: unknown rule selector {selector}",
+                    entry.name
+                );
+            }
         }
         assert!(
             !body.contains("settings/rules/"),
@@ -285,6 +320,12 @@ fn every_named_protocol_and_rule_selector_exists() {
             entry.name
         );
     }
+}
+
+fn skill_documents(entry: skill::Skill) -> Vec<&'static str> {
+    std::iter::once(entry.body().expect("body"))
+        .chain(entry.resources().iter().map(|resource| resource.content()))
+        .collect()
 }
 
 #[test]

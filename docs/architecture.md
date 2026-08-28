@@ -50,8 +50,8 @@ agent-authored evidence is never mutation authority.
 - `artifacts/resolution.rs` owns typed Spec and Task loads, gate inputs,
   fingerprints, and traceability projections.
 
-`read_model/` groups Contract graph, freshness, status/list, Roadmap scope,
-task, and release-readiness projections. `read_model.rs` re-exports their
+`read_model/` groups configuration inventory, Contract graph, freshness,
+status/list, Roadmap scope, task, and release-readiness projections. `read_model.rs` re-exports their
 existing crate-root paths. They report current state and diagnostics; they do
 not authorize transitions.
 

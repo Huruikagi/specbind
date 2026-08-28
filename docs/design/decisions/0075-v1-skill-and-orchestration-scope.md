@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0154](./0154-guided-configuration-workflow.md) supersedes only the
+customization-Skill deferral below. The dedicated `specbind-configure` workflow
+is now part of the installed product surface.
+
 ## Context
 
 The inherited cc-sdd skill set mixes product phases, compatibility names, initialization mechanics, and multi-spec implementation orchestration. SpecBind v1 needs a complete agent-facing workflow without committing to a milestone-wide implementation scheduler whose subagent and validation behavior has not yet been designed.

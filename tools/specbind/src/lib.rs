@@ -24,6 +24,6 @@ pub use lifecycle::{
     task_progress,
 };
 pub use read_model::{
-    contract_graph, freshness, milestone_scope, milestone_status, release_readiness, spec_list,
-    spec_status, task_read_model,
+    configuration, contract_graph, freshness, milestone_scope, milestone_status, release_readiness,
+    spec_list, spec_status, task_read_model,
 };

@@ -62,6 +62,13 @@ pub fn install_apply(start: &Path, inputs: &install::InstallInputs) -> CommandOu
                 "Summary",
                 &format!("{create} created, {replace} replaced, {keep} kept"),
             );
+            if outcome.plan.initial {
+                push_field(
+                    &mut output,
+                    "Next",
+                    "Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.",
+                );
+            }
             CommandOutput::success(output.into_bytes())
         }
         Err(error) => CommandOutput::failure(

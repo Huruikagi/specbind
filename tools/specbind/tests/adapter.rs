@@ -187,5 +187,9 @@ fn states_that_the_git_adapter_grants_no_authority() {
                 && (scaffold.contains("Do not push") || scaffold.contains("pushしません")),
             "the working default must commit locally without pushing: {scaffold}"
         );
+        assert!(
+            scaffold.contains("specbind-configure"),
+            "configuration changes must be named as eligible checkpoints: {scaffold}"
+        );
     }
 }

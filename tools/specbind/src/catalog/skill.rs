@@ -1,9 +1,9 @@
 //! Catalog of product-managed skills and their per-agent rendering.
 //!
-//! One agent-neutral source is authored per skill under `assets/skills/`. This
-//! module parses its neutral Front Matter and renders the document each
-//! supported agent expects. Rendering maps declared intent onto a platform
-//! schema and never edits the body.
+//! One agent-neutral package is authored per skill under `assets/skills/`.
+//! This module parses the entrypoint's neutral Front Matter, renders the
+//! document each supported agent expects, and carries any declared reference
+//! files byte-for-byte beside it.
 //!
 //! The renderer emits no permission grant and no invocation restriction. Those
 //! are security and discovery controls rather than descriptions of the work a
@@ -19,6 +19,29 @@ pub struct Skill {
     /// Skill identity, matching the source directory name.
     pub name: &'static str,
     source: &'static str,
+}
+
+/// One product-managed file carried beside a skill entrypoint.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SkillResource {
+    /// Portable path relative to the skill package root.
+    pub relative_path: &'static str,
+    source: &'static str,
+}
+
+impl SkillResource {
+    /// Returns the exact agent-neutral resource content.
+    #[must_use]
+    pub fn content(self) -> &'static str {
+        self.source
+    }
+}
+
+/// One rendered package file and its project-relative install target.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RenderedSkillFile {
+    pub target: String,
+    pub content: String,
 }
 
 /// The neutral Front Matter a skill source declares.
@@ -52,6 +75,10 @@ static SKILLS: &[Skill] = &[
     Skill {
         name: "specbind-contract-review",
         source: include_str!("../../assets/skills/specbind-contract-review/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-configure",
+        source: include_str!("../../assets/skills/specbind-configure/SKILL.md"),
     },
     Skill {
         name: "specbind-debug",
@@ -112,6 +139,37 @@ static SKILLS: &[Skill] = &[
     Skill {
         name: "specbind-verify-completion",
         source: include_str!("../../assets/skills/specbind-verify-completion/SKILL.md"),
+    },
+];
+
+static CONFIGURE_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/adapters.md",
+        source: include_str!("../../assets/skills/specbind-configure/references/adapters.md"),
+    },
+    SkillResource {
+        relative_path: "references/aftercare.md",
+        source: include_str!("../../assets/skills/specbind-configure/references/aftercare.md"),
+    },
+    SkillResource {
+        relative_path: "references/installation-and-agents.md",
+        source: include_str!(
+            "../../assets/skills/specbind-configure/references/installation-and-agents.md"
+        ),
+    },
+    SkillResource {
+        relative_path: "references/rules.md",
+        source: include_str!("../../assets/skills/specbind-configure/references/rules.md"),
+    },
+    SkillResource {
+        relative_path: "references/steering.md",
+        source: include_str!("../../assets/skills/specbind-configure/references/steering.md"),
+    },
+    SkillResource {
+        relative_path: "references/templates-and-reconciliation.md",
+        source: include_str!(
+            "../../assets/skills/specbind-configure/references/templates-and-reconciliation.md"
+        ),
     },
 ];
 
@@ -195,6 +253,44 @@ impl Skill {
         ))
     }
 
+    /// Returns every declared file in this neutral package.
+    #[must_use]
+    pub fn resources(self) -> &'static [SkillResource] {
+        match self.name {
+            "specbind-configure" => CONFIGURE_RESOURCES,
+            _ => &[],
+        }
+    }
+
+    /// Renders the entrypoint and carries declared resources for one Agent.
+    ///
+    /// # Errors
+    ///
+    /// Returns the entrypoint Front Matter diagnostic when rendering fails.
+    pub fn render_files(self, agent: Agent) -> Result<Vec<RenderedSkillFile>, SkillError> {
+        let mut files = vec![RenderedSkillFile {
+            target: self.target(agent),
+            content: self.render(agent)?,
+        }];
+        files.extend(self.resources().iter().map(|resource| RenderedSkillFile {
+            target: self.resource_target(agent, resource.relative_path),
+            content: resource.source.to_owned(),
+        }));
+        Ok(files)
+    }
+
+    /// Returns every exact install target owned by this package for one Agent.
+    #[must_use]
+    pub fn targets(self, agent: Agent) -> Vec<String> {
+        std::iter::once(self.target(agent))
+            .chain(
+                self.resources()
+                    .iter()
+                    .map(|resource| self.resource_target(agent, resource.relative_path)),
+            )
+            .collect()
+    }
+
     /// Returns the project-relative install target for one agent.
     #[must_use]
     pub fn target(self, agent: Agent) -> String {
@@ -203,6 +299,14 @@ impl Skill {
             Agent::Codex | Agent::Generic => ".agents/skills",
         };
         format!("{root}/{}/SKILL.md", self.name)
+    }
+
+    fn resource_target(self, agent: Agent, relative_path: &str) -> String {
+        let entrypoint = self.target(agent);
+        let package_root = entrypoint
+            .strip_suffix("/SKILL.md")
+            .expect("skill entrypoint always ends in /SKILL.md");
+        format!("{package_root}/{relative_path}")
     }
 
     fn split(self) -> Result<(&'static str, &'static str), SkillError> {

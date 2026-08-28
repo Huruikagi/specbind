@@ -6,10 +6,10 @@ use std::{
 
 use clap::Parser as _;
 use specbind::args::{
-    AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command, DirectCommand,
-    GateCommand, MigrateCommand, MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand,
-    RuleCommand, SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
-    TemplateCommand,
+    AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command,
+    ConfigurationCommand, DirectCommand, GateCommand, MigrateCommand, MilestoneCommand,
+    ProtocolCommand, ReleaseCommand, ReviewCommand, RuleCommand, SchemaCommand, SpecCommand,
+    SpecCompletionCommand, SteeringCommand, TasksCommand, TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -307,6 +307,9 @@ fn main() -> ExitCode {
         Command::Adapter { command } => run_adapter(&start, command),
         Command::Rule { command } => run_rule(&start, command),
         Command::Steering { command } => run_steering(&start, command),
+        Command::Configuration { command } => match command {
+            ConfigurationCommand::Show => specbind::cli::configuration_show(&start),
+        },
         Command::Adoption { command } => run_adoption(&start, &command),
         Command::Spec { command } => run_spec(&start, command),
         Command::Milestone { command } => run_milestone(&start, command),

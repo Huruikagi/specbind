@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Every supported Agent profile receives the same 17 skills:
+Every supported Agent profile receives the same 18 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
@@ -23,6 +23,7 @@ once.
 
 | Skill | Current role |
 | --- | --- |
+| `specbind-configure` | Review and change supported SpecBind project configuration, coordinate the owning workflow, verify the result, and complete authorized aftercare. |
 | `specbind-adopt-existing` | Establish new Spec boundaries and confirmed Brief intent from a selected existing implementation while retaining revision-pinned evidence. |
 | `specbind-discovery` | Confirm milestone scope, classify Direct, existing-Spec, and new-Spec work, delegate state changes to the CLI, and author Briefs. |
 | `specbind-requirements` | Maintain the complete current behavioral contract, select the milestone's active Requirement IDs, and approve the Requirements gate. |
@@ -54,5 +55,7 @@ skills.
 - Behavioral verification index: `docs/skill-forward-tests.md`
 - Measurement ledger: `docs/skill-forward-tests/results.md`
 
-When a product skill changes, update its one embedded source and the applicable
-mechanical and forward tests. Both agent renderings are derived from that source.
+When a product skill changes, update its one embedded package and the applicable
+mechanical and forward tests. Each package has one `SKILL.md` entrypoint and may
+have directly linked `references/` files for conditional detail. Both agent
+renderings are derived from that package.

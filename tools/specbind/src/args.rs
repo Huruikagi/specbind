@@ -101,6 +101,11 @@ pub enum Command {
         #[command(subcommand)]
         command: SteeringCommand,
     },
+    /// Inspect the complete supported project configuration.
+    Configuration {
+        #[command(subcommand)]
+        command: ConfigurationCommand,
+    },
     /// Prepare guarded adoption of specifications from an existing implementation.
     Adoption {
         #[command(subcommand)]
@@ -239,6 +244,12 @@ pub enum SteeringCommand {
         #[arg(long = "for", value_parser = ["maintain", "consume"])]
         purpose: Option<String>,
     },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ConfigurationCommand {
+    /// Validate and summarize every supported configuration surface.
+    Show,
 }
 
 #[derive(Debug, Subcommand)]

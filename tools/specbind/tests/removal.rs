@@ -87,6 +87,9 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
         .stdout(predicate::str::contains(
             "remove .agents/skills/specbind-status/SKILL.md [skill]",
         ))
+        .stdout(predicate::str::contains(
+            "remove .agents/skills/specbind-configure/references/aftercare.md [skill]",
+        ))
         .stdout(predicate::str::contains("retain AGENTS.md").not());
     assert!(
         root.path()
@@ -105,6 +108,12 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
         !root
             .path()
             .join(".agents/skills/specbind-status/SKILL.md")
+            .exists()
+    );
+    assert!(
+        !root
+            .path()
+            .join(".agents/skills/specbind-configure/references/aftercare.md")
             .exists()
     );
     assert!(
@@ -166,6 +175,9 @@ fn removing_codex_retains_surfaces_shared_with_generic() {
         .success()
         .stdout(predicate::str::contains(
             "retain .agents/skills/specbind-status/SKILL.md [skill]",
+        ))
+        .stdout(predicate::str::contains(
+            "retain .agents/skills/specbind-configure/references/aftercare.md [skill]",
         ))
         .stdout(predicate::str::contains(
             "remove .codex/agents/specbind-planner.toml [agent-role]",

@@ -22,7 +22,9 @@ type: SpecBind Git Adapter
 Requirements・Design・Tasksの各Gate、受理されたContract review、完了した実装Taskが
 それぞれ1単位です。承認された初回のRelease adapter設定と、成功したリリース確定も
 それぞれ1単位です。completionとリリース確定の状態メタデータは、各ワークフローが
-要求するときは別のチェックポイントにします。
+要求するときは別のチェックポイントにします。`specbind-configure`で完了した変更と、
+そのrequiredまたは承認済みのアフターケアは1つの設定checkpointにします。見送った
+optionalなアフターケアは含めません。
 
 ## 何を含めるか
 

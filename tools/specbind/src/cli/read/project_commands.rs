@@ -1,11 +1,109 @@
 //! Project-wide Spec and milestone scope reads.
 
+use std::fmt::Write as _;
+
 use super::super::{
     CommandOutput, Path, SpecHealth, config, escape, milestone_scope as milestone_scope_model,
     render_issue, render_milestone_diagnostic, spec_list as spec_list_model, spec_status, steering,
 };
 use super::present;
-use crate::repository;
+use crate::{configuration, repository};
+
+/// Validates and summarizes every supported project configuration surface.
+#[must_use]
+pub fn configuration_show(start: &Path) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let report = match configuration::resolve(&paths.project_root) {
+        Ok(report) => report,
+        Err(error) => {
+            return CommandOutput::failure(
+                "CONFIGURATION_SHOW_FAILED",
+                "Cannot summarize the current SpecBind configuration.",
+                error.diagnostics,
+            );
+        }
+    };
+    let language = match report.language {
+        config::ProjectLanguage::En => "en",
+        config::ProjectLanguage::Ja => "ja",
+    };
+    let mut output =
+        String::from("OK CONFIGURATION_SHOWN: Current SpecBind configuration.\n  Project:\n");
+    let _ = writeln!(output, "    Spec directory: {}", escape(&report.spec_dir));
+    let _ = writeln!(output, "    Language: {language}");
+    let _ = writeln!(
+        output,
+        "    Agents: {}",
+        report
+            .agents
+            .iter()
+            .map(|agent| agent.name())
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+    let _ = writeln!(
+        output,
+        "    Project instructions: {}",
+        if report.project_instructions {
+            "enabled"
+        } else {
+            "disabled"
+        }
+    );
+    output.push_str("  Agent roles:\n");
+    if report.roles.is_empty() {
+        output.push_str("    none\n");
+    }
+    for role in &report.roles {
+        let _ = write!(
+            output,
+            "    {}/{}: state={} model={}",
+            role.agent.name(),
+            role.selector,
+            if role.overridden {
+                "overridden"
+            } else {
+                "default"
+            },
+            escape(&role.model)
+        );
+        if let Some(effort) = role.reasoning_effort {
+            let _ = write!(output, " reasoning_effort={}", effort.name());
+        }
+        output.push('\n');
+    }
+    render_configuration_items(&mut output, "Templates", &report.templates);
+    render_configuration_items(&mut output, "Rules", &report.rules);
+    render_configuration_items(&mut output, "Adapters", &report.adapters);
+    let _ = write!(
+        output,
+        "  Steering:\n    Documents: {}\n",
+        report.steering_documents
+    );
+    output.push_str("  Attention:\n");
+    if report.attention.is_empty() {
+        output.push_str("    none\n");
+    } else {
+        for attention in &report.attention {
+            let _ = writeln!(output, "    - {}", escape(attention));
+        }
+    }
+    CommandOutput::success(output.into_bytes())
+}
+
+fn render_configuration_items(
+    output: &mut String,
+    heading: &str,
+    items: &[configuration::ConfigurationItem],
+) {
+    let _ = writeln!(output, "  {heading}:");
+    for item in items {
+        let _ = writeln!(output, "    {}: {}", escape(&item.selector), item.state);
+    }
+}
 
 /// Returns the immutable Git revision against which an existing implementation
 /// may be inspected for adoption into new Specs.

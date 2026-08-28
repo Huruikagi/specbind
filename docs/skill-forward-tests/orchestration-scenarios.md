@@ -1,6 +1,44 @@
 # Orchestration and supporting forward-test scenarios
 
-[Back to the forward-test index](../skill-forward-tests.md). These cover quick-plan scope modes, checkpoints, gap analysis, steering, and failure handling.
+[Back to the forward-test index](../skill-forward-tests.md). These cover
+configuration, quick-plan scope modes, checkpoints, gap analysis, steering, and
+failure handling.
+
+## Configuration scenarios
+
+Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).
+
+### CF1 — A role change is regenerated and verified
+
+Use the base fixture and ask:
+
+> Ask: Use the cheaper Codex model for implementation work in this project.
+
+- `.specbind.json` records only the implementer capability override and keeps
+  every unrelated install choice.
+- `.codex/agents/specbind-implementer.toml` is regenerated from that setting;
+  no generated Agent file is edited as the source of truth.
+- `specbind configuration show` reports the implementer as `overridden`, and a
+  final `specbind install --dry-run` has no create or replace action.
+- The active Git adapter produces one local checkpoint containing only the
+  configuration and regenerated product-managed files.
+
+### CF2 — A template change leaves existing artifacts alone
+
+Use the base fixture, record the current cart Requirements bytes and lifecycle
+status, then ask:
+
+> Ask: Future Requirements need a Risks section after Acceptance criteria.
+> Leave existing artifacts alone.
+
+- `settings/templates/specs/requirements.md` gains the requested section and
+  remains readable through `specbind template read spec requirements`.
+- `specbind configuration show` reports `spec/requirements: project-content`.
+- The established cart Requirements bytes and all lifecycle state are unchanged.
+- No reconciliation preview or write is treated as required after the request
+  explicitly declines it.
+- The active Git adapter produces one local checkpoint containing only the
+  project-owned template.
 
 ## Existing-implementation adoption scenarios
 

@@ -28,10 +28,16 @@ reasoning applies to the skill text itself.
 
 ### One authored source per skill
 
-Each skill has exactly one source at
+Each skill has exactly one entrypoint source at
 `tools/specbind/assets/skills/<skill-name>/SKILL.md`. The body is agent-neutral
 English prose. There is no per-agent copy in the repository, and no agent-specific
 branch inside the body.
+
+[Decision 0154](./0154-guided-configuration-workflow.md) expands this authored
+source into a package when progressive disclosure is needed. A package may add
+known files directly below `references/`; its `SKILL.md` links each file and
+states when to read it. Installation renders the entrypoint and copies those
+references byte-for-byte for every selected Agent.
 
 The source begins with a neutral Front Matter block:
 
@@ -184,3 +190,8 @@ exercised with the first skill that does.
 as another consumer of the portable Codex-shaped rendering at
 `.agents/skills/<name>/SKILL.md` and deduplicates that shared target when Codex
 and generic are selected together.
+
+[Decision 0154](./0154-guided-configuration-workflow.md) later generalizes the
+renderer and exact-target removal logic from a single file to the complete known
+Skill package. `specbind-configure` is the first package with conditional
+references.

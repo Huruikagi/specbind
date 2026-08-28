@@ -35,6 +35,7 @@ Related documents:
 - [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
 - [Decision 0137: active default Git checkpoints](./decisions/0137-active-default-git-checkpoints.md)
 - [Decision 0153: unified quick-plan orchestrator](./decisions/0153-unified-quick-plan-orchestrator.md)
+- [Decision 0154: guided configuration workflow](./decisions/0154-guided-configuration-workflow.md)
 
 Skills that may create Git checkpoints or push read the project-owned
 `settings/adapters/git.md` contract when present. The active default chooses one
@@ -74,6 +75,7 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-verify-completion` | `specbind-verify-completion` | Change | Implemented | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
 | None | `specbind-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
 | None | `specbind-release` | New | Implemented | Complete a release and close its active milestone. |
+| None | `specbind-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
 
 This classification now records the implemented v1 migration from the inherited
 set. Future rows should use `Rename` only when responsibility is unchanged;
@@ -187,10 +189,6 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - A milestone-wide implementation orchestrator with dependency-wave and
   subagent coordination, tracked by
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
-- A dedicated customization convenience skill over the stable shared settings
-  surface, tracked by
-  [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
-
 Agent removal and project uninstall are intentionally CLI-only under Decision
 0141. Their plan-by-default commands provide the exact confirmation surface, so
 they do not add a dedicated product-managed Skill.

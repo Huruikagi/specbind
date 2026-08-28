@@ -277,3 +277,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0151](./design/decisions/0151-agent-bound-template-variables.md) | Accepted | Project-defined template variables resolved through bound agent instructions |
 | [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |
 | [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Accepted | One quick-plan orchestrator with explicit named and all-Spec scope modes |
+| [0154](./design/decisions/0154-guided-configuration-workflow.md) | Accepted | Completing guided configuration workflow, summary command, and aftercare |

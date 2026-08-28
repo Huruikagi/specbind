@@ -16,6 +16,7 @@ without a pass are listed separately below.
 
 | Workflow area | Claude Code passes | Codex passes |
 | --- | --- | --- |
+| Configuration | None recorded | CF2 |
 | Discovery | D1, D2, D4–D6, D8–D12 | D4, D6, D13 |
 | Requirements | R1–R5 | R1, R3, R4, R6 |
 | Gap analysis | G1 | G1 |
@@ -34,6 +35,15 @@ without a pass are listed separately below.
 | Release | RL1 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
+
+CF2 was measured as Codex on 2026-08-28 with `gpt-5.6-terra` at medium
+reasoning against the working tree based on `d9de45b`, including Decision 0154.
+The driver changed only the project-owned Requirements template, adding the
+requested `#### Risks` materialization guidance after Acceptance Criteria, and
+created one adapter-directed local checkpoint. Mechanical judgment confirmed
+`spec/requirements: project-content`, a clean worktree, a readable raw template,
+and byte-identical established cart Requirements and `spec.yaml`. No existing
+artifact or lifecycle state was reconciled after the request declined it.
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
 Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit

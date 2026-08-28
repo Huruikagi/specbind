@@ -577,6 +577,18 @@ pub fn embedded_steering_templates(language: ProjectLanguage) -> Vec<SteeringTem
     templates
 }
 
+/// Reads one official embedded Steering template by selector.
+#[must_use]
+pub fn read_embedded_steering(language: ProjectLanguage, selector: &str) -> Option<String> {
+    let template = embedded_steering_templates(language)
+        .into_iter()
+        .find(|template| template.selector == selector)?;
+    EMBEDDED_TEMPLATES
+        .get_file(template.template_path.as_str())
+        .and_then(include_dir::File::contents_utf8)
+        .map(ToOwned::to_owned)
+}
+
 /// Discovers project-owned steering templates directly below the scope root.
 ///
 /// Nesting is not scanned: the selector is a bare file stem, so a subdirectory

@@ -3,7 +3,18 @@
 SpecBindのライフサイクルと検証はそのままに、成果物の書き方、プロジェクト固有の
 判断基準、運用手順、役割ごとに使うモデルを、プロジェクトに合わせて調整できます。
 
-このページでは、何を変えたいときにどこを編集するのかをまとめます。
+このページでは、何を変えたいときにどこを編集するのかをまとめます。通常は場所を
+先に調べて手作業する必要はありません。coding agentへ設定したい結果を伝えると、
+`specbind-configure`が現在値を調べ、必要な変更、検証、アフターケアまで完遂します。
+
+```sh
+specbind configuration show
+```
+
+このコマンドは、Agentと役割設定、テンプレート、ルール、adapter、Steeringの現在値を
+読み取り専用で要約します。`current-default`は現在の組み込み既定値と完全一致するという
+機械的な事実、`project-content`は異なるという事実だけを表し、意図的に設定済みかどうかは
+断定しません。
 
 ## 変更したいことから選ぶ
 
@@ -53,7 +64,6 @@ Brief、Research、Contract、Implementation NotesのSpecテンプレートと�
 
 ```sh
 specbind template list spec
-specbind template read spec requirements
 specbind template read spec requirements
 specbind template list steering
 specbind template read steering document
@@ -108,6 +118,13 @@ Brief、Research、Implementation Notesも、見出しやコメントだけで�
 
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。
+
+`specbind-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。
+同意した時点では候補と影響のpreviewだけを作り、format-only、instruction-update、
+structural、semantic、conflictに分類します。実際の書き換えは別に確認し、意味を変える
+変更はRequirementsやDesignなど、その成果物を所有するSkillへ引き渡します。Gate、
+completion、released archive、CLI所有の構造化状態は、テンプレートに合わせるという理由で
+直接書き換えません。
 
 `specbind:instruction`コメントには、用途を必ず1つ指定します。
 
@@ -227,7 +244,8 @@ version manifest、build script、既存ドキュメントを調べて具体案�
 本当に不要なら、Front Matterを残して本文を空にすることで明示できます。
 
 `git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contract reviewの
-受理、各実装Taskの完了など、Skillが定めた安全な完了単位ごとに、関係するパスだけを
+受理、各実装Taskの完了、`specbind-configure`による1つの設定変更など、Skillが定めた
+安全な完了単位ごとに、関係するパスだけを
 ローカルコミットします。現在のブランチを使い、既定ではpushやamendなどの履歴書き換えを
 行いません。初回のRelease adapter設定と、`release finalize`が生成するlog・archive・
 cleanupも、それぞれ公開対象とは別のローカルcommitになります。自動コミットを望まない
@@ -332,15 +350,20 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 
 ## 変更するときの進め方
 
-どの面をカスタマイズする場合も、次の順で進めると現在の状態とずれません。
+通常はcoding agentへ目的を伝え、`specbind-configure`に次の一連の作業を任せます。
 
-1. 変えたい内容が、テンプレート、ルール、adapter、Steering、プロジェクト設定の
-   どれに当たるかを決める。
-2. テンプレート、adapter、Steeringは、対応するCLIの`list`と`read`で現在値を
-   確認してから編集する。
-3. 編集するのはプロジェクト所有のファイルだけにする。
-4. 機械可読な構造と、上に挙げた製品側の契約は壊さない。
-5. 変更後に、CLIの`read`、dry run、または実際のSkillの実行で結果を確認する。
+1. `configuration show`と関係する`list`、`read`で現在値を確認する。
+2. 目的をテンプレート、ルール、adapter、Steering、install設定の所有面へ分類する。
+3. 変更案と影響を示し、必要な確認を得てプロジェクト所有面だけを変更する。
+4. installの再実行や専用Skillへの委譲を含め、所有する経路で反映する。
+5. 機械的な検証を再実行し、required、recommended、optionalに分けてアフターケアを
+   完了または明示的に見送る。
+
+Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果物のSkillが所有します。
+`specbind-configure`はそれらへ委譲しても、依頼された設定変更全体の完了確認と報告を
+引き続き担当します。有効なGit adapterが定める狭いローカルcheckpointは通常の完了手順に
+含まれますが、削除、push、branch変更、tag、履歴操作、外部操作、ライフサイクル変更は
+別の確認境界です。
 
 インストールされるファイルの全体像は
 [現在の成果物一覧](../../current-artifact-index.md)で確認できます。

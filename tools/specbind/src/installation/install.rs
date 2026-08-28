@@ -155,17 +155,47 @@ impl fmt::Display for InstallIssues {
 
 impl std::error::Error for InstallIssues {}
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct InstalledConfig {
-    schema_version: u64,
-    spec_dir: String,
-    language: ProjectLanguage,
-    agents: Vec<String>,
+pub struct InstalledConfig {
+    pub schema_version: u64,
+    pub spec_dir: String,
+    pub language: ProjectLanguage,
+    pub agents: Vec<String>,
     #[serde(default)]
-    project_instructions: bool,
+    pub project_instructions: bool,
     #[serde(default)]
-    agent_roles: AgentRoleOverrides,
+    pub agent_roles: AgentRoleOverrides,
+}
+
+/// Reads and validates the complete installed configuration without planning
+/// any filesystem change.
+///
+/// # Errors
+///
+/// Returns the same configuration and capability diagnostics installation
+/// planning would report.
+pub fn read_installed_config(project_root: &Path) -> Result<InstalledConfig, InstallIssues> {
+    let Some(config) = read_existing_config(project_root)? else {
+        return Err(one_issue(
+            "INSTALL_CONFIG_REQUIRED",
+            Some(CONFIG_RELATIVE.to_owned()),
+            "SpecBind is not installed in this project",
+        ));
+    };
+    let resolved = resolve_inputs(Some(&config), &InstallInputs::default())?;
+    Ok(InstalledConfig {
+        schema_version: config.schema_version,
+        spec_dir: resolved.spec_dir,
+        language: resolved.language,
+        agents: resolved
+            .agents
+            .iter()
+            .map(|agent| agent.name().to_owned())
+            .collect(),
+        project_instructions: resolved.project_instructions,
+        agent_roles: resolved.agent_roles,
+    })
 }
 
 /// Computes the installation plan without touching the filesystem.
@@ -771,39 +801,43 @@ fn skill_entries(
     let mut planned = std::collections::BTreeSet::new();
     for agent in &resolved.agents {
         for skill in skill::all() {
-            let relative = skill.target(*agent);
-            if !planned.insert(relative.clone()) {
-                continue;
-            }
-            let rendered = skill.render(*agent).map_err(|error| {
+            let rendered_files = skill.render_files(*agent).map_err(|error| {
                 one_issue(
                     "INSTALL_ASSET_UNAVAILABLE",
-                    Some(relative.clone()),
+                    Some(skill.target(*agent)),
                     error.message,
                 )
             })?;
-            let target = project_root.join(&relative);
-            let action = match fs::read(&target) {
-                Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
-                Ok(current) if current == rendered.as_bytes() => PlanAction::Keep,
-                Ok(_) => PlanAction::Replace,
-                Err(error) => {
-                    return Err(one_issue(
-                        "INSTALL_TARGET_UNREADABLE",
-                        Some(relative),
-                        error.to_string(),
-                    ));
+            for rendered in rendered_files {
+                let relative = rendered.target;
+                if !planned.insert(relative.clone()) {
+                    continue;
                 }
-            };
-            entries.push(PlanEntry {
-                action,
-                path: relative,
-                category: "skill",
-                detail: (action == PlanAction::Keep)
-                    .then(|| "already matches the current product asset".to_owned()),
-                content: (action != PlanAction::Keep).then_some(rendered),
-                expected_current: None,
-            });
+                let target = project_root.join(&relative);
+                let action = match fs::read(&target) {
+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                        PlanAction::Create
+                    }
+                    Ok(current) if current == rendered.content.as_bytes() => PlanAction::Keep,
+                    Ok(_) => PlanAction::Replace,
+                    Err(error) => {
+                        return Err(one_issue(
+                            "INSTALL_TARGET_UNREADABLE",
+                            Some(relative),
+                            error.to_string(),
+                        ));
+                    }
+                };
+                entries.push(PlanEntry {
+                    action,
+                    path: relative,
+                    category: "skill",
+                    detail: (action == PlanAction::Keep)
+                        .then(|| "already matches the current product asset".to_owned()),
+                    content: (action != PlanAction::Keep).then_some(rendered.content),
+                    expected_current: None,
+                });
+            }
         }
     }
     Ok(entries)
