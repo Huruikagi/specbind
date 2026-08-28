@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-28. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-29. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -225,6 +225,19 @@ evidence, a clean worktree, and four passing tests. Its post-judgment debrief di
 not repeat the earlier `specbind-status` to `specbind status` command
 translation.
 
+A1, I1, I3, and RL4 were re-measured on 2026-08-29 with fresh
+`gpt-5.6-terra` medium drivers after their conditional procedures moved into
+directly linked package resources. A1 passed on `ff304ab` by stopping at
+`ADOPTION_STEERING_REQUIRED` without creating a dossier, Roadmap, or Spec. I1
+and I3 passed on `09cfc19`: I1 used fresh implementer and reviewer contexts,
+completed only its one Task, and stopped before completion; I3 checkpointed
+only `CONTRIBUTING.md`, completed its Direct item, and manufactured no Spec
+artifacts. RL4 first failed on `ff304ab` because the entrypoint's stop wording
+let the driver omit the complete bootstrap proposal. After the boundary was
+clarified, a fresh `09cfc19` run proposed the repository-derived local-tag
+adapter, obtained configuration-only approval, committed only that adapter,
+and stopped without binding, tagging, publishing, pushing, or finalizing.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -245,6 +258,9 @@ translation.
 | VD1 | Codex | Product failure | On `7307f7a`, the validator returned the expected `NOT_READY` for Research dependence but also raised inactive Requirements 2.1–2.2 as blocking Design omissions. The fresh `3d887b6` run scoped judgment to the active 4/4 set and passed. |
 | RL3 | Codex | Product failure | On `6a29ad7`, a fresh driver misclassified the explicit Front Matter-only Release adapter as an unconfigured scaffold. The classification order was made explicit and the fresh `f069aef` run finalized correctly. |
 | RL4 | Codex | Product failure | On `f069aef`, a fresh driver concluded that release documentation was absent without inspecting root `RELEASING.md`. `447c0c6` requires root release-document enumeration before that conclusion; the fresh run found it and passed. |
+| RL4 | Codex | Product failure | On `ff304ab`, the fresh driver opened the new bootstrap resource but interpreted the entrypoint's stop boundary as permission to omit the full adapter proposal. `09cfc19` makes proposal presentation mandatory before the approval stop; the fresh retry proposed and checkpointed only the approved adapter, then stopped. |
+| I1 | Codex | Environment blocked | On `ff304ab`, the driver did not exercise the installed Skill or its fresh implementation/review dispatch and left only a partial direct edit. A fresh `09cfc19` run exercised both roles and passed. |
+| I3 | Codex | Environment blocked | On `ff304ab`, the host rejected fixture CLI execution and did not expose the installed Skill, leaving the Direct item pending. A fresh `09cfc19` run exercised the packaged Direct procedure and passed. |
 | HP1 | Codex | Product failure | On `2ec33fd`, a `gpt-5.6-terra` medium driver stopped for Discovery confirmation without presenting the whole scope plan its owning skill requires. The clean fixture stayed at commit `8f546b55b5631c0b070a014d9a3e8d6a2215161d` with no milestone or tag, `cart` idle, and one dispatch-log context. The missing plan made the first confirmation unapprovable, so no later journey phase was run. |
 | HP1 | Codex | Environment blocked | On `ef536c8`, the temp-directory driver was denied the required fixture-local dispatch-log write twice, including after the existing user authority was relayed. No product workflow ran. |
 | HP1 | Codex | Product failure | On `ef536c8`, a fresh workspace-local `gpt-5.6-terra` medium driver named the `cart` update but again omitted explicit empty New Specs, invalidations, and dependencies from its confirmation payload. It also tried `milestone create --scope` with prose before confirmation; the CLI rejected the path-like argument. The clean fixture stayed at `9f12ed713d4fe97842bca25583d51bb8408aaa17` with no milestone or tag, `cart` idle, and one dispatch-log context. |
@@ -295,6 +311,7 @@ remain available in Git history.
 | Successful `release finalize` left its lifecycle archive and log mutations outside a checkpoint. | Release snapshots the worktree before finalization, then uses active Git policy to create a separate local commit containing only newly changed finalization lifecycle paths; publication approval does not authorize pushing it. | `a576cf6`, confirmed on `d51a12a` |
 | Empty adapter content and an installed scaffold could both be reported as `state=scaffold`, contradicting the dedicated-marker contract and the Release empty-body meaning. | Skill classification checks the exact read result first, and `adapter list` now reports scaffold only for the exact dedicated marker; a Front Matter-only adapter is active. | `f069aef`, `d51a12a`, confirmed on `d51a12a` |
 | Release bootstrap could declare policy evidence absent after reading only `README.md`, even when root `RELEASING.md` existed. | Bootstrap enumerates root release-document candidates such as `RELEASE*`, `RELEASING*`, and `CHANGELOG*` before concluding that evidence is absent. | `447c0c6`, confirmed on `447c0c6` |
+| A progressive Release entrypoint could tell the driver to stop at a referenced bootstrap boundary before the driver presented the complete configuration proposal. | The entrypoint now requires repository investigation and the full replacement proposal before stopping for explicit approval; absence of approval cannot suppress the proposal. | `09cfc19`, confirmed on `09cfc19` |
 | A marked adapter could retain actionable-looking scaffold text, leaving precedence implicit. | Every consuming Skill states that the marker classifies the whole document and all remaining body lines are ignored. | `3746108`, confirmed on `fb87bb9` |
 | Discovery read the authoring protocol before a Brief but did not repeat its completion-state check after applying milestone scope. | Discovery now runs `milestone status` after reading `okf-authoring` and immediately before the first Brief write. | `fb87bb9`, confirmed on `fb87bb9` |
 | An inactive installed Git scaffold left every accepted phase uncommitted and blocked a same-session scope addition at the Roadmap target guard. | New installs receive active local-checkpoint policy; C1 confirmed the narrow first commit and D6 continued through `update-scope` with the milestone identity, existing item, and Roadmap body preserved. | `c3a0ccf`, confirmed on `8a58244` |
