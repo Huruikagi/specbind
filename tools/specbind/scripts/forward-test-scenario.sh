@@ -624,6 +624,12 @@ ds7 | ds8)
         title="Show the account overview screen"
         objective="A customer can understand their account status from one accessible screen."
         criterion="The account overview screen presents account status and recent activity with defined loading, empty, error, responsive, and keyboard-navigation behavior."
+        {
+            echo
+            echo "## Dashboard foundation"
+            echo
+            echo "The dashboard is a Python standard-library feature. Its renderer receives a caller-supplied account snapshot containing account status and recent activity, then returns one semantic HTML fragment; transport and data fetching stay outside this repository. Keep presentation CSS in src/dashboard.css and verify rendering with unittest without adding dependencies."
+        } >> README.md
     else
         spec=parser
         summary="Expose a library function that parses catalog identifiers."
@@ -677,6 +683,10 @@ ds7 | ds8)
         "specbind spec status $spec | grep -q 'State: design'"
     expect "the Design selection rule does not classify both standard candidates" \
         'specbind rule read design-template-selection --for consume | grep -q "design/ui"'
+    if [ "$scenario" = ds7 ]; then
+        expect "the dashboard Design fixture does not define its implementation foundation" \
+            'grep -q "caller-supplied account snapshot" README.md'
+    fi
     ;;
 
 ds4 | t1 | t2 | x1 | vd1)

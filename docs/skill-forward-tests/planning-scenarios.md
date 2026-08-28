@@ -357,7 +357,9 @@ From `ds2`, run the design skill and decline to approve when asked.
 
 From `ds7` — a new `dashboard` Spec with one approved Requirement explicitly
 covering a responsive account overview screen, loading, empty, error, and
-keyboard-navigation behavior — run the design skill.
+keyboard-navigation behavior, plus an established dependency-free Python HTML
+renderer boundary, caller-supplied account snapshot, and `unittest` convention
+— run the design skill.
 
 > Ask: design the dashboard spec.
 
