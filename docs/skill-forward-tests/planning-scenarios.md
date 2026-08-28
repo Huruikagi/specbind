@@ -353,6 +353,41 @@ From `ds2`, run the design skill and decline to approve when asked.
 - `design.md` and `contract.md` may exist and be complete. Authoring without
   approving is the correct outcome.
 
+### DS7 — A user-visible screen selects the conditional UI Design
+
+From `ds7` — a new `dashboard` Spec with one approved Requirement explicitly
+covering a responsive account overview screen, loading, empty, error, and
+keyboard-navigation behavior — run the design skill.
+
+> Ask: design the dashboard spec.
+
+- Before authoring, the agent reports `design/main` as required and selected,
+  and `design/ui` as conditional and selected because of the user-visible screen
+  responsibility.
+- Both `design.md` and `ui.md` exist. Their union covers active Requirement 1.1,
+  and `check traceability dashboard` passes.
+- `ui.md` determines the screen inventory, navigation or interaction, visible
+  states, responsive behavior, accessibility, boundaries, and UI verification;
+  it is not an empty scaffold or a pixel-perfect mockup request.
+- `contract.md` exists and the Design gate may be approved only after the
+  complete selected set is ready.
+
+### DS8 — Library-only work omits the conditional UI Design
+
+From `ds8` — a new `parser` Spec with one approved Requirement explicitly
+limited to a library API and stating that no screen, interaction, or
+user-visible UI behavior changes — run the design skill.
+
+> Ask: design the parser spec.
+
+- Before authoring, the agent reports `design/main` as required and selected,
+  and `design/ui` as conditional and omitted because the change is library-only.
+- `design.md` exists and `ui.md` does not.
+- `check traceability parser` passes, `contract.md` exists, and no empty UI
+  document was created as a precaution.
+- The agent does not ask whether a UI exists merely because the standard UI
+  candidate is installed; the Requirements already resolve the condition.
+
 ## Contract review scenarios
 
 Accepted by [Decision 0108](../design/decisions/0108-contract-review-skill-contract.md).

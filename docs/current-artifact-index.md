@@ -28,9 +28,11 @@ machine-level binary.
 | `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, optional project-instruction integration, and optional agent-role capability overrides. |
 | `{{SPEC_DIR}}/settings/templates/specs/requirements.md` | Project-owned Requirements structure and authoring scaffold. |
 | `{{SPEC_DIR}}/settings/templates/specs/design.md` | Project-owned Design structure and authoring scaffold. |
+| `{{SPEC_DIR}}/settings/templates/specs/ui.md` | Project-owned conditional screen-design scaffold; the selection Rule decides whether it applies to one Spec. |
 | `{{SPEC_DIR}}/settings/templates/roadmap.md` | Project-owned scaffold for milestone-wide Roadmap requests and rationale; live Roadmap Front Matter remains CLI-owned. |
 | `{{SPEC_DIR}}/settings/rules/ears-format.md` | Project Requirements style preferences. |
 | `{{SPEC_DIR}}/settings/rules/design-principles.md` | Project Design preferences. |
+| `{{SPEC_DIR}}/settings/rules/design-template-selection.md` | Required classification and applicability policy for every `design/<artifact_id>` template. |
 | `{{SPEC_DIR}}/settings/rules/contract-principles.md` | Project seam and compatibility policy. |
 | `{{SPEC_DIR}}/settings/rules/tasks-generation.md` | Project task-decomposition preferences. |
 | `{{SPEC_DIR}}/settings/rules/steering-principles.md` | Project steering-authoring preferences. |
@@ -43,22 +45,31 @@ machine-level binary.
 | `.claude/agents/specbind-*.md` | Product-managed Claude Code role adapters for the same five roles; model capability may be overridden through `.specbind.json`. |
 | `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
 
-The binary also embeds six Spec scaffolds (`brief`, `research`, `requirements`,
-`design/main`, `contract`, and `implementation-notes/main`), four Steering
+The binary also embeds seven Spec scaffolds (`brief`, `research`, `requirements`,
+`design/main`, `design/ui`, `contract`, and `implementation-notes/main`), four Steering
 scaffolds (`product`, `tech`, `structure`, and author-identified `document`), and
 one milestone `roadmap` scaffold in English and Japanese. `template list/read`
-exposes all of them. Requirements, Design, and the Roadmap body template are
-installed by default; a project can override any other selector under
+exposes all of them. Requirements, main Design, conditional UI Design, and the
+Roadmap body template are installed by default; a project can override any other selector under
 `settings/templates/` deliberately. `template resolve spec <spec> <selector>`
 reports the selected source and exact SpecBind-root-relative target path without
 writing it. `template read` validates and returns the raw scaffold, including
 its variables and instruction comments; the authoring agent materializes it.
 
+`template list spec` reports Design candidates rather than ordering every one
+to be materialized. The required `design-template-selection` Rule classifies
+each `design/<artifact_id>` as `required`, `conditional`, or `disabled` and
+provides project-owned conditions for conditional entries. The CLI validates a
+complete one-to-one classification when that Rule is listed or read;
+`specbind-design` evaluates conditional prose against the current Spec. The
+default selects `design/main` for every Spec and selects `design/ui` only for a
+user-visible screen or interaction responsibility.
+
 Every template instruction explicitly names `create`, `maintain`, or `consume`.
 Materialization removes `create` and carries the two durable scopes into the
 live artifact. `artifact read` and `steering read` preserve exact raw Markdown
 by default and accept `--for maintain` or `--for consume` to omit the unrelated
-durable instruction scope. `rule list/read` expose the five fixed project-owned
+durable instruction scope. `rule list/read` expose the six fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
 maintain, and consume modes and reject live `create` instructions.
 

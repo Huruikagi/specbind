@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0152 later adds the standard installed `design/ui` candidate and its
+required selection Rule. UI remains conditional per Spec rather than becoming a
+mandatory live artifact.
+
 ## Context
 
 [Decision 0059](./0059-okf-artifact-templates.md) makes a template both the materialization scaffold for an artifact and the file a project edits to customize that artifact. [Decision 0008](./0008-customization-surface.md) describes `settings/templates/` as the surface for "the structure and format of generated requirements, design, tasks, steering, and other documented artifacts".
@@ -34,7 +38,8 @@ Removing their templates entirely would cost something real. A template is also 
 
 ## Consequences
 
-- A newly installed project contains two template files instead of six, and both are files the project has a reason to open.
+- A newly installed project originally contained two Spec template files. Decision
+  0152 adds the conditional UI candidate as a third project-owned Spec template.
 - Brief and Implementation Notes keep deterministic OKF identity and a scaffold to materialize from, without pretending their structure is a product contract.
 - The install and refresh plans gain an explicit list rather than "everything embedded", which the installer increment must honor.
 - A project that genuinely wants to standardize its Brief or Contract guidance can still create the file under `settings/templates/specs/`; it is an informed choice rather than a default.
@@ -43,8 +48,9 @@ Removing their templates entirely would cost something real. A template is also 
 
 Implemented. The embedded set and per-selector override resolution make
 `template list spec` and `template read spec <selector>` behave as accepted.
-`specbind install` creates only the Requirements and Design defaults when they
-are absent and keeps every existing project-owned template unchanged.
+`specbind install` creates the Requirements, main Design, and conditional UI
+Design defaults when they are absent and keeps every existing project-owned
+template unchanged.
 
 Decision 0145 later widens the installed surface with a project-owned milestone
 Roadmap body template. It does not change this Decision's six-template Spec

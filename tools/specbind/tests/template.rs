@@ -9,11 +9,12 @@ use specbind::{
 };
 use tempfile::TempDir;
 
-const EXPECTED_SELECTORS: [&str; 6] = [
+const EXPECTED_SELECTORS: [&str; 7] = [
     "brief",
     "research",
     "requirements",
     "design/main",
+    "design/ui",
     "contract",
     "implementation-notes/main",
 ];
@@ -175,9 +176,9 @@ fn materialized_embedded_templates_are_recognized_live_artifacts() {
                 "{language:?} materialization is missing {expected}: {selectors:?}"
             );
         }
-        // The Design template deliberately omits the live-only requirement_ids
-        // mapping under Decision 0059, so exactly that diagnostic is expected
-        // until the authoring agent adds the mapping and its body markers.
+        // Both Design templates deliberately omit the live-only requirement_ids
+        // mapping under Decision 0059, so each reports the same diagnostic until
+        // the authoring agent selects it and adds the mapping and body markers.
         let codes = inventory
             .issues
             .iter()
@@ -185,7 +186,10 @@ fn materialized_embedded_templates_are_recognized_live_artifacts() {
             .collect::<Vec<_>>();
         assert_eq!(
             codes,
-            ["ARTIFACT_DESIGN_REQUIREMENT_IDS_INVALID"],
+            [
+                "ARTIFACT_DESIGN_REQUIREMENT_IDS_INVALID",
+                "ARTIFACT_DESIGN_REQUIREMENT_IDS_INVALID"
+            ],
             "{language:?} materialization has unexpected diagnostics: {:?}",
             inventory.issues
         );
@@ -326,7 +330,10 @@ fn reads_agent_bound_variables_and_preserves_create_guidance() {
                 .0;
             assert!(raw.contains("{{spec}}"));
             assert!(raw.contains("specbind:instruction create bind=spec"));
-            if matches!(selector, "design/main" | "implementation-notes/main") {
+            if matches!(
+                selector,
+                "design/main" | "design/ui" | "implementation-notes/main"
+            ) {
                 assert!(raw.contains("{{artifact_id}}"));
                 assert!(raw.contains("specbind:instruction create bind=artifact_id"));
             }
@@ -388,18 +395,20 @@ fn resolve_default_bindings(content: &str, spec: &str, artifact_id: Option<&str>
 }
 
 fn complete_design(specbind_root: &Path) {
-    let path = specbind_root.join("specs/checkout/design.md");
-    let content = fs::read_to_string(&path).expect("materialized design");
-    let content = content.replacen(
-        "artifact_id: main\n",
-        "artifact_id: main\nrequirement_ids: ['1.1']\n",
-        1,
-    );
-    fs::write(
-        path,
-        format!("{}\n_Requirements: 1.1_\n", content.trim_end()),
-    )
-    .expect("write completed design");
+    for (file_name, artifact_id) in [("design.md", "main"), ("ui.md", "ui")] {
+        let path = specbind_root.join("specs/checkout").join(file_name);
+        let content = fs::read_to_string(&path).expect("materialized design");
+        let content = content.replacen(
+            &format!("artifact_id: {artifact_id}\n"),
+            &format!("artifact_id: {artifact_id}\nrequirement_ids: ['1.1']\n"),
+            1,
+        );
+        fs::write(
+            path,
+            format!("{}\n_Requirements: 1.1_\n", content.trim_end()),
+        )
+        .expect("write completed design");
+    }
 }
 
 fn strip_instructions(content: &str) -> String {

@@ -1,17 +1,19 @@
 use specbind::rule;
 
 /// The complete Decision 0093 installed default set.
-const ACCEPTED_RULES: [&str; 5] = [
+const ACCEPTED_RULES: [&str; 6] = [
     "ears-format.md",
     "design-principles.md",
+    "design-template-selection.md",
     "contract-principles.md",
     "tasks-generation.md",
     "steering-principles.md",
 ];
 
-const ACCEPTED_SELECTORS: [&str; 5] = [
+const ACCEPTED_SELECTORS: [&str; 6] = [
     "ears-format",
     "design-principles",
+    "design-template-selection",
     "contract-principles",
     "tasks-generation",
     "steering-principles",
@@ -37,6 +39,31 @@ fn embeds_exactly_the_accepted_default_rule_set() {
     for unknown in ["deployment", "ears-format.md", "", "Ears-format"] {
         assert!(rule::find(unknown).is_none(), "{unknown} must not resolve");
     }
+}
+
+#[test]
+fn default_design_template_selection_classifies_main_and_ui() {
+    let content = rule::find("design-template-selection")
+        .expect("selection rule")
+        .content();
+    let selectors = vec!["design/main".to_owned(), "design/ui".to_owned()];
+    assert!(rule::validate_design_template_selection(content, &selectors).is_empty());
+}
+
+#[test]
+fn design_template_selection_fails_closed_for_incomplete_or_stale_policy() {
+    let selectors = vec!["design/main".to_owned(), "design/ui".to_owned()];
+    let content = concat!(
+        "# Selection\n\n",
+        "## `design/main`\n\nMode: conditional\n\n",
+        "## `design/legacy`\n\nMode: disabled\n",
+    );
+    let issues = rule::validate_design_template_selection(content, &selectors);
+    let codes = issues.iter().map(|issue| issue.code).collect::<Vec<_>>();
+    assert!(codes.contains(&"RULE_DESIGN_TEMPLATE_CONDITION_MISSING"));
+    assert!(codes.contains(&"RULE_DESIGN_TEMPLATE_SELECTOR_MISSING"));
+    assert!(codes.contains(&"RULE_DESIGN_TEMPLATE_SELECTOR_UNKNOWN"));
+    assert!(codes.contains(&"RULE_DESIGN_TEMPLATE_REQUIRED_MISSING"));
 }
 
 #[test]

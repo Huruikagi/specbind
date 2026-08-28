@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0152 expands the closed set with the required
+`design-template-selection.md` routing Rule. Unlike the original five optional
+preference Rules, its absence fails because the Design candidate set would be
+unclassified.
+
 [Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
 removes parallelization preferences from the retained task-generation rule.
 
@@ -23,12 +28,15 @@ SpecBind therefore needs a narrow default set that follows cc-sdd where the rule
 
 ### Installed defaults
 
-`specbind install` provides exactly these five default files under `{{SPEC_DIR}}/settings/rules/`:
+`specbind install` originally provided the following five preference files
+under `{{SPEC_DIR}}/settings/rules/`; Decision 0152 adds the sixth
+`design-template-selection.md` routing Rule:
 
 | Default file | Origin | Customizable responsibility |
 | --- | --- | --- |
 | `ears-format.md` | Retained from cc-sdd | Preferred EARS patterns, subject choice, localization-aware phrasing, and testability style for Requirements. It does not define Requirement heading grammar, IDs, approval, or active-scope selection. |
 | `design-principles.md` | Retained from cc-sdd | Project-adjustable architecture, interface, data-model, error-handling, diagram, documentation, and level-of-detail preferences. It does not define discovery modes, mandatory review loops, Design traceability syntax, or gate behavior. |
+| `design-template-selection.md` | New for SpecBind | Required, conditional, or disabled classification and project applicability conditions for every Design template. |
 | `contract-principles.md` | New for SpecBind | Project policy for shared ownership, public seams, compatibility posture, generated boundaries, dependency direction, and when warnings deserve stricter review. It does not define canonical Contract syntax, required graph validity, or cross-spec-review lifecycle. |
 | `tasks-generation.md` | Retained from cc-sdd | Project preferences for task sizing, decomposition, completion-detail style, test-work grouping, and conservative parallelization. It does not define `tasks.yaml`, positional IDs, dependency semantics, required coverage, approval, or execution state. |
 | `steering-principles.md` | Retained from cc-sdd | Project preferences for durable steering granularity, examples, preservation, and avoiding transient or obvious content. It does not define steering discovery, identity, installation, or synchronization workflow. |
@@ -58,6 +66,7 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 | --- | --- |
 | `ears-format.md` | `specbind-requirements`. |
 | `design-principles.md` | `specbind-design`, `specbind-validate-design`, and `specbind-gap-analysis`. |
+| `design-template-selection.md` | `specbind-design` and `specbind-validate-design`. |
 | `contract-principles.md` | `specbind-design`, `specbind-validate-design`, `specbind-gap-analysis` when boundaries are relevant, and `specbind-contract-review`. |
 | `tasks-generation.md` | `specbind-tasks`. |
 | `steering-principles.md` | `specbind-steering`. |
@@ -76,7 +85,7 @@ specbind rule read <selector> --for maintain
 specbind rule read <selector> --for consume
 ```
 
-Selectors are the five accepted filenames without `.md`. `list` enumerates
+Selectors are the six accepted filenames without `.md`. `list` enumerates
 that closed set rather than scanning the directory and reports each rule's
 type, path, and project presence. `read` returns the project's exact raw UTF-8
 Markdown when no purpose is supplied. Absence is the successful `NO_CHANGE
@@ -90,7 +99,12 @@ instruction scope exactly while omitting the other durable scope. Invalid
 instruction syntax, a `create` leak, a link-like or non-regular target, and
 non-UTF-8 content fail the read rather than returning partial policy.
 
-V1 does not recursively load additional `settings/rules/**/*.md` files. Arbitrary automatic loading would make relevance and conflict precedence depend on filenames or directory order. A future extensible rule profile may add stable IDs, applicability selectors, and deterministic ordering through a separate decision. Until then, projects customize the five known files and use ordinary steering artifacts for additional durable project guidance.
+V1 does not recursively load additional `settings/rules/**/*.md` files.
+Arbitrary automatic loading would make relevance and conflict precedence depend
+on filenames or directory order. Projects customize the six known files and
+use the Design-template selection Rule to classify arbitrary project-defined
+Design selectors; ordinary steering artifacts remain the destination for other
+additional durable project guidance.
 
 ### Installation and refresh
 
@@ -126,7 +140,7 @@ The inherited files are classified as follows:
 
 ## Consequences
 
-- A new project receives five purposeful rule files rather than the complete inherited process library.
+- A new project receives six purposeful rule files rather than the complete inherited process library.
 - Four familiar cc-sdd customization topics remain available under familiar filenames.
 - Contract authoring receives a SpecBind-native project-policy surface, while OKF authoring uses an immutable product protocol.
 - Product protocols and skill implementations have concrete, separate destinations for semantic guidance and workflow control removed from templates and inherited rules.
@@ -135,7 +149,16 @@ The inherited files are classified as follows:
 
 ## Implementation status
 
-All five default rules are authored as embedded installation assets under `tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as create-or-keep entries alongside the Decision 0091 templates. Each is a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`, applicability, priority, or enablement field, and the one English set serves both configured artifact languages. `rule list/read` expose the fixed selector set and project copies, including the Decision 0139 purpose projections; current consuming skills request `--for consume` and never resolve the settings path themselves.
+All six default rules are authored as embedded installation assets under
+`tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as
+create-or-keep entries alongside the Decision 0091 and 0152 templates. Each is
+a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`,
+applicability, priority, or enablement Front Matter field, and the one English
+set serves both configured artifact languages. `rule list/read` expose the
+fixed selector set and project copies, including the Decision 0139 purpose
+projections; current consuming skills request `--for consume` and never resolve
+the settings path themselves. Decision 0152 gives the selection Rule a narrow
+machine-readable Markdown section contract and requires its presence.
 
 The contents are rewritten for the Decision 0092 boundary rather than copied from cc-sdd: each file states that the project owns it, names the CLI contract or protocol that stays authoritative, and carries preferences plus review questions instead of workflow control. The inherited files under `tools/cc-sdd/templates/shared/settings/rules/` remain migration inputs.
 

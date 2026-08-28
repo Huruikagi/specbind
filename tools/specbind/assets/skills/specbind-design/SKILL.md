@@ -167,21 +167,39 @@ Read the project's design and seam preferences through its rule surface:
 ```text
 specbind rule read design-principles --for consume
 specbind rule read contract-principles --for consume
+specbind rule read design-template-selection --for consume
 ```
 
-`NO_CHANGE RULE_ABSENT` means that customization is absent; the protocol still
-applies. Any `ERROR` line stops this workflow.
+`NO_CHANGE RULE_ABSENT` for the design or contract principles means that
+customization is absent; the protocol still applies. Design-template selection
+is required because it classifies the project's complete candidate set. Any
+`ERROR` line stops this workflow.
 
-**No Design exists — whether the Spec is new or established** — list the
-template set first:
+List the template set whether or not a Design already exists:
 
 ```sh
 specbind template list spec
 ```
 
-The listing is the complete initial Design decomposition and also tells you
-whether each scaffold is `project` or `embedded`. For every listed
-`design/<artifact_id>` selector, resolve and read it:
+The listing is the complete candidate Design set and also tells you whether
+each scaffold is `project` or `embedded`. Classify every listed
+`design/<artifact_id>` selector using the selection rule:
+
+- select every `required` template;
+- evaluate every `conditional` template against the complete current
+  Requirements, existing Design set, repository facts, and explicit user
+  decisions;
+- exclude every `disabled` template;
+- ask the user when a conditional boundary remains ambiguous after those
+  reads; never create a precautionary empty Design.
+
+Before writing, report each selector, its mode, and `selected` or `omitted`
+with the concrete reason. A mode is not a substitute for judgment: the selected
+set must still contain at least one Design, own every responsibility required by
+the current change, and cover every active Requirement.
+
+**No Design exists — whether the Spec is new or established** — for every
+selected selector, resolve and read it:
 
 ```sh
 specbind template resolve spec <spec> <design-selector>
@@ -196,7 +214,12 @@ the same resolved value, and omit the `create` instruction. Copy every
 live-only traceability fields while authoring.
 
 **A Design set exists** — read every current design artifact with
-`--for maintain`, then revise those artifacts in place.
+`--for maintain`, then revise those artifacts in place. If the active change
+introduces a durable responsibility whose selected template has no live Design,
+resolve and materialize that template. A template or rule edit by itself never
+reconciles an existing Design set. If a live Design is now disabled or its
+conditional responsibility no longer applies, explain the identity removal and
+ask before deleting it; do not silently discard accepted design knowledge.
 
 The design set is the Spec's **complete current design**, persistent the way the
 requirements are. Fold this milestone's change into the document that owns that

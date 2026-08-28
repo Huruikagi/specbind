@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0152 later changes "every Design entry" below to every entry selected
+by the required project Rule; the inventory remains the complete candidate set.
+
 ## Context
 
 [Decision 0059](./0059-okf-artifact-templates.md) makes a Spec template's path

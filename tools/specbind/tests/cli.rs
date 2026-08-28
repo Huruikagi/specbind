@@ -1300,7 +1300,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 58 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 60 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -1318,7 +1318,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/roadmap.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 58 create, 0 replace, 0 keep\n",
+                "\n  Summary: 60 create, 0 replace, 0 keep\n",
             )),
         )
         .stderr("");
@@ -1387,7 +1387,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 33 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 35 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -1436,10 +1436,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 35 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 37 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 35 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 37 created, 0 replaced, 0 kept\n",
             )),
         )
         .stderr("");
@@ -1452,8 +1452,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
     for relative in [
         ".specbind/settings/templates/specs/requirements.md",
         ".specbind/settings/templates/specs/design.md",
+        ".specbind/settings/templates/specs/ui.md",
         ".specbind/settings/templates/roadmap.md",
         ".specbind/settings/rules/ears-format.md",
+        ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
@@ -1909,7 +1911,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 33 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 35 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(
@@ -2147,7 +2149,7 @@ fn lists_and_reads_project_owned_spec_templates() {
         .assert()
         .success()
         .stdout(
-            predicate::str::starts_with("OK TEMPLATE_LISTED: Found 6 recognized spec template(s).\n")
+            predicate::str::starts_with("OK TEMPLATE_LISTED: Found 7 recognized spec template(s).\n")
                 .and(predicate::str::contains(
                     "selector=brief source=project type=\"SpecBind Brief\" template_path=settings/templates/specs/brief.md output_path=brief.md\n",
                 ))
@@ -2298,7 +2300,7 @@ fn falls_back_to_embedded_defaults_in_the_configured_language() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK TEMPLATE_LISTED: Found 6 recognized spec template(s).\n",
+                "OK TEMPLATE_LISTED: Found 7 recognized spec template(s).\n",
             )
             .and(predicate::str::contains("template_path=en/specs/brief.md"))
             .and(predicate::str::contains("source=project").not()),
@@ -4372,6 +4374,15 @@ fn lists_accepted_rules_with_project_presence() {
         ".specbind/settings/rules/ears-format.md",
         "---\ntype: SpecBind Rule\n---\n# EARS\n",
     );
+    write(
+        root.path(),
+        ".specbind/settings/rules/design-template-selection.md",
+        concat!(
+            "---\ntype: SpecBind Rule\n---\n# Selection\n\n",
+            "## `design/main`\n\nMode: required\n\nAlways.\n\n",
+            "## `design/ui`\n\nMode: conditional\n\nFor user-visible UI changes.\n",
+        ),
+    );
 
     let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
     command
@@ -4380,14 +4391,54 @@ fn lists_accepted_rules_with_project_presence() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK RULE_LISTED: Found 5 accepted rule(s).\n",
+            "OK RULE_LISTED: Found 6 accepted rule(s).\n",
             "  selector=ears-format type=\"SpecBind Rule\" path=settings/rules/ears-format.md present=yes\n",
             "  selector=design-principles type=\"SpecBind Rule\" path=settings/rules/design-principles.md present=no\n",
+            "  selector=design-template-selection type=\"SpecBind Rule\" path=settings/rules/design-template-selection.md present=yes\n",
             "  selector=contract-principles type=\"SpecBind Rule\" path=settings/rules/contract-principles.md present=no\n",
             "  selector=tasks-generation type=\"SpecBind Rule\" path=settings/rules/tasks-generation.md present=no\n",
             "  selector=steering-principles type=\"SpecBind Rule\" path=settings/rules/steering-principles.md present=no\n",
         ))
         .stderr("");
+}
+
+#[test]
+fn design_template_selection_rule_is_required_and_matches_the_candidate_set() {
+    let root = project_fixture();
+
+    let mut absent = Command::cargo_bin("specbind").expect("specbind binary should build");
+    absent
+        .current_dir(root.path())
+        .args([
+            "rule",
+            "read",
+            "design-template-selection",
+            "--for",
+            "consume",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("ERROR RULE_REQUIRED"));
+
+    write(
+        root.path(),
+        ".specbind/settings/rules/design-template-selection.md",
+        concat!(
+            "---\ntype: SpecBind Rule\n---\n# Selection\n\n",
+            "## `design/main`\n\nMode: required\n\nAlways.\n",
+        ),
+    );
+    let mut incomplete = Command::cargo_bin("specbind").expect("specbind binary should build");
+    incomplete
+        .current_dir(root.path())
+        .args(["rule", "read", "design-template-selection"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "RULE_DESIGN_TEMPLATE_SELECTOR_MISSING design/ui",
+        ));
 }
 
 #[test]

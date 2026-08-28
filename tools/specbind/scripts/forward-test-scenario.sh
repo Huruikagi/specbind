@@ -33,6 +33,8 @@
 #   ds3    ds2 with the requirements edited afterwards, so that gate is stale
 #   ds4    cart with the design gate approved and the contract review accepted
 #   ds5    ds2 plus a `checkout` Spec consuming the cart export
+#   ds7    a new dashboard Spec whose user-visible screen requires Design UI
+#   ds8    a new parser Spec whose library-only behavior must omit Design UI
 #   t1     ds4's state: design approved and the review accepted, no plan yet
 #   t2     t1 without the accepted contract review
 #   t3     an approved three-task plan with the first two already completed
@@ -610,6 +612,71 @@ ds1)
         'specbind spec status order | grep -q "Expected work: cover 3 active requirement(s) in Design"'
     expect "order already has a contract" \
         '! test -e .specbind/specs/order/contract.md'
+    ;;
+
+ds7 | ds8)
+    if [ "$scenario" = ds7 ]; then
+        spec=dashboard
+        summary="Add a customer account overview screen."
+        problem="Customers cannot see their account status in one place."
+        desired="A responsive account overview screen shows status, recent activity, loading, empty, and error states with accessible navigation."
+        context="A signed-in customer needs a visual overview of their account."
+        title="Show the account overview screen"
+        objective="A customer can understand their account status from one accessible screen."
+        criterion="The account overview screen presents account status and recent activity with defined loading, empty, error, responsive, and keyboard-navigation behavior."
+    else
+        spec=parser
+        summary="Expose a library function that parses catalog identifiers."
+        problem="Callers parse catalog identifiers inconsistently."
+        desired="A library-only parser returns one normalized identifier or a typed invalid-input error without changing any user interface."
+        context="Internal callers need one stable parsing boundary."
+        title="Parse a catalog identifier"
+        objective="A caller can normalize a catalog identifier through one library API."
+        criterion="The parser returns the normalized identifier for valid input and a typed invalid-input error otherwise; no screen, interaction, or user-visible UI behavior changes."
+    fi
+    milestone "{\"schemaVersion\":1,\"workItems\":{\"newSpecs\":[{\"spec\":\"$spec\",\"summary\":\"$summary\"}]}}"
+    brief "$spec" "$problem" "$desired"
+    {
+        echo "---"
+        echo "type: SpecBind Requirements"
+        echo "heading_labels:"
+        echo "  requirement: Requirement"
+        echo "  acceptance_criteria: Acceptance Criteria"
+        echo "---"
+        echo
+        echo "# Requirements"
+        echo
+        echo "## Context"
+        echo
+        echo "$context"
+        echo
+        echo "## Scope"
+        echo
+        echo "### In scope"
+        echo
+        echo "$desired"
+        echo
+        echo "### Out of scope"
+        echo
+        echo "Unrelated product behavior."
+        echo
+        echo "## Requirements"
+        echo
+        echo "### Requirement 1: $title"
+        echo
+        echo "**Objective:** $objective"
+        echo
+        echo "#### Acceptance Criteria"
+        echo
+        echo "1. $criterion"
+    } > ".specbind/specs/$spec/requirements.md"
+    specbind spec requirements approve "$spec" \
+        --approval-mode explicit --requirement-ids 1.1 >/dev/null \
+        || fail "could not approve the requirements gate"
+    expect "$spec did not reach the design state" \
+        "specbind spec status $spec | grep -q 'State: design'"
+    expect "the Design selection rule does not classify both standard candidates" \
+        'specbind rule read design-template-selection --for consume | grep -q "design/ui"'
     ;;
 
 ds4 | t1 | t2 | x1 | vd1)

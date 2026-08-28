@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0152 supersedes this Decision's rule that every discovered Design
+template is materialized as the initial decomposition. The inventory is now the
+candidate set; the project-owned selection Rule chooses required and applicable
+conditional entries.
+
 ## Context
 
 Decision 0008 makes shared templates and rules the project-owned customization surface. Decisions 0057 and 0058 then decouple live artifact identity from filenames and give agents logical inventory and read operations. The inherited cc-sdd templates still mix final Markdown structure, placeholder examples, and natural-language generation instructions without a machine-recognizable boundary.

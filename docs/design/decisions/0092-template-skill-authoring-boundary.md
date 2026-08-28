@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0152 applies this allocation generically to Design decomposition: a
+project-owned shared Rule classifies candidate templates, while the Design
+Skills retain applicability judgment and materialization orchestration.
+
 ## Context
 
 Decision 0008 makes both `settings/templates/` and `settings/rules/` project-owned customization surfaces. Decision 0059 then allows a template to carry `specbind:instruction` comments that an authoring agent reads before removing them from the materialized artifact. This is useful for explaining a scaffold, but it also makes it easy to place workflow policy in the template merely because the template is nearby.

@@ -25,11 +25,23 @@ SpecBindのライフサイクルと検証はそのままに、成果物の書き
 分け方、例、テンプレート内の`specbind:instruction`コメントを調整できます。
 
 初回のinstallでプロジェクト側にコピーされるのは、構成をプロジェクトで所有する
-次の3つです。
+次の4つです。
 
 - `settings/templates/specs/requirements.md`
 - `settings/templates/specs/design.md`
+- `settings/templates/specs/ui.md`
 - `settings/templates/roadmap.md`
+
+`design.md` と `ui.md` はいずれもDesignの候補です。候補が存在するだけで
+すべてのSpecに生成されるわけではありません。
+`settings/rules/design-template-selection.md`が各`design/<artifact_id>`を
+`required`、`conditional`、`disabled`のいずれかに分類します。標準設定では
+`design/main`は必須、`design/ui`は画面、操作、表示状態、レスポンシブ動作、
+アクセシビリティなどのユーザー可視な責任がある場合だけ選択されます。
+
+独自のDesignテンプレートを追加する場合は、同じselectorの分類と、
+`conditional`なら適用条件もこのRuleに追加してください。テンプレートとの
+対応が欠落、重複、または不明な場合、Ruleの読み取りはfail closedします。
 
 Roadmapテンプレートは、マイルストーン全体の変更要求、境界、分解判断、依存関係の
 理由を書く本文だけをカスタマイズします。`milestone_id`、baseline、target release、

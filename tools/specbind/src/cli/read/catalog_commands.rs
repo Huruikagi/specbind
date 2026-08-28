@@ -495,6 +495,13 @@ pub fn rule_list(start: &Path) -> CommandOutput {
     for entry in rule::defaults() {
         match entry.read(&paths.specbind_root) {
             Ok(content) => {
+                if content.is_none() && entry.selector == "design-template-selection" {
+                    return CommandOutput::failure(
+                        "RULE_LIST_FAILED",
+                        "Cannot inspect project rules.",
+                        vec![format!("RULE_REQUIRED missing {}", entry.path())],
+                    );
+                }
                 if let Some(content) = &content {
                     let issues = instruction::validate_live(content);
                     if !issues.is_empty() {
@@ -507,6 +514,19 @@ pub fn rule_list(start: &Path) -> CommandOutput {
                                     format!("{} {}: {}", issue.code, entry.path(), issue.message)
                                 })
                                 .collect(),
+                        );
+                    }
+                    if entry.selector == "design-template-selection"
+                        && let Err(details) = validate_design_template_selection_rule(
+                            &paths.specbind_root,
+                            paths.language,
+                            content,
+                        )
+                    {
+                        return CommandOutput::failure(
+                            "RULE_LIST_FAILED",
+                            "Cannot inspect project rules.",
+                            details,
                         );
                     }
                 }
@@ -540,8 +560,9 @@ pub fn rule_list(start: &Path) -> CommandOutput {
 
 /// Reads one project-owned rule as raw or purpose-projected UTF-8 Markdown.
 ///
-/// Absence is a successful no-change result because product protocols remain
-/// authoritative when the project supplies no customization.
+/// Absence is a successful no-change result for ordinary preference Rules
+/// because product protocols remain authoritative. Decision 0152's Design
+/// template selection Rule is required and fails when absent.
 #[must_use]
 pub fn rule_read(start: &Path, selector: &str, purpose: Option<&str>) -> CommandOutput {
     let paths = match config::resolve_from(start) {
@@ -568,6 +589,19 @@ pub fn rule_read(start: &Path, selector: &str, purpose: Option<&str>) -> Command
                         .collect(),
                 );
             }
+            if selector == "design-template-selection"
+                && let Err(details) = validate_design_template_selection_rule(
+                    &paths.specbind_root,
+                    paths.language,
+                    &content,
+                )
+            {
+                return CommandOutput::failure(
+                    "RULE_READ_FAILED",
+                    "Design template selection rule is inconsistent with the template set.",
+                    details,
+                );
+            }
             let projected = match purpose {
                 Some("maintain") => {
                     instruction::project(&content, instruction::InstructionScope::Maintain)
@@ -579,11 +613,42 @@ pub fn rule_read(start: &Path, selector: &str, purpose: Option<&str>) -> Command
             };
             CommandOutput::success(projected.into_bytes())
         }
+        Ok(None) if selector == "design-template-selection" => CommandOutput::failure(
+            "RULE_REQUIRED",
+            "The project has no Design template selection rule.",
+            vec![format!("missing {}", entry.path())],
+        ),
         Ok(None) => CommandOutput::no_change(
             "RULE_ABSENT",
             &format!("The project has no {selector} rule."),
         ),
         Err(error) => CommandOutput::failure(error.code, error.message, vec![]),
+    }
+}
+
+fn validate_design_template_selection_rule(
+    specbind_root: &Path,
+    language: config::ProjectLanguage,
+    content: &str,
+) -> Result<(), Vec<String>> {
+    let inventory = template::discover_spec_templates(specbind_root, language);
+    if !inventory.issues.is_empty() {
+        return Err(inventory.issues.iter().map(render_issue).collect());
+    }
+    let selectors = inventory
+        .templates
+        .iter()
+        .filter(|template| template.artifact_type == "SpecBind Design")
+        .map(|template| template.selector.clone())
+        .collect::<Vec<_>>();
+    let issues = rule::validate_design_template_selection(content, &selectors);
+    if issues.is_empty() {
+        Ok(())
+    } else {
+        Err(issues
+            .into_iter()
+            .map(|issue| format!("{} {}", issue.code, issue.message))
+            .collect())
     }
 }
 

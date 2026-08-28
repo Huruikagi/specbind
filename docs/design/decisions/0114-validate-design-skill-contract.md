@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0152 later adds the project Design-template selection Rule to the
+validator's read set so a missing applicable focused Design is `NOT_READY`.
+
 ## Context
 
 `specbind-validate-design` is the second consumer of the `design-validation`

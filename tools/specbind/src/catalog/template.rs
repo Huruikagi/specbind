@@ -90,7 +90,7 @@ pub fn discover_spec_templates(
 /// Selectors whose structure a project may own, installed under Decision 0091.
 ///
 /// Every other artifact type keeps an embedded scaffold only.
-pub const INSTALLED_SELECTORS: [&str; 2] = ["requirements", "design/main"];
+pub const INSTALLED_SELECTORS: [&str; 3] = ["requirements", "design/main", "design/ui"];
 
 /// Resolves the embedded defaults that `specbind install` writes into the
 /// project customization surface.

@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0152 later replaces unconditional materialization of every Design
+template with project-rule classification and per-Spec applicability judgment.
+
 ## Context
 
 The design phase is the most heavily pre-decided phase in SpecBind, and almost

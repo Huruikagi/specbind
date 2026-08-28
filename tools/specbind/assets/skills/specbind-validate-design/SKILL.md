@@ -60,6 +60,7 @@ Then the standard:
 
 ```sh
 specbind protocol read design-validation
+specbind template list spec
 ```
 
 Read the project's design and seam preferences through its rule surface:
@@ -67,10 +68,15 @@ Read the project's design and seam preferences through its rule surface:
 ```text
 specbind rule read design-principles --for consume
 specbind rule read contract-principles --for consume
+specbind rule read design-template-selection --for consume
 ```
 
-`NO_CHANGE RULE_ABSENT` means that customization is absent; the protocol still
-applies. Any `ERROR` line stops this validation.
+`NO_CHANGE RULE_ABSENT` for design or contract principles means that
+customization is absent; the protocol still applies. Design-template selection
+is required. Any `ERROR` line stops this validation. Confirm that the current
+Design set contains every required template and every conditional template
+whose responsibility applies to the current Requirements and repository. A
+missing applicable Design is `NOT_READY`; do not create it.
 
 When judging whether the design fits the system it enters requires real
 investigation of the existing code, dispatch that as a fresh subagent with a

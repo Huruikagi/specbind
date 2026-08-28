@@ -32,6 +32,21 @@ Before settling on an approach, apply these lenses to the full picture:
   has takes precedence over introducing a parallel mechanism, unless the design
   states why the existing one cannot carry the change.
 
+## Select the complete Design set
+
+The project may classify Design templates as required, conditional, or
+disabled. That policy controls decomposition, but it cannot make a required
+responsibility disappear. Evaluate conditional entries against current
+Requirements, existing Design, repository facts, and explicit user decisions.
+Select a focused Design when its durable concern applies; omit it when the
+concern does not apply. Framework presence alone is not evidence of product
+responsibility, and an empty precautionary document is not a Design.
+
+The result must contain at least one Design, cover every active Requirement,
+and make every responsibility needed by the change inspectable. When the
+available evidence leaves a conditional boundary ambiguous, ask rather than
+silently selecting or omitting it.
+
 ## The right design is the smallest one that works
 
 For every component, layer, and abstraction, the question is whether it is

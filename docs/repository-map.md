@@ -275,3 +275,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0149](./design/decisions/0149-bound-spec-template-rendering-variable.md) | Superseded by 0151 | Canonical Spec identity rendering bound to explicit create guidance |
 | [0150](./design/decisions/0150-attributable-fail-closed-default-scaffolds.md) | Accepted | Collection identity rendering and fail-closed default scaffolds |
 | [0151](./design/decisions/0151-agent-bound-template-variables.md) | Accepted | Project-defined template variables resolved through bound agent instructions |
+| [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |

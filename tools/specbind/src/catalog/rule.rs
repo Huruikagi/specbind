@@ -2,10 +2,15 @@
 //!
 //! A rule is project-owned policy, not product behavior. These embedded copies
 //! exist only as installation assets: once installed, skills read the project
-//! copy through the CLI, and an absent project file simply means no
-//! customization applies. The embedded copy is never a runtime fallback.
+//! copy through the CLI, and an absent ordinary preference file simply means no
+//! customization applies. Decision 0152's Design-template selection rule is a
+//! required routing input. The embedded copy is never a runtime fallback.
 
-use std::{fs, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    path::Path,
+};
 
 /// One embedded default shared rule.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -71,7 +76,7 @@ impl DefaultRule {
     }
 }
 
-/// The complete Decision 0093 installed default set.
+/// The complete Decisions 0093 and 0152 installed default set.
 ///
 /// One English set serves both configured artifact languages; projects may
 /// localize or rewrite their installed copies.
@@ -87,6 +92,12 @@ static DEFAULT_RULES: &[DefaultRule] = &[
         file_name: "design-principles.md",
         purpose: "Project-adjustable architecture, interface, data-model, error-handling, diagram, and documentation preferences.",
         content: include_str!("../../assets/rules/design-principles.md"),
+    },
+    DefaultRule {
+        selector: "design-template-selection",
+        file_name: "design-template-selection.md",
+        purpose: "Required, conditional, or disabled selection policy for every Design template.",
+        content: include_str!("../../assets/rules/design-template-selection.md"),
     },
     DefaultRule {
         selector: "contract-principles",
@@ -130,4 +141,139 @@ pub fn find(selector: &str) -> Option<DefaultRule> {
 pub struct RuleError {
     pub code: &'static str,
     pub message: String,
+}
+
+#[derive(Default)]
+struct DesignSelectionSection {
+    selector: String,
+    line: usize,
+    lines: Vec<String>,
+}
+
+fn finish_design_selection_section(
+    section: DesignSelectionSection,
+    entries: &mut Vec<(String, String, usize)>,
+    issues: &mut Vec<RuleError>,
+) {
+    if section.selector.is_empty() {
+        return;
+    }
+    let mut non_empty = section.lines.iter().filter(|line| !line.trim().is_empty());
+    let Some(mode_line) = non_empty.next() else {
+        issues.push(RuleError {
+            code: "RULE_DESIGN_TEMPLATE_MODE_MISSING",
+            message: format!(
+                "line {}: {} must declare Mode",
+                section.line, section.selector
+            ),
+        });
+        return;
+    };
+    let Some(mode) = mode_line.trim().strip_prefix("Mode: ") else {
+        issues.push(RuleError {
+            code: "RULE_DESIGN_TEMPLATE_MODE_MISSING",
+            message: format!(
+                "line {}: {} must begin with Mode: required, conditional, or disabled",
+                section.line, section.selector
+            ),
+        });
+        return;
+    };
+    if !matches!(mode, "required" | "conditional" | "disabled") {
+        issues.push(RuleError {
+            code: "RULE_DESIGN_TEMPLATE_MODE_INVALID",
+            message: format!(
+                "line {}: {} has unsupported mode {mode}",
+                section.line, section.selector
+            ),
+        });
+        return;
+    }
+    if mode == "conditional" && non_empty.next().is_none() {
+        issues.push(RuleError {
+            code: "RULE_DESIGN_TEMPLATE_CONDITION_MISSING",
+            message: format!(
+                "line {}: {} is conditional but has no applicability condition",
+                section.line, section.selector
+            ),
+        });
+    }
+    entries.push((section.selector, mode.to_owned(), section.line));
+}
+
+/// Deterministically validates the selector and mode declarations in the
+/// project-owned Design-template selection rule.
+///
+/// Applicability prose remains agent-interpreted project policy. This parser
+/// only proves that every discovered Design template is classified exactly
+/// once and that a conditional classification actually carries a condition.
+#[must_use]
+pub fn validate_design_template_selection(
+    content: &str,
+    design_selectors: &[String],
+) -> Vec<RuleError> {
+    let mut entries = Vec::new();
+    let mut issues = Vec::new();
+    let mut current = DesignSelectionSection::default();
+    for (index, line) in content.lines().enumerate() {
+        if let Some(heading) = line.strip_prefix("## ") {
+            finish_design_selection_section(current, &mut entries, &mut issues);
+            current = DesignSelectionSection::default();
+            let Some(selector) = heading
+                .strip_prefix('`')
+                .and_then(|value| value.strip_suffix('`'))
+                .filter(|value| {
+                    value.starts_with("design/") && !value["design/".len()..].is_empty()
+                })
+            else {
+                issues.push(RuleError {
+                    code: "RULE_DESIGN_TEMPLATE_SELECTOR_INVALID",
+                    message: format!(
+                        "line {}: level-two headings must name a `design/<artifact_id>` selector",
+                        index + 1
+                    ),
+                });
+                continue;
+            };
+            selector.clone_into(&mut current.selector);
+            current.line = index + 1;
+        } else if !current.selector.is_empty() {
+            current.lines.push(line.to_owned());
+        }
+    }
+    finish_design_selection_section(current, &mut entries, &mut issues);
+
+    let mut classified = BTreeMap::new();
+    for (selector, mode, line) in entries {
+        if classified.insert(selector.clone(), mode).is_some() {
+            issues.push(RuleError {
+                code: "RULE_DESIGN_TEMPLATE_SELECTOR_DUPLICATE",
+                message: format!("line {line}: {selector} is classified more than once"),
+            });
+        }
+    }
+    let discovered = design_selectors.iter().cloned().collect::<BTreeSet<_>>();
+    for selector in &discovered {
+        if !classified.contains_key(selector) {
+            issues.push(RuleError {
+                code: "RULE_DESIGN_TEMPLATE_SELECTOR_MISSING",
+                message: format!("{selector} is not classified by the selection rule"),
+            });
+        }
+    }
+    for selector in classified.keys() {
+        if !discovered.contains(selector) {
+            issues.push(RuleError {
+                code: "RULE_DESIGN_TEMPLATE_SELECTOR_UNKNOWN",
+                message: format!("{selector} does not resolve to a discovered Design template"),
+            });
+        }
+    }
+    if !classified.values().any(|mode| mode == "required") {
+        issues.push(RuleError {
+            code: "RULE_DESIGN_TEMPLATE_REQUIRED_MISSING",
+            message: "at least one Design template must be classified required".to_owned(),
+        });
+    }
+    issues
 }
