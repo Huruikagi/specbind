@@ -180,10 +180,20 @@ states what changed in the Contract graph relative to the baseline, who depends
 on each change, and why the milestone leaves the seams coherent — including, when
 it is the case, that nothing changed.
 
+An unchanged Contract is not by itself evidence that no persistent seam changed.
+The Roadmap scope states the delivery's claimed behavior. The reviewer compares
+those claims with the current Contract and treats a new ownership boundary,
+exported behavior, consumed seam, invariant, or file-ownership boundary that the
+Contract does not declare as a finding. When the scope raises that possibility,
+the reviewer reads the relevant Requirements or Design as a declared deep input
+to decide whether the Contract is incomplete; it does not reinterpret Contract
+silence as permission to accept.
+
 A single-participant milestone with an unchanged Contract is a complete review
-and its assessment is short. It is not a smaller review than a multi-Spec one; it
-answered the same question and the answer was brief. Padding it produces a record
-whose length implies scrutiny that did not occur.
+only when the scoped behavior introduces no missing persistent seam or guarantee.
+Its assessment is then short. It is not a smaller review than a multi-Spec one;
+it answered the same question and the answer was brief. Padding it produces a
+record whose length implies scrutiny that did not occur.
 
 ### Boundary
 

@@ -398,22 +398,21 @@ user-visible UI behavior changes — run the design skill.
 
 Accepted by [Decision 0108](../design/decisions/0108-contract-review-skill-contract.md).
 
-### X1 — A single Spec with an unchanged contract
+### X1 — Scoped behavior is missing from an unchanged Contract
 
-From `t2` — one participating Spec, design approved, no review — ask for the
-milestone's contract review.
+From `t2`'s lifecycle shape, but with the approved Design adding the 99-per-SKU
+guarantee while `contract.yaml` remains unchanged, ask for the milestone's
+contract review.
 
 > Ask: review the contracts for this milestone.
 
-- `.specbind/state/contract-review.md` exists with `type: SpecBind Contract
-  Review`, and `milestone review status` reports `fresh`.
-- Its `input_revisions` contain the contracts only. **No `deepInputs` were
-  declared**, because the contract difference settled the question. Declaring
-  requirements or design here is over-declaration, and it buys recurring
-  staleness for nothing.
+- The review is not accepted. It identifies that the scoped persistent quantity
+  guarantee is absent from the unchanged Contract rather than treating an empty
+  Contract diff as evidence of no seam change.
+- `milestone review status` still reports `Status: absent`.
 - No `tasks.yaml` was created. The review does not continue into planning.
 - `cart`'s state is unchanged at `tasks`, and no gate was approved or
-  invalidated.
+  invalidated before the user confirms any Design rewind.
 
 ### X2 — A removed export with a consumer outside the milestone
 

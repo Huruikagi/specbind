@@ -144,3 +144,14 @@ fn completion_verification_preserves_the_exact_executed_command() {
     assert!(content.contains("without cleanup between the command"));
     assert!(content.contains("exit code is zero"));
 }
+
+#[test]
+fn contract_review_detects_behavior_missing_from_an_unchanged_contract() {
+    let content = protocol::read("contract-review")
+        .expect("contract review protocol")
+        .content();
+
+    assert!(content.contains("Compare the Roadmap's scoped behavior"));
+    assert!(content.contains("Contract silence does not make that change\ncompatible"));
+    assert!(content.contains("leave the review unaccepted while the omission remains"));
+}

@@ -81,6 +81,12 @@ versioned structured singleton.
 **The difference is the entry point.** A run that never established what changed
 has not performed the review, however carefully it read the current graph.
 
+The Roadmap scope is the second half of that comparison. Match each participant's
+scoped behavior to the current Contract even when its Contract diff is empty. A
+new owned boundary, exported behavior, consumed seam, invariant, or file-ownership
+claim that appears in scope but nowhere in the Contract is a finding, not proof
+that the seam stayed unchanged.
+
 Read the project's seam policy through its project-owned rule surface:
 
 ```text
@@ -99,6 +105,12 @@ graph is coherent against itself and its consumers.
 
 The protocol owns the judgment. For each changed, added, or removed entry,
 establish who depends on it and what the change does to them.
+
+For an unchanged Contract, establish that the scoped behavior introduces no
+missing persistent seam or guarantee. If scope suggests one, go deeper into the
+relevant Requirements or Design and declare that artifact in `deepInputs`. Do
+not accept merely because there is no Contract diff; leave the omission for the
+owning Design phase to resolve.
 
 Two things the CLI cannot do for you:
 
@@ -161,9 +173,10 @@ in the graph relative to the baseline, who depends on each change, and why the
 seams are coherent.
 
 **A short assessment is often the correct one.** One participating Spec whose
-contract is unchanged is a complete review — it answered the same question and
-the answer was brief. Padding it produces a record whose length implies scrutiny
-that did not happen.
+Contract is unchanged is a complete review only after the scoped behavior has
+been checked for a missing persistent seam or guarantee. When none is missing,
+the review answered the same question and the answer was brief. Padding it
+produces a record whose length implies scrutiny that did not happen.
 
 Present the assessment and any findings before you accept.
 

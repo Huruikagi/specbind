@@ -155,6 +155,15 @@ cart_cap_approved() {
 # report, which is a louder and different signal.
 cart_design_approved() {
     mechanism=${1:-"cap, and leaves the cart unchanged when either bound is violated."}
+    contract_mode=${2:-updated}
+    if [ "$contract_mode" = updated ] && \
+        ! grep -q 'id: max-per-sku' .specbind/specs/cart/contract.yaml; then
+        awk '{ print }
+             /^invariants:$/ {
+               print "  - { id: max-per-sku, description: A cart holds no SKU above 99 and rejects an addition that would exceed that bound. }"
+             }' .specbind/specs/cart/contract.yaml > contract.tmp
+        mv contract.tmp .specbind/specs/cart/contract.yaml
+    fi
     {
         echo "---"
         echo "type: SpecBind Design"
@@ -703,6 +712,13 @@ ds4 | t1 | t2 | x1 | vd1)
         expect "the research artifact is not readable" \
             'specbind artifact read cart research | grep -q "Ninety-nine"'
         cart_design_approved "cap recorded in the research document, in the manner decided there."
+    elif [ "$scenario" = x1 ]; then
+        # X1 deliberately keeps the Contract unchanged while the scoped behavior
+        # adds a persistent quantity guarantee. The review must identify the
+        # omission rather than treating an empty Contract diff as a pass.
+        cart_design_approved \
+            "cap, and leaves the cart unchanged when either bound is violated." \
+            unchanged
     else
         cart_design_approved
     fi
@@ -712,7 +728,9 @@ ds4 | t1 | t2 | x1 | vd1)
         '! test -e .specbind/specs/cart/tasks.yaml'
     if [ "$scenario" = t2 ] || [ "$scenario" = x1 ] || [ "$scenario" = vd1 ]; then
         # t2 measures what the tasks phase does when the review has not been
-        # accepted, so this is the one recipe that deliberately leaves it out.
+        # accepted. X1 measures a scoped guarantee omitted from the unchanged
+        # Contract. Both deliberately leave the review absent for different
+        # reasons.
         expect "the contract review is already accepted" \
             'specbind milestone review status | grep -q "Status: absent"'
     else

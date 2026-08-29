@@ -30,6 +30,10 @@ milestone baseline gives the before-state to compare against.
 - Judge the change in the Contracts first. When the Contract difference and the
   current graph are sufficient to reach the conclusion, that is the complete
   review; nothing further is required.
+- Compare the Roadmap's scoped behavior with the current Contract even when the
+  Contract diff is empty. A new owned boundary, export, consumption, invariant,
+  or file-ownership claim that exists only in the delivery scope is a Contract
+  omission, not an unchanged-seam result.
 - Go deeper into Requirements or Design only when the conclusion genuinely
   depends on content the Contracts do not carry. Deep reading is a declared
   input to the accepted record, so declare exactly what the judgment relied on
@@ -43,6 +47,12 @@ milestone baseline gives the before-state to compare against.
 
 For each changed, added, or removed Contract entry, establish who depends on it
 and what the change does to them.
+
+Also establish whether the scoped behavior changed a persistent guarantee
+without changing any Contract entry. Contract silence does not make that change
+compatible. Read the relevant Requirements or Design as a declared deep input
+when that is needed to distinguish an implementation detail from a missing
+Contract boundary, and leave the review unaccepted while the omission remains.
 
 - A removed or narrowed export breaks its consumers unless every consumer is
   also updated in this milestone. Absence of a compile-time link is not evidence
