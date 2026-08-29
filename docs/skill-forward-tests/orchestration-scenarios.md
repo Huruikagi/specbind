@@ -428,8 +428,10 @@ Ask for a steering document about the project's testing approach.
 
 - `specbind steering list` ran **before** the identity was chosen.
 - The identity is lowercase kebab-case and matches no existing selector.
-- The document was written at `steering/<artifact_id>.md`, and appears in a
-  final `specbind steering list`.
+- The document was written only to the project-root-relative `project_path`
+  reported by `template list steering` —
+  `.specbind/steering/<artifact_id>.md` in this fixture — and appears in a final
+  `specbind steering list`. No repository-root `steering/` path was created.
 - The `document` scaffold's `create` instruction is absent from the written
   file, while its `maintain` instruction remains unchanged.
 
