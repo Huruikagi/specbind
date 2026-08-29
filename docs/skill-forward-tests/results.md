@@ -25,8 +25,8 @@ without a pass are listed separately below.
 | Existing-implementation adoption | None recorded | A1, A2 |
 | Design | DS3 | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS5, DS7, DS8 |
 | Tasks | T2 | T1, T2, T4 |
-| Contract review | X2–X4 | X1, X2, X4 |
-| Implementation | I4 | I1–I4, I6 |
+| Contract review | X1–X4 | X1, X2, X4 |
+| Implementation | I3, I4 | I1–I4, I6 |
 | Debug | DB1 | DB1 |
 | Task review | RT1 | RT1, RT2 |
 | Design validation | None recorded | VD1, VD2 |
@@ -35,6 +35,57 @@ without a pass are listed separately below.
 | Release | RL1–RL3 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
+
+X1, I3, RT1, and DB1 were re-measured on 2026-08-29 against `1736d0c`, driven
+as Claude Code Agent-tool subagents on `claude-opus-5` with no prior context and
+one fresh fixture per scenario. All four passed, and each fixture was judged by
+command and by a SHA-256 manifest compared against its pre-run snapshot rather
+than from the driver's report.
+
+X1 withheld acceptance for the undeclared 99-per-SKU guarantee: it read the
+Contract at baseline and current revisions, found the Contract diff empty, and
+used the existing `positive-quantity` invariant as the symmetric evidence that
+the cap is a missing seam rather than an implementation detail. `milestone
+review status` stayed `absent`, no `tasks.yaml` was created, `cart` stayed at
+`tasks` with `design=fresh`, and every fixture file was byte-identical. It
+stopped for the maintainer before any Design rewind. This reverses the `26518ee`
+Claude Code failure and closes the two-readings divergence with Codex.
+
+I3 read `milestone status` as its third command, before any routing decision,
+and classified the request as the pending `direct:contributing-guide` item
+rather than ordinary work. It committed only `CONTRIBUTING.md` as `ddf3d8e`
+under the recipe's Direct checkpoint policy, completed the item through
+`direct preflight` and `direct complete --implementation-revision` at that clean
+revision, and reached 1/1 Direct items. No Spec directory, brief, requirements,
+design, or contract was created; the established `cart` Spec stayed
+byte-unchanged. The fixture ends with the CLI's own completion edit to
+`.specbind/steering/roadmap.md` uncommitted, which the adapter's
+implementation-paths-only scope leaves outside the checkpoint. This reverses the
+`26518ee` Claude Code failure.
+
+RT1 returned `REJECTED` with three blocking findings — the cap admitting 100
+against the stated maximum of 99, a `"too many"` rejection that never states the
+largest accepted quantity, and `setdefault` mutating the cart on a rejected
+addition against the Design's unchanged-on-violation guarantee. It read the cart
+Contract and both Steering documents alongside the mapped Requirements, Design,
+and Task, and probed with `python3 -B` so no bytecode was written. `src/cart.py`
+stayed byte-identical to what the recipe wrote, `git status --short` stayed at
+` M src/cart.py`, and Task 1 stayed pending.
+
+DB1 did not start implementation. It read Requirements, Contract, `design/main`,
+both Steering documents, the Task, and `src/cart.py`, returned `CATEGORY:
+ARTIFACT` for the Design's silent-trim instruction contradicting Requirement 1.4
+and invariant `max-per-sku`, and preserved the exact `## Diagnosis` block with
+all four fields. The fixture was byte-identical and Task 1 stayed pending. Under
+this driver the Agent-tool harness appends its own `result:` summary line after
+the block; that line is the driver's reporting convention, present in all four
+runs of this batch and in the `needs input:` form under X1, and is not produced
+by the product skill.
+
+Two pending confirmations from the previous batch were settled here. X1 listed
+`artifact list cart` and read the reported `design/main` selector with no
+shortened-`design` retry. I3 used the accepted `inline` Direct default without
+searching settings for a mode.
 
 The 2026-08-29 Claude Code batch was measured against `26518ee`, driven as
 Agent-tool subagents on `claude-opus-5` with no prior context, one fixture per
@@ -318,8 +369,8 @@ the drivers had resolved a stale host CLI for those commands.
 
 | Scenario | Agent | Result | Why no pass was recorded |
 | --- | --- | --- | --- |
-| X1 | Claude Code | Product failure | On `26518ee`, the driver refused acceptance of an unchanged Contract because the milestone's new 99-per-SKU guarantee was not declared as an invariant, and stopped with `milestone review status` still `absent`. Codex accepts the same fixture, so the review contract admits two readings: it tells a reviewer how to judge a *changed* entry but not a behavior change that arrives with no Contract entry at all. |
-| I3 | Claude Code | Product failure | On `26518ee`, the driver wrote `CONTRIBUTING.md` as ordinary work without ever reading `milestone status`, so the milestone's pending `direct:contributing-guide` item stayed `0/1 completed` and the file was left uncommitted. No Spec artifacts were manufactured. Routing settled on "not a Spec, not Steering" without the active milestone ever entering the decision. |
+| X1 | Claude Code | Product failure | On `26518ee`, the driver refused acceptance of an unchanged Contract because the milestone's new 99-per-SKU guarantee was not declared as an invariant, and stopped with `milestone review status` still `absent`. Codex accepts the same fixture, so the review contract admits two readings: it tells a reviewer how to judge a *changed* entry but not a behavior change that arrives with no Contract entry at all. Superseded by the passing `1736d0c` Claude Code run. |
+| I3 | Claude Code | Product failure | On `26518ee`, the driver wrote `CONTRIBUTING.md` as ordinary work without ever reading `milestone status`, so the milestone's pending `direct:contributing-guide` item stayed `0/1 completed` and the file was left uncommitted. No Spec artifacts were manufactured. Routing settled on "not a Spec, not Steering" without the active milestone ever entering the decision. Superseded by the passing `1736d0c` Claude Code run. |
 | DS1, T1, T4, DS4 | Claude Code | Environment blocked | On `26518ee`, each run reached its confirmation boundary correctly — DS1 authored the `order` design and Contract (`check traceability` 3/3, `check contracts` clean), T1 authored a three-task plan passing 4/4 coverage, T4 and DS4 stated their rewind costs, DS4 naming the contract-review deletion — and then refused the approval relayed by the driving session, on the correct ground that another agent's message is not the user's consent. The post-approval half of each scenario is unmeasurable from an Agent-tool subagent. |
 | A2 | Claude Code | Environment blocked | On `26518ee`, preflight returned the fixture HEAD, all four Steering documents were read, and the boundary proposal named `cart`, `order`, their dependency, the unmanaged area, and three uncertainties, with no dossier, milestone, Spec, or Brief written and a clean worktree. The agent log held one line: the subagent driver has no dispatch tool, so the required fresh readers never ran. |
 | D3 | Claude Code | Not measured | The confirmation authorized the whole feature, so later phases rewrote the discovery artifacts before they could be judged. |
@@ -365,14 +416,33 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-None recorded.
+Reproduced against the `1736d0c` fixtures and their installed assets, not from
+the drivers' reports alone. None was fixed in the run that found it.
+
+| Scenario | Surface | Finding | Reproduction | Impact |
+| --- | --- | --- | --- | --- |
+| RT1 | Skill | `specbind-review-task` states a read-only stop rule ("the working tree after review must match the working tree you received", and "if an observation cannot be made without writing, do not run it") and then, in step 5, directs a deferred finding to be written where the active adapter says. Nothing states which rule wins. | `SKILL.md` lines 13–19 against step 5; `specbind adapter read deferred` reports `state=active` with "Append the finding to `deferred.md`". The RT1 driver avoided the collision only by disposing of its one candidate as `RESOLVED`. | wrong-action-risk |
+| X1 | Skill | `specbind-contract-review` names no actor for the confirmation that permits a gate invalidation. Section 4 conditions confirmation on the milestone's scope changing materially — which a missing invariant on the same behavior does not — while Boundaries says invalidation happens "only as the confirmed outcome of a finding". | `SKILL.md` line 169 against lines 264–265. The driver read the two together conservatively and stopped for the maintainer; the section 4 reading alone permits invalidating a fresh Design gate autonomously. | wrong-action-risk |
+| I3 | CLI | `milestone status` prints Direct items as `direct:<id>` in both Items and Actionable, while the completion commands take the bare id and `direct.md` shows only the placeholder `<direct>`. The identifier has to be reshaped by guesswork at the point the run becomes mutating. | `Items: - direct:contributing-guide` against the accepted `specbind milestone direct complete contributing-guide`; `references/direct.md` lines 69–70. | wrong-action-risk |
+| DB1 | Diagnostics | A Spec whose Design specifies the opposite of its Requirements reports `Health: consistent`, `Diagnostics: none`, `Task blockers: none`, and `Requirement coverage: design 4/4, tasks 4/4`. Coverage is counted by requirement-id linkage, so a Design can cite `1.4` while contradicting it and still score full coverage. | `specbind spec status cart` on the `db1` fixture against `design/main` ("silently trimming the addition to the cap instead of rejecting it") and Requirement 1.4. An agent trusting the health summary rules out the artifact layer and misroutes to `IMPLEMENTATION`. | wrong-action-risk |
+| RT1, DB1 | Other | Reopened. The `specbind-status` Skill identifier was still translated into the nonexistent `specbind status` command by two of four drivers, despite the project instructions added in `46dd074` and marked confirmed on `46dd074` by an I6 debrief. Both drivers named the instruction while describing the misstep, so it was read and did not prevent the translation. | `specbind status` → `error: unrecognized subcommand 'status'` in both fixtures, followed by `specbind --help` recovery to `spec list` / `spec status`. | extra-step |
+| X1, RT1, DB1 | CLI | The unrecognized-subcommand tip points at an unrelated command instead of the near match, in three drivers across two scenarios. | `specbind status` → `tip: a similar subcommand exists: 'tasks'` when `spec status` was the match; `specbind gate --help` → `tip: a similar subcommand exists: 'adapter'` when gate operations live under `specbind spec`. | extra-step |
+| RT1, DB1 | Skill | `specbind-review-task` and `specbind-debug` declare `argument-hint` values (`"<spec> <task-id>"`, `"<failure>"`) but give no procedure for resolving the subject when the request arrives as bare prose. Both drivers inferred it from there being exactly one candidate. | The two `SKILL.md` Front Matter lines against the requests "review the task implementation." and "why can this task not be implemented?". With two pending Tasks the subject is a guess. | ambiguity |
+| I3 | CLI, Adapter | The Direct completion handshake edits the CLI-owned Roadmap itself, `direct.md` defers committing it to a conditional ("if project policy also asks for lifecycle-state checkpoints"), and an adapter that simply has no lifecycle-state section neither grants nor denies it. `milestone status` then reports `Revision: unavailable` and `Release blockers: RELEASE_TARGET_DIRTY` right after a successful handshake, with nothing connecting that to the edit the command just made. | After `DIRECT_COMPLETION_RECORDED`: ` M .specbind/steering/roadmap.md`, `Revision: unavailable` where it had been a commit hash, `Direct progress: 1/1 completed`, `Health: consistent`. | ambiguity |
+| X1 | Template | The adapter surface has an exact scaffold marker (`<!-- specbind:adapter-scaffold -->`); the rule surface has none, so an unfilled `contract-principles` template is indistinguishable by command from a stated project seam policy. | `specbind rule read contract-principles --for consume` returns prompt text ("State how strictly this project treats seam changes, for example:"); `specbind rule list` reports `present=yes` either way. | ambiguity |
+| RT1 | Adapter | The deferred adapter's admission criteria both admit and exclude a missing-coverage finding: it is "actionable and worth keeping, and … does not change a verdict", and it is also "work that the current change must do". | The two headed sections of `settings/adapters/deferred.md` against absent boundary coverage at 99/100. The driver marked it `RESOLVED` to avoid the category error, which under-rates a real gap. | ambiguity |
+
+### Environment limitations affecting interpretation
+
+| Limitation | Effect on this batch |
+| --- | --- |
+| A Claude Code Agent-tool subagent does not see the fixture's installed skills in its Skill registry. All four drivers hit `Unknown skill: specbind-*` and fell back to reading `SKILL.md` from disk, which is faithful to the document but is not the platform selection path the project instructions name. Those instructions forbid translating a Skill name into a CLI command and name no fallback for this state. | The four passes measure the skill bodies, not skill selection or dispatch. The gap is only reachable when a platform fails to register installed skills, so it is not recorded as a product finding. |
+| The same driver appends its own status line (`result:` or `needs input:`) after the agent's report. | DB1's exact `## Diagnosis` block is terminal in the diagnosis but is followed by that harness line. Present in all four runs regardless of skill, so it is driver reporting, not skill output. |
 
 ### Fixed, behavioral confirmation pending
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
-| `9dc9505` | X1 | Contract review deep reading did not discover split Design selectors, so the driver first tried the invalid shortened `design` selector. | `c6a5f40` lists the Spec's artifacts and reads the reported `design/<artifact-id>` selector before declaring a deep input. | Static contract tests pass; confirm the removed retry on the next X1 behavioral run. |
-| `c6a5f40` | I3 | The Direct procedure referred to the run's "selected mode" without stating where the selection came from. | `69b709f` resolves an explicit override first and otherwise states the accepted `inline` Direct default in both entrypoint and procedure. | Static contract tests pass; confirm the default is used without a settings search on the next I3 behavioral run. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
 
 ### Resolved usability findings
@@ -385,9 +455,10 @@ remain available in Git history.
 | --- | --- | --- |
 | Contract review could accept an unchanged Contract even when the scoped delivery added a persistent guarantee that Contract never declared. | Review compares Roadmap behavior to the current Contract, deep-reads only when needed, and blocks a missing seam or guarantee. X1 kept review absent for the missing 99-per-SKU invariant. | `9dc9505`, confirmed on `9dc9505` |
 | A request matching a pending Direct item could be classified as ordinary work without reading the active milestone. | Project instructions require `milestone status` before ordinary-work classification and route a matching pending item to implementation. I3 completed the existing Direct item and created no Spec artifacts. | `ec93e3a`, confirmed on `c6a5f40` |
+| Contract review deep reading did not discover split Design selectors, so a driver tried the invalid shortened `design` selector. | The review lists the Spec's artifacts and reads the reported `design/<artifact-id>` selector before declaring a deep input. X1 read `design/main` with no retry. | `c6a5f40`, confirmed on `1736d0c` |
+| The Direct procedure referred to the run's "selected mode" without stating where the selection came from. | An explicit override resolves first; otherwise both entrypoint and procedure state the accepted `inline` Direct default. I3 used `inline` without searching settings. | `69b709f`, confirmed on `1736d0c` |
 | Direct task review omitted the Spec Contract and Steering from its required inputs and had no project-instruction route. | The route is explicit; review reads Contract and every Steering document in addition to mapped artifacts, failing closed on an incomplete set. RT1 read both Steering documents and rejected the unchanged seeded diff. | `e8cb515`, confirmed on `69b709f` |
 | Debug could return only prose without the mandated result block, and a diagnosis-shaped request could be absorbed by implementation and paraphrase a nested result. | Debug's exact block is a pre-command validity rule, diagnosis requests route directly to it, and the complete governing input set prevents absence guesses. DB1 returned the exact `ARTIFACT` block with only the supported Requirements/Design contradiction. | `65fc207`, `6be1931`, `e18d8fc`, confirmed on `e18d8fc` |
-| Fresh drivers could translate the installed Skill identifier `specbind-status` into the nonexistent CLI command `specbind status`. | Project instructions state that hyphenated `specbind-*` names are Skill identifiers, must be selected through the agent platform, and must not be translated into CLI syntax; the selected Skill owns its commands. A fresh I6 debrief did not reproduce the confusion. | `46dd074`, confirmed on `46dd074` |
 | Completed implementation Tasks could be accumulated and combined into one checkpoint even though the default Git adapter names each Task as one workflow unit. | Task execution is sequential, and every completed Task resolves its own adapter-directed checkpoint before the next Task is selected. I6 confirmed two requested Tasks become two commits with one progress transition each. | `243c0f9`, confirmed on `243c0f9` |
 | `scope/v1` exposed only `minimum: 0` for `schemaVersion`, so an author had to infer the version from the selector. | The generated schema now fixes `schemaVersion` with `const: 1`, matching runtime acceptance and the other v1 schemas; C2 authored the candidate from the corrected schema. | `6d1d2e5`, confirmed on `7307f7a` |
 | Design validation could treat Requirements retained outside the active milestone set as missing Design scope. | Validation fixes the review scope from status and traceability before reading prose and treats inactive Requirements as context only. | `3d887b6`, confirmed on `3d887b6` |
