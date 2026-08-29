@@ -21,7 +21,7 @@ without a pass are listed separately below.
 | Requirements | R1–R5 | R1, R3, R4, R6 |
 | Gap analysis | G1 | G1 |
 | Checkpoint behavior | C1–C3 | C1–C3 |
-| Steering | None recorded | S5 |
+| Steering | S5 | S5 |
 | Existing-implementation adoption | None recorded | A1, A2 |
 | Design | DS3 | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS5, DS7, DS8 |
 | Tasks | T2 | T1, T2, T4 |
@@ -35,6 +35,47 @@ without a pass are listed separately below.
 | Release | RL1–RL3 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
+
+X1, I3, and S5 were measured on 2026-08-29 against `b1d0dda`, driven as Claude
+Code Agent-tool subagents on `claude-opus-5` with no prior context and one fresh
+fixture per scenario. All three passed. Each fixture was judged by command and by
+a SHA-256 manifest compared against its pre-run snapshot, and again after the
+read-only debrief. `b1d0dda` is documentation-only over `9e8abd3`, so this batch
+confirms that build's tracked-routing and selector-precedence fixes under the
+second agent.
+
+X1 refused acceptance for the undeclared 99-per-SKU guarantee. It listed
+`artifact list cart` before the deep read and consumed the reported `design/main`
+selector with no invalid retry, read the Contract at baseline and current
+revisions, and used the existing `positive-quantity` invariant as the symmetric
+evidence that the upper bound is an omitted seam rather than an empty-diff pass.
+`milestone review status` stayed `absent`, no `tasks.yaml` was created, `cart`
+stayed at `tasks` with `requirements=fresh, design=fresh` and
+`Next action: contract_review`, and all 98 fixture files stayed byte-identical at
+setup commit `3b4b216`. It presented the rewind cost and stopped for confirmation
+before any invalidation.
+
+I3 read `milestone status` first and classified the request as the pending
+`direct:contributing-guide` item without a Steering detour. It committed only
+`CONTRIBUTING.md` as `8baaea1`, completed the item through `direct preflight` and
+`direct complete --implementation-revision` at that clean revision, and reached
+1/1 Direct items with the milestone at `release_pending`. No Spec directory,
+brief, requirements, design, or contract was created, and the established `cart`
+Spec stayed byte-unchanged. The only remaining dirty path is the CLI's own
+`status: completed` edit to `.specbind/steering/roadmap.md`, which the active
+implementation-paths-only adapter leaves outside the checkpoint; the run reported
+it with the narrower-policy reason and the `RELEASE_TARGET_DIRTY` blocker.
+
+S5 ran `steering list` before choosing an identity, selected the noncolliding
+lowercase `testing`, and wrote only `.specbind/steering/testing.md`, which the
+final listing resolves as a selector. The `document` scaffold's `create`
+instruction is absent and its 658-byte `maintain` instruction is byte-exact. The
+run first stopped before authoring because the fixture holds no test files,
+runner, manifest, or CI, and asked the maintainer for the actual practice rather
+than inventing one; that is the skill's established-evidence rule working, and
+the document was written in one pass after the answer. It reached the correct
+file only after a repair: the first write landed at a repository-root `steering/`
+directory, and the mandated re-listing caught it.
 
 X1 and I3 were re-measured on 2026-08-29 against `9e8abd3` as fresh Codex
 subagents on `gpt-5.6-terra` at medium reasoning. X1 passed: selector discovery
@@ -463,15 +504,27 @@ the drivers' reports alone. None was fixed in the run that found it.
 
 | Scenario | Surface | Finding | Reproduction | Impact |
 | --- | --- | --- | --- | --- |
+| S5 | CLI / Skill | Steering paths are reported relative to the configured spec root but never labeled as such, so the natural repository-root reading writes outside the collection. | `specbind steering list` prints `path=steering/conventions.md` and `template list steering` prints `output_path=steering/product.md`, while the file is at `.specbind/steering/conventions.md` under `"specDir": ".specbind"`. The driver created a root `steering/` directory and document before the mandated re-listing caught it. | wrong-action-risk |
+| S5 | CLI | A steering read failure names the selector but not the location searched, so a misplaced file and an unknown identity produce the same message. | `specbind steering read testing --for consume` returned `ERROR STEERING_READ_INVALID: unknown steering selector: testing` while a valid `steering/testing.md` existed with correct Front Matter and no colliding identity. The driver audited Front Matter, type, and collision before suspecting the path. | ambiguity |
+| X1 | Skill | Contract review forbids authoring the Contract and directs the maintainer to a gate invalidation, but never names the phase that owns `contract.yaml`, and no contract gate appears in status. | The Boundaries say only "Requirements, design, and contracts belong to their phases"; `spec status cart` reports gates `requirements`, `design`, `tasks`, `completion`. The driver inferred the design gate from the review's stated ordering and proposed `spec design invalidate cart`. | wrong-action-risk |
+| X1 | CLI | The exact rewind cost must be presented before an invalidation, but nothing computes it; the maintainer confirms a destructive operation against a cost the agent assembled. | `specbind spec design --help` exposes only `approve` and `invalidate` with no preview. The driver reconstructed the loss from `spec status cart` gate values and `milestone review status`. | extra-step |
+| X1 | Template | The `contract-principles` sections left as authoring prompts are indistinguishable from adopted policy, because Rules carry no scaffold marker while adapters do. | `dc6c022` gave Compatibility posture a live default, but Dependency direction and "When a warning deserves more than a note" still read as instructions to the project, with no `specbind:*-scaffold` equivalent. The driver treated the stated default as binding and the prompt sections as absent guidance. | ambiguity |
+| X1 | Skill | Two selector notations for one artifact, with no stated rule for composing the second from the first. | `artifact list cart` reports `selector=design/main` and reads use that form, while the acceptance payload example uses `"deepInputs": ["specs/checkout#design/main"]`. Not exercised here — the review did not pass, so no candidate was built — but declared inputs are fingerprinted, so a guessed form causes recurring staleness. | ambiguity |
 
-None. Decision 0159 resolved the actionable `1736d0c` findings; the two
-`dc6c022` follow-ups are awaiting confirmation on their fixing build below.
+I3's two observations are not retained. The adapter's silence about the CLI-owned
+Roadmap is resolved by the Direct reference's closed-world rule, and the
+`task-review` clauses that have no Direct referent are covered by the same
+reference's Roadmap-summary substitution; the driver applied both correctly, as
+the `dc6c022` triage predicted. `milestone status` reporting
+`RELEASE_TARGET_DIRTY` without naming the dirty path is a single extra `git
+status`, recorded here only because it recurs if the blocker ever covers several
+paths.
 
 ### Environment limitations affecting interpretation
 
 | Limitation | Effect on this batch |
 | --- | --- |
-| A Claude Code Agent-tool subagent does not see the fixture's installed skills in its Skill registry. All four drivers hit `Unknown skill: specbind-*` and fell back to reading `SKILL.md` from disk, which is faithful to the document but is not the platform selection path the project instructions name. Those instructions forbid translating a Skill name into a CLI command and name no fallback for this state. | The four passes measure the skill bodies, not skill selection or dispatch. The gap is only reachable when a platform fails to register installed skills, so it is not recorded as a product finding. |
+| A Claude Code Agent-tool subagent does not see the fixture's installed skills in its Skill registry. Drivers hit `Unknown skill: specbind-*` and fall back to reading `SKILL.md` from disk, which is faithful to the document but is not the platform selection path the project instructions name. Those instructions forbid translating a Skill name into a CLI command and name no fallback for this state. | Recurred across the `1736d0c` and `b1d0dda` batches. Those passes measure the skill bodies, not skill selection or dispatch. The gap is only reachable when a platform fails to register installed skills, so it is not recorded as a product finding. |
 | The same driver appends its own status line (`result:` or `needs input:`) after the agent's report. | DB1's exact `## Diagnosis` block is terminal in the diagnosis but is followed by that harness line. Present in all four runs regardless of skill, so it is driver reporting, not skill output. |
 
 ### Fixed, behavioral confirmation pending
