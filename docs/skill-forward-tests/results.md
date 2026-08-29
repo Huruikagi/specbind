@@ -4,7 +4,7 @@
 
 ## Latest run
 
-Runs below span 2026-08-18 through 2026-08-29. The initial Claude Code suite was
+Runs below span 2026-08-18 through 2026-08-30. The initial Claude Code suite was
 measured against builds from `9f8ae39` through `f134915`; later targeted Codex
 runs record their own builds below.
 
@@ -35,6 +35,40 @@ without a pass are listed separately below.
 | Release | RL1–RL3 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
+
+X1 and S5 were re-measured on 2026-08-30 against `9978278`, driven as fresh
+Codex subagents on `gpt-5.6-terra` at medium reasoning with one fixture per
+scenario. Both passed. X1 kept Contract Review absent for the undeclared
+99-per-SKU guarantee, left Design fresh and Tasks absent, and made no changes.
+S5 first left a clean fixture completely unchanged because it found no settled
+testing convention. After the maintainer supplied the convention, it created
+only `.specbind/steering/testing.md`; `steering list` reported
+`project_path=.specbind/steering/testing.md`, no root `steering/` directory
+appeared, and the document contained only the supplied policy plus the exact
+durable `maintain` instruction. Both fixtures retained the same status through
+their read-only debriefs.
+
+The first S5 run on `dc6b0db` is a product failure: it used the correct
+`project_path`, but invented a requirement to add automated coverage for every
+public function even though the fixture had no tests, runner, CI, or established
+testing convention. Decision 0117 and the Steering skill now require the driver
+to report that absence and stop before writing; the passing `9978278` run
+confirms the stop-and-ask behavior. An X1 attempt on `dc6b0db` is discarded as
+an environment failure because the driver used product-repository sources
+instead of the fixture-installed skill. The fresh `9978278` retry used the
+installed procedure and passed.
+
+X1's debrief reported that it substituted the fixture's known `.specbind` path
+when reading the baseline Contract. The installed skill already says to resolve
+`specDir` from `.specbind.json`, the file was present with
+`"specDir": ".specbind"`, and the placeholder command uses `<specDir>` rather
+than a fixed path. This was a driver-side shortcut, not a second product
+contract, so it is not retained as a usability finding. S5's debrief described
+the newly required stop as a wrong-action risk; the measured first-turn clean
+stop is the confirmation that the risk is now guarded. The earlier suggestion
+for a separate rewind-preview command is also not retained: the Contract Review
+skill owns assembling the semantic downstream cost from existing status and
+review projections, and no incorrect or incomplete cost was reproduced.
 
 X1, I3, and S5 were measured on 2026-08-29 against `b1d0dda`, driven as Claude
 Code Agent-tool subagents on `claude-opus-5` with no prior context and one fresh
@@ -452,6 +486,8 @@ the drivers had resolved a stale host CLI for those commands.
 
 | Scenario | Agent | Result | Why no pass was recorded |
 | --- | --- | --- | --- |
+| S5 | Codex | Product failure | On `dc6b0db`, the driver used the reported `.specbind/steering/testing.md` project path but invented a requirement to add automated coverage for every public function despite finding no tests, runner, CI, or settled convention. `9978278` made the no-evidence stop explicit, and the fresh retry passed after asking the maintainer for the actual policy. |
+| X1 | Codex | Environment blocked | On `dc6b0db`, the driver did not read the fixture-installed Contract Review skill and instead used the product repository's source. Its otherwise-correct clean stop therefore does not measure the installed package. The fresh `9978278` retry read the fixture procedure and passed. |
 | X1 | Claude Code | Product failure | On `26518ee`, the driver refused acceptance of an unchanged Contract because the milestone's new 99-per-SKU guarantee was not declared as an invariant, and stopped with `milestone review status` still `absent`. Codex accepts the same fixture, so the review contract admits two readings: it tells a reviewer how to judge a *changed* entry but not a behavior change that arrives with no Contract entry at all. Superseded by the passing `1736d0c` Claude Code run. |
 | I3 | Claude Code | Product failure | On `26518ee`, the driver wrote `CONTRIBUTING.md` as ordinary work without ever reading `milestone status`, so the milestone's pending `direct:contributing-guide` item stayed `0/1 completed` and the file was left uncommitted. No Spec artifacts were manufactured. Routing settled on "not a Spec, not Steering" without the active milestone ever entering the decision. Superseded by the passing `1736d0c` Claude Code run. |
 | DS1, T1, T4, DS4 | Claude Code | Environment blocked | On `26518ee`, each run reached its confirmation boundary correctly — DS1 authored the `order` design and Contract (`check traceability` 3/3, `check contracts` clean), T1 authored a three-task plan passing 4/4 coverage, T4 and DS4 stated their rewind costs, DS4 naming the contract-review deletion — and then refused the approval relayed by the driving session, on the correct ground that another agent's message is not the user's consent. The post-approval half of each scenario is unmeasurable from an Agent-tool subagent. |
@@ -499,17 +535,9 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-Reproduced against the `1736d0c` fixtures and their installed assets, not from
-the drivers' reports alone. None was fixed in the run that found it.
-
-| Scenario | Surface | Finding | Reproduction | Impact |
-| --- | --- | --- | --- | --- |
-| S5 | CLI / Skill | Steering paths are reported relative to the configured spec root but never labeled as such, so the natural repository-root reading writes outside the collection. | `specbind steering list` prints `path=steering/conventions.md` and `template list steering` prints `output_path=steering/product.md`, while the file is at `.specbind/steering/conventions.md` under `"specDir": ".specbind"`. The driver created a root `steering/` directory and document before the mandated re-listing caught it. | wrong-action-risk |
-| S5 | CLI | A steering read failure names the selector but not the location searched, so a misplaced file and an unknown identity produce the same message. | `specbind steering read testing --for consume` returned `ERROR STEERING_READ_INVALID: unknown steering selector: testing` while a valid `steering/testing.md` existed with correct Front Matter and no colliding identity. The driver audited Front Matter, type, and collision before suspecting the path. | ambiguity |
-| X1 | Skill | Contract review forbids authoring the Contract and directs the maintainer to a gate invalidation, but never names the phase that owns `contract.yaml`, and no contract gate appears in status. | The Boundaries say only "Requirements, design, and contracts belong to their phases"; `spec status cart` reports gates `requirements`, `design`, `tasks`, `completion`. The driver inferred the design gate from the review's stated ordering and proposed `spec design invalidate cart`. | wrong-action-risk |
-| X1 | CLI | The exact rewind cost must be presented before an invalidation, but nothing computes it; the maintainer confirms a destructive operation against a cost the agent assembled. | `specbind spec design --help` exposes only `approve` and `invalidate` with no preview. The driver reconstructed the loss from `spec status cart` gate values and `milestone review status`. | extra-step |
-| X1 | Template | The `contract-principles` sections left as authoring prompts are indistinguishable from adopted policy, because Rules carry no scaffold marker while adapters do. | `dc6c022` gave Compatibility posture a live default, but Dependency direction and "When a warning deserves more than a note" still read as instructions to the project, with no `specbind:*-scaffold` equivalent. The driver treated the stated default as binding and the prompt sections as absent guidance. | ambiguity |
-| X1 | Skill | Two selector notations for one artifact, with no stated rule for composing the second from the first. | `artifact list cart` reports `selector=design/main` and reads use that form, while the acceptance payload example uses `"deepInputs": ["specs/checkout#design/main"]`. Not exercised here — the review did not pass, so no candidate was built — but declared inputs are fingerprinted, so a guessed form causes recurring staleness. | ambiguity |
+No reproduced unresolved product finding remains after this batch. Changes that
+still need a scenario exercising their exact branch are tracked below rather
+than presented as open defects.
 
 I3's two observations are not retained. The adapter's silence about the CLI-owned
 Roadmap is resolved by the Direct reference's closed-world rule, and the
@@ -531,6 +559,9 @@ paths.
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
+| `1736d0c` | S5 | A Steering read failure did not name the project path searched. | `6df80fc` adds `searched_project_path=.specbind/steering` to unknown and ambiguous selector diagnostics. | Focused CLI tests cover both errors; a fresh behavioral recovery run remains pending. |
+| `1736d0c` | X1 | Contract Review did not name Design as the owner of `contract.yaml` or provide the exact rewind command. | `ae6c562` assigns the Design set and Contract to the Design phase and names `specbind spec design invalidate <spec>`. | Focused Skill tests pass; X1 stopped before the invalidation branch, so behavioral confirmation remains pending. |
+| `1736d0c` | X1 | Acceptance used a prefixed deep-input selector without explaining its relation to the selector returned by `artifact list`. | `ae6c562` maps an exact listed selector `<selector>` to `specs/<canonical-spec>#<selector>`. | Focused Skill tests pass; X1 did not build an acceptance candidate, so behavioral confirmation remains pending. |
 | `1736d0c` | RT1 | Review's read-only boundary and deferred adapter write had no stated ordering. | Decision 0159 fixes the verdict first under a byte-identical worktree, then permits only the adapter-directed deferred record as a separate post-verdict mutation. | RT1 confirmed the read-only verdict path on `dc6c022`; a deferred-candidate scenario is still needed for the post-verdict write branch. |
 | `1736d0c` | CLI recovery | Unknown nested commands could suggest an unrelated top-level command. | Decision 0159 disables token-only similarity suggestions while retaining help and usage. | Focused parser tests pass; behavioral recovery confirmation remains pending. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
@@ -543,6 +574,9 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| Steering list and template paths could be read as repository-root-relative, causing a document to be written outside the configured collection. | CLI output retains the spec-root-relative path and adds an explicit repository-root-relative `project_path`; Steering authoring follows that field. S5 wrote only `.specbind/steering/testing.md`. | `6df80fc`, confirmed on `9978278` |
+| Steering authoring could invent a durable testing policy when the repository had no settled convention. | The rule and Skill treat Add as documentation of existing or explicitly supplied policy, stop without writing when evidence is absent, and ask the maintainer for the actual convention. S5's first turn was clean and the supplied policy alone was materialized after the answer. | `9978278`, confirmed on `9978278` |
+| The default Contract Rule left dependency direction, ownership overlap, and cycle handling as authoring prompts instead of live policy. | The embedded Rule now forbids invented dependency direction, blocks unexplained ownership overlap, and requires case-specific cycle rationale. X1 consumed the installed policy and correctly withheld review. | `00ab0c7`, confirmed on `9978278` |
 | A lifecycle action label could be guessed as a Design artifact ID before selector discovery. | Contract review lists artifacts first, uses only exact reported Design selectors, and explicitly excludes lifecycle states and actions from the artifact namespace. X1 consumed `design/main` without a failed retry. | `9e8abd3`, confirmed on `9e8abd3` |
 | A tracked Direct item that also looked like durable guidance could be routed to Steering before active milestone lookup. | Change-request routing checks the active milestone before surface classification and gives a matching tracked item precedence. I3 read status first and entered Direct implementation without a Steering detour. | `9e8abd3`, confirmed on `9e8abd3` |
 | A missing Design seam could be rewound without an explicit maintainer confirmation when milestone scope itself was unchanged. | Contract review presents the full downstream loss and requires explicit user confirmation before every gate invalidation. X1 stopped with Design fresh and review absent. | `dc6c022`, confirmed on `dc6c022` |
