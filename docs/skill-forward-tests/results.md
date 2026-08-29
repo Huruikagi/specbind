@@ -36,6 +36,26 @@ without a pass are listed separately below.
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
 
+X1 and I3 were re-measured on 2026-08-29 against `9e8abd3` as fresh Codex
+subagents on `gpt-5.6-terra` at medium reasoning. X1 passed: selector discovery
+preceded the deep read, `design/main` was consumed without an invalid retry, the
+review stayed absent, Design stayed fresh, and the fixture stayed clean. I3
+passed on a fresh retry: milestone status was the first product read, the
+matching Direct item took precedence without a Steering detour, only
+`CONTRIBUTING.md` was committed, the item reached 1/1, and the active
+implementation-paths-only adapter left the CLI-owned Roadmap edit explicitly
+uncommitted. Both judged fixtures retained the same status through the debrief.
+
+The first I3 attempt on this build is discarded as an environment failure. Its
+Codex tool registry did not expose fixture-installed Skills, the driver did not
+read the installed `specbind-implement` package, and it inferred completion
+commands from CLI help, including an unauthorized convenience commit of the
+Roadmap edit. The retry read and followed the installed procedure, so only that
+run measures the Skill. X1's debrief reported a sandbox-only Git Bash permission
+retry. I3's remaining hesitation was settled by the procedure's explicit
+Direct-summary substitution and closed-world adapter rule; neither is retained
+as an unresolved finding.
+
 X1, I3, RT1, and DB1 were re-measured on 2026-08-29 against `dc6c022`, driven
 as fresh Codex subagents on `gpt-5.6-terra` at medium reasoning with one fixture
 per scenario. All four passed their mechanical expectations. X1 kept contract
@@ -458,8 +478,6 @@ None. Decision 0159 resolved the actionable `1736d0c` findings; the two
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
-| `dc6c022` | X1 | A lifecycle action label could be guessed as a Design artifact ID before selector discovery. | Decision 0160 requires `artifact list` first, exact reported selectors only, and explicitly excludes lifecycle states and actions from the artifact namespace. | Awaiting a fresh X1 run on the fixing build. |
-| `dc6c022` | I3 | A tracked Direct item that also looked like durable guidance could be routed to Steering before active milestone lookup. | Decision 0160 makes active milestone matching precede change-request surface classification and gives a matching tracked item precedence. | Awaiting a fresh I3 run on the fixing build. |
 | `1736d0c` | RT1 | Review's read-only boundary and deferred adapter write had no stated ordering. | Decision 0159 fixes the verdict first under a byte-identical worktree, then permits only the adapter-directed deferred record as a separate post-verdict mutation. | RT1 confirmed the read-only verdict path on `dc6c022`; a deferred-candidate scenario is still needed for the post-verdict write branch. |
 | `1736d0c` | CLI recovery | Unknown nested commands could suggest an unrelated top-level command. | Decision 0159 disables token-only similarity suggestions while retaining help and usage. | Focused parser tests pass; behavioral recovery confirmation remains pending. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
@@ -472,6 +490,8 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| A lifecycle action label could be guessed as a Design artifact ID before selector discovery. | Contract review lists artifacts first, uses only exact reported Design selectors, and explicitly excludes lifecycle states and actions from the artifact namespace. X1 consumed `design/main` without a failed retry. | `9e8abd3`, confirmed on `9e8abd3` |
+| A tracked Direct item that also looked like durable guidance could be routed to Steering before active milestone lookup. | Change-request routing checks the active milestone before surface classification and gives a matching tracked item precedence. I3 read status first and entered Direct implementation without a Steering detour. | `9e8abd3`, confirmed on `9e8abd3` |
 | A missing Design seam could be rewound without an explicit maintainer confirmation when milestone scope itself was unchanged. | Contract review presents the full downstream loss and requires explicit user confirmation before every gate invalidation. X1 stopped with Design fresh and review absent. | `dc6c022`, confirmed on `dc6c022` |
 | Milestone actions exposed typed item keys but not the exact operand accepted by item mutation commands. | Spec and Direct actions expose `command_operand`; I3 used the Direct operand to complete the pending item. | `dc6c022`, confirmed on `dc6c022` |
 | Machine-consistent state was labeled unqualified `Health`, allowing it to be read as semantic prose agreement. | Status labels it `State health` and separately reports `Semantic alignment: not evaluated`; DB1 still diagnosed the artifact contradiction from governing inputs. | `dc6c022`, confirmed on `dc6c022` |
