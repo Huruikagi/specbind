@@ -45,6 +45,18 @@ created one adapter-directed local checkpoint. Mechanical judgment confirmed
 and byte-identical established cart Requirements and `spec.yaml`. No existing
 artifact or lifecycle state was reconciled after the request declined it.
 
+DS1 and X1 were re-measured as Codex on 2026-08-29 with `gpt-5.6-terra` at
+medium reasoning against `0270764`. DS1 read `contract/v1`, materialized the
+fixed `contract.yaml`, declared the established cart dependency, reached 3/3
+Design coverage, passed the two-Contract graph check, and checkpointed only the
+Design, Contract, and CLI-owned `spec.yaml`; no task plan was created. X1 read
+the same fixed Contract path at baseline and current revisions, accepted a fresh
+review from only Roadmap scope and Contract inputs, and created no task plan.
+Both fixtures were clean before and after their read-only debriefs. The DS1
+driver corrected unquoted Requirement IDs before approval, and the X1 driver
+regenerated a candidate after a PowerShell quoting mistake; neither workaround
+changed the measured outcome or exposed a retained product finding.
+
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
 Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit
 beyond fixture setup, and did not ask for checkpoint policy. Earlier passing
