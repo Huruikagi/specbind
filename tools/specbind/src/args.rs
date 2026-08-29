@@ -76,6 +76,11 @@ pub enum Command {
         #[command(subcommand)]
         command: CheckCommand,
     },
+    /// Inspect the derived project-wide Contract dependency graph.
+    Contract {
+        #[command(subcommand)]
+        command: ContractCommand,
+    },
     /// Read the project-owned OKF artifact templates.
     Template {
         #[command(subcommand)]
@@ -169,6 +174,16 @@ pub enum CheckCommand {
     Traceability { spec: String },
     /// Verify the project-wide Contract graph.
     Contracts,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ContractCommand {
+    /// Report every resolved direct Contract dependency reference.
+    Graph,
+    /// Report the direct provider references consumed by one Spec.
+    Dependencies { spec: String },
+    /// Report the direct consumer references targeting one Spec.
+    Consumers { spec: String },
 }
 
 #[derive(Debug, Subcommand)]

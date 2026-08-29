@@ -7,9 +7,9 @@ use std::{
 use clap::Parser as _;
 use specbind::args::{
     AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command,
-    ConfigurationCommand, DirectCommand, GateCommand, MigrateCommand, MilestoneCommand,
-    ProtocolCommand, ReleaseCommand, ReviewCommand, RuleCommand, SchemaCommand, SpecCommand,
-    SpecCompletionCommand, SteeringCommand, TasksCommand, TemplateCommand,
+    ConfigurationCommand, ContractCommand, DirectCommand, GateCommand, MigrateCommand,
+    MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand, RuleCommand, SchemaCommand,
+    SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand, TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -98,6 +98,16 @@ fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
     match command {
         CheckCommand::Traceability { spec } => specbind::cli::check_traceability(start, &spec),
         CheckCommand::Contracts => specbind::cli::check_contracts(start),
+    }
+}
+
+fn run_contract(start: &Path, command: ContractCommand) -> CommandOutput {
+    match command {
+        ContractCommand::Graph => specbind::cli::contract_graph(start),
+        ContractCommand::Dependencies { spec } => {
+            specbind::cli::contract_dependencies(start, &spec)
+        }
+        ContractCommand::Consumers { spec } => specbind::cli::contract_consumers(start, &spec),
     }
 }
 
@@ -301,6 +311,7 @@ fn main() -> ExitCode {
             ProtocolCommand::Read { selector } => specbind::cli::protocol_read(&selector),
         },
         Command::Check { command } => run_check(&start, command),
+        Command::Contract { command } => run_contract(&start, command),
         Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
         Command::Schema { command } => run_schema(command),

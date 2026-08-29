@@ -280,3 +280,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Accepted | One quick-plan orchestrator with explicit named and all-Spec scope modes |
 | [0154](./design/decisions/0154-guided-configuration-workflow.md) | Accepted | Completing guided configuration workflow, summary command, and aftercare |
 | [0155](./design/decisions/0155-versioned-yaml-contract-artifact.md) | Accepted | Versioned strict YAML Contract artifact and semantic fingerprint |
+| [0156](./design/decisions/0156-derived-contract-graph-reads.md) | Accepted | Read-only direct Contract graph and reverse-consumer projections |

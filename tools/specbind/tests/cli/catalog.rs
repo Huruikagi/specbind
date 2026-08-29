@@ -163,6 +163,113 @@ fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
 }
 
 #[test]
+fn reports_contract_graph_dependencies_and_reverse_consumers() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/provider/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: value, target: { spec: provider, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
+    );
+    let edge = "specs/consumer#contract/consumes/value -> specs/provider#contract/exports/value";
+
+    let mut graph = specbind_command();
+    graph
+        .current_dir(root.path())
+        .args(["contract", "graph"])
+        .assert()
+        .success()
+        .stdout(format!(
+            "OK CONTRACT_GRAPH_REPORTED: Reported 3 contract(s) and 1 direct dependency reference(s).\n  Dependencies:\n    - {edge}\n  Graph warnings: 0\n"
+        ))
+        .stderr("");
+
+    let mut dependencies = specbind_command();
+    dependencies
+        .current_dir(root.path())
+        .args(["contract", "dependencies", "consumer"])
+        .assert()
+        .success()
+        .stdout(format!(
+            "OK CONTRACT_DEPENDENCIES_REPORTED: Reported 1 direct provider reference(s) for spec consumer.\n  Dependencies:\n    - {edge}\n"
+        ))
+        .stderr("");
+
+    let mut consumers = specbind_command();
+    consumers
+        .current_dir(root.path())
+        .args(["contract", "consumers", "provider"])
+        .assert()
+        .success()
+        .stdout(format!(
+            "OK CONTRACT_CONSUMERS_REPORTED: Reported 1 direct consumer reference(s) for spec provider.\n  Consumers:\n    - {edge}\n"
+        ))
+        .stderr("");
+
+    let mut empty = specbind_command();
+    empty
+        .current_dir(root.path())
+        .args(["contract", "consumers", "consumer"])
+        .assert()
+        .success()
+        .stdout(
+            "OK CONTRACT_CONSUMERS_REPORTED: Reported 0 direct consumer reference(s) for spec consumer.\n  Consumers: none\n",
+        )
+        .stderr("");
+}
+
+#[test]
+fn contract_graph_reads_fail_closed_and_reject_unknown_specs() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+
+    let mut missing = specbind_command();
+    missing
+        .current_dir(root.path())
+        .args(["contract", "consumers", "absent"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR CONTRACT_SPEC_NOT_FOUND:",
+        ));
+
+    write(
+        root.path(),
+        ".specbind/specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: checkout, section: exports, id: missing } }\ninvariants: []\nfile_ownership: []\n",
+    );
+    let mut invalid = specbind_command();
+    invalid
+        .current_dir(root.path())
+        .args(["contract", "graph"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR CONTRACT_GRAPH_READ_FAILED: Cannot report an incomplete Contract graph.",
+            )
+            .and(predicate::str::contains(
+                "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
+            )),
+        );
+}
+
+#[test]
 fn lists_and_reads_project_owned_spec_templates() {
     let root = project_fixture();
     write_template_fixture(root.path());

@@ -99,6 +99,19 @@ Tasksを作る前に、activeなMilestoneに含まれる全SpecのContractをま
 します。Specが1つしかないMilestoneでも、このレビューは省略しません。所有権の
 重複、循環依存、互換性の前提、統合時の抜けを、実装前に見つけるためです。
 
+Contract同士の直接の依存関係は、元の`contract.yaml`を変更せずにCLIから確認できます。
+
+```sh
+specbind contract graph
+specbind contract dependencies <spec>
+specbind contract consumers <spec>
+```
+
+`graph`はプロジェクト全体の解決済み参照、`dependencies`は指定したSpecが利用する
+provider、`consumers`は指定したSpecを利用するmanaged consumerを表示します。
+いずれも直接参照の機械的な投影です。到達可能なSpecが実際に変更の影響を受けるか、
+SpecBind管理外のconsumerが存在するかは、Contract reviewで判断します。
+
 ## Invalidationとrewind
 
 承認したあとで前提が変わったときは、影響を受ける中でいちばん手前のGateを、

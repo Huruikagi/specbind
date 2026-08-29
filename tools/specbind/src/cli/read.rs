@@ -6,7 +6,10 @@ mod install_commands;
 mod project_commands;
 mod removal_commands;
 
-pub use artifact_commands::{artifact_list, artifact_read, check_contracts, check_traceability};
+pub use artifact_commands::{
+    artifact_list, artifact_read, check_contracts, check_traceability, contract_consumers,
+    contract_dependencies, contract_graph,
+};
 pub use catalog_commands::{
     adapter_list, adapter_read, protocol_list, protocol_read, rule_list, rule_read, schema_list,
     schema_read, steering_list, steering_read, template_list_milestone, template_list_spec,

@@ -203,27 +203,7 @@ pub fn check_contracts(start: &Path) -> CommandOutput {
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     let graph = contract_graph::resolve(&paths.specbind_root);
-    let mut errors = graph
-        .project_issues
-        .iter()
-        .map(render_issue)
-        .collect::<Vec<_>>();
-    for (spec, inventory) in &graph.inventories {
-        errors.extend(
-            inventory
-                .issues
-                .iter()
-                .map(|issue| format!("{} spec {spec}", render_issue(issue))),
-        );
-    }
-    errors.extend(
-        graph
-            .report
-            .issues
-            .iter()
-            .filter(|issue| issue.severity == GraphIssueSeverity::Error)
-            .map(render_graph_issue),
-    );
+    let errors = contract_graph_errors(&graph);
     if !errors.is_empty() {
         return CommandOutput::failure(
             "CONTRACTS_FAILED",
@@ -262,6 +242,169 @@ pub fn check_contracts(start: &Path) -> CommandOutput {
         }
     }
     CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn contract_graph(start: &Path) -> CommandOutput {
+    let graph = match readable_contract_graph(start) {
+        Ok(graph) => graph,
+        Err(output) => return output,
+    };
+    let mut output = format!(
+        "OK CONTRACT_GRAPH_REPORTED: Reported {} contract(s) and {} direct dependency reference(s).\n",
+        graph.report.contracts.len(),
+        graph.report.dependencies.len()
+    );
+    push_dependency_list(&mut output, "Dependencies", &graph.report.dependencies);
+    push_field(
+        &mut output,
+        "Graph warnings",
+        &graph
+            .report
+            .issues
+            .iter()
+            .filter(|issue| issue.severity == GraphIssueSeverity::Warning)
+            .count()
+            .to_string(),
+    );
+    CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn contract_dependencies(start: &Path, canonical_spec: &str) -> CommandOutput {
+    let graph = match readable_contract_graph(start) {
+        Ok(graph) => graph,
+        Err(output) => return output,
+    };
+    if !graph.report.contracts.contains_key(canonical_spec) {
+        return contract_spec_not_found(canonical_spec);
+    }
+    let dependencies = graph
+        .report
+        .dependencies
+        .iter()
+        .filter(|dependency| dependency.consumer.canonical_spec == canonical_spec)
+        .cloned()
+        .collect::<Vec<_>>();
+    let mut output = format!(
+        "OK CONTRACT_DEPENDENCIES_REPORTED: Reported {} direct provider reference(s) for spec {}.\n",
+        dependencies.len(),
+        escape(canonical_spec)
+    );
+    push_dependency_list(&mut output, "Dependencies", &dependencies);
+    CommandOutput::success(output.into_bytes())
+}
+
+#[must_use]
+pub fn contract_consumers(start: &Path, canonical_spec: &str) -> CommandOutput {
+    let graph = match readable_contract_graph(start) {
+        Ok(graph) => graph,
+        Err(output) => return output,
+    };
+    if !graph.report.contracts.contains_key(canonical_spec) {
+        return contract_spec_not_found(canonical_spec);
+    }
+    let consumers = graph
+        .report
+        .dependencies
+        .iter()
+        .filter(|dependency| dependency.provider.canonical_spec == canonical_spec)
+        .cloned()
+        .collect::<Vec<_>>();
+    let mut output = format!(
+        "OK CONTRACT_CONSUMERS_REPORTED: Reported {} direct consumer reference(s) for spec {}.\n",
+        consumers.len(),
+        escape(canonical_spec)
+    );
+    push_dependency_list(&mut output, "Consumers", &consumers);
+    CommandOutput::success(output.into_bytes())
+}
+
+fn readable_contract_graph(
+    start: &Path,
+) -> Result<contract_graph::ContractGraphResolution, CommandOutput> {
+    let paths = config::resolve_from(start)
+        .map_err(|error| CommandOutput::failure(error.code, error.message, vec![]))?;
+    let graph = contract_graph::resolve(&paths.specbind_root);
+    let errors = contract_graph_errors(&graph);
+    if errors.is_empty() {
+        Ok(graph)
+    } else {
+        Err(CommandOutput::failure(
+            "CONTRACT_GRAPH_READ_FAILED",
+            "Cannot report an incomplete Contract graph.",
+            errors,
+        ))
+    }
+}
+
+fn contract_graph_errors(graph: &contract_graph::ContractGraphResolution) -> Vec<String> {
+    let mut errors = graph
+        .project_issues
+        .iter()
+        .map(render_issue)
+        .collect::<Vec<_>>();
+    for (spec, inventory) in &graph.inventories {
+        errors.extend(
+            inventory
+                .issues
+                .iter()
+                .map(|issue| format!("{} spec {spec}", render_issue(issue))),
+        );
+    }
+    errors.extend(
+        graph
+            .report
+            .issues
+            .iter()
+            .filter(|issue| issue.severity == GraphIssueSeverity::Error)
+            .map(render_graph_issue),
+    );
+    errors
+}
+
+fn contract_spec_not_found(canonical_spec: &str) -> CommandOutput {
+    CommandOutput::failure(
+        "CONTRACT_SPEC_NOT_FOUND",
+        format!(
+            "Persistent spec {} does not have a resolved Contract in the project graph.",
+            escape(canonical_spec)
+        ),
+        vec![],
+    )
+}
+
+fn push_dependency_list(
+    output: &mut String,
+    label: &str,
+    dependencies: &[contract_graph::ContractDependency],
+) {
+    if dependencies.is_empty() {
+        push_field(output, label, "none");
+        return;
+    }
+    writeln!(output, "  {label}:").expect("writing to a String cannot fail");
+    for dependency in dependencies {
+        writeln!(output, "    - {}", render_dependency(dependency))
+            .expect("writing to a String cannot fail");
+    }
+}
+
+fn render_dependency(dependency: &contract_graph::ContractDependency) -> String {
+    format!(
+        "{} -> {}",
+        render_contract_entry(&dependency.consumer),
+        render_contract_entry(&dependency.provider)
+    )
+}
+
+fn render_contract_entry(entry: &contract_graph::ContractEntryRef) -> String {
+    format!(
+        "specs/{}#contract/{}/{}",
+        escape(&entry.canonical_spec),
+        entry.section.token(),
+        escape(&entry.entry_id)
+    )
 }
 
 fn render_traceability_issue(issue: &crate::traceability::TraceabilityIssue) -> String {
