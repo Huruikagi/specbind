@@ -490,7 +490,7 @@ EOF
         expect "the seeded contract graph does not resolve" \
             'specbind check contracts'
         expect "checkout does not consume the cart export" \
-            'specbind artifact read checkout contract | grep -q "cart/exports/add-item"'
+            'specbind contract consumers cart | grep -q "specs/checkout#contract/consumes/cart-add -> specs/cart#contract/exports/add-item"'
     fi
     if [ "$scenario" = x2 ]; then
         # The approved design removes the export checkout consumes. Design
