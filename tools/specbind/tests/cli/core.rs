@@ -17,6 +17,16 @@ fn reports_help() {
 }
 
 #[test]
+fn unrecognized_nested_routes_do_not_suggest_unrelated_top_level_commands() {
+    let mut command = specbind_command();
+
+    command.arg("status").assert().failure().stderr(
+        predicate::str::contains("unrecognized subcommand 'status'")
+            .and(predicate::str::contains("a similar subcommand exists").not()),
+    );
+}
+
+#[test]
 fn reports_feedback_routes_without_requiring_a_project() {
     let outside = tempfile::tempdir().expect("temporary directory");
     let mut command = specbind_command();
@@ -465,7 +475,7 @@ fn reports_composed_spec_status_with_freshness_coverage_and_progress() {
         .assert()
         .success()
         .stdout(
-            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  Health: consistent\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Next action: implementation\n  Delegated gates: none\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next task: none\n  Task blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
+            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: implementation\n  Milestone: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  State health: consistent\n  Semantic alignment: not evaluated\n  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n  Next action: implementation\n  Delegated gates: none\n  Task progress: 2 total, 1 completed, 0 pending, 1 blocked\n  Next task: none\n  Task blockers:\n    - 2: Waiting for review\n  Requirement coverage: design 1/1, tasks 1/1 (required)\n  Diagnostics: none\n",
         )
         .stderr("");
 }
@@ -495,6 +505,7 @@ fn reports_composed_spec_status_as_command_specific_json() {
                 "state": "implementation",
                 "milestone": "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62",
                 "health": "consistent",
+                "semanticAlignment": "not_evaluated",
                 "gates": {
                     "requirements": "fresh",
                     "design": "fresh",
@@ -544,7 +555,7 @@ fn reports_a_clean_idle_spec_without_requiring_active_artifacts() {
         .assert()
         .success()
         .stdout(
-            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: idle\n  Milestone: none\n  Health: consistent\n  Gates: requirements=not_reached, design=not_reached, tasks=not_reached, completion=not_reached\n  Next action: none\n  Task progress: unavailable\n  Next task: none\n  Task blockers: none\n  Requirement coverage: inactive\n  Diagnostics: none\n",
+            "OK SPEC_STATUS_REPORTED: Reported status for spec checkout.\n  State: idle\n  Milestone: none\n  State health: consistent\n  Semantic alignment: not evaluated\n  Gates: requirements=not_reached, design=not_reached, tasks=not_reached, completion=not_reached\n  Next action: none\n  Task progress: unavailable\n  Next task: none\n  Task blockers: none\n  Requirement coverage: inactive\n  Diagnostics: none\n",
         )
         .stderr("");
 
@@ -560,7 +571,7 @@ fn reports_a_clean_idle_spec_without_requiring_active_artifacts() {
         .assert()
         .success()
         .stdout(
-            predicate::str::contains("  Health: inconsistent\n")
+            predicate::str::contains("  State health: inconsistent\n")
                 .and(predicate::str::contains("SPEC_IDLE_ARTIFACT_PRESENT")),
         );
 }
@@ -582,7 +593,7 @@ fn reports_semantic_spec_contradictions_as_inconsistent_without_repairing() {
         .success()
         .stdout(
             predicate::str::contains("  State: design\n")
-                .and(predicate::str::contains("  Health: inconsistent\n"))
+                .and(predicate::str::contains("  State health: inconsistent\n"))
                 .and(predicate::str::contains("SPEC_STATE_GATE_EVIDENCE")),
         )
         .stderr("");
@@ -606,7 +617,7 @@ fn reports_unstarted_design_as_expected_work_without_weakening_traceability() {
         .success()
         .stdout(
             predicate::str::contains("  State: design\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
                 .and(predicate::str::contains("  Next action: design\n"))
                 .and(predicate::str::contains(
                     "  Expected work: cover 1 active requirement(s) in Design\n",
@@ -648,7 +659,7 @@ fn reports_unstarted_requirements_as_expected_work_without_weakening_traceabilit
         .success()
         .stdout(
             predicate::str::contains("  State: requirements\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
                 .and(predicate::str::contains("  Next action: requirements\n"))
                 .and(predicate::str::contains(
                     "  Expected work: author Requirements\n",
@@ -665,9 +676,9 @@ fn reports_unstarted_requirements_as_expected_work_without_weakening_traceabilit
         .assert()
         .success()
         .stdout(
-            predicate::str::contains("  Health: consistent\n")
+            predicate::str::contains("  State health: consistent\n")
                 .and(predicate::str::contains(
-                    "    - spec:checkout action=requirements\n",
+                    "    - spec:checkout action=requirements command_operand=checkout\n",
                 ))
                 .and(predicate::str::contains(
                     "  Release readiness: not evaluated until validation\n",

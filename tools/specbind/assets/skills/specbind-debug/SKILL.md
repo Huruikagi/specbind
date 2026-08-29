@@ -29,6 +29,24 @@ heading, omit a field, or return only a narrative diagnosis.
 specbind protocol read debug
 ```
 
+## Resolve the subject
+
+Use the explicit failure, Spec, and Task identity supplied by the caller. When a
+bare diagnosis request omits them, do not infer identity from a repository path
+or from whichever Task you notice first.
+
+```sh
+specbind milestone status
+specbind tasks list <spec>
+```
+
+List Tasks for every active Spec in implementation. For a request that says a
+Task failed or cannot be implemented, candidates are blocked Tasks and pending
+actionable Tasks. Continue only when exactly one candidate exists across the
+active milestone. Otherwise present the canonical candidates and ask the user
+which failure to diagnose. The request is not evidence that an arbitrary
+candidate failed.
+
 ## Change nothing
 
 Read-only means read-only. You may run commands that reproduce or observe the

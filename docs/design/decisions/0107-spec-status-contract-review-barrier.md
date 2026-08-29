@@ -21,7 +21,8 @@ The result is observable. A Spec parked behind the barrier reports:
 
 ```text
   State: tasks
-  Health: consistent
+  State health: consistent
+  Semantic alignment: not evaluated
   Gates: requirements=fresh, design=fresh, tasks=not_reached, completion=not_reached
   Blockers: none
   Diagnostics: none

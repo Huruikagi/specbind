@@ -35,16 +35,18 @@ without review.
 
 ## Compatibility posture
 
-State how strictly this project treats seam changes, for example:
+This project's default posture is conservative:
 
-- whether a removal or narrowing requires every consumer to change in the same
-  milestone
-- whether additive change is routine or still reviewed closely
-- whether any seam is depended on outside this repository and therefore cannot
-  be changed on the project's own schedule
+- A removal or narrowing is accepted only when every managed consumer changes
+  in the same milestone or no longer consumes the seam.
+- An additive change is still reviewed for ownership, dependency direction, and
+  unmanaged consumer impact; “additive” is not an automatic compatibility pass.
+- A seam used outside this repository is changed only after the affected
+  consumer and the user's intended compatibility disposition are explicit.
 
-A project that never states its posture decides it case by case, under time
-pressure, differently each time.
+Replace this section when the project deliberately chooses a different
+compatibility policy. Until then, apply this default rather than deciding case
+by case during each review.
 
 ## Dependency direction
 

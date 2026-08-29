@@ -54,7 +54,7 @@ Task mutation commands retain their existing `Next actionable` result field.
 
 ## Consequences
 
-- A newly entered, untouched Design phase reports `Health: consistent`, names
+- A newly entered, untouched Design phase reports `State health: consistent`, names
   Design as the next action, and summarizes the coverage still to author.
 - A reader no longer interprets absence of a task plan as absence of workflow
   work.

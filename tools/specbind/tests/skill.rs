@@ -605,7 +605,9 @@ fn task_review_puts_its_no_write_rule_before_commands() {
 
     assert!(preamble.contains("Read-only stop rule — before any probe"));
     assert!(preamble.contains("cannot create\ncaches, coverage data, reports, lockfiles"));
-    assert!(preamble.contains("git status --short` before and after"));
+    assert!(preamble.contains("before investigation and\nagain before recording"));
+    assert!(body.contains("This is the one permitted repository mutation"));
+    assert!(body.contains("after the\nbefore/after probe status matched"));
 
     for required in [
         "specbind artifact read <spec> contract --for consume",
@@ -640,6 +642,10 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     assert!(
         body.contains("Ask only when the impact introduces a choice the request did not settle")
     );
+    assert!(body.contains("before every gate invalidation"));
+    assert!(
+        body.contains("obtain explicit user confirmation even when milestone scope is unchanged")
+    );
     assert!(!body.contains("git ls-tree -r --name-only <baseline>"));
 }
 
@@ -658,6 +664,9 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "The orchestrator never deletes them itself",
         "Do not skip ahead and return here afterwards.",
         "Do not stop merely because the implementation commit succeeded.",
+        "This is a separate metadata checkpoint",
+        "Adapter guidance is closed-world authority.",
+        "`Revision` is unavailable until it is\nreconciled",
         "default is `required` for Spec-backed work and\n`inline` for Direct work",
         "there is no\nseparate project setting to discover",
     ] {
@@ -677,6 +686,37 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         checkpoint < handshake,
         "the Direct workflow must present checkpoint before handshake"
     );
+}
+
+#[test]
+fn direct_review_and_debug_resolve_omitted_subjects_without_guessing() {
+    let review = skill::find("specbind-review-task")
+        .expect("task review skill")
+        .body()
+        .expect("body");
+    let debug = skill::find("specbind-debug")
+        .expect("debug skill")
+        .body()
+        .expect("body");
+
+    for body in [review, debug] {
+        assert!(body.contains("specbind milestone status"));
+        assert!(body.contains("specbind tasks list <spec>"));
+        assert!(body.contains("exactly one"));
+        assert!(body.contains("ask the user"));
+    }
+}
+
+#[test]
+fn status_names_machine_health_without_claiming_semantic_alignment() {
+    let body = skill::find("specbind-status")
+        .expect("status skill")
+        .body()
+        .expect("body");
+
+    assert!(body.contains("`State health: consistent`"));
+    assert!(body.contains("`Semantic alignment: not evaluated`"));
+    assert!(body.contains("Never use state health to rule out an artifact contradiction"));
 }
 
 #[test]

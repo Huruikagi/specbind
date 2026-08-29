@@ -106,7 +106,7 @@ The skill authors nothing until `spec status` reports the requirements gate
 approved and fresh, and the Spec a current participant of the active Roadmap.
 
 A Spec that has reached the design state and has no design artifact yet reports
-`Health: inconsistent` with a missing-coverage diagnostic for every active
+`State health: inconsistent` with a missing-coverage diagnostic for every active
 Requirement. That is the expected starting state of this phase, not a fault, and
 the skill says so rather than treating the diagnostic as damage to repair. The
 requirements skill has the same rule for a missing Requirements artifact under

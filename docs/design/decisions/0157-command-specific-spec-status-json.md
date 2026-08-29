@@ -4,6 +4,8 @@ Status: Accepted
 
 Decision 0158 adds the matching command-specific `milestone status --json`
 project-level projection. The general JSON protocol remains deferred.
+Decision 0159 qualifies text health as state health and adds the
+`semanticAlignment` field to both projections.
 
 ## Context
 
@@ -35,8 +37,8 @@ specbind spec status <spec> --json
 ```
 
 - This `--json` applies only to `spec status`. It is not a global option.
-- Omitting `--json` preserves the existing Decision 0067 text output
-  byte-for-byte.
+- Omitting `--json` uses the Decision 0067 text output as qualified by Decision
+  0159.
 - The command resolves the same `SpecStatusModel` for both renderings. JSON is
   an alternate projection, not a separate status calculation.
 
@@ -49,7 +51,8 @@ to stdout:
 {"status":"ok","code":"SPEC_STATUS_REPORTED","data":{}}
 ```
 
-The `data` object reports the named Spec, declared state, milestone, health,
+The `data` object reports the named Spec, declared state, milestone, state health,
+`semanticAlignment: "not_evaluated"`,
 four gate freshness values, next action, expected Requirements or Design work,
 Contract Review status, delegated gates, task progress and blockers,
 Requirement coverage, and diagnostics. JSON field names use `camelCase`;

@@ -69,6 +69,13 @@ Cover, in the project's language:
 - **What can happen next.** The CLI reports actionable items and release
   blockers; turn those into the concrete next step and say who has to take it.
 
+`State health: consistent` means the CLI found no deterministic schema,
+lifecycle, freshness, declared-coverage, or other machine-checkable diagnostic.
+`Semantic alignment: not evaluated` is equally authoritative: status does not
+judge whether Requirements, Design, Contract, Steering, and implementation
+prose agree. Never use state health to rule out an artifact contradiction in a
+review or diagnosis.
+
 Keep it proportionate. A healthy Spec needs a few lines. A milestone with
 several blocked items needs the detail that explains the blockage.
 

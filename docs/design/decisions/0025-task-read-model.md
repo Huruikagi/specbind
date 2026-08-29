@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0159 qualifies the human projection as `State health` and explicitly
+reports that prose-level semantic alignment is not evaluated.
+
 ## Context
 
 `tasks.yaml` improves deterministic validation and updates but is less convenient than the inherited Markdown checklist for routine human review. Agent workflows also should not repeatedly reconstruct group progress, implicit dependencies, pending state, blockers, and gate freshness by interpreting raw YAML.

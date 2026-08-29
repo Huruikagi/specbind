@@ -25,6 +25,7 @@ struct SpecStatusData<'a> {
     state: &'static str,
     milestone: Option<&'a str>,
     health: &'static str,
+    semantic_alignment: &'static str,
     gates: GateStatusData,
     next_action: &'static str,
     expected_requirements_work: bool,
@@ -97,6 +98,7 @@ struct MilestoneStatusData<'a> {
     target_release: Option<&'a str>,
     stage: &'static str,
     health: &'static str,
+    semantic_alignment: &'static str,
     contract_review: &'static str,
     spec_states: &'a std::collections::BTreeMap<String, usize>,
     direct_progress: DirectProgressData,
@@ -126,8 +128,11 @@ struct MilestoneItemData<'a> {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct MilestoneActionData<'a> {
     item: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    command_operand: Option<&'a str>,
     action: &'static str,
 }
 
@@ -221,12 +226,13 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     );
     push_field(
         &mut output,
-        "Health",
+        "State health",
         match model.health {
             MilestoneHealth::Consistent => "consistent",
             MilestoneHealth::Inconsistent => "inconsistent",
         },
     );
+    push_field(&mut output, "Semantic alignment", "not evaluated");
     push_field(
         &mut output,
         "Contract review",
@@ -296,6 +302,7 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
             MilestoneHealth::Consistent => "consistent",
             MilestoneHealth::Inconsistent => "inconsistent",
         },
+        semantic_alignment: "not_evaluated",
         contract_review: milestone_status::review_name(model.review_status),
         spec_states: &model.spec_state_counts,
         direct_progress: DirectProgressData {
@@ -319,6 +326,7 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
             .iter()
             .map(|action| MilestoneActionData {
                 item: &action.item,
+                command_operand: action.command_operand.as_deref(),
                 action: action.action,
             })
             .collect(),
@@ -381,13 +389,24 @@ fn render_milestone_actions(model: &MilestoneStatusModel, output: &mut String) {
     }
     output.push_str("  Actionable:\n");
     for action in &model.actionable {
-        writeln!(
-            output,
-            "    - {} action={}",
-            escape(&action.item),
-            action.action
-        )
-        .expect("writing to a String cannot fail");
+        if let Some(command_operand) = &action.command_operand {
+            writeln!(
+                output,
+                "    - {} action={} command_operand={}",
+                escape(&action.item),
+                action.action,
+                escape(command_operand)
+            )
+            .expect("writing to a String cannot fail");
+        } else {
+            writeln!(
+                output,
+                "    - {} action={}",
+                escape(&action.item),
+                action.action
+            )
+            .expect("writing to a String cannot fail");
+        }
     }
 }
 
@@ -420,12 +439,13 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
     );
     push_field(
         &mut output,
-        "Health",
+        "State health",
         match model.health {
             ConsistencyHealth::Consistent => "consistent",
             ConsistencyHealth::Inconsistent => "inconsistent",
         },
     );
+    push_field(&mut output, "Semantic alignment", "not evaluated");
     push_field(
         &mut output,
         "Gates",
@@ -491,6 +511,7 @@ fn render_spec_status_json(canonical_spec: &str, model: &SpecStatusModel) -> Com
             ConsistencyHealth::Consistent => "consistent",
             ConsistencyHealth::Inconsistent => "inconsistent",
         },
+        semantic_alignment: "not_evaluated",
         gates: GateStatusData {
             requirements: spec_status::freshness_name(model.freshness.requirements.status),
             design: spec_status::freshness_name(model.freshness.design.status),

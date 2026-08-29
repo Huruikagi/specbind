@@ -92,7 +92,7 @@ fn walks_every_gate_from_requirements_to_implementation() {
         .success()
         .stdout(
             predicate::str::contains("  State: implementation\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
                 .and(predicate::str::contains(
                     "  Gates: requirements=fresh, design=fresh, tasks=fresh, completion=not_reached\n",
                 )),
@@ -171,7 +171,7 @@ fn reports_worktree_dirt_only_when_a_clean_revision_would_unlock_progress() {
         .stdout(
             predicate::str::contains("  Stage: validation\n")
                 .and(predicate::str::contains(
-                    "    - spec:checkout action=validation\n",
+                    "    - spec:checkout action=validation command_operand=checkout\n",
                 ))
                 .and(predicate::str::contains("Current blockers:").not())
                 .and(predicate::str::contains("  Release blockers:")),
@@ -409,7 +409,7 @@ fn reports_the_contract_review_barrier_from_the_tasks_state_onward() {
     assert!(fresh.contains("\n  Contract review: fresh\n"));
     // Decision 0078 keeps the milestone-owned review out of the per-Spec
     // invariant, so it never moves this Spec's health.
-    assert!(fresh.contains("\n  Health: consistent\n"));
+    assert!(fresh.contains("\n  State health: consistent\n"));
 }
 
 /// Delegation exists to skip a confirmation the user would otherwise give, and

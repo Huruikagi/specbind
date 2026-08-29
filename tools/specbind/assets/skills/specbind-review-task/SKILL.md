@@ -8,15 +8,34 @@ argument-hint: "<spec> <task-id>"
 
 Verdict on **one task**: is it done correctly?
 
-You read. You do not fix, do not implement, and do not record anything.
+You read. You do not fix or implement. Only after the verdict is fixed may a
+`DEFERRED` finding be recorded through the project's active deferred adapter.
 
-**Read-only stop rule — before any probe:** the working tree after review must
-match the working tree you received. Choose command forms that cannot create
+**Read-only stop rule — before any probe:** the working tree after evidence
+gathering and verdict formation must match the working tree you received. Choose
+command forms that cannot create
 caches, coverage data, reports, lockfiles, or other generated files. For
 example, a Python import probe must disable bytecode generation. If an
 observation cannot be made without writing, do not run it; report the resulting
-verification gap instead. Capture `git status --short` before and after so this
-boundary is checked rather than assumed.
+verification gap instead. Capture `git status --short` before investigation and
+again before recording any deferred finding so this boundary is checked rather
+than assumed.
+
+## 0. Resolve the subject
+
+Use the explicit `<spec> <task-id>` when the invocation supplies it. When it
+does not, do not choose from repository paths or from the first Task you notice.
+
+```sh
+specbind milestone status
+specbind tasks list <spec>
+```
+
+List Tasks for every active Spec in implementation that the milestone reports.
+Select a subject only when exactly one pending actionable Task exists across
+that set. If there are zero or several candidates, present their canonical Spec
+and Task IDs and ask the user which one to review. Stop before reading the diff
+as though it belonged to one of them.
 
 ## 1. Read the change first
 
@@ -126,6 +145,11 @@ far enough to avoid recording the same finding twice; nothing in it is a source
 of work for you, and no entry there becomes work until a person puts it on the
 Roadmap.
 
+This is the one permitted repository mutation. It happens only after the
+before/after probe status matched and the verdict can no longer change. Report
+the adapter-directed destination separately from the implementation diff; never
+include that destination write as evidence for the verdict.
+
 ## Boundaries
 
 - **Never fix what you find.** Repairing the change destroys the thing under
@@ -133,6 +157,7 @@ Roadmap.
 - Leave no generated files behind. A cache produced by a review command is still
   a repository change, even when it is untracked and the implementation diff is
   otherwise untouched.
+- Outside the post-verdict deferred destination above, record nothing.
 - Never run `tasks complete`, `tasks block`, or any gate command. Recording a
   task is the implementer's judgment, not a consequence of your verdict.
 - Never write implementation notes. Durable knowledge goes in your findings; the

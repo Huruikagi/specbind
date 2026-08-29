@@ -167,8 +167,11 @@ report what is unresolved.
 
 - present the affected Spec and what is wrong with the seam;
 - get confirmation when the milestone's scope changes materially;
-- invoke the explicit operation — `specbind milestone update-scope`, or a gate
-  invalidation — rather than editing an artifact or a contract.
+- before every gate invalidation, present the exact Requirements, Design,
+  Tasks, completion, and accepted Contract Review state that the rewind removes,
+  then obtain explicit user confirmation even when milestone scope is unchanged;
+- invoke the confirmed explicit operation — `specbind milestone update-scope`,
+  or a gate invalidation — rather than editing an artifact or a contract.
 
 A Spec added to scope must be brought through design **before** acceptance. It
 cannot be left as follow-up behind a passing review: the accepted artifact has no
@@ -262,8 +265,8 @@ and continue.
   phases; `tasks.yaml` belongs to the phase after this one.
 - Write no machine state. Never edit `spec.yaml` or the roadmap directly.
 - Never delete a task plan, and never approve or invalidate a gate to make this
-  barrier passable. Invalidation happens only as the confirmed outcome of a
-  finding.
+  barrier passable. Invalidation happens only as the explicitly user-confirmed
+  outcome of a finding after its complete rewind cost was presented.
 - Report in the project's language: what changed in the graph, who is affected,
   what you concluded, anything you brought to the user, whether the review was
   accepted, and what runs next.

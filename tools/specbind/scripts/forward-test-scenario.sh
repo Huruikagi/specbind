@@ -608,7 +608,7 @@ ds1)
     expect "order did not reach the design state" \
         'specbind spec status order | grep -q "State: design"'
     expect "unstarted Design is still reported as inconsistent" \
-        'specbind spec status order | grep -q "Health: consistent"'
+        'specbind spec status order | grep -q "State health: consistent"'
     expect "status does not route the next workflow to Design" \
         'specbind spec status order | grep -q "Next action: design"'
     expect "status does not aggregate the expected Design coverage" \

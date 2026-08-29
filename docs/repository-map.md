@@ -283,3 +283,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0156](./design/decisions/0156-derived-contract-graph-reads.md) | Accepted | Read-only direct Contract graph and reverse-consumer projections |
 | [0157](./design/decisions/0157-command-specific-spec-status-json.md) | Accepted | Minimal command-specific JSON projection for Spec status |
 | [0158](./design/decisions/0158-command-specific-milestone-status-json.md) | Accepted | Minimal command-specific JSON projection for Milestone status |
+| [0159](./design/decisions/0159-forward-test-usability-boundaries.md) | Accepted | Forward-test usability, authority, status, and recovery boundaries |

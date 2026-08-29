@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0159 supersedes only the statements below that review authors or
+records nothing: after verdict formation it may write one adapter-directed
+deferred finding. The evidentiary read-only boundary and every other prohibition
+remain accepted.
+
 ## Context
 
 `specbind-review-task` and `specbind-debug` are the two skills that exist in

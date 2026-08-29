@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0159 adds an exact mutation `command_operand` to each actionable item
+and qualifies the derived result as state health rather than prose-level
+semantic judgment.
+
 ## Context
 
 The Roadmap already persists milestone identity, scope, dependencies, release binding, and sparse Direct completion. Participating Specs persist their own workflow states and evidence, while the accepted contract review is separate project state. Adding a writable milestone `status` or copying per-Spec progress into the Roadmap would create competing authorities.

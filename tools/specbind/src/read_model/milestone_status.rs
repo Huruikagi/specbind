@@ -44,6 +44,7 @@ pub struct MilestoneDiagnostic {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MilestoneAction {
     pub item: String,
+    pub command_operand: Option<String>,
     pub action: &'static str,
 }
 
@@ -82,6 +83,7 @@ pub struct MilestoneStatusFailure {
 
 struct ItemFacts {
     id: String,
+    command_operand: String,
     summary: String,
     dependencies: Vec<String>,
     kind: ItemKind,
@@ -300,6 +302,7 @@ fn spec_facts(
             };
             ItemFacts {
                 id,
+                command_operand: item.spec.clone(),
                 summary: item.summary.clone(),
                 dependencies: item.depends_on.iter().map(dependency_key).collect(),
                 kind: ItemKind::Spec {
@@ -316,6 +319,7 @@ fn direct_facts(roadmap: &RoadmapDocument) -> Vec<ItemFacts> {
         .iter()
         .map(|item| ItemFacts {
             id: format!("direct:{}", item.id),
+            command_operand: item.id.clone(),
             summary: item.summary.clone(),
             dependencies: item.depends_on.iter().map(dependency_key).collect(),
             kind: ItemKind::Direct {
@@ -446,6 +450,7 @@ fn actionable_items(
     {
         actions.push(MilestoneAction {
             item: "milestone".to_owned(),
+            command_operand: None,
             action: "contract_review",
         });
     }
@@ -457,6 +462,7 @@ fn actionable_items(
     {
         actions.push(MilestoneAction {
             item: "milestone".to_owned(),
+            command_operand: None,
             action: if release_bound {
                 "release_preflight"
             } else {
@@ -491,6 +497,7 @@ fn worktree_blocks_progress(
 fn push_action(actions: &mut Vec<MilestoneAction>, item: &ItemFacts, action: &'static str) {
     actions.push(MilestoneAction {
         item: item.id.clone(),
+        command_operand: Some(item.command_operand.clone()),
         action,
     });
 }

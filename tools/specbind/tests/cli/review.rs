@@ -49,7 +49,10 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
         .success()
         .stdout(
             predicate::str::contains("  Stage: implementation\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
+                .and(predicate::str::contains(
+                    "  Semantic alignment: not evaluated\n",
+                ))
                 .and(predicate::str::contains(
                     "  Contract review: not_applicable\n",
                 ))
@@ -86,6 +89,7 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
                 "targetRelease": null,
                 "stage": "implementation",
                 "health": "consistent",
+                "semanticAlignment": "not_evaluated",
                 "contractReview": "not_applicable",
                 "specStates": {},
                 "directProgress": {"completed": 0, "total": 2},
@@ -106,7 +110,11 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
                     }
                 ],
                 "actionable": [
-                    {"item": "direct:docs", "action": "implementation"}
+                    {
+                        "item": "direct:docs",
+                        "commandOperand": "docs",
+                        "action": "implementation"
+                    }
                 ],
                 "currentBlockers": [],
                 "releaseReadinessEvaluated": false,
@@ -338,7 +346,7 @@ fn reports_tasks_authored_before_the_required_milestone_review() {
         .success()
         .stdout(
             predicate::str::contains("  Stage: contract_review\n")
-                .and(predicate::str::contains("  Health: inconsistent\n"))
+                .and(predicate::str::contains("  State health: inconsistent\n"))
                 .and(predicate::str::contains(
                     "  Spec states: implementation=1\n",
                 ))
@@ -360,7 +368,7 @@ fn reports_an_absent_future_review_without_a_health_diagnostic() {
         .success()
         .stdout(
             predicate::str::contains("  Stage: requirements\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
                 .and(predicate::str::contains("  Contract review: absent\n"))
                 .and(predicate::str::contains("CONTRACT_REVIEW_MISSING").not()),
         )
@@ -381,7 +389,7 @@ fn reports_an_absent_actionable_review_as_expected_work() {
         .success()
         .stdout(
             predicate::str::contains("  Stage: contract_review\n")
-                .and(predicate::str::contains("  Health: consistent\n"))
+                .and(predicate::str::contains("  State health: consistent\n"))
                 .and(predicate::str::contains("  Contract review: absent\n"))
                 .and(predicate::str::contains("milestone action=contract_review"))
                 .and(predicate::str::contains("CONTRACT_REVIEW_MISSING").not()),

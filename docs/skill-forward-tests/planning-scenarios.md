@@ -268,7 +268,7 @@ another run.
 From the `ds1` recipe — a new `order` Spec with its requirements approved, no
 contract, and its project-owned Design template relocated to
 `technical-design/main.md` — run the design skill. Before the run, `spec status`
-reports `Health: consistent`, `Next action: design`, and expected coverage for
+reports `State health: consistent`, `Next action: design`, and expected coverage for
 three active Requirements.
 
 > Ask: design the order spec.

@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0159 clarifies that every gate invalidation requires explicit user
+confirmation after the complete rewind cost is presented, even when milestone
+scope does not change materially.
+
 Decision 0155 replaces historical type-based Contract discovery with a read of
 the fixed `<specDir>/specs/<spec>/contract.yaml` path at the baseline revision.
 

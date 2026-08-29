@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0159 qualifies text health as state health, adds
+`semanticAlignment`, and adds `commandOperand` to Spec-backed and Direct item
+actions.
+
 ## Context
 
 [Decision 0157](./0157-command-specific-spec-status-json.md) establishes a
@@ -25,13 +29,15 @@ specbind milestone status --json
 ```
 
 - `--json` applies only to `milestone status`. It is not a global option.
-- Omitting it preserves the existing text output byte-for-byte.
+- Omitting it uses the existing text projection as qualified by Decision 0159.
 - Text and JSON resolve the same `MilestoneStatusModel`.
 - Success uses the Decision 0157 minimal envelope with `status: "ok"`, stable
   code `MILESTONE_STATUS_REPORTED`, and typed `data`.
-- `data` reports the Milestone identity, target release, stage, health,
+- `data` reports the Milestone identity, target release, stage, state health,
+  semantic-alignment evaluation status,
   Contract Review, Spec state counts, Direct progress, current and baseline
-  revisions, ordered items and dependency waits, actionable work, current and
+  revisions, ordered items and dependency waits, actionable work with exact
+  command operands where an item identity is required, current and
   release blockers, and diagnostics.
 - `releaseReadinessEvaluated` distinguishes an empty evaluated blocker set from
   a stage where release readiness is not yet evaluated. `releaseBlockers` is

@@ -7,7 +7,7 @@ Status: Accepted
 `milestone status` derives both the current delivery stage and aggregate health.
 For every Spec-backed milestone it evaluates the contract review immediately and
 adds `CONTRACT_REVIEW_MISSING` to diagnostics when no accepted review exists.
-That makes a newly created milestone report `Health: inconsistent` during
+That makes a newly created milestone report `State health: inconsistent` during
 Requirements and Design, even though the review cannot run until every
 participating Spec has current Design approval.
 

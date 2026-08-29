@@ -7,7 +7,7 @@ Status: Accepted
 Discovery creates a new Spec with `spec.yaml` and a Brief, then deliberately
 stops before Requirements authoring. `spec status` nevertheless folds
 `TRACEABILITY_REQUIREMENTS_UNAVAILABLE` into health immediately, so the normal
-entry to the Requirements phase reports `Health: inconsistent`. `milestone
+entry to the Requirements phase reports `State health: inconsistent`. `milestone
 status` inherits that result as `MILESTONE_SPEC_INCONSISTENT` while also routing
 the same Spec to `action=requirements`.
 

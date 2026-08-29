@@ -72,5 +72,13 @@ specbind milestone direct complete <direct> --implementation-revision <revision>
 
 Do not stop merely because the implementation commit succeeded. The successful
 handshake is what records the Direct item complete. If project policy also asks
-for lifecycle-state checkpoints, apply it once more to the CLI-owned Roadmap
-change after completion.
+for completion metadata or checkpoints after every eligible workflow unit,
+re-read the Git adapter and apply it once more to the CLI-owned Roadmap change
+after completion. This is a separate metadata checkpoint; never amend it into
+the clean implementation revision used by preflight.
+
+Adapter guidance is closed-world authority. An absent or scaffolded adapter, or
+active guidance limited to implementation paths, does not authorize the
+Roadmap checkpoint. In that case the Direct item is still completed, but report
+the modified Roadmap path, that `Revision` is unavailable until it is
+reconciled, and the exact adapter reason for leaving it uncommitted.

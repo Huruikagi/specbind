@@ -116,3 +116,15 @@ fn task_generation_chooses_a_default_test_grouping_convention() {
     assert!(content.contains("canonical test command or test interface does not exist yet"));
     assert!(content.contains("Never put that setup in a later task"));
 }
+
+#[test]
+fn contract_principles_states_a_live_default_compatibility_posture() {
+    let content = rule::find("contract-principles")
+        .expect("contract principles rule")
+        .content();
+
+    assert!(content.contains("This project's default posture is conservative"));
+    assert!(content.contains("every managed consumer changes\n  in the same milestone"));
+    assert!(content.contains("“additive” is not an automatic compatibility pass"));
+    assert!(!content.contains("State how strictly this project treats seam changes"));
+}
