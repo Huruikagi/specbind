@@ -35,7 +35,7 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
-            .contains("When that classification is genuinely unclear, enter the")
+            .contains("classification is genuinely unclear, enter the flow")
     );
     assert!(
         applied
@@ -57,6 +57,17 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("do not start the currently actionable phase directly")
     );
+    assert!(
+        applied
+            .content
+            .contains("Before classifying anything as ordinary work")
+    );
+    assert!(
+        applied
+            .content
+            .contains("a request matching a pending Spec-backed or Direct\n  item")
+    );
+    assert!(applied.content.contains("routes to `specbind-implement`"));
 }
 
 #[test]

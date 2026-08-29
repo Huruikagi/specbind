@@ -126,9 +126,11 @@ the only supported writer of machine state.
 - A request enters that flow when it changes a Spec's artifacts or observable
   behavior, including a validation rule, limit, or rejected case; modifies a path
   the Spec owns; adds a durable responsibility; or belongs to a delivery the
-  project is tracking. When that classification is genuinely unclear, enter the
-  flow. Anything else is ordinary work: say in one line that it needs no Spec,
-  and do it.
+  project is tracking. Before classifying anything as ordinary work, run
+  `specbind milestone status`: a request matching a pending Spec-backed or Direct
+  item is tracked delivery work and routes to `specbind-implement`. When the
+  classification is genuinely unclear, enter the flow. Anything else is ordinary
+  work: say in one line that it needs no Spec, and do it.
 - Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
   `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
   validated. The task plan itself is authored, by the skill that owns it.

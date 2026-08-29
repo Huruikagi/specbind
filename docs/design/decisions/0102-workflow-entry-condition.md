@@ -99,6 +99,14 @@ to.
 A request that satisfies none of those is performed as ordinary work, outside
 the workflow. No milestone, no Roadmap item, no Brief.
 
+That conclusion is made only after checking the active milestone through
+`milestone status`. Request wording is not enough to distinguish a standalone
+ordinary edit from a pending Direct item: both may name the same file and ask for
+the same change. When a pending Spec-backed or Direct item matches the request,
+the active Roadmap has already established that it belongs to tracked delivery,
+so the request routes to `specbind-implement` rather than leaving the workflow.
+This is an entry check, not permission to infer or create a new Roadmap item.
+
 The agent states that it is doing so and why, in one sentence. That sentence is
 the whole safeguard: the user can answer "actually, track that," and a decision
 made silently is one they never get to correct. Announcing it also keeps the
@@ -169,9 +177,11 @@ rather than scoping it anyway.
 ## Implementation status
 
 Implemented. The Decision 0099 project-instruction block names the entry
-condition in one bullet, and `specbind-discovery` gains an entry check before it
-reads the project shape: the four mandatory rules, the File Ownership rule stated
-as something to check rather than judge, the one-sentence hand-back, the
+condition in one bullet, requires `milestone status` before an ordinary-work
+classification, and routes a request matching a pending item to
+`specbind-implement`. `specbind-discovery` carries the entry check before it reads
+the project shape: the four mandatory rules, the File Ownership rule stated as
+something to check rather than judge, the one-sentence hand-back, the
 enter-when-unclear bias, and the note that handing work back while a milestone is
 active leaves the worktree dirty.
 
