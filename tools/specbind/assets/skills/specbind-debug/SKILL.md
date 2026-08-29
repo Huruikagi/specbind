@@ -9,6 +9,22 @@ argument-hint: "<failure>"
 The **diagnosis is the deliverable**. Someone else applies the fix, from a
 context that did not watch this failure happen.
 
+## Final response contract — before any investigation
+
+Your final response is incomplete unless it ends with this exact parseable
+shape. Reserve it now and fill it from the evidence:
+
+```text
+## Diagnosis
+- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
+- CAUSE: <what diverges, and where>
+- NEXT_ACTION: <for whoever owns that category>
+- UNCERTAIN: <what remains open, or none>
+```
+
+Naming a category in prose does not satisfy this contract. Do not rename the
+heading, omit a field, or return only a narrative diagnosis.
+
 ```sh
 specbind protocol read debug
 ```
@@ -71,6 +87,8 @@ If two causes remain possible, say both and say what would distinguish them. A
 confident single answer that is wrong costs more than an honest fork.
 
 ## Return the diagnosis
+
+End with the exact block reserved above:
 
 ```text
 ## Diagnosis

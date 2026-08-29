@@ -109,6 +109,8 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
     assert!(
         debug.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
     );
+    assert!(debug.contains("A\ncategory mentioned only in prose"));
+    assert!(debug.contains("is not a\nparseable diagnosis"));
 }
 
 #[test]

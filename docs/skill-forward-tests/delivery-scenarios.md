@@ -349,4 +349,7 @@ the task cannot be implemented.
 - The category is `ARTIFACT`, not `IMPLEMENTATION`. Routing an unworkable
   specification back to the implementer produces repeated attempts at work that
   cannot succeed, which is the expensive mistake this scenario checks.
+- The response ends with the exact `## Diagnosis` block and its `CATEGORY:`,
+  `CAUSE:`, `NEXT_ACTION:`, and `UNCERTAIN:` fields. A prose-only categorization
+  is not a passing result.
 - No fix was applied and no file was created, including implementation notes.

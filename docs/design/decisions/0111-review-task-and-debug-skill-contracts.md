@@ -118,7 +118,9 @@ owned categories turns uncertainty into misrouting.
 Keeping the block in the direct case costs nothing and removes a class of
 divergence: one output shape means the skill cannot drift into a chatty variant
 that a dispatcher would later fail to parse. The surrounding explanation is free
-prose in both cases.
+prose in both cases. Naming a category in that prose is not a substitute for the
+block: a debug run that omits the exact `## Diagnosis` result is incomplete, even
+when a human can infer the intended category.
 
 ### Review scopes itself to one task
 

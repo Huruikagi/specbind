@@ -1,5 +1,13 @@
 # Debug protocol
 
+## Output validity
+
+Every diagnosis ends with the exact `## Diagnosis` block defined below. A
+category mentioned only in prose, a renamed heading, or omitted fields is not a
+parseable diagnosis and must not drive the caller's routing. Reserve the block
+before investigating and fill it from the evidence; do not replace it with a
+narrative summary.
+
 This protocol is the shared baseline for diagnosing a failure that stopped work.
 It applies to every supported agent and cannot be waived by a project template
 or shared rule.

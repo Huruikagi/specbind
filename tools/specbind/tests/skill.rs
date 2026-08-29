@@ -806,6 +806,11 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
     assert!(
         body.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
     );
+    let first_command = body.find("```sh").expect("documented command");
+    let preamble = &body[..first_command];
+    assert!(preamble.contains("Final response contract — before any investigation"));
+    assert!(preamble.contains("final response is incomplete unless it ends"));
+    assert!(preamble.contains("Naming a category in prose does not satisfy"));
 }
 
 #[test]
