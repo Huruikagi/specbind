@@ -35,6 +35,7 @@ Related documents:
 - [Decision 0101: project adapter directory and Git workflow](./decisions/0101-project-adapter-directory-and-git-workflow.md)
 - [Decision 0137: active default Git checkpoints](./decisions/0137-active-default-git-checkpoints.md)
 - [Decision 0153: unified quick-plan orchestrator](./decisions/0153-unified-quick-plan-orchestrator.md)
+- [Decision 0161: default Plan and phase Skill namespace](./decisions/0161-default-plan-and-phase-skill-namespace.md)
 - [Decision 0154: guided configuration workflow](./decisions/0154-guided-configuration-workflow.md)
 
 Skills that may create Git checkpoints or push read the project-owned
@@ -54,7 +55,8 @@ work eligible nor grants push, branch, or history-rewriting authority.
 
 ## Working catalog
 
-Decision 0075 accepts the v1 public skill set below. Compatibility aliases are not shipped.
+Decision 0161 provides the current planning names within the v1 public Skill set
+accepted by Decision 0075. Compatibility aliases are not shipped.
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
@@ -62,12 +64,12 @@ Decision 0075 accepts the v1 public skill set below. Compatibility aliases are n
 | `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
 | `kiro-impl` | `specbind-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
 | `kiro-review` | `specbind-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
-| `kiro-spec-design` | `specbind-design` | Change | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
+| `kiro-spec-design` | `specbind-plan-design` | Change | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
 | `kiro-spec-init` | None | Remove | Implemented | Initialization is a deterministic Rust CLI operation invoked by discovery. |
-| `kiro-spec-quick` and `kiro-spec-batch` | `specbind-quick-plan` | Merge | Implemented | Bring one named Spec or every Spec-backed milestone item through Tasks approval using one explicit scope and delegated gates. |
-| `kiro-spec-requirements` | `specbind-requirements` | Change | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
+| `kiro-spec-quick` and `kiro-spec-batch` | `specbind-plan` | Merge | Implemented | Bring one named Spec or every Spec-backed milestone item through Tasks approval using one explicit scope and delegated gates. |
+| `kiro-spec-requirements` | `specbind-plan-requirements` | Change | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
 | `kiro-spec-status` | `specbind-status` | Change | Implemented | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
-| `kiro-spec-tasks` | `specbind-tasks` | Change | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |
+| `kiro-spec-tasks` | `specbind-plan-tasks` | Change | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |
 | `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Implemented | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
 | `kiro-validate-design` | `specbind-validate-design` | Change | Implemented | Review technical design quality and design-to-contract consistency. |
 | `kiro-validate-gap` | `specbind-gap-analysis` | Change | Implemented | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |

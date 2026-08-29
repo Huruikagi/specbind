@@ -84,7 +84,7 @@ Requirements、Design、TasksにはそれぞれGateがあります。Gateの承�
 承認には2つの形があります。
 
 - **explicit** — あなたがそのGateで内容を確認して承認する
-- **delegated** — `specbind-quick-plan`など、名前の付いた1回の実行に対して、承認を
+- **delegated** — `specbind-plan`など、名前の付いた1回の実行に対して、承認を
   あらかじめ委任する
 
 委任しても、レビューや検査は省略されません。また、承認済みGateを破棄したり、
@@ -147,10 +147,12 @@ Discovery
   -> Release
 ```
 
-`specbind-quick-plan`は、RequirementsからTasks承認までの確認回数を減らします。Specを
-指定するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを
-対象にします。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。ただし、
-使う成果物、レビュー、CLIの検査は通常のワークフローと同じです。
+`specbind-plan`は、RequirementsからTasks承認までを進める標準の入口です。Specを指定
+するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを対象に
+します。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。各Gateの承認を
+この実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は変わりません。
+Requirements、Design、Tasksの1フェーズだけを扱う明示的な依頼では、それぞれ
+`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を使います。
 `specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。v1には、
 Milestone全体を自動で実装するオーケストレータはありません。
 

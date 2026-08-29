@@ -50,12 +50,15 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
-            .contains("Use `specbind-quick-plan` when the user asks")
+            .contains("Use `specbind-plan` as the default planning entry point")
     );
+    assert!(applied.content.contains(
+        "Use\n  `specbind-plan-requirements`, `specbind-plan-design`, or\n  `specbind-plan-tasks` directly only"
+    ));
     assert!(
         applied
             .content
-            .contains("do not start the currently actionable phase directly")
+            .contains("do not start the\n  currently actionable phase directly")
     );
     assert!(
         applied

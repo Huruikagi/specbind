@@ -1,6 +1,6 @@
 # 0153: Unify planning orchestration under quick-plan
 
-Status: Accepted
+Status: Superseded by 0161
 
 Supersedes: [Decision 0120](./0120-quick-and-batch-orchestration-contracts.md),
 [Decision 0128](./0128-plan-orchestrator-names.md), and the two-planning-skill

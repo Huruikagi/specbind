@@ -1,10 +1,14 @@
 ---
-name: specbind-tasks
-description: Decompose an approved design into the Spec's executable task plan, verify it against the schema and requirement coverage, and approve the tasks gate.
+name: specbind-plan-tasks
+description: Run the individual Tasks planning phase only when explicitly requested; author the executable task plan, verify schema and Requirement coverage, and approve its gate. Use specbind-plan for ordinary planning.
 argument-hint: "<spec>"
 ---
 
 # Plan the work
+
+This phase Skill is normally dispatched by `specbind-plan`. Select it directly
+only when the user explicitly wants to author or revise Tasks without running
+the complete planning workflow.
 
 Turn the approved design into `tasks.yaml`: the ordered plan an implementer
 executes and the CLI derives progress from.
@@ -42,7 +46,7 @@ review, because the review is still valid at the tasks state.
 `spec status` must report the design gate approved and fresh, and the Spec a
 current participant of the active milestone.
 
-If it does not, stop and say so. Route the user to `specbind-design`. Never
+If it does not, stop and say so. Route the user to `specbind-plan-design`. Never
 approve or invalidate an upstream gate, and never edit the requirements, design,
 or contract to make a plan work.
 

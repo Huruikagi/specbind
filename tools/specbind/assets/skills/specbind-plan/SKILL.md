@@ -1,24 +1,25 @@
 ---
-name: specbind-quick-plan
-description: Orchestrate accelerated planning whenever the user asks to take active work through approved plans in one go or reduce approval pauses. Supports one named Spec or explicitly all Specs; when neither scope is stated, ask before any phase work.
+name: specbind-plan
+description: Orchestrate planning by default whenever the user asks to plan active work or take it through approved task plans. Supports one named Spec or explicitly all Specs; when neither scope is stated, ask before any phase work.
 argument-hint: "[<spec> | --all]"
 ---
 
 # Take an explicit scope through to approved task plans
 
-Select this Skill before any individual phase Skill whenever the request asks to
-take active work through an approved plan in one go or otherwise accelerate
-planning from Requirements through Tasks approval. This routing applies even
-when the request names neither a Spec nor all Specs. Do not infer the current
+Select this Skill as the default planning entry point before any individual
+phase Skill whenever the request asks to plan active work. It owns the complete
+route from Requirements through Tasks approval. This routing applies even when
+the request names neither a Spec nor all Specs. Do not infer the current
 actionable phase and start it directly; establish planning scope first.
 
-Orchestrate accelerated planning for either one named Spec or every Spec-backed
+Orchestrate planning for either one named Spec or every Spec-backed
 participant in the active milestone. **You orchestrate and stay light.** The
 phase skills author everything, the CLI owns every state change, and dispatched
 runs do the artifact reading.
 
-The speed comes from removing approval pauses, not checks. Named and all-Spec
-scope use the same phases, gates, reviews, protocols, and guards.
+Delegation changes approval pauses, not checks. Named and all-Spec scope, and
+delegated and explicit approval, use the same phases, gates, reviews, protocols,
+and guards.
 
 ## 1. Establish the scope before doing work
 
@@ -55,7 +56,7 @@ Once scope is explicit, present before doing anything:
 
 - the milestone and the exact item or items the run will touch;
 - the gates it will accept without another pause: requirements, design, tasks;
-- that every delegated acceptance records `specbind-quick-plan` in its durable
+- that every delegated acceptance records `specbind-plan` in its durable
   gate evidence, visible afterwards through `specbind spec status`.
 
 Take **one confirmation** for the run. The request to run this skill is **not**
@@ -96,7 +97,7 @@ request or discovery owns scope expansion.
 ## 4. Run the owned phases
 
 Each phase is a fresh dispatch. Give it the Spec identity, phase, and, when
-delegation was accepted, the workflow name `specbind-quick-plan` plus the
+delegation was accepted, the workflow name `specbind-plan` plus the
 authorized gate names. It reads its own artifact inputs; authorization omitted
 from the dispatch does not reach it.
 
@@ -108,16 +109,16 @@ change models.
 
 Per item, in order:
 
-1. `specbind-requirements` — Requirements and its gate
-2. `specbind-design` without Design-gate authority — Design set and Contract;
+1. `specbind-plan-requirements` — Requirements and its gate
+2. `specbind-plan-design` without Design-gate authority — Design set and Contract;
    stop before approval and checkpoint
 3. `specbind-validate-design` — an independent verdict
-4. re-dispatch `specbind-design` with delegated authority for Design approval
+4. re-dispatch `specbind-plan-design` with delegated authority for Design approval
    and its checkpoint
 
 **Design validation is mandatory.** A `NO-GO` blocks approval. It is a validator
 verdict, not a phase status: return its complete findings to that item's
-`specbind-design` run for one revision, then dispatch fresh validation. Stop if
+`specbind-plan-design` run for one revision, then dispatch fresh validation. Stop if
 Design reports a requirements rewind or another user-owned decision, or if the
 fresh validator repeats `NO-GO`. Never approve a rejected draft, repair its
 artifacts in the orchestrator, or let remediation change another item's scope.
@@ -142,7 +143,7 @@ current Design approval:
 
 After the review is accepted:
 
-6. `specbind-tasks` — `tasks.yaml` and its gate, for every in-scope item now
+6. `specbind-plan-tasks` — `tasks.yaml` and its gate, for every in-scope item now
    actionable; parallel in all scope
 
 Gap analysis is not on this path. Run `specbind-gap-analysis` first when
@@ -201,7 +202,7 @@ In the project's language, report:
 
 - the selected scope mode and exact items;
 - per in-scope item, what was produced and its current state;
-- which gates were delegated under `specbind-quick-plan`;
+- which gates were delegated under `specbind-plan`;
 - Design validation and Contract Review outcomes;
 - unfinished and outside-scope blockers and the next available action;
 - in all scope, Direct items not touched;
@@ -213,5 +214,5 @@ In the project's language, report:
   release.
 - Author nothing yourself and never finish work owned by a phase Skill.
 - No scope changes: no Roadmap items, new Specs, removals, or silent expansion.
-- Same rules, protocols, and criteria as deliberate planning. There is no quick
-  or all-Spec variant of them.
+- Same rules, protocols, and criteria under delegated or explicit approval.
+  There is no all-Spec variant of them.

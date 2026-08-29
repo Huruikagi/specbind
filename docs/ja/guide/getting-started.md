@@ -265,22 +265,22 @@ Claude Codeでは`/specbind-status`です。このスキルは読み取り専用
 
 ## 6. Tasks承認まで進める
 
-Discoveryが報告したSpec IDを使い、最初の1件はquickワークフローで進めます。
+Discoveryが報告したSpec IDを使い、標準の計画ワークフローで最初の1件を進めます。
 ここではSpec IDが`csv-export`だったとします。
 
 Codex:
 
 ```text
-$specbind-quick-plan csv-export
+$specbind-plan csv-export
 ```
 
 Claude Code:
 
 ```text
-/specbind-quick-plan csv-export
+/specbind-plan csv-export
 ```
 
-Quickは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
+Planは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
 Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
 Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
 
@@ -288,7 +288,8 @@ Tasksの各Gateをこの実行の中でまとめて承認してよいか聞か�
 確認を、1回の実行に対する確認へまとめるだけです。1つずつ内容を見ながら進めたい
 場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
 
-Quickが終わった時点では、実装はまだ始まっていません。
+Planが終わった時点では、実装はまだ始まっていません。Requirements、Design、Tasksの
+どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*` Skillを使います。
 
 ## 7. 実装して検証する
 

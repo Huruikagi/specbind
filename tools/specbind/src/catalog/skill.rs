@@ -85,10 +85,6 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../../assets/skills/specbind-debug/SKILL.md"),
     },
     Skill {
-        name: "specbind-design",
-        source: include_str!("../../assets/skills/specbind-design/SKILL.md"),
-    },
-    Skill {
         name: "specbind-discovery",
         source: include_str!("../../assets/skills/specbind-discovery/SKILL.md"),
     },
@@ -101,16 +97,24 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../../assets/skills/specbind-implement/SKILL.md"),
     },
     Skill {
-        name: "specbind-quick-plan",
-        source: include_str!("../../assets/skills/specbind-quick-plan/SKILL.md"),
+        name: "specbind-plan",
+        source: include_str!("../../assets/skills/specbind-plan/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-plan-design",
+        source: include_str!("../../assets/skills/specbind-plan-design/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-plan-requirements",
+        source: include_str!("../../assets/skills/specbind-plan-requirements/SKILL.md"),
+    },
+    Skill {
+        name: "specbind-plan-tasks",
+        source: include_str!("../../assets/skills/specbind-plan-tasks/SKILL.md"),
     },
     Skill {
         name: "specbind-release",
         source: include_str!("../../assets/skills/specbind-release/SKILL.md"),
-    },
-    Skill {
-        name: "specbind-requirements",
-        source: include_str!("../../assets/skills/specbind-requirements/SKILL.md"),
     },
     Skill {
         name: "specbind-review-task",
@@ -123,10 +127,6 @@ static SKILLS: &[Skill] = &[
     Skill {
         name: "specbind-steering",
         source: include_str!("../../assets/skills/specbind-steering/SKILL.md"),
-    },
-    Skill {
-        name: "specbind-tasks",
-        source: include_str!("../../assets/skills/specbind-tasks/SKILL.md"),
     },
     Skill {
         name: "specbind-validate-design",

@@ -201,7 +201,7 @@ pushing stopped it.
 
 ### Driving a nested-dispatch run
 
-`specbind-implement` dispatches subagents of its own, and `specbind-design`
+`specbind-implement` dispatches subagents of its own, and `specbind-plan-design`
 dispatches parallel investigation. Driving those with a subagent would nest one
 inside another.
 

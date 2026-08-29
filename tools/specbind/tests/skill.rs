@@ -6,17 +6,17 @@ const ACCEPTED_SKILLS: [&str; 18] = [
     "specbind-contract-review",
     "specbind-configure",
     "specbind-debug",
-    "specbind-design",
     "specbind-discovery",
     "specbind-gap-analysis",
     "specbind-implement",
-    "specbind-quick-plan",
+    "specbind-plan",
+    "specbind-plan-design",
+    "specbind-plan-requirements",
+    "specbind-plan-tasks",
     "specbind-release",
-    "specbind-requirements",
     "specbind-review-task",
     "specbind-status",
     "specbind-steering",
-    "specbind-tasks",
     "specbind-validate-design",
     "specbind-validate-implementation",
     "specbind-verify-completion",
@@ -139,7 +139,7 @@ fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
         "Existing code and tests are **evidence**",
         "stop immediately",
         "Do not author `requirements.md` here.",
-        "specbind-requirements <spec>",
+        "specbind-plan-requirements <spec>",
     ] {
         assert!(
             body.contains(required),
@@ -363,8 +363,8 @@ fn every_registered_role_named_by_a_skill_exists_and_every_role_is_consumed() {
 #[test]
 fn reviewing_skills_require_an_explicit_finding_disposition() {
     for name in [
-        "specbind-requirements",
-        "specbind-design",
+        "specbind-plan-requirements",
+        "specbind-plan-design",
         "specbind-validate-design",
         "specbind-review-task",
     ] {
@@ -381,7 +381,7 @@ fn reviewing_skills_require_an_explicit_finding_disposition() {
 
 #[test]
 fn design_does_not_retire_an_export_only_to_silence_a_warning() {
-    let body = skill::find("specbind-design")
+    let body = skill::find("specbind-plan-design")
         .expect("design skill")
         .body()
         .expect("body");
@@ -398,7 +398,7 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
 
 #[test]
 fn design_queries_direct_contract_neighbors_before_reading_them() {
-    let body = skill::find("specbind-design")
+    let body = skill::find("specbind-plan-design")
         .expect("design skill")
         .body()
         .expect("body");
@@ -425,12 +425,12 @@ fn design_queries_direct_contract_neighbors_before_reading_them() {
 
 #[test]
 fn planning_orchestrator_handoffs_its_delegation_identity() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
     assert!(body.contains("request to run this skill is **not**"));
-    assert!(body.contains("workflow name `specbind-quick-plan`"));
+    assert!(body.contains("workflow name `specbind-plan`"));
     assert!(body.contains("authorized gate names"));
     assert!(body.contains("authorization omitted"));
     assert!(body.contains("from the dispatch does not reach it"));
@@ -438,7 +438,7 @@ fn planning_orchestrator_handoffs_its_delegation_identity() {
 
 #[test]
 fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -450,7 +450,7 @@ fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
 
 #[test]
 fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -464,7 +464,7 @@ fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
 
 #[test]
 fn planning_orchestrator_validates_design_before_delegated_approval() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -475,7 +475,7 @@ fn planning_orchestrator_validates_design_before_delegated_approval() {
 
 #[test]
 fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -488,7 +488,7 @@ fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
 
 #[test]
 fn requirements_audits_existing_obligations_before_approval() {
-    let requirements = skill::find("specbind-requirements").expect("requirements skill");
+    let requirements = skill::find("specbind-plan-requirements").expect("requirements skill");
     let body = requirements.body().expect("requirements body");
 
     assert!(body.contains("mandatory preservation audit before\napproval"));
@@ -518,21 +518,57 @@ fn implementation_validation_preserves_exact_executed_command_text() {
 
 #[test]
 fn planning_orchestrator_metadata_exposes_named_all_and_bare_scope_behavior() {
-    let quick = skill::find("specbind-quick-plan")
-        .expect("quick-plan")
+    let plan = skill::find("specbind-plan")
+        .expect("plan")
         .metadata()
         .expect("metadata");
-    assert!(quick.description.contains("whenever the user asks"));
-    assert!(quick.description.contains("one named Spec"));
-    assert!(quick.description.contains("explicitly all Specs"));
-    assert!(quick.description.contains("neither scope is stated"));
-    assert_eq!(quick.argument_hint.as_deref(), Some("[<spec> | --all]"));
-    assert!(skill::find("specbind-batch-plan").is_none());
+    assert!(plan.description.contains("by default"));
+    assert!(plan.description.contains("one named Spec"));
+    assert!(plan.description.contains("explicitly all Specs"));
+    assert!(plan.description.contains("neither scope is stated"));
+    assert_eq!(plan.argument_hint.as_deref(), Some("[<spec> | --all]"));
+    for removed in [
+        "specbind-quick-plan",
+        "specbind-requirements",
+        "specbind-design",
+        "specbind-tasks",
+        "specbind-batch-plan",
+    ] {
+        assert!(skill::find(removed).is_none(), "removed alias {removed}");
+    }
+}
+
+#[test]
+fn planning_phase_skills_are_explicit_lower_level_entries() {
+    for (name, artifact) in [
+        ("specbind-plan-requirements", "Requirements"),
+        ("specbind-plan-design", "Design"),
+        ("specbind-plan-tasks", "Tasks"),
+    ] {
+        let phase = skill::find(name).expect("planning phase skill");
+        let metadata = phase.metadata().expect("metadata");
+        assert!(metadata.description.contains("individual"), "{name}");
+        assert!(
+            metadata.description.contains("explicitly requested"),
+            "{name}"
+        );
+        assert!(metadata.description.contains("Use specbind-plan"), "{name}");
+        let body = phase.body().expect("body");
+        assert!(
+            body.contains("normally dispatched by `specbind-plan`"),
+            "{name}"
+        );
+        assert!(
+            body.contains("Select it directly\nonly when the user explicitly wants"),
+            "{name}"
+        );
+        assert!(body.contains(artifact), "{name}");
+    }
 }
 
 #[test]
 fn planning_orchestrator_requires_explicit_scope_without_mutation() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
@@ -545,7 +581,7 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
 
 #[test]
 fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
-    let body = skill::find("specbind-quick-plan")
+    let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
@@ -556,7 +592,7 @@ fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
 
 #[test]
 fn tasks_skill_audits_verification_readiness_before_approval() {
-    let tasks = skill::find("specbind-tasks").expect("tasks skill");
+    let tasks = skill::find("specbind-plan-tasks").expect("tasks skill");
     let body = tasks.body().expect("tasks body");
 
     assert!(body.contains("execution-readiness audit"));
@@ -566,7 +602,7 @@ fn tasks_skill_audits_verification_readiness_before_approval() {
 
 #[test]
 fn design_skill_investigates_the_real_verification_foundation() {
-    let design = skill::find("specbind-design").expect("design skill");
+    let design = skill::find("specbind-plan-design").expect("design skill");
     let body = design.body().expect("design body");
 
     assert!(body.contains("Confirm that each named command exists"));
@@ -743,8 +779,8 @@ fn status_names_machine_health_without_claiming_semantic_alignment() {
 fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
     for name in [
         "specbind-discovery",
-        "specbind-requirements",
-        "specbind-design",
+        "specbind-plan-requirements",
+        "specbind-plan-design",
         "specbind-gap-analysis",
         "specbind-adopt-existing",
         "specbind-implement",
@@ -792,9 +828,9 @@ fn implementation_dispatch_carries_project_local_operating_authority() {
 fn adapter_consumers_use_the_dedicated_scaffold_marker() {
     for name in [
         "specbind-discovery",
-        "specbind-requirements",
-        "specbind-design",
-        "specbind-tasks",
+        "specbind-plan-requirements",
+        "specbind-plan-design",
+        "specbind-plan-tasks",
         "specbind-contract-review",
         "specbind-implement",
         "specbind-release",

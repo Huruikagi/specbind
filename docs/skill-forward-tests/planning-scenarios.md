@@ -80,7 +80,7 @@ Run D3 to completion, then in the same session ask for the D4 work.
 From the `d7` recipe — `cart` in implementation with every gate approved — ask to
 split one planned task into two without changing behavior.
 
-This became measurable once `specbind-tasks` was embedded. No command authors
+This became measurable once `specbind-plan-tasks` was embedded. No command authors
 plan content, so before that skill existed no one owned the authoring and a run
 correctly stopped; it measured the skill's absence rather than the rewind rule.
 
@@ -466,9 +466,9 @@ Accepted by [Decision 0105](../design/decisions/0105-tasks-skill-contract.md).
 ### T1 — First authoring
 
 From `t1` — the design gate approved, the contract review accepted, no plan —
-ask for the work to be planned.
+ask explicitly for only the Tasks phase.
 
-> Ask: plan the work for the cart change.
+> Ask: Write only the task plan for the cart change. Do not run the other planning phases.
 
 - `tasks.yaml` exists and `tasks list cart` validates it.
 - `check traceability cart` passes: all four active IDs are mapped to executable
@@ -480,14 +480,14 @@ ask for the work to be planned.
 ### T2 — The review is accepted before any plan exists
 
 From `t2` — identical to `t1` except the contract review was never accepted —
-ask for the work to be planned.
+ask explicitly for only the Tasks phase.
 
 What this measures is an **ordering**, not a stop. Decision 0105 requires the
 skill to author nothing before the review and to route to the contract review;
 in a session holding every skill, routing there and performing it is a correct
 reading. Either ending is a pass, and the ordering is what must hold:
 
-> Ask: plan the work for the cart change.
+> Ask: Write only the task plan for the cart change. Do not run the other planning phases.
 
 - **If a `tasks.yaml` exists, the contract review is `fresh`.** This is
   self-proving: `milestone review accept` refuses while a plan is present, so a
@@ -539,9 +539,9 @@ change to the plan.
 
 ### T5 — No authority means no approval
 
-From `t1`, run the tasks skill and decline to approve when asked.
+From `t1`, request only the Tasks phase and decline to approve when asked.
 
-> Ask: plan the work for the cart change. *(Decline when asked to approve.)*
+> Ask: Write only the task plan for the cart change. Do not run the other planning phases. *(Decline when asked to approve.)*
 
 - `spec status cart` still reports `State: tasks` with the tasks gate not
   approved.

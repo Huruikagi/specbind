@@ -244,6 +244,14 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     let codex = fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
         .expect("rendered Codex skill");
     for relative in [
+        ".claude/skills/specbind-plan/SKILL.md",
+        ".agents/skills/specbind-plan/SKILL.md",
+        ".claude/skills/specbind-plan-requirements/SKILL.md",
+        ".agents/skills/specbind-plan-requirements/SKILL.md",
+        ".claude/skills/specbind-plan-design/SKILL.md",
+        ".agents/skills/specbind-plan-design/SKILL.md",
+        ".claude/skills/specbind-plan-tasks/SKILL.md",
+        ".agents/skills/specbind-plan-tasks/SKILL.md",
         ".claude/skills/specbind-configure/references/aftercare.md",
         ".agents/skills/specbind-configure/references/aftercare.md",
         ".claude/skills/specbind-adopt-existing/references/start.md",
@@ -255,6 +263,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
+    assert_removed_plan_skill_aliases_are_absent(root.path());
     assert!(
         claude.starts_with("---\nname: specbind-status\n"),
         "{claude}"
@@ -310,6 +319,22 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         codex,
         "a refresh restores the product asset"
     );
+}
+
+fn assert_removed_plan_skill_aliases_are_absent(root: &std::path::Path) {
+    for removed in [
+        "specbind-quick-plan",
+        "specbind-requirements",
+        "specbind-design",
+        "specbind-tasks",
+    ] {
+        for agent_root in [".claude/skills", ".agents/skills"] {
+            assert!(
+                !root.join(agent_root).join(removed).exists(),
+                "removed alias {agent_root}/{removed}"
+            );
+        }
+    }
 }
 
 #[test]

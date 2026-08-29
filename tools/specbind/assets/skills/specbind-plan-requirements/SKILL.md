@@ -1,10 +1,14 @@
 ---
-name: specbind-requirements
-description: Author or revise a Spec's requirements as its complete current behavioral contract, choose the requirement IDs this milestone must deliver or re-verify, and approve the requirements gate.
+name: specbind-plan-requirements
+description: Run the individual Requirements planning phase only when explicitly requested; author or revise the complete behavioral contract, select active Requirement IDs, and approve its gate. Use specbind-plan for ordinary planning.
 argument-hint: "<spec>"
 ---
 
 # Write the requirements
+
+This phase Skill is normally dispatched by `specbind-plan`. Select it directly
+only when the user explicitly wants to author or revise Requirements without
+running the complete planning workflow.
 
 Produce the document every later phase is verified against: this Spec's
 **complete current behavioral contract**, not the delta this milestone requested.

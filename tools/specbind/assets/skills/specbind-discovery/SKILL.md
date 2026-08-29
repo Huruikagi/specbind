@@ -408,7 +408,7 @@ why, whether the work was committed, and which skill runs next for each item.
 ## Boundaries
 
 Do not author requirements here, for a new Spec or an existing one. A newly
-created Spec correctly holds only machine state until `specbind-requirements`
+created Spec correctly holds only machine state until `specbind-plan-requirements`
 runs; an empty scaffold placed now would put an artifact before the skill that
 owns it. Requirements are written once, in full, from the brief.
 

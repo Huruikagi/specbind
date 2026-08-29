@@ -38,7 +38,7 @@ after the preceding work has stopped and presented the state it owns.
 
 1. At Discovery's scope confirmation: `I approve the Discovery scope you just presented for the cart change. Stop after Discovery.`
 2. After Discovery: `Take the cart item through an approved plan in one go. Present the delegated gates first and wait for my confirmation.`
-3. At the delegation boundary: `I authorize specbind-quick-plan to accept the requirements, design, and tasks gates for cart. Stop after Tasks approval.`
+3. At the delegation boundary: `I authorize specbind-plan to accept the requirements, design, and tasks gates for cart. Stop after Tasks approval.`
 4. After Tasks approval: `Implement the approved cart work.`
 5. After implementation: `Bind this milestone to v1.4.0, follow the project's local checkpoint policy for that binding, but do not publish or finalize. Stop when release preflight cannot proceed.`
 6. After the expected not-ready preflight: `Is the cart work done?`

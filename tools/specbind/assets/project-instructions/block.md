@@ -10,10 +10,13 @@ the only supported writer of machine state.
   Skill.
 - Work through those installed `specbind-*` Skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
-- Use `specbind-quick-plan` when the user asks to take active work through an
-  approved plan in one go or reduce planning approval pauses. If the request
-  names neither one Spec nor all Specs, select that Skill and let it ask for
-  scope; do not start the currently actionable phase directly.
+- Use `specbind-plan` as the default planning entry point when the user asks to
+  plan active work. It coordinates Requirements through Tasks approval. Use
+  `specbind-plan-requirements`, `specbind-plan-design`, or
+  `specbind-plan-tasks` directly only when the user explicitly asks to work on
+  that individual phase. If a planning request names neither one Spec nor all
+  Specs, select `specbind-plan` and let it ask for scope; do not start the
+  currently actionable phase directly.
 - When every Task for a named Spec is complete and the user asks whether that
   Spec is done, complete, or ready, use `specbind-validate-implementation`.
   Do not answer that question from status or consequence-free claim checking.

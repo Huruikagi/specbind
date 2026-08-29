@@ -1,7 +1,7 @@
 # Orchestration and supporting forward-test scenarios
 
 [Back to the forward-test index](../skill-forward-tests.md). These cover
-configuration, quick-plan scope modes, checkpoints, gap analysis, steering, and
+configuration, Plan scope modes, checkpoints, gap analysis, steering, and
 failure handling.
 
 ## Configuration scenarios
@@ -75,16 +75,16 @@ Prepare `a2` with dispatch instrumentation, then ask:
 - The worktree remains clean. With instrumentation, the agent log records the
   driver plus at least two fresh readers.
 
-## Quick-plan scenarios
+## Plan scenarios
 
-Accepted by [Decision 0153](../design/decisions/0153-unified-quick-plan-orchestrator.md).
+Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md).
 
 ### Q0 — A bare invocation asks for scope without starting work
 
-Request accelerated planning without naming a Spec or explicitly requesting all
+Request ordinary planning without naming a Spec or explicitly requesting all
 Specs.
 
-> Ask: take the active work through to an approved plan in one go.
+> Ask: Plan the active work.
 
 - The Skill may read milestone status and presents the named-Spec and all-Spec
   choices, then stops for the answer.
@@ -94,19 +94,20 @@ Specs.
 
 ### Q1 — Delegation is authorized once, and recorded
 
-Run quick-plan on a Spec-backed item and accept the delegation it proposes.
+Request ordinary planning for a Spec-backed item and accept the delegation it
+proposes.
 
-> Ask: take the cart change through to an approved plan in one go.
+> Ask: Plan the cart change.
 
 - The milestone, the item, and the three gates were named **before** any work
   started.
 - Exactly one confirmation was taken. A prompt at each gate is the failure.
 - `specbind spec status <spec>` afterwards reports
-  `Delegated gates: requirements (specbind-quick-plan), design (specbind-quick-plan), tasks (specbind-quick-plan)`.
+  `Delegated gates: requirements (specbind-plan), design (specbind-plan), tasks (specbind-plan)`.
 
 ### Q2 — Declining delegation does not end the run
 
-Run quick-plan and decline the delegation.
+Run Plan and decline the delegation.
 
 > Ask: take the cart change through to an approved plan in one go. *(Decline the delegation.)*
 
@@ -115,7 +116,7 @@ Run quick-plan and decline the delegation.
 
 ### Q3 — Design validation is on the delegated path
 
-Run quick-plan against a Spec whose design has a defect design validation catches.
+Run Plan against a Spec whose design has a defect design validation catches.
 
 > Ask: take the cart change through to an approved plan in one go.
 
@@ -125,7 +126,7 @@ Run quick-plan against a Spec whose design has a defect design validation catche
 
 ### Q4 — The single-Spec contract review is not skipped
 
-Run quick-plan on a milestone with exactly one participating Spec.
+Run Plan on a milestone with exactly one participating Spec.
 
 > Ask: take the cart change through to an approved plan in one go.
 
@@ -135,15 +136,15 @@ Run quick-plan on a milestone with exactly one participating Spec.
 
 ### Q5 — A deliberate stop is not retried
 
-Run quick-plan against a Spec whose requirements gate is already approved, so the
-requirements skill stops and asks before invalidating.
+Run Plan against a Spec whose requirements gate is already approved, so the
+Requirements phase Skill stops and asks before invalidating.
 
 > Ask: take the cart change through to an approved plan in one go.
 
 - The stop was reported as the answer. **No re-dispatch was attempted.**
 - Delegation did not carry the invalidation. The run asked.
 
-### B0 — Explicit all-Spec intent selects the same quick-plan workflow
+### B0 — Explicit all-Spec intent selects the same Plan workflow
 
 Run against any active milestone, including one with a single participating
 Spec.
@@ -153,12 +154,13 @@ Spec.
 - The exact complete Spec-backed scope and the Requirements, Design, and Tasks
   delegated gates are presented before phase work starts.
 - The workflow identity presented for durable gate evidence is
-  `specbind-quick-plan`; no removed batch workflow is selected or suggested.
+  `specbind-plan`; none of the removed `specbind-quick-plan` or batch workflow
+  identifiers is selected or suggested.
 - The run stops for the one delegation confirmation before authoring.
 
 ### B1 — Requirements are not serialized behind dependencies
 
-Run quick-plan in all scope on a milestone whose roadmap has a dependency chain
+Run Plan in all scope on a milestone whose roadmap has a dependency chain
 across three Spec-backed items.
 
 > Ask: take every spec in this milestone through to approved plans.
@@ -179,7 +181,7 @@ Continue the all-scope B1 run to completion.
 
 ### B3 — Waves are read, not computed
 
-Watch the commands during an all-scope quick-plan run.
+Watch the commands during an all-scope Plan run.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -189,7 +191,7 @@ Watch the commands during an all-scope quick-plan run.
 
 ### B4 — One unfinished item stops the barrier, and scope is not touched
 
-Run quick-plan in all scope on a three-Spec milestone where one Spec's design
+Run Plan in all scope on a three-Spec milestone where one Spec's design
 cannot complete.
 
 > Ask: take every spec in this milestone through to approved plans.
@@ -202,7 +204,7 @@ cannot complete.
 
 ### B5 — Direct items are reported, not absorbed
 
-Run quick-plan in all scope on a milestone containing both Spec-backed and Direct items.
+Run Plan in all scope on a milestone containing both Spec-backed and Direct items.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -212,7 +214,7 @@ Run quick-plan in all scope on a milestone containing both Spec-backed and Direc
 
 ### B6 — The run stops at Tasks approval
 
-Complete any all-scope quick-plan run.
+Complete any all-scope Plan run.
 
 > Ask: take every spec in this milestone through to approved plans.
 
@@ -336,7 +338,7 @@ Run a gap analysis substantial enough to produce a research document.
   none.
 - Not everything is marked for promotion. A document where every finding must be
   promoted has not made the judgment this scenario checks.
-- Run `specbind-design` afterwards. Conclusions marked Design or Contract appear
+- Run `specbind-plan-design` afterwards. Conclusions marked Design or Contract appear
   in the design set; a Requirements mark was surfaced as a rewind decision rather
   than silently written or silently dropped.
 

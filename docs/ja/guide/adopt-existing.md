@@ -32,9 +32,9 @@ Steeringのbootstrapまたは同期
   -> SpecとBriefの作成
   -> specbind-adopt-existingを再開
   -> Specごとの観察と意図の確認
-  -> specbind-requirements
-  -> specbind-design
-  -> specbind-tasks
+  -> specbind-plan-requirements
+  -> specbind-plan-design
+  -> specbind-plan-tasks
 ```
 
 最初の実行では、CLIが次のpreflightを行います。
@@ -84,5 +84,5 @@ Researchは通常のrelease finalizationまで保持されます。
 
 採用スキルはRequirementsやDesignを直接作成・承認しません。確認済みの意図を
 Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
-以後は通常の`specbind-requirements`、`specbind-design`、`specbind-tasks`を
+以後は通常の`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を
 使用します。Reverse専用のRequirementsやDesignスキルはありません。

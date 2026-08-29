@@ -277,7 +277,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0150](./design/decisions/0150-attributable-fail-closed-default-scaffolds.md) | Accepted | Collection identity rendering and fail-closed default scaffolds |
 | [0151](./design/decisions/0151-agent-bound-template-variables.md) | Accepted | Project-defined template variables resolved through bound agent instructions |
 | [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |
-| [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Accepted | One quick-plan orchestrator with explicit named and all-Spec scope modes |
+| [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Superseded by 0161 | One quick-plan orchestrator with explicit named and all-Spec scope modes |
 | [0154](./design/decisions/0154-guided-configuration-workflow.md) | Accepted | Completing guided configuration workflow, summary command, and aftercare |
 | [0155](./design/decisions/0155-versioned-yaml-contract-artifact.md) | Accepted | Versioned strict YAML Contract artifact and semantic fingerprint |
 | [0156](./design/decisions/0156-derived-contract-graph-reads.md) | Accepted | Read-only direct Contract graph and reverse-consumer projections |
@@ -285,3 +285,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0158](./design/decisions/0158-command-specific-milestone-status-json.md) | Accepted | Minimal command-specific JSON projection for Milestone status |
 | [0159](./design/decisions/0159-forward-test-usability-boundaries.md) | Accepted | Forward-test usability, authority, status, and recovery boundaries |
 | [0160](./design/decisions/0160-tracked-routing-and-selector-precedence.md) | Accepted | Tracked delivery routing and declared Design selector precedence |
+| [0161](./design/decisions/0161-default-plan-and-phase-skill-namespace.md) | Accepted | Default Plan entry point and explicit plan-phase Skill namespace |

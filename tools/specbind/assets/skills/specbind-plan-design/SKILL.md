@@ -1,10 +1,14 @@
 ---
-name: specbind-design
-description: Investigate the system, author a Spec's complete current technical design, maintain the Contract that other Specs depend on, and approve the design gate.
+name: specbind-plan-design
+description: Run the individual Design planning phase only when explicitly requested; investigate the system, maintain the complete Design and Contract, and approve its gate. Use specbind-plan for ordinary planning.
 argument-hint: "<spec>"
 ---
 
 # Design the change
+
+This phase Skill is normally dispatched by `specbind-plan`. Select it directly
+only when the user explicitly wants to author or revise Design and Contract
+without running the complete planning workflow.
 
 Produce the document an implementer builds from and a reviewer judges against:
 this Spec's **complete current technical design**, plus the **Contract** that
@@ -34,7 +38,7 @@ here to do. `check traceability` remains strict and lists each missing coverage
 entry until the Design is complete.
 
 If the requirements gate is not approved and fresh, stop and say so. Route the
-user to `specbind-requirements`.
+user to `specbind-plan-requirements`.
 Never approve or invalidate the requirements gate yourself, and never edit
 `requirements.md` to make your own work possible — editing an approved artifact
 invalidates its gate as a side effect, and the user gets a freshness diagnostic
