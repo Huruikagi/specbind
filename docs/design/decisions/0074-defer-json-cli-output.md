@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0157 narrows this deferral by allowing one command-specific
+`spec status --json` projection in v1. The general JSON response protocol and
+all other commands remain deferred.
+
 ## Context
 
 SpecBind v1 needs deterministic parsing, guarded mutations, stable result codes, and concise agent-readable diagnostics. A second JSON rendering for every command would require a common envelope, command-specific response schemas, compatibility policy, and duplicate test coverage before those core workflows are implemented. Agents can consume the accepted concise English text, and CI can branch on exit status and stable codes in v1.

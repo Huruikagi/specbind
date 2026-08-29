@@ -278,7 +278,12 @@ pub enum SpecCommand {
     /// List every persistent Spec in the project.
     List,
     /// Report lifecycle, freshness, coverage, and task progress.
-    Status { spec: String },
+    Status {
+        spec: String,
+        /// Emit the command-specific machine-readable response.
+        #[arg(long)]
+        json: bool,
+    },
     /// Validate, accept, or invalidate implementation completion.
     Completion {
         #[command(subcommand)]

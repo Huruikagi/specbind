@@ -30,9 +30,9 @@ The exact spec locator grammar and optional filtering flags remain follow-up CLI
 
 ### V1 agent output
 
-- Under Decision 0074, v1 exposes only the default concise English text projection and stable result codes; these commands have no `--json` response mode.
+- The default remains the concise English text projection with stable result codes. Decision 0157 adds a command-specific `--json` projection to `spec status`; `tasks list` and `tasks show` remain text-only under Decision 0074.
 - Generated skills consume the CLI projection directly when they need computed state. Raw YAML remains available for authoring and narrowly scoped edits.
-- A future structured response must render the same derived model, but its JSON shape is not reserved by this decision.
+- Any future structured response for `tasks list` or `tasks show` must render the same derived model, but its JSON shape is not reserved by this decision.
 
 ### Validation and ownership
 

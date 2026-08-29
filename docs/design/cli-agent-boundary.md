@@ -28,7 +28,7 @@ Repeated grep, PowerShell, or shell-specific inspection consumes agent context a
 - one implementation shared by every supported agent
 - version alignment between the executing CLI and the immutable product protocols skills invoke
 
-Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands return an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decision 0074 makes text the sole non-raw v1 result surface; agent skills consume it directly and translate or explain results for the user when needed.
+Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands default to an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decision 0157 adds the narrow `spec status --json` integration surface while Decision 0074 continues to defer a general JSON protocol. Agent skills consume the default text directly and translate or explain results for the user when needed.
 
 The goal is not to replace agent judgment. It is to remove mechanical work from prompts so the agent can focus on meaning and decisions.
 
@@ -190,7 +190,7 @@ The CLI and skills must respect supported settings customization while still enf
 
 Decision 0025 accepts `specbind spec status`, `specbind tasks list`, and `specbind tasks show` as read-only CLI projections over `spec.yaml` and `tasks.yaml`. The CLI owns schema validation, consistency health, sparse-status expansion, effective dependency calculation, group rollups, Requirement ID coverage, approval freshness, and concise text rendering. Agent skills own when to request a view, how to explain it in workflow context, and any semantic recommendation that cannot be derived mechanically.
 
-These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. V1 exposes one concise text projection; Decision 0074 defers alternate JSON rendering.
+These commands replace routine raw-YAML interpretation but do not create a generated Markdown artifact. V1 defaults to one concise text projection. Decision 0157 additionally exposes the same composed `spec status` read model through a command-specific `--json` option; Decision 0074 continues to defer JSON for the other task reads and a general response protocol.
 
 ## Artifact inventory and content read model
 

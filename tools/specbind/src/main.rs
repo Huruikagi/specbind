@@ -196,7 +196,7 @@ fn run_adoption(start: &Path, command: &AdoptionCommand) -> CommandOutput {
 fn run_spec(start: &Path, command: SpecCommand) -> CommandOutput {
     match command {
         SpecCommand::List => specbind::cli::spec_list(start),
-        SpecCommand::Status { spec } => specbind::cli::spec_status(start, &spec),
+        SpecCommand::Status { spec, json } => specbind::cli::spec_status(start, &spec, json),
         SpecCommand::Completion { command } => run_spec_completion(start, command),
         SpecCommand::Requirements { command } => {
             run_gate(start, specbind::approval::Gate::Requirements, command)

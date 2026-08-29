@@ -469,6 +469,65 @@ fn reports_composed_spec_status_with_freshness_coverage_and_progress() {
         )
         .stderr("");
 }
+
+#[test]
+fn reports_composed_spec_status_as_command_specific_json() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout", "--json"])
+        .output()
+        .expect("spec status runs");
+
+    assert!(output.status.success());
+    assert!(output.stderr.is_empty());
+    let actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert_eq!(
+        actual,
+        serde_json::json!({
+            "status": "ok",
+            "code": "SPEC_STATUS_REPORTED",
+            "data": {
+                "spec": "checkout",
+                "state": "implementation",
+                "milestone": "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62",
+                "health": "consistent",
+                "gates": {
+                    "requirements": "fresh",
+                    "design": "fresh",
+                    "tasks": "fresh",
+                    "completion": "not_reached"
+                },
+                "nextAction": "implementation",
+                "expectedRequirementsWork": false,
+                "expectedDesignWork": null,
+                "contractReview": null,
+                "delegatedGates": [],
+                "tasks": {
+                    "total": 2,
+                    "completed": 1,
+                    "pending": 0,
+                    "blocked": 1,
+                    "nextTasks": [],
+                    "blockers": [{
+                        "taskId": "2",
+                        "reason": "Waiting for review"
+                    }]
+                },
+                "coverage": {
+                    "active": 1,
+                    "design": 1,
+                    "tasks": 1,
+                    "tasksRequired": true
+                },
+                "diagnostics": []
+            }
+        })
+    );
+}
 #[test]
 fn reports_a_clean_idle_spec_without_requiring_active_artifacts() {
     let root = project_fixture();
@@ -645,4 +704,33 @@ fn fails_status_when_spec_metadata_is_not_structurally_readable() {
         .failure()
         .stdout("")
         .stderr(predicate::str::starts_with("ERROR SPEC_STATUS_FAILED:"));
+}
+
+#[test]
+fn reports_spec_status_failure_as_json_without_stderr_text() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: invalid\n",
+    );
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout", "--json"])
+        .output()
+        .expect("spec status runs");
+
+    assert!(!output.status.success());
+    assert!(output.stderr.is_empty());
+    let actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert_eq!(actual["status"], "error");
+    assert_eq!(actual["code"], "SPEC_STATUS_FAILED");
+    assert_eq!(actual["message"], "Cannot report status for spec checkout.");
+    assert!(
+        actual["details"]
+            .as_array()
+            .is_some_and(|details| !details.is_empty())
+    );
 }

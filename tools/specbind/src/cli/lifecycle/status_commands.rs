@@ -1,25 +1,126 @@
 //! Spec and milestone status command execution and rendering.
 
 use super::super::*;
+use serde::Serialize;
+
+#[derive(Serialize)]
+struct JsonResponse<T> {
+    status: &'static str,
+    code: &'static str,
+    data: T,
+}
+
+#[derive(Serialize)]
+struct JsonFailure {
+    status: &'static str,
+    code: String,
+    message: String,
+    details: Vec<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct SpecStatusData<'a> {
+    spec: &'a str,
+    state: &'static str,
+    milestone: Option<&'a str>,
+    health: &'static str,
+    gates: GateStatusData,
+    next_action: &'static str,
+    expected_requirements_work: bool,
+    expected_design_work: Option<ExpectedDesignWorkData>,
+    contract_review: Option<&'static str>,
+    delegated_gates: Option<Vec<DelegatedGateData<'a>>>,
+    tasks: Option<TaskStatusData<'a>>,
+    coverage: Option<RequirementCoverageData>,
+    diagnostics: Vec<StatusDiagnosticData<'a>>,
+}
+
+#[derive(Serialize)]
+struct GateStatusData {
+    requirements: &'static str,
+    design: &'static str,
+    tasks: &'static str,
+    completion: &'static str,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ExpectedDesignWorkData {
+    missing_coverage: usize,
+}
+
+#[derive(Serialize)]
+struct DelegatedGateData<'a> {
+    gate: &'static str,
+    workflow: &'a str,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct TaskStatusData<'a> {
+    total: usize,
+    completed: usize,
+    pending: usize,
+    blocked: usize,
+    next_tasks: &'a [String],
+    blockers: Vec<TaskBlockerData<'a>>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct TaskBlockerData<'a> {
+    task_id: &'a str,
+    reason: &'a str,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RequirementCoverageData {
+    active: usize,
+    design: usize,
+    tasks: usize,
+    tasks_required: bool,
+}
+
+#[derive(Serialize)]
+struct StatusDiagnosticData<'a> {
+    code: &'static str,
+    path: Option<&'a str>,
+    message: &'a str,
+}
 
 #[must_use]
-pub fn spec_status(start: &Path, canonical_spec: &str) -> CommandOutput {
+pub fn spec_status(start: &Path, canonical_spec: &str, json: bool) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
+        Err(error) if json => return render_json_failure(error.code, error.message, vec![]),
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     let model =
         match spec_status::resolve(&paths.project_root, &paths.specbind_root, canonical_spec) {
             Ok(model) => model,
             Err(error) => {
+                let details = error.issues.iter().map(render_issue).collect();
+                if json {
+                    return render_json_failure(
+                        "SPEC_STATUS_FAILED",
+                        format!("Cannot report status for spec {canonical_spec}."),
+                        details,
+                    );
+                }
                 return CommandOutput::failure(
                     "SPEC_STATUS_FAILED",
                     format!("Cannot report status for spec {canonical_spec}."),
-                    error.issues.iter().map(render_issue).collect(),
+                    details,
                 );
             }
         };
-    render_spec_status(canonical_spec, &model)
+    if json {
+        render_spec_status_json(canonical_spec, &model)
+    } else {
+        render_spec_status(canonical_spec, &model)
+    }
 }
 
 #[must_use]
@@ -256,6 +357,108 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
     render_status_coverage(model, &mut output);
     render_status_diagnostics(model, &mut output);
     CommandOutput::success(output.into_bytes())
+}
+
+fn render_spec_status_json(canonical_spec: &str, model: &SpecStatusModel) -> CommandOutput {
+    let data = SpecStatusData {
+        spec: canonical_spec,
+        state: spec_status::state_name(model.declared_state),
+        milestone: model.milestone_id.as_deref(),
+        health: match model.health {
+            ConsistencyHealth::Consistent => "consistent",
+            ConsistencyHealth::Inconsistent => "inconsistent",
+        },
+        gates: GateStatusData {
+            requirements: spec_status::freshness_name(model.freshness.requirements.status),
+            design: spec_status::freshness_name(model.freshness.design.status),
+            tasks: spec_status::freshness_name(model.freshness.tasks.status),
+            completion: spec_status::freshness_name(model.freshness.completion.status),
+        },
+        next_action: spec_status::action_name(model.next_action),
+        expected_requirements_work: model.expected_requirements_work,
+        expected_design_work: model
+            .expected_design_work
+            .map(|work| ExpectedDesignWorkData {
+                missing_coverage: work.missing_coverage,
+            }),
+        contract_review: model.contract_review.map(milestone_status::review_name),
+        delegated_gates: model.delegated_gates.as_ref().map(|gates| {
+            gates
+                .iter()
+                .map(|gate| DelegatedGateData {
+                    gate: gate.gate,
+                    workflow: &gate.workflow,
+                })
+                .collect()
+        }),
+        tasks: model.task_model.as_ref().map(|tasks| TaskStatusData {
+            total: tasks.total(),
+            completed: tasks.completed,
+            pending: tasks.pending,
+            blocked: tasks.blocked,
+            next_tasks: &tasks.actionable_ids,
+            blockers: model
+                .blockers
+                .iter()
+                .map(|blocker| TaskBlockerData {
+                    task_id: &blocker.task_id,
+                    reason: &blocker.reason,
+                })
+                .collect(),
+        }),
+        coverage: model
+            .coverage
+            .as_ref()
+            .map(|coverage| RequirementCoverageData {
+                active: coverage.active,
+                design: coverage.design,
+                tasks: coverage.tasks,
+                tasks_required: coverage.tasks_required,
+            }),
+        diagnostics: model
+            .diagnostics
+            .iter()
+            .map(|diagnostic| StatusDiagnosticData {
+                code: diagnostic.code,
+                path: diagnostic.path.as_deref(),
+                message: &diagnostic.message,
+            })
+            .collect(),
+    };
+    render_json(
+        &JsonResponse {
+            status: "ok",
+            code: "SPEC_STATUS_REPORTED",
+            data,
+        },
+        true,
+    )
+}
+
+fn render_json_failure(
+    code: impl Into<String>,
+    message: impl Into<String>,
+    details: Vec<String>,
+) -> CommandOutput {
+    render_json(
+        &JsonFailure {
+            status: "error",
+            code: code.into(),
+            message: message.into(),
+            details,
+        },
+        false,
+    )
+}
+
+fn render_json(value: &impl Serialize, success: bool) -> CommandOutput {
+    let mut stdout = serde_json::to_vec(value).expect("spec status JSON response is serializable");
+    stdout.push(b'\n');
+    CommandOutput {
+        stdout,
+        stderr: vec![],
+        success,
+    }
 }
 
 fn render_status_tasks(model: &SpecStatusModel, output: &mut String) {
