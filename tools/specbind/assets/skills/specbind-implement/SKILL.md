@@ -21,6 +21,11 @@ The kind decides the whole run:
 - **Direct** — there is no plan, no requirements, no design, no contract. The
   item's summary and the repository are the work.
 
+Resolve review mode here, before loading the procedure. An explicit `--review`
+value wins; otherwise the default is `required` for Spec-backed work and
+`inline` for Direct work. “Selected mode” in either procedure means this resolved
+value, not a setting to search for elsewhere.
+
 **Never create canonical artifacts for a Direct item.** If the work turns out to
 need requirements, design, or a contract, the premise that made it Direct has
 failed. Stop and report that it needs rerouting through discovery.

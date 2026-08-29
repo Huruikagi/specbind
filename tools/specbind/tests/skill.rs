@@ -658,6 +658,8 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "The orchestrator never deletes them itself",
         "Do not skip ahead and return here afterwards.",
         "Do not stop merely because the implementation commit succeeded.",
+        "default is `required` for Spec-backed work and\n`inline` for Direct work",
+        "there is no\nseparate project setting to discover",
     ] {
         assert!(
             body.contains(required),

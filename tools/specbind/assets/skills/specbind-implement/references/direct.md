@@ -7,13 +7,15 @@ summary leaves a product or architecture decision you cannot make narrowly,
 stop and route it through discovery; Direct is not permission to invent the
 missing canonical artifacts.
 
-Review the resulting diff under the run's selected mode. `inline` applies the
-correctness and weakened-verification standard from `task-review` here, using
-the Roadmap summary as the obligation. `required` dispatches a fresh reviewer
-with that summary, the actual diff, the checks, and the protocol; `off` skips
-only this run-scoped review. A rejection may return to implementation at most
-twice. `CANNOT_REVIEW` and an unresolved rejection enter the same bounded
-diagnosis route as Spec-backed work.
+Review the resulting diff under the run's selected mode. Direct work defaults to
+`inline` when the invocation supplied no explicit `--review` value; there is no
+separate project setting to discover. `inline` applies the correctness and
+weakened-verification standard from `task-review` here, using the Roadmap summary
+as the obligation. `required` dispatches a fresh reviewer with that summary, the
+actual diff, the checks, and the protocol; `off` skips only this run-scoped
+review. A rejection may return to implementation at most twice. `CANNOT_REVIEW`
+and an unresolved rejection enter the same bounded diagnosis route as
+Spec-backed work.
 
 When `required`, use the registered `specbind-reviewer` role when available,
 with an ordinary fresh subagent as the fallback.
