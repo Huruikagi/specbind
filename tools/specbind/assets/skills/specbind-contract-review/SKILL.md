@@ -154,6 +154,12 @@ selectors it reports. Lifecycle states and action labels such as `tasks` and
 
 Read only the Requirements or listed Designs the conclusion needs.
 
+For `deepInputs`, prefix the exact logical selector reported by `artifact list`
+with `specs/<canonical-spec>#`. Thus `requirements` becomes
+`specs/<spec>#requirements`, and `design/main` becomes
+`specs/<spec>#design/main`. Do not use the reported filesystem `path`, shorten a
+Design selector, or derive a selector from lifecycle state.
+
 Declare in `deepInputs` only what the judgment actually relied on. Every declared
 input is fingerprinted into the accepted artifact, so it becomes a freshness
 input: editing it later makes the review stale and blocks tasks approval,
@@ -183,6 +189,13 @@ cannot be left as follow-up behind a passing review: the accepted artifact has n
 field a caveat could live in.
 
 Never edit another Spec's contract to make the graph resolve.
+
+The Design phase owns both the Design set and `contract.yaml`; status has no
+separate Contract gate. If Requirements remain valid and the finding requires a
+Design or Contract change, present the complete rewind cost, obtain explicit
+confirmation, run `specbind spec design invalidate <spec>`, and hand the work to
+`specbind-design`. If Requirements must change, rewind the Requirements gate
+instead. Never leave the maintainer to infer the owning phase from the gate list.
 
 ## 5. Write the assessment and accept
 

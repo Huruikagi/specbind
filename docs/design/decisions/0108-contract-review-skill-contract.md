@@ -107,6 +107,13 @@ The skill runs before authoring and reports rather than fixes:
 actually relied on, as the protocol requires. Two consequences make this
 concrete rather than stylistic.
 
+`artifact list <spec>` reports the logical selector suffix. The canonical
+candidate selector is assembled mechanically as
+`specs/<canonical-spec>#<exact-reported-selector>`: `requirements` becomes
+`specs/<spec>#requirements`, and `design/main` becomes
+`specs/<spec>#design/main`. It is never assembled from the artifact's filesystem
+path or from a lifecycle action.
+
 Every declared input is fingerprinted into the accepted artifact, so it becomes a
 freshness input: editing it later makes the review stale and blocks Tasks
 approval, implementation validation, and release preflight. A file declared
@@ -131,6 +138,14 @@ a Spec needs owned work, the skill:
 - obtains confirmation where the milestone's scope changes materially;
 - invokes the explicit operation — `milestone update-scope`, or a gate
   invalidation — rather than editing an artifact or a Contract itself.
+
+The Design phase owns both the Design set and `contract.yaml`; there is no
+separate Contract gate. When Requirements stay valid but Design or Contract work
+is required, the exact owning rewind is
+`specbind spec design invalidate <spec>`, followed by `specbind-design` after the
+confirmed invalidation. A Requirements change instead rewinds the Requirements
+gate. Contract review never asks the maintainer to infer this ownership from the
+gate list.
 
 A Spec added to scope must be brought through Design before acceptance. It
 cannot be recorded as follow-up behind a passing review, because the accepted
