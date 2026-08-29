@@ -500,7 +500,11 @@ EOF
         # The contract is reduced before the gate is approved, so the approval
         # covers the removal. Approving first and editing after would leave a
         # stale gate and measure freshness instead of the seam.
-        awk '!/id: add-item/' .specbind/specs/cart/contract.yaml > contract.tmp
+        # Dropping the only export leaves `exports:` with no entries, which
+        # parses as null and fails the contract schema. The removal has to
+        # leave an explicitly empty sequence behind.
+        awk '/id: add-item/ { next } /^exports:$/ { print "exports: []"; next } { print }' \
+            .specbind/specs/cart/contract.yaml > contract.tmp
         mv contract.tmp .specbind/specs/cart/contract.yaml
         cart_design_approved
         expect "the cart export was not removed" \
