@@ -340,7 +340,11 @@ pub enum SpecCompletionCommand {
 #[derive(Debug, Subcommand)]
 pub enum MilestoneCommand {
     /// Report stage, progress, actions, dependencies, and release blockers.
-    Status,
+    Status {
+        /// Emit the command-specific machine-readable response.
+        #[arg(long)]
+        json: bool,
+    },
     /// Write the current scope as a replacement candidate document.
     Scope {
         /// Include the complete current Markdown body in the candidate.

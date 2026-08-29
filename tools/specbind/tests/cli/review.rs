@@ -12,6 +12,24 @@ fn reports_no_active_milestone_as_no_change() {
         .success()
         .stdout("NO_CHANGE NO_ACTIVE_MILESTONE: No active milestone exists.\n")
         .stderr("");
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["milestone", "status", "--json"])
+        .output()
+        .expect("milestone status runs");
+    assert!(output.status.success());
+    assert!(output.stderr.is_empty());
+    let actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert_eq!(
+        actual,
+        serde_json::json!({
+            "status": "no_change",
+            "code": "NO_ACTIVE_MILESTONE",
+            "data": null
+        })
+    );
 }
 #[test]
 fn reports_direct_milestone_dependencies_and_actionable_work() {
@@ -46,6 +64,86 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
                 )),
         )
         .stderr("");
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["milestone", "status", "--json"])
+        .output()
+        .expect("milestone status runs");
+    assert!(output.status.success());
+    assert!(output.stderr.is_empty());
+    let mut actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert!(actual["data"]["revision"].is_string());
+    actual["data"]["revision"] = serde_json::Value::String("<revision>".to_owned());
+    assert_eq!(
+        actual,
+        serde_json::json!({
+            "status": "ok",
+            "code": "MILESTONE_STATUS_REPORTED",
+            "data": {
+                "milestoneId": "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62",
+                "targetRelease": null,
+                "stage": "implementation",
+                "health": "consistent",
+                "contractReview": "not_applicable",
+                "specStates": {},
+                "directProgress": {"completed": 0, "total": 2},
+                "revision": "<revision>",
+                "baseline": "0123456789abcdef0123456789abcdef01234567",
+                "items": [
+                    {
+                        "id": "direct:docs",
+                        "summary": "Update docs",
+                        "status": "pending",
+                        "waitingFor": []
+                    },
+                    {
+                        "id": "direct:publish",
+                        "summary": "Publish site",
+                        "status": "pending",
+                        "waitingFor": ["direct:docs"]
+                    }
+                ],
+                "actionable": [
+                    {"item": "direct:docs", "action": "implementation"}
+                ],
+                "currentBlockers": [],
+                "releaseReadinessEvaluated": false,
+                "releaseBlockers": null,
+                "diagnostics": []
+            }
+        })
+    );
+}
+
+#[test]
+fn reports_milestone_status_failure_as_json_without_stderr_text() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        "---\ntype: SpecBind Roadmap\n---\n# Roadmap\n",
+    );
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["milestone", "status", "--json"])
+        .output()
+        .expect("milestone status runs");
+
+    assert!(!output.status.success());
+    assert!(output.stderr.is_empty());
+    let actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert_eq!(actual["status"], "error");
+    assert_eq!(actual["code"], "MILESTONE_STATUS_FAILED");
+    assert_eq!(actual["message"], "Cannot report the active milestone.");
+    assert!(
+        actual["details"]
+            .as_array()
+            .is_some_and(|details| !details.is_empty())
+    );
 }
 
 #[test]

@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0158 adds the matching command-specific `milestone status --json`
+project-level projection. The general JSON protocol remains deferred.
+
 ## Context
 
 [Decision 0074](./0074-defer-json-cli-output.md) defers a general JSON output
@@ -31,8 +34,7 @@ V1 adds one command-specific option:
 specbind spec status <spec> --json
 ```
 
-- `--json` applies only to `spec status`. It is not a global option and does
-  not imply JSON support for another command.
+- This `--json` applies only to `spec status`. It is not a global option.
 - Omitting `--json` preserves the existing Decision 0067 text output
   byte-for-byte.
 - The command resolves the same `SpecStatusModel` for both renderings. JSON is
@@ -78,9 +80,10 @@ be introduced within the executable major version; removing or repurposing an
 established field is breaking. Consumers must ignore unknown fields.
 
 Decision 0074 continues to defer a global `--json` or `--format` option, a
-common cross-command envelope, response-schema distribution, and JSON support
-for every other command. A later concrete integration may extend support one
-command at a time or justify a broader protocol.
+public common cross-command envelope, response-schema distribution, and JSON
+support beyond the command-specific status projections accepted by this
+decision and Decision 0158. A later concrete integration may extend support
+one command at a time or justify a broader protocol.
 
 ## Consequences
 

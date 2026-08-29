@@ -2,9 +2,9 @@
 
 Status: Accepted
 
-Decision 0157 narrows this deferral by allowing one command-specific
-`spec status --json` projection in v1. The general JSON response protocol and
-all other commands remain deferred.
+Decisions 0157 and 0158 narrow this deferral by allowing command-specific
+`spec status --json` and `milestone status --json` projections in v1. The
+general JSON response protocol and all other commands remain deferred.
 
 ## Context
 

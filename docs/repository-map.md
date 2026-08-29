@@ -198,7 +198,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0071](./design/decisions/0071-no-partial-milestone-release.md) | Accepted | No partially released milestone representation |
 | [0072](./design/decisions/0072-explicit-release-rebinding.md) | Accepted | Explicit operation required for release rebinding |
 | [0073](./design/decisions/0073-portable-release-version.md) | Accepted | Opaque portable release-version label |
-| [0074](./design/decisions/0074-defer-json-cli-output.md) | Accepted | General JSON CLI output deferred beyond the narrow Decision 0157 exception |
+| [0074](./design/decisions/0074-defer-json-cli-output.md) | Accepted | General JSON CLI output deferred beyond two command-specific status exceptions |
 | [0075](./design/decisions/0075-v1-skill-and-orchestration-scope.md) | Accepted | Fixed v1 skill and orchestration scope |
 | [0076](./design/decisions/0076-project-global-artifact-language.md) | Accepted | One project-global artifact language |
 | [0077](./design/decisions/0077-v1-installation-distribution-and-migration.md) | Accepted | v1 installation, distribution, and cc-sdd migration contract |
@@ -282,3 +282,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0155](./design/decisions/0155-versioned-yaml-contract-artifact.md) | Accepted | Versioned strict YAML Contract artifact and semantic fingerprint |
 | [0156](./design/decisions/0156-derived-contract-graph-reads.md) | Accepted | Read-only direct Contract graph and reverse-consumer projections |
 | [0157](./design/decisions/0157-command-specific-spec-status-json.md) | Accepted | Minimal command-specific JSON projection for Spec status |
+| [0158](./design/decisions/0158-command-specific-milestone-status-json.md) | Accepted | Minimal command-specific JSON projection for Milestone status |

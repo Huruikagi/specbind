@@ -28,7 +28,7 @@ Repeated grep, PowerShell, or shell-specific inspection consumes agent context a
 - one implementation shared by every supported agent
 - version alignment between the executing CLI and the immutable product protocols skills invoke
 
-Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands default to an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decision 0157 adds the narrow `spec status --json` integration surface while Decision 0074 continues to defer a general JSON protocol. Agent skills consume the default text directly and translate or explain results for the user when needed.
+Under [Decision 0067](./decisions/0067-text-first-english-cli-results.md), non-raw commands default to an explicit concise English `OK`, `NO_CHANGE`, or `ERROR` outcome with a stable code. Decisions 0157 and 0158 add the narrow `spec status --json` and `milestone status --json` integration surfaces while Decision 0074 continues to defer a general JSON protocol. Agent skills consume the default text directly and translate or explain results for the user when needed.
 
 The goal is not to replace agent judgment. It is to remove mechanical work from prompts so the agent can focus on meaning and decisions.
 

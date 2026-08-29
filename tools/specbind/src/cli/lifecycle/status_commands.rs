@@ -90,6 +90,47 @@ struct StatusDiagnosticData<'a> {
     message: &'a str,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MilestoneStatusData<'a> {
+    milestone_id: &'a str,
+    target_release: Option<&'a str>,
+    stage: &'static str,
+    health: &'static str,
+    contract_review: &'static str,
+    spec_states: &'a std::collections::BTreeMap<String, usize>,
+    direct_progress: DirectProgressData,
+    revision: Option<&'a str>,
+    baseline: &'a str,
+    items: Vec<MilestoneItemData<'a>>,
+    actionable: Vec<MilestoneActionData<'a>>,
+    current_blockers: &'a [String],
+    release_readiness_evaluated: bool,
+    release_blockers: Option<&'a [String]>,
+    diagnostics: Vec<StatusDiagnosticData<'a>>,
+}
+
+#[derive(Serialize)]
+struct DirectProgressData {
+    completed: usize,
+    total: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MilestoneItemData<'a> {
+    id: &'a str,
+    summary: &'a str,
+    status: &'a str,
+    waiting_for: &'a [String],
+}
+
+#[derive(Serialize)]
+struct MilestoneActionData<'a> {
+    item: &'a str,
+    action: &'static str,
+}
+
 #[must_use]
 pub fn spec_status(start: &Path, canonical_spec: &str, json: bool) -> CommandOutput {
     let paths = match config::resolve_from(start) {
@@ -124,14 +165,33 @@ pub fn spec_status(start: &Path, canonical_spec: &str, json: bool) -> CommandOut
 }
 
 #[must_use]
-pub fn milestone_status(start: &Path) -> CommandOutput {
+pub fn milestone_status(start: &Path, json: bool) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
+        Err(error) if json => return render_json_failure(error.code, error.message, vec![]),
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     match milestone_status::resolve(&paths.project_root, &paths.specbind_root) {
+        Ok(Some(model)) if json => render_milestone_status_json(&model),
         Ok(Some(model)) => render_milestone_status(&model),
+        Ok(None) if json => render_json(
+            &JsonResponse {
+                status: "no_change",
+                code: "NO_ACTIVE_MILESTONE",
+                data: Option::<()>::None,
+            },
+            true,
+        ),
         Ok(None) => CommandOutput::no_change("NO_ACTIVE_MILESTONE", "No active milestone exists."),
+        Err(error) if json => render_json_failure(
+            "MILESTONE_STATUS_FAILED",
+            "Cannot report the active milestone.",
+            error
+                .diagnostics
+                .iter()
+                .map(render_milestone_diagnostic)
+                .collect(),
+        ),
         Err(error) => CommandOutput::failure(
             "MILESTONE_STATUS_FAILED",
             "Cannot report the active milestone.",
@@ -213,12 +273,7 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
             );
         }
     }
-    if matches!(
-        model.stage,
-        milestone_status::DeliveryStage::Validation
-            | milestone_status::DeliveryStage::ReleasePending
-            | milestone_status::DeliveryStage::ReleaseReady
-    ) {
+    if release_readiness_evaluated(model.stage) {
         push_inline_list(&mut output, "Release blockers", &model.release_blockers);
     } else {
         push_field(
@@ -229,6 +284,74 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     }
     render_milestone_diagnostics(model, &mut output);
     CommandOutput::success(output.into_bytes())
+}
+
+fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
+    let release_readiness_evaluated = release_readiness_evaluated(model.stage);
+    let data = MilestoneStatusData {
+        milestone_id: &model.milestone_id,
+        target_release: model.target_release.as_deref(),
+        stage: milestone_status::stage_name(model.stage),
+        health: match model.health {
+            MilestoneHealth::Consistent => "consistent",
+            MilestoneHealth::Inconsistent => "inconsistent",
+        },
+        contract_review: milestone_status::review_name(model.review_status),
+        spec_states: &model.spec_state_counts,
+        direct_progress: DirectProgressData {
+            completed: model.direct_completed,
+            total: model.direct_total,
+        },
+        revision: model.current_revision.as_deref(),
+        baseline: &model.baseline_revision,
+        items: model
+            .items
+            .iter()
+            .map(|item| MilestoneItemData {
+                id: &item.id,
+                summary: &item.summary,
+                status: &item.status,
+                waiting_for: &item.waiting_for,
+            })
+            .collect(),
+        actionable: model
+            .actionable
+            .iter()
+            .map(|action| MilestoneActionData {
+                item: &action.item,
+                action: action.action,
+            })
+            .collect(),
+        current_blockers: &model.current_blockers,
+        release_readiness_evaluated,
+        release_blockers: release_readiness_evaluated.then_some(model.release_blockers.as_slice()),
+        diagnostics: model
+            .diagnostics
+            .iter()
+            .map(|diagnostic| StatusDiagnosticData {
+                code: diagnostic.code,
+                path: diagnostic.path.as_deref(),
+                message: &diagnostic.message,
+            })
+            .collect(),
+    };
+    render_json(
+        &JsonResponse {
+            status: "ok",
+            code: "MILESTONE_STATUS_REPORTED",
+            data,
+        },
+        true,
+    )
+}
+
+fn release_readiness_evaluated(stage: milestone_status::DeliveryStage) -> bool {
+    matches!(
+        stage,
+        milestone_status::DeliveryStage::Validation
+            | milestone_status::DeliveryStage::ReleasePending
+            | milestone_status::DeliveryStage::ReleaseReady
+    )
 }
 
 fn render_milestone_items(model: &MilestoneStatusModel, output: &mut String) {

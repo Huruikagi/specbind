@@ -57,7 +57,7 @@ Hint: Commit, stash, or otherwise resolve the affected paths before retrying.
 ### V1 output boundary
 
 - Human-readable text is the default non-raw v1 result surface for both direct users and agent skills.
-- Decision 0074 defers a general `--json`, common JSON envelope, and command-response schemas until after v1. Decision 0157 adds only the command-specific `spec status --json` exception.
+- Decision 0074 defers a general `--json`, common JSON envelope, and command-response schemas until after v1. Decisions 0157 and 0158 add only the command-specific `spec status --json` and `milestone status --json` exceptions.
 - Raw-content operations remain exceptions only where their accepted contract requires unmodified file content on standard output.
 
 ## Consequences

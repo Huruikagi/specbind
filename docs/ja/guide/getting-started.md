@@ -366,11 +366,12 @@ specbind tasks list csv-export
 specbind artifact list csv-export
 ```
 
-周辺ツールやスクリプトからSpecの状態を読む場合に限り、`spec status`は
-コマンド固有のJSON出力も提供します。通常の利用では既定の簡潔なテキスト出力を
-そのまま使います。
+周辺ツールやスクリプトからMilestoneとSpecの状態を読む場合に限り、2つの
+statusコマンドはコマンド固有のJSON出力も提供します。通常の利用では既定の
+簡潔なテキスト出力をそのまま使います。
 
 ```sh
+specbind milestone status --json
 specbind spec status csv-export --json
 ```
 
