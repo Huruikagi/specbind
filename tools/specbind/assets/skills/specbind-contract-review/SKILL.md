@@ -53,6 +53,7 @@ specbind spec status <spec>
 ## 2. Establish what changed
 
 ```sh
+specbind schema read contract/v1
 specbind protocol read contract-review
 specbind check contracts
 ```
@@ -64,21 +65,18 @@ specbind spec list
 specbind artifact read <spec> contract --for consume
 ```
 
-Then discover and read the same Contracts independently at the baseline. This
-is ordinary Git, but the path is not an identity: `specDir` is configured in
-`.specbind.json`, and a Contract is the lowercase Markdown artifact whose Front
-Matter `type` is `SpecBind Contract`.
+Then read the same fixed Contract paths independently at the baseline. This is
+ordinary Git. Resolve `specDir` from `.specbind.json`; each persistent Spec's
+Contract is exactly `<specDir>/specs/<spec>/contract.yaml`.
 
 ```sh
-git ls-tree -r --name-only <baseline> -- <specDir>/specs/<spec>
-git show <baseline>:<candidate-path>
+git show <baseline>:<specDir>/specs/<spec>/contract.yaml
 ```
 
-Inspect the historical candidates and require exactly one Contract by `type`,
-or establish that the Spec or Contract did not yet exist. Never substitute the
-current artifact path for this discovery: a moved or renamed Contract keeps its
-logical identity, and `.specbind/specs/<spec>/contract.md` is only the default
-location in a default installation.
+If that path does not exist at the baseline, establish whether the Spec itself
+was new or its required Contract was missing. Do not search for a renamed
+Markdown concept or infer identity from Front Matter; `contract.yaml` is the
+versioned structured singleton.
 
 **The difference is the entry point.** A run that never established what changed
 has not performed the review, however carefully it read the current graph.

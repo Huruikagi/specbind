@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 replaces the Contract's type-discovered Markdown representation
+with the fixed strict `contract.yaml` artifact. The persistent seam-manifest
+direction and Contract-first workflow remain unchanged.
+
 Implementation status: `tools/specbind/src/documents/contract.rs` and `contract_graph.rs` now implement artifact-local parsing and the complete current persistent-Spec graph read model. The resolver distinguishes mechanical missing or dangling-reference errors from File Ownership and dependency-cycle warnings. Semantic compatibility judgment and accepted review persistence remain agent and guarded-workflow responsibilities.
 
 ## Context

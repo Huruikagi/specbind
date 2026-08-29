@@ -15,7 +15,7 @@ use super::{
     TraceabilityResolution,
 };
 use crate::{
-    contract::{self, ContractDocument},
+    contract::{Contract, ContractDocument},
     domain::{self, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::CurrentGateInputs,
@@ -338,8 +338,42 @@ pub(crate) fn resolve_contract_projection(
     artifact: &Artifact,
     issues: &mut Vec<DiscoveryIssue>,
 ) -> Option<ContractDocument> {
-    let (_, body) = read_traceability_concept(specbind_root, artifact, issues)?;
-    contract::parse(&instruction::mask(&body)).ok()
+    let native_path = specbind_root.join(artifact.path.as_std_path());
+    let input = match fs::read_to_string(&native_path) {
+        Ok(input) => input,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CONTRACT_READ_FAILED",
+                Some(artifact.path.clone()),
+                format!("cannot read contract.yaml as UTF-8: {error}"),
+            ));
+            return None;
+        }
+    };
+    let wire = match runtime::load_contract(&input) {
+        Ok(wire) => wire,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CONTRACT_STRUCTURAL_INVALID",
+                Some(artifact.path.clone()),
+                error.to_string(),
+            ));
+            return None;
+        }
+    };
+    match Contract::try_from(wire) {
+        Ok(contract) => Some(contract),
+        Err(error) => {
+            for semantic in error.issues {
+                issues.push(issue(
+                    semantic.code,
+                    Some(artifact.path.clone()),
+                    format!("{}: {}", semantic.path, semantic.message),
+                ));
+            }
+            None
+        }
+    }
 }
 
 fn read_traceability_concept(
@@ -505,6 +539,20 @@ fn fingerprint_artifact(
     artifact: &Artifact,
     issues: &mut Vec<DiscoveryIssue>,
 ) -> Option<Fingerprint> {
+    if artifact.kind == ArtifactKind::Contract {
+        let contract = resolve_contract_projection(specbind_root, artifact, issues)?;
+        return match Fingerprint::contract(&contract) {
+            Ok(fingerprint) => Some(fingerprint),
+            Err(error) => {
+                issues.push(issue(
+                    "ARTIFACT_CONTRACT_FINGERPRINT_FAILED",
+                    Some(artifact.path.clone()),
+                    format!("cannot canonicalize Contract: {error}"),
+                ));
+                None
+            }
+        };
+    }
     let native_path = specbind_root.join(artifact.path.as_std_path());
     let metadata = match fs::symlink_metadata(&native_path) {
         Ok(metadata) => metadata,

@@ -3,12 +3,20 @@ use std::path::Path;
 use std::process::Command;
 
 use specbind::{
+    contract::Contract,
     cross_spec_review::{self, ReviewBoundary, ReviewFreshnessStatus},
     fingerprint::Fingerprint,
+    schema::runtime,
 };
 use tempfile::TempDir;
 
 const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
+
+fn contract_fingerprint(input: &str) -> Fingerprint {
+    let contract = Contract::try_from(runtime::load_contract(input).expect("contract wire"))
+        .expect("contract semantics");
+    Fingerprint::contract(&contract).expect("contract fingerprint")
+}
 
 fn write(root: &Path, relative: &str, content: &str) {
     let path = root.join(relative);
@@ -27,13 +35,13 @@ fn fixture() -> TempDir {
     );
     write(
         root.path(),
-        "specs/provider/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/provider/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
-        "specs/consumer/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `value` → `provider/exports/value`\n\n## Invariants\n\n## File Ownership\n",
+        "specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: value, target: { spec: provider, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
@@ -87,10 +95,10 @@ fn acceptance_fixture() -> TempDir {
         ),
     );
     let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n";
-    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
+    let contract = "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n";
     let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n";
     write(root.path(), "specs/checkout/requirements.md", requirements);
-    write(root.path(), "specs/checkout/contract.md", contract);
+    write(root.path(), "specs/checkout/contract.yaml", contract);
     write(root.path(), "specs/checkout/design.md", design);
     write(
         root.path(),
@@ -98,7 +106,7 @@ fn acceptance_fixture() -> TempDir {
         &format!(
             "schema_version: 1\nactive_change:\n  milestone_id: {MILESTONE}\n  state: tasks\n  requirement_ids: ['1.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1']\n      input_revisions:\n        requirements: {}\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: {}\n        design/main: {}\n",
             Fingerprint::markdown(requirements.as_bytes()),
-            Fingerprint::markdown(contract.as_bytes()),
+            contract_fingerprint(contract),
             Fingerprint::markdown(design.as_bytes()),
         ),
     );
@@ -194,8 +202,8 @@ fn blocks_input_resolution_on_contract_graph_errors() {
     let root = fixture();
     write(
         root.path(),
-        "specs/consumer/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `missing` → `provider/exports/missing`\n\n## Invariants\n\n## File Ownership\n",
+        "specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: provider, section: exports, id: missing } }\ninvariants: []\nfile_ownership: []\n",
     );
 
     let error = cross_spec_review::resolve_inputs(
@@ -262,7 +270,7 @@ fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
 }
 
 #[test]
-fn reports_fresh_and_then_stale_authoritative_inputs() {
+fn ignores_yaml_formatting_and_reports_semantic_contract_changes_stale() {
     let root = acceptance_fixture();
     let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;
     cross_spec_review::accept(root.path(), root.path(), candidate).expect("accepted review");
@@ -275,8 +283,15 @@ fn reports_fresh_and_then_stale_authoritative_inputs() {
 
     write(
         root.path(),
-        "specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n",
+        "specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n\n",
+    );
+    let formatting_only = cross_spec_review::evaluate_freshness(root.path(), root.path());
+    assert_eq!(formatting_only.status, ReviewFreshnessStatus::Fresh);
+    write(
+        root.path(),
+        "specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     let stale = cross_spec_review::evaluate_freshness(root.path(), root.path());
     assert_eq!(stale.status, ReviewFreshnessStatus::Stale);
@@ -424,8 +439,8 @@ fn enforces_fresh_review_for_spec_local_later_boundaries() {
 
     write(
         root.path(),
-        "specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n",
+        "specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     let stale = cross_spec_review::require_for_boundary(
         root.path(),

@@ -2,15 +2,18 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::Path;
 
-use specbind::contract;
 use specbind::contract_graph::{self, GraphIssueSeverity, OwnershipFindingKind};
+use specbind::{contract, schema::runtime};
 use tempfile::TempDir;
 
 const EMPTY: &str =
-    "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
+    "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n";
 
 fn document(body: &str) -> contract::ContractDocument {
-    contract::parse(body).expect("valid Contract fixture")
+    runtime::load_contract(body)
+        .expect("structurally valid Contract fixture")
+        .try_into()
+        .expect("semantically valid Contract fixture")
 }
 
 fn contracts(values: &[(&str, &str)]) -> BTreeMap<String, contract::ContractDocument> {
@@ -37,11 +40,11 @@ fn resolves_typed_consumes_edges() {
         contracts(&[
             (
                 "catalog",
-                "# Contract\n\n## Owns\n\n## Exports\n\n- `stock-status` — Stock status.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports:\n  - { id: stock-status, description: Stock status. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
             ),
             (
                 "checkout",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `inventory` → `catalog/exports/stock-status`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - id: inventory\n    target: { spec: catalog, section: exports, id: stock-status }\ninvariants: []\nfile_ownership: []\n",
             ),
         ]),
     );
@@ -59,7 +62,7 @@ fn distinguishes_unavailable_specs_contracts_entries_and_self_consumes() {
         &specs(&["consumer", "missing-contract"]),
         contracts(&[(
             "consumer",
-            "# Contract\n\n## Owns\n\n- `local` — Local boundary.\n\n## Exports\n\n## Consumes\n\n- `unknown-spec` → `absent/exports/value`\n- `unknown-contract` → `missing-contract/exports/value`\n- `unknown-entry` → `consumer/exports/value`\n- `self` → `consumer/owns/local`\n\n## Invariants\n\n## File Ownership\n",
+            "schema_version: 1\nowns:\n  - { id: local, description: Local boundary. }\nexports: []\nconsumes:\n  - { id: unknown-spec, target: { spec: absent, section: exports, id: value } }\n  - { id: unknown-contract, target: { spec: missing-contract, section: exports, id: value } }\n  - { id: unknown-entry, target: { spec: consumer, section: exports, id: value } }\n  - { id: self, target: { spec: consumer, section: owns, id: local } }\ninvariants: []\nfile_ownership: []\n",
         )]),
     );
     let codes = report
@@ -89,7 +92,7 @@ fn reports_missing_target_entries_in_valid_target_contracts() {
             ("provider", EMPTY),
             (
                 "consumer",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `missing` → `provider/exports/value`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: provider, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
             ),
         ]),
     );
@@ -107,15 +110,15 @@ fn reports_cross_spec_duplicate_and_overlapping_ownership_as_warnings() {
         contracts(&[
             (
                 "alpha",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n- `api` — `src/API/**`\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: api, paths: [src/API/**] }\n",
             ),
             (
                 "beta",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n- `api-file` — `src/api/handler.rs`\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: api-file, paths: [src/api/handler.rs] }\n",
             ),
             (
                 "gamma",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n- `api-copy` — `src/api/**`\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: api-copy, paths: [src/api/**] }\n",
             ),
         ]),
     );
@@ -144,15 +147,15 @@ fn reports_a_deterministic_dependency_cycle_path() {
         contracts(&[
             (
                 "alpha",
-                "# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n- `beta-value` → `beta/exports/value`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes:\n  - { id: beta-value, target: { spec: beta, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
             ),
             (
                 "beta",
-                "# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n- `gamma-value` → `gamma/exports/value`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes:\n  - { id: gamma-value, target: { spec: gamma, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
             ),
             (
                 "gamma",
-                "# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n- `alpha-value` → `alpha/exports/value`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes:\n  - { id: alpha-value, target: { spec: alpha, section: exports, id: value } }\ninvariants: []\nfile_ownership: []\n",
             ),
         ]),
     );
@@ -174,19 +177,19 @@ fn resolves_every_immediate_persistent_spec_and_keeps_partial_inventories() {
     let root = TempDir::new().expect("temporary SpecBind root");
     write(
         root.path(),
-        "specs/catalog/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `stock` — Stock.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/catalog/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: stock, description: Stock. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
-        "specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `stock` → `catalog/exports/stock`\n\n## Invariants\n\n## File Ownership\n",
+        "specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: stock, target: { spec: catalog, section: exports, id: stock } }\ninvariants: []\nfile_ownership: []\n",
     );
     write(root.path(), "specs/missing/index.md", "# Reserved index\n");
     write(
         root.path(),
-        "specs/invalid/contract.md",
-        "---\ntype: SpecBind Contract\nartifact_id: forbidden\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/invalid/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\nforbidden: true\n",
     );
     write(root.path(), "specs/not-a-directory", "invalid\n");
 
@@ -224,11 +227,11 @@ fn warns_when_an_exported_seam_reaches_no_managed_consumer() {
         contracts(&[
             (
                 "catalog",
-                "# Contract\n\n## Owns\n\n## Exports\n\n- `stock-status` — Stock status.\n- `restock-forecast` — Forecast nobody consumes.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports:\n  - { id: stock-status, description: Stock status. }\n  - { id: restock-forecast, description: Forecast nobody consumes. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
             ),
             (
                 "checkout",
-                "# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `inventory` → `catalog/exports/stock-status`\n\n## Invariants\n\n## File Ownership\n",
+                "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: inventory, target: { spec: catalog, section: exports, id: stock-status } }\ninvariants: []\nfile_ownership: []\n",
             ),
         ]),
     );

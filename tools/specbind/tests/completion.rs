@@ -6,6 +6,7 @@ use specbind::{
         self, DirectCompleteOutcome, DirectPreflightOutcome, SpecAcceptOutcome,
         SpecInvalidateOutcome, SpecPreflightOutcome,
     },
+    contract::Contract,
     cross_spec_review,
     fingerprint::Fingerprint,
     milestone_status::{self, DeliveryStage},
@@ -17,6 +18,12 @@ use specbind::{
 };
 use tempfile::TempDir;
 use time::OffsetDateTime;
+
+fn contract_fingerprint(input: &str) -> Fingerprint {
+    let contract = Contract::try_from(runtime::load_contract(input).expect("contract wire"))
+        .expect("contract semantics");
+    Fingerprint::contract(&contract).expect("contract fingerprint")
+}
 
 const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
 
@@ -423,7 +430,7 @@ fn spec_fixture() -> TempDir {
         "# Checkout change log\n",
     );
     let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n";
-    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
+    let contract = "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n";
     let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n";
     write(
         root.path(),
@@ -432,7 +439,7 @@ fn spec_fixture() -> TempDir {
     );
     write(
         root.path(),
-        ".specbind/specs/checkout/contract.md",
+        ".specbind/specs/checkout/contract.yaml",
         contract,
     );
     write(root.path(), ".specbind/specs/checkout/design.md", design);
@@ -442,7 +449,7 @@ fn spec_fixture() -> TempDir {
         &format!(
             "schema_version: 1\nactive_change:\n  milestone_id: {MILESTONE}\n  state: tasks\n  requirement_ids: ['1.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-08-16T10:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.1']\n      input_revisions:\n        requirements: {}\n    design:\n      passed_at: 2026-08-16T11:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        contract: {}\n        design/main: {}\n",
             Fingerprint::markdown(requirements.as_bytes()),
-            Fingerprint::markdown(contract.as_bytes()),
+            contract_fingerprint(contract),
             Fingerprint::markdown(design.as_bytes()),
         ),
     );

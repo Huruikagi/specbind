@@ -69,9 +69,9 @@ Their root facade modules preserve the existing public crate paths.
 ### Domain and wire models
 
 `schema/` and `foundation/yaml.rs` own structural loading. `domain/` owns
-validated structured-artifact wrappers. `documents/` groups scoped
-managed-Markdown instructions and the focused Requirements, Design, Contract,
-Roadmap, and traceability semantics behind the
+validated structured-artifact wrappers, including the strict Contract wire and
+domain models. `documents/` groups scoped managed-Markdown instructions and the
+focused Requirements, Design, Roadmap, and traceability semantics behind the
 `documents.rs` crate-root compatibility facade. Third-party parser types stop
 at these boundaries and are not public CLI or persisted contracts.
 

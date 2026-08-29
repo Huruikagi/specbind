@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 replaces the Contract's complete-file Markdown fingerprint with
+the normalized typed `contract.yaml` projection. The logical `contract` input
+key and the rest of this gate contract remain unchanged.
+
 ## Context
 
 The design gate approves both the spec's internal technical design set and its externally observable cross-spec seam. The singleton requirements artifact and ordered active Requirement IDs are already owned by the prerequisite requirements gate, so copying them into design evidence would duplicate freshness state.

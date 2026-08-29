@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 removes the Contract from this type-based Markdown discovery
+surface. Its fixed structured locator is now `contract.yaml`; the remaining
+managed Markdown artifact identities continue to follow this decision.
+
 ## Context
 
 Decision 0045 makes managed Markdown files OKF concept documents with a machine-readable `type`, but earlier lifecycle and gate decisions still identify spec artifacts by fixed filenames. That prevents a design from being split into focused documents and makes a harmless file rename look like a different artifact.

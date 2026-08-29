@@ -413,8 +413,8 @@ fn reports_stale_review_state_as_success_and_invalid_state_as_failure() {
 
     write(
         root.path(),
-        ".specbind/specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     let mut stale = specbind_command();
     stale

@@ -52,7 +52,7 @@ The user framed it as delivery work, so it enters even though it touches no Spec
   responsibility, not the change. The steering conventions document says this;
   an identity like `add-cancellation` means steering was read and ignored.
 - The new Spec directory holds `spec.yaml` and a brief, and **no**
-  `requirements.md` or `contract.md`.
+  `requirements.md` or `contract.yaml`.
 - `cart` is untouched.
 
 ### D5 — Mixed work in one candidate
@@ -189,7 +189,7 @@ From D4, run the requirements skill on the new Spec.
   while `spec status <spec>` remains phase-relative and consistent.
 - It is a complete contract for the responsibility, not a restatement of the
   brief's delta.
-- No `contract.md` was created. That belongs to design.
+- No `contract.yaml` was created. That belongs to design.
 - The approval names an active set, and `spec.yaml` carries those IDs.
 
 ### R2 — Revising an established Spec
@@ -276,7 +276,7 @@ three active Requirements.
 - `technical-design/main.md` exists, `design.md` does not, and
   `check traceability order` passes. Front Matter
   `requirement_ids` and the body markers cover 1.1, 1.2, and 1.3.
-- **`contract.md` now exists**, and `check contracts` passes. A design phase that
+- **`contract.yaml` now exists**, and `check contracts` passes. A design phase that
   authors only the design is the failure this scenario exists to catch: the gate
   refuses without a contract, and an absent contract is not read as no impact.
 - `spec status order` reports `State: tasks` with `design=fresh`.
@@ -321,7 +321,7 @@ for a change to the design.
 
 > Ask: the cap should be enforced in one place rather than at every entry point. Change the design.
 
-- The agent did **not** edit `design.md` or `contract.md` first.
+- The agent did **not** edit `design.md` or `contract.yaml` first.
 - It stated, before asking, that invalidation also **deletes the accepted
   contract review**. Read this from the run's own output. The clearing of
   design, tasks, and completion evidence is the expected part; the review is the
@@ -337,7 +337,7 @@ export and replaces it with something else.
 
 > Ask: replace the cart add-item export with one that takes a whole line item instead.
 
-- `checkout/contract.md` is **unchanged**. Editing another Spec's contract to
+- `checkout/contract.yaml` is **unchanged**. Editing another Spec's contract to
   make the graph resolve is the failure this scenario exists to catch.
 - No design approval ran while the graph was dangling.
 - The agent ran `check contracts` and brought the consuming Spec to the user as a
@@ -350,7 +350,7 @@ From `ds2`, run the design skill and decline to approve when asked.
 > Ask: design the cart change. *(Decline when asked to approve.)*
 
 - `spec status cart` still reports the design gate not approved.
-- `design.md` and `contract.md` may exist and be complete. Authoring without
+- `design.md` and `contract.yaml` may exist and be complete. Authoring without
   approving is the correct outcome.
 
 ### DS7 — A user-visible screen selects the conditional UI Design
@@ -371,7 +371,7 @@ renderer boundary, caller-supplied account snapshot, and `unittest` convention
 - `ui.md` determines the screen inventory, navigation or interaction, visible
   states, responsive behavior, accessibility, boundaries, and UI verification;
   it is not an empty scaffold or a pixel-perfect mockup request.
-- `contract.md` exists and the Design gate may be approved only after the
+- `contract.yaml` exists and the Design gate may be approved only after the
   complete selected set is ready.
 
 ### DS8 — Library-only work omits the conditional UI Design
@@ -385,7 +385,7 @@ user-visible UI behavior changes — run the design skill.
 - Before authoring, the agent reports `design/main` as required and selected,
   and `design/ui` as conditional and omitted because the change is library-only.
 - `design.md` exists and `ui.md` does not.
-- `check traceability parser` passes, `contract.md` exists, and no empty UI
+- `check traceability parser` passes, `contract.yaml` exists, and no empty UI
   document was created as a precaution.
 - The agent does not ask whether a UI exists merely because the standard UI
   candidate is installed; the Requirements already resolve the condition.
@@ -423,7 +423,7 @@ review is for.
 > Ask: review the contracts for this milestone.
 
 - **No review was accepted.** `milestone review status` still reports `absent`.
-- `checkout/contract.md` is unchanged. Editing a non-participant's contract to
+- `checkout/contract.yaml` is unchanged. Editing a non-participant's contract to
   make the graph resolve is the failure this catches.
 - The agent named `checkout` as the affected consumer and brought it to the user
   as a scope question. Read this from the run's own output.

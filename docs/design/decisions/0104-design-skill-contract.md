@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0155 replaces the five-heading Markdown Contract with strict
+`contract.yaml`. The Design skill now reads `contract/v1`; it preserves an
+untouched seam semantically, while YAML presentation and collection order do
+not affect the Contract fingerprint.
+
 Decision 0152 later replaces unconditional materialization of every Design
 template with project-rule classification and per-Spec applicability judgment.
 

@@ -2,10 +2,13 @@
 
 Status: Accepted
 
+Decision 0155 extends the accepted selector set with `contract/v1` for the
+agent-authored persistent `contract.yaml` artifact.
+
 ## Context
 
-`spec.yaml` and `tasks.yaml` are the two artifacts SpecBind validates
-structurally. [Decision 0014](./0014-structured-spec-metadata.md) and
+`spec.yaml`, `contract.yaml`, and `tasks.yaml` are the persistent artifacts
+SpecBind validates structurally. [Decision 0014](./0014-structured-spec-metadata.md) and
 [Decision 0020](./0020-positional-task-ids.md) fix their content, the versioned
 Rust wire models under `tools/specbind/src/schema/` are the structural source of
 truth, and the generated Draft 2020-12 schemas are committed and checked in CI.
@@ -38,7 +41,8 @@ in the same family as `artifact read`, `template read`, `protocol read`,
 
 ### Selectors carry the version
 
-The accepted selectors are `spec/v1`, `scope/v1`, and `tasks/v1`.
+The accepted selectors are `contract/v1`, `spec/v1`, `scope/v1`, and
+`tasks/v1`.
 
 The version is part of the selector because the wire model is versioned. An
 unversioned `tasks` would have to mean "whatever this binary considers current",
@@ -91,7 +95,8 @@ artifact prototypes, and `tasks.yaml` is neither Markdown nor OKF.
 
 - No schema for Markdown artifacts. Their structure is fixed by their profiles
   and taught by their templates; a JSON Schema of a Requirements document is not
-  the shape an author works from.
+  the shape an author works from. `contract.yaml` is structured data rather than
+  a Markdown exception and therefore has a schema.
 - No validation command. `check` and the guarded operations already validate,
   and a schema read is for authoring, not for a second opinion on a written file.
 - No installed schema files. The binary answers the question, so copying schemas
@@ -103,15 +108,16 @@ artifact prototypes, and `tasks.yaml` is neither Markdown nor OKF.
   the one that reverse-engineered the binary was the last that needed to.
 - The answer comes from the artifact CI already guards, so the documentation of
   the format and the enforcement of the format are the same bytes.
-- `specbind-tasks`, when it is written, names `tasks/v1` rather than carrying a
-  transcription of the plan shape that would drift on the next wire change.
+- `specbind-design` names `contract/v1`, and `specbind-tasks` names `tasks/v1`,
+  rather than carrying transcriptions of those shapes that would drift on the
+  next wire change.
 - The read surface is now uniform: every kind of thing an agent must read —
   artifacts, templates, protocols, steering, adapters, schemas — is reachable
   through one command pattern.
 
 ## Implementation status
 
-Implemented for `spec/v1`, `scope/v1`, and `tasks/v1`. The review-candidate and
+Implemented for `contract/v1`, `spec/v1`, `scope/v1`, and `tasks/v1`. The review-candidate and
 completion-evidence documents remain unexposed.
 
 `tools/specbind/src/schema/scope.rs` holds the scope candidate as a wire model

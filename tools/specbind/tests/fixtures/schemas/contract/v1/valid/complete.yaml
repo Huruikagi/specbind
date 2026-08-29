@@ -1,0 +1,21 @@
+schema_version: 1
+owns:
+  - id: checkout
+    description: Owns checkout orchestration.
+exports:
+  - id: result
+    description: Checkout result.
+consumes:
+  - id: inventory
+    target:
+      spec: catalog
+      section: exports
+      id: stock-status
+    description: Reads availability.
+invariants:
+  - id: positive-quantity
+    description: Quantity is positive.
+file_ownership:
+  - id: checkout-api
+    paths:
+      - src/checkout/**

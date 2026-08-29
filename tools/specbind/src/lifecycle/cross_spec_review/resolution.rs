@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::{
-    artifacts::{Artifact, ArtifactInventory, ArtifactKind},
+    artifacts::{Artifact, ArtifactInventory},
     contract_graph::{self, ContractGraphResolution, GraphIssueSeverity},
     fingerprint::Fingerprint,
     roadmap,
@@ -91,7 +91,7 @@ pub(super) fn resolve_candidate_inputs(
         }
     }
 
-    collect_contract_revisions(specbind_root, &graph, &mut input_revisions, &mut issues);
+    collect_contract_revisions(&graph, &mut input_revisions, &mut issues);
 
     let mut deep_seen = BTreeSet::new();
     for selector in &candidate.deep_inputs {
@@ -134,21 +134,23 @@ pub(super) fn resolve_candidate_inputs(
     Err(ReviewIssues { issues })
 }
 fn collect_contract_revisions(
-    specbind_root: &Path,
     graph: &ContractGraphResolution,
     revisions: &mut BTreeMap<String, Fingerprint>,
     issues: &mut Vec<ReviewIssue>,
 ) {
-    for (spec, inventory) in &graph.inventories {
+    for spec in graph.inventories.keys() {
         let key = format!("specs/{spec}#contract");
-        if graph.report.contracts.contains_key(spec)
-            && let Some(artifact) = inventory
-                .artifacts
-                .iter()
-                .find(|artifact| artifact.kind == ArtifactKind::Contract)
-            && let Some(bytes) = read_artifact(specbind_root, artifact, &key, issues)
-        {
-            revisions.insert(key, Fingerprint::markdown(&bytes));
+        if let Some(contract) = graph.report.contracts.get(spec) {
+            match Fingerprint::contract(contract) {
+                Ok(fingerprint) => {
+                    revisions.insert(key, fingerprint);
+                }
+                Err(error) => issues.push(review_issue(
+                    "CONTRACT_REVIEW_CONTRACT_FINGERPRINT_FAILED",
+                    Some(key),
+                    format!("cannot canonicalize contract.yaml: {error}"),
+                )),
+            }
         }
     }
 }

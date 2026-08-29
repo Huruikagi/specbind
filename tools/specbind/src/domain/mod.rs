@@ -1,5 +1,6 @@
 //! Semantically validated domain models for structured `SpecBind` artifacts.
 
+pub mod contract;
 mod diagnostics;
 pub mod spec;
 pub mod tasks;

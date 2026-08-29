@@ -58,44 +58,36 @@ If the answer is no, the information belongs in requirements, design, tasks, or 
 
 ## Canonical representation
 
-[Decision 0056](./decisions/0056-canonical-contract-markdown.md) defines the contract as an OKF concept document whose semantic contract is canonical Markdown parsed through a Markdown syntax tree. Frontmatter identifies the profile with `type: SpecBind Contract`; it does not duplicate the contract entries.
+[Decision 0155](./decisions/0155-versioned-yaml-contract-artifact.md) defines the Contract as the fixed, strict `<specDir>/specs/<spec>/contract.yaml` structured artifact. Its versioned Rust wire model generates the public `contract/v1` Schema; it is not an OKF Markdown concept.
 
-The body has one `# Contract` heading and exactly these level-two sections in order: Owns, Exports, Consumes, Invariants, and File Ownership. Each section contains only a flat unordered list and may be empty without placeholder text. Structural headings remain canonical English tokens while descriptions may use either supported product language.
+Every entry has a stable lowercase kebab-case ID. IDs are unique within their array and never derive from list position. The canonical shape is:
 
-Every entry begins with a stable lowercase kebab-case ID in inline code. IDs are unique within their section and never derive from list position. The canonical shape is:
-
-```markdown
----
-type: SpecBind Contract
----
-# Contract
-
-## Owns
-
-- `part-compatibility-evaluation` — Evaluates compatibility between selected parts.
-
-## Exports
-
-- `compatibility-result` — Result consumed by build presentation.
-- `compatibility-rule-provider` — Supplies compatibility rules.
-
-## Consumes
-
-- `part-type` → `part-catalog/exports/part-type`
-- `selected-parts` → `build-state/exports/selected-parts`
-
-## Invariants
-
-- `no-selection-mutation` — Compatibility evaluation never mutates selected parts.
-
-## File Ownership
-
-- `compatibility-domain` — `src/domain/compatibility/**`
+```yaml
+schema_version: 1
+owns:
+  - id: part-compatibility-evaluation
+    description: Evaluates compatibility between selected parts.
+exports:
+  - id: compatibility-result
+    description: Result consumed by build presentation.
+  - id: compatibility-rule-provider
+    description: Supplies compatibility rules.
+consumes:
+  - id: part-type
+    target: { spec: part-catalog, section: exports, id: part-type }
+  - id: selected-parts
+    target: { spec: build-state, section: exports, id: selected-parts }
+invariants:
+  - id: no-selection-mutation
+    description: Compatibility evaluation never mutates selected parts.
+file_ownership:
+  - id: compatibility-domain
+    paths: [src/domain/compatibility/**]
 ```
 
-Consumes targets use `<canonical-spec>/<target-section>/<target-id>`, where the target section is `owns`, `exports`, `invariants`, or `file-ownership`; a `consumes` entry never targets another `consumes` entry. File Ownership paths are SpecBind-project-root-relative POSIX values attached to a stable entry ID. V1 accepts exact paths and directory subtrees ending in `/**` only. A path move therefore updates the value without changing identity when the semantic boundary remains the same.
+Consumes targets contain a canonical Spec, target section, and target entry ID. The target section is `owns`, `exports`, `invariants`, or `file-ownership`; a `consumes` entry never targets another `consumes` entry. File Ownership paths are SpecBind-project-root-relative POSIX values attached to a stable entry ID. V1 accepts exact paths and directory subtrees ending in `/**` only. A path move therefore updates the value without changing identity when the semantic boundary remains the same.
 
-The canonical empty contract retains all five headings and has no list items. A changed description, reordered item, or path move does not create a new identity when the meaning is unchanged; a semantic replacement receives a new ID.
+The canonical empty Contract retains all five arrays as empty arrays. Reordering entries or paths and changing YAML presentation does not change its semantic fingerprint. A changed description or path value is still a seam change, while a semantic replacement receives a new ID.
 
 ### File Ownership scope
 
@@ -173,7 +165,7 @@ Relevant documents may be read for migration diagnosis, but missing-Contract fal
 
 ## Customization boundary
 
-The default `settings/templates/specs/contract.md` and related shared rules are project-customizable under [Decision 0008](./decisions/0008-customization-surface.md). The filename is only a default under Decision 0057. Customization may adjust prose and presentation but must preserve the accepted machine-readable identity and reference contract. The CLI reports incompatible customization explicitly.
+The default `settings/templates/specs/contract.yaml` and related shared rules are project-customizable under [Decision 0008](./decisions/0008-customization-surface.md). The fixed filename is part of Decision 0155. A project template may choose initial semantic entries but must conform to the closed versioned Schema; the CLI reports incompatible customization explicitly.
 
 ## V1 semantic policy boundary
 

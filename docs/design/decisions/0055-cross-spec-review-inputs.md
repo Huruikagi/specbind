@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 replaces complete-Markdown Contract fingerprints with normalized
+typed `contract.yaml` fingerprints. The complete Contract-set and authoritative
+input-resolution requirements remain unchanged.
+
 Decision 0078 narrows the Roadmap projection to Spec-backed scope, removes Tasks from optional deep inputs, and removes classification input.
 
 ## Context

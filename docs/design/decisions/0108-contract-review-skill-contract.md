@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+Decision 0155 replaces historical type-based Contract discovery with a read of
+the fixed `<specDir>/specs/<spec>/contract.yaml` path at the baseline revision.
+
 ## Context
 
 The milestone-wide contract review is fixed in more detail than any other phase.

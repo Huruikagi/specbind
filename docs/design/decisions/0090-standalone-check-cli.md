@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 changes Contract diagnostics from a discovered Markdown path to
+the fixed `specs/<spec>/contract.yaml` locator; the graph check contract remains
+unchanged.
+
 ## Context
 
 [Decision 0011](./0011-cross-spec-contract.md) and the [CLI and agent boundary](../cli-agent-boundary.md) proposed a deterministic `specbind check` family as the first mechanical replacement for ad hoc grep and shell inspection. The Rust read models are complete: the traceability resolver checks Requirement existence plus active Design and Task coverage, and the Contract graph resolves the project-wide dependency set while separating structural errors from review warnings.

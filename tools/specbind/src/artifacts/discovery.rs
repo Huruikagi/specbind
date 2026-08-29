@@ -12,13 +12,15 @@ use walkdir::WalkDir;
 use super::{
     Artifact, ArtifactInventory, ArtifactKind, DiscoveryIssue, SpecDiscovery, SpecEntryFault,
 };
-use crate::{contract, design, domain, instruction, requirements};
+use crate::{
+    design, domain, instruction, requirements,
+    schema::runtime::{self, LoadError},
+};
 
 const TYPE_BRIEF: &str = "SpecBind Brief";
 const TYPE_RESEARCH: &str = "SpecBind Research";
 const TYPE_REQUIREMENTS: &str = "SpecBind Requirements";
 const TYPE_DESIGN: &str = "SpecBind Design";
-const TYPE_CONTRACT: &str = "SpecBind Contract";
 const TYPE_IMPLEMENTATION_NOTES: &str = "SpecBind Implementation Notes";
 
 pub(super) fn validate_spec_directory(
@@ -152,7 +154,10 @@ pub fn discover_spec(specbind_root: &Path, canonical_spec: &str) -> ArtifactInve
         return inventory(vec![], issues);
     };
 
-    let candidates = scan_concepts(specbind_root, &active_spec_dir, &mut issues);
+    let mut candidates = scan_concepts(specbind_root, &active_spec_dir, &mut issues);
+    if let Some(contract) = inspect_contract_yaml(specbind_root, &active_spec_dir, &mut issues) {
+        candidates.push(contract);
+    }
     let mut by_selector = BTreeMap::<String, Vec<Artifact>>::new();
     for artifact in candidates {
         by_selector
@@ -379,21 +384,6 @@ fn validate_profile(
             )
         }));
     }
-    if kind == ArtifactKind::Contract
-        && let Err(error) = contract::parse(&semantic_body)
-    {
-        issues.extend(error.issues.into_iter().map(|body_issue| {
-            issue(
-                body_issue.code,
-                Some(path.clone()),
-                format!(
-                    "line {}: {}",
-                    body_start_line + body_issue.line - 1,
-                    body_issue.message
-                ),
-            )
-        }));
-    }
     if kind == ArtifactKind::Brief && !has_substantive_content(body) {
         issues.push(issue(
             "ARTIFACT_BRIEF_BODY_EMPTY",
@@ -535,10 +525,85 @@ pub(crate) fn recognized_kind(value: &str) -> Option<ArtifactKind> {
         TYPE_RESEARCH => Some(ArtifactKind::Research),
         TYPE_REQUIREMENTS => Some(ArtifactKind::Requirements),
         TYPE_DESIGN => Some(ArtifactKind::Design),
-        TYPE_CONTRACT => Some(ArtifactKind::Contract),
         TYPE_IMPLEMENTATION_NOTES => Some(ArtifactKind::ImplementationNotes),
         _ => None,
     }
+}
+
+fn inspect_contract_yaml(
+    specbind_root: &Path,
+    active_spec_dir: &Path,
+    issues: &mut Vec<DiscoveryIssue>,
+) -> Option<Artifact> {
+    let native_path = active_spec_dir.join("contract.yaml");
+    let path = relative_utf8(specbind_root, &native_path).ok()?;
+    let metadata = match fs::symlink_metadata(&native_path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return None,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CONTRACT_READ_FAILED",
+                Some(path),
+                format!("cannot inspect contract.yaml: {error}"),
+            ));
+            return None;
+        }
+    };
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        issues.push(issue(
+            "ARTIFACT_CONTRACT_NOT_REGULAR",
+            Some(path.clone()),
+            "contract.yaml must be a regular non-symlink file",
+        ));
+        return None;
+    }
+    let input = match fs::read_to_string(&native_path) {
+        Ok(input) => input,
+        Err(error) => {
+            issues.push(issue(
+                "ARTIFACT_CONTRACT_READ_FAILED",
+                Some(path.clone()),
+                format!("cannot read contract.yaml as UTF-8: {error}"),
+            ));
+            return None;
+        }
+    };
+    match runtime::load_contract(&input) {
+        Ok(wire) => {
+            if let Err(error) = domain::contract::Contract::try_from(wire) {
+                for semantic in error.issues {
+                    issues.push(issue(
+                        semantic.code,
+                        Some(path.clone()),
+                        format!("{}: {}", semantic.path, semantic.message),
+                    ));
+                }
+            }
+        }
+        Err(LoadError::Schema {
+            issues: schema_issues,
+        }) => {
+            for schema_issue in schema_issues {
+                issues.push(issue(
+                    "ARTIFACT_CONTRACT_SCHEMA_INVALID",
+                    Some(path.clone()),
+                    format!("{}: {}", schema_issue.instance_path, schema_issue.message),
+                ));
+            }
+        }
+        Err(error) => issues.push(issue(
+            "ARTIFACT_CONTRACT_INVALID",
+            Some(path.clone()),
+            error.to_string(),
+        )),
+    }
+    Some(Artifact {
+        selector: "contract".to_owned(),
+        artifact_type: "SpecBind Contract".to_owned(),
+        path,
+        artifact_id: None,
+        kind: ArtifactKind::Contract,
+    })
 }
 
 pub(crate) fn collection_id(kind: ArtifactKind, mapping: &Map<String, Value>) -> Option<&str> {

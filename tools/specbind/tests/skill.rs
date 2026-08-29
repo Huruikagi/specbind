@@ -387,9 +387,9 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
         .expect("body");
 
     assert!(body.contains("`CONTRACT_GRAPH_EXPORT_UNCONSUMED` is also a warning"));
-    assert!(
-        body.contains("An existing export that this change does not alter stays byte-identical")
-    );
+    assert!(body.contains(
+        "An existing export that this change does not alter stays semantically unchanged"
+    ));
     assert!(body.contains("do not\n  retire an unrelated seam merely to silence the check"));
     assert!(
         body.contains("For an export this change adds or alters, name the managed or external")
@@ -582,7 +582,7 @@ fn task_review_puts_its_no_write_rule_before_commands() {
 }
 
 #[test]
-fn contract_review_uses_scope_and_type_based_historical_discovery() {
+fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     let body = skill::find("specbind-contract-review")
         .expect("contract review skill")
         .body()
@@ -590,13 +590,13 @@ fn contract_review_uses_scope_and_type_based_historical_discovery() {
 
     assert!(body.contains("specbind milestone scope"));
     assert!(body.contains("`Status: not_applicable`"));
-    assert!(body.contains("git ls-tree -r --name-only <baseline>"));
-    assert!(body.contains("`type` is `SpecBind Contract`"));
+    assert!(body.contains("specbind schema read contract/v1"));
+    assert!(body.contains("git show <baseline>:<specDir>/specs/<spec>/contract.yaml"));
     assert!(body.contains("Do not ask the user to repeat a decision already explicit"));
     assert!(
         body.contains("Ask only when the impact introduces a choice the request did not settle")
     );
-    assert!(!body.contains("git show <baseline>:.specbind/specs/<spec>/contract.md"));
+    assert!(!body.contains("git ls-tree -r --name-only <baseline>"));
 }
 
 #[test]

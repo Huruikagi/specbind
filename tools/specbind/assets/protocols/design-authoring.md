@@ -135,9 +135,9 @@ about which boundaries actually matter.
 When membership is genuinely unclear, ask what a consumer would be relying on if
 the entry were absent. If nothing outside this Spec could notice, leave it out.
 
-A Spec with no cross-spec seams has an empty Contract with all five headings and
-no entries. That is a complete, correct Contract and a deliberate statement; it
-is not a placeholder to be filled in later.
+A Spec with no cross-spec seams has a `contract.yaml` with all five entry arrays
+present and empty. That is a complete, correct Contract and a deliberate
+statement; it is not a placeholder to be filled in later.
 
 ## The document stands alone
 

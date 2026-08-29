@@ -698,7 +698,7 @@ fn build_design(
     if !design.keys().any(|key| key == "contract") {
         issues.push(issue(
             "SPEC_DESIGN_CONTRACT_MISSING",
-            Some(format!("specs/{canonical_spec}/contract.md")),
+            Some(format!("specs/{canonical_spec}/contract.yaml")),
             "design approval requires the singleton Contract artifact",
         ));
     }

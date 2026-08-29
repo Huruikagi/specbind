@@ -65,7 +65,7 @@ Spec-backed itemの成果物には、リリース後も残るものと、Milesto
 
 | 種類 | 代表例 | ライフサイクル |
 | --- | --- | --- |
-| 永続 | `spec.yaml`、`requirements.md`、`design.md`、`contract.md`、`log.md` | Specの現在の姿と履歴として残る |
+| 永続 | `spec.yaml`、`requirements.md`、`design.md`、`contract.yaml`、`log.md` | Specの現在の姿と履歴として残る |
 | Milestone固有 | `brief.md`、`research.md`、`tasks.yaml` | 進行中の変更を進めるために使い、リリース完了時に片付ける |
 | プロジェクト全体 | `steering/roadmap.md`、Steering文書、Contract review | 複数のSpecにまたがるスコープと判断を保持する |
 

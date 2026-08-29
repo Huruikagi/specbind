@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 removes the Contract from the OKF Markdown artifact set and gives
+it the fixed structured `contract.yaml` representation. Other managed Markdown
+profiles continue to follow this decision.
+
 ## Context
 
 SpecBind needs documents that remain comfortable for humans and agents to read while exposing a small amount of metadata to deterministic CLI operations. A private Markdown grammar or an ad hoc frontmatter convention would create another format for producers and consumers to learn.

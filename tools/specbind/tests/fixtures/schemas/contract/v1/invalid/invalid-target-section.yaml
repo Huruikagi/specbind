@@ -1,0 +1,11 @@
+schema_version: 1
+owns: []
+exports: []
+consumes:
+  - id: dependency
+    target:
+      spec: catalog
+      section: consumes
+      id: value
+invariants: []
+file_ownership: []

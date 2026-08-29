@@ -203,30 +203,17 @@ Payment, fulfilment, and anything after an order is placed.
 1. Reading a cart returns every SKU it holds with its current quantity.
 2. Reading a cart that holds nothing returns an empty result rather than failing.
 EOF
-cat > "$spec_dir/specs/cart/contract.md" <<'EOF'
----
-type: SpecBind Contract
----
-
-# Contract
-
-## Owns
-
-- `cart-contents` — the SKUs and quantities a customer intends to buy
-
-## Exports
-
-- `add-item` — record an intended purchase
-
-## Consumes
-
-## Invariants
-
-- `positive-quantity` — A cart holds no SKU at a quantity below one.
-
-## File Ownership
-
-- `cart-module` — `src/cart.py`
+cat > "$spec_dir/specs/cart/contract.yaml" <<'EOF'
+schema_version: 1
+owns:
+  - { id: cart-contents, description: the SKUs and quantities a customer intends to buy }
+exports:
+  - { id: add-item, description: record an intended purchase }
+consumes: []
+invariants:
+  - { id: positive-quantity, description: A cart holds no SKU at a quantity below one. }
+file_ownership:
+  - { id: cart-module, paths: [src/cart.py] }
 EOF
 
 # The skills invoke `specbind` as a bare command, because a real installed

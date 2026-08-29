@@ -1,6 +1,11 @@
 use schemars::{JsonSchema, Schema, generate::SchemaSettings};
 
-use super::{scope, spec, tasks};
+use super::{contract, scope, spec, tasks};
+
+#[must_use]
+pub fn contract_v1() -> Schema {
+    generate::<contract::v1::ContractDocument>()
+}
 
 #[must_use]
 pub fn spec_v1() -> Schema {

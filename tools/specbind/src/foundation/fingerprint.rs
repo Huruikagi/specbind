@@ -6,7 +6,7 @@ use std::fmt;
 use sha2::{Digest, Sha256};
 
 use crate::{
-    domain::tasks::Tasks,
+    domain::{contract::Contract, tasks::Tasks},
     roadmap::RoadmapDocument,
     schema::{spec, tasks},
 };
@@ -41,6 +41,34 @@ impl Fingerprint {
     pub fn task_plan(document: &Tasks) -> Result<Self, serde_json::Error> {
         let mut normalized = document.as_wire().plan.clone();
         normalize_task_plan(&mut normalized);
+        serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
+    }
+
+    /// Fingerprints the semantic `contract.yaml` projection using JCS.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the schema-owned contract cannot be serialized to JCS.
+    pub fn contract(document: &Contract) -> Result<Self, serde_json::Error> {
+        let mut normalized = document.as_wire().clone();
+        normalized
+            .owns
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        normalized
+            .exports
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        normalized
+            .consumes
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        normalized
+            .invariants
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        normalized
+            .file_ownership
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        for entry in &mut normalized.file_ownership {
+            sort_strings(&mut entry.paths);
+        }
         serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
     }
 

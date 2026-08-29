@@ -457,15 +457,4 @@ mod tests {
         assert!(masked.starts_with("before\n"));
         assert!(masked.ends_with("after\n"));
     }
-
-    #[test]
-    fn masks_durable_guidance_out_of_the_contract_grammar() {
-        let template = include_str!("../../assets/templates/en/specs/contract.md");
-        let body = template.split_once("\n---\n").expect("frontmatter").1;
-        let masked = mask(body);
-        assert!(
-            crate::contract::parse(&masked).is_ok(),
-            "masked body:\n{masked}"
-        );
-    }
 }

@@ -55,7 +55,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/documents/requirements.rs` — Markdown AST validation and canonical Requirement ID extraction
 - `tools/specbind/src/documents/design.rs` — Design emphasis-marker extraction and Front Matter traceability equality
 - `tools/specbind/src/documents/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
-- `tools/specbind/src/documents/contract.rs` — canonical Contract Markdown parsing and artifact-local semantic validation
+- `tools/specbind/src/schema/contract.rs` and `domain/contract.rs` — versioned Contract wire model and artifact-local semantic validation
 - `tools/specbind/src/read_model/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
 - `tools/specbind/src/documents/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
@@ -180,7 +180,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0053](./design/decisions/0053-minimal-cross-spec-review-state.md) | Superseded by 0078 | Structured classifications paired with an AI-authored review |
 | [0054](./design/decisions/0054-milestone-baseline-revision.md) | Accepted | Milestone baseline revision as the contract-diff anchor |
 | [0055](./design/decisions/0055-cross-spec-review-inputs.md) | Accepted | Contract-first review inputs |
-| [0056](./design/decisions/0056-canonical-contract-markdown.md) | Accepted | Canonical five-section Markdown contract manifests |
+| [0056](./design/decisions/0056-canonical-contract-markdown.md) | Superseded by 0155 | Canonical five-section Markdown contract manifests |
 | [0057](./design/decisions/0057-type-based-artifact-discovery.md) | Accepted | Type-based OKF artifact discovery |
 | [0058](./design/decisions/0058-artifact-inventory-read-model.md) | Accepted | Artifact inventory separated from raw content reads |
 | [0059](./design/decisions/0059-okf-artifact-templates.md) | Accepted | Final-form OKF documents as artifact templates |
@@ -279,3 +279,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |
 | [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Accepted | One quick-plan orchestrator with explicit named and all-Spec scope modes |
 | [0154](./design/decisions/0154-guided-configuration-workflow.md) | Accepted | Completing guided configuration workflow, summary command, and aftercare |
+| [0155](./design/decisions/0155-versioned-yaml-contract-artifact.md) | Accepted | Versioned strict YAML Contract artifact and semantic fingerprint |

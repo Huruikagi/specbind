@@ -136,12 +136,12 @@ fn discover_project_templates(specbind_root: &Path) -> (Vec<Template>, Vec<Disco
             ));
             continue;
         }
-        if !file_type.is_file()
-            || entry
-                .path()
-                .extension()
-                .is_none_or(|extension| extension != "md")
-        {
+        let is_markdown = entry
+            .path()
+            .extension()
+            .is_some_and(|extension| extension == "md");
+        let is_contract = relative(&root, entry.path()).is_some_and(|path| path == "contract.yaml");
+        if !file_type.is_file() || (!is_markdown && !is_contract) {
             continue;
         }
         let (Some(template_path), Some(output_path)) = (
@@ -214,6 +214,21 @@ fn resolve_template(
     output_path: Utf8PathBuf,
 ) -> Result<(Option<Template>, Vec<DiscoveryIssue>), Vec<DiscoveryIssue>> {
     let mut issues = validate_output_path(&output_path, template_path);
+    if output_path == "contract.yaml" {
+        issues.extend(validate_contract_template(content, template_path));
+        return Ok((
+            Some(Template {
+                source,
+                selector: "contract".to_owned(),
+                artifact_type: "SpecBind Contract".to_owned(),
+                artifact_id: None,
+                template_path: template_path.clone(),
+                output_path,
+                kind: ArtifactKind::Contract,
+            }),
+            issues,
+        ));
+    }
     let (frontmatter, body) = split_frontmatter(content).map_err(|message| {
         vec![issue(
             "TEMPLATE_FRONTMATTER_INVALID",
@@ -288,6 +303,29 @@ fn resolve_template(
     ))
 }
 
+fn validate_contract_template(content: &str, template_path: &Utf8PathBuf) -> Vec<DiscoveryIssue> {
+    let mut issues = Vec::new();
+    match crate::schema::runtime::load_contract(content) {
+        Ok(wire) => {
+            if let Err(error) = crate::domain::contract::Contract::try_from(wire) {
+                for semantic in error.issues {
+                    issues.push(issue(
+                        semantic.code,
+                        Some(template_path.clone()),
+                        format!("{}: {}", semantic.path, semantic.message),
+                    ));
+                }
+            }
+        }
+        Err(error) => issues.push(issue(
+            "TEMPLATE_CONTRACT_INVALID",
+            Some(template_path.clone()),
+            error.to_string(),
+        )),
+    }
+    issues
+}
+
 /// Enforces the Decision 0059 template-only profile rules.
 ///
 /// A `SpecBind Design` template omits the live-only `requirement_ids` mapping,
@@ -299,10 +337,7 @@ fn validate_template_profile(
 ) -> Vec<DiscoveryIssue> {
     let mut issues = Vec::new();
     match kind {
-        ArtifactKind::Brief
-        | ArtifactKind::Research
-        | ArtifactKind::Requirements
-        | ArtifactKind::Contract => {
+        ArtifactKind::Brief | ArtifactKind::Research | ArtifactKind::Requirements => {
             if mapping.contains_key("artifact_id") {
                 issues.push(issue(
                     "TEMPLATE_SINGLETON_ID_FORBIDDEN",
@@ -311,7 +346,7 @@ fn validate_template_profile(
                 ));
             }
         }
-        ArtifactKind::Design | ArtifactKind::ImplementationNotes => {}
+        ArtifactKind::Design | ArtifactKind::Contract | ArtifactKind::ImplementationNotes => {}
     }
     if kind == ArtifactKind::Design && mapping.contains_key("requirement_ids") {
         issues.push(issue(

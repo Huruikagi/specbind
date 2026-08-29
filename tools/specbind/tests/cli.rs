@@ -46,8 +46,8 @@ fn write_template_fixture(root: &Path) {
     );
     write(
         root,
-        ".specbind/settings/templates/specs/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/settings/templates/specs/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root,
@@ -128,8 +128,8 @@ fn write_gate_fixture(root: &Path) {
     );
     write(
         root,
-        ".specbind/specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root,
@@ -171,8 +171,8 @@ fn write_review_fixture(root: &Path) {
     );
     write(
         root,
-        ".specbind/specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root,
@@ -289,8 +289,8 @@ fn write_status_fixture(root: &Path) {
     );
     write(
         root,
-        ".specbind/specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root,

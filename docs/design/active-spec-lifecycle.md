@@ -106,7 +106,7 @@ Within `spec.yaml`, `active_change.requirement_ids: null` means the set has not 
 
 ## Cross-spec contract
 
-Every active spec maintains one discovered `SpecBind Contract` artifact as the current source of truth for seams other specs may observe or consume. It persists across releases and changes alongside the discovered design set; see [Cross-spec contracts](./cross-spec-contracts.md), [Decision 0011](./decisions/0011-cross-spec-contract.md), and [Decision 0057](./decisions/0057-type-based-artifact-discovery.md).
+Every active spec maintains one fixed `contract.yaml` artifact as the current source of truth for seams other specs may observe or consume. It persists across releases and changes alongside the discovered design set; see [Cross-spec contracts](./cross-spec-contracts.md), [Decision 0011](./decisions/0011-cross-spec-contract.md), and [Decision 0155](./decisions/0155-versioned-yaml-contract-artifact.md).
 
 The contract contains only stable ownership, exports, consumes, cross-spec invariants, and File Ownership entries. Design review confirms that internal design implements the contract and that an active change has not omitted a required contract update. CLI checks validate structure and references; agent review determines semantic compatibility and downstream revalidation scope.
 

@@ -433,12 +433,12 @@ fn strip_instructions(content: &str) -> String {
 #[test]
 fn project_owned_templates_override_the_embedded_default() {
     let root: TempDir = tempfile::tempdir().expect("temporary SpecBind root");
-    let override_path = root.path().join("settings/templates/specs/contract.md");
+    let override_path = root.path().join("settings/templates/specs/contract.yaml");
     fs::create_dir_all(override_path.parent().expect("template parent"))
         .expect("create template directory");
     fs::write(
         &override_path,
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     )
     .expect("write project template");
 
@@ -452,7 +452,7 @@ fn project_owned_templates_override_the_embedded_default() {
     assert_eq!(contract.source, TemplateSource::Project);
     assert_eq!(
         contract.template_path.as_str(),
-        "settings/templates/specs/contract.md"
+        "settings/templates/specs/contract.yaml"
     );
     assert_eq!(
         inventory.templates.len(),

@@ -3,7 +3,9 @@ use std::path::Path;
 
 use specbind::{
     artifacts::{ArtifactKind, discover_spec, resolve_gate_inputs},
+    contract::Contract,
     fingerprint::Fingerprint,
+    schema::runtime,
 };
 use tempfile::TempDir;
 
@@ -37,8 +39,8 @@ fn discovers_recognized_artifacts_in_inventory_order() {
     );
     write(
         root.path(),
-        "specs/example/contract.md",
-        "---\ntype: SpecBind Contract\nproject_default: &default stable\nproject_copy: *default\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/example/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
@@ -94,8 +96,8 @@ fn reports_invalid_concepts_and_keeps_valid_partial_inventory() {
     let root = root();
     write(
         root.path(),
-        "specs/example/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/example/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
@@ -249,26 +251,77 @@ fn reports_design_marker_mismatches_with_document_lines() {
 }
 
 #[test]
-fn reports_contract_body_issues_with_document_lines() {
+fn reports_contract_yaml_semantic_paths() {
     let root = root();
     write(
         root.path(),
-        "specs/example/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n- `Bad_ID` — Description\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        "specs/example/contract.yaml",
+        "schema_version: 1\nowns:\n  - { id: entry, description: ' ' }\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
 
     let inventory = discover_spec(root.path(), "example");
     let issue = inventory
         .issues
         .iter()
-        .find(|issue| issue.code == "CONTRACT_DESCRIBED_ENTRY_INVALID")
-        .expect("Contract body diagnostic");
+        .find(|issue| issue.code == "CONTRACT_DESCRIPTION_EMPTY")
+        .expect("Contract semantic diagnostic");
 
     assert_eq!(
         issue.path.as_deref(),
-        Some("specs/example/contract.md".into())
+        Some("specs/example/contract.yaml".into())
     );
-    assert!(issue.message.starts_with("line 8:"), "{}", issue.message);
+    assert!(
+        issue.message.starts_with("/owns/0/description:"),
+        "{}",
+        issue.message
+    );
+}
+
+#[test]
+fn contract_is_the_fixed_yaml_singleton_not_a_markdown_type() {
+    let root = root();
+    write(
+        root.path(),
+        "specs/example/contract.md",
+        "---\ntype: SpecBind Contract\n---\n# Legacy\n",
+    );
+    let legacy = discover_spec(root.path(), "example");
+    assert!(
+        !legacy
+            .artifacts
+            .iter()
+            .any(|artifact| artifact.kind == ArtifactKind::Contract)
+    );
+
+    write(
+        root.path(),
+        "specs/example/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    let current = discover_spec(root.path(), "example");
+    let contract = current
+        .artifacts
+        .iter()
+        .find(|artifact| artifact.kind == ArtifactKind::Contract)
+        .expect("fixed Contract");
+    assert_eq!(contract.path.as_str(), "specs/example/contract.yaml");
+}
+
+#[test]
+fn reports_contract_schema_paths_for_unknown_fields() {
+    let root = root();
+    write(
+        root.path(),
+        "specs/example/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\nnotes: prose\n",
+    );
+    let inventory = discover_spec(root.path(), "example");
+    let issue = inventory
+        .issues
+        .iter()
+        .find(|issue| issue.code == "ARTIFACT_CONTRACT_SCHEMA_INVALID")
+        .expect("schema diagnostic");
+    assert!(issue.message.contains("notes"), "{}", issue.message);
 }
 
 #[test]
@@ -286,10 +339,10 @@ fn rejects_invalid_spec_ids_and_missing_directories() {
 fn resolves_discovered_markdown_and_fixed_task_plan_inputs() {
     let root = root();
     let requirements = "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Example\n\n#### Acceptance Criteria\n\n1. It works.\n";
-    let contract = "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n";
+    let contract = "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n";
     let design = "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n_Requirements: 1.1_\n";
     write(root.path(), "specs/example/requirements.md", requirements);
-    write(root.path(), "specs/example/contract.md", contract);
+    write(root.path(), "specs/example/contract.yaml", contract);
     write(root.path(), "specs/example/design.md", design);
     write(
         root.path(),
@@ -307,7 +360,11 @@ fn resolves_discovered_markdown_and_fixed_task_plan_inputs() {
     let current_design = resolution.inputs.design.expect("design input set");
     assert_eq!(
         current_design["contract"],
-        Fingerprint::markdown(contract.as_bytes())
+        Fingerprint::contract(
+            &Contract::try_from(runtime::load_contract(contract).expect("contract wire"))
+                .expect("contract semantics")
+        )
+        .expect("contract fingerprint")
     );
     assert_eq!(
         current_design["design/main"],

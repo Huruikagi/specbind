@@ -67,7 +67,8 @@ user-visible screen or interaction responsibility.
 
 Every template instruction explicitly names `create`, `maintain`, or `consume`.
 Materialization removes `create` and carries the two durable scopes into the
-live artifact. `artifact read` and `steering read` preserve exact raw Markdown
+live artifact. `artifact read` preserves exact raw artifact bytes, and
+`steering read` preserves exact raw Markdown
 by default and accept `--for maintain` or `--for consume` to omit the unrelated
 durable instruction scope. `rule list/read` expose the six fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
@@ -111,7 +112,7 @@ The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 | `spec.yaml` | Persistent structured lifecycle, active-change, Requirement-selection, gate, and completion state maintained only through guarded CLI operations. |
 | `requirements.md` | Persistent complete current Requirements maintained by `specbind-requirements`. |
 | `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by `specbind-design`; `artifact_id` is its stable selector. |
-| `contract.md` | Persistent canonical five-section Contract maintained with Design and reviewed milestone-wide. |
+| `contract.yaml` | Persistent strict versioned Contract maintained with Design and reviewed milestone-wide. |
 | `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
 | `brief.md` | Active-milestone input authored by discovery and removed by successful release finalization. |
 | `research.md` | Optional active-milestone gap-analysis result replaced by `specbind-gap-analysis` and removed by finalization. |
@@ -120,7 +121,7 @@ The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 
 Markdown artifacts are discovered by their OKF type and, for collections, their
 `artifact_id`; the default filenames above are materialization paths rather than
-general semantic identity. `spec.yaml`, `tasks.yaml`, `roadmap.md`, and the
+general semantic identity. `spec.yaml`, `contract.yaml`, `tasks.yaml`, `roadmap.md`, and the
 Contract-review state keep their accepted fixed structured paths.
 
 ## Sources of truth

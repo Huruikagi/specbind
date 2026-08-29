@@ -22,6 +22,15 @@ fn loads_tasks_v1_into_its_wire_model() {
 }
 
 #[test]
+fn loads_contract_v1_into_its_wire_model() {
+    let document = runtime::load_contract(
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    )
+    .expect("minimal Contract should load");
+    assert!(document.exports.is_empty());
+}
+
+#[test]
 fn reports_yaml_layer_errors() {
     let error = runtime::load_spec("schema_version: 1\nschema_version: 1\nactive_change: null\n")
         .expect_err("duplicate keys must fail in the YAML layer");

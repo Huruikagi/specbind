@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0155 replaces the embedded `contract.md` scaffold with the strict
+`contract.yaml` v1 empty shape. Contract remains outside the installed
+project-owned default template set.
+
 Decision 0152 later adds the standard installed `design/ui` candidate and its
 required selection Rule. UI remains conditional per Spec rather than becoming a
 mandatory live artifact.

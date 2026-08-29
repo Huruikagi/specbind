@@ -460,11 +460,11 @@ fn validate_participants(
                 "an updated Spec must be idle before joining a milestone",
             ));
         }
-        let contract = specbind_root.join(format!("specs/{}/contract.md", item.spec));
+        let contract = specbind_root.join(format!("specs/{}/contract.yaml", item.spec));
         if fs::symlink_metadata(&contract).is_err() {
             issues.push(issue(
                 "MILESTONE_SPEC_CONTRACT_MISSING",
-                Some(format!("specs/{}/contract.md", item.spec)),
+                Some(format!("specs/{}/contract.yaml", item.spec)),
                 "an updated Spec requires its Contract as the baseline before-state",
             ));
         }

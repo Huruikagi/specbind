@@ -5,13 +5,20 @@ use std::{
 
 use serde::de::DeserializeOwned;
 use specbind::schema::{
-    SCOPE_V1_SCHEMA_JSON, SPEC_V1_SCHEMA_JSON, TASKS_V1_SCHEMA_JSON, generate, spec, tasks,
+    CONTRACT_V1_SCHEMA_JSON, SCOPE_V1_SCHEMA_JSON, SPEC_V1_SCHEMA_JSON, TASKS_V1_SCHEMA_JSON,
+    contract, generate, spec, tasks,
 };
 use specbind::yaml;
 
 #[test]
 fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
     let cases = [
+        (
+            "contract/v1",
+            CONTRACT_V1_SCHEMA_JSON,
+            generate::contract_v1(),
+            "/$defs/SchemaVersion/const",
+        ),
         (
             "spec/v1",
             SPEC_V1_SCHEMA_JSON,
@@ -46,6 +53,11 @@ fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
         jsonschema::draft202012::meta::validate(&value)
             .unwrap_or_else(|error| panic!("{name} schema is not valid Draft 2020-12: {error}"));
     }
+}
+
+#[test]
+fn contract_v1_fixtures_conform() {
+    assert_fixture_set::<contract::v1::ContractDocument>("contract/v1", CONTRACT_V1_SCHEMA_JSON);
 }
 
 #[test]

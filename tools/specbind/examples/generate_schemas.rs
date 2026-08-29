@@ -11,6 +11,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     write_or_check(
+        &root.join("schemas/contract/v1.schema.json"),
+        &generate::to_pretty_json(&generate::contract_v1())?,
+        check,
+    )?;
+    write_or_check(
         &root.join("schemas/spec/v1.schema.json"),
         &generate::to_pretty_json(&generate::spec_v1())?,
         check,

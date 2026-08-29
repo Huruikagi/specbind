@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpecBind Contract artifact v1",
+  "description": "Runtime contract for the strict contract.yaml v1 persistent cross-Spec seam manifest.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "$ref": "#/$defs/SchemaVersion"
+    },
+    "owns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DescribedEntry"
+      }
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DescribedEntry"
+      }
+    },
+    "consumes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ConsumesEntry"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DescribedEntry"
+      }
+    },
+    "file_ownership": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FileOwnershipEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "owns",
+    "exports",
+    "consumes",
+    "invariants",
+    "file_ownership"
+  ],
+  "$defs": {
+    "SchemaVersion": {
+      "type": "integer",
+      "format": "uint8",
+      "minimum": 0,
+      "maximum": 255,
+      "const": 1
+    },
+    "DescribedEntry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntryId"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description"
+      ]
+    },
+    "EntryId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "ConsumesEntry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntryId"
+        },
+        "target": {
+          "$ref": "#/$defs/ContractTarget"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "target"
+      ]
+    },
+    "ContractTarget": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "section": {
+          "$ref": "#/$defs/TargetSection"
+        },
+        "id": {
+          "$ref": "#/$defs/EntryId"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "spec",
+        "section",
+        "id"
+      ]
+    },
+    "TargetSection": {
+      "type": "string",
+      "enum": [
+        "owns",
+        "exports",
+        "invariants",
+        "file-ownership"
+      ]
+    },
+    "FileOwnershipEntry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntryId"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "paths"
+      ]
+    }
+  }
+}

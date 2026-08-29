@@ -349,7 +349,7 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
    ├─ brief.md
    ├─ requirements.md
    ├─ design.md
-   ├─ contract.md
+   ├─ contract.yaml
    └─ tasks.yaml
 ```
 

@@ -1,10 +1,43 @@
-use specbind::{domain::tasks::Tasks, fingerprint::Fingerprint, schema::runtime};
+use specbind::{
+    domain::{contract::Contract, tasks::Tasks},
+    fingerprint::Fingerprint,
+    schema::runtime,
+};
 
 fn tasks(input: &str) -> Tasks {
     runtime::load_tasks(input)
         .expect("task document is structurally valid")
         .try_into()
         .expect("task document is semantically valid")
+}
+
+fn contract(input: &str) -> Contract {
+    runtime::load_contract(input)
+        .expect("Contract is structurally valid")
+        .try_into()
+        .expect("Contract is semantically valid")
+}
+
+#[test]
+fn contract_fingerprint_ignores_entry_path_and_yaml_order_but_keeps_descriptions() {
+    let first = contract(
+        "schema_version: 1\nowns: []\nexports:\n  - { id: zed, description: Zed. }\n  - { id: alpha, description: Alpha. }\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: source, paths: [src/z, src/a] }\n",
+    );
+    let reordered = contract(
+        "file_ownership:\n  - { paths: [src/a, src/z], id: source }\ninvariants: []\nconsumes: []\nexports:\n  - { description: Alpha., id: alpha }\n  - { description: Zed., id: zed }\nowns: []\nschema_version: 1\n",
+    );
+    let changed = contract(
+        "schema_version: 1\nowns: []\nexports:\n  - { id: alpha, description: Changed. }\n  - { id: zed, description: Zed. }\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: source, paths: [src/a, src/z] }\n",
+    );
+    let fingerprint = Fingerprint::contract(&first).expect("Contract canonicalizes");
+    assert_eq!(
+        fingerprint,
+        Fingerprint::contract(&reordered).expect("Contract canonicalizes")
+    );
+    assert_ne!(
+        fingerprint,
+        Fingerprint::contract(&changed).expect("Contract canonicalizes")
+    );
 }
 
 #[test]

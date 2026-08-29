@@ -474,29 +474,19 @@ r4 | r5 | ds2 | ds3 | ds5 | x2)
             echo "1. Placing an order records every SKU the cart holds."
             echo "2. Placing an order from an empty cart is rejected."
         } > .specbind/specs/checkout/requirements.md
-        {
-            echo "---"
-            echo "type: SpecBind Contract"
-            echo "---"
-            echo
-            echo "# Contract"
-            echo
-            echo "## Owns"
-            echo
-            echo '- `placed-order` — the committed record of a purchase'
-            echo
-            echo "## Exports"
-            echo
-            echo "## Consumes"
-            echo
-            echo '- `cart-add` → `cart/exports/add-item` — replays a cart while placing an order'
-            echo
-            echo "## Invariants"
-            echo
-            echo "## File Ownership"
-            echo
-            echo '- `checkout-module` — `src/checkout.py`'
-        } > .specbind/specs/checkout/contract.md
+        cat > .specbind/specs/checkout/contract.yaml <<'EOF'
+schema_version: 1
+owns:
+  - { id: placed-order, description: the committed record of a purchase }
+exports: []
+consumes:
+  - id: cart-add
+    target: { spec: cart, section: exports, id: add-item }
+    description: replays a cart while placing an order
+invariants: []
+file_ownership:
+  - { id: checkout-module, paths: [src/checkout.py] }
+EOF
         expect "the seeded contract graph does not resolve" \
             'specbind check contracts'
         expect "checkout does not consume the cart export" \
@@ -510,8 +500,8 @@ r4 | r5 | ds2 | ds3 | ds5 | x2)
         # The contract is reduced before the gate is approved, so the approval
         # covers the removal. Approving first and editing after would leave a
         # stale gate and measure freshness instead of the seam.
-        awk '!/^- `add-item`/' .specbind/specs/cart/contract.md > contract.tmp
-        mv contract.tmp .specbind/specs/cart/contract.md
+        awk '!/id: add-item/' .specbind/specs/cart/contract.yaml > contract.tmp
+        mv contract.tmp .specbind/specs/cart/contract.yaml
         cart_design_approved
         expect "the cart export was not removed" \
             '! specbind artifact read cart contract | grep -q "add-item"'
@@ -611,7 +601,7 @@ ds1)
     expect "status does not aggregate the expected Design coverage" \
         'specbind spec status order | grep -q "Expected work: cover 3 active requirement(s) in Design"'
     expect "order already has a contract" \
-        '! test -e .specbind/specs/order/contract.md'
+        '! test -e .specbind/specs/order/contract.yaml'
     ;;
 
 ds7 | ds8)

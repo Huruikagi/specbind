@@ -265,6 +265,7 @@ absence of cross-spec impact.
 **No contract yet** — including every Spec this milestone created:
 
 ```sh
+specbind schema read contract/v1
 specbind template resolve spec <spec> contract
 specbind template read spec contract
 ```
@@ -273,15 +274,17 @@ Write the authored Contract only to the reported `Project path`; do not prepend
 or remove the configured SpecBind root. The `Source` field explains whether its
 scaffold is project-owned or embedded; both use the same raw read command.
 
-A Spec with no cross-spec seams gets the canonical empty contract: five
-headings, no entries. That is a complete and deliberate statement, not a
-placeholder.
+A Spec with no cross-spec seams gets the canonical empty Contract: all five
+entry arrays are present and empty. That is a complete and deliberate statement,
+not a placeholder. Author `contract.yaml` against the versioned schema; do not
+add unknown fields or use YAML comments as durable Contract meaning.
 
 **Contract exists** — read it with `--for maintain`, then revise it in place
-when this change adds, alters, or
-removes a seam, and leave it **byte-identical** when it does not. Rewording an
-untouched entry is not free: the whole file is fingerprinted, so a cosmetic edit
-invalidates approval and forces a new contract review.
+when this change adds, alters, or removes a seam, and leave it unchanged when it
+does not. The CLI fingerprints the normalized typed Contract, so YAML formatting,
+mapping order, entry order, and path order carry no meaning. IDs, descriptions,
+targets, and paths do: rewording an untouched entry changes the approved seam and
+forces a new contract review.
 
 The `design-authoring` protocol carries the test for what belongs in it. Entry
 IDs are stable — do not rename an ID whose meaning is unchanged, because another
@@ -315,7 +318,7 @@ finding. Passing it silently to contract review is not a judgment.
 `CONTRACT_GRAPH_EXPORT_UNCONSUMED` is also a warning, not evidence that an
 export should be removed. The managed graph cannot see external consumers:
 
-- An existing export that this change does not alter stays byte-identical. Keep
+- An existing export that this change does not alter stays semantically unchanged. Keep
   its stable ID and carry the warning into the contract-review report; do not
   retire an unrelated seam merely to silence the check.
 - For an export this change adds or alters, name the managed or external

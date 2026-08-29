@@ -536,7 +536,7 @@ fn reports_unstarted_design_as_expected_work_without_weakening_traceability() {
     approve_requirements(root.path());
     fs::remove_file(root.path().join(".specbind/specs/checkout/design.md"))
         .expect("remove the prewritten Design fixture");
-    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.md"))
+    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.yaml"))
         .expect("remove the prewritten Contract fixture");
 
     let mut status = specbind_command();
@@ -578,7 +578,7 @@ fn reports_unstarted_requirements_as_expected_work_without_weakening_traceabilit
         .expect("remove the prewritten Requirements fixture");
     fs::remove_file(root.path().join(".specbind/specs/checkout/design.md"))
         .expect("remove the prewritten Design fixture");
-    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.md"))
+    fs::remove_file(root.path().join(".specbind/specs/checkout/contract.yaml"))
         .expect("remove the prewritten Contract fixture");
 
     let mut status = specbind_command();

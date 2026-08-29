@@ -111,18 +111,18 @@ fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
     let root = project_fixture();
     write(
         root.path(),
-        ".specbind/specs/checkout/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     );
     write(
         root.path(),
-        ".specbind/specs/provider/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n- `value` — Value.\n\n## Consumes\n\n## Invariants\n\n## File Ownership\n\n- `shared-tree` — `src/shared/**`\n",
+        ".specbind/specs/provider/contract.yaml",
+        "schema_version: 1\nowns: []\nexports:\n  - { id: value, description: Value. }\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: shared-tree, paths: [src/shared/**] }\n",
     );
     write(
         root.path(),
-        ".specbind/specs/consumer/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `value` → `provider/exports/value`\n\n## Invariants\n\n## File Ownership\n\n- `shared-tree` — `src/shared/**`\n",
+        ".specbind/specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: value, target: { spec: provider, section: exports, id: value } }\ninvariants: []\nfile_ownership:\n  - { id: shared-tree, paths: [src/shared/**] }\n",
     );
 
     let mut warned = specbind_command();
@@ -142,8 +142,8 @@ fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
 
     write(
         root.path(),
-        ".specbind/specs/consumer/contract.md",
-        "---\ntype: SpecBind Contract\n---\n# Contract\n\n## Owns\n\n## Exports\n\n## Consumes\n\n- `missing` → `provider/exports/missing`\n\n## Invariants\n\n## File Ownership\n",
+        ".specbind/specs/consumer/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: provider, section: exports, id: missing } }\ninvariants: []\nfile_ownership: []\n",
     );
     let mut failed = specbind_command();
     failed
@@ -236,7 +236,7 @@ fn lists_and_reads_project_owned_spec_templates() {
         .success()
         .stdout(
             predicate::str::contains("  Source: embedded\n").and(predicate::str::contains(
-                "  Project path: .specbind/specs/checkout/contract.md\n",
+                "  Project path: .specbind/specs/checkout/contract.yaml\n",
             )),
         )
         .stderr("");
