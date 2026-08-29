@@ -290,6 +290,15 @@ clarified, a fresh `09cfc19` run proposed the repository-derived local-tag
 adapter, obtained configuration-only approval, committed only that adapter,
 and stopped without binding, tagging, publishing, pushing, or finalizing.
 
+A Claude Code re-measurement of the same fixes on `1736d0c` was started for X1,
+X2, X3, X4, T2, RT1, RT2, DB1, and I3, and stopped almost immediately: the
+driver account hit its session limit and eight of the nine subagents were
+terminated before they ran a command. Only X4 completed, and it passed —
+`milestone review status` reported `not_applicable` for the Direct-only
+milestone, no review artifact was written, and the fixture stayed
+byte-identical. The other eight have no result on this build; their fixtures
+were never mutated, so nothing about them was measured either way.
+
 X1, I3, RT1, and DB1 were re-measured on 2026-08-29 as fresh Codex
 `gpt-5.6-terra` medium drivers after the four open findings from `26518ee` were
 reproduced against their owning Decisions and assets. X1 passed on `9dc9505`:
