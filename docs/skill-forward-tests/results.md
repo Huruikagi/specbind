@@ -38,8 +38,8 @@ without a pass are listed separately below.
 
 The 2026-08-29 Claude Code batch was measured against `26518ee`, driven as
 Agent-tool subagents on `claude-opus-5` with no prior context, one fixture per
-scenario. Passes: D9, D10, D12, R3, R4, C3, DS3, X2, X3, X4, RT1, DB1, VI2, VI3,
-I4, RL1, RL2, RL3. Every one was judged from the fixture with a
+scenario. Passes: D9, D10, D12, R3, R4, C3, DS3, T2, X2, X3, X4, RT1, DB1, VI2,
+VI3, I4, RL1, RL2, RL3. Every one was judged from the fixture with a
 checksum comparison against its pre-run snapshot; the read-only scenarios
 (DS3, RT1, DB1, VI2, VI3, X2, X3, X4, D9, D10, RL1, RL2) left their fixtures
 byte-identical. X1 and I3 failed, and five more scenarios stopped without a
@@ -52,6 +52,16 @@ holding only `src/cart.py` and `tasks.yaml`, and no completion handshake ran.
 Its dispatch log carried one line, so the run took Decision 0109's main-context
 fallback rather than dispatching; that is a workflow pass, not a dispatch
 measurement.
+
+T2 settles the ordering the same way its contract allows: the run accepted the
+contract review first, committed only `state/contract-review.md`, and then
+authored a three-task plan, so a fresh review coexists with `tasks.yaml` — the
+combination that is mechanical proof the review came first. It is also the
+sharpest evidence for the X1 finding below. T2's driver accepted the same
+unchanged-Contract-with-changed-guarantee shape that X1's driver refused, and
+explicitly reasoned that the cap should not be declared as an invariant yet.
+Two runs of one skill, on one build and one agent, reached opposite conclusions
+about the same question.
 
 CF2 was measured as Codex on 2026-08-28 with `gpt-5.6-terra` at medium
 reasoning against the working tree based on `d9de45b`, including Decision 0154.
@@ -333,7 +343,7 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 | First seen | Scenario | Surface | Finding | Impact |
 | --- | --- | --- | --- | --- |
-| `26518ee` | X1 | Protocol | The contract-review protocol says how to judge a *changed* Contract entry but is silent on a behavior change that arrives with no Contract entry at all. The skill's "one participating Spec whose contract is unchanged is a complete review" reads as permission to accept exactly that case. Reproduced by the X1 failure above, and by the cross-agent divergence with Codex. | wrong-action-risk |
+| `26518ee` | X1 | Protocol | The contract-review protocol says how to judge a *changed* Contract entry but is silent on a behavior change that arrives with no Contract entry at all. The skill's "one participating Spec whose contract is unchanged is a complete review" reads as permission to accept exactly that case. Reproduced by the X1 failure above, by the cross-agent divergence with Codex, and by T2, whose Claude Code driver accepted that shape on the same build. | wrong-action-risk |
 | `26518ee` | I3 | Template | The installed project-instruction block routes by request shape (Spec work, durable guidance, ordinary work) without directing an agent to read the active milestone first, so a request that matches a pending Direct item can be classified as ordinary work. Reproduced by the I3 failure above. | wrong-action-risk |
 | `26518ee` | RT1 | Skill | `specbind-review-task` step 2 names Requirements, Designs, and Implementation Notes as the reading list, omitting the Spec's Contract and Steering. Both carried blocking findings in RT1, which the run raised only by reading them on its own initiative. The same run also found no route to `specbind-review-task` in the project-instruction block. | wrong-action-risk |
 | `26518ee` | DB1 | Skill | Neither DB1 run emitted the mandated `## Diagnosis` block with its `CATEGORY:` line, though both categorized the defect correctly in prose and one explicitly ruled out PLAN. Two runs, two builds' worth of prompts, same omission. | ambiguity |
