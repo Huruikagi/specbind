@@ -392,10 +392,10 @@ fn lists_and_reads_the_steering_template_scope() {
                 "OK TEMPLATE_LISTED: Found 4 recognized steering template(s).\n",
             )
             .and(predicate::str::contains(
-                "selector=product source=embedded type=\"SpecBind Steering\" artifact_id=product template_path=en/steering/product.md output_path=steering/product.md\n",
+                "selector=product source=embedded type=\"SpecBind Steering\" artifact_id=product template_path=en/steering/product.md output_path=steering/product.md project_path=.specbind/steering/product.md\n",
             ))
             .and(predicate::str::contains(
-                "selector=document source=embedded type=\"SpecBind Steering\" template_path=en/steering/document.md output_path=<authored>\n",
+                "selector=document source=embedded type=\"SpecBind Steering\" template_path=en/steering/document.md output_path=<authored> project_path=.specbind/steering/<artifact_id>.md\n",
             )),
         )
         .stderr("");

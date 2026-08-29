@@ -83,6 +83,10 @@ incomplete.
 - Each recognized line exposes `selector`, `type`, and `path`, as Decision 0058
   requires. `artifact_id` is not shown separately, because for this profile it
   is the selector.
+- `path` is the logical locator relative to the configured SpecBind root. The
+  same line also exposes `project_path`, the project-root-relative path a caller
+  may use directly for filesystem authoring or repair. A caller never prepends
+  or removes `specDir` by inference.
 - Documents are ordered by `artifact_id` in Unicode code point order. One
   collection means one ordering rule.
 - Zero steering documents is a valid answer:
@@ -116,7 +120,9 @@ expected in this directory.
   empty standard output. Ambiguity here means a duplicated `artifact_id`.
   Requested-selector resolution takes precedence over collection-wide
   diagnostics, so the caller receives this focused code when that selector
-  itself cannot resolve.
+  itself cannot resolve. The diagnostic names the project-root-relative
+  `searched_project_path` for the steering collection, so a misplaced document
+  is distinguishable from one written into the configured collection.
 - A target that is not a regular non-symlink file returns
   `ERROR STEERING_READ_TARGET_INVALID`; content that is not UTF-8 returns
   `ERROR STEERING_READ_NOT_UTF8`. These mirror the `artifact read` codes because

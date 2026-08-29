@@ -39,6 +39,9 @@ The read surface is the validator:
 
 - Before choosing an `artifact_id`, the skill runs `specbind steering list` and
   treats every listed selector as taken.
+- Every listed document carries both its SpecBind-root-relative logical `path`
+  and its directly usable project-root-relative `project_path`. Authoring and
+  repair use only `project_path`; they never infer `specDir` from `path`.
 - After writing, it runs `specbind steering list` again and confirms its document
   appears with the expected selector. A document that does not appear was
   authored wrong, and the skill says so rather than reporting success.
@@ -218,6 +221,10 @@ For the `steering` template scope only:
   output path is `steering/<artifact_id>.md`.
 - `document` omits `artifact_id`. The authoring skill supplies it and derives the
   output path from it.
+- Template listings retain that SpecBind-root-relative `output_path` and also
+  expose its project-root-relative `project_path`. For `document`, the latter is
+  the explicit pattern `<specDir>/steering/<artifact_id>.md`. The author writes
+  only to `project_path` after substituting the chosen identity.
 - A supplied ID follows the same kebab-case rule discovery enforces, and must not
   collide with a listed selector. The `document` template is never used to
   recreate one of the three named IDs.

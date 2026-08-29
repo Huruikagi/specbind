@@ -116,6 +116,12 @@ marker, complete body, and closing marker byte-for-byte. Never excerpt or
 rewrite it. Existing documents already own their durable comments; preserve
 them when revising unrelated content.
 
+The listing reports both a SpecBind-root-relative `output_path` and a
+project-root-relative `project_path`. Write only to `project_path`. For
+`document`, replace `<artifact_id>` in that reported project path with the
+identity you chose; never prepend or remove the configured SpecBind root by
+inference.
+
 Author guidance from established project evidence. Do not change source,
 configuration, or tests merely to make a statement in the new document true;
 that would expand a documentation request into implementation work.
@@ -146,8 +152,9 @@ has decided to make policy are the user's call, not yours.
 
 ### Add
 
-Read `template read steering document`, choose the identity, and write it at
-`steering/<artifact_id>.md`.
+Read `template read steering document`, choose the identity, and write it only
+to the `project_path` reported by `template list steering` after replacing
+`<artifact_id>`.
 
 The identity is yours to choose here — it is the one place SpecBind asks an agent
 to pick an `artifact_id`. Get it right:

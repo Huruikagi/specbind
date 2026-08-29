@@ -259,12 +259,16 @@ pub fn template_list_steering(start: &Path) -> CommandOutput {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
+    let spec_root = match project_relative_spec_root(&paths) {
+        Ok(root) => root,
+        Err(output) => return output,
+    };
     let inventory = template::discover_steering_templates(&paths.specbind_root, paths.language);
     if !inventory.issues.is_empty() {
         let mut details = inventory
             .templates
             .iter()
-            .map(render_steering_template)
+            .map(|template| render_steering_template(template, &spec_root))
             .collect::<Vec<_>>();
         details.extend(inventory.issues.iter().map(render_issue));
         return CommandOutput::failure(
@@ -279,7 +283,7 @@ pub fn template_list_steering(start: &Path) -> CommandOutput {
     );
     for template in &inventory.templates {
         output.push_str("  ");
-        output.push_str(&render_steering_template(template));
+        output.push_str(&render_steering_template(template, &spec_root));
         output.push('\n');
     }
     CommandOutput::success(output.into_bytes())
@@ -326,7 +330,7 @@ pub fn template_read_steering(start: &Path, selector: &str) -> CommandOutput {
 
 /// Renders one steering template, whose output path is absent exactly when the
 /// authoring skill supplies the identity under Decision 0117.
-fn render_steering_template(template: &template::SteeringTemplate) -> String {
+fn render_steering_template(template: &template::SteeringTemplate, spec_root: &str) -> String {
     let mut output = format!(
         "selector={} source={} type=\"{}\"",
         escape(&template.selector),
@@ -344,8 +348,17 @@ fn render_steering_template(template: &template::SteeringTemplate) -> String {
     )
     .expect("writing to a String cannot fail");
     match &template.output_path {
-        Some(output_path) => write!(output, " output_path={}", escape(output_path.as_str())),
-        None => write!(output, " output_path=<authored>"),
+        Some(output_path) => write!(
+            output,
+            " output_path={} project_path={}",
+            escape(output_path.as_str()),
+            escape(&format!("{spec_root}/{output_path}"))
+        ),
+        None => write!(
+            output,
+            " output_path=<authored> project_path={}",
+            escape(&format!("{spec_root}/steering/<artifact_id>.md"))
+        ),
     }
     .expect("writing to a String cannot fail");
     output
@@ -672,6 +685,10 @@ pub fn steering_list(start: &Path) -> CommandOutput {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
+    let spec_root = match project_relative_spec_root(&paths) {
+        Ok(root) => root,
+        Err(output) => return output,
+    };
     let inventory = match steering::discover(&paths.specbind_root) {
         Ok(inventory) => inventory,
         Err(message) => {
@@ -686,7 +703,7 @@ pub fn steering_list(start: &Path) -> CommandOutput {
         let mut details = inventory
             .documents
             .iter()
-            .map(render_steering)
+            .map(|document| render_steering(document, &spec_root))
             .collect::<Vec<_>>();
         details.extend(inventory.issues.iter().map(render_issue));
         return CommandOutput::failure(
@@ -701,7 +718,7 @@ pub fn steering_list(start: &Path) -> CommandOutput {
     );
     for document in &inventory.documents {
         output.push_str("  ");
-        output.push_str(&render_steering(document));
+        output.push_str(&render_steering(document, &spec_root));
         output.push('\n');
     }
     CommandOutput::success(output.into_bytes())
@@ -713,6 +730,10 @@ pub fn steering_read(start: &Path, selector: &str, purpose: Option<&str>) -> Com
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let spec_root = match project_relative_spec_root(&paths) {
+        Ok(root) => root,
+        Err(output) => return output,
     };
     match steering::read(&paths.specbind_root, selector) {
         Ok(content) => {
@@ -727,19 +748,44 @@ pub fn steering_read(start: &Path, selector: &str, purpose: Option<&str>) -> Com
             };
             CommandOutput::success(projected.into_bytes())
         }
-        Err(failure) => CommandOutput::failure(
-            failure.code,
-            failure.message,
-            failure.issues.iter().map(render_issue).collect(),
-        ),
+        Err(failure) => {
+            let message = if failure.code == "STEERING_READ_INVALID" {
+                format!(
+                    "{}; searched_project_path={}/steering",
+                    failure.message, spec_root
+                )
+            } else {
+                failure.message
+            };
+            CommandOutput::failure(
+                failure.code,
+                message,
+                failure.issues.iter().map(render_issue).collect(),
+            )
+        }
     }
 }
 
-fn render_steering(document: &steering::SteeringDocument) -> String {
+fn render_steering(document: &steering::SteeringDocument, spec_root: &str) -> String {
     format!(
-        "selector={} type=\"{}\" path={}",
+        "selector={} type=\"{}\" path={} project_path={}",
         escape(&document.selector),
         escape(&document.artifact_type),
-        escape(document.path.as_str())
+        escape(document.path.as_str()),
+        escape(&format!("{spec_root}/{}", document.path))
     )
+}
+
+fn project_relative_spec_root(paths: &config::ProjectPaths) -> Result<String, CommandOutput> {
+    paths
+        .specbind_root
+        .strip_prefix(&paths.project_root)
+        .map(|path| path.to_string_lossy().replace('\\', "/"))
+        .map_err(|_| {
+            CommandOutput::failure(
+                "SPEC_ROOT_INVALID",
+                "configured specDir must remain below the resolved project root",
+                vec![],
+            )
+        })
 }

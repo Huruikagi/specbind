@@ -339,9 +339,9 @@ fn lists_steering_by_artifact_id_and_excludes_other_types() {
         .stdout(concat!(
             "OK STEERING_LISTED: Found 2 steering document(s).
 ",
-            "  selector=naming type=\"SpecBind Steering\" path=steering/nested/conventions.md
+            "  selector=naming type=\"SpecBind Steering\" path=steering/nested/conventions.md project_path=.specbind/steering/nested/conventions.md
 ",
-            "  selector=product type=\"SpecBind Steering\" path=steering/product.md
+            "  selector=product type=\"SpecBind Steering\" path=steering/product.md project_path=.specbind/steering/product.md
 ",
         ))
         .stderr("");
@@ -412,7 +412,7 @@ fn reports_an_unknown_steering_selector_without_touching_stdout() {
         .failure()
         .stdout("")
         .stderr(predicate::str::starts_with(
-            "ERROR STEERING_READ_INVALID: unknown steering selector: missing
+            "ERROR STEERING_READ_INVALID: unknown steering selector: missing; searched_project_path=.specbind/steering
 ",
         ));
 }
