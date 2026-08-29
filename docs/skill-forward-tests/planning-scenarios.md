@@ -339,9 +339,13 @@ export and replaces it with something else.
 
 - `checkout/contract.yaml` is **unchanged**. Editing another Spec's contract to
   make the graph resolve is the failure this scenario exists to catch.
-- No design approval ran while the graph was dangling.
-- The agent ran `check contracts` and brought the consuming Spec to the user as a
-  scope question.
+- `spec status cart` still reports the Design gate `not_reached` while migration
+  of the consumer is unresolved. The agent may stop before editing
+  `cart/contract.yaml`; discovering the consumer before creating a dangling
+  graph is preferable to using the later check as discovery.
+- The agent named `checkout` as the consuming Spec and brought its migration to
+  the user as a scope question. If it did draft the replacement first,
+  `check contracts` fails and no approval runs while the graph is dangling.
 
 ### DS6 — No authority means no approval
 

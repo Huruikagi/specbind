@@ -23,7 +23,7 @@ without a pass are listed separately below.
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
 | Existing-implementation adoption | None recorded | A1, A2 |
-| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS7, DS8 |
+| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS5, DS7, DS8 |
 | Tasks | T2 | T1, T2, T4 |
 | Contract review | X3 | X1, X2, X4 |
 | Implementation | None recorded | I1–I4, I6 |
@@ -56,6 +56,19 @@ Both fixtures were clean before and after their read-only debriefs. The DS1
 driver corrected unquoted Requirement IDs before approval, and the X1 driver
 regenerated a candidate after a PowerShell quoting mistake; neither workaround
 changed the measured outcome or exposed a retained product finding.
+
+DS5 was measured as Codex on 2026-08-29 with `gpt-5.6-terra` at medium
+reasoning against `9c8d4b8`. Before editing, the driver used both focused graph
+queries, read the `checkout` Contract named by the reverse edge, and stopped on
+the unresolved consumer migration and whole-line-item shape. Both Contracts
+remained byte-unchanged, the Design gate stayed `not_reached`, and the fixture
+was clean before and after the read-only debrief. The first fixture attempt on
+`a0f4ac9` never reached an Agent because its precondition still grepped for the
+superseded Markdown target spelling; `9c8d4b8` replaced that harness check with
+the typed `contract consumers` projection. The debrief observations were either
+the scenario's intentional unresolved choice, a corrected command guess, or a
+fixture-specific missing implementation consumer, so none was retained as a
+product finding.
 
 C2's dedicated-marker variant passed as Codex on `fb87bb9`. The fixture left the
 Discovery milestone, Roadmap, cart state, and Brief uncommitted, made no commit
