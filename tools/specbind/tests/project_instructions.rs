@@ -35,7 +35,7 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
-            .contains("classification is genuinely unclear, enter the flow")
+            .contains("When the classification is genuinely\n  unclear, enter the flow")
     );
     assert!(
         applied
@@ -60,14 +60,21 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
-            .contains("Before classifying anything as ordinary work")
+            .contains("run `specbind milestone status` before choosing between")
     );
     assert!(
         applied
             .content
-            .contains("a request matching a pending Spec-backed or Direct\n  item")
+            .contains("A request matching a\n  pending Spec-backed or Direct item")
     );
-    assert!(applied.content.contains("routes to `specbind-implement`"));
+    assert!(
+        applied
+            .content
+            .contains("routes to\n  `specbind-implement`")
+    );
+    assert!(applied.content.contains(
+        "that match takes precedence even when the requested\n  output also looks like durable"
+    ));
     assert!(applied.content.contains("use\n  `specbind-review-task`"));
     assert!(
         applied

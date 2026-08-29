@@ -147,6 +147,11 @@ specbind artifact read <spec> requirements --for consume
 specbind artifact read <spec> design/<artifact-id> --for consume
 ```
 
+Run the listing before constructing any Design selector and use only the exact
+selectors it reports. Lifecycle states and action labels such as `tasks` and
+`implementation` are not artifact IDs; never turn them into `design/tasks` or
+`design/implementation`.
+
 Read only the Requirements or listed Designs the conclusion needs.
 
 Declare in `deepInputs` only what the judgment actually relied on. Every declared

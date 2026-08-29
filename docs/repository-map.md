@@ -284,3 +284,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0157](./design/decisions/0157-command-specific-spec-status-json.md) | Accepted | Minimal command-specific JSON projection for Spec status |
 | [0158](./design/decisions/0158-command-specific-milestone-status-json.md) | Accepted | Minimal command-specific JSON projection for Milestone status |
 | [0159](./design/decisions/0159-forward-test-usability-boundaries.md) | Accepted | Forward-test usability, authority, status, and recovery boundaries |
+| [0160](./design/decisions/0160-tracked-routing-and-selector-precedence.md) | Accepted | Tracked delivery routing and declared Design selector precedence |

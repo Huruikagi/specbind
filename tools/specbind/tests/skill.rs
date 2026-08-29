@@ -639,6 +639,7 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     assert!(body.contains("specbind artifact list <spec>"));
     assert!(body.contains("specbind artifact read <spec> design/<artifact-id> --for consume"));
     assert!(body.contains("never shorten\n`design/<artifact-id>`"));
+    assert!(body.contains("Lifecycle states and action labels such as `tasks` and\n`implementation` are not artifact IDs"));
     assert!(
         body.contains("Ask only when the impact introduces a choice the request did not settle")
     );
