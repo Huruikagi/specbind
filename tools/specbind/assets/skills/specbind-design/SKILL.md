@@ -93,13 +93,21 @@ A mark you neither promote nor surface expires silently when the milestone
 closes. If you judge one unnecessary, say so — that is a decision, and it should
 be visible as one.
 
-When the change touches a seam, read the contracts of the Specs on the other
-side of it:
+When an existing Contract may change a seam, resolve both sides of its current
+managed graph before editing it:
 
 ```sh
-specbind spec list
+specbind contract dependencies <spec>
+specbind contract consumers <spec>
 specbind artifact read <other-spec> contract --for consume
 ```
+
+Read the Contract of every distinct Spec those two queries name. These are
+direct structural relationships, not a semantic impact verdict: decide from the
+actual seam whether each neighbor is affected. For a newly proposed seam, the
+current graph cannot name the other side yet; use `specbind spec list` and the
+investigation below to find the owning Spec, then read its Contract. Do not infer
+that an empty query means there is no external consumer.
 
 ## 2. Investigate before you decide
 

@@ -82,3 +82,6 @@ machine or visualization contract and require a separate demonstrated use case.
 
 Implemented. The three commands share the existing Contract graph resolver,
 reject incomplete graphs, and render deterministic entry-level direct edges.
+`specbind-design` uses the two focused projections before editing a possible
+existing seam, then reads each named neighboring Contract while retaining
+ordinary investigation for new or unmanaged relationships.

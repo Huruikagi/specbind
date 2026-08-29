@@ -397,6 +397,33 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
 }
 
 #[test]
+fn design_queries_direct_contract_neighbors_before_reading_them() {
+    let body = skill::find("specbind-design")
+        .expect("design skill")
+        .body()
+        .expect("body");
+    let dependencies = body
+        .find("specbind contract dependencies <spec>")
+        .expect("direct dependency query");
+    let consumers = body
+        .find("specbind contract consumers <spec>")
+        .expect("reverse consumer query");
+    let neighbor = body
+        .find("specbind artifact read <other-spec> contract --for consume")
+        .expect("neighbor Contract read");
+    assert!(
+        dependencies < consumers && consumers < neighbor,
+        "design must resolve both directions before reading neighboring Contracts"
+    );
+    assert!(
+        body.contains("not a semantic impact verdict")
+            && body.contains("current graph cannot name the other side yet")
+            && body.contains("external consumer"),
+        "design must retain the topology, new-seam, and unmanaged-consumer boundaries"
+    );
+}
+
+#[test]
 fn planning_orchestrator_handoffs_its_delegation_identity() {
     let body = skill::find("specbind-quick-plan")
         .expect("planning orchestrator")

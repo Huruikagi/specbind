@@ -9,6 +9,9 @@ not affect the Contract fingerprint.
 
 Decision 0152 later replaces unconditional materialization of every Design
 template with project-rule classification and per-Spec applicability judgment.
+Decision 0156 later replaces broad current-neighbor discovery with direct
+Contract dependency and consumer projections while retaining investigation for
+new and unmanaged seams.
 
 ## Context
 
@@ -75,7 +78,8 @@ The skill keeps update timing, which is what Decision 0092 assigned it.
 | `specbind steering list`, then every document listed | always |
 | The Spec's existing Design set and Contract | only when the Spec has them |
 | The Spec's Research | only when one exists |
-| The Contracts of Specs this one consumes or is consumed by | when the change touches a seam |
+| `specbind contract dependencies <spec>` and `specbind contract consumers <spec>` | when an existing Contract may change a seam |
+| The Contracts of Specs those queries name | when an existing Contract may change a seam |
 
 `spec status` establishes the lifecycle state and, decisively, whether the
 requirements gate is approved and fresh. The Requirements are the obligation
@@ -292,6 +296,13 @@ self-invalidation that states the deleted contract review.
 
 `tools/specbind/assets/protocols/design-authoring.md` carries the Contract
 inclusion test.
+
+[Decision 0156](./0156-derived-contract-graph-reads.md) later made the existing
+managed neighbors directly queryable. Before editing a possible existing seam,
+the skill now reads both direct provider and reverse-consumer projections, then
+reads every distinct Contract they name. The graph remains routing evidence,
+not a semantic-impact verdict; new seams and unmanaged consumers still require
+ordinary investigation.
 
 [Decision 0109](./0109-subagent-dispatch-contract.md) subsequently added
 fresh-context subagent dispatch to the investigation step: independent areas are
