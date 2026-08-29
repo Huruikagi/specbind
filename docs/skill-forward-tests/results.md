@@ -290,6 +290,30 @@ clarified, a fresh `09cfc19` run proposed the repository-derived local-tag
 adapter, obtained configuration-only approval, committed only that adapter,
 and stopped without binding, tagging, publishing, pushing, or finalizing.
 
+X1, I3, RT1, and DB1 were re-measured on 2026-08-29 as fresh Codex
+`gpt-5.6-terra` medium drivers after the four open findings from `26518ee` were
+reproduced against their owning Decisions and assets. X1 passed on `9dc9505`:
+the unchanged Contract's missing 99-per-SKU invariant blocked acceptance,
+`milestone review status` remained `absent`, no Tasks existed, and the fixture
+stayed clean. I3 passed on `c6a5f40`: the driver read the active milestone,
+selected the Direct implementation path, checkpointed only `CONTRIBUTING.md`,
+and completed the existing item without manufacturing Spec artifacts. RT1
+passed on `69b709f`: it read the Contract and both Steering documents, returned
+an exact `REJECTED` block with three blocking findings, left the seeded diff
+byte-unchanged, and kept Task 1 pending.
+
+DB1 exposed one additional layer before its final pass. On `69b709f` the driver
+routed the diagnosis-shaped request through implementation and paraphrased the
+nested debugger, so the required result block was still absent. `6be1931`
+routed directly to debug and preserved the exact `## Diagnosis` block, but the
+diagnosis added a false missing-Contract claim after failing to read that
+existing input. The fresh `e18d8fc` run read Requirements, Design, Contract,
+both Steering documents, and the Task, returned only the supported `ARTIFACT`
+contradiction in the exact block, and left the clean fixture and pending Task
+unchanged. Debrief claims that `--for consume` was unsupported were discarded:
+direct execution of the fixture binary accepted the documented syntax, proving
+the drivers had resolved a stale host CLI for those commands.
+
 ### Runs without a passing measurement
 
 | Scenario | Agent | Result | Why no pass was recorded |
@@ -341,21 +365,14 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-| First seen | Scenario | Surface | Finding | Impact |
-| --- | --- | --- | --- | --- |
-| `26518ee` | X1 | Protocol | The contract-review protocol says how to judge a *changed* Contract entry but is silent on a behavior change that arrives with no Contract entry at all. The skill's "one participating Spec whose contract is unchanged is a complete review" reads as permission to accept exactly that case. Reproduced by the X1 failure above, by the cross-agent divergence with Codex, and by T2, whose Claude Code driver accepted that shape on the same build. | wrong-action-risk |
-| `26518ee` | I3 | Template | The installed project-instruction block routes by request shape (Spec work, durable guidance, ordinary work) without directing an agent to read the active milestone first, so a request that matches a pending Direct item can be classified as ordinary work. Reproduced by the I3 failure above. | wrong-action-risk |
-| `26518ee` | RT1 | Skill | `specbind-review-task` step 2 names Requirements, Designs, and Implementation Notes as the reading list, omitting the Spec's Contract and Steering. Both carried blocking findings in RT1, which the run raised only by reading them on its own initiative. The same run also found no route to `specbind-review-task` in the project-instruction block. | wrong-action-risk |
-| `26518ee` | DB1 | Skill | Neither DB1 run emitted the mandated `## Diagnosis` block with its `CATEGORY:` line, though both categorized the defect correctly in prose and one explicitly ruled out PLAN. Two runs, two builds' worth of prompts, same omission. | ambiguity |
-
-Reproduce each against its owning Decision, CLI, or asset before changing the
-product. The X1 and I3 rows are backed by scenario failures rather than by
-debrief prose alone.
+None recorded.
 
 ### Fixed, behavioral confirmation pending
 
 | First seen | Scenario | Finding | Resolution | Status |
 | --- | --- | --- | --- | --- |
+| `9dc9505` | X1 | Contract review deep reading did not discover split Design selectors, so the driver first tried the invalid shortened `design` selector. | `c6a5f40` lists the Spec's artifacts and reads the reported `design/<artifact-id>` selector before declaring a deep input. | Static contract tests pass; confirm the removed retry on the next X1 behavioral run. |
+| `c6a5f40` | I3 | The Direct procedure referred to the run's "selected mode" without stating where the selection came from. | `69b709f` resolves an explicit override first and otherwise states the accepted `inline` Direct default in both entrypoint and procedure. | Static contract tests pass; confirm the default is used without a settings search on the next I3 behavioral run. |
 | `4738ca2` | T1 | The default task rule told projects to choose a test-grouping convention but did not choose one, so the planner had to decide whether one behavior needed a separate test task. | `cc37049` defaults tests into the behavior task and permits a separate verification task only across several earlier tasks or a separately reviewable system boundary. | A fresh driver proposed the expected combined task, but host safety blocked artifact authoring; rerun T1 when that environment stop is absent. |
 
 ### Resolved usability findings
@@ -366,6 +383,10 @@ remain available in Git history.
 
 | Finding | Resolution | Fixed in |
 | --- | --- | --- |
+| Contract review could accept an unchanged Contract even when the scoped delivery added a persistent guarantee that Contract never declared. | Review compares Roadmap behavior to the current Contract, deep-reads only when needed, and blocks a missing seam or guarantee. X1 kept review absent for the missing 99-per-SKU invariant. | `9dc9505`, confirmed on `9dc9505` |
+| A request matching a pending Direct item could be classified as ordinary work without reading the active milestone. | Project instructions require `milestone status` before ordinary-work classification and route a matching pending item to implementation. I3 completed the existing Direct item and created no Spec artifacts. | `ec93e3a`, confirmed on `c6a5f40` |
+| Direct task review omitted the Spec Contract and Steering from its required inputs and had no project-instruction route. | The route is explicit; review reads Contract and every Steering document in addition to mapped artifacts, failing closed on an incomplete set. RT1 read both Steering documents and rejected the unchanged seeded diff. | `e8cb515`, confirmed on `69b709f` |
+| Debug could return only prose without the mandated result block, and a diagnosis-shaped request could be absorbed by implementation and paraphrase a nested result. | Debug's exact block is a pre-command validity rule, diagnosis requests route directly to it, and the complete governing input set prevents absence guesses. DB1 returned the exact `ARTIFACT` block with only the supported Requirements/Design contradiction. | `65fc207`, `6be1931`, `e18d8fc`, confirmed on `e18d8fc` |
 | Fresh drivers could translate the installed Skill identifier `specbind-status` into the nonexistent CLI command `specbind status`. | Project instructions state that hyphenated `specbind-*` names are Skill identifiers, must be selected through the agent platform, and must not be translated into CLI syntax; the selected Skill owns its commands. A fresh I6 debrief did not reproduce the confusion. | `46dd074`, confirmed on `46dd074` |
 | Completed implementation Tasks could be accumulated and combined into one checkpoint even though the default Git adapter names each Task as one workflow unit. | Task execution is sequential, and every completed Task resolves its own adapter-directed checkpoint before the next Task is selected. I6 confirmed two requested Tasks become two commits with one progress transition each. | `243c0f9`, confirmed on `243c0f9` |
 | `scope/v1` exposed only `minimum: 0` for `schemaVersion`, so an author had to infer the version from the selector. | The generated schema now fixes `schemaVersion` with `const: 1`, matching runtime acceptance and the other v1 schemas; C2 authored the candidate from the corrected schema. | `6d1d2e5`, confirmed on `7307f7a` |
