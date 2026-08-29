@@ -39,6 +39,8 @@ review, because the verdict it produces will be trusted.
 specbind tasks show <spec> <task-id>
 specbind artifact list <spec>
 specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> contract --for consume
+specbind steering list
 ```
 
 The inventory names every split Design and every
@@ -50,6 +52,17 @@ change walked into:
 specbind artifact read <spec> design/<artifact-id> --for consume
 specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
 ```
+
+Steering has no relevance metadata, so read every selector the Steering listing
+returns rather than guessing from its name:
+
+```sh
+specbind steering read <selector> --for consume
+```
+
+Zero Steering documents is a complete answer. If `steering list` or any
+`steering read` prints an `ERROR` line, the governing input set is incomplete;
+return `CANNOT_REVIEW` instead of approving from a partial view.
 
 Read the requirement IDs the task carries **in the requirements' own words**,
 not through the task title. An inventory with no notes is a complete answer.

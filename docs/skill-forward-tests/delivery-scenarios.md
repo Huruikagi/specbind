@@ -313,6 +313,9 @@ caps at the wrong bound — ask for the planned task to be reviewed.
 
 - The verdict is **`REJECTED`**, and the finding names the requirement it
   endangers rather than describing the code as untidy.
+- The review reads the cart Contract and current Steering as well as the mapped
+  Requirements and Design; it does not discover their blocking constraints only
+  by accident or approve from the shorter Step 2 list.
 - **`src/cart.py` is unchanged from what the recipe wrote.** Fixing the defect
   is the failure this scenario exists to catch: a repaired diff leaves nothing to
   review and hands the implementer a verdict on work it did not write.

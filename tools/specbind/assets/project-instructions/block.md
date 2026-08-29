@@ -17,6 +17,9 @@ the only supported writer of machine state.
 - When every Task for a named Spec is complete and the user asks whether that
   Spec is done, complete, or ready, use `specbind-validate-implementation`.
   Do not answer that question from status or consequence-free claim checking.
+- When the user asks to review one implemented Task, use
+  `specbind-review-task`; the review must judge the actual diff without fixing
+  it or recording Task state.
 - Use `specbind-steering` when the request creates or updates durable,
   project-wide guidance, including conventions for testing, APIs, security, or
   deployment. This route does not require a Spec or observable behavior change.

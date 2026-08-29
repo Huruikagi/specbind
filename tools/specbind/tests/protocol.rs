@@ -102,6 +102,8 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
         .content();
     assert!(review.contains("- VERDICT: APPROVED | REJECTED | CANNOT_REVIEW"));
     assert!(review.contains("[BLOCKING|DEFERRED|RESOLVED]"));
+    assert!(review.contains("Read the Spec's Contract and every current Steering document"));
+    assert!(review.contains("partial or unreadable Steering set"));
 
     let debug = protocol::read("debug").expect("debug protocol").content();
     assert!(

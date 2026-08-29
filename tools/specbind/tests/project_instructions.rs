@@ -68,6 +68,12 @@ fn creates_a_file_holding_only_the_block() {
             .contains("a request matching a pending Spec-backed or Direct\n  item")
     );
     assert!(applied.content.contains("routes to `specbind-implement`"));
+    assert!(applied.content.contains("use\n  `specbind-review-task`"));
+    assert!(
+        applied
+            .content
+            .contains("judge the actual diff without fixing")
+    );
 }
 
 #[test]

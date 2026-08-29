@@ -21,6 +21,10 @@ happened. Review the diff.
   view.
 - Read the Requirements the task carries and the Design sections that govern it,
   from the artifacts rather than from the implementer's summary of them.
+- Read the Spec's Contract and every current Steering document. They carry
+  persistent boundaries and project-wide constraints that a mapped Requirement
+  or Design may not repeat. A partial or unreadable Steering set makes the
+  subject undetermined rather than safe to approve.
 - Treat the report as a claim to verify. A report and a diff that disagree is
   itself a finding, and the diff is what is true.
 

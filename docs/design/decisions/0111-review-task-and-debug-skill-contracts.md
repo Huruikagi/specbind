@@ -90,6 +90,22 @@ This places one obligation on the dispatcher, and
 diagnosis is run-scoped, so durable knowledge it surfaced is lost unless the
 implementation run writes it down.
 
+### Review reads every governing boundary
+
+Requirements and Design describe the requested behavior and mechanism, but they
+are not the complete review input. The Spec's Contract declares its persistent
+ownership, exports, invariants, and file boundary; current Steering declares the
+project-wide constraints the implementation must obey. A Task can satisfy its
+mapped Requirement and still violate either one.
+
+Review therefore reads the Spec's Contract and lists then reads every Steering
+document in addition to Requirements, all governing Designs, and Implementation
+Notes. Steering has no relevance metadata under Decision 0098, so selecting a
+subset from filenames or `artifact_id` values would be an unsupported guess.
+Zero Steering documents is a complete answer. An inventory or read error leaves
+the governing input set unknown and produces `CANNOT_REVIEW`, not an approval
+formed from a partial view.
+
 ### Structured returns in both moments
 
 Each skill returns the closed-set result its protocol defines — the three review
@@ -146,7 +162,8 @@ A directly invoked run has no bound, because the user is the loop.
 ### Boundary
 
 - Review authors nothing, fixes nothing, and records nothing. It reads the diff,
-  the task, and the approved artifacts, and returns a verdict.
+  the task, the approved artifacts, the Contract, and current Steering, then
+  returns a verdict.
 - Debug writes nothing at all, and never applies its own fix. Decision 0075
   gives the fix to a new implementer.
 - Neither approves or invalidates a gate, records task progress, or updates
