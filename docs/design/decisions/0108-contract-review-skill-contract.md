@@ -189,6 +189,10 @@ the reviewer reads the relevant Requirements or Design as a declared deep input
 to decide whether the Contract is incomplete; it does not reinterpret Contract
 silence as permission to accept.
 
+That deep read starts from `artifact list`. Split Design selectors are discovered
+as `design/<artifact_id>` rather than guessed from a conventional filename or a
+shortened `design` selector.
+
 A single-participant milestone with an unchanged Contract is a complete review
 only when the scoped behavior introduces no missing persistent seam or guarantee.
 Its assessment is then short. It is not a smaller review than a multi-Spec one;

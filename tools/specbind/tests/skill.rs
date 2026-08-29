@@ -622,6 +622,9 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     assert!(body.contains("Do not ask the user to repeat a decision already explicit"));
     assert!(body.contains("scoped behavior introduces no\nmissing persistent seam or guarantee"));
     assert!(body.contains("Do\nnot accept merely because there is no Contract diff"));
+    assert!(body.contains("specbind artifact list <spec>"));
+    assert!(body.contains("specbind artifact read <spec> design/<artifact-id> --for consume"));
+    assert!(body.contains("never shorten\n`design/<artifact-id>`"));
     assert!(
         body.contains("Ask only when the impact introduces a choice the request did not settle")
     );

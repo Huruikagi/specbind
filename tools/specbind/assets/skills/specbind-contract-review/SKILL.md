@@ -138,6 +138,17 @@ Silence here is the one finding with no downstream check that might catch it.
 When the Contract difference and the current graph settle the question, that is
 the complete review. Reading Requirements or Design is for when they do not.
 
+Discover the Spec's artifact selectors before a deep read; never shorten
+`design/<artifact-id>` to a guessed `design` selector:
+
+```sh
+specbind artifact list <spec>
+specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> design/<artifact-id> --for consume
+```
+
+Read only the Requirements or listed Designs the conclusion needs.
+
 Declare in `deepInputs` only what the judgment actually relied on. Every declared
 input is fingerprinted into the accepted artifact, so it becomes a freshness
 input: editing it later makes the review stale and blocks tasks approval,
