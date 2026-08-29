@@ -50,19 +50,27 @@ by case during each review.
 
 ## Dependency direction
 
-Say which direction dependencies may run between areas of this project.
-Contract review reports dependency cycles as warnings because they are
-occasionally deliberate; a stated direction turns that warning into a decision
-you can make quickly rather than an argument you rehear each milestone.
+No additional project-specific dependency direction is declared by default. Do
+not invent layers or an allowed direction from directory names or one observed
+dependency. Judge each dependency against the owned and consumed seams that the
+Contracts actually declare.
+
+Replace this section when the project has an established direction between its
+areas. Until then, a dependency cycle requires case-by-case compatibility
+judgment but is not automatically blocking.
 
 ## When a warning deserves more than a note
 
-The CLI reports ownership overlap and dependency cycles as warnings for human
-judgment. Name here which of them this project treats as blocking, for example
-overlap on generated output, or any cycle involving a published interface.
+The CLI reports ownership overlap and dependency cycles as warnings because
+their disposition requires semantic judgment. Under this default policy:
 
-Where a warning is routinely acceptable in this project, say that too, so
-reviewers do not relitigate it every time.
+- Ownership overlap is blocking until the Contracts identify one owner or the
+  project records an explicit exception with its boundary and reason.
+- A dependency cycle is not automatically blocking, but the review must explain
+  why the cycle leaves ownership, compatibility, and consumers coherent.
+
+A project may replace these defaults with stricter or more permissive policy;
+silence never authorizes the reviewer to invent one.
 
 ## Review questions
 

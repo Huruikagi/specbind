@@ -118,7 +118,7 @@ fn task_generation_chooses_a_default_test_grouping_convention() {
 }
 
 #[test]
-fn contract_principles_states_a_live_default_compatibility_posture() {
+fn contract_principles_states_complete_live_default_policy() {
     let content = rule::find("contract-principles")
         .expect("contract principles rule")
         .content();
@@ -126,5 +126,12 @@ fn contract_principles_states_a_live_default_compatibility_posture() {
     assert!(content.contains("This project's default posture is conservative"));
     assert!(content.contains("every managed consumer changes\n  in the same milestone"));
     assert!(content.contains("“additive” is not an automatic compatibility pass"));
+    assert!(content.contains("No additional project-specific dependency direction is declared"));
+    assert!(
+        content.contains("Ownership overlap is blocking until the Contracts identify one owner")
+    );
+    assert!(content.contains("A dependency cycle is not automatically blocking"));
     assert!(!content.contains("State how strictly this project treats seam changes"));
+    assert!(!content.contains("Say which direction dependencies may run"));
+    assert!(!content.contains("Name here which of them this project treats as blocking"));
 }

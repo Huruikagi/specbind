@@ -104,9 +104,14 @@ instead of implying completion left a clean checkpoint.
 
 The embedded `contract-principles` Rule is live default project policy, not a
 template and not an inactive scaffold. Its compatibility section therefore
-states an actual conservative default. Projects may replace or relax it through
-the existing Rule customization surface; Rules gain no scaffold marker or new
-state.
+states an actual conservative default. Every other section also states current
+policy rather than asking a consumer to author missing project policy. The
+default declares no project-specific dependency direction and forbids an agent
+from inventing one. Ownership overlap must be resolved to one owner unless the
+project explicitly records an exception; a dependency cycle is judged and
+explained case by case rather than failing automatically. Projects may replace
+or relax these defaults through the existing Rule customization surface; Rules
+gain no scaffold marker or new state.
 
 ## Consequences
 
