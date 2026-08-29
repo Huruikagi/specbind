@@ -37,6 +37,12 @@ lenient because a human will read it, or a diagnosis that is less rigorous
 because nothing automatic depends on it, produces two standards for one
 question.
 
+A diagnosis-shaped user request routes directly to `specbind-debug`. Asking why
+a Task failed or cannot be implemented is not authority to start an implementation
+run merely because the Task is actionable. Starting there creates a nested debug
+result that the outer run can paraphrase, losing the structured diagnosis this
+decision requires at the user boundary.
+
 ### Neither skill changes the thing it is examining
 
 Both are read-only with respect to the work under examination, and this is the

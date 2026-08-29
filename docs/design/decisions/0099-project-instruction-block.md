@@ -120,6 +120,10 @@ the only supported writer of machine state.
 - When the user asks to review one implemented Task, use
   `specbind-review-task`; the review must judge the actual diff without fixing
   it or recording Task state.
+- When the user asks why a Task failed or cannot be implemented, use
+  `specbind-debug` directly. A diagnosis-only request does not start
+  implementation, and its final response must preserve the exact diagnosis
+  block rather than summarize a nested result.
 - Use `specbind-steering` when the request creates or updates durable,
   project-wide guidance, including conventions for testing, APIs, security, or
   deployment. This route does not require a Spec or observable behavior change.

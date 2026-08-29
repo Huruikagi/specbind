@@ -1,6 +1,6 @@
 ---
 name: specbind-debug
-description: Establish the root cause of a failure that stopped work, categorize it, and return a next action for whoever owns it. Read-only; never applies the fix.
+description: Use directly when the user asks why a Task failed or cannot be implemented. Establish the root cause, categorize it, and return a next action. Read-only; never starts implementation or applies the fix.
 argument-hint: "<failure>"
 ---
 

@@ -800,10 +800,15 @@ fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
 
 #[test]
 fn direct_debug_surface_can_report_an_undetermined_owner() {
-    let body = skill::find("specbind-debug")
-        .expect("debug skill")
-        .body()
-        .expect("body");
+    let debug = skill::find("specbind-debug").expect("debug skill");
+    let metadata = debug.metadata().expect("debug metadata");
+    assert!(
+        metadata
+            .description
+            .contains("Use directly when the user asks why a Task failed")
+    );
+    assert!(metadata.description.contains("never starts implementation"));
+    let body = debug.body().expect("body");
 
     assert!(
         body.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
@@ -813,6 +818,16 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
     assert!(preamble.contains("Final response contract — before any investigation"));
     assert!(preamble.contains("final response is incomplete unless it ends"));
     assert!(preamble.contains("Naming a category in prose does not satisfy"));
+
+    let implement = skill::find("specbind-implement")
+        .expect("implementation skill")
+        .metadata()
+        .expect("implementation metadata");
+    assert!(
+        implement
+            .description
+            .contains("Do not use for a diagnosis-only request")
+    );
 }
 
 #[test]

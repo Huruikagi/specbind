@@ -74,6 +74,17 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("judge the actual diff without fixing")
     );
+    assert!(applied.content.contains("use\n  `specbind-debug` directly"));
+    assert!(
+        applied
+            .content
+            .contains("diagnosis-only request does not start\n  implementation")
+    );
+    assert!(
+        applied
+            .content
+            .contains("preserve the exact diagnosis\n  block")
+    );
 }
 
 #[test]

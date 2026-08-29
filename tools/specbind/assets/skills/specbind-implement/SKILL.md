@@ -1,6 +1,6 @@
 ---
 name: specbind-implement
-description: Implement one roadmap item — executing a Spec's approved task plan with dispatched implementers and reviewers, or performing and completing a Direct change.
+description: Implement one roadmap item — executing a Spec's approved task plan with dispatched implementers and reviewers, or performing and completing a Direct change. Do not use for a diagnosis-only request asking why work failed or cannot be implemented.
 argument-hint: "<item> [tasks] [--review required|inline|off]"
 ---
 
