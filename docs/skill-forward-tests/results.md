@@ -23,18 +23,35 @@ without a pass are listed separately below.
 | Checkpoint behavior | C1–C3 | C1–C3 |
 | Steering | None recorded | S5 |
 | Existing-implementation adoption | None recorded | A1, A2 |
-| Design | None recorded | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS5, DS7, DS8 |
+| Design | DS3 | DS1 (workflow only; investigation dispatch was not exercised), DS2, DS3, DS5, DS7, DS8 |
 | Tasks | T2 | T1, T2, T4 |
-| Contract review | X3 | X1, X2, X4 |
-| Implementation | None recorded | I1–I4, I6 |
-| Debug | None recorded | DB1 |
-| Task review | None recorded | RT1, RT2 |
+| Contract review | X2–X4 | X1, X2, X4 |
+| Implementation | I4 | I1–I4, I6 |
+| Debug | DB1 | DB1 |
+| Task review | RT1 | RT1, RT2 |
 | Design validation | None recorded | VD1, VD2 |
-| Implementation validation | None recorded | VI1–VI3 |
+| Implementation validation | VI2, VI3 | VI1–VI3 |
 | Claim verification | None recorded | VC1, VC2 |
-| Release | RL1 | RL1–RL4 |
+| Release | RL1–RL3 | RL1–RL4 |
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
+
+The 2026-08-29 Claude Code batch was measured against `26518ee`, driven as
+Agent-tool subagents on `claude-opus-5` with no prior context, one fixture per
+scenario. Passes: D9, D10, D12, R3, R4, C3, DS3, X2, X3, X4, RT1, DB1, VI2, VI3,
+I4, RL1, RL2, RL3. Every one was judged from the fixture with a
+checksum comparison against its pre-run snapshot; the read-only scenarios
+(DS3, RT1, DB1, VI2, VI3, X2, X3, X4, D9, D10, RL1, RL2) left their fixtures
+byte-identical. X1 and I3 failed, and five more scenarios stopped without a
+measurement because this driver profile cannot supply an approval or dispatch;
+all of them are recorded below.
+
+I4 also exercised the implementation path end to end: the unrelated
+`src/orders.py` edit survived untouched, the completed task produced one commit
+holding only `src/cart.py` and `tasks.yaml`, and no completion handshake ran.
+Its dispatch log carried one line, so the run took Decision 0109's main-context
+fallback rather than dispatching; that is a workflow pass, not a dispatch
+measurement.
 
 CF2 was measured as Codex on 2026-08-28 with `gpt-5.6-terra` at medium
 reasoning against the working tree based on `d9de45b`, including Decision 0154.
@@ -267,6 +284,10 @@ and stopped without binding, tagging, publishing, pushing, or finalizing.
 
 | Scenario | Agent | Result | Why no pass was recorded |
 | --- | --- | --- | --- |
+| X1 | Claude Code | Product failure | On `26518ee`, the driver refused acceptance of an unchanged Contract because the milestone's new 99-per-SKU guarantee was not declared as an invariant, and stopped with `milestone review status` still `absent`. Codex accepts the same fixture, so the review contract admits two readings: it tells a reviewer how to judge a *changed* entry but not a behavior change that arrives with no Contract entry at all. |
+| I3 | Claude Code | Product failure | On `26518ee`, the driver wrote `CONTRIBUTING.md` as ordinary work without ever reading `milestone status`, so the milestone's pending `direct:contributing-guide` item stayed `0/1 completed` and the file was left uncommitted. No Spec artifacts were manufactured. Routing settled on "not a Spec, not Steering" without the active milestone ever entering the decision. |
+| DS1, T1, T4, DS4 | Claude Code | Environment blocked | On `26518ee`, each run reached its confirmation boundary correctly — DS1 authored the `order` design and Contract (`check traceability` 3/3, `check contracts` clean), T1 authored a three-task plan passing 4/4 coverage, T4 and DS4 stated their rewind costs, DS4 naming the contract-review deletion — and then refused the approval relayed by the driving session, on the correct ground that another agent's message is not the user's consent. The post-approval half of each scenario is unmeasurable from an Agent-tool subagent. |
+| A2 | Claude Code | Environment blocked | On `26518ee`, preflight returned the fixture HEAD, all four Steering documents were read, and the boundary proposal named `cart`, `order`, their dependency, the unmanaged area, and three uncertainties, with no dossier, milestone, Spec, or Brief written and a clean worktree. The agent log held one line: the subagent driver has no dispatch tool, so the required fresh readers never ran. |
 | D3 | Claude Code | Not measured | The confirmation authorized the whole feature, so later phases rewrote the discovery artifacts before they could be judged. |
 | D7 | Claude Code | Not measured | No embedded `specbind-tasks` skill owned plan authoring at the time; the run correctly stopped. |
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
@@ -310,7 +331,16 @@ either agent. The tables are a measurement ledger, not a coverage checklist.
 
 ### Open usability findings
 
-None.
+| First seen | Scenario | Surface | Finding | Impact |
+| --- | --- | --- | --- | --- |
+| `26518ee` | X1 | Protocol | The contract-review protocol says how to judge a *changed* Contract entry but is silent on a behavior change that arrives with no Contract entry at all. The skill's "one participating Spec whose contract is unchanged is a complete review" reads as permission to accept exactly that case. Reproduced by the X1 failure above, and by the cross-agent divergence with Codex. | wrong-action-risk |
+| `26518ee` | I3 | Template | The installed project-instruction block routes by request shape (Spec work, durable guidance, ordinary work) without directing an agent to read the active milestone first, so a request that matches a pending Direct item can be classified as ordinary work. Reproduced by the I3 failure above. | wrong-action-risk |
+| `26518ee` | RT1 | Skill | `specbind-review-task` step 2 names Requirements, Designs, and Implementation Notes as the reading list, omitting the Spec's Contract and Steering. Both carried blocking findings in RT1, which the run raised only by reading them on its own initiative. The same run also found no route to `specbind-review-task` in the project-instruction block. | wrong-action-risk |
+| `26518ee` | DB1 | Skill | Neither DB1 run emitted the mandated `## Diagnosis` block with its `CATEGORY:` line, though both categorized the defect correctly in prose and one explicitly ruled out PLAN. Two runs, two builds' worth of prompts, same omission. | ambiguity |
+
+Reproduce each against its owning Decision, CLI, or asset before changing the
+product. The X1 and I3 rows are backed by scenario failures rather than by
+debrief prose alone.
 
 ### Fixed, behavioral confirmation pending
 
@@ -353,6 +383,23 @@ remain available in Git history.
 | Discovery's expected dirty output appeared as a present Release blocker. | Worktree cleanliness is reported only when a clean revision would unlock current progress; release readiness is not evaluated before Validation. | `475f144` |
 
 ### Active environment limitation
+
+A Claude Code Agent-tool subagent is a valid driver only for scenarios that do
+not cross an approval. It refuses an approval relayed by the driving session —
+correctly, since another agent's message is not the user's consent — so every
+authoring phase stops with its draft unapproved. It also has no dispatch tool
+and does not see the fixture's installed skills in its Skill registry, so it
+reads `SKILL.md` from disk and takes the main-context fallback for dispatch.
+Judge those runs as environment-blocked past the confirmation turn rather than
+as product failures, and use a real session in the fixture directory to measure
+the second half.
+
+Host-instruction inheritance shows up here the same way it does under Codex:
+in the first `26518ee` batch, two of six drivers answered in Japanese against an
+`en` fixture despite the standalone-fixture statement. Naming the inherited
+rules explicitly — that no other repository's language or commit policy
+applies — stopped it, and the DB1 rerun under that wording answered in English
+and reached the same diagnosis.
 
 Codex subagents can inherit host instructions, an older host CLI on `PATH`, or a
 skill registry that does not expose the fixture's installed skills. Stale agent

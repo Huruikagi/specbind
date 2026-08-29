@@ -183,6 +183,22 @@ which is this repository's own instruction file: the same rules about answering
 in Japanese and committing to `main` travel with it by a different route. Say
 the fixture stands alone regardless of which agent you drive.
 
+When the driver is a Claude Code Agent-tool subagent, pick scenarios that do not
+cross an approval. Such a subagent hears the driving session, not the user, and
+refuses a relayed approval on the correct ground that another agent's message is
+not the user's consent — so DS1, DS4, T1, T4 and every other authoring phase stop
+with a correct draft and an unapproved gate. Measure those from a real session
+started in the fixture directory. The same driver has no dispatch tool and does
+not see the fixture's installed skills in its Skill registry; it reads
+`SKILL.md` from disk, which is faithful to the document but leaves dispatch on
+the main-context fallback.
+
+Name the inherited rules when you say the fixture stands alone. "Instructions
+from any other repository do not apply" was not enough in the 2026-08-29 batch:
+two of six drivers still answered in Japanese against an `en` fixture. Adding
+that this covers any rule about response language and about committing or
+pushing stopped it.
+
 ### Driving a nested-dispatch run
 
 `specbind-implement` dispatches subagents of its own, and `specbind-design`
