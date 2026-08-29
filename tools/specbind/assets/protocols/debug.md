@@ -51,6 +51,12 @@ else.
 - Follow the failure to the point where the system's actual behavior first
   diverges from what the approved artifacts require. That divergence is the
   cause; everything after it is consequence.
+- Establish the complete governing input set before naming that divergence:
+  Requirements, governing Designs, the Spec's Contract, current Steering, and
+  any Implementation Notes. Do not infer that a Contract boundary is missing
+  without reading the Contract, or turn omitted Steering into permission. If an
+  inventory or read fails, use `UNDETERMINED` and make that failed read the next
+  evidence step.
 - When two causes remain possible, state both and state what would distinguish
   them. A confident single answer that is wrong costs more than an honest fork.
 

@@ -66,6 +66,8 @@ specbind spec status <spec>
 specbind tasks show <spec> <task-id>
 specbind artifact list <spec>
 specbind artifact read <spec> requirements --for consume
+specbind artifact read <spec> contract --for consume
+specbind steering list
 ```
 
 The inventory names split Designs and every
@@ -75,6 +77,17 @@ The inventory names split Designs and every
 specbind artifact read <spec> design/<artifact-id> --for consume
 specbind artifact read <spec> implementation-notes/<artifact-id> --for consume
 ```
+
+Steering has no relevance metadata. Read every selector the listing returns:
+
+```sh
+specbind steering read <selector> --for consume
+```
+
+Zero Steering documents is a complete answer. If the artifact inventory,
+Contract read, Steering listing, or any Steering read fails, do not infer the
+missing content. Return `UNDETERMINED` and make the failed read the evidence step
+that must succeed before the cause can be owned.
 
 An inventory with no notes is a complete answer. When notes exist, a recorded
 trap is often exactly the cause.

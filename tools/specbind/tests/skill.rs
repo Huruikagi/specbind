@@ -819,6 +819,18 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
     assert!(preamble.contains("final response is incomplete unless it ends"));
     assert!(preamble.contains("Naming a category in prose does not satisfy"));
 
+    for required in [
+        "specbind artifact read <spec> contract --for consume",
+        "specbind steering list",
+        "specbind steering read <selector> --for consume",
+        "Return `UNDETERMINED` and make the failed read the evidence step",
+    ] {
+        assert!(
+            body.contains(required),
+            "debug skill must contain {required}"
+        );
+    }
+
     let implement = skill::find("specbind-implement")
         .expect("implementation skill")
         .metadata()

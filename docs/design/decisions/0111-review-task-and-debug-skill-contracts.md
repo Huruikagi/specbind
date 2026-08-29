@@ -112,6 +112,14 @@ Zero Steering documents is a complete answer. An inventory or read error leaves
 the governing input set unknown and produces `CANNOT_REVIEW`, not an approval
 formed from a partial view.
 
+Debug reads the same governing boundary set when establishing where behavior
+first diverges. A diagnosis that reads Requirements and Design but not the
+existing Contract can invent a missing boundary or misstate an invariant; a
+diagnosis that omits Steering can route a project-constraint failure to the wrong
+owner. Debug therefore reads the Contract and every Steering document too. An
+incomplete governing input set yields `UNDETERMINED` with the failed read as the
+next evidence step rather than a cause inferred from absence.
+
 ### Structured returns in both moments
 
 Each skill returns the closed-set result its protocol defines — the three review
