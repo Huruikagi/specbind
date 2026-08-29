@@ -453,7 +453,7 @@ fn drops_both_documents_sharing_one_artifact_id() {
         .failure()
         .stdout("")
         .stderr(predicate::str::starts_with(
-            "ERROR STEERING_READ_INVALID: steering selector is ambiguous: product
+            "ERROR STEERING_READ_INVALID: steering selector is ambiguous: product; searched_project_path=.specbind/steering
 ",
         ));
 }
