@@ -7,8 +7,9 @@ type: SpecBind Steering
 <!-- specbind:instruction create
 これは主題を著者が選ぶ steering 文書のための雛形である。他のすべての SpecBind テンプレートと
 異なり artifact_id を宣言していない。steering の識別子は著者が選ぶものだからである。書き始める
-前に、既存のどの steering 文書とも重複しない小文字ケバブケースの識別子を決め、この文書を
-steering/<artifact_id>.md として作成する。
+前に、既存のどの steering 文書とも重複しない小文字ケバブケースの識別子を決める。この文書は、
+`template list steering` が報告した project_path の <artifact_id> をその識別子に置換した場所だけに
+作成する。
 
 見出しは主題に合わせて置き換える。
 -->

@@ -655,6 +655,21 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
 }
 
 #[test]
+fn steering_add_stops_before_inventing_missing_project_policy() {
+    let body = skill::find("specbind-steering")
+        .expect("steering skill")
+        .body()
+        .expect("body");
+
+    assert!(
+        body.contains("authority to document an\nexisting practice, not to choose a new policy")
+    );
+    assert!(body.contains("stop before creating a file"));
+    assert!(body.contains("Do not\ncombine an accurate statement that tooling is absent with an invented normative\npolicy"));
+    assert!(body.contains("write it only\nto the `project_path` reported"));
+}
+
+#[test]
 fn implementation_workflow_carries_notes_and_all_failure_routes() {
     let body = skill_package_text("specbind-implement");
 

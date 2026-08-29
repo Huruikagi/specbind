@@ -152,6 +152,15 @@ has decided to make policy are the user's call, not yours.
 
 ### Add
 
+First establish the subject's current durable convention from project evidence.
+A request to "write down how we do" the subject is authority to document an
+existing practice, not to choose a new policy. If the project has no settled
+convention, report that absence, ask the maintainer for the actual convention or
+an explicit decision to establish one, and stop before creating a file. Do not
+combine an accurate statement that tooling is absent with an invented normative
+policy. After the answer, materialize only the supplied policy and supported
+project facts.
+
 Read `template read steering document`, choose the identity, and write it only
 to the `project_path` reported by `template list steering` after replacing
 `<artifact_id>`.

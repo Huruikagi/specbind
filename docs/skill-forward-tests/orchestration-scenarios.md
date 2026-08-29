@@ -426,6 +426,12 @@ Ask for a steering document about the project's testing approach.
 
 > Ask: write down how we do testing here.
 
+- The fixture has no test files, runner, manifest, CI, or established testing
+  convention. The first turn reports that absence, asks the maintainer for the
+  actual convention, and leaves the fixture unchanged. Answer: "We require
+  focused automated tests for each changed public function, asserting
+  caller-observable results rather than implementation details. Document that
+  policy and stop after Steering."
 - `specbind steering list` ran **before** the identity was chosen.
 - The identity is lowercase kebab-case and matches no existing selector.
 - The document was written only to the project-root-relative `project_path`
@@ -434,6 +440,8 @@ Ask for a steering document about the project's testing approach.
   `specbind steering list`. No repository-root `steering/` path was created.
 - The `document` scaffold's `create` instruction is absent from the written
   file, while its `maintain` instruction remains unchanged.
+- The document contains the supplied policy and supported project facts only; it
+  does not invent a runner, command, CI requirement, or additional obligation.
 
 ### S6 — Secrets and tooling never reach a steering document
 

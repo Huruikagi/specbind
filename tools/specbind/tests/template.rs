@@ -536,6 +536,10 @@ fn embeds_the_steering_scaffold_set_in_every_language() {
         let document = steering_template(&inventory, "document");
         assert_eq!(document.artifact_id, None);
         assert_eq!(document.output_path, None);
+        let (content, _) = template::read_steering_template(root.path(), language, "document")
+            .expect("embedded steering document scaffold");
+        assert!(content.contains("project_path"));
+        assert!(!content.contains("steering/<artifact_id>.md"));
     }
 }
 

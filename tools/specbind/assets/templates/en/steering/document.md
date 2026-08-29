@@ -9,7 +9,8 @@ This is the scaffold for a steering document whose subject the author chooses.
 Unlike every other SpecBind template it declares no artifact_id, because a
 steering identity is the author's to pick: supply one before writing, as a
 lowercase kebab-case token that no existing steering document already uses, and
-materialize this file at steering/<artifact_id>.md.
+materialize this file only at the project_path reported by `template list
+steering` after replacing <artifact_id> with that token.
 
 Replace these headings with the ones the subject needs.
 -->

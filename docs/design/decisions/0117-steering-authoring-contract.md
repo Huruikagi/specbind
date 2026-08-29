@@ -177,6 +177,21 @@ steady state for a project that has decided it does not want steering, and
 silently bootstrapping one is the failure mode that teaches people to avoid the
 skill.
 
+## Adding documents records policy; it does not create it
+
+A request to "write down how we do" a subject authorizes documenting an
+existing durable convention. It does not authorize the authoring skill to turn
+an absent practice, an implementation example, or its own preference into new
+project policy.
+
+For Add, the skill inspects subject-specific project evidence before writing. If
+that evidence establishes no settled convention, it reports the absence and
+asks the maintainer for the actual convention or for an explicit decision to
+establish one. It stops with no new document until that answer arrives. Once the
+maintainer supplies the policy, the same run materializes it without inventing
+additional obligations. Recording that no tool or command currently exists is
+not permission to add a normative replacement beside the absence.
+
 ## A steering template scope
 
 `template list` and `template read` gain a second scope:
