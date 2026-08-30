@@ -53,16 +53,15 @@ miseを使わないインストール方法は、
 
 ## 3. 対象プロジェクトへ導入する
 
-### 3.1. 仮実行する
+### 3.1. インストールする
 
 今インストールしたCLIの最初の仕事として、
 SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
 
-このガイドではCodexを例に進めます。まずはdry runで、どんなファイルが
-作られるのかを確認します。
+このガイドではCodexを例に進めます。
 
 ```sh
-specbind install --dry-run --agent codex --language ja --project-instructions
+specbind install --agent codex --language ja --project-instructions
 ```
 
 #### `--agent`
@@ -93,12 +92,11 @@ SpecBindが管理する成果物、具体的には `requirements.md` や
 もともと書いてある既存の文章はそのまま残ります。
 普通はつけたほうがいいでしょう。
 
-### 3.2. 実際に適用する
-
-仮実行の内容に問題がなければ、`--dry-run`を外して実際に適用します。
+書き込まれるファイルを事前に確認したい場合は、同じコマンドへ`--dry-run`を
+追加すると、変更を適用せずに`create`、`replace`、`keep`の計画を確認できます。
 
 ```sh
-specbind install --agent codex --language ja --project-instructions
+specbind install --dry-run --agent codex --language ja --project-instructions
 ```
 
 主に、次のファイルが追加されます。
