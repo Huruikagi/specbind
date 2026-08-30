@@ -300,10 +300,9 @@ $specbind-status <spec-id>
 
 完了したら、次に着手可能になったSpecでもImplementと検証を繰り返します。
 
-この時点では、Milestoneはまだリリースされていません。リリースするには、
-プロジェクト固有の`.specbind/settings/adapters/release.md`を用意し、対象
-リリースを実際に公開・検証できる状態にしておく必要があります。最初の試用では、
-実装の検証までを完了地点にすることをおすすめします。
+この時点では、Milestoneはまだリリースされていません。最初の試用では、実装の検証
+までを完了地点にするのがおすすめです。実際に締めるところまで進める手順は
+[リリースする](./release.md)にまとめています。
 
 ## 9. 生成された成果物を見る
 
@@ -349,6 +348,7 @@ specbind spec status <spec-id> --json
 ## 次に読む
 
 - [基本概念](./concepts.md)
+- [リリースする](./release.md) — Milestoneを実際に締めるとき
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
 - [現在のスキル一覧](../../current-skill-index.md)
 - [現在の成果物一覧](../../current-artifact-index.md)

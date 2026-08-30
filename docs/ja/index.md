@@ -22,6 +22,7 @@ Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証してい�
 1. [Getting Started](./guide/getting-started.md) — 新規・既存プロジェクトのルートを選ぶ
    - [新規プロジェクトで始める](./guide/start-new-project.md)
    - [既存プロジェクトで始める](./guide/start-existing-project.md)
+   - [リリースする](./guide/release.md)
 2. [SpecBindの考え方](./guide/concepts.md) — 何を目指して、どう実現するのか
 3. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
 4. [バグ報告と改善提案](./guide/feedback.md) — 教えてください

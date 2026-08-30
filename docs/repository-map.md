@@ -87,6 +87,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese new-project guide](./ja/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [Japanese existing-project guide](./ja/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
 | [Japanese existing-implementation adoption guide](./ja/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
+| [Japanese release guide](./ja/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
 | [Japanese basic concepts](./ja/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
 | [Japanese customization guide](./ja/guide/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
 | [Japanese feedback guide](./ja/guide/feedback.md) | Offline product feedback entry point for CLI, Skill, integration, and documentation reports |
