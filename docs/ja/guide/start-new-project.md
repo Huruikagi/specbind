@@ -3,6 +3,9 @@
 このページでは、まだ実装を始めていないプロジェクトへSpecBindを導入し、最初の
 機能をスコープの確認から実装の検証まで進めます。
 
+必要な環境とエージェントについては、[Getting Started](./getting-started.md)の
+「どちらのルートでも必要なもの」を確認しておいてください。
+
 ## 0. いつ始めるのか
 
 ここで、まったくの手探りでこれから走り始めるプロジェクトにSpecBindを
@@ -57,15 +60,27 @@ git commit -m "Initialize project"
 ```sh
 mise use github:Huruikagi/specbind
 mise lock
-specbind --version
 ```
 
 `mise use`はSpecBindを`mise.toml`へ追加し、`mise lock`は選ばれたバージョンと
-配布物のチェックサムを`mise.lock`へ記録します。追加または更新された2ファイルを
-確認し、Gitへコミットしてください。miseを使わないインストール方法は、
+配布物のチェックサムを`mise.lock`へ記録します。
+
+インストールできたか確認します。
+
+```sh
+specbind --version
+```
+
+追加または更新された`mise.toml`と`mise.lock`の内容を確認し、どちらもGitへ
+コミットしてください。これにより、チームで同じバージョンのSpecBindを使えます。
+
+miseを使わないインストール方法は、
 [README](https://github.com/Huruikagi/specbind#install-the-cli)を参照してください。
 
 ## 3. SpecBindを導入する
+
+今インストールしたCLIの最初の仕事として、
+SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
 
 このガイドではCodexを例に進めます。
 
@@ -73,7 +88,9 @@ specbind --version
 specbind install --agent codex --language ja --project-instructions
 ```
 
-使うコーディングエージェントに合わせて、`--agent`を選びます。
+### `--agent`
+
+使うコーディングエージェントに合わせて、`--agent`の値を選んでください。
 
 | 使うエージェント | 指定する値 |
 | --- | --- |
@@ -82,40 +99,81 @@ specbind install --agent codex --language ja --project-instructions
 | Agent Skillsと`AGENTS.md`に対応するその他のエージェント | `generic` |
 
 複数のエージェントを使う場合は、`--agent codex --agent claude-code`のように
-`--agent`を繰り返します。`--language ja`はSpecBindが管理する成果物を日本語にし、
-`--project-instructions`はルートのAgent向け指示へSpecBindの案内を統合します。
+`--agent`を繰り返します。
 
-書き込まれるファイルを先に確認する場合は、`--dry-run`を追加します。
+`generic`が作るのは、`.agents/skills/`のAgent Skillsとルート`AGENTS.md`の
+案内ブロックだけです。サブエージェント定義は作りません。
+
+### `--language ja`
+
+SpecBindが管理する成果物、具体的には `requirements.md` や
+`design.md` の言語を日本語にします。
+
+### `--project-instructions`
+
+`AGENTS.md`または
+`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
+もともと書いてある既存の文章はそのまま残ります。
+普通はつけたほうがいいでしょう。
+
+### 書き込まれる内容を確認する
+
+同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
+`keep`の計画を確認できます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --project-instructions
 ```
 
-生成された内容をレビューし、コミットしてください。インストーラ自体はコミットを
-行いません。コミット後にコーディングエージェントのセッションを開き直します。
-`generic`を選んだ場合は、以降のスキル呼び出しを利用するエージェントのスキル選択や
-自動Discoveryの方法に読み替えてください。
+主に、次のファイルが追加されます。
+
+```text
+.specbind.json
+.specbind/settings/
+.agents/skills/specbind-*/       # Codexとgenericで共有
+.codex/agents/specbind-*.toml    # Codexの役割別モデル設定
+.claude/skills/specbind-*/       # Claude Code
+.claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
+AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
+```
+
+CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定されます。
+変更する場合は、
+[カスタマイズガイド](./customization.md)の「プロジェクト設定と役割別モデル」を
+参照してください。
+
+生成された内容をレビューし、手順1で作った土台へのコミットとは分けてコミットして
+ください。SpecBindのインストーラ自体はコミットを行いません。
+
+### セッションを開き直す
+
+導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
+そうしないと、エージェントが新しいスキルを認識できないことがあります。
 
 以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
-読み替えてください。スキル名と引数は同じです。
+読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
+`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに異なります。
+利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
 
 ## 4. プロジェクト設定を確認する
 
-初回のinstallが成功すると、`specbind-configure`で設定レビューを行うよう案内されます。
-セッションを開き直したあと、たとえば次のように依頼してください。
+初回のinstallが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
+設定レビューを行うよう案内が表示されます。セッションを開き直したあと、たとえば
+次のように依頼してください。
 
 ```text
 このプロジェクト向けにSpecBindの設定を見直して、必要な変更まで進めて。
 ```
 
-設定の機械的な現在値は次のコマンドで確認できます。
+スキルは次の読み取り専用コマンドから現在値を確認し、テンプレート、ルール、
+adapter、Steering、Agent設定のうち関係する面だけを扱います。
 
 ```sh
 specbind configuration show
 ```
 
-既定値のまま使う判断も有効です。設定を変更した場合は、エージェントが示す検証と
-Gitの手順を完了してから次へ進みます。
+新規プロジェクトでは、まだ判断材料が少ないので、既定値のまま使う判断も有効です。
+設定を変更した場合は、エージェントが示す検証とGitの手順を完了してから次へ進みます。
 
 ## 5. 必要なSteeringだけを用意する
 
@@ -156,6 +214,14 @@ Discoveryは、現在のSpec、Steering、Milestoneを読み、Direct、既存Sp
 
 承認後、CLIがMilestoneとSpecの状態を作り、エージェントが`brief.md`を書きます。
 
+途中で状態を確認したくなったら、次のように依頼できます。
+
+```text
+$specbind-status
+```
+
+このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
+
 ## 7. Tasks承認まで計画する
 
 Discoveryが報告したSpec IDを使います。ここでは`task-management`だったとします。
@@ -165,9 +231,15 @@ $specbind-plan task-management
 ```
 
 PlanはRequirements、Design、Design検証、Contract review、Tasksを順に実行し、
-Tasksの承認まで進んだところで止まります。各Gateをまとめて承認しても、成果物の
-レビューやCLIの検査は省略されません。1フェーズずつ進める場合は、対応する
-`specbind-plan-*`スキルを使います。
+Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
+Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
+
+まとめて承認しても、レビューやCLIの検査は省略されません。各Gateで個別に行う
+確認を、1回の実行に対する確認へまとめるだけです。1つずつ内容を見ながら進めたい
+場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
+
+Planが終わった時点では、実装はまだ始まっていません。Requirements、Design、Tasksの
+どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*`スキルを使います。
 
 ## 8. 実装して検証する
 
@@ -176,6 +248,11 @@ Tasksの承認まで進んだところで止まります。各Gateをまとめ�
 ```text
 $specbind-implement task-management
 ```
+
+Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
+Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記録を行います。
+計画やDesignの問題が見つかった場合は、無理に実装を続けず、該当フェーズへ戻す
+ためにいったん停止します。
 
 全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
 
@@ -190,8 +267,10 @@ $specbind-validate-implementation task-management
 $specbind-status task-management
 ```
 
-最初の試用では、リリースまで進めず、実装の検証を完了地点にすることを
-おすすめします。
+この時点では、Milestoneはまだリリースされていません。リリースするには、
+プロジェクト固有の`.specbind/settings/adapters/release.md`を用意し、対象
+リリースを実際に公開・検証できる状態にしておく必要があります。最初の試用では、
+実装の検証までを完了地点にすることをおすすめします。
 
 ## 9. 生成された成果物を見る
 
@@ -211,7 +290,10 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 ```
 
 `spec.yaml`、`roadmap.md`、`tasks.yaml`に入っている実行状態はCLIの持ち物です。
-状態を進める目的で手編集しないでください。現在の状態はCLIから確認できます。
+状態を進める目的で手編集しないでください。Requirements、Design、Contract、
+Tasksの計画部分は、それぞれを所有するスキル経由で保守します。
+
+現在の状態は、CLIから直接確認することもできます。
 
 ```sh
 specbind milestone status

@@ -4,33 +4,11 @@
 一緒に、最初の変更を計画・実装・検証まで進めてみます。
 
 まだ実装を始めていない場合は、[新規プロジェクトで始める](./start-new-project.md)へ
-進んでください。
+進んでください。必要な環境とエージェントについては、
+[Getting Started](./getting-started.md)の「どちらのルートでも必要なもの」を
+確認しておいてください。
 
-## 1. 前提を確認する
-
-次のものを用意してください。
-
-- Gitで管理していて、コミットが1つ以上ある対象プロジェクト
-- コーディングエージェント
-- Windows x64、WSL2上のLinux x64、またはmacOS ARM64
-
-### 1.1. 使えるエージェントについて
-
-開発者はCodexとClaude Codeを利用しており、この2つでテストを進めています。
-
-それ以外のコーディングエージェントでも、
-Agent Skillsと`AGENTS.md`に対応していれば
-（試してないけど）多分動くはずです。
-具体的には
-
-- Cursor
-- GitHub Copilot
-- Devin
-- ほか...
-
-うまくいかなかったら[バグ報告と改善提案](./feedback.md)から教えてください。
-
-## 2. CLIをインストールする
+## 1. CLIをインストールする
 
 対象プロジェクトのルートへ移動します。未コミットの変更が残っている場合は、
 内容を確認し、いつもの手順でコミットしておいてください。
@@ -57,9 +35,7 @@ specbind --version
 miseを使わないインストール方法は、
 [README](https://github.com/Huruikagi/specbind#install-the-cli)を参照してください。
 
-## 3. 対象プロジェクトへ導入する
-
-### 3.1. インストールする
+## 2. SpecBindを導入する
 
 今インストールしたCLIの最初の仕事として、
 SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
@@ -70,7 +46,7 @@ SpecBindがこれから使うエージェントスキルや設定ファイルを
 specbind install --agent codex --language ja --project-instructions
 ```
 
-#### `--agent`
+### `--agent`
 
 使うコーディングエージェントに合わせて、`--agent`の値を選んでください。
 
@@ -86,20 +62,22 @@ specbind install --agent codex --language ja --project-instructions
 `generic`が作るのは、`.agents/skills/`のAgent Skillsとルート`AGENTS.md`の
 案内ブロックだけです。サブエージェント定義は作りません。
 
-#### `--language ja`
+### `--language ja`
 
 SpecBindが管理する成果物、具体的には `requirements.md` や
 `design.md` の言語を日本語にします。
 
-#### `--project-instructions`
+### `--project-instructions`
 
 `AGENTS.md`または
 `CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
 もともと書いてある既存の文章はそのまま残ります。
 普通はつけたほうがいいでしょう。
 
-書き込まれるファイルを事前に確認したい場合は、同じコマンドへ`--dry-run`を
-追加すると、変更を適用せずに`create`、`replace`、`keep`の計画を確認できます。
+### 書き込まれる内容を確認する
+
+同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
+`keep`の計画を確認できます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --project-instructions
@@ -125,25 +103,36 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
 インストーラ自体はコミットを行いません。
 
+### セッションを開き直す
+
+導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
+そうしないと、エージェントが新しいスキルを認識できないことがあります。
+
+以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
+読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
+`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに異なります。
+利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
+
+## 3. プロジェクト設定を確認する
+
 初回のinstallが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
-設定レビューを行うよう案内が表示されます。coding agentのセッションを開き直した
-あと、たとえば「このプロジェクト向けにSpecBindの設定を見直して、必要な変更まで
-進めて」と依頼してください。スキルは次の読み取り専用コマンドから現在値を確認し、
-テンプレート、ルール、adapter、Steering、Agent設定のうち関係する面だけを扱います。
+設定レビューを行うよう案内が表示されます。セッションを開き直したあと、たとえば
+次のように依頼してください。
+
+```text
+このプロジェクト向けにSpecBindの設定を見直して、必要な変更まで進めて。
+```
+
+スキルは次の読み取り専用コマンドから現在値を確認し、テンプレート、ルール、
+adapter、Steering、Agent設定のうち関係する面だけを扱います。
 
 ```sh
 specbind configuration show
 ```
 
 既定値のまま使う判断も有効です。コマンドやスキルは、プロジェクト全体を単純な
-「設定済み／未設定」には分類しません。
-
-導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
-そうしないと、エージェントが新しいスキルを認識できないことがあります。
-以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
-読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
-`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに異なります。
-利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
+「設定済み／未設定」には分類しません。設定を変更した場合は、エージェントが示す
+検証とGitの手順を完了してから次へ進みます。
 
 ## 4. 導入方法を選ぶ
 
@@ -298,9 +287,10 @@ specbind spec status csv-export --json
 ## 次に読む
 
 - [基本概念](./concepts.md)
+- [カスタマイズ](./customization.md)
 - [現在のスキル一覧](../../current-skill-index.md)
 - [現在の成果物一覧](../../current-artifact-index.md)
 
 ---
 
-[Getting Started](./getting-started.md) | [基本概念](./concepts.md)
+[Getting Started](./getting-started.md) | [新規プロジェクトで始める](./start-new-project.md)
