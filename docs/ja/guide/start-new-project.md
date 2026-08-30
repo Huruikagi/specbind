@@ -6,6 +6,9 @@
 必要な環境とエージェントについては、[Getting Started](./getting-started.md)の
 「どちらのルートでも必要なもの」を確認しておいてください。
 
+出てくる用語（Spec、Steering、Milestone、Gate など）は[基本概念](./concepts.md)に
+まとめています。先に目を通しても、出てきたときに参照してもかまいません。
+
 ## 始める前に
 
 SpecBindが得意なのは、何を作るかをゼロから探索することではありません。ある程度
@@ -188,28 +191,44 @@ $specbind-steering この新規プロジェクトで、すでに決めた長期�
 
 ## 6. Discoveryでスコープを確認する
 
-機能の内容を添えて、discoveryスキルをエージェントに依頼します。
+「始める前に」で挙げた資料（画面一覧、主要ユースケース、ラフな要件メモなど）が
+あれば、その場所を伝えるか、要点を添えて、discoveryスキルをエージェントに
+依頼します。
 
 ```text
-$specbind-discovery タスクを登録して一覧表示できるようにしたい。
+$specbind-discovery タスク管理機能を追加したい。やりたいことの整理は
+docs/notes/task-management.md にある。
 ```
 
-Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読んだうえで、機能を
-次のどれかに分類します。
+Discoveryはこの資料を、機能の境界と分類を決めるために読みます。細かい要件や設計は
+このあとのPlanで詰めるので、ここで全部渡す必要はありません。使う技術や構成の選定も
+Discoveryの仕事ではなく、決まっていれば5節のSteeringへ、まだなら後続のDesignで
+扱います。
 
-- Direct
-- 既存Specの更新
-- 新規Spec
+Discoveryは、プロジェクトの現在の状態（Spec、Steering、Milestone）を読んだうえで、
+依頼を次のどれかに分類します。
 
-新規プロジェクトの最初の持続的な機能は、通常は新規Specの候補です。スキルが示す
-次の4項目を読み、境界と依存関係に納得してから承認してください。
+- **Direct** — 既存の仕様を変えずにできる小さな変更
+- **既存Specの更新** — すでにある能力の振る舞いや境界を変える
+- **新規Spec** — プロジェクトに新しい責務（Spec）を1つ増やす
 
-- Work items
-- New Specs
-- Gate invalidations
-- Dependencies
+Specは「プロジェクトが持ち続ける1つの能力の境界」で、責務を表す短いkebab-caseの
+IDが付きます（用語は[基本概念](./concepts.md)）。新規プロジェクトの最初の持続的な
+機能は、通常は新規Specの候補です。
 
-承認後、CLIがMilestoneとSpecの状態を作り、エージェントが`brief.md`を書きます。
+スキルは提案を次の4項目で示します。
+
+- **Work items** — 今回行う作業の一覧
+- **New Specs** — 新しく作る責務の境界
+- **Gate invalidations** — やり直しになる既存の承認
+- **Dependencies** — 作業どうしの依存関係
+
+新規プロジェクトの最初の機能なら、通常はWork itemsとNew Specsだけに中身が入り、
+残りはNoneです。ここでの結論が以降のワークフロー全体の前提になります。前の2項目を
+読み、境界と分類に納得してから承認してください。
+
+承認すると、CLIがMilestoneとSpecの状態を作り、エージェントが、その機能の要点を
+まとめた作業メモ（`brief.md`）を書きます。
 
 途中で状態を確認したくなったら、次のように依頼できます。
 
