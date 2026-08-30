@@ -11,7 +11,10 @@ usability state lives in the [findings worklist](./findings.md).
 
 Normalized run records start after the 2026-08-30 migration accepted by
 [Decision 0162](../design/decisions/0162-forward-test-record-lifecycle.md).
-No post-migration run has been recorded yet.
+
+| Date | Driver | Model/profile | Tested build | Scenarios | Record |
+| --- | --- | --- | --- | --- | --- |
+| 2026-08-31 | Codex | `gpt-5.6-terra` / `medium` | `3719787` | D14, R7 — pass | [Local Source Collections](./runs/2026-08-31-codex-3719787-source-collections.md) |
 
 Use the [run template](./run-template.md) for the next batch. Update this section
 with the date, driver, tested build, scenarios, and link to that run; do not copy
