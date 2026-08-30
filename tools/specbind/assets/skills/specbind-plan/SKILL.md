@@ -41,6 +41,11 @@ artifact authoring, or gate approval**. Do not infer all scope from the number
 of participants. A milestone containing one Spec still requires the user's
 scope choice.
 
+The stopping response itself must name the available Spec choices, name the
+all-Spec choice, and explicitly ask the user to select one. A report that merely
+says nothing changed or lists the commands run is not the required scope
+question and leaves the workflow without a resumable decision.
+
 Scope selection is not delegated-gate authorization. A single answer may do
 both only when it explicitly selects the scope and authorizes the gates described
 below.

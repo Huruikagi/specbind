@@ -577,6 +577,8 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
     assert!(body.contains("Do not infer all scope from the number\nof participants"));
     assert!(body.contains("Scope selection is not delegated-gate authorization"));
     assert!(body.contains("Do not infer the current\nactionable phase and start it directly"));
+    assert!(body.contains("stopping response itself must name the available Spec choices"));
+    assert!(body.contains("not the required scope\nquestion"));
 }
 
 #[test]
