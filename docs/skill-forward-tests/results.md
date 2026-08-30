@@ -36,6 +36,21 @@ without a pass are listed separately below.
 | Planning orchestrators | None recorded | Q0, Q4, B0 |
 | End-to-end journey | None recorded | HP1 |
 
+Q0 and R4 were re-measured on 2026-08-30 for the Decision 0161 Plan namespace,
+driven as fresh Codex subagents on `gpt-5.6-terra` at medium reasoning with one
+fixture per scenario. R4 passed on `1bf2f16`: an explicit Requirements-only
+request selected the lower-level phase, changed only
+`.specbind/specs/cart/requirements.md`, proposed active IDs 1.1–1.4, and stopped
+with every gate `not_reached`. Q0 on the same build kept the fixture completely
+clean and inferred no scope, but returned only a no-change and command summary;
+it omitted the required named/all choices and scope question. `b645004` made the
+stopping response itself part of the contract. The fresh Q0 retry named `cart`
+and all Specs, explicitly asked for one selection, ran only milestone status,
+and left every gate and artifact unchanged in a clean worktree. The retry
+debrief reported `none`. R4's language and active-set observations were not
+retained: the English fixture artifacts supplied the configured language, and
+the phase already directs genuinely unclear active membership to inclusion.
+
 X1 and S5 were re-measured on 2026-08-30 against `9978278`, driven as fresh
 Codex subagents on `gpt-5.6-terra` at medium reasoning with one fixture per
 scenario. Both passed. X1 kept Contract Review absent for the undeclared
@@ -497,6 +512,7 @@ the drivers had resolved a stale host CLI for those commands.
 | D7 | Codex | Environment blocked | The agent stated the correct rewind cost, but the host safety review rejected the confirmed invalidation twice. |
 | R1 | Codex | Scenario blocked | The fixture says only that customers can cancel "eligible orders", but never defines eligibility. The Requirements review protocol requires an unknown product expectation to be escalated rather than guessed, so the agent correctly stopped without authoring. |
 | Q0 | Codex | Product failure | On `dd8793f`, the fresh `gpt-5.6-terra` medium driver inferred named `cart` scope from the milestone's only participant and routed directly to Requirements. It added criterion 1.4 to `requirements.md` while leaving every gate `not_reached`, instead of presenting named/all scope choices without authoring. The quick-plan metadata and installed project instructions now route ambiguous accelerated-planning requests to the orchestrator before an actionable phase. |
+| Q0 | Codex | Product failure | On `1bf2f16`, the driver correctly made no change, inferred no scope, and left every gate `not_reached`, but returned only a no-change and command summary without presenting the required `cart` and all-Spec choices or asking for selection. `b645004` made the resumable scope question explicit, and the fresh retry passed. |
 | R1 | Codex | Environment blocked | After the fixture ambiguity was repaired in `55518ce`, the driver approval mechanism rejected the fixture-required instrumentation write twice, including after the parent explicitly authorized that write. No product workflow ran. |
 | R6 | Codex | Product failure | On `a0f901d`, the driver correctly resolved the Unicode `作成日` binding once to `fixture-day` and replaced both references without changing the template, but first proposed noncanonical `R2.AC1`-style active IDs and omitted the template's complete `maintain` comment from the live Requirements. After correction it approved `2.1`-`2.3`; the fixture reached Design with the expected coverage diagnostics, but the durable-comment loss prevented a pass. |
 | C1 | Codex | Product failure | On `9cce3de`, the agent read the quantity limit as ordinary work, bypassed Discovery, and edited `src/cart.py` plus tests. The project instruction admitted that reading; `59ebc5f` clarified the boundary and the fresh C1 run passed. |
