@@ -96,6 +96,9 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 `generic`を選んだ場合は、以降のスキル呼び出しを利用するエージェントのスキル選択や
 自動Discoveryの方法に読み替えてください。
 
+以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
+読み替えてください。スキル名と引数は同じです。
+
 ## 4. プロジェクト設定を確認する
 
 初回のinstallが成功すると、`specbind-configure`で設定レビューを行うよう案内されます。
@@ -122,17 +125,8 @@ Steeringは、プロジェクト全体で長く維持する目的、技術上の
 
 すでに決めた長期的な方針がある場合は、`specbind-steering`へbootstrapを依頼します。
 
-Codex:
-
 ```text
 $specbind-steering この新規プロジェクトで、すでに決めた長期的な方針から
-最初のSteeringを提案して。書く前に内容を確認したい。
-```
-
-Claude Code:
-
-```text
-/specbind-steering この新規プロジェクトで、すでに決めた長期的な方針から
 最初のSteeringを提案して。書く前に内容を確認したい。
 ```
 
@@ -145,16 +139,8 @@ Claude Code:
 プロジェクトが持ち続ける最初の小さな機能を選び、Discoveryを依頼します。ここでは
 例として、タスクを登録して一覧表示する機能を扱います。
 
-Codex:
-
 ```text
 $specbind-discovery タスクを登録して一覧表示できるようにしたい。
-```
-
-Claude Code:
-
-```text
-/specbind-discovery タスクを登録して一覧表示できるようにしたい。
 ```
 
 Discoveryは、現在のSpec、Steering、Milestoneを読み、Direct、既存Specの更新、
@@ -174,16 +160,8 @@ Discoveryは、現在のSpec、Steering、Milestoneを読み、Direct、既存Sp
 
 Discoveryが報告したSpec IDを使います。ここでは`task-management`だったとします。
 
-Codex:
-
 ```text
 $specbind-plan task-management
-```
-
-Claude Code:
-
-```text
-/specbind-plan task-management
 ```
 
 PlanはRequirements、Design、Design検証、Contract review、Tasksを順に実行し、
@@ -195,30 +173,14 @@ Tasksの承認まで進んだところで止まります。各Gateをまとめ�
 
 承認済みのTasksを実装します。
 
-Codex:
-
 ```text
 $specbind-implement task-management
 ```
 
-Claude Code:
-
-```text
-/specbind-implement task-management
-```
-
 全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
-
-Codex:
 
 ```text
 $specbind-validate-implementation task-management
-```
-
-Claude Code:
-
-```text
-/specbind-validate-implementation task-management
 ```
 
 検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
@@ -228,8 +190,8 @@ Claude Code:
 $specbind-status task-management
 ```
 
-Claude Codeでは`/specbind-status task-management`です。最初の試用では、リリース
-まで進めず、実装の検証を完了地点にすることをおすすめします。
+最初の試用では、リリースまで進めず、実装の検証を完了地点にすることを
+おすすめします。
 
 ## 9. 生成された成果物を見る
 

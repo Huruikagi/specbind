@@ -140,9 +140,10 @@ specbind configuration show
 
 導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
 そうしないと、エージェントが新しいスキルを認識できないことがあります。
-以下ではCodexの`$`とClaude Codeの`/`を使って呼び出し例を示します。`generic`を
-選んだ場合、`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに
-異なります。利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
+以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
+読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
+`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに異なります。
+利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
 
 ## 4. 導入方法を選ぶ
 
@@ -180,17 +181,8 @@ Specへ引き継ぐ専用ワークフローです。今後の変更からSpecBin
 
 変更内容を添えて、discoveryスキルをエージェントに依頼します。
 
-Codex:
-
 ```text
 $specbind-discovery 一覧画面に表示している内容を、CSVファイルとして
-ダウンロードできるようにしたい。
-```
-
-Claude Code:
-
-```text
-/specbind-discovery 一覧画面に表示している内容を、CSVファイルとして
 ダウンロードできるようにしたい。
 ```
 
@@ -212,24 +204,15 @@ Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読�
 $specbind-status
 ```
 
-Claude Codeでは`/specbind-status`です。このスキルは読み取り専用で、承認したり
-成果物を書き換えたりはしません。
+このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
 ## 7. Tasks承認まで進める
 
 Discoveryが報告したSpec IDを使い、標準の計画ワークフローで最初の1件を進めます。
 ここではSpec IDが`csv-export`だったとします。
 
-Codex:
-
 ```text
 $specbind-plan csv-export
-```
-
-Claude Code:
-
-```text
-/specbind-plan csv-export
 ```
 
 Planは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
@@ -247,16 +230,8 @@ Planが終わった時点では、実装はまだ始まっていません。Requ
 
 承認済みのTasksを実装します。
 
-Codex:
-
 ```text
 $specbind-implement csv-export
-```
-
-Claude Code:
-
-```text
-/specbind-implement csv-export
 ```
 
 Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
@@ -266,16 +241,8 @@ Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記
 
 全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
 
-Codex:
-
 ```text
 $specbind-validate-implementation csv-export
-```
-
-Claude Code:
-
-```text
-/specbind-validate-implementation csv-export
 ```
 
 検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
