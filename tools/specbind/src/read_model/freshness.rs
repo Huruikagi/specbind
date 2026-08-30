@@ -10,6 +10,7 @@ use crate::{
     domain::{SemanticIssue, spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     repository,
+    roadmap::{self, ReleaseBindingEdit},
     schema::{
         runtime,
         spec::v1 as wire,
@@ -34,7 +35,8 @@ pub struct CompletionRevisionAssessment {
 }
 
 #[derive(Debug, Clone, Copy)]
-struct CompletionPathFailure {
+struct CompletionPathPolicy {
+    allow_release_binding: bool,
     code: &'static str,
     message: &'static str,
 }
@@ -99,7 +101,7 @@ pub fn evaluate_wire(
 /// Validates the accepted implementation revision against the current checkout.
 ///
 /// A successor checkout is accepted only when its complete tracked difference from the
-/// implementation revision is the expected `spec.yaml` completion-evidence transition.
+/// implementation revision consists of recognized evidence-preserving metadata transitions.
 #[must_use]
 pub fn assess_completion_revision(
     project_root: &Path,
@@ -190,9 +192,10 @@ pub fn assess_completion_revision(
             revision,
             &paths,
             Some(&relative_spec),
-            CompletionPathFailure {
+            CompletionPathPolicy {
+                allow_release_binding: true,
                 code: "FRESHNESS_COMPLETION_PROJECT_CHANGED",
-                message: "project content since implementation_revision is not limited to expected completion metadata mutations",
+                message: "project content since implementation_revision is not limited to recognized evidence-preserving metadata transitions",
             },
             &mut issues,
         ),
@@ -202,7 +205,7 @@ pub fn assess_completion_revision(
             message,
         )),
     }
-    validate_worktree_status(project_root, specbind_root, revision, &mut issues);
+    validate_worktree_status(project_root, specbind_root, revision, true, &mut issues);
     completion_assessment(issues)
 }
 
@@ -219,7 +222,7 @@ pub fn assess_pending_completion_mutations(
     revision: &str,
 ) -> CompletionRevisionAssessment {
     let mut issues = Vec::new();
-    validate_worktree_status(project_root, specbind_root, revision, &mut issues);
+    validate_worktree_status(project_root, specbind_root, revision, false, &mut issues);
     completion_assessment(issues)
 }
 
@@ -401,6 +404,7 @@ fn validate_worktree_status(
     project_root: &Path,
     specbind_root: &Path,
     revision: &str,
+    allow_release_binding: bool,
     issues: &mut Vec<SemanticIssue>,
 ) {
     let output = match git_output_bytes(
@@ -445,9 +449,10 @@ fn validate_worktree_status(
             revision,
             &paths,
             None,
-            CompletionPathFailure {
+            CompletionPathPolicy {
+                allow_release_binding,
                 code: "FRESHNESS_COMPLETION_WORKTREE_DIRTY",
-                message: "working tree contains changes other than expected completion metadata mutations",
+                message: "working tree contains changes other than recognized evidence-preserving metadata transitions",
             },
             issues,
         );
@@ -482,9 +487,10 @@ fn validate_commit_history(
             revision,
             &paths,
             None,
-            CompletionPathFailure {
+            CompletionPathPolicy {
+                allow_release_binding: true,
                 code: "FRESHNESS_COMPLETION_PROJECT_CHANGED",
-                message: "commit history since implementation_revision contains a non-metadata project change",
+                message: "commit history since implementation_revision contains a change other than recognized evidence-preserving metadata transitions",
             },
             issues,
         ),
@@ -535,29 +541,37 @@ fn validate_completion_paths(
     revision: &str,
     paths: &[String],
     required_path: Option<&str>,
-    failure: CompletionPathFailure,
+    policy: CompletionPathPolicy,
     issues: &mut Vec<SemanticIssue>,
 ) {
     let paths = paths.iter().collect::<BTreeSet<_>>();
     if required_path.is_some_and(|required| !paths.iter().any(|path| path.as_str() == required)) {
         issues.push(freshness_issue(
-            failure.code,
+            policy.code,
             "/completion/implementation_revision",
-            failure.message,
+            policy.message,
         ));
         return;
     }
     for relative_spec in paths {
-        if !validate_completion_transition_path(
+        let completion_transition = validate_completion_transition_path(
             project_root,
             specbind_root,
             revision,
             relative_spec,
-        ) {
+        );
+        let release_binding = policy.allow_release_binding
+            && validate_release_binding_transition_path(
+                project_root,
+                specbind_root,
+                revision,
+                relative_spec,
+            );
+        if !completion_transition && !release_binding {
             issues.push(freshness_issue(
-                failure.code,
+                policy.code,
                 "/completion/implementation_revision",
-                failure.message,
+                policy.message,
             ));
             return;
         }
@@ -614,6 +628,66 @@ fn validate_completion_transition_path(
         evidence.completion = None;
     }
     baseline.as_wire() == &expected
+}
+
+fn validate_release_binding_transition_path(
+    project_root: &Path,
+    specbind_root: &Path,
+    revision: &str,
+    relative_path: &str,
+) -> bool {
+    if release_binding_path(project_root, specbind_root).as_deref() != Some(relative_path) {
+        return false;
+    }
+    let current_path = project_root.join(relative_path);
+    if !fs::symlink_metadata(&current_path)
+        .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+    {
+        return false;
+    }
+    let Ok(current) = fs::read_to_string(&current_path) else {
+        return false;
+    };
+    let Ok(current_roadmap) = roadmap::parse(&current) else {
+        return false;
+    };
+    let Some(current_release) = current_roadmap.target_release.as_deref() else {
+        return false;
+    };
+    let Ok(baseline) = git_output_bytes(
+        project_root,
+        &["show", &format!("{revision}:{relative_path}")],
+    ) else {
+        return false;
+    };
+    let Ok(baseline) = std::str::from_utf8(&baseline) else {
+        return false;
+    };
+    let Ok(baseline_roadmap) = roadmap::parse(baseline) else {
+        return false;
+    };
+    if baseline_roadmap.target_release.as_deref() == Some(current_release) {
+        return false;
+    }
+    matches!(
+        roadmap::bind_release(
+            baseline,
+            current_release,
+            baseline_roadmap.target_release.is_some(),
+        ),
+        Ok(ReleaseBindingEdit::Updated(expected)) if expected == current
+    )
+}
+
+fn release_binding_path(project_root: &Path, specbind_root: &Path) -> Option<String> {
+    let relative = specbind_root.strip_prefix(project_root).ok()?;
+    Some(
+        relative
+            .join("steering")
+            .join("roadmap.md")
+            .to_string_lossy()
+            .replace('\\', "/"),
+    )
 }
 
 fn completion_path_spec_id<'a>(

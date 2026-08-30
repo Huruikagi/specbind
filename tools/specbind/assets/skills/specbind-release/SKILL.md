@@ -18,9 +18,14 @@ verifies that a publication happened** — you and the user judge that.
 specbind milestone status
 specbind adapter list
 specbind adapter read release
+specbind adapter read git
 ```
 
-Classify the exact read result before doing anything else:
+The Release adapter owns project release work. The Git adapter owns the narrow
+project checkpoints this run may need; reading it grants no authority beyond
+its current guidance.
+
+Classify the exact Release adapter read result before doing anything else:
 
 1. If the adapter exists, has the required Front Matter, has no scaffold marker,
    and everything after Front Matter is whitespace, it is an **explicit empty
@@ -49,7 +54,7 @@ different: it explicitly means this project needs no project-specific Prepare,
 Publish, Verify, or After-finalize action. Continue to core release. An active
 body is project policy; follow it below.
 
-## 2. Bind the version, and do it early
+## 2. Bind the version
 
 ```sh
 specbind release preflight
@@ -66,22 +71,25 @@ not choose.
 specbind milestone bind-release <version>
 ```
 
-> **Binding late costs a revalidation cycle.** The binding writes
-> `target_release` into the roadmap, and any non-metadata project change after a
-> Spec's completion evidence stales it. So if a participating Spec is already
-> `release_ready`, binding now produces:
->
-> ```text
-> FRESHNESS_COMPLETION_PROJECT_CHANGED: commit history since
-> implementation_revision contains a non-metadata project change
-> ```
->
-> and the only exit is re-running the completion handshake for every affected
-> Spec. Say this before binding, so the user can decide. Where the version is
-> known earlier in the milestone, binding earlier avoids it entirely.
+Binding and explicit rebinding are evidence-preserving lifecycle metadata
+transitions. Rust proves that only the active Roadmap's `target_release`
+changed, so Specs already at `release_ready` keep their completion freshness and
+their original `implementation_revision`. Do not generalize this exception to a
+Roadmap scope or body edit, release-policy change, or project version bump.
 
 A different version already bound needs `--rebind`, which is a deliberate
 replacement — confirm it explicitly first.
+
+A successful bind or rebind leaves the active Roadmap modified. Before release
+preflight, apply the Git adapter read above to one narrow checkpoint containing
+only that Roadmap transition. Inspect `git status --short` and the Roadmap diff;
+never include pre-existing or unrelated paths, never amend, and never push from
+this checkpoint unless separately authorized.
+
+If the Git adapter is absent, empty, still carries its scaffold marker, or says
+not to commit, stop after binding and report that the evidence remains fresh but
+release preflight still needs a clean project checkpoint. Do not route around
+that policy or continue into project release work with a dirty Roadmap.
 
 Then re-run `specbind release preflight` and resolve what it reports. **A
 preflight failure stops the run**; no adapter work happens until it passes.

@@ -54,12 +54,17 @@ $specbind-release 1.0.0
 リリース）。スキルはこの値を自動で決めず、必ず尋ねます。指定するとMilestoneへ
 `target_release`が書き込まれます。
 
-あるSpecがすでに`release_ready`になってからbindすると、そのcompletion evidenceが
-古くなり、対象Specのcompletionをやり直すことになります。バージョンが早い段階で
-決まっているなら、リリースを待たず自分で固定しておくと、このやり直しを避けられます。
+`target_release`だけのbindまたは明示的なrebindは、completion freshnessを保つ
+lifecycle metadata変更です。あるSpecがすでに`release_ready`でも、そのcompletion
+evidenceは古くならず、completionをやり直す必要はありません。Roadmapのscopeや本文、
+project内のversion fileなどを同時に変えた場合は、この例外にはなりません。
+
+bind後のRoadmapは通常のGit変更なので、スキルはGit adapterに従ってこの1ファイルだけを
+checkpointしてからpreflightへ進みます。Git adapterがcommitを許可していない場合は、
+completion evidenceを保ったままそこで停止し、cleanなcheckpointが必要だと報告します。
 
 ```sh
-specbind milestone bind-release 1.0.0     # 任意。早めにバージョンを固定したいとき
+specbind milestone bind-release 1.0.0     # 任意。リリース前に固定してもよい
 ```
 
 ### preflight / Prepare / Publish / Verify

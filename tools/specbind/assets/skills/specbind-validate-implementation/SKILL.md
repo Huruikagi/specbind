@@ -37,14 +37,16 @@ That revision is what you validate against and what you will submit. If
 preflight fails, report the diagnostic and stop — it is naming a real
 precondition, not an obstacle to route around.
 
-**Validate at the final revision.** A later commit anywhere in the project
+**Validate at the final implementation state.** A later project-content commit
 stales completion evidence, so a Spec validated before other work landed needs
 revalidating rather than trusting an earlier verdict.
 
-That includes the release version. `milestone bind-release` writes the roadmap,
-which is a non-metadata change, so binding **after** you accept completion stales
-what you just recorded. If the version is already known, say it should be bound
-before this handshake rather than after.
+One exact lifecycle exception does not change that implementation state:
+`milestone bind-release` may change only the active Roadmap's `target_release`.
+Rust proves that transition structurally, so binding or explicit rebinding after
+acceptance preserves completion freshness. Any Roadmap scope or body change,
+release-policy edit, version bump in project source, or other project change
+still stales it.
 
 ## 2. Read what completion would mean
 
@@ -180,6 +182,10 @@ The first acceptance at a revision needs a completely clean worktree. Each
 acceptance writes that Spec's `spec.yaml`, so later ones at the same revision
 tolerate exactly the other participants' `implementation` → `release_ready`
 transitions — **and nothing else**. Any other change fails closed.
+
+A pending release binding is not an acceptance exception. Checkpoint it first;
+then later Specs may validate at the new clean `HEAD` while earlier completion
+evidence remains fresh at its original implementation revision.
 
 **Commit that metadata set together**, as one commit containing only those
 files. Do not interleave other work into it.

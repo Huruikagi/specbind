@@ -83,12 +83,16 @@ never routed as typed artifacts.
 
 ## Writing while a completion stands
 
-Completion evidence is bound to a project revision, and the only project change
-it tolerates is a Spec's own transition into `release_ready`. Once any
-participating Spec holds accepted completion, **every other write stales it**,
-and that Spec's completion handshake has to be re-run before the milestone can be
-released. This is true however unrelated the write looks; path boundaries do not
-establish non-impact.
+Completion evidence is bound to a project revision. The recognized
+evidence-preserving metadata transitions are a Spec's own transition into
+`release_ready` and the CLI-owned active-Roadmap `target_release` bind or
+rebind. The latter is not an authoring operation and grants no permission to
+rewrite the Roadmap.
+
+Once any participating Spec holds accepted completion, **every ordinary
+authoring write stales it**, and that Spec's completion handshake has to be
+re-run before the milestone can be released. This is true however unrelated the
+write looks; path boundaries do not establish non-impact.
 
 Check before you write, not after:
 

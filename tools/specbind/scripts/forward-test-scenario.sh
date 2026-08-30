@@ -892,9 +892,9 @@ d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
         git -c user.name=Fixture -c user.email=fixture@example.invalid \
             commit --quiet -m "Implement the cap"
         if [ "$scenario" != rl1 ]; then
-            # Bind before accepting completion. The reverse order stales the
-            # evidence, because the roadmap write is a non-metadata project
-            # change — which is exactly what rl1 is built to leave unbound.
+            # These scenarios start already bound. RL1 is deliberately left
+            # unbound so the run can prove that a later user-supplied release
+            # identity preserves accepted completion freshness.
             # Binding also refuses a dirty roadmap, hence the commit above.
             specbind milestone bind-release v1.4.0 >/dev/null \
                 || fail "could not bind the release version"

@@ -905,7 +905,7 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
 }
 
 #[test]
-fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
+fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
     let body = skill_package_text("specbind-release");
 
     for required in [
@@ -917,6 +917,9 @@ fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
         "Do not rely on `README.md` being the only entry point",
         "Skip sections 3 through 6",
         "A local tag has not left the repository",
+        "Binding and explicit rebinding are evidence-preserving",
+        "one narrow checkpoint containing\nonly that Roadmap transition",
+        "evidence remains fresh but\nrelease preflight still needs a clean project checkpoint",
         "Immediately before finalization, record `git status --short`",
         "Checkpoint only the finalized lifecycle metadata",
         "Publication approval does not authorize pushing this commit",
@@ -927,6 +930,17 @@ fn release_bootstraps_policy_and_checkpoints_only_after_finalization() {
             "release skill must contain {required}"
         );
     }
+
+    let first_git = body
+        .find("specbind adapter read git")
+        .expect("initial Git adapter read");
+    let bind = body
+        .find("specbind milestone bind-release <version>")
+        .expect("release binding command");
+    assert!(
+        first_git < bind,
+        "Git checkpoint policy must be known before release binding"
+    );
 
     let finalize = body
         .find("specbind release finalize --log-entries -")

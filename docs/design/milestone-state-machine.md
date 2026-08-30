@@ -139,10 +139,12 @@ Milestone-level final validation has one convergence barrier:
 
 1. every Spec-backed item is implementation-complete;
 2. every Direct item is completed;
-3. the project worktree is clean at one committed `HEAD`;
-4. every participating Spec missing fresh evidence is validated against that same revision.
+3. the project worktree is clean at one committed implementation state;
+4. every participating Spec missing fresh evidence is validated against that state.
 
-Validations may run in parallel when tools and project boundaries allow it. They must not modify project content. If any project-content commit occurs, completion evidence accepted at an earlier revision becomes stale and the affected Specs re-enter the validation candidate set.
+Validations may run in parallel when tools and project boundaries allow it. They must not modify project content. Completion metadata transitions and an exact active-Roadmap `target_release` bind or rebind preserve the validated implementation state. Any other project-content commit makes evidence accepted at an earlier revision stale and returns the affected Specs to the validation candidate set.
+
+The release-binding exception may leave participating Specs with different raw `implementation_revision` values when some validate before the binding checkpoint and others after it. Rust accepts that only when the complete difference is the closed evidence-preserving transition set from Decision 0165; it does not infer non-impact from paths or prose.
 
 Decision 0086 permits the per-Spec acceptance calls for that common revision to run sequentially before commit. After the first call, only Rust-validated completion metadata transitions for other participating Specs at the same revision may be dirty; the accepted metadata set is then committed together. This is not a general dirty-worktree exception.
 

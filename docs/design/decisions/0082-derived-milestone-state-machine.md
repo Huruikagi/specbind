@@ -6,6 +6,11 @@ Decision 0159 adds an exact mutation `command_operand` to each actionable item
 and qualifies the derived result as state health rather than prose-level
 semantic judgment.
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) narrows the
+same-`HEAD` convergence wording: completion revisions may differ only across
+structurally proven completion metadata and active-Roadmap release-binding
+transitions.
+
 ## Context
 
 The Roadmap already persists milestone identity, scope, dependencies, release binding, and sparse Direct completion. Participating Specs persist their own workflow states and evidence, while the accepted contract review is separate project state. Adding a writable milestone `status` or copying per-Spec progress into the Roadmap would create competing authorities.

@@ -293,3 +293,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0162](./design/decisions/0162-forward-test-record-lifecycle.md) | Accepted | Separate forward-test run history, current dashboard, and findings lifecycle |
 | [0163](./design/decisions/0163-macos-arm64-release-target.md) | Accepted | Native macOS ARM64 release, preflight, installer, and runtime verification |
 | [0164](./design/decisions/0164-local-discovery-source-collections.md) | Accepted | Provider-neutral Discovery source semantics with a Git-backed local-files provider |
+| [0165](./design/decisions/0165-release-binding-preserves-completion.md) | Accepted | Completion-preserving active-Roadmap release binding and rebinding |

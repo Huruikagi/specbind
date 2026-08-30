@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) adds a
+structurally proven active-Roadmap release binding to the completion freshness
+exceptions. The gate-local fingerprint chain is unchanged.
+
 ## Context
 
 Later workflows read requirements, design, contracts, and tasks together, but that does not mean every downstream gate should duplicate fingerprints for every upstream artifact. Repeating the same revisions in completion evidence would enlarge `spec.yaml`, create multiple stored copies of one approval fact, and require rules for resolving disagreement between them.

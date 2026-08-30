@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) adds one exact
+Roadmap `target_release` bind or rebind to the successor changes that preserve
+completion freshness. All other project-content changes retain this decision's
+revalidation rule.
+
 ## Context
 
 Feature-level validation may run several mechanical commands and semantic reviews over a non-trivial period. A result is not trustworthy if the repository changes between the start of validation and the lifecycle transition, or if the recorded evidence names a commit that did not contain the validated working tree.

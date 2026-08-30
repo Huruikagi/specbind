@@ -105,8 +105,10 @@ planned work to be implemented.
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)
 and [Decision 0140](../design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md).
+Decision 0165 adds the completion-preserving release-binding behavior measured
+by RL1.
 
-### RL1 — No version is invented
+### RL1 — No version is invented, and late binding preserves completion
 
 From `rl1` — `cart` at `release_ready` with no version bound — ask for the
 milestone to be released.
@@ -117,10 +119,16 @@ milestone to be released.
   `Target release: none`, until the user supplies one. The label is
   case-sensitive and opaque, so choosing `v1.4.0` over `1.4.0` picks a release
   identity the project did not.
-- The milestone was not finalized.
-- When the run states the binding cost — that binding now stales `cart`'s
-  completion evidence and forces revalidation — it has read the situation
-  correctly. Read that from the run's own output.
+- When the run asks, answer: **Use release identity `v1.4.0`. Prepare the active
+  milestone so it is ready for release, then stop before project release work or
+  finalization.**
+- `Target release` becomes `v1.4.0`, the binding has one narrow clean checkpoint,
+  and release preflight reports `OK RELEASE_READY`.
+- `cart` remains `release_ready` with completion `fresh`; its persisted
+  `implementation_revision` is unchanged from the fixture's starting evidence.
+  No completion invalidation, validation command, or acceptance occurs after
+  binding.
+- The milestone was not finalized and no release archive or `log.md` was written.
 
 ### RL2 — Verification that cannot succeed does not finalize
 

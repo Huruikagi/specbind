@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) adds one exact
+exception to the general rule below: a CLI-shaped active-Roadmap
+`target_release` bind or rebind preserves completion freshness. Ordinary
+managed-Markdown authoring remains completion-invalidating.
+
 ## Context
 
 Three accepted contracts state a version of one caution, each having found it

@@ -2,6 +2,12 @@
 
 Status: Accepted
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) supersedes the
+"Binding late invalidates completion" section and its revalidation warning.
+Binding or rebinding only `target_release` now preserves completion freshness;
+the release Skill checkpoints that Roadmap mutation before preflight. The
+remaining release orchestration in this decision is unchanged.
+
 [Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
 supersedes the treatment of an untouched or absent Release adapter as an
 explicit no-op and adds the post-finalization Git checkpoint. An intentionally
@@ -201,8 +207,8 @@ release neither waits on it nor fails because of it.
 
 Implemented. `tools/specbind/assets/skills/specbind-release/SKILL.md` is
 embedded and installed.
-`tools/specbind/assets/skills/specbind-validate-implementation/SKILL.md` gains
-a pointer to bind the release version first where it is known.
+Decision 0165 later replaced the binding-first revalidation warning with an
+evidence-preserving binding transition and a narrow Roadmap checkpoint.
 
 Its forward tests are specified as scenarios RL1 through RL3 in
 [Skill forward tests](../../skill-forward-tests.md) and are run manually.

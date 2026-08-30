@@ -9,6 +9,7 @@ use specbind::{
     contract::Contract,
     cross_spec_review,
     fingerprint::Fingerprint,
+    milestone,
     milestone_status::{self, DeliveryStage},
     release_finalize::{self, FinalizeOutcome},
     release_log::{self, LogUpdate},
@@ -54,6 +55,37 @@ fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed(
         .expect("active milestone");
     assert_eq!(milestone.stage, DeliveryStage::ReleaseReady);
     assert!(milestone.release_blockers.is_empty());
+}
+
+#[test]
+fn preserves_release_readiness_when_rebinding_after_completion() {
+    let root = accepted_spec_fixture();
+    let specbind = root.path().join(".specbind");
+    let before = read_spec(&specbind)
+        .active_change
+        .0
+        .and_then(|active| active.gate_evidence)
+        .and_then(|evidence| evidence.completion)
+        .expect("accepted completion")
+        .implementation_revision
+        .0;
+
+    milestone::bind_release(root.path(), &specbind, "v1.5.0", true)
+        .expect("rebind release after accepted completion");
+    commit_all(root.path(), "Rebind release after completion");
+
+    let readiness = release_readiness::resolve(root.path(), &specbind)
+        .expect("late rebinding should preserve release readiness");
+    assert_eq!(readiness.version, "v1.5.0");
+    let after = read_spec(&specbind)
+        .active_change
+        .0
+        .and_then(|active| active.gate_evidence)
+        .and_then(|evidence| evidence.completion)
+        .expect("completion remains accepted")
+        .implementation_revision
+        .0;
+    assert_eq!(after, before);
 }
 
 #[test]

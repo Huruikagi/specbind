@@ -4,8 +4,11 @@ use specbind::{
     domain::{spec::Spec, tasks::Tasks},
     fingerprint::Fingerprint,
     freshness::{self, CompletionRevisionAssessment, CurrentGateInputs, FreshnessStatus},
+    roadmap::{self, ReleaseBindingEdit},
     schema::runtime,
 };
+
+const MILESTONE: &str = "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62";
 
 fn implementation_spec(inputs: &CurrentGateInputs) -> Spec {
     let requirements = inputs.requirements.expect("requirements fingerprint");
@@ -293,6 +296,173 @@ fn accepts_multiple_completion_metadata_transitions_at_one_revision() {
             assessment.issues
         );
     }
+}
+
+#[test]
+fn accepts_release_binding_as_completion_preserving_metadata() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    let specbind = root.path().join(".specbind");
+    let spec_dir = specbind.join("specs/checkout");
+    fs::create_dir_all(&spec_dir).expect("create spec directory");
+    fs::create_dir_all(specbind.join("steering")).expect("create steering directory");
+    git(root.path(), &["init"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "SpecBind Test"]);
+
+    let inputs = current_inputs();
+    let baseline_spec = implementation_spec(&inputs);
+    write_spec(&spec_dir, &baseline_spec);
+    let baseline_roadmap = roadmap_source(None);
+    write_roadmap(&specbind, &baseline_roadmap);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "implementation"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+
+    let current = release_ready_spec(&inputs, &revision);
+    write_spec(&spec_dir, &current);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "accept completion"]);
+
+    write_roadmap(
+        &specbind,
+        &bound_roadmap(&baseline_roadmap, "v1.4.0", false),
+    );
+    let pending =
+        freshness::assess_completion_revision(root.path(), &specbind, "checkout", &current);
+    assert!(pending.issues.is_empty(), "{:?}", pending.issues);
+
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "bind release"]);
+    let committed =
+        freshness::assess_completion_revision(root.path(), &specbind, "checkout", &current);
+    assert!(committed.issues.is_empty(), "{:?}", committed.issues);
+}
+
+#[test]
+fn accepts_release_rebinding_as_completion_preserving_metadata() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    let specbind = root.path().join(".specbind");
+    let spec_dir = specbind.join("specs/checkout");
+    fs::create_dir_all(&spec_dir).expect("create spec directory");
+    fs::create_dir_all(specbind.join("steering")).expect("create steering directory");
+    git(root.path(), &["init"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "SpecBind Test"]);
+
+    let inputs = current_inputs();
+    let baseline_spec = implementation_spec(&inputs);
+    write_spec(&spec_dir, &baseline_spec);
+    let baseline_roadmap = roadmap_source(Some("v1.4.0"));
+    write_roadmap(&specbind, &baseline_roadmap);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "implementation"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+
+    let current = release_ready_spec(&inputs, &revision);
+    write_spec(&spec_dir, &current);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "accept completion"]);
+
+    write_roadmap(&specbind, &bound_roadmap(&baseline_roadmap, "v1.5.0", true));
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "rebind release"]);
+
+    let assessment =
+        freshness::assess_completion_revision(root.path(), &specbind, "checkout", &current);
+    assert!(assessment.issues.is_empty(), "{:?}", assessment.issues);
+}
+
+#[test]
+fn rejects_other_roadmap_changes_made_with_release_binding() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    let specbind = root.path().join(".specbind");
+    let spec_dir = specbind.join("specs/checkout");
+    fs::create_dir_all(&spec_dir).expect("create spec directory");
+    fs::create_dir_all(specbind.join("steering")).expect("create steering directory");
+    git(root.path(), &["init"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "SpecBind Test"]);
+
+    let inputs = current_inputs();
+    let baseline_spec = implementation_spec(&inputs);
+    write_spec(&spec_dir, &baseline_spec);
+    let baseline_roadmap = roadmap_source(None);
+    write_roadmap(&specbind, &baseline_roadmap);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "implementation"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+
+    let current = release_ready_spec(&inputs, &revision);
+    write_spec(&spec_dir, &current);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "accept completion"]);
+
+    let mut changed = bound_roadmap(&baseline_roadmap, "v1.4.0", false);
+    changed.push_str("\nChanged scope explanation.\n");
+    write_roadmap(&specbind, &changed);
+    git(root.path(), &["add", "."]);
+    git(
+        root.path(),
+        &["commit", "-m", "bind release and rewrite roadmap"],
+    );
+
+    let assessment =
+        freshness::assess_completion_revision(root.path(), &specbind, "checkout", &current);
+    assert!(
+        assessment
+            .issues
+            .iter()
+            .any(|issue| issue.code == "FRESHNESS_COMPLETION_PROJECT_CHANGED")
+    );
+}
+
+#[test]
+fn does_not_treat_pending_release_binding_as_completion_acceptance_metadata() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    let specbind = root.path().join(".specbind");
+    fs::create_dir_all(specbind.join("steering")).expect("create steering directory");
+    git(root.path(), &["init"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "SpecBind Test"]);
+
+    let baseline_roadmap = roadmap_source(None);
+    write_roadmap(&specbind, &baseline_roadmap);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "-m", "implementation"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+
+    write_roadmap(
+        &specbind,
+        &bound_roadmap(&baseline_roadmap, "v1.4.0", false),
+    );
+    let assessment =
+        freshness::assess_pending_completion_mutations(root.path(), &specbind, &revision);
+    assert!(
+        assessment
+            .issues
+            .iter()
+            .any(|issue| issue.code == "FRESHNESS_COMPLETION_WORKTREE_DIRTY")
+    );
+}
+
+fn roadmap_source(target_release: Option<&str>) -> String {
+    let target_release = target_release.unwrap_or("null");
+    format!(
+        "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: {target_release}\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+    )
+}
+
+fn bound_roadmap(source: &str, release: &str, rebind: bool) -> String {
+    let ReleaseBindingEdit::Updated(rendered) =
+        roadmap::bind_release(source, release, rebind).expect("bind release")
+    else {
+        panic!("release binding should update the Roadmap");
+    };
+    rendered
+}
+
+fn write_roadmap(specbind: &Path, content: &str) {
+    fs::write(specbind.join("steering/roadmap.md"), content).expect("write Roadmap fixture");
 }
 
 fn write_spec(directory: &Path, spec: &Spec) {

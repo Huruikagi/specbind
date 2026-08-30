@@ -6,6 +6,11 @@ Status: Accepted
 supersedes Task-level concurrent actionability. Boundaries remain scope and
 review evidence, not a scheduling claim.
 
+[Decision 0165](./0165-release-binding-preserves-completion.md) narrows the
+project-revision rule for one exact active-Roadmap `target_release` bind or
+rebind. That transition preserves completion freshness; unrelated paths and
+other Roadmap changes remain stale.
+
 ## Context
 
 The accepted structured Task plan leaves `boundaries` and `contracts` as unconstrained strings, assigns semantic completion-criteria judgment partly to Rust, and omits working directory from mechanical evidence. The Git completion handshake also returns redundant fingerprints even though every authoritative input is version-controlled and the complete worktree must remain clean.
