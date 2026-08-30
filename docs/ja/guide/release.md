@@ -44,35 +44,28 @@ adapterの節にあります。
 $specbind-release 1.0.0
 ```
 
-スキルが次の順にオーケストレーションし、状態の変更はすべてCLIが行います。
+リリースの操作は、基本的にこのスキル1つで進みます。バージョンのbindからfinalizeまで
+スキルがオーケストレーションし、状態の変更はすべてスキル経由でCLIが行います。あなたは
+要所の確認に答えます。以下は、スキルが内部で進める流れです。
 
-### バージョンをbindする（できるだけ早く）
+### バージョンのbind
 
-リリースのラベルは不透明で、大文字小文字も区別します。`v1.4.0`と`1.4.0`は別の
-リリースです。スキルはこの値を自動で決めず、必ず尋ねます。
+リリースのラベルは不透明で、大文字小文字も区別します（`v1.4.0`と`1.4.0`は別の
+リリース）。スキルはこの値を自動で決めず、必ず尋ねます。指定するとMilestoneへ
+`target_release`が書き込まれます。
 
-```sh
-specbind milestone bind-release 1.0.0
-```
-
-bindはMilestoneに`target_release`を書き込みます。あるSpecがすでに`release_ready`に
-なってからbindすると、そのcompletion evidenceが古くなり、対象Specのcompletionを
-やり直すことになります。バージョンが決まっているなら、Milestoneの早い段階でbindして
-おくと、このやり直しを避けられます。別のバージョンをbindし直す場合は`--rebind`で、
-置き換えを明示してから行います。
-
-### preflightを通す
+あるSpecがすでに`release_ready`になってからbindすると、そのcompletion evidenceが
+古くなり、対象Specのcompletionをやり直すことになります。バージョンが早い段階で
+決まっているなら、リリースを待たず自分で固定しておくと、このやり直しを避けられます。
 
 ```sh
-specbind release preflight
+specbind milestone bind-release 1.0.0     # 任意。早めにバージョンを固定したいとき
 ```
 
-preflightが失敗した回は、そこで止まります。adapterの手順は、preflightが通るまで
-始めません。
+### preflight / Prepare / Publish / Verify
 
-### Prepare / Publish / Verify
-
-adapterに書いた手順を、スキルが順に実行します。
+スキルはまず前提を確認し（この検査が失敗した回は、そこで止まります）、通ったら
+adapterに書いた手順を順に実行します。
 
 - **Prepare** — 繰り返し可能でローカルに閉じた準備。失敗したらそこで報告し、
   リポジトリの外には何も出ていません。
@@ -82,23 +75,17 @@ adapterに書いた手順を、スキルが順に実行します。
   別に確認します。
 - **Verify** — 「意図したバージョンが実際に公開され、使える」ことを、公開コマンドの
   出力の読み直しではなく、新しい証拠で確かめます。確かめる手段がない場合は
-  「検証できない」であって、成功ではありません。finalizeしません。
+  「検証できない」であって、成功ではありません。この場合はfinalizeしません。
 
 Publishは成功したがVerifyが通らなかったときは、Milestoneはactiveのまま、SpecBindの
 成果物もそのままです。公開のロールバックや盲目的な再試行はせず、現状を報告して
 どう扱うかを相談します。
 
-### finalizeする
+### finalize
 
 Verifyまで通ったら、参加する各Specの成果（要求ではなく、実際に届けたもの）を1行で
-要約し、CLIがMilestone全体をfinalizeします。
-
-```sh
-specbind release finalize --log-entries -
-```
-
-`log.md`はCLIが構造ごと更新します。手で先に編集しないでください。失敗しても
-再実行でき、履歴は重複しません。
+要約し、スキルがMilestone全体のfinalizeをCLIに指示します。`log.md`はCLIが構造ごと
+更新するので、手で先に編集しないでください。失敗しても再実行でき、履歴は重複しません。
 
 ## 3. finalize 後
 
@@ -115,9 +102,11 @@ finalize後はSteeringの編集がふたたび自由になります。
 
 ## 現在の状態を確認する
 
+スキルを呼ぶ前に、自分でリリースの準備状況を見ておけます。どちらも読み取り専用です。
+
 ```sh
 specbind milestone status          # Target release、Release blockersを表示
-specbind release preflight
+specbind release preflight         # 未bindや未受理のcompletionなど、残っている障害を表示
 ```
 
 ## 次に読む
