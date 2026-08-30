@@ -6,6 +6,11 @@ Post-cutover preservation of the legacy source is superseded by [Decision
 0127](./0127-retire-cc-sdd-source-at-final-cutover.md). The read-only planning
 and fail-closed conversion boundaries remain accepted.
 
+The Windows/Linux-only distribution boundary is extended by [Decision
+0163](./0163-macos-arm64-release-target.md), which adds native macOS ARM64
+build, installation, and runtime verification. macOS Intel and Linux ARM64
+remain deferred.
+
 ## Context
 
 The inherited TypeScript installer exposes compatibility aliases, manifests, overwrite policies, backups, profiles, and operating-system switches. SpecBind v1 is primarily invoked through agent skills after installation and needs a smaller, testable distribution surface.

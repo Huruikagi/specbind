@@ -52,10 +52,11 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 
 ## Install the CLI
 
-The current binary release remains a Preview for Windows x64 and Linux x64.
+The current binary release remains a Preview for Windows x64, Linux x64, and
+macOS ARM64.
 The latest stable release can be installed without choosing a version.
 
-With [mise](https://mise.jdx.dev/), on either supported platform:
+With [mise](https://mise.jdx.dev/), on any supported platform:
 
 ```sh
 mise use github:Huruikagi/specbind
@@ -82,7 +83,7 @@ Windows PowerShell:
 irm https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 | iex
 ```
 
-WSL2/Linux:
+WSL2/Linux or Apple Silicon macOS:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
@@ -103,7 +104,7 @@ sh install.sh --version 1.0.0-rc.2
 
 Both installers verify the release archive against `SHA256SUMS`, install to the
 platform default, and leave persistent `PATH` changes to the user. Use
-`-InstallDir` on PowerShell or `--install-dir` on Linux to choose another
+`-InstallDir` on PowerShell or `--install-dir` on Linux/macOS to choose another
 location.
 
 ## Development

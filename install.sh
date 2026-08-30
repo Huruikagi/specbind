@@ -8,7 +8,7 @@ install_dir="${HOME}/.local/bin"
 
 usage() {
   cat <<'EOF'
-Install the SpecBind Linux x64 binary from GitHub Releases.
+Install the SpecBind Linux x64 or macOS ARM64 binary from GitHub Releases.
 
 Usage: install.sh [--version <VERSION>] [--install-dir <DIRECTORY>]
 
@@ -42,14 +42,19 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-[ "$(uname -s)" = "Linux" ] || {
-  echo "install.sh supports Linux only." >&2
-  exit 1
-}
-[ "$(uname -m)" = "x86_64" ] || {
-  echo "install.sh supports Linux x64 only." >&2
-  exit 1
-}
+platform="$(uname -s):$(uname -m)"
+case "$platform" in
+  Linux:x86_64)
+    target="x86_64-unknown-linux-gnu"
+    ;;
+  Darwin:arm64|Darwin:aarch64)
+    target="aarch64-apple-darwin"
+    ;;
+  *)
+    echo "install.sh does not support $platform." >&2
+    exit 1
+    ;;
+esac
 command -v curl >/dev/null 2>&1 || {
   echo "curl is required." >&2
   exit 1
@@ -78,7 +83,7 @@ if ! printf '%s\n' "$tag" | grep -Eq \
   exit 1
 fi
 
-archive="specbind-${tag}-x86_64-unknown-linux-gnu.tar.gz"
+archive="specbind-${tag}-${target}.tar.gz"
 base_url="https://github.com/${repository}/releases/download/${tag}"
 temporary_dir=$(mktemp -d)
 trap 'rm -rf "$temporary_dir"' EXIT HUP INT TERM

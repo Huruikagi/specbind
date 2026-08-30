@@ -287,3 +287,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0160](./design/decisions/0160-tracked-routing-and-selector-precedence.md) | Accepted | Tracked delivery routing and declared Design selector precedence |
 | [0161](./design/decisions/0161-default-plan-and-phase-skill-namespace.md) | Accepted | Default Plan entry point and explicit plan-phase Skill namespace |
 | [0162](./design/decisions/0162-forward-test-record-lifecycle.md) | Accepted | Separate forward-test run history, current dashboard, and findings lifecycle |
+| [0163](./design/decisions/0163-macos-arm64-release-target.md) | Accepted | Native macOS ARM64 release, preflight, installer, and runtime verification |

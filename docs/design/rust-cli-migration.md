@@ -171,7 +171,8 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 
 - Complete: the Rust workspace is canonical at `tools/specbind/`, while
   `tools/cc-sdd/` remains the temporary migration oracle.
-- Produce Windows x64 and Linux x64 GitHub Release binaries plus `SHA256SUMS`.
+- Produce Windows x64, Linux x64, and macOS ARM64 GitHub Release binaries plus
+  `SHA256SUMS`.
 - Publish PowerShell and shell installers that select the latest stable version by default, accept explicit prerelease versions, verify checksums, and never edit PATH.
 - Verify `%LOCALAPPDATA%\SpecBind\bin` and `$HOME/.local/bin` defaults plus `--install-dir`.
 - Start the public Rust release line under the pre-1.0 policy in
@@ -180,9 +181,10 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 
 ## V1 distribution boundary
 
-V1 officially supports Windows x64 and Linux x64 as tested through WSL2.
-Native macOS ARM64, macOS Intel, and Linux ARM64 remain deferred until
-corresponding test environments exist and are tracked by
+V1 officially supports Windows x64 and Linux x64 as tested through WSL2, plus
+macOS ARM64 as tested on a hosted Apple Silicon runner under
+[Decision 0163](./decisions/0163-macos-arm64-release-target.md). Native macOS
+Intel and Linux ARM64 remain deferred and are tracked by
 [Issue #12](https://github.com/Huruikagi/specbind/issues/12). GitHub Releases,
 the two installer scripts, and the Decision 0130 mise GitHub backend are the
 current distribution channels. Homebrew, WinGet, Scoop, Cargo installation,
@@ -197,7 +199,7 @@ The installers verify the selected archive against `SHA256SUMS`, install to the 
 - Drop-in cc-sdd command or configuration compatibility
 - Public custom installation manifests or profiles
 - Backup, overwrite-policy, or destructive force machinery
-- macOS or Linux ARM64 release claims without test coverage
+- macOS Intel or Linux ARM64 release claims without test coverage
 - Encoding semantic requirement, design, review, or validation judgments in Rust
 - A second long-lived `spec-lint` executable
 

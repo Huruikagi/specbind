@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Cargo version to verify without publishing (for example, 1.0.0-rc.3)
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -11,6 +17,9 @@ permissions:
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', inputs.version) || github.ref_name }}
 
 jobs:
   build:
@@ -24,13 +33,14 @@ jobs:
             target: x86_64-pc-windows-msvc
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+          - os: macos-15
+            target: aarch64-apple-darwin
 
     defaults:
       run:
         working-directory: tools/specbind
 
     env:
-      RELEASE_TAG: ${{ github.ref_name }}
       RUST_TARGET: ${{ matrix.target }}
 
     steps:
@@ -115,6 +125,36 @@ jobs:
           printf 'Linux x64: %s %s\n' "$ImageOS" "$ImageVersion" \
             > "dist/environment-$RUST_TARGET.txt"
 
+      - name: Package macOS archive
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/specbind-package"
+          archive="specbind-${RELEASE_TAG}-aarch64-apple-darwin.tar.gz"
+          mkdir -p "$stage" dist
+          install -m 755 "target/$RUST_TARGET/release/specbind" "$stage/specbind"
+          install -m 644 ../../README.md ../../LICENSE "$stage/"
+          tar -C "$stage" -czf "dist/$archive" specbind README.md LICENSE
+
+          smoke="$RUNNER_TEMP/specbind-smoke"
+          project="$RUNNER_TEMP/specbind-project-smoke"
+          mkdir -p "$smoke" "$project"
+          tar -C "$smoke" -xzf "dist/$archive"
+          actual=$("$smoke/specbind" --version)
+          expected="specbind ${RELEASE_TAG#v}"
+          test "$actual" = "$expected"
+          "$smoke/specbind" schema read spec/v1 > "$smoke/spec-v1.schema.json"
+          test -s "$smoke/spec-v1.schema.json"
+          git -C "$project" init
+          (
+            cd "$project"
+            "$smoke/specbind" install --dry-run --agent codex --language en
+          )
+          printf 'macOS ARM64: macOS %s (%s)\n' \
+            "$(sw_vers -productVersion)" "$(uname -m)" \
+            > "dist/environment-$RUST_TARGET.txt"
+
       - name: Upload release archive
         uses: actions/upload-artifact@v7
         with:
@@ -125,12 +165,10 @@ jobs:
           if-no-files-found: error
           compression-level: 0
 
-  publish:
-    name: Publish GitHub Release
+  verify-release:
+    name: Verify release archives
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Download release archives
@@ -146,8 +184,8 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           archives=(dist/specbind-*.zip dist/specbind-*.tar.gz)
-          if [[ ${#archives[@]} -ne 2 ]]; then
-            echo "Expected two release archives, found ${#archives[@]}." >&2
+          if [[ ${#archives[@]} -ne 3 ]]; then
+            echo "Expected three release archives, found ${#archives[@]}." >&2
             exit 1
           fi
           (
@@ -156,11 +194,36 @@ jobs:
             sha256sum --check SHA256SUMS
           )
 
+      - name: Upload verified release bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-bundle
+          path: |
+            dist/specbind-*
+            dist/environment-*
+            dist/SHA256SUMS
+          if-no-files-found: error
+          compression-level: 0
+
+  publish:
+    name: Publish GitHub Release
+    if: github.event_name == 'push'
+    needs: verify-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download verified release bundle
+        uses: actions/download-artifact@v8
+        with:
+          name: release-bundle
+          path: dist
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.ref_name }}
         shell: bash
         run: |
           set -euo pipefail
@@ -187,6 +250,7 @@ jobs:
         os:
           - windows-latest
           - ubuntu-latest
+          - macos-15
 
     steps:
       - name: Install mise
@@ -200,7 +264,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           MISE_MINIMUM_RELEASE_AGE: 0s
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           $smoke = Join-Path $env:RUNNER_TEMP 'specbind-mise-smoke'
           New-Item -ItemType Directory -Force -Path $smoke | Out-Null
@@ -214,3 +277,30 @@ jobs:
           if ($actual -ne $expected) {
             throw "mise-installed archive reports '$actual'; expected '$expected'."
           }
+
+  macos-installer-smoke:
+    name: Smoke-test macOS shell installer
+    if: github.event_name == 'push'
+    needs: publish
+    runs-on: macos-15
+
+    steps:
+      - name: Install and run SpecBind through install.sh
+        shell: bash
+        run: |
+          set -euo pipefail
+          installer="$RUNNER_TEMP/install.sh"
+          install_dir="$RUNNER_TEMP/specbind-bin"
+          project="$RUNNER_TEMP/specbind-installed-project"
+          curl --fail --silent --show-error --location \
+            --output "$installer" \
+            "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$RELEASE_TAG/install.sh"
+          sh "$installer" --version "${RELEASE_TAG#v}" --install-dir "$install_dir"
+          "$install_dir/specbind" schema read spec/v1 > "$RUNNER_TEMP/spec-v1.schema.json"
+          test -s "$RUNNER_TEMP/spec-v1.schema.json"
+          mkdir -p "$project"
+          git -C "$project" init
+          (
+            cd "$project"
+            "$install_dir/specbind" install --dry-run --agent codex --language en
+          )

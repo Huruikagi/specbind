@@ -4,6 +4,8 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added native macOS ARM64 release archives, checksum verification, shell and
+  mise installation smoke tests, and a non-publishing manual release preflight.
 - Added an offline `specbind feedback` entry point and bilingual GitHub Issue
   Forms for structured CLI, Skill, integration, and documentation bug reports
   and improvement proposals.
