@@ -54,7 +54,9 @@ skills.
 - Installation planning and refresh: `tools/specbind/src/installation/install.rs`
 - Mechanical conformance tests: `tools/specbind/tests/skill.rs` and `tools/specbind/tests/cli.rs`
 - Behavioral verification index: `docs/skill-forward-tests.md`
-- Measurement ledger: `docs/skill-forward-tests/results.md`
+- Measurement dashboard: `docs/skill-forward-tests/results.md`
+- Historical run records: `docs/skill-forward-tests/runs/`
+- Findings worklist: `docs/skill-forward-tests/findings.md`
 
 When a product skill changes, update its one embedded package and the applicable
 mechanical and forward tests. Each package has one `SKILL.md` entrypoint and may

@@ -10,7 +10,7 @@ The suite is split by concern so measurement history does not obscure the proced
 | Document | Purpose |
 | --- | --- |
 | [Running the tests](./skill-forward-tests/running.md) | Fixture setup, driver isolation, confirmation turns, judging state, usability debriefs, and rerun policy |
-| [Measurement ledger](./skill-forward-tests/results.md) | Passing measurements, stopped runs, environment failures, and post-run usability observations |
+| [Measurement dashboard](./skill-forward-tests/results.md) | Current measurement projection, run archive, and findings worklist |
 | [Planning scenarios](./skill-forward-tests/planning-scenarios.md) | Discovery, Requirements, Design, Contract review, and Tasks |
 | [Delivery scenarios](./skill-forward-tests/delivery-scenarios.md) | Implementation, release, validation, task review, and debugging |
 | [Orchestration scenarios](./skill-forward-tests/orchestration-scenarios.md) | Configuration, Plan scope modes, checkpoints, gap analysis, steering, and failure handling |

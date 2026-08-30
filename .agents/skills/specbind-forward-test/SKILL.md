@@ -6,9 +6,9 @@ description: Run the behavioral forward tests for SpecBind's embedded skills aga
 # Run the skill forward tests
 
 The [forward-test index](../../../docs/skill-forward-tests.md) routes to the
-scenario contracts and measurement ledger. The scenario documents are the
-contract; this skill is how to execute them without rediscovering the operational
-traps each time.
+scenario contracts, measurement dashboard, run archive, and findings worklist.
+The scenario documents are the contract; this skill is how to execute them
+without rediscovering the operational traps each time.
 
 The index also routes to the deliberately expensive end-to-end journey. Use
 that journey only for cross-lifecycle changes or release-candidate confidence;
@@ -230,12 +230,12 @@ product, and look for recurrence across scenarios or agents. One
 `wrong-action-risk` is enough to investigate before the next batch; lower-impact
 observations normally need either concrete reproduction or a repeated pattern.
 
-Treat the usability ledger as a triaged worklist, not an append-only transcript.
-Keep reproduced unresolved product findings, compact resolved findings to their
-behavior change and fixing build, and retain environment limitations only while
-they affect interpretation. Remove duplicates, one-off non-defects, fixture-only
-workarounds, and `none` observations after the run itself is recorded; Git
-history preserves their raw wording.
+Treat `docs/skill-forward-tests/findings.md` as a triaged worklist, not an
+append-only transcript. Keep reproduced unresolved product findings, compact
+resolved findings to their behavior change and fixing build, and retain
+environment limitations only while they affect interpretation. Remove
+duplicates, one-off non-defects, fixture-only workarounds, and `none`
+observations from the worklist after the run itself records their disposition.
 
 ## When something fails
 
@@ -265,10 +265,19 @@ explains it.
 
 ## Finishing
 
-Report per scenario: the agent it was driven as, pass or fail, the expectation
-that did not hold, and the state that was left behind. Report actionable
-usability observations in their separate ledger section and triage non-findings
-under the retention rule above. Then clean up the fixtures.
+Copy `docs/skill-forward-tests/run-template.md` to
+`docs/skill-forward-tests/runs/YYYY-MM-DD-<driver>-<short-build>[-N].md`. One
+record contains one driver and one tested build. Use `pass`,
+`product_failure`, `scenario_invalid`, `environment_invalid`, or
+`environment_blocked` per scenario, and record the expectation that did not
+hold, the state left behind, and fixture evidence. A retry never replaces its
+failed attempt.
+
+Update `docs/skill-forward-tests/results.md` only with the current projection.
+Give reproduced product findings stable `FT-NNNN` identities in
+`docs/skill-forward-tests/findings.md`; use separate `ENV-NNNN` identities for
+active environment limitations. Record non-findings and discarded observations
+only in the run record. Then clean up the fixtures.
 
 Record any defect the run exposed against the decision or skill it belongs to,
 and update the scenario document when the run showed the procedure itself was

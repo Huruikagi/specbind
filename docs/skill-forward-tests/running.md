@@ -228,12 +228,32 @@ have.
 
 ## Recording a run
 
-These are samples, not proofs. Record enough that a later reader can tell what
-was actually observed:
+These are samples, not proofs. Copy the
+[run template](./run-template.md) to
+`runs/YYYY-MM-DD-<driver>-<short-build>[-N].md`. One file records one driver
+against one tested build. A fix, rebuild, or driver change starts a new file.
 
-- the commit under test
-- the scenario, **the agent it was driven as**, and pass or fail
-- for a failure, the expectation that did not hold and the state that was left
+Use one verdict for every scenario:
+
+- `pass` when every expectation held in the judged fixture;
+- `product_failure` when the judged fixture violated an expectation after
+  confirming that the accepted Decisions require it;
+- `scenario_invalid` when the recipe, precondition, expectation, or harness did
+  not measure the intended product contract;
+- `environment_invalid` when the driver environment did not exercise the
+  installed product Skill;
+- `environment_blocked` when the Skill ran but an external boundary prevented a
+  verdict.
+
+Record the expectation that did not hold, the fixture state left behind, and
+concise mechanical evidence. The driver's report is not evidence. A retry gets
+its own row or run record and never replaces the failed attempt.
+
+After the run record is complete, update the
+[measurement dashboard](./results.md) with only its current projection. Put a
+reproduced product finding in the [findings worklist](./findings.md) under a
+stable `FT-NNNN` identifier. Environment limitations use `ENV-NNNN` and do not
+enter the product finding lifecycle.
 
 A scenario that fails once and passes on retry is a finding, not a flake. The
 skill is ambiguous enough that the agent can go either way, and the ambiguity is
@@ -247,7 +267,8 @@ restatement of the defect, not an explanation of it.
 
 A scenario with no result for an agent has not been measured under it. There is
 no blank row to fill in and no expectation that every scenario is eventually run
-twice — the matrix is a record of what was observed, not a checklist.
+twice. The dashboard is a projection of observed evidence, not a checklist or a
+claim about current `HEAD`.
 
 ### Post-run usability debrief
 
@@ -277,7 +298,8 @@ single `wrong-action-risk` is enough to investigate before starting another
 batch. Keep these observations out of the pass and no-passing-measurement
 tables.
 
-The usability ledger is a triaged worklist, not an append-only debrief archive:
+The findings worklist is triaged state, not an append-only debrief archive. The
+run record retains the concise observation and its disposition:
 
 - keep reproduced, unresolved product findings in the open table;
 - move a fixed finding to the compact resolved table with its fixing build;
@@ -285,9 +307,8 @@ The usability ledger is a triaged worklist, not an append-only debrief archive:
 - remove duplicates, one-off non-defects, fixture-only workarounds, and `none`
   observations after the run itself is recorded.
 
-Git history preserves the raw wording when it is needed later. The current
-document should answer what remains actionable without requiring readers to
-re-evaluate every past debrief.
+The current worklist should answer what remains actionable without requiring
+readers to re-evaluate every past debrief.
 
 ### How much to re-run per agent
 

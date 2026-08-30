@@ -113,7 +113,7 @@ repository root to verify it locally.
 | [Cross-spec contracts](./design/cross-spec-contracts.md) | Detailed draft for persistent cross-spec seam manifests and contract-first review |
 | [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
 | [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
-| [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement ledger, and scenario contracts for embedded skills |
+| [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement dashboard, run archive, findings worklist, and scenario contracts for embedded skills |
 
 This repository's behavioral verification skill lives at `.agents/skills/specbind-forward-test/`. It is a development asset and is never installed into a consumer project.
 
@@ -286,3 +286,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0159](./design/decisions/0159-forward-test-usability-boundaries.md) | Accepted | Forward-test usability, authority, status, and recovery boundaries |
 | [0160](./design/decisions/0160-tracked-routing-and-selector-precedence.md) | Accepted | Tracked delivery routing and declared Design selector precedence |
 | [0161](./design/decisions/0161-default-plan-and-phase-skill-namespace.md) | Accepted | Default Plan entry point and explicit plan-phase Skill namespace |
+| [0162](./design/decisions/0162-forward-test-record-lifecycle.md) | Accepted | Separate forward-test run history, current dashboard, and findings lifecycle |
