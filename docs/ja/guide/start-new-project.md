@@ -6,31 +6,27 @@
 必要な環境とエージェントについては、[Getting Started](./getting-started.md)の
 「どちらのルートでも必要なもの」を確認しておいてください。
 
-## 0. いつ始めるのか
+## 始める前に
 
-ここで、まったくの手探りでこれから走り始めるプロジェクトにSpecBindを
-導入することは、正直お勧めしません。
+SpecBindが得意なのは、何を作るかをゼロから探索することではありません。ある程度
+見えてきたプロダクトの輪郭を仕様として定着させ、その仕様で計画・実装・検証を
+駆動することです。MVPや主要ユースケースが頻繁に入れ替わる段階では、SpecBindの
+成果物が探索の足枷になることがあります。
 
-SpecBindが得意なのは、何を作るかをゼロから探索することではありません。
-ある程度見えてきたプロダクトの輪郭を仕様として定着させ、
-その仕様を使って計画・実装・検証を駆動することです。
-MVPや主要ユースケースが頻繁に入れ替わる段階では、
-SpecBindの成果物が探索の足枷になるかもしれません。
-
-かといって、導入前に要件定義をすべて終える必要もありません。
-ある程度話が進んでいて、たとえば次のような状態のとき。
+次のような状態になっていれば、このルートで始められます。
 
 - 何を作るかは決まっている
 - MVPやスコープもだいたい決まっている
 - 画面・機能・主要ユースケースが列挙できる
 - ただし実装詳細や例外系、画面間の契約までは詰め切れていない
 
-この段階なら、まだ詰め切れていない内容をRequirementsやDesignで具体化できます。
-それまでの成果物を、後述するDiscoveryのインプットにして開始してみてください。
+まだこの状態でなければ、先にSpecBind無しでプロトタイプを作る探索フェーズを進め、
+維持したいプロダクト意図と最初の責務が見えてから導入することをおすすめします。
+その場合は[既存プロジェクトで始める](./start-existing-project.md)へ進んでください。
 
-そうでなければ、まずSpecBind無しでプロトタイプを作る探索フェーズを進め、
-維持するプロダクト意図と最初の責務が見えてきてから導入することをお勧めします。
-そうしてから[既存プロジェクトで始める](./start-existing-project.md)を参照してください。
+なお、導入前に要件定義をすべて終える必要はありません。詰め切れていない内容は
+RequirementsやDesignで具体化できます。それまでの成果物は、後述するDiscoveryの
+インプットにできます。
 
 ## 1. プロジェクトの土台を作る
 
@@ -164,13 +160,22 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 調整したい面が見えてから`specbind-configure`に見直しを依頼すれば十分です。方法は
 [プロジェクトに合わせてカスタマイズする](./customization.md)にまとめています。
 
-## 5. 必要なSteeringだけを用意する
+## 5. 最初の機能を選ぶ
+
+プロジェクトが持ち続ける最初の小さな機能を選んでください。複数の機能やリリース
+作業をまとめて試すのは避けます。
+
+このガイドでは、例としてタスクを登録して一覧表示する機能を扱います。実際に試す
+ときは、自分のプロジェクトで同じくらいの規模の機能に置き換えてください。
+
+### すでに決めた長期的な方針がある場合
 
 Steeringは、プロジェクト全体で長く維持する目的、技術上の制約、構造上の方針を
 記録する場所です。空のSteeringも有効なので、最初の機能を始めるためだけに方針を
 作り足す必要はありません。
 
-すでに決めた長期的な方針がある場合は、`specbind-steering`へbootstrapを依頼します。
+すでに決めた長期的な方針がある場合だけ、Discoveryの前に`specbind-steering`へ
+bootstrapを依頼できます。
 
 ```text
 $specbind-steering この新規プロジェクトで、すでに決めた長期的な方針から
@@ -178,23 +183,26 @@ $specbind-steering この新規プロジェクトで、すでに決めた長期�
 ```
 
 スキルはプロジェクトの証拠を調べ、書く内容を先に提案します。まだ決めていない
-技術や構造をSteeringで先回りして決める必要はありません。作成した場合は内容を
-確認し、コミットしてから続けます。
+技術や構造を先回りして決める必要はありません。作成した場合は内容を確認し、
+コミットしてから続けます。
 
-## 6. 最初の機能をDiscoveryする
+## 6. Discoveryでスコープを確認する
 
-プロジェクトが持ち続ける最初の小さな機能を選び、Discoveryを依頼します。ここでは
-例として、タスクを登録して一覧表示する機能を扱います。
+機能の内容を添えて、discoveryスキルをエージェントに依頼します。
 
 ```text
 $specbind-discovery タスクを登録して一覧表示できるようにしたい。
 ```
 
-Discoveryは、現在のSpec、Steering、Milestoneを読み、Direct、既存Specの更新、
-新規Specのどれに当たるかを提示します。新規プロジェクトの最初の持続的な機能は、
-通常は新規Specの候補です。
+Discoveryは、プロジェクトの現在のSpec、Steering、Milestoneを読んだうえで、機能を
+次のどれかに分類します。
 
-スキルが示す次の4項目を読み、境界と依存関係に納得してから承認してください。
+- Direct
+- 既存Specの更新
+- 新規Spec
+
+新規プロジェクトの最初の持続的な機能は、通常は新規Specの候補です。スキルが示す
+次の4項目を読み、境界と依存関係に納得してから承認してください。
 
 - Work items
 - New Specs
@@ -211,15 +219,16 @@ $specbind-status
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
-## 7. Tasks承認まで計画する
+## 7. Tasks承認まで進める
 
-Discoveryが報告したSpec IDを使います。ここでは`task-management`だったとします。
+Discoveryが報告したSpec IDを使い、標準の計画ワークフローで進めます。ここでは
+Spec IDが`task-management`だったとします。
 
 ```text
 $specbind-plan task-management
 ```
 
-PlanはRequirements、Design、Design検証、Contract review、Tasksを順に実行し、
+Planは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
 Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
 Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
 
@@ -267,8 +276,7 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
 ```text
 .specbind/
-├─ steering/
-│  └─ roadmap.md
+├─ steering/roadmap.md
 └─ specs/task-management/
    ├─ spec.yaml
    ├─ brief.md
@@ -289,6 +297,15 @@ specbind milestone status
 specbind spec status task-management
 specbind tasks list task-management
 specbind artifact list task-management
+```
+
+周辺ツールやスクリプトからMilestoneとSpecの状態を読む場合に限り、2つの
+statusコマンドはコマンド固有のJSON出力も提供します。通常の利用では既定の
+簡潔なテキスト出力をそのまま使います。
+
+```sh
+specbind milestone status --json
+specbind spec status task-management --json
 ```
 
 ## 次に読む
