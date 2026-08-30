@@ -62,9 +62,12 @@ nav:
   - 日本語:
       - ホーム: ja/index.md
       - ユーザーガイド:
-          - Getting Started: ja/guide/getting-started.md
+          - Getting Started:
+              - ルートを選ぶ: ja/guide/getting-started.md
+              - 新規プロジェクトで始める: ja/guide/start-new-project.md
+              - 既存プロジェクトで始める: ja/guide/start-existing-project.md
           - 基本概念: ja/guide/concepts.md
-          - 既存実装を採用する: ja/guide/adopt-existing.md
+          - 既存実装からSpecを確立する: ja/guide/adopt-existing.md
           - カスタマイズ: ja/guide/customization.md
           - バグ報告と改善提案: ja/guide/feedback.md
           - Agentの削除とアンインストール: ja/guide/uninstall.md

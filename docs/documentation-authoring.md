@@ -14,6 +14,9 @@ uses the relative paths intended for the eventual English tree:
 ```text
 docs/ja/index.md
 docs/ja/guide/getting-started.md
+docs/ja/guide/start-new-project.md
+docs/ja/guide/start-existing-project.md
+docs/ja/guide/adopt-existing.md
 docs/ja/guide/concepts.md
 docs/ja/guide/customization.md
 docs/ja/guide/feedback.md
@@ -43,6 +46,9 @@ Japanese source: docs/ja/guide/getting-started.md
 English URL:  /guide/getting-started/
 Japanese URL: /ja/guide/getting-started/
 ```
+
+The new-project, existing-project, and existing-implementation routes follow
+the same relative-path rule when English counterparts are added.
 
 The final bilingual build will publish English at the site root and Japanese
 under `/ja/`, with localized navigation, Material UI strings, search behavior,

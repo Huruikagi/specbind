@@ -86,3 +86,7 @@ Researchは通常のrelease finalizationまで保持されます。
 Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
 以後は通常の`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を
 使用します。Reverse専用のRequirementsやDesignスキルはありません。
+
+---
+
+[既存プロジェクトで始める](./start-existing-project.md) | [Getting Started](./getting-started.md)
