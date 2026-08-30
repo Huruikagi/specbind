@@ -60,7 +60,7 @@ Directとして始めた作業が、実は仕様やContractの変更を必要と
 
 ## DiscoveryのSource Collection
 
-Discoveryには、プロジェクト内のGitで追跡済みのUTF-8テキストファイルまたは
+Discoveryには、プロジェクト内のGitで追跡済みのテキストファイルまたは
 ディレクトリを、ひとまとまりのSource Collectionとして渡せます。Discoveryは
 コレクション全体を棚卸しし、RoadmapにすべてのSource Itemの振り分けを、各Briefに
 そのSpecが参照するSource Itemを記録します。読めない項目や未追跡の項目があれば、
