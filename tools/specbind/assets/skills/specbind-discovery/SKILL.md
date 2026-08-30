@@ -1,7 +1,7 @@
 ---
 name: specbind-discovery
-description: Turn a change request into confirmed milestone scope. Decides whether work is Direct, an update to an existing Spec, or a new Spec, then delegates every state change to the CLI and writes the briefs.
-argument-hint: "<what you want to change>"
+description: Turn a change request or explicit local Source Collection into confirmed milestone scope. Decides whether work is Direct, an update to an existing Spec, or a new Spec, then delegates every state change to the CLI and writes the briefs.
+argument-hint: "<what you want to change or local source path>"
 ---
 
 # Decide what the work is
@@ -20,7 +20,8 @@ presented yet. This remains true when the request says "ship", "go ahead", or
 authorizes the desired outcome broadly.
 
 Your first response before any product or lifecycle mutation presents the
-four-field scope proposal from step 5 and asks the user to confirm it. Only a
+scope proposal from step 5 and asks the user to confirm it. An ordinary request
+has four fields; an explicit Source Collection adds `Source coverage`. Only a
 later user reply that refers to that visible proposal authorizes Discovery to
 apply it. Do not infer this separate confirmation from the invocation.
 
@@ -34,6 +35,18 @@ Do not begin comparing technical options. Choosing a library, an architecture, o
 an implementation approach is not discovery work; it belongs to gap analysis and
 design. Scope justified by an approach nobody has chosen yet is scope built on a
 guess.
+
+### When the request names local source material
+
+If the maintainer explicitly supplies a local file or directory as input, read
+[the local-files procedure](references/local-files.md) and follow it before
+classification. That procedure reads the `source-material` protocol, proves the
+complete Git-backed UTF-8 collection, and adds source coverage to the normal
+confirmation and authoring flow.
+
+Do not open an inferred requirements folder, select a promising subset, or treat
+an external URL as the local provider. Without an explicit local locator, the
+ordinary conversational request path below is unchanged.
 
 ### Does this need the workflow at all?
 
@@ -173,6 +186,10 @@ between kinds of document.
 A request spanning several kinds is normal and is not a fourth case. It becomes
 one scope candidate holding several work items.
 
+When a Source Collection is present, classify every Source Item and preserve its
+disposition. Documents are evidence, not boundaries: several items may inform
+one Spec, and one item may inform several Specs.
+
 Name each new Spec with a short lowercase kebab-case identity that describes the
 responsibility it owns, not the change being made.
 
@@ -203,6 +220,8 @@ Present the whole plan and get explicit agreement:
 - each new Spec identity and the responsibility it owns
 - every gate that will be invalidated, and what that costs in rework
 - dependencies between items
+- for a Source Collection, every source item's disposition, relevant work
+  items, and unresolved questions
 
 Stopping for confirmation means presenting that complete confirmation payload
 in the same response. Render it with these four explicit fields, writing `None`
@@ -214,6 +233,16 @@ New Specs: <identity and owned responsibility for each, or None>
 Gate invalidations: <earliest gate and rework cost for each, or None>
 Dependencies: <edges only between the work-item identities above, or None>
 ```
+
+For a Source Collection, append the fifth field defined by the provider
+procedure:
+
+```text
+Source coverage: <collection and complete item-to-work mapping>
+```
+
+An unresolved source item prevents confirmation. It is not `None` and must not
+be silently excluded.
 
 A release version, publication, phase, or gate is not a work item and never
 appears as a dependency endpoint. One work item therefore always reports
@@ -259,7 +288,9 @@ template's Markdown body into the candidate's `body`: resolve every
 value, apply its remaining `create` guidance without copying that instruction,
 preserve `maintain` and `consume` instructions, and fill the scaffold with the
 confirmed milestone-wide request, boundaries, decomposition reasoning, and
-dependency rationale. Front Matter from the template never enters `body`; the
+dependency rationale. For a Source Collection, also include its complete
+provenance and coverage mapping from the confirmed proposal. Front Matter from
+the template never enters `body`; the
 milestone command owns the live Front Matter. `--help` describes the transport,
 not the strict document shape; do not probe a mutating command with guessed JSON
 to discover its fields.
@@ -281,8 +312,8 @@ one already in progress.
 
 The default read carries no `body`, and an omitted body preserves the roadmap
 prose already written. Use the complete form only when you intend to change that
-prose — including when steering shaped a decision you must record there, per
-step 7:
+prose — including when steering shaped a decision or a Source Collection mapping
+must be recorded there, per step 7:
 
 ```sh
 specbind milestone scope --include-body
@@ -312,7 +343,9 @@ write. If any participating Spec is `release_ready`, stop at the protocol's
 confirmation boundary before authoring. An earlier status read does not replace
 this check because applying the scope changed the milestone.
 
-Fill it from the request in the requester's own terms. Keep it short — the
+Fill it from the request in the requester's own terms. For a Source Collection,
+name the exact project-relative items relevant to this Spec and why each matters,
+as required by the provider procedure. Keep it short — the
 authoritative scope lives in requirements, and this document is not
 fingerprinted. When the Spec already has a brief in this milestone, **fold the
 new request into it** rather than adding a second one.
@@ -337,6 +370,8 @@ guidance still says what it said.
 | --- | --- |
 | Why a Spec owns this responsibility | that Spec's brief |
 | Why an item is Direct, why items depend on each other, how the milestone was decomposed | the roadmap body |
+| Which Source Items inform one Spec and why | that Spec's brief |
+| The complete Source Collection disposition and cross-Spec mapping | the roadmap body |
 | A convention you merely confirmed, changing nothing | nowhere |
 
 Direct items get no brief, and no single Spec's brief can hold a reason that is
@@ -403,7 +438,8 @@ the briefs remain valid; report them as uncommitted and continue.
 ## 9. Report
 
 In the project's language: what was created or changed, what was invalidated and
-why, whether the work was committed, and which skill runs next for each item.
+why, Source Collection coverage when one was supplied, whether the work was
+committed, and which skill runs next for each item.
 
 ## Boundaries
 

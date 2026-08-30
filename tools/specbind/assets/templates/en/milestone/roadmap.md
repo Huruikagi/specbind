@@ -32,3 +32,12 @@ explains the request, boundaries, decomposition, and reasoning behind them.
 ## Dependency and ordering rationale
 
 ## Constraints and unresolved questions
+
+## Source collection and coverage
+
+<!-- specbind:instruction maintain
+When Discovery used an explicit Source Collection, preserve its provider,
+project-relative collection locator, every item's disposition, relevant work
+items, and the reason for each mapping. Omit this section when no collection was
+supplied.
+-->

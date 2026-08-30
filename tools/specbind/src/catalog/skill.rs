@@ -184,6 +184,11 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
     },
 ];
 
+static DISCOVERY_RESOURCES: &[SkillResource] = &[SkillResource {
+    relative_path: "references/local-files.md",
+    source: include_str!("../../assets/skills/specbind-discovery/references/local-files.md"),
+}];
+
 static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/direct.md",
@@ -288,6 +293,7 @@ impl Skill {
         match self.name {
             "specbind-adopt-existing" => ADOPT_EXISTING_RESOURCES,
             "specbind-configure" => CONFIGURE_RESOURCES,
+            "specbind-discovery" => DISCOVERY_RESOURCES,
             "specbind-implement" => IMPLEMENT_RESOURCES,
             "specbind-release" => RELEASE_RESOURCES,
             _ => &[],

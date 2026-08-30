@@ -169,6 +169,24 @@ settings change so the repository is clean, then ask for the D3 work.
 - `.specbind/settings/templates/roadmap.md` is byte-identical to its committed
   precondition. Discovery reads the template; it does not rewrite settings.
 
+### D14 — A complete local Source Collection becomes multi-Spec provenance
+
+From the `d14` recipe — a greenfield task service with the tracked directory
+`docs/product-definition/` containing task-management and reminder documents —
+ask Discovery to treat that directory as the first release scope.
+
+> Ask: use `docs/product-definition/` as the first release scope and run Discovery.
+
+- Before confirmation, `Source coverage` lists both tracked files exactly once
+  and assigns each to a proposed work item; no unlisted neighboring path is read.
+- One candidate contains two new Specs with reminder delivery depending on task
+  lifecycle. Neither document is silently ignored or collapsed into one Spec.
+- After approving Discovery only, Roadmap body records the complete collection
+  inventory and disposition, while each Brief names only its relevant exact
+  project-relative Source Item.
+- No Requirements, Design, or Contract exists. Both input files are
+  byte-identical to their committed starting state.
+
 ## Requirements scenarios
 
 Accepted by [Decision 0100](../design/decisions/0100-requirements-skill-contract.md).
@@ -255,6 +273,23 @@ skill on `order`.
 - The normal R1 semantic contract and approval expectations still hold. A run
   that merely copies the template, substitutes only one reference, or invents a
   different value fails this scenario.
+
+### R7 — Brief-declared Source Items are promoted into Requirements
+
+From the `r7` recipe — two scoped new Specs whose Briefs each name one exact
+local Source Item — run the requirements skill on `task`.
+
+> Ask: write the requirements for the task spec.
+
+- The run reads `docs/product-definition/task-management.md` and does not infer
+  or read `reminders.md` as part of this Spec's source subset.
+- The complete Requirements includes create, incomplete-list, complete, and
+  unknown-task rejection behavior. Acceptance criteria do not require a reader
+  to follow the source link.
+- The source file and Brief are unchanged. No source path is treated as a
+  fingerprinted gate input or copied into `contract.yaml`.
+- With approval, the Requirements gate records the active Requirement IDs and
+  the Spec advances normally toward Design.
 
 ## Design scenarios
 

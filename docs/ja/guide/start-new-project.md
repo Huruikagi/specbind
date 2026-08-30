@@ -1,7 +1,7 @@
 # 新規プロジェクトで始める
 
 このページでは、まだ実装を始めていないプロジェクトへSpecBindを導入し、最初の
-機能をスコープの確認から実装の検証まで進めます。
+リリース範囲を複数の責務へ分けて、スコープの確認から実装の検証まで進めます。
 
 必要な環境とエージェントについては、[Getting Started](./getting-started.md)の
 「どちらのルートでも必要なもの」を確認しておいてください。
@@ -157,24 +157,39 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 ## 4. 設定は既定のまま進める
 
 初回のinstallが成功すると、`specbind-configure`で設定レビューを行うよう案内されます。
-ただし最初は、この案内に従う前に、既定値のまま最初の機能を一周することを
+ただし最初は、この案内に従う前に、既定値のまま最初のリリース範囲を一周することを
 おすすめします。SpecBindの既定のテンプレートや判断基準は、そのまま使えるように
 設計されています。特に新規プロジェクトでは、まだ判断材料が少ないので、一周して
 調整したい面が見えてから`specbind-configure`に見直しを依頼すれば十分です。方法は
 [プロジェクトに合わせてカスタマイズする](./customization.md)にまとめています。
 
-## 5. 最初の機能を選ぶ
+## 5. 最初のリリース範囲を用意する
 
-プロジェクトが持ち続ける最初の小さな機能を選んでください。複数の機能やリリース
-作業をまとめて試すのは避けます。
+新規プロジェクトでは、1つの小さな機能へ先に絞る必要はありません。最初の
+リリースとして一緒に届けたい、ひとまとまりのプロダクト範囲を用意してください。
+Discoveryが入力全体を読み、長く維持する責務の境界、作業順序、Spec間の依存へ
+振り分けます。
 
-このガイドでは、例としてタスクを登録して一覧表示する機能を扱います。実際に試す
-ときは、自分のプロジェクトで同じくらいの規模の機能に置き換えてください。
+このガイドでは、タスクの登録・一覧・完了と、期限前のリマインダーを最初の
+リリース範囲にします。すべてを1つのメモへ詰め込まず、すでにある要件定義の
+成果物を次のようにプロジェクト内のディレクトリへ置いたとします。
+
+```text
+docs/product-definition/
+├─ task-management.md
+└─ reminders.md
+```
+
+指定できるのは、プロジェクト内にあり、Gitで追跡済みのUTF-8テキストファイルまたは
+ディレクトリです。ディレクトリを指定すると、配下の通常ファイルを再帰的に
+棚卸しします。未追跡ファイル、シンボリックリンク、読めない形式などが混ざって
+いる場合、Discoveryは一部だけで進めずに停止します。まず資料を確認し、プロジェクトの
+土台と一緒にコミットしてください。
 
 ### すでに決めた長期的な方針がある場合
 
 Steeringは、プロジェクト全体で長く維持する目的、技術上の制約、構造上の方針を
-記録する場所です。空のSteeringも有効なので、最初の機能を始めるためだけに方針を
+記録する場所です。空のSteeringも有効なので、最初の範囲を始めるためだけに方針を
 作り足す必要はありません。
 
 すでに決めた長期的な方針がある場合だけ、Discoveryの前に`specbind-steering`へ
@@ -191,19 +206,16 @@ $specbind-steering この新規プロジェクトで、すでに決めた長期�
 
 ## 6. Discoveryでスコープを確認する
 
-「始める前に」で挙げた資料（画面一覧、主要ユースケース、ラフな要件メモなど）が
-あれば、その場所を伝えるか、要点を添えて、discoveryスキルをエージェントに
-依頼します。
+5節で用意したディレクトリを、最初のリリース範囲としてdiscoveryスキルへ渡します。
 
 ```text
-$specbind-discovery タスク管理機能を追加したい。やりたいことの整理は
-docs/notes/task-management.md にある。
+$specbind-discovery docs/product-definition/ を最初のリリース範囲としてDiscoveryして
 ```
 
-Discoveryはこの資料を、機能の境界と分類を決めるために読みます。細かい要件や設計は
-このあとのPlanで詰めるので、ここで全部渡す必要はありません。使う技術や構成の選定も
-Discoveryの仕事ではなく、決まっていれば5節のSteeringへ、まだなら後続のDesignで
-扱います。
+Discoveryは指定したコレクションを完全に棚卸しし、各ファイルをどの作業へ使うか、
+今回は使わないかを明示します。細かい要件や設計はこのあとのPlanで詰めます。
+使う技術や構成の選定もDiscoveryの仕事ではなく、決まっていれば5節のSteeringへ、
+まだなら後続のDesignで扱います。
 
 Discoveryは、プロジェクトの現在の状態（Spec、Steering、Milestone）を読んだうえで、
 依頼を次のどれかに分類します。
@@ -216,19 +228,26 @@ Specは「プロジェクトが持ち続ける1つの能力の境界」で、責
 IDが付きます（用語は[基本概念](./concepts.md)）。新規プロジェクトの最初の持続的な
 機能は、通常は新規Specの候補です。
 
-スキルは提案を次の4項目で示します。
+通常の依頼では、スキルは提案を次の4項目で示します。
 
 - **Work items** — 今回行う作業の一覧
 - **New Specs** — 新しく作る責務の境界
 - **Gate invalidations** — やり直しになる既存の承認
 - **Dependencies** — 作業どうしの依存関係
 
-新規プロジェクトの最初の機能なら、通常はWork itemsとNew Specsだけに中身が入り、
-残りはNoneです。ここでの結論が以降のワークフロー全体の前提になります。前の2項目を
-読み、境界と分類に納得してから承認してください。
+資料を指定した今回のような依頼では、さらに **Source coverage** が加わります。
+ここには、棚卸ししたすべてのファイルと、その振り分け先または不使用の理由が
+表示されます。タスク管理とリマインダーが別の責務なら、New Specsには複数のSpec、
+Dependenciesにはリマインダーからタスク管理への依存が提案されます。
 
-承認すると、CLIがMilestoneとSpecの状態を作り、エージェントが、その機能の要点を
-まとめた作業メモ（`brief.md`）を書きます。
+ここでの結論が以降のワークフロー全体の前提になります。入力の欠落がないこと、
+責務の境界、依存関係に納得してから承認してください。
+
+承認すると、CLIがMilestoneとSpecの状態を作ります。エージェントはRoadmapに
+コレクション全体の振り分けを、各Specの作業メモ（`brief.md`）にはそのSpecが
+参照すべきファイルだけを記録します。後続のRequirementsとDesignは該当ファイルを
+読み、採用した内容を正規の成果物へ書き直します。元資料へのリンクだけを
+RequirementsやDesignの代わりにはしません。
 
 途中で状態を確認したくなったら、次のように依頼できます。
 
@@ -240,14 +259,15 @@ $specbind-status
 
 ## 7. Tasks承認まで進める
 
-Discoveryが報告したSpec IDを使い、標準の計画ワークフローで進めます。ここでは
-Spec IDが`task-management`だったとします。
+Discoveryが複数のSpecを作ったので、標準の計画ワークフローでMilestone全体を
+進めます。
 
 ```text
-$specbind-plan task-management
+$specbind-plan --all
 ```
 
-Planは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
+Planは、全SpecのRequirementsを作成し、依存順にDesignとDesign検証を進め、
+Milestone全体で1回のContract reviewを行ってから、各SpecのTasksを作成します。
 Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
 Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
 
@@ -260,10 +280,11 @@ Planが終わった時点では、実装はまだ始まっていません。Requ
 
 ## 8. 実装して検証する
 
-承認済みのTasksを実装します。
+承認済みのTasksを、Roadmapの依存順にSpecごとに実装します。まず状態を確認します。
 
 ```text
-$specbind-implement task-management
+$specbind-status
+$specbind-implement <着手可能なspec-id>
 ```
 
 Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
@@ -274,15 +295,17 @@ Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記
 全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
 
 ```text
-$specbind-validate-implementation task-management
+$specbind-validate-implementation <spec-id>
 ```
 
 検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
 完了です。最後に状態を確認します。
 
 ```text
-$specbind-status task-management
+$specbind-status <spec-id>
 ```
+
+完了したら、次に着手可能になったSpecでもImplementと検証を繰り返します。
 
 この時点では、Milestoneはまだリリースされていません。リリースするには、
 プロジェクト固有の`.specbind/settings/adapters/release.md`を用意し、対象
@@ -296,13 +319,16 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 ```text
 .specbind/
 ├─ steering/roadmap.md
-└─ specs/task-management/
-   ├─ spec.yaml
-   ├─ brief.md
-   ├─ requirements.md
-   ├─ design.md
-   ├─ contract.yaml
-   └─ tasks.yaml
+└─ specs/
+   ├─ task-management/
+   │  ├─ spec.yaml
+   │  ├─ brief.md
+   │  ├─ requirements.md
+   │  ├─ design.md
+   │  ├─ contract.yaml
+   │  └─ tasks.yaml
+   └─ reminders/
+      └─ ...
 ```
 
 `spec.yaml`、`roadmap.md`、`tasks.yaml`に入っている実行状態はCLIの持ち物です。
@@ -313,9 +339,9 @@ Tasksの計画部分は、それぞれを所有するスキル経由で保守し
 
 ```sh
 specbind milestone status
-specbind spec status task-management
-specbind tasks list task-management
-specbind artifact list task-management
+specbind spec status <spec-id>
+specbind tasks list <spec-id>
+specbind artifact list <spec-id>
 ```
 
 周辺ツールやスクリプトからMilestoneとSpecの状態を読む場合に限り、2つの
@@ -324,7 +350,7 @@ statusコマンドはコマンド固有のJSON出力も提供します。通常�
 
 ```sh
 specbind milestone status --json
-specbind spec status task-management --json
+specbind spec status <spec-id> --json
 ```
 
 ## 次に読む

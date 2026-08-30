@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0164 adds the Source Items declared by the Spec's Brief as conditional
+request-context reads and requires accepted obligations to be restated in
+Requirements rather than left as links.
+
 ## Context
 
 Almost everything the requirements phase needs is already accepted.

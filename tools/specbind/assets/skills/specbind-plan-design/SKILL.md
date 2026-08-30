@@ -54,6 +54,19 @@ specbind artifact read <spec> brief --for consume
 The requirements are the obligation you must realize. The brief is why this
 milestone is changing it.
 
+If the Brief declares Source Items, read the shared contract once and then read
+every exact project-relative item it names:
+
+```sh
+specbind protocol read source-material
+```
+
+Do not reopen the whole collection or infer neighboring files. A missing,
+unreadable, unsupported, or project-external item makes the request context
+partial, so stop before authoring. Requirements remains authoritative for
+behavior. If a Source Item contradicts the approved Requirements, report the
+Requirements rewind instead of choosing the source silently.
+
 Read **every** steering document the listing named:
 
 ```sh
@@ -83,6 +96,11 @@ Read every design artifact and the contract when they exist. Read the research
 when one exists — and treat it as background only. It is deleted at release and
 is not fingerprinted, so a design whose meaning depends on it becomes incomplete
 the moment the milestone closes. Any conclusion you need, restate here.
+
+Source material has the same self-containment boundary. Restate every technical
+conclusion the implementation or a later maintainer needs in the complete
+current Design or Contract. A locator or quotation in the Brief is provenance,
+not a durable design decision.
 
 **Research marks where each of its conclusions has to land.** Those marks are
 addressed to you, and the milestone deletes the document that carries them:

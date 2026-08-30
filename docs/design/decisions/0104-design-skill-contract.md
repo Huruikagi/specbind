@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0164 adds the Source Items declared by the Spec's Brief as conditional
+request-context reads and requires every needed conclusion to be restated in
+Design or Contract.
+
 Decision 0155 replaces the five-heading Markdown Contract with strict
 `contract.yaml`. The Design skill now reads `contract/v1`; it preserves an
 untouched seam semantically, while YAML presentation and collection order do

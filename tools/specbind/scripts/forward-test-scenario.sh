@@ -19,7 +19,9 @@
 #   a2     an initial-adoption project with no Specs and complete Steering
 #   d9     base plus an uncommitted edit to an owned file
 #   d12    base plus a steering document that cannot be parsed
+#   d14    a greenfield project with a tracked two-file local Source Collection
 #   r1     milestone scoping a new `order` Spec, with its brief written
+#   r7     a new `task` Spec whose Brief declares one local Source Item
 #   r6     r1 plus a Requirements template with one repeated Unicode variable
 #   r3     milestone scoping a `cart` update that removes behavior, brief written
 #   r4     milestone scoping the `cart` quantity cap, brief written
@@ -287,6 +289,63 @@ cart_cap_implemented() {
     } > src/cart.py
 }
 
+# A greenfield task product whose first release is described by a complete,
+# committed local Source Collection. Discovery and the planning phases use the
+# same source baseline, so their recipes must not drift apart.
+local_source_project() {
+    rm -rf .specbind/specs src
+    mkdir -p docs/product-definition
+    cat > README.md <<'EOF'
+# Task service
+
+A new service for managing tasks and reminding people before they are due.
+EOF
+    cat > docs/product-definition/task-management.md <<'EOF'
+# Task management
+
+A person can create a task with a title and optional due time, list incomplete
+tasks, and mark a task complete. Completing an unknown task is rejected and
+states that the task no longer exists.
+EOF
+    cat > docs/product-definition/reminders.md <<'EOF'
+# Reminders
+
+An incomplete task with a due time produces one reminder before it is due.
+Completed tasks never produce reminders. A reminder refers to the stable task
+identity and reads task due time and completion state rather than copying them.
+EOF
+    cat > .specbind/steering/structure.md <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: structure
+---
+
+# Structure
+
+Task lifecycle and reminder delivery are separate capabilities. Reminder
+delivery may consume task identity, due time, and completion state, but does not
+own them.
+EOF
+    cat > .specbind/steering/conventions.md <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: conventions
+---
+
+# Conventions
+
+Spec identities are singular nouns naming the responsibility, not the change.
+Every externally visible failure states what the caller should do next.
+EOF
+    git add -A
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Define the first task-service release"
+    expect "the source collection is not completely tracked" \
+        'test "$(git ls-files docs/product-definition | wc -l | tr -d " ")" = 2'
+    expect "the greenfield fixture still has a persistent Spec" \
+        'specbind spec list | grep -q "Found 0 spec(s)"'
+}
+
 leave_dirty=no
 
 case "$scenario" in
@@ -352,6 +411,10 @@ d12)
         '! specbind steering list'
     ;;
 
+d14)
+    local_source_project
+    ;;
+
 r1 | r6)
     milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"order","summary":"Let a customer cancel an order they placed."}]}}'
     brief order \
@@ -387,6 +450,33 @@ EOF
     fi
     expect "order did not reach the requirements state" \
         'specbind spec status order | grep -q "State: requirements"'
+    ;;
+
+r7)
+    local_source_project
+    milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"task","summary":"Own task creation, listing, and completion."},{"spec":"reminder","summary":"Notify for incomplete tasks before they are due.","dependsOn":[{"spec":"task"}]}]}}'
+    brief task \
+        "The first release needs a durable task lifecycle." \
+        "People can create, list, and complete tasks as defined by the product source."
+    cat >> .specbind/specs/task/brief.md <<'EOF'
+
+## Source material
+
+- `docs/product-definition/task-management.md` — behavioral source for this Spec.
+EOF
+    brief reminder \
+        "The first release needs due-time reminders." \
+        "People are reminded about incomplete tasks before their due time."
+    cat >> .specbind/specs/reminder/brief.md <<'EOF'
+
+## Source material
+
+- `docs/product-definition/reminders.md` — behavioral source for this Spec.
+EOF
+    expect "the task Brief did not retain its exact Source Item" \
+        'specbind artifact read task brief | grep -q "docs/product-definition/task-management.md"'
+    expect "task did not reach the requirements state" \
+        'specbind spec status task | grep -q "State: requirements"'
     ;;
 
 r3)

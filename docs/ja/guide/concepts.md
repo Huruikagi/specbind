@@ -58,6 +58,19 @@ Discoveryは、ワークフローに入ってきた作業を「誰が所有す�
 Directとして始めた作業が、実は仕様やContractの変更を必要とすると分かった場合は、
 その場で成果物を足さずに、Discoveryへ戻して分類をやり直します。
 
+## DiscoveryのSource Collection
+
+Discoveryには、プロジェクト内のGitで追跡済みのUTF-8テキストファイルまたは
+ディレクトリを、ひとまとまりのSource Collectionとして渡せます。Discoveryは
+コレクション全体を棚卸しし、RoadmapにすべてのSource Itemの振り分けを、各Briefに
+そのSpecが参照するSource Itemを記録します。読めない項目や未追跡の項目があれば、
+一部だけを使って進めずに停止します。
+
+Source Collectionは正規の仕様そのものではありません。RequirementsとDesignは
+Briefが指定した資料を読み、採用する振る舞いや技術上の結論を自身の成果物へ
+書き直します。元資料を更新した場合は自動同期されないため、必要な範囲を指定して
+Discoveryを明示的にやり直します。
+
 ## 永続成果物とMilestone固有成果物
 
 Spec-backed itemの成果物には、リリース後も残るものと、Milestoneがactiveな間だけ

@@ -27,3 +27,11 @@ type: SpecBind Brief
 ## スコープの境界
 
 ## 既知の依存
+
+## 入力資料
+
+<!-- specbind:instruction maintain
+Discoveryが明示的なSource Collectionを使った場合、このSpecに関係する正確な
+プロジェクト相対pathと、各資料が関係する理由だけを保つ。コレクション全体の
+振り分けとSpec横断の対応はRoadmapに保つ。
+-->

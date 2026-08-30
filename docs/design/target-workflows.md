@@ -65,6 +65,7 @@ skill boundary.
 ```text
 No active milestone
   -> discovery confirms the route and initiates milestone creation
+  -> when the request names a local Source Collection, discovery completely inventories it and confirms every Source Item disposition
   -> Rust CLI captures clean HEAD and creates roadmap.md with stable milestone identity and baseline revision
   -> active milestone
        -> discovery confirms scope and ordering changes
@@ -81,7 +82,7 @@ No active milestone
   -> no active milestone
 ```
 
-`roadmap.md` is the required durable representation of every active milestone, including single-item and Direct-only work. It begins from discovery and remains present for the milestone lifetime. Under Decisions 0045, 0046, and 0054, its frontmatter owns the milestone identity, branch-local baseline revision, release binding, and grouped work items while its body remains readable context. Spec-backed progress is derived; Direct items persist only sparse completion state. Decision 0078 stores one accepted free-form cross-spec assessment plus its contract-first input revisions in `state/contract-review.md` whenever the milestone contains a Spec-backed item. Direct-only milestones have no such artifact. Git preserves pre-release history, while release archives the final roadmap and, when present, the accepted global review.
+`roadmap.md` is the required durable representation of every active milestone, including single-item and Direct-only work. It begins from discovery and remains present for the milestone lifetime. Under Decisions 0045, 0046, and 0054, its frontmatter owns the milestone identity, branch-local baseline revision, release binding, and grouped work items while its body remains readable context. When Decision 0164 source material was supplied, the body also preserves the full collection inventory and every item's work-item disposition, while each Brief preserves only its relevant subset. Source material is request context rather than a fingerprinted lifecycle input; Requirements and Design reread the declared items and promote accepted meaning into their canonical artifacts. Spec-backed progress is derived; Direct items persist only sparse completion state. Decision 0078 stores one accepted free-form cross-spec assessment plus its contract-first input revisions in `state/contract-review.md` whenever the milestone contains a Spec-backed item. Direct-only milestones have no such artifact. Git preserves pre-release history, while release archives the final roadmap and, when present, the accepted global review.
 
 ### Scope removal, abandonment, and rollback
 
@@ -179,7 +180,7 @@ layout can be judged as a durable Spec boundary. Gap analysis remains optional.
 
 | Stage | Owns | Does not own |
 | --- | --- | --- |
-| Discovery | Routing, scope clarification, decomposition, active brief, and confirmed milestone intent | Detailed requirements, technical design, or mechanical milestone-state transitions |
+| Discovery | Routing, scope clarification, complete inventory and disposition of an explicit local Source Collection, decomposition, active brief, and confirmed milestone intent | Detailed requirements, technical design, or mechanical milestone-state transitions |
 | Rust CLI milestone operations | Roadmap creation, confirmed scope updates, release-version binding, consistency checks, and confirmed abandonment cleanup | Request analysis, spec authoring, automatic Git rollback, or release publication |
 | Requirements | User-visible behavior, constraints, acceptance criteria | Architecture and implementation sequencing |
 | Design | Architecture, interfaces, data flow, file boundaries, active-requirement traceability, and current contract maintenance | Task execution or unapproved scope changes |

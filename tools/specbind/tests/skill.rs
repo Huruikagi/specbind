@@ -104,6 +104,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("specbind-adopt-existing", 2),
         ("specbind-configure", 6),
+        ("specbind-discovery", 1),
         ("specbind-implement", 2),
         ("specbind-release", 1),
     ] {
@@ -291,6 +292,53 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
             && no_mutation < apply,
         "discovery must present the approvable payload before applying scope"
     );
+}
+
+#[test]
+fn local_source_collection_is_complete_confirmed_and_preserved() {
+    let discovery = skill_package_text("specbind-discovery");
+    for required in [
+        "references/local-files.md",
+        "specbind protocol read source-material",
+        "every Source Item",
+        "Source coverage:",
+        "complete\nprovenance and coverage mapping",
+        "exact project-relative Source Items",
+        "Direct items still have no Brief",
+    ] {
+        assert!(
+            discovery.contains(required),
+            "Discovery package must contain {required}"
+        );
+    }
+}
+
+#[test]
+fn planning_promotes_declared_source_items_into_canonical_artifacts() {
+    let requirements = skill_package_text("specbind-plan-requirements");
+    for required in [
+        "If the Brief declares Source Items",
+        "specbind protocol read source-material",
+        "every exact project-relative item",
+        "Restate every accepted behavioral",
+        "do not make an acceptance criterion depend on following a source link",
+    ] {
+        assert!(
+            requirements.contains(required),
+            "Requirements missing {required}"
+        );
+    }
+
+    let design = skill_package_text("specbind-plan-design");
+    for required in [
+        "If the Brief declares Source Items",
+        "specbind protocol read source-material",
+        "every exact project-relative item",
+        "Requirements remains authoritative for\nbehavior",
+        "Restate every technical\nconclusion",
+    ] {
+        assert!(design.contains(required), "Design missing {required}");
+    }
 }
 
 #[test]

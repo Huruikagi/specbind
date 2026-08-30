@@ -1,9 +1,10 @@
 use specbind::protocol;
 
-/// The complete Decision 0094 v1 selector set, in accepted order.
-const ACCEPTED_SELECTORS: [&str; 12] = [
+/// The complete accepted protocol selector set, in stable order.
+const ACCEPTED_SELECTORS: [&str; 13] = [
     "okf-authoring",
     "requirements-review",
+    "source-material",
     "design-discovery",
     "design-authoring",
     "design-validation",
@@ -79,6 +80,26 @@ fn requirements_review_does_not_authorize_unsupported_retirement() {
         !content.contains("removing it is correct"),
         "the protocol must not contradict the requirements skill's retirement stop"
     );
+}
+
+#[test]
+fn source_material_is_context_that_must_be_promoted() {
+    let content = protocol::read("source-material")
+        .expect("source material protocol")
+        .content();
+
+    for required in [
+        "Enumerate every\nitem",
+        "Every item receives a visible disposition",
+        "Source items and Briefs are not fingerprinted Gate inputs",
+        "Requirements and Design read the declared source items as context",
+        "Permission to read a source grants no authority",
+    ] {
+        assert!(
+            content.contains(required),
+            "missing source contract: {required}"
+        );
+    }
 }
 
 #[test]

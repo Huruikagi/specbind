@@ -86,7 +86,7 @@ default Requirements scaffold deliberately has no dummy live Requirement, and
 heading-only Brief, Research, or Implementation Notes artifacts fail live
 validation.
 
-Twelve immutable product protocols and the versioned structured-artifact and
+Thirteen immutable product protocols and the versioned structured-artifact and
 command-input schemas are binary-owned read surfaces exposed by
 `protocol list/read` and `schema list/read`; they are not installed as project
 settings.
@@ -97,7 +97,7 @@ settings.
 | --- | --- |
 | `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by `specbind-adopt-existing`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
 | `{{SPEC_DIR}}/deferred.md` | Optional project-wide OKF concept created by the default deferred adapter when the first non-blocking finding is recorded. It is not a gate, fingerprint input, lifecycle artifact, or source of work. |
-| `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope. |
+| `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope and records complete Source Collection disposition when supplied. |
 | `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `specbind-steering` and selected by `artifact_id`. |
 | `{{SPEC_DIR}}/state/contract-review.md` | Current accepted milestone-wide Contract review for a Spec-backed milestone; authored by `specbind-contract-review` and persisted by the CLI. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Final released Roadmap archive written by release finalization. |
@@ -114,7 +114,7 @@ The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 | `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by `specbind-plan-design`; `artifact_id` is its stable selector. |
 | `contract.yaml` | Persistent strict versioned Contract maintained with Design and reviewed milestone-wide. |
 | `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
-| `brief.md` | Active-milestone input authored by discovery and removed by successful release finalization. |
+| `brief.md` | Active-milestone input authored by discovery; records the exact relevant Source Items when a collection was supplied and is removed by successful release finalization. |
 | `research.md` | Optional active-milestone gap-analysis result replaced by `specbind-gap-analysis` and removed by finalization. |
 | `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by `specbind-plan-tasks`, progressed by implementation, and removed by finalization. |
 | `log.md` | Persistent newest-first release history maintained by release finalization for Spec-backed milestones. |

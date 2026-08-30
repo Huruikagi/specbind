@@ -35,6 +35,11 @@ static PROTOCOLS: &[Protocol] = &[
         content: include_str!("../../assets/protocols/requirements-review.md"),
     },
     Protocol {
+        selector: "source-material",
+        purpose: "Complete source-collection capture, provenance, request-context authority, and promotion into canonical artifacts.",
+        content: include_str!("../../assets/protocols/source-material.md"),
+    },
+    Protocol {
         selector: "design-discovery",
         purpose: "Selection and escalation of repository investigation needed before a self-contained Design can be authored.",
         content: include_str!("../../assets/protocols/design-discovery.md"),

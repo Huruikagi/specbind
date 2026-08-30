@@ -22,7 +22,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 82 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 84 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -40,7 +40,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/roadmap.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 82 create, 0 replace, 0 keep\n",
+                "\n  Summary: 84 create, 0 replace, 0 keep\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -108,7 +108,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 46 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 47 create, 0 replace, 2 keep\n",
                 )),
         );
 
@@ -157,10 +157,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 48 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 49 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 48 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 49 created, 0 replaced, 0 kept\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
@@ -765,7 +765,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 46 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 47 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(

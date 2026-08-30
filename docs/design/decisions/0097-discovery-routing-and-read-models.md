@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision 0164 extends the fixed Discovery read set only when the maintainer
+explicitly supplies a local Source Collection. Ordinary request routing retains
+this decision's selective read boundary.
+
 ## Context
 
 [Decision 0075](./0075-v1-skill-and-orchestration-scope.md) removed

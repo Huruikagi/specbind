@@ -32,6 +32,19 @@ specbind artifact read <spec> brief --for consume
 specbind steering read <selector> --for consume
 ```
 
+If the Brief declares Source Items, read the shared contract once and then read
+every exact project-relative item it names:
+
+```sh
+specbind protocol read source-material
+```
+
+Do not reopen the whole collection or infer neighboring files; Discovery already
+recorded this Spec's relevant subset. A missing, unreadable, unsupported, or
+project-external item makes the request context partial, so stop before
+authoring. Source material is context rather than approved scope, and a locator
+alone never becomes a Requirement.
+
 Read all the steering, not a promising-looking subset. The listing gives you a
 selector, a type, and a path, and nothing in that says whether a document
 constrains this Spec's behavior. A project constraint missed here is absent from
@@ -102,6 +115,13 @@ Write constraints you took from steering **into the document**, in the
 requirements' own terms. Steering is not fingerprinted, so nothing detects a
 steering document that changes after this gate is approved. A requirement that
 merely points at guidance is a requirement whose meaning can drift silently.
+
+Apply the same rule to Source Items. Restate every accepted behavioral
+obligation in the Requirements' own terms so the complete current contract
+survives the milestone and can be fingerprinted. Keep provenance in the Brief;
+do not make an acceptance criterion depend on following a source link. When two
+items disagree about intended behavior, surface the conflict to the user rather
+than selecting one silently.
 
 For a new document, omit `create` instructions and copy every `maintain` and
 `consume` instruction unchanged. For an existing document, preserve the durable

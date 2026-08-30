@@ -27,3 +27,11 @@ scope, and this document is not fingerprinted.
 ## Scope boundaries
 
 ## Known dependencies
+
+## Source material
+
+<!-- specbind:instruction maintain
+When Discovery used an explicit Source Collection, keep only the exact
+project-relative items relevant to this Spec and state why each matters. Keep
+the complete collection disposition and cross-Spec mapping in the Roadmap.
+-->

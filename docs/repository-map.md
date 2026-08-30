@@ -291,3 +291,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0161](./design/decisions/0161-default-plan-and-phase-skill-namespace.md) | Accepted | Default Plan entry point and explicit plan-phase Skill namespace |
 | [0162](./design/decisions/0162-forward-test-record-lifecycle.md) | Accepted | Separate forward-test run history, current dashboard, and findings lifecycle |
 | [0163](./design/decisions/0163-macos-arm64-release-target.md) | Accepted | Native macOS ARM64 release, preflight, installer, and runtime verification |
+| [0164](./design/decisions/0164-local-discovery-source-collections.md) | Accepted | Provider-neutral Discovery source semantics with a Git-backed local-files provider |
