@@ -1,68 +1,43 @@
 # Getting Started
 
-このページでは、既存のGitプロジェクトにSpecBindを導入し、Codex、Claude Code、
-または共通形式に対応するcoding agentを使って、最初の変更をスコープの確認から
-実装の検証まで進めます。
-
-SpecBindはv1.0前のプレビュー版として配布しています。インストーラは公開済みの
-最新stableリリースを選び、対応するバイナリをGitHub Releaseから取得します。
+このページでは、既存のGitプロジェクトにSpecBindを導入し、あなたのコーディングエージェントと
+一緒に、最初の変更をスコープの確認から実装の検証まで進めてみます。
 
 ## 1. 前提を確認する
 
 次のものを用意してください。
 
 - Gitで管理していて、コミットが1つ以上ある対象プロジェクト
-- Codex、Claude Code、または`.agents/skills/`と`AGENTS.md`に対応するcoding agent
-- Windows x64、またはWSL2上のLinux x64
+- コーディングエージェント
+- Windows x64、WSL2上のLinux x64、またはmacOS ARM64
 
-ソースからビルドする場合は、これに加えて[Rustup](https://rustup.rs/)で入れた
-Rustツールチェーンが必要です。Windowsでソースビルドするには、Visual Studio
-Build Toolsの**Desktop development with C++**ワークロードとWindows SDKも
-入れてください。
+### 1.1. 使えるエージェントについて
 
-対象プロジェクトに未コミットの変更が残っている場合は、導入前に内容を確認し、
-いつもの手順でコミットしておいてください。SpecBindは、既存ファイルを置き換える
-操作の安全境界として、Gitの履歴とクリーンな作業ツリーを利用します。
+開発者はCodexとClaude Codeを利用しており、スキルのテストをしています。
 
-## 2. プレビュー版CLIをインストールする
+それ以外のAgent Skillsと`AGENTS.md`に対応する以下のようなコーディングエージェントは、
+試してないけど多分動くはずです。
+うまくいかなかったら[バグ報告と改善提案](./feedback.md)から教えてください。
 
-miseを使っている場合は、WindowsとWSL2/Linuxのどちらでも次のコマンドで
-GitHub Releaseの対応するバイナリを導入できます。
+- Cursor
+- GitHub Copilot
+- Devin
+- ほか...
+
+## 2. CLIをインストールする
+
+対象プロジェクトのルートへ移動します。未コミットの変更が残っている場合は、
+内容を確認し、いつもの手順でコミットしておいてください。
+
+このガイドでは、[mise](https://mise.jdx.dev/)を使ってSpecBindをインストールします。
 
 ```sh
 mise use github:Huruikagi/specbind
+mise lock
 ```
 
-このコマンドは、現在のディレクトリでmiseが選んだ設定ファイルへSpecBindを記録し、
-miseの管理する`PATH`から実行できるようにします。miseは`latest`に既定で最低公開
-期間を設けているため、stableリリースの公開直後は、必要に応じて
-`mise use github:Huruikagi/specbind@0.2.0`のようにバージョンを明示してください。
-
-miseを使わない場合は、プラットフォーム別のインストーラを使います。
-
-Windows PowerShell:
-
-```powershell
-irm https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 | iex
-```
-
-WSL2/Linux:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
-```
-
-プラットフォーム別インストーラはGitHub Releaseのアーカイブと`SHA256SUMS`を
-取得し、チェックサムが一致した場合だけバイナリを配置します。既定の配置先は
-次のとおりです。
-
-- Windows: `%LOCALAPPDATA%\SpecBind\bin\specbind.exe`
-- WSL2/Linux: `$HOME/.local/bin/specbind`
-
-インストーラは`PATH`を恒久的には変更しません。配置先が現在の`PATH`に入って
-いない場合は、いま使っているシェルに追加するためのコマンドを表示します。別の
-場所へ入れたい場合は、PowerShellでは`-InstallDir`、Linuxでは`--install-dir`を
-指定してください。
+`mise use`はSpecBindを`mise.toml`へ追加し、`mise lock`は選ばれたバージョンと
+配布物のチェックサムを`mise.lock`へ記録します。
 
 インストールできたか確認します。
 
@@ -70,75 +45,57 @@ curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh 
 specbind --version
 ```
 
-### ソースからビルドする
+追加または更新された`mise.toml`と`mise.lock`の内容を確認し、どちらもGitへ
+コミットしてください。これにより、チームで同じバージョンのSpecBindを使えます。
 
-SpecBindリポジトリを取得し、Rustワークスペースでreleaseバイナリをビルドします。
-
-```sh
-git clone https://github.com/Huruikagi/specbind.git
-cd specbind/tools/specbind
-cargo build --release
-```
-
-ビルドしたバイナリは次の場所にできます。
-
-- Windows: `target/release/specbind.exe`
-- WSL2/Linux: `target/release/specbind`
-
-このディレクトリを、いま使っているシェルの`PATH`に追加して確認します。
-
-PowerShell:
-
-```powershell
-$env:Path = "$(Resolve-Path .\target\release);$env:Path"
-specbind --version
-```
-
-WSL2/Linux:
-
-```sh
-export PATH="$(pwd)/target/release:$PATH"
-specbind --version
-```
-
-この設定が効くのは、いま使っているシェルの中だけです。CodexやClaude Codeを別の
-シェルから起動する場合は、そちらのプロセスからも`specbind`を実行できるように
-してください。
+miseを使わないインストール方法は、
+[README](https://github.com/Huruikagi/specbind#install-the-cli)を参照してください。
 
 ## 3. 対象プロジェクトへ導入する
 
-対象プロジェクトのルートへ移動します。まずはdry runで、どんなファイルが作られる
-のかを確認します。
+### 3.1. 仮実行する
 
-Codexだけを使う場合:
+今インストールしたCLIの最初の仕事として、
+SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
+
+このガイドではCodexを例に進めます。まずはdry runで、どんなファイルが
+作られるのかを確認します。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --project-instructions
 ```
 
-Claude Codeだけを使う場合は、`codex`を`claude-code`に置き換えてください。
-共通形式に対応する別のcoding agentでは、`generic`に置き換えます。
+#### `--agent`
 
-```sh
-specbind install --dry-run --agent generic --language ja --project-instructions
-```
+使うコーディングエージェントに合わせて、`--agent`の値を選んでください。
 
-`generic`が保証するのは`.agents/skills/`のAgent Skillsと、ルート`AGENTS.md`の
-案内ブロックだけです。サブエージェント定義は作りません。利用するagentがこの2つの
-場所を自動検出するかは、そのagentのドキュメントで確認してください。
+| 使うエージェント | 指定する値 |
+| --- | --- |
+| Codex | `codex` |
+| Claude Code | `claude-code` |
+| Agent Skillsと`AGENTS.md`に対応するその他のエージェント | `generic` |
 
-複数を使う場合は`--agent`を並べます。
+複数のエージェントを使う場合は、`--agent codex --agent claude-code`のように
+`--agent`を繰り返します。
 
-```sh
-specbind install --dry-run --agent codex --agent claude-code --language ja --project-instructions
-```
+`generic`が作るのは、`.agents/skills/`のAgent Skillsとルート`AGENTS.md`の
+案内ブロックだけです。サブエージェント定義は作りません。
 
-`--language ja`を付けると、SpecBindが管理する成果物の言語をプロジェクト全体で
-日本語にします。`--project-instructions`を付けると、ルートの`AGENTS.md`または
-`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。まわりに
-書いてある既存の文章はそのまま残ります。
+#### `--language ja`
 
-内容に問題がなければ、`--dry-run`を外して実際に適用します。
+SpecBindが管理する成果物、具体的には `requirements.md` や
+`design.md` の言語を日本語にします。
+
+#### `--project-instructions`
+
+`AGENTS.md`または
+`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
+もともと書いてある既存の文章はそのまま残ります。
+普通はつけたほうがいいでしょう。
+
+### 3.2. 実際に適用する
+
+仮実行の内容に問題がなければ、`--dry-run`を外して実際に適用します。
 
 ```sh
 specbind install --agent codex --language ja --project-instructions
@@ -156,35 +113,10 @@ specbind install --agent codex --language ja --project-instructions
 AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 ```
 
-CodexとClaude Codeのどちらでも、実装・レビューなどの役割ごとにSpecBindの既定
-モデルが設定されます。通常は変更不要です。プロジェクトでコストと能力の配分を
-変える場合だけ、`.specbind.json`の`agentRoles`を上書きしてから、クリーンな
-リポジトリで`specbind install`を再実行します。
-`generic`には共通のサブエージェント形式がないため、役割定義と`agentRoles`は
-ありません。
-
-```json
-{
-  "agentRoles": {
-    "codex": {
-      "implementer": {
-        "model": "gpt-5.6-luna",
-        "reasoningEffort": "medium"
-      }
-    },
-    "claudeCode": {
-      "researcher": {
-        "model": "sonnet"
-      }
-    }
-  }
-}
-```
-
-指定できる役割は`planner`、`implementer`、`reviewer`、`debugger`、
-`researcher`です。省略した役割と項目にはSpecBindの既定値が使われます。
-Claude Codeのサブエージェント定義には推論強度の項目がないため、
-`agentRoles.claudeCode`で指定できるのは`model`だけです。
+CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定されます。
+変更する場合は、
+[カスタマイズガイド](./customization.md)の「プロジェクト設定と役割別モデル」を
+参照してください。
 
 生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
 インストーラ自体はコミットを行いません。
@@ -192,21 +124,21 @@ Claude Codeのサブエージェント定義には推論強度の項目がない
 初回のinstallが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
 設定レビューを行うよう案内が表示されます。coding agentのセッションを開き直した
 あと、たとえば「このプロジェクト向けにSpecBindの設定を見直して、必要な変更まで
-進めて」と依頼してください。Skillは次の読み取り専用コマンドから現在値を確認し、
+進めて」と依頼してください。スキルは次の読み取り専用コマンドから現在値を確認し、
 テンプレート、ルール、adapter、Steering、Agent設定のうち関係する面だけを扱います。
 
 ```sh
 specbind configuration show
 ```
 
-既定値のまま使う判断も有効です。コマンドやSkillは、プロジェクト全体を単純な
+既定値のまま使う判断も有効です。コマンドやスキルは、プロジェクト全体を単純な
 「設定済み／未設定」には分類しません。
 
 導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
 そうしないと、エージェントが新しいスキルを認識できないことがあります。
 以下ではCodexの`$`とClaude Codeの`/`を使って呼び出し例を示します。`generic`を
-選んだ場合、`specbind-*`というSkill名は同じですが、呼び出し方はagentごとに
-異なります。利用するagentのSkill選択または自動Discoveryの方法に読み替えてください。
+選んだ場合、`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに
+異なります。利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
 
 ## 4. 最初の変更を選ぶ
 
@@ -289,7 +221,7 @@ Tasksの各Gateをこの実行の中でまとめて承認してよいか聞か�
 場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
 
 Planが終わった時点では、実装はまだ始まっていません。Requirements、Design、Tasksの
-どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*` Skillを使います。
+どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*`スキルを使います。
 
 ## 7. 実装して検証する
 

@@ -122,7 +122,7 @@ Brief、Research、Implementation Notesも、見出しやコメントだけで�
 `specbind-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。
 同意した時点では候補と影響のpreviewだけを作り、format-only、instruction-update、
 structural、semantic、conflictに分類します。実際の書き換えは別に確認し、意味を変える
-変更はRequirementsやDesignなど、その成果物を所有するSkillへ引き渡します。Gate、
+変更はRequirementsやDesignなど、その成果物を所有するスキルへ引き渡します。Gate、
 completion、released archive、CLI所有の構造化状態は、テンプレートに合わせるという理由で
 直接書き換えません。
 
@@ -171,12 +171,12 @@ specbind steering read <selector> --for consume
 | そのテンプレートから作る成果物だけの作成、更新、読み方 | テンプレート内の`specbind:instruction` |
 | 複数の成果物、エージェント、作成、検証、レビューで共有するプロジェクト判断基準 | `settings/rules/` |
 | プロジェクトが弱められない製品共通の意味や品質基準 | 製品protocol（カスタマイズ対象外） |
-| 作業の順序、分岐、停止条件 | 製品管理のSkill（カスタマイズ対象外） |
+| 作業の順序、分岐、停止条件 | 製品管理のスキル（カスタマイズ対象外） |
 | 必須構造、状態遷移、機械的な整合性 | CLI（カスタマイズ対象外） |
 
 テンプレートの`maintain`と`consume`は、初回作成時に成果物へコピーされ、その後は
 各成果物が所有します。テンプレートを更新しても、既存成果物の指示は変わりません。
-一方、共有ルールはSkillが作成時だけでなく検証やレビュー時にも読みます。既存成果物を
+一方、共有ルールはスキルが作成時だけでなく検証やレビュー時にも読みます。既存成果物を
 含めて次の作業から同じ方針を適用したい場合や、Design作成とContract reviewのように
 複数の作業で同じ判断基準を使う場合は、独立した共有ルールに置きます。
 
@@ -191,7 +191,7 @@ specbind steering read <selector> --for consume
 | `tasks-generation.md` | Taskの大きさ、分割の仕方、テスト作業の扱い |
 | `steering-principles.md` | Steeringに残す知識の粒度、例の書き方、更新の方針 |
 
-v1のSkillが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
+v1のスキルが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
 読み込まれません。
 
 ```sh
@@ -200,7 +200,7 @@ specbind rule read ears-format --for consume
 specbind rule read ears-format --for maintain
 ```
 
-一覧は既知の5件と、各ファイルがプロジェクトに存在するかを返します。Skillが判断基準
+一覧は既知の5件と、各ファイルがプロジェクトに存在するかを返します。スキルが判断基準
 として使うときは`--for consume`、ルール自体を更新するときは`--for maintain`を指定します。
 省略すると、指示コメントを含むMarkdownをそのまま返します。ルール内でも
 `specbind:instruction maintain`と`consume`を使用できますが、初回作成専用の`create`は
@@ -208,7 +208,7 @@ specbind rule read ears-format --for maintain
 引き続き適用されます。
 
 また、ルールで弱められないものがあります。成果物の必須構造、Gate、承認、状態の
-遷移、Skillの必須手順、CLIの検証です。
+遷移、スキルの必須手順、CLIの検証です。
 
 ## 運用adapter
 
@@ -237,14 +237,14 @@ specbind adapter read git
 方針として扱われません。内容を具体化したらマーカーを削除します。テンプレート用の
 `specbind:instruction`はアダプターの状態には影響しません。
 
-`release.md`が未設定のままリリースを始めると、Release Skillがリポジトリ内のworkflow、
+`release.md`が未設定のままリリースを始めると、Releaseスキルがリポジトリ内のworkflow、
 version manifest、build script、既存ドキュメントを調べて具体案を提示します。承認した
 実行では`release.md`だけを保存・ローカルcommitして停止し、公開は行いません。この設定
 変更後はcompletionを再検証してから、改めてリリースします。プロジェクト固有の作業が
 本当に不要なら、Front Matterを残して本文を空にすることで明示できます。
 
 `git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contract reviewの
-受理、各実装Taskの完了、`specbind-configure`による1つの設定変更など、Skillが定めた
+受理、各実装Taskの完了、`specbind-configure`による1つの設定変更など、スキルが定めた
 安全な完了単位ごとに、関係するパスだけを
 ローカルコミットします。現在のブランチを使い、既定ではpushやamendなどの履歴書き換えを
 行いません。初回のRelease adapter設定と、`release finalize`が生成するlog・archive・
@@ -258,7 +258,7 @@ cleanupも、それぞれ公開対象とは別のローカルcommitになりま�
 作ってから次へ進みます。複数Taskの完了を最後の1commitへまとめるのは既定動作では
 ありません。Spec全体のcompletion記録は、Taskの実装commitとは別です。
 
-adapterはあくまで方針であり、広い権限を与えるものではありません。変更を伴うSkillの依頼は
+adapterはあくまで方針であり、広い権限を与えるものではありません。変更を伴うスキルの依頼は
 既定のローカルチェックポイントまでを含みますが、`git.md`にpushの方針を書いても、それだけで
 エージェントがpushできるようにはなりません。pushにはあなたの依頼と実行環境の権限が別途
 必要です。
@@ -272,7 +272,7 @@ Steeringは、製品の目的、技術方針、構造、テスト方針、セキ
 これから先の作業でも参照するプロジェクトの知識です。作業中だけのメモや、すぐに
 変わる状態は書きません。
 
-`specbind-steering` Skillが、現在の一覧を確認したうえで、初期作成、既存文書の同期、
+`specbind-steering`スキルが、現在の一覧を確認したうえで、初期作成、既存文書の同期、
 1文書の追加を行います。既定の`product`、`tech`、`structure`という分け方は提案です。
 名前を変えても、統合しても、分割しても、使わなくても構いません。
 
@@ -338,14 +338,14 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 次はSpecBindが管理している製品側の契約です。直接編集しても、サポートされた
 カスタマイズにはなりません。
 
-- `.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`のSkill本体
+- `.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`のスキル本体
 - `.codex/agents/specbind-*.toml`と`.claude/agents/specbind-*.md`の役割定義
 - CLIが埋め込むprotocolとschema
 - Gate、承認、fingerprint、状態の遷移、必須のトレーサビリティ
 - `spec.yaml`、`tasks.yaml`、Roadmapなど、CLIが所有する構造化された状態
 - ルート指示ファイルの中の、SpecBind管理ブロック
 
-プロジェクト固有の方針を足したいときは、Skill本体を書き換えず、目的に応じて
+プロジェクト固有の方針を足したいときは、スキル本体を書き換えず、目的に応じて
 テンプレート、ルール、adapter、Steeringのどれかに置いてください。
 
 ## 変更するときの進め方
@@ -355,11 +355,11 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 1. `configuration show`と関係する`list`、`read`で現在値を確認する。
 2. 目的をテンプレート、ルール、adapter、Steering、install設定の所有面へ分類する。
 3. 変更案と影響を示し、必要な確認を得てプロジェクト所有面だけを変更する。
-4. installの再実行や専用Skillへの委譲を含め、所有する経路で反映する。
+4. installの再実行や専用スキルへの委譲を含め、所有する経路で反映する。
 5. 機械的な検証を再実行し、required、recommended、optionalに分けてアフターケアを
    完了または明示的に見送る。
 
-Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果物のSkillが所有します。
+Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果物のスキルが所有します。
 `specbind-configure`はそれらへ委譲しても、依頼された設定変更全体の完了確認と報告を
 引き続き担当します。有効なGit adapterが定める狭いローカルcheckpointは通常の完了手順に
 含まれますが、削除、push、branch変更、tag、履歴操作、外部操作、ライフサイクル変更は

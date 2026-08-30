@@ -16,13 +16,13 @@ PATH、miseなどのpackage manager設定は削除しません。
 specbind remove-agent codex
 ```
 
-planには、Codex用のproduct-managed Skills、5つのrole定義、`AGENTS.md`
+planには、Codex用の製品管理のスキル、5つのrole定義、`AGENTS.md`
 のmarked block、`.specbind.json`の更新がexact pathで表示されます。
 Claude Code連携、`.specbind/`以下のSpecsやsettings、marker外の
 `AGENTS.md`本文は保持されます。
 
-`generic`も選ばれている場合、Codexと共有する`.agents/skills/`以下のmanaged
-Skill targetsと`AGENTS.md`のmarked blockは`retain`として表示され、Codex固有の
+`generic`も選ばれている場合、Codexと共有する`.agents/skills/`以下の管理対象スキルと
+`AGENTS.md`のmarked blockは`retain`として表示され、Codex固有の
 role定義だけが削除されます。
 逆に`generic`を外してCodexが残る場合も、共有targetは保持され、設定だけが更新
 されます。削除後に残るAgentのどれも必要としないexact targetだけが削除されます。
@@ -50,7 +50,7 @@ specbind uninstall --knowledge retain
 specbind uninstall --knowledge retain --apply
 ```
 
-`retain`はagent用Skills、role定義、root instruction block、
+`retain`はagent用スキル、role定義、root instruction block、
 `.specbind.json`を削除しますが、設定されていた`specDir`全体を残します。
 別のworkflowへ移行するとき、後でSpecBindを再導入するとき、Requirements、
 Design、Contract、Steering、log、release historyを通常のproject文書として

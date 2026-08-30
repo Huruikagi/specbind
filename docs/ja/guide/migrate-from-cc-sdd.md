@@ -50,7 +50,7 @@ specbind migrate cc-sdd --apply
 ください。CLIが表示したfinding code、対象パス、理由を控えて、次の手順へ進みます。
 
 現在の自動適用範囲は、`.cc-sdd.json`からのSpecBind installと、Codex・Claude Codeの
-既知の`kiro-*` skillおよびGit追跡済みcc-sdd sourceの最終退役です。旧Specが1件でもあれば
+既知の`kiro-*`スキルおよびGit追跡済みcc-sdd sourceの最終退役です。旧Specが1件でもあれば
 `MIGRATE_SPEC_CONVERSION_REQUIRED`で停止し、MilestoneやGate evidenceを推測しません。
 
 ## 2. エージェントに依頼する
@@ -176,7 +176,7 @@ specbind migrate cc-sdd --apply
 
 ## 7. 旧ワークフローを止める
 
-成功すると、設定されたcc-sdd source root、`.cc-sdd.json`、既知の旧`kiro-*` skill、
+成功すると、設定されたcc-sdd source root、`.cc-sdd.json`、既知の旧`kiro-*`スキル、
 resolution stateが削除され、SpecBindだけがactive workflowとして残ります。再実行は
 `NO_CHANGE CC_SDD_MIGRATION_COMPLETE`です。
 
