@@ -60,13 +60,18 @@ For the authoring skill it is a deadlock. Repairing a malformed steering documen
 is this skill's work, and `steering read` refuses to hand it the input —
 including the healthy documents it would need for context.
 
-`steering list` still reports each fault with its path, so the file is
-identifiable. The skill therefore reads that file directly.
+`steering list` still reports each fault with its path, so a malformed file is
+identifiable. The skill therefore reads that file directly. A duplicate
+identity is different: every colliding path is reported, but the diagnostic
+cannot decide which document owns the identity. The skill may remove one only
+when repository history proves it is the newly introduced duplicate in the
+repair scope. Matching content or a copy-like filename is not proof; without
+provenance, the paths and consequences go to the maintainer for a choice.
 
-**The repair exception.** The steering skill may read a steering file directly
-when `steering list` reports a diagnostic naming it, and only to repair it. Every
-other read, by this skill and by every other skill, goes through `steering list`
-and `steering read` as Decision 0098 requires.
+**The repair exception.** The steering skill may read steering files directly
+when `steering list` reports diagnostics naming them, and only to repair them.
+Every other read, by this skill and by every other skill, goes through
+`steering list` and `steering read` as Decision 0098 requires.
 
 The exception is narrow in the way that matters: it is available only for a
 document the CLI has already declared broken, so it can never become a convenient

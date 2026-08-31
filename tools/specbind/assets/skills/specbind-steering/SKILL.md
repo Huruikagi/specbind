@@ -50,8 +50,15 @@ Never read `steering/` directly and never glob it. The selector is the
 document, including the healthy ones — a consumer must not act on guidance known
 to be incomplete. You are the exception, and only for repair:
 
-- The diagnostic names the faulty path. Read **that file** directly, fix what the
-  diagnostic reports, and re-run `specbind steering list`.
+- A malformed-document diagnostic names the faulty path. Read **that file**
+  directly, fix what the diagnostic reports, and re-run
+  `specbind steering list`.
+- A duplicate-identity diagnostic names every colliding path but does not decide
+  which one owns the identity. Read those named files directly and inspect Git
+  history. Remove one only when history proves it is the newly introduced
+  duplicate in the repair scope. Matching content or a copy-like filename is
+  not proof. Without provenance, present every path and the effect of each
+  choice, then stop for the maintainer; do not pick a survivor yourself.
 - Repair first, then continue. Do not work around a broken collection by
   authoring alongside it.
 - Every other read still goes through the commands above.

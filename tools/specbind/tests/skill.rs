@@ -756,6 +756,8 @@ fn steering_add_stops_before_inventing_missing_project_policy() {
     assert!(body.contains("Do not\ncombine an accurate statement that tooling is absent with an invented normative\npolicy"));
     assert!(body.contains("write-safety preflight for accepted completion"));
     assert!(body.contains("supplies no document\n  content"));
+    assert!(body.contains("A duplicate-identity diagnostic names every colliding path"));
+    assert!(body.contains("Matching content or a copy-like filename is\n  not proof"));
     assert!(body.contains("write it only\nto the `project_path` reported"));
 }
 
