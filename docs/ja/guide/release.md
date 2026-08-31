@@ -4,8 +4,9 @@
 説明します。SpecBindでのリリースは「Milestone全体を出すか、出さないか」で、一部の
 Specだけを切り出す方法はありません。
 
-用語（Milestone、Spec、Gate、completion evidence など）は[基本概念](./concepts.md)に
-まとめています。
+!!! info "用語について"
+    用語（Milestone、Spec、Gate、completion evidence など）は[基本概念](./concepts.md)
+    にまとめています。
 
 ## いつリリースするか
 

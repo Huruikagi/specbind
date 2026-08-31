@@ -76,10 +76,11 @@ untrackedのファイル、symlink、junction、reparse pointがない場合だ�
 git restore --source=HEAD -- .
 ```
 
-このコマンドはworktree全体をHEADへ戻すため、アンインストール後に別の編集を
-始めた場合は使わず、planに表示されたexact pathを個別にrestoreしてください。
-すでにアンインストールをcommitした後は、`HEAD^`のようにアンインストール前
-のrevisionと復元するexact pathを明示します。
+!!! warning
+    このコマンドはworktree全体をHEADへ戻すため、アンインストール後に別の編集を
+    始めた場合は使わず、planに表示されたexact pathを個別にrestoreしてください。
+    すでにアンインストールをcommitした後は、`HEAD^`のようにアンインストール前
+    のrevisionと復元するexact pathを明示します。
 
 ## 停止したとき
 

@@ -139,10 +139,11 @@ Tasksだけが変わった -> Tasks Gateからやり直す
 invalidateすると、下流の証拠も消えます。これは失敗ではなく、変わった前提に古い
 承認を使わないための、通常のrewindです。
 
-なお、確立済みのSpecからRequirement groupやAcceptance Criterionを削除する場合、
-v1では完全なretirement履歴を残せません。既存Requirementの削除が必要になった
-ときは、履歴が欠けたまま進めず、その操作の手前で停止します。既存内容の更新と、
-新しいRequirementの追加は問題なく行えます。
+!!! warning "v1の制限: Requirementの削除"
+    確立済みのSpecからRequirement groupやAcceptance Criterionを削除する場合、
+    v1では完全なretirement履歴を残せません。既存Requirementの削除が必要になった
+    ときは、履歴が欠けたまま進めず、その操作の手前で停止します。既存内容の更新と、
+    新しいRequirementの追加は問題なく行えます。
 
 ## 通常のライフサイクル
 

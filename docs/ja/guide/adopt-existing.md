@@ -9,9 +9,10 @@ cc-sddなど別のSDD製品からの移行ではなく、信頼できる仕様�
 正式な要件、バグ、歴史的制約、内部実装、または判断が必要な不明点になり得ます。
 ユーザーが確認した挙動だけがBriefを経てRequirementsへ進みます。
 
-用語（Spec、Steering、Milestone、Brief、Research など）は[基本概念](./concepts.md)、
-既存プロジェクトの通常の流れは
-[既存プロジェクトで始める](./start-existing-project.md)にまとめています。
+!!! info "用語について"
+    用語（Spec、Steering、Milestone、Brief、Research など）は[基本概念](./concepts.md)、
+    既存プロジェクトの通常の流れは
+    [既存プロジェクトで始める](./start-existing-project.md)にまとめています。
 
 ## 前提条件
 
