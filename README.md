@@ -1,6 +1,7 @@
 # SpecBind
 
-SpecBind is an experimental system for keeping durable software specifications bound to agent-assisted delivery, from intent through release.
+SpecBind keeps durable software specifications bound to agent-assisted delivery,
+from intent through release.
 
 AI coding agents can implement quickly, but the reasoning around a change is easy to lose: requirements become one-off prompts, design decisions drift away from the code, and a later agent has to reconstruct what the product is supposed to do. SpecBind gives that reasoning a maintained home and makes it part of the delivery lifecycle.
 
@@ -32,28 +33,14 @@ discover scope
 
 Approvals bind each phase to the exact inputs that were reviewed. If an upstream artifact changes, SpecBind marks the affected downstream evidence stale rather than letting an agent silently continue from an obsolete plan. Faster orchestration can reuse the same artifacts and guards without defining a weaker workflow.
 
-Projects can adapt document templates, shared rules, and Git or release guidance while keeping the product's validation and state transitions consistent. SpecBind supports Codex and Claude Code workflows, with English and Japanese as the v1 artifact languages.
+Projects can adapt document templates, shared rules, and Git or release guidance while keeping the product's validation and state transitions consistent. SpecBind is developed and tested with Codex and Claude Code, and provides shared Agent Skills and `AGENTS.md` integration for other compatible agents. English and Japanese are the v1 artifact languages.
 
-## Learn more
+## Get started
 
-- [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
-- [Japanese user guide (Preview)](./docs/ja/index.md) walks through the current pre-1.0 preview from project installation to a first verified implementation.
-- [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
-- [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
-- [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
-- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
-- [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
+### Install the CLI
 
-## Repository layout
-
-- `tools/specbind/` — canonical Rust workspace for the `specbind` executable
-- `tools/cc-sdd/` — inherited TypeScript migration oracle
-- `docs/design/` — target workflows, lifecycle models, and accepted design decisions
-
-## Install the CLI
-
-The current stable binary release supports Windows x64, Linux x64, and macOS
-ARM64.
+The [latest stable release](https://github.com/Huruikagi/specbind/releases/latest)
+supports Windows x64, Linux x64, and macOS ARM64.
 The latest stable release can be installed without choosing a version.
 
 With [mise](https://mise.jdx.dev/), on any supported platform:
@@ -64,12 +51,9 @@ mise use github:Huruikagi/specbind
 
 This installs the latest stable version eligible under your mise settings and
 records it in the mise configuration selected for the current directory. mise
-applies a minimum release age to `latest` by default, so during the first day
-after this release, select it explicitly if needed:
-
-```sh
-mise use github:Huruikagi/specbind@1.0.0
-```
+applies a minimum release age to `latest` by default. If a newly published
+stable release is not eligible yet, select that version explicitly with
+`github:Huruikagi/specbind@<version>`.
 
 Without mise, use the platform installer.
 
@@ -89,6 +73,54 @@ Both installers verify the release archive against `SHA256SUMS`, install to the
 platform default, and leave persistent `PATH` changes to the user. Use
 `-InstallDir` on PowerShell or `--install-dir` on Linux/macOS to choose another
 location.
+
+Confirm the installed version:
+
+```sh
+specbind --version
+```
+
+### Install SpecBind into a project
+
+From the root of a Git repository with at least one commit, install the Codex
+integration and English artifact defaults:
+
+```sh
+specbind install --agent codex --language en --project-instructions
+```
+
+Use `claude-code` instead of `codex` for Claude Code, and `ja` instead of `en`
+for Japanese artifacts. The command installs the product-managed Skills and
+creates project-owned templates, rules, and adapter guidance under
+`.specbind/settings/`.
+
+Then choose the route that matches the repository:
+
+- [Start a new project](./docs/en/guide/start-new-project.md) before application
+  implementation has begun.
+- [Start with an existing project](./docs/en/guide/start-existing-project.md)
+  when code or tests already exist.
+
+The [Getting Started guide](./docs/en/guide/getting-started.md) explains both
+routes and their prerequisites. The
+[Japanese Getting Started guide](./docs/ja/guide/getting-started.md) covers the
+same workflow in Japanese.
+
+## Learn more
+
+- [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
+- [English user guide](./docs/en/index.md) and [Japanese user guide](./docs/ja/index.md) cover installation, delivery, customization, and removal.
+- [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
+- [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
+- [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
+- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
+- [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
+
+## Repository layout
+
+- `tools/specbind/` — canonical Rust workspace for the `specbind` executable
+- `tools/cc-sdd/` — inherited TypeScript migration oracle
+- `docs/design/` — target workflows, lifecycle models, and accepted design decisions
 
 ## Development
 
@@ -135,7 +167,8 @@ npm run build
 
 ## Language support
 
-During this stabilization phase, SpecBind officially supports English (`en`) and Japanese (`ja`) only. Additional languages may be reconsidered after the commands, workflows, and documentation have stabilized.
+SpecBind v1 officially supports English (`en`) and Japanese (`ja`). Other
+languages are not currently part of the supported product contract.
 
 ## Upstream and attribution
 
