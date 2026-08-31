@@ -22,11 +22,14 @@ Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証してい�
 1. [Getting Started](./guide/getting-started.md) — 新規・既存プロジェクトのルートを選ぶ
    - [新規プロジェクトで始める](./guide/start-new-project.md)
    - [既存プロジェクトで始める](./guide/start-existing-project.md)
+2. 実装を進める — 確認の粒度とMilestoneの規模に合わせて選ぶ
+   - [1件ずつ計画・実装する](./guide/implement-step-by-step.md)
+   - [PlanとDriveでMilestoneを進める](./guide/implement-with-plan-and-drive.md)
    - [リリースする](./guide/release.md)
-2. [SpecBindの考え方](./guide/concepts.md) — 何を目指して、どう実現するのか
-3. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
-4. [バグ報告と改善提案](./guide/feedback.md) — 教えてください
-5. [Agentの削除とアンインストール](./guide/uninstall.md) — やめたくなったら
+3. [SpecBindの考え方](./guide/concepts.md) — 何を目指して、どう実現するのか
+4. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
+5. [バグ報告と改善提案](./guide/feedback.md) — 教えてください
+6. [Agentの削除とアンインストール](./guide/uninstall.md) — やめたくなったら
 
 ## リファレンス
 

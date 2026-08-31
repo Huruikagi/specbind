@@ -24,11 +24,14 @@ Linux x64 is verified on WSL2, and macOS ARM64 is verified on Apple Silicon CI.
 1. [Getting Started](./guide/getting-started.md) — choose the route for a new or existing project
    - [Start a new project](./guide/start-new-project.md)
    - [Start with an existing project](./guide/start-existing-project.md)
+2. Implement changes — choose the route that fits the review granularity and Milestone size
+   - [Plan and implement one item at a time](./guide/implement-step-by-step.md)
+   - [Plan and Drive a Milestone](./guide/implement-with-plan-and-drive.md)
    - [Release a milestone](./guide/release.md)
-2. [Core concepts](./guide/concepts.md) — understand the model behind the workflow
-3. [Customize SpecBind](./guide/customization.md) — adapt supported project-owned surfaces
-4. [Report bugs and suggest improvements](./guide/feedback.md)
-5. [Remove an Agent or uninstall](./guide/uninstall.md)
+3. [Core concepts](./guide/concepts.md) — understand the model behind the workflow
+4. [Customize SpecBind](./guide/customization.md) — adapt supported project-owned surfaces
+5. [Report bugs and suggest improvements](./guide/feedback.md)
+6. [Remove an Agent or uninstall](./guide/uninstall.md)
 
 ## Reference
 
