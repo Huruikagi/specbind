@@ -3,15 +3,15 @@ type: SpecBind Design
 artifact_id: main
 ---
 
-<!-- specbind:instruction create bind=spec
-Resolve `spec` to the canonical Spec identity in the current authoring context.
-Replace every `{{spec}}` reference with that exact value and keep it in the
+<!-- specbind:instruction create output=spec
+Produce `spec` from the canonical Spec identity in the current authoring context.
+Replace every `{{spec}}` reference with that exact output and keep it in the
 title so the artifact remains identifiable when read outside its directory.
 -->
 
-<!-- specbind:instruction create bind=artifact_id
-Resolve `artifact_id` to the literal collection identity in this template's
-Front Matter. Replace every `{{artifact_id}}` reference with that exact value
+<!-- specbind:instruction create output=artifact_id
+Produce `artifact_id` from the literal collection identity in this template's
+Front Matter. Replace every `{{artifact_id}}` reference with that exact output
 and keep it in the title so split Design documents remain distinguishable.
 -->
 
@@ -82,13 +82,13 @@ descriptive H3 heading. Include language-specific signatures only when their
 exact shape is itself a compatibility decision.
 -->
 
-<!-- specbind:instruction create
-Replace `<component-or-boundary>` with an actual name and repeat the H3
-subsection for every new or changed responsibility boundary. Do not leave the
-empty example heading in a live artifact.
+<!-- specbind:instruction create output=components
+Produce one Markdown fragment containing an H3 subsection for every new or
+changed responsibility boundary. Give each subsection the actual component or
+boundary name and the content required by the maintenance instruction above.
 -->
 
-### `<component-or-boundary>`
+{{components}}
 
 ## Data models
 

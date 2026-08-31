@@ -139,9 +139,10 @@ If this is the first managed Markdown write in the run, read `okf-authoring` as
 directed above before materializing the artifact. Do not read it a second time
 when a Brief revision already required it.
 
-Follow every scoped instruction the template returns. Resolve every
-`create bind=<name>` once, replace every reference to that name with the same
-value, omit `create` comments from the materialized artifact, copy every
+Follow every scoped instruction the template returns. Follow every
+`create output=<name>` instruction once to produce its named output. An output
+may be a short string or a Markdown fragment. Replace every reference to that
+name with the same produced output, omit `create` comments from the materialized artifact, copy every
 `maintain` and `consume` comment unchanged, and write it at the Spec's research
 path.
 

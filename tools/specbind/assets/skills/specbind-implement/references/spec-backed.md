@@ -168,8 +168,9 @@ the knowledge is durable enough to justify one, start from the default scaffold:
 specbind template read spec implementation-notes/main
 ```
 
-Follow every `create bind=<name>` instruction once and replace every reference
-to that name with the same resolved value. Materialize it only with real
+Follow every `create output=<name>` instruction once to produce its named output.
+An output may be a short string or a Markdown fragment. Replace every reference
+to that name with the same produced output. Materialize it only with real
 content. The filename is a locator, not identity;
 do not guess an existing notes path or create a second `artifact_id` for the same
 concern. Omit `create` instructions and copy `maintain` and `consume`

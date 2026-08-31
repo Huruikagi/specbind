@@ -115,9 +115,10 @@ specbind protocol read okf-authoring
 identity. `document` is the scaffold for any other subject and deliberately
 declares none.
 
-Follow every scoped instruction the template returns. Resolve every
-`create bind=<name>` once, replace every reference to that name with the same
-value, and omit `create` comments from the materialized artifact. Treat each
+Follow every scoped instruction the template returns. Follow every
+`create output=<name>` instruction once to produce its named output. An output
+may be a short string or a Markdown fragment. Replace every reference to that
+name with the same produced output, and omit `create` comments from the materialized artifact. Treat each
 `maintain` and `consume` comment as one indivisible block: copy its opening
 marker, complete body, and closing marker byte-for-byte. Never excerpt or
 rewrite it. Existing documents already own their durable comments; preserve

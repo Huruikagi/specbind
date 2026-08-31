@@ -60,29 +60,37 @@ specbind template resolve spec <spec> <selector>
 `template resolve` reports the selected source and exact project-relative
 destination. Use that reported path rather than reconstructing it.
 
-### Template variables and instructions
+### Named creation outputs and instructions
 
-A Markdown template may use project-defined `{{variable}}` references. Every
-distinct name requires exactly one `create bind=<variable>` instruction. The
-Agent resolves it once and substitutes the same value everywhere; the CLI
-validates name relationships but never supplies the value.
+A Markdown template may use project-defined `{{name}}` output references. Every
+distinct name requires exactly one `create output=<name>` instruction and at
+least one reference. The Agent follows the instruction once and may produce a
+short string or a complete Markdown fragment. It places that same output at
+every reference to the name. The CLI validates only this correspondence; it
+never produces or compares the content.
 
 ```markdown
-<!-- specbind:instruction create bind=current_weather
-Use an available tool to obtain the current weather in Tokyo.
+<!-- specbind:instruction create output=components
+Produce one H3 subsection for every new or changed responsibility boundary.
+Give each subsection its actual component name and describe its responsibility.
 -->
 
-Created when the weather was {{current_weather}}.
-Record precautions appropriate to {{current_weather}}.
+{{components}}
 ```
 
-Variables must be nonempty and contain no whitespace or braces. They are not
-allowed in Front Matter. Missing, duplicate, unused, or non-`create` bindings
-and unresolved live variables are diagnostics. `template read` returns the raw
-template byte-for-byte, including instructions and variables.
+The `components` output may contain several different H3 sections; it is still
+one produced Markdown fragment. Output names must be nonempty and contain no
+whitespace or braces. References are not allowed in Front Matter. Missing,
+duplicate, unused, or non-`create` output declarations and unresolved live
+references are diagnostics. `template read` returns the raw template
+byte-for-byte, including instructions and output references.
+
+The official `spec` and `artifact_id` names are not built-ins. Their ordinary
+`create output` instructions tell the Agent to produce them from the current
+authoring context or literal Front Matter.
 
 The raw template may not itself be a valid live artifact. The Agent follows
-creation instructions, replaces variables, adds real content, removes `create`
+creation instructions, replaces output references, adds real content, removes `create`
 comments, and then validates the result.
 
 Template changes affect future materialization by default. Existing artifacts

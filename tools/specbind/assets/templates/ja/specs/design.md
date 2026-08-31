@@ -3,15 +3,15 @@ type: SpecBind Design
 artifact_id: main
 ---
 
-<!-- specbind:instruction create bind=spec
-`spec`を現在のauthoring contextにある正規のSpec identityとして解決する。
-すべての`{{spec}}`参照をその同じ値で置換し、ディレクトリ外で読んでも対象を
+<!-- specbind:instruction create output=spec
+現在のauthoring contextにある正規のSpec identityから`spec`を生成する。
+すべての`{{spec}}`参照をその同じ出力で置換し、ディレクトリ外で読んでも対象を
 識別できるようタイトルに残す。
 -->
 
-<!-- specbind:instruction create bind=artifact_id
-`artifact_id`をこのテンプレートのFront Matterにあるリテラルなcollection identityとして
-解決する。すべての`{{artifact_id}}`参照をその同じ値で置換し、分割した設計文書を
+<!-- specbind:instruction create output=artifact_id
+このテンプレートのFront Matterにあるリテラルなcollection identityから`artifact_id`を
+生成する。すべての`{{artifact_id}}`参照をその同じ出力で置換し、分割した設計文書を
 区別できるようタイトルに残す。
 -->
 
@@ -77,12 +77,12 @@ artifact_id: main
 互換性の判断である場合だけ含める。
 -->
 
-<!-- specbind:instruction create
-`<コンポーネントまたは境界>`を実際の名前に置き換え、新設または変更する責任境界ごとにH3小節を
-繰り返す。空の例示見出しはlive artifactに残さない。
+<!-- specbind:instruction create output=components
+新設または変更する責任境界ごとに1つのH3小節を含むMarkdown断片を生成する。各小節には
+実際のコンポーネント名または境界名を付け、直前のmaintain instructionが求める内容を記載する。
 -->
 
-### `<コンポーネントまたは境界>`
+{{components}}
 
 ## データモデル
 

@@ -3,15 +3,15 @@ type: SpecBind Design
 artifact_id: ui
 ---
 
-<!-- specbind:instruction create bind=spec
-`spec`を現在のauthoring contextにある正規のSpec identityとして解決する。
-すべての`{{spec}}`参照をその同じ値で置換し、ディレクトリ外で読んでも対象を
+<!-- specbind:instruction create output=spec
+現在のauthoring contextにある正規のSpec identityから`spec`を生成する。
+すべての`{{spec}}`参照をその同じ出力で置換し、ディレクトリ外で読んでも対象を
 識別できるようタイトルに残す。
 -->
 
-<!-- specbind:instruction create bind=artifact_id
-`artifact_id`をこのテンプレートのFront Matterにあるリテラルなcollection identityとして
-解決し、すべての`{{artifact_id}}`参照をその同じ値で置換する。
+<!-- specbind:instruction create output=artifact_id
+このテンプレートのFront Matterにあるリテラルなcollection identityから`artifact_id`を
+生成し、すべての`{{artifact_id}}`参照をその同じ出力で置換する。
 -->
 
 # `{{spec}}` の設計 — `{{artifact_id}}`

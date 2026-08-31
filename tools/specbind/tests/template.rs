@@ -52,7 +52,7 @@ fn embeds_one_official_template_per_artifact_type_in_every_language() {
             assert!(
                 instruction::validate_spec_template(&content, resolved.artifact_id.as_deref())
                     .is_empty(),
-                "{language:?} template {selector} has invalid scoped instructions or bindings"
+                "{language:?} template {selector} has invalid scoped instructions or outputs"
             );
         }
     }
@@ -97,7 +97,7 @@ fn project_milestone_template_overrides_the_embedded_default() {
 }
 
 #[test]
-fn non_spec_templates_accept_agent_bound_variables() {
+fn non_spec_templates_accept_agent_produced_outputs() {
     let root = tempfile::tempdir().expect("temporary SpecBind root");
     let milestone = root.path().join("settings/templates/roadmap.md");
     fs::create_dir_all(milestone.parent().expect("milestone parent")).expect("create parent");
@@ -105,7 +105,7 @@ fn non_spec_templates_accept_agent_bound_variables() {
         milestone,
         concat!(
             "---\ntype: SpecBind Roadmap\n---\n",
-            "<!-- specbind:instruction create bind=対象読者 Ask who will read it. -->\n",
+            "<!-- specbind:instruction create output=対象読者 Ask who will read it. -->\n",
             "# {{対象読者}}向けRoadmap\n",
         ),
     )
@@ -117,7 +117,7 @@ fn non_spec_templates_accept_agent_bound_variables() {
         steering,
         concat!(
             "---\ntype: SpecBind Steering\nartifact_id: audience\n---\n",
-            "<!-- specbind:instruction create bind=対象読者 Ask who will read it. -->\n",
+            "<!-- specbind:instruction create output=対象読者 Ask who will read it. -->\n",
             "# {{対象読者}}向けGuidance\n",
         ),
     )
@@ -240,7 +240,7 @@ fn materialize(specbind_root: &Path, language: ProjectLanguage) {
             .join(template.output_path.as_std_path());
         fs::create_dir_all(target.parent().expect("template parent"))
             .expect("create spec directory");
-        let scaffold = strip_instructions(&resolve_default_bindings(
+        let scaffold = strip_instructions(&resolve_default_outputs(
             &content,
             "checkout",
             template.artifact_id.as_deref(),
@@ -295,7 +295,7 @@ fn unfilled_default_scaffolds_fail_closed() {
                 .expect("read template")
                 .0;
             let rendered =
-                resolve_default_bindings(&content, "checkout", template.artifact_id.as_deref());
+                resolve_default_outputs(&content, "checkout", template.artifact_id.as_deref());
             let target = root
                 .path()
                 .join("specs/checkout")
@@ -315,7 +315,7 @@ fn unfilled_default_scaffolds_fail_closed() {
 }
 
 #[test]
-fn reads_agent_bound_variables_and_preserves_create_guidance() {
+fn reads_agent_produced_outputs_and_preserves_create_guidance() {
     for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
         for selector in [
             "brief",
@@ -330,13 +330,13 @@ fn reads_agent_bound_variables_and_preserves_create_guidance() {
                 .expect("read template")
                 .0;
             assert!(raw.contains("{{spec}}"));
-            assert!(raw.contains("specbind:instruction create bind=spec"));
+            assert!(raw.contains("specbind:instruction create output=spec"));
             if matches!(
                 selector,
                 "design/main" | "design/ui" | "implementation-notes/main"
             ) {
                 assert!(raw.contains("{{artifact_id}}"));
-                assert!(raw.contains("specbind:instruction create bind=artifact_id"));
+                assert!(raw.contains("specbind:instruction create output=artifact_id"));
             }
         }
     }
@@ -443,7 +443,6 @@ fn repeatable_decision_sections_have_minimal_h3_scaffolds() {
         (
             ProjectLanguage::En,
             [
-                "### `<component-or-boundary>`",
                 "### `<caution>`",
                 "### `<decision-or-constraint>`",
                 "### `<technology-decision>`",
@@ -452,7 +451,6 @@ fn repeatable_decision_sections_have_minimal_h3_scaffolds() {
         (
             ProjectLanguage::Ja,
             [
-                "### `<コンポーネントまたは境界>`",
                 "### `<注意事項>`",
                 "### `<決定または制約>`",
                 "### `<技術判断>`",
@@ -461,9 +459,6 @@ fn repeatable_decision_sections_have_minimal_h3_scaffolds() {
     ] {
         let root = tempfile::tempdir().expect("temporary SpecBind root");
         let contents = [
-            template::read_spec_template(root.path(), language, "design/main")
-                .expect("read design template")
-                .0,
             template::read_spec_template(root.path(), language, "implementation-notes/main")
                 .expect("read implementation notes template")
                 .0,
@@ -501,6 +496,18 @@ fn repeatable_decision_sections_have_minimal_h3_scaffolds() {
     }
 }
 
+#[test]
+fn design_components_use_a_named_markdown_fragment_output() {
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        let raw = template::read_spec_template(root.path(), language, "design/main")
+            .expect("read design template")
+            .0;
+        assert!(raw.contains("specbind:instruction create output=components"));
+        assert!(raw.contains("{{components}}"));
+    }
+}
+
 fn assert_h2_sections_have_maintenance_guidance(
     language: ProjectLanguage,
     selector: &str,
@@ -521,19 +528,19 @@ fn assert_h2_sections_have_maintenance_guidance(
 }
 
 #[test]
-fn accepts_arbitrary_bound_variables_and_rejects_binding_faults() {
+fn accepts_arbitrary_named_outputs_and_rejects_output_faults() {
     let cases = [
         (
             "---\ntype: SpecBind Brief\n---\n# `{{spec}}` Brief\n",
-            "TEMPLATE_VARIABLE_BINDING_MISSING",
+            "TEMPLATE_OUTPUT_MISSING",
         ),
         (
             concat!(
                 "---\ntype: SpecBind Brief\nlabel: '{{spec}}'\n---\n",
-                "<!-- specbind:instruction create bind=spec Use it. -->\n",
+                "<!-- specbind:instruction create output=spec Use it. -->\n",
                 "# Brief\n",
             ),
-            "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
+            "TEMPLATE_OUTPUT_FRONTMATTER_FORBIDDEN",
         ),
     ];
     for (content, expected) in cases {
@@ -556,17 +563,20 @@ fn accepts_arbitrary_bound_variables_and_rejects_binding_faults() {
         target,
         concat!(
             "---\ntype: SpecBind Brief\n---\n",
-            "<!-- specbind:instruction create bind=今日の天気 Fetch Tokyo weather. -->\n",
+            "<!-- specbind:instruction create output=今日の天気 Fetch Tokyo weather. -->\n",
             "{{今日の天気}}の日に作成。{{今日の天気}}に合わせる。\n",
         ),
     )
-    .expect("write arbitrary variable template");
+    .expect("write arbitrary output template");
     let inventory = template::discover_spec_templates(root.path(), ProjectLanguage::En);
     assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
 }
 
-fn resolve_default_bindings(content: &str, spec: &str, artifact_id: Option<&str>) -> String {
-    let content = content.replace("{{spec}}", spec);
+fn resolve_default_outputs(content: &str, spec: &str, artifact_id: Option<&str>) -> String {
+    let content = content.replace("{{spec}}", spec).replace(
+        "{{components}}",
+        "### Checkout service\n\nResponsibility details.\n",
+    );
     match artifact_id {
         Some(artifact_id) => content.replace("{{artifact_id}}", artifact_id),
         None => content,

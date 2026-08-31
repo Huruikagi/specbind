@@ -77,8 +77,9 @@ specbind template read spec research
 ```
 
 Write or replace the Spec's Research from the resolved scaffold. Follow every
-`create bind=<name>` instruction once, replace every reference to that name with
-the same resolved value, and omit the `create` instruction. Preserve its durable
+`create output=<name>` instruction once to produce its named output. An output
+may be a short string or a Markdown fragment. Replace every reference to that
+name with the same produced output, and omit the `create` instruction. Preserve its durable
 scoped instructions. Include the observation claims, exact evidence,
 dispositions, and destinations needed by Design. Research remains background,
 not authority, and is deleted at release.

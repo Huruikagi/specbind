@@ -258,15 +258,15 @@ for another behavior change.
 - After confirmation, `spec status cart` shows the gate cleared and
   `requirement_ids: null`.
 
-### R6 — Project-defined variables are resolved once for every reference
+### R6 — A project-defined output is produced once for every reference
 
-From the `r6` recipe — R1 with a project-owned Requirements template that binds
-the Unicode variable `作成日` and references it twice — run the requirements
-skill on `order`.
+From the `r6` recipe — R1 with a project-owned Requirements template that
+declares the Unicode output `作成日` and references it twice — run the
+requirements skill on `order`.
 
 > Ask: write the requirements for the new order spec.
 
-- `requirements.md` is valid and contains the binding's exact value
+- `requirements.md` is valid and contains the named output's exact content
   `fixture-day` twice.
 - Neither `{{作成日}}` nor any `create` instruction remains in the live
   artifact. The template itself remains unchanged.

@@ -1,7 +1,7 @@
 # Templates and existing-artifact reconciliation
 
-Use this procedure for Spec, Steering, or Roadmap templates, agent-bound
-variables, Design-template selection, and alignment of existing artifacts.
+Use this procedure for Spec, Steering, or Roadmap templates, named creation
+outputs, Design-template selection, and alignment of existing artifacts.
 
 ## Inspect and edit
 
@@ -22,10 +22,11 @@ Write only to the reported project-owned template path. Preserve the OKF
 profile, selector, output path, machine-owned Front Matter boundary, and every
 complete scoped-instruction block.
 
-Every `{{name}}` body variable needs exactly one `create bind=name`
-instruction. Resolve no value while editing the template. Variables are
-forbidden in Front Matter. Do not restore a removed CLI renderer or implement a
-second template language.
+Every `{{name}}` body reference needs exactly one `create output=name`
+instruction. Produce no output while editing the template. Each output may be a
+short string or a Markdown fragment, and references are forbidden in Front
+Matter. Do not restore a removed CLI renderer or implement a second template
+language.
 
 ## Design template set
 

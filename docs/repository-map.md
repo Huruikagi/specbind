@@ -290,7 +290,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0148](./design/decisions/0148-cli-feedback-and-issue-forms.md) | Accepted | Offline product feedback routing to bilingual public Issue Forms |
 | [0149](./design/decisions/0149-bound-spec-template-rendering-variable.md) | Superseded by 0151 | Canonical Spec identity rendering bound to explicit create guidance |
 | [0150](./design/decisions/0150-attributable-fail-closed-default-scaffolds.md) | Accepted | Collection identity rendering and fail-closed default scaffolds |
-| [0151](./design/decisions/0151-agent-bound-template-variables.md) | Accepted | Project-defined template variables resolved through bound agent instructions |
+| [0151](./design/decisions/0151-agent-bound-template-variables.md) | Superseded by 0167 | Project-defined template variables resolved through bound agent instructions |
 | [0152](./design/decisions/0152-rule-selected-design-template-set.md) | Accepted | Project-rule selection of required, conditional, and disabled Design templates |
 | [0153](./design/decisions/0153-unified-quick-plan-orchestrator.md) | Superseded by 0161 | One quick-plan orchestrator with explicit named and all-Spec scope modes |
 | [0154](./design/decisions/0154-guided-configuration-workflow.md) | Accepted | Completing guided configuration workflow, summary command, and aftercare |
@@ -306,3 +306,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0164](./design/decisions/0164-local-discovery-source-collections.md) | Accepted | Provider-neutral Discovery source semantics with a Git-backed local-files provider |
 | [0165](./design/decisions/0165-release-binding-preserves-completion.md) | Accepted | Completion-preserving active-Roadmap release binding and rebinding |
 | [0166](./design/decisions/0166-single-english-cc-sdd-migration-guide-url.md) | Accepted | One English cc-sdd migration guide URL for every CLI handoff |
+| [0167](./design/decisions/0167-named-template-creation-outputs.md) | Accepted | Agent-produced named outputs with mechanically validated template references |

@@ -283,9 +283,10 @@ specbind milestone create --scope -
 ```
 
 Author the candidate against the schema you just read. Materialize the Roadmap
-template's Markdown body into the candidate's `body`: resolve every
-`create bind=<name>` once, replace every reference to that name with the same
-value, apply its remaining `create` guidance without copying that instruction,
+template's Markdown body into the candidate's `body`: follow every
+`create output=<name>` instruction once to produce its named output. An output
+may be a short string or a Markdown fragment. Replace every reference to that
+name with the same produced output, apply its remaining `create` guidance without copying that instruction,
 preserve `maintain` and `consume` instructions, and fill the scaffold with the
 confirmed milestone-wide request, boundaries, decomposition reasoning, and
 dependency rationale. For a Source Collection, also include its complete
@@ -353,9 +354,10 @@ new request into it** rather than adding a second one.
 The template title and instruction comments are not a valid Brief by
 themselves. Include substantive request content before the first write.
 
-On first materialization, follow every `create bind=<name>` instruction once,
-replace every reference to that name with the same resolved value, and omit the
-`create` instruction. Copy `maintain` and `consume` instructions unchanged. When
+On first materialization, follow every `create output=<name>` instruction once
+to produce its named output. An output may be a short string or a Markdown
+fragment. Replace every reference to that name with the same produced output,
+and omit the `create` instruction. Copy `maintain` and `consume` instructions unchanged. When
 folding into an existing brief, read it with
 `artifact read <spec> brief --for maintain` and preserve those durable comments.
 

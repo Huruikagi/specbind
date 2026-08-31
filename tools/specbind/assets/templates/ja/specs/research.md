@@ -2,9 +2,9 @@
 type: SpecBind Research
 ---
 
-<!-- specbind:instruction create bind=spec
-`spec`を現在のauthoring contextにある正規のSpec identityとして解決する。
-すべての`{{spec}}`参照をその同じ値で置換し、ディレクトリ外で読んでも対象を
+<!-- specbind:instruction create output=spec
+現在のauthoring contextにある正規のSpec identityから`spec`を生成する。
+すべての`{{spec}}`参照をその同じ出力で置換し、ディレクトリ外で読んでも対象を
 識別できるようタイトルに残す。
 -->
 

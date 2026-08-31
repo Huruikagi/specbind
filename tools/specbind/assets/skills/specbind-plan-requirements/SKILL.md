@@ -69,9 +69,10 @@ not a fault.
   specbind template read spec requirements
   ```
 
-  Follow every `create bind=<name>` instruction once, replace every reference
-  to that name with the same resolved value, and omit the `create` instruction
-  from the live artifact. Copy each complete `maintain` and `consume` comment,
+  Follow every `create output=<name>` instruction once to produce its named
+  output. An output may be a short string or a Markdown fragment. Replace every
+  reference to that name with the same produced output, and omit the `create`
+  instruction from the live artifact. Copy each complete `maintain` and `consume` comment,
   including its opening marker, body, and closing marker, byte-for-byte. The
   Requirements section is deliberately empty and is not a valid live artifact.
   Replace it with at least one real Requirement and Acceptance Criterion before

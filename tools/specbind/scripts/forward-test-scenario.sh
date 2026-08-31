@@ -22,7 +22,7 @@
 #   d14    a greenfield project with a tracked two-file local Source Collection
 #   r1     milestone scoping a new `order` Spec, with its brief written
 #   r7     a new `task` Spec whose Brief declares one local Source Item
-#   r6     r1 plus a Requirements template with one repeated Unicode variable
+#   r6     r1 plus a Requirements template with one repeated Unicode output
 #   r3     milestone scoping a `cart` update that removes behavior, brief written
 #   r4     milestone scoping the `cart` quantity cap, brief written
 #   r5     r4 with the requirements gate already approved
@@ -429,8 +429,8 @@ heading_labels:
   acceptance_criteria: Acceptance Criteria
 ---
 
-<!-- specbind:instruction create bind=作成日
-Resolve `作成日` to the exact literal value `fixture-day`.
+<!-- specbind:instruction create output=作成日
+Produce `作成日` as the exact literal content `fixture-day`.
 -->
 
 # Requirements prepared on {{作成日}}
@@ -443,9 +443,9 @@ Keep this as the Spec's complete current behavioral contract.
 
 ## Requirements
 EOF
-        expect "the repeated Unicode variable template was not accepted" \
+        expect "the repeated Unicode output template was not accepted" \
             'specbind template read spec requirements | grep -q "{{作成日}}"'
-        expect "the Unicode variable does not have two references" \
+        expect "the Unicode output does not have two references" \
             'test "$(grep -o "{{作成日}}" .specbind/settings/templates/specs/requirements.md | wc -l | tr -d " ")" = 2'
     fi
     expect "order did not reach the requirements state" \

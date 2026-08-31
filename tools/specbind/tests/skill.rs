@@ -837,7 +837,7 @@ fn status_names_machine_health_without_claiming_semantic_alignment() {
 }
 
 #[test]
-fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
+fn authoring_skills_produce_each_template_output_once_for_all_references() {
     for name in [
         "specbind-discovery",
         "specbind-plan-requirements",
@@ -848,10 +848,14 @@ fn authoring_skills_resolve_each_template_binding_once_for_all_references() {
         "specbind-steering",
     ] {
         let body = skill_package_text(name);
-        let same_value = body.contains("same resolved value") || body.contains("same\nvalue");
+        let same_output = body.contains("same produced output") || body.contains("same\noutput");
         assert!(
-            body.contains("`create bind=<name>`") && body.contains("every reference") && same_value,
-            "{name} must own agent-bound template materialization"
+            body.contains("`create output=<name>`")
+                && body.contains("Replace every")
+                && body.contains("reference")
+                && same_output
+                && body.contains("Markdown fragment"),
+            "{name} must own named-output template materialization"
         );
     }
 }

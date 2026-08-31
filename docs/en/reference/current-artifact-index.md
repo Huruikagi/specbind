@@ -74,14 +74,15 @@ durable instruction scope. `rule list/read` expose the six fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
 maintain, and consume modes and reject live `create` instructions.
 
-Managed template bodies may define project-owned `{{variable}}` references.
+Managed template bodies may define project-owned `{{name}}` output references.
 Every distinct name requires exactly one corresponding
-`specbind:instruction create bind=<variable>` comment, while that name may be
-referenced any number of times. The agent resolves each binding once and uses
-the same value for all of its references; the CLI does not provide built-ins or
-substitute values. Template discovery rejects missing, duplicate, unused, or
-Front Matter bindings, and live artifact discovery rejects an unresolved
-variable. The
+`specbind:instruction create output=<name>` comment and one or more references.
+The agent follows the instruction once and may produce a short string or a
+multi-section Markdown fragment, then uses that same output for every reference
+to the name. The CLI does not provide built-ins, produce content, or substitute
+references. Template discovery rejects missing, duplicate, unused, or Front
+Matter output declarations, and live artifact discovery rejects an unresolved
+reference. The
 default Requirements scaffold deliberately has no dummy live Requirement, and
 heading-only Brief, Research, or Implementation Notes artifacts fail live
 validation.

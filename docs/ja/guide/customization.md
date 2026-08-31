@@ -81,34 +81,36 @@ specbind template resolve spec <spec> <selector>
 `Project path`が含まれます。ファイル操作では`Project path`をそのまま使用します。
 
 成果物を初めて作るときは、raw templateとその`create` instructionをエージェントが
-読み、materializeします。Markdown本文では、プロジェクトが任意の変数を
-`{{変数名}}`の形式で定義できます。変数名は空ではなく、空白と波括弧を含まない
+読み、materializeします。Markdown本文では、プロジェクトが任意の名前付き生成出力を
+`{{名前}}`の形式で参照できます。名前は空ではなく、空白と波括弧を含まない
 必要がありますが、日本語を含むUnicode名を使用できます。
 
 ```sh
 specbind template read spec <selector>
 ```
 
-異なる変数名ごとに、対応する`create` instructionがちょうど1つ必要です。同じ変数は
-本文で何度参照しても構いません。エージェントはbindingの指示を1回実行し、すべての
-同名参照を同じ値で置換します。CLIは値を持たず、名前の対応だけを検証します。
+異なる名前ごとに、対応する`create output=<名前>` instructionがちょうど1つと、参照が
+1つ以上必要です。エージェントはinstructionを1回実行し、短い文字列またはMarkdown断片
+全体を生成できます。同名の参照はすべてその同じ出力で置換します。CLIはこの対応だけを
+検証し、内容の生成や比較は行いません。
 
 ```markdown
-<!-- specbind:instruction create bind=今日の天気
-利用可能なMCPで、作成時点の東京の天気を取得する。
+<!-- specbind:instruction create output=components
+新設または変更する責任境界ごとにH3小節を1つ生成する。
+各小節に実際のコンポーネント名を付け、その責任を記載する。
 -->
 
-{{今日の天気}}の日に作成。
-{{今日の天気}}に合わせた注意事項を記載する。
+{{components}}
 ```
 
-既定テンプレートの`spec`と`artifact_id`も特別な組み込み変数ではありません。それぞれの
-`create bind` instructionが、現在のauthoring contextやリテラルなFront Matterから値を
-取得するようエージェントへ指示します。
+`components`の出力は、それぞれ異なる複数のH3小節を含められます。それでも生成結果全体が
+1つのMarkdown断片です。既定テンプレートの`spec`と`artifact_id`も特別な組み込み出力では
+ありません。それぞれの`create output` instructionが、現在のauthoring contextやリテラルな
+Front Matterから内容を生成するようエージェントへ指示します。
 
-変数とbindingの欠落、bindingの重複や未使用、`create`以外でのbinding、Front Matterでの
-使用はテンプレート診断になります。未展開の変数が残った成果物も無効です。
-`template read`は変数とinstructionを含む元のテンプレートをbyte-exactに返します。
+出力宣言の欠落、重複、未使用、`create`以外での宣言、Front Matterでの参照はテンプレート
+診断になります。未展開の参照が残った成果物も無効です。`template read`は出力参照と
+instructionを含む元のテンプレートをbyte-exactに返します。
 
 read結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
 Requirementsは実際のRequirementとAcceptance Criterionを書くまで検証に失敗します。

@@ -5,9 +5,9 @@ heading_labels:
   acceptance_criteria: Acceptance Criteria
 ---
 
-<!-- specbind:instruction create bind=spec
-Resolve `spec` to the canonical Spec identity in the current authoring context.
-Replace every `{{spec}}` reference with that exact value and keep it in the
+<!-- specbind:instruction create output=spec
+Produce `spec` from the canonical Spec identity in the current authoring context.
+Replace every `{{spec}}` reference with that exact output and keep it in the
 title so the artifact remains identifiable when read outside its directory.
 -->
 

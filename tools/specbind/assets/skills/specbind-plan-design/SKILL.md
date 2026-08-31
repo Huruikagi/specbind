@@ -243,8 +243,9 @@ specbind template read spec <design-selector>
 For project file operations, write the authored document only to the reported
 `Project path`, which already includes the configured SpecBind root. Do not
 infer a filename from `artifact_id`, the Requirements path, or another Spec. Follow each
-`create bind=<name>` instruction once, replace every reference to that name with
-the same resolved value, and omit the `create` instruction. Copy every
+`create output=<name>` instruction once to produce its named output. An output
+may be a short string or a Markdown fragment. Replace every reference to that
+name with the same produced output, and omit the `create` instruction. Copy every
 `maintain` and `consume` instruction unchanged into the live artifact. Add the
 live-only traceability fields while authoring.
 
