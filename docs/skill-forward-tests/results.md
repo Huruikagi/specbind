@@ -14,6 +14,11 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-08-31 | Codex | session default / fresh-context subagent | `20ca375` | completed-Task status recovery — pass | [Spec status routes to validation](./runs/2026-08-31-codex-20ca375-spec-status-validation.md) |
+| 2026-08-31 | Codex | session default / fresh-context subagents | `1a843d9` | RT1, S5 — pass | [Final v1 recovery confirmations](./runs/2026-08-31-codex-1a843d9-v1-rc3-final.md) |
+| 2026-08-31 | Codex | session default / fresh-context subagents | `8aaa198` | S5, RT1, HP1 — pass | [Duplicate recovery, deferred review, and HP1](./runs/2026-08-31-codex-8aaa198-v1-rc3.md) |
+| 2026-08-31 | Codex | session default / fresh-context subagents | `7e6fd42` | X1 — pass; S5 — pass/product failure; invalid attempts retained | [Contract and Steering recovery](./runs/2026-08-31-codex-7e6fd42-v1-rc3-recovery.md) |
+| 2026-08-31 | Codex | session default / fresh-context subagents | `d993293` | S5, RT1, CLI recovery, T1 — pass; X1 — product failure; blocked attempt retained | [Initial v1 rc.3 batch](./runs/2026-08-31-codex-d993293-v1-rc3.md) |
 | 2026-08-31 | Codex | `gpt-5.6-terra` / `medium` | `546394f` | RL1 — pass | [Release binding preserves completion](./runs/2026-08-31-codex-546394f-release-binding.md) |
 | 2026-08-31 | Codex | `gpt-5.6-terra` / `medium` | `3719787` | D14, R7 — pass | [Local Source Collections](./runs/2026-08-31-codex-3719787-source-collections.md) |
 
@@ -57,7 +62,7 @@ invalid runs, retries, and debrief dispositions, remains in
 ## Current finding state
 
 - Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 6
+- Fixed, behavioral confirmation pending: 0
 - Active environment limitations: 3
 
 The authoritative rows and stable identifiers are in
