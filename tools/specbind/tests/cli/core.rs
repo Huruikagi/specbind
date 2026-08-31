@@ -539,6 +539,38 @@ fn reports_composed_spec_status_as_command_specific_json() {
         })
     );
 }
+
+#[test]
+fn reports_validation_after_every_task_is_complete() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Build\n      requirement_ids: ['1.1']\n    - id: '2'\n      kind: task\n      title: Review\n      requirement_ids: ['1.1']\nexecution:\n  tasks:\n    '1':\n      status: completed\n    '2':\n      status: completed\n",
+    );
+
+    let mut text = specbind_command();
+    text.current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("  Next action: validation\n").and(
+            predicate::str::contains(
+                "  Task progress: 2 total, 2 completed, 0 pending, 0 blocked\n",
+            ),
+        ));
+
+    let output = specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout", "--json"])
+        .output()
+        .expect("spec status runs");
+    assert!(output.status.success());
+    let actual: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
+    assert_eq!(actual["data"]["nextAction"], "validation");
+}
 #[test]
 fn reports_a_clean_idle_spec_without_requiring_active_artifacts() {
     let root = project_fixture();

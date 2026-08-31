@@ -53,6 +53,7 @@ pub enum WorkflowAction {
     ContractReview,
     Tasks,
     Implementation,
+    Validation,
     Release,
 }
 
@@ -160,7 +161,12 @@ pub fn resolve(
         ConsistencyHealth::Inconsistent
     };
     let contract_review = contract_review(project_root, specbind_root, declared_state);
-    let next_action = next_action(declared_state, &freshness, contract_review);
+    let next_action = next_action(
+        declared_state,
+        &freshness,
+        contract_review,
+        task_model.as_ref(),
+    );
     let delegated_gates = active
         .and_then(|active| active.gate_evidence.as_ref())
         .map(delegated_gates);
@@ -206,6 +212,7 @@ fn next_action(
     declared_state: Option<WorkflowState>,
     freshness: &ArtifactFreshnessReport,
     contract_review: Option<ReviewFreshnessStatus>,
+    task_model: Option<&TaskReadModel>,
 ) -> WorkflowAction {
     match declared_state {
         None => WorkflowAction::None,
@@ -231,6 +238,8 @@ fn next_action(
                 WorkflowAction::Tasks
             } else if contract_review.is_some_and(|status| status != ReviewFreshnessStatus::Fresh) {
                 WorkflowAction::ContractReview
+            } else if task_model.is_some_and(|tasks| tasks.pending == 0 && tasks.blocked == 0) {
+                WorkflowAction::Validation
             } else {
                 WorkflowAction::Implementation
             }
@@ -447,6 +456,7 @@ pub fn action_name(action: WorkflowAction) -> &'static str {
         WorkflowAction::ContractReview => "contract_review",
         WorkflowAction::Tasks => "tasks",
         WorkflowAction::Implementation => "implementation",
+        WorkflowAction::Validation => "validation",
         WorkflowAction::Release => "release",
     }
 }

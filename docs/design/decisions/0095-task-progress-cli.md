@@ -169,6 +169,13 @@ plan and actionable set, and records each task individually as it is judged
 complete. Reporting partial progress when the sequence stops early is part of
 that skill's contract; the CLI reports only the single record it made.
 
+Once every executable Task is complete and none is blocked, `spec status`
+reports `validation` as the next action while the declared Spec state remains
+`implementation`. Implementation has no remaining actionable Task at that
+point; Decision 0086's completion handshake is the next lifecycle operation.
+This per-Spec projection stays aligned with the milestone `validation` stage
+defined by Decision 0082.
+
 ## Consequences
 
 - `specbind-implement` can record progress through a public command, so the
@@ -194,3 +201,5 @@ non-empty single-line reason and refuses a completed task. Reopening removes the
 entry and drops the `execution` container when it becomes empty. Every mutation
 revalidates the document through domain conversion before an atomic guarded
 write, and no Git state is inspected.
+When every Task is complete and unblocked, `spec status` reports `validation`
+rather than sending the caller back to implementation.
