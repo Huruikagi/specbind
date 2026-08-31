@@ -233,6 +233,9 @@ jobs:
           fi
           environments=$(LC_ALL=C sort dist/environment-*.txt)
           notes=$(printf 'Built and smoke-tested on:\n\n%s' "$environments")
+          if [[ "$RELEASE_TAG" == "v1.0.0" ]]; then
+            notes+=$'\n\nMigration from 0.x: not applicable. The maintainer confirmed that no external adopter depends on 0.x project state and accepts responsibility for maintainer-owned local conversion.'
+          fi
           options+=(--notes "$notes")
           gh release create "$RELEASE_TAG" \
             dist/specbind-*.zip \

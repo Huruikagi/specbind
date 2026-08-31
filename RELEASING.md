@@ -20,6 +20,9 @@ values remain independent of executable SemVer.
    For a stable `1.x` or later release, classify compatibility-surface changes
    against Decision 0144. A breaking change belongs to the next major and its
    migration route must be ready before publication.
+   For the initial `1.0.0` exception in Decision 0144, record in the release
+   notes that no external `0.x` adopter depends on migration and that the
+   maintainer accepts any local conversion.
 2. Update `tools/specbind/Cargo.toml`, `tools/specbind/Cargo.lock`, the CLI
    version assertion, and `CHANGELOG.md` together.
 3. Run the complete Rust verification set from `tools/specbind/`:

@@ -4,11 +4,25 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0-rc.3 - 2026-08-31
+
+- Replaced the prose Contract artifact with a strict versioned YAML model and
+  added direct dependency and reverse-consumer graph reads.
+- Added guided project configuration, generic agent integration, attributable
+  template variables, rule-selected Design sets, and fail-closed default
+  scaffolds.
+- Unified planning under `specbind-plan`, with explicit single-phase entry
+  points and an explicit scope choice before planning begins.
+- Added local Discovery source collections, completion-preserving release
+  binding, command-specific JSON status projections, and sequential Task
+  checkpoints.
 - Added native macOS ARM64 release archives, checksum verification, shell and
   mise installation smoke tests, and a non-publishing manual release preflight.
 - Added an offline `specbind feedback` entry point and bilingual GitHub Issue
   Forms for structured CLI, Skill, integration, and documentation bug reports
   and improvement proposals.
+- Added a complete bilingual public guide and one canonical English cc-sdd
+  migration URL for every CLI handoff.
 
 ## 1.0.0-rc.2 - 2026-08-25
 

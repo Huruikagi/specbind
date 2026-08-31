@@ -84,15 +84,24 @@ schema Decision and migration contract rather than inferred from SemVer alone.
 ### The pre-1.0 line remains a stabilization line
 
 The `0.x` releases retain Decision 0124's narrower promise: incompatible
-changes are possible when documented and decided deliberately. The `1.0.0`
-release notes nevertheless state how projects on the latest stable `0.x`
-release move to `1.0.0`, so the compatibility milestone begins with an
-exercised adoption path rather than an unexplained reset.
+changes are possible when documented and decided deliberately. Ordinarily, the
+`1.0.0` release notes state how projects on the latest stable `0.x` release move
+to `1.0.0`, so the compatibility milestone begins with an exercised adoption
+path rather than an unexplained reset.
+
+For the initial `1.0.0` publication only, that route may instead be recorded as
+not applicable when the maintainer has confirmed that no external adopter
+depends on `0.x` project state and explicitly accepts responsibility for any
+maintainer-owned local conversion. The release notes record that determination.
+This is a one-time initial-release fact, not a general exception to migration
+support after a stable major has users.
 
 ## Consequences
 
 - Stable users receive a practical forward-upgrade guarantee without freezing
   prose, agent reasoning, or internal implementation.
+- The initial stable release does not require a fictional migration workflow
+  for external adopters that the maintainer has confirmed do not exist.
 - Breaking product changes remain possible at a visible major-version boundary.
 - A major release carries migration work as part of the release, not as an
   unspecified follow-up.
