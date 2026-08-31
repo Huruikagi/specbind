@@ -344,7 +344,7 @@ fn reads_agent_bound_variables_and_preserves_create_guidance() {
 
 #[test]
 fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
-    for (language, headings) in [
+    for (language, headings, screen_heading, following_heading) in [
         (
             ProjectLanguage::En,
             [
@@ -356,6 +356,8 @@ fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
                 "#### Actions and outcomes",
                 "#### Layout and information hierarchy",
             ],
+            "### `<screen-id>` `<screen-name>`",
+            "## Responsive behavior",
         ),
         (
             ProjectLanguage::Ja,
@@ -368,6 +370,8 @@ fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
                 "#### 操作と結果",
                 "#### レイアウトと情報階層",
             ],
+            "### `<画面ID>` `<画面名>`",
+            "## レスポンシブ動作",
         ),
     ] {
         let root = tempfile::tempdir().expect("temporary SpecBind root");
@@ -383,9 +387,16 @@ fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
             raw.matches("specbind:instruction create").count() >= 3,
             "{language:?} missing repeatable-screen creation guidance"
         );
+        let repeated_screen = raw
+            .split_once(screen_heading)
+            .expect("screen scaffold heading")
+            .1
+            .split_once(following_heading)
+            .expect("heading after screen scaffold")
+            .0;
         assert!(
-            raw.matches("specbind:instruction maintain").count() > 8,
-            "{language:?} missing section-local maintenance guidance"
+            !repeated_screen.contains("specbind:instruction maintain"),
+            "{language:?} duplicates durable guidance inside each screen scaffold"
         );
     }
 }

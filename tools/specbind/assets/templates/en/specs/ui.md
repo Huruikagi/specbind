@@ -51,9 +51,9 @@ Specs must inherit only in this document.
 
 <!-- specbind:instruction maintain
 List the screens this Spec introduces or changes. Give each a screen ID that is
-consistent within this document, then record its name, user purpose, primary
-users, and main entry point. Keep item and state details in each screen's
-"Screen design" section rather than duplicating them here.
+consistent within this document, then record its name, a one-line summary of its
+user purpose, primary users, and main entry point. Keep item and state details
+in each screen's "Screen design" section rather than duplicating them here.
 -->
 
 | Screen ID | Screen | Purpose | Primary users | Main entry point |
@@ -72,10 +72,31 @@ there is no cross-screen flow.
 ## Screen design
 
 <!-- specbind:instruction maintain
-Repeat the following subsection set for every screen in the inventory. Do not
-split a Design identity merely because the Spec has several screens. Consider a
-split only for a durable UI responsibility that a separate owner maintains and
-that changes independently.
+Repeat the following subsection set for every screen in the inventory.
+
+- Under "Purpose and display conditions," state what the user accomplishes and
+  the permissions, state, or other preconditions for availability.
+- Under "Display items," record items that affect user decisions, input,
+  permissions, or state display. Exclude presentational labels and pixel-level
+  placement, and group repeated items that share one structure.
+- Under "Actions and outcomes," state each user-initiated action's preconditions,
+  successful result or destination, and failure feedback. Reference "Navigation
+  and interaction flow" for a shared cross-screen flow. Delete this subsection
+  for a screen with no user-initiated action.
+- Under "States and input feedback," describe applicable loading, empty, error,
+  and unavailable states together with input-validation timing, placement, and
+  recovery. Delete this subsection for a screen with no distinct state or input
+  behavior.
+- Under "Layout and information hierarchy," describe the spatial relationship
+  of major regions, the priority of information and actions, and composition
+  changes across viewport widths. Delete this subsection when the existing
+  design system applies without a screen-specific decision. Use a simple ASCII
+  wireframe only when prose or a table would make the spatial relationship easy
+  to misread, and never as a pixel, color, or visual-finish specification.
+
+Do not split a Design identity merely because the Spec has several screens.
+Consider a split only for a durable UI responsibility that a separate owner
+maintains and that changes independently.
 -->
 
 <!-- specbind:instruction create
@@ -88,52 +109,19 @@ heading in a live artifact.
 
 #### Purpose and display conditions
 
-<!-- specbind:instruction maintain
-State what the user accomplishes on this screen and the permissions, state, or
-other preconditions under which it is available.
--->
-
 #### Display items
-
-<!-- specbind:instruction maintain
-Record items that affect user decisions, input, permissions, or state display.
-Do not inventory purely presentational labels or pixel-level placement. Group
-repeated items that share one structure.
--->
 
 | Item | Content or data source | Display or edit conditions |
 | --- | --- | --- |
 
 #### Actions and outcomes
 
-<!-- specbind:instruction maintain
-For each user-initiated action, state its preconditions, successful result or
-destination, and failure feedback. Reference "Navigation and interaction flow"
-for a shared cross-screen flow.
--->
-
 | Action | Preconditions | Result or destination | Failure feedback |
 | --- | --- | --- | --- |
 
 #### States and input feedback
 
-<!-- specbind:instruction maintain
-Describe applicable loading, empty, error, and unavailable states together with
-input-validation timing, placement, and recovery after correction. Do not
-invent states merely to fill a checklist. Delete this subsection for a screen
-with no distinct state or input behavior.
--->
-
 #### Layout and information hierarchy
-
-<!-- specbind:instruction maintain
-Describe the spatial relationship of major regions, the priority of information
-and actions, and composition changes across viewport widths. Use a simple ASCII
-wireframe only when prose or a table would make the spatial relationship easy
-to misread. Treat it as a structural aid, not a pixel, color, or visual-finish
-specification. Delete this subsection when the existing design system applies
-without a screen-specific decision.
--->
 
 ## Responsive behavior
 
@@ -159,7 +147,9 @@ when the Spec adds or changes no accessibility guarantee.
 <!-- specbind:instruction maintain
 Define UI component responsibilities, the owners of displayed data, and service
 boundaries that receive updates or side effects. Do not duplicate screen items
-or the Contract's standard seam inventory.
+or the Contract's standard seam inventory. Delete this section when `design/main`
+already owns every required boundary and this document has no UI-specific
+decision.
 -->
 
 ## UI verification strategy
