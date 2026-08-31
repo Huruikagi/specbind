@@ -27,9 +27,15 @@ Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証してい�
 3. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
 4. [バグ報告と改善提案](./guide/feedback.md) — 教えてください
 5. [Agentの削除とアンインストール](./guide/uninstall.md) — やめたくなったら
-6. [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
-7. [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
-8. [cc-sddから移行する](./guide/migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
+
+## リファレンス
+
+- [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
+- [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
+
+## cc-sddを利用中の場合
+
+- [cc-sddから移行する](./guide/migrate-from-cc-sdd.md) — 自動移行とエージェント支援移行
 
 ---
 

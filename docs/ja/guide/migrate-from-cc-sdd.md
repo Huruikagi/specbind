@@ -275,4 +275,4 @@ CLI所有のstateが壊れています。stateを手編集せず、現在のfind
 
 ---
 
-[移行ガイド入口](../../guide/migration/cc-sdd.md) | [English](../../guide/en/migrate-from-cc-sdd.md)
+[ユーザーガイド](../index.md) | [English](../../guide/en/migrate-from-cc-sdd.md)
