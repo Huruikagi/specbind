@@ -27,7 +27,7 @@ fn plans_a_minimal_cc_sdd_project_without_writes() {
 }
 
 #[test]
-fn routes_semantic_findings_to_the_neutral_agent_guide() {
+fn routes_semantic_findings_to_the_english_agent_guide() {
     let root = migration_fixture("guided");
     let before = snapshot(root.path());
 
@@ -46,7 +46,7 @@ fn routes_semantic_findings_to_the_neutral_agent_guide() {
         .stderr(predicate::str::contains("MIGRATE_LANGUAGE_MIXED"))
         .stderr(predicate::str::contains("MIGRATE_RULE_REVIEW_REQUIRED"))
         .stderr(predicate::str::contains(
-            "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/",
+            "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/",
         ))
         .stderr(predicate::str::contains("No files were changed."));
 
@@ -54,7 +54,7 @@ fn routes_semantic_findings_to_the_neutral_agent_guide() {
 }
 
 #[test]
-fn routes_japanese_semantic_findings_to_the_canonical_japanese_guide() {
+fn routes_japanese_semantic_findings_to_the_same_english_agent_guide() {
     let root = migration_fixture("guided");
     write_file(
         root.path(),
@@ -77,7 +77,7 @@ fn routes_japanese_semantic_findings_to_the_canonical_japanese_guide() {
         .stdout("")
         .stderr(predicate::str::contains("ERROR MANUAL_MIGRATION_REQUIRED"))
         .stderr(predicate::str::contains(
-            "https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/",
+            "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/",
         ));
 
     assert_eq!(before, snapshot(root.path()));

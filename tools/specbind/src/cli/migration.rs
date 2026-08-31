@@ -50,7 +50,7 @@ pub fn migrate_cc_sdd(start: &Path, apply: bool, accept_resolution: Option<&str>
     if !plan.findings.is_empty() {
         let mut details = migration_summary(&plan);
         details.extend(plan.findings.iter().map(render_migration_finding));
-        details.push(format!("Guide: {}", plan.guide_url()));
+        details.push(format!("Guide: {}", migration::GUIDE_URL));
         details.push("No files were changed.".to_owned());
         details.push(format!(
             "Original {} tree remains intact.",

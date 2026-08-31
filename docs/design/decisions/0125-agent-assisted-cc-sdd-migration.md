@@ -10,6 +10,10 @@ The Japanese guide path below is superseded by
 [Decision 0142](./0142-bilingual-documentation-authoring-and-publishing.md).
 CLI output uses the new canonical path.
 
+The language-aware CLI guide selection and language-neutral entry below are
+superseded by
+[Decision 0166](./0166-single-english-cc-sdd-migration-guide-url.md).
+
 ## Context
 
 [Decision 0077](./0077-v1-installation-distribution-and-migration.md) makes
@@ -136,9 +140,9 @@ documentation verification.
 
 ## Implementation status
 
-The GitHub Pages entry pages and bilingual playbook are published. The Preview
-CLI provides the read-only inventory, stable semantic findings, language-aware
-guide selection, guarded deterministic `--apply`, and the Decision 0126
-candidate-acceptance handshake for retry-safe recognition of agent-authored
-work. Exact legacy-instruction recognition and mechanical legacy Spec
-conversion remain outside the automatic subset.
+The bilingual playbook is published. The Preview CLI provides the read-only
+inventory, stable semantic findings, the Decision 0166 English guide handoff,
+guarded deterministic `--apply`, and the Decision 0126 candidate-acceptance
+handshake for retry-safe recognition of agent-authored work. Exact
+legacy-instruction recognition and mechanical legacy Spec conversion remain
+outside the automatic subset.

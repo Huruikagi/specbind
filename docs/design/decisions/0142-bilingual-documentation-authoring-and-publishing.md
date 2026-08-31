@@ -6,6 +6,11 @@ This decision supersedes the Japanese guide path listed by
 [Decision 0125](./0125-agent-assisted-cc-sdd-migration.md). Its neutral and
 English migration entry paths remain unchanged.
 
+The CLI-specific canonical URL and neutral-entry statements below are
+superseded by
+[Decision 0166](./0166-single-english-cc-sdd-migration-guide-url.md). The
+bilingual authoring and publication hierarchy remains accepted.
+
 ## Context
 
 The public documentation grew with Japanese user guides under `guide/ja/`, an

@@ -112,10 +112,9 @@ Golden generated-tree fixtures should identify the accepted decision that explai
   exact known Codex or Claude Code legacy skills, and recursively tracked
   source retirement. Spec and task conversion, exact quick-start recognition,
   and platform-specific legacy layouts remain agent-assisted or outstanding.
-- The accepted agent-assisted path is published in Japanese and English under
-  `docs/guide/`; stable findings and language-aware guide selection are
-  implemented, including accepted resolution freshness and deterministic
-  rejoin.
+- The accepted agent-assisted path is published in Japanese and English;
+  stable findings always route CLI handoff to the English agent playbook,
+  including accepted resolution freshness and deterministic rejoin.
 
 ### 2. Read-only Rust core
 

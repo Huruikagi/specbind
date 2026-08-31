@@ -72,10 +72,9 @@ nav:
           - カスタマイズ: ja/guide/customization.md
           - バグ報告と改善提案: ja/guide/feedback.md
           - Agentの削除とアンインストール: ja/guide/uninstall.md
-  - cc-sddから移行 / Migrate from cc-sdd:
-      - 概要・言語を選ぶ / Overview: guide/migration/cc-sdd.md
-      - 日本語: ja/guide/migrate-from-cc-sdd.md
-      - English: guide/en/migrate-from-cc-sdd.md
+          - cc-sddから移行: ja/guide/migrate-from-cc-sdd.md
+  - English:
+      - Migrate from cc-sdd: guide/en/migrate-from-cc-sdd.md
   - リファレンス:
       - スキル一覧: current-skill-index.md
       - 成果物一覧: current-artifact-index.md

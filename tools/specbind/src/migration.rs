@@ -11,9 +11,8 @@ use crate::{
     install::{self, InstallInputs, PlanAction},
 };
 
-pub const GUIDE_NEUTRAL: &str = "https://huruikagi.github.io/specbind/guide/migration/cc-sdd/";
-pub const GUIDE_EN: &str = "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/";
-pub const GUIDE_JA: &str = "https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/";
+pub(crate) const GUIDE_URL: &str =
+    "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/";
 
 pub(super) const LEGACY_CONFIG: &str = ".cc-sdd.json";
 pub(super) const TARGET_CONFIG: &str = ".specbind.json";
@@ -89,17 +88,6 @@ fn path_entry_present(path: &Path) -> bool {
     match fs::symlink_metadata(path) {
         Ok(_) => true,
         Err(error) => error.kind() != std::io::ErrorKind::NotFound,
-    }
-}
-
-impl MigrationPlan {
-    #[must_use]
-    pub fn guide_url(&self) -> &'static str {
-        match self.language {
-            Some(ProjectLanguage::En) => GUIDE_EN,
-            Some(ProjectLanguage::Ja) => GUIDE_JA,
-            None => GUIDE_NEUTRAL,
-        }
     }
 }
 

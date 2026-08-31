@@ -92,7 +92,6 @@ in [Implementation architecture](./architecture.md).
 | [Japanese customization guide](./ja/guide/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
 | [Japanese feedback guide](./ja/guide/feedback.md) | Offline product feedback entry point for CLI, Skill, integration, and documentation reports |
 | [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
-| [cc-sdd migration entry](./guide/migration/cc-sdd.md) | Language-neutral entry for automatic and agent-assisted migration guidance |
 | [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
 | [English cc-sdd migration guide](./guide/en/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
 | [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
@@ -294,3 +293,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0163](./design/decisions/0163-macos-arm64-release-target.md) | Accepted | Native macOS ARM64 release, preflight, installer, and runtime verification |
 | [0164](./design/decisions/0164-local-discovery-source-collections.md) | Accepted | Provider-neutral Discovery source semantics with a Git-backed local-files provider |
 | [0165](./design/decisions/0165-release-binding-preserves-completion.md) | Accepted | Completion-preserving active-Roadmap release binding and rebinding |
+| [0166](./design/decisions/0166-single-english-cc-sdd-migration-guide-url.md) | Accepted | One English cc-sdd migration guide URL for every CLI handoff |
