@@ -2,7 +2,7 @@
 
 This page is the single index of how this repository is organized to develop SpecBind itself. [CLAUDE.md](https://github.com/Huruikagi/specbind/blob/main/CLAUDE.md) and [AGENTS.md](https://github.com/Huruikagi/specbind/blob/main/AGENTS.md) link here instead of duplicating it, so one edit keeps every agent's map current.
 
-For the files the CLI installs into consumer projects, see the [current generated artifact index](./current-artifact-index.md) and the [current generated skill index](./current-skill-index.md).
+For the files the CLI installs into consumer projects, see the [current generated artifact index](./en/reference/current-artifact-index.md) and the [current generated skill index](./en/reference/current-skill-index.md).
 
 The canonical Rust dependency direction and module-boundary rules are defined
 in [Implementation architecture](./architecture.md).
@@ -80,9 +80,19 @@ in [Implementation architecture](./architecture.md).
 
 | Document | Role |
 | --- | --- |
-| [Documentation site transition entry](./index.md) | GitHub Pages landing page while the English root tree is prepared |
+| [English user guide](./en/index.md) | Default public documentation entry at the site root |
 | [Documentation authoring policy](./documentation-authoring.md) | Japanese-first source policy, final bilingual path mapping, and contributor verification |
-| [Japanese user guide (Preview)](./ja/index.md) | Entry point for source-built Preview users |
+| [English Getting Started](./en/guide/getting-started.md) | Route selection for new and existing projects |
+| [English new-project guide](./en/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
+| [English existing-project guide](./en/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
+| [English existing-implementation adoption guide](./en/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
+| [English release guide](./en/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
+| [English core concepts](./en/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
+| [English customization guide](./en/guide/customization.md) | Supported project customization surfaces, boundaries, and verification entry points |
+| [English feedback guide](./en/guide/feedback.md) | Offline product feedback entry point for CLI, Skill, integration, and documentation reports |
+| [English removal and uninstall guide](./en/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
+| [English cc-sdd migration guide](./en/guide/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
+| [Japanese user guide](./ja/index.md) | Japanese public documentation entry under `/ja/` |
 | [Japanese Getting Started](./ja/guide/getting-started.md) | Route selection for new and existing projects |
 | [Japanese new-project guide](./ja/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [Japanese existing-project guide](./ja/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
@@ -93,9 +103,8 @@ in [Implementation architecture](./architecture.md).
 | [Japanese feedback guide](./ja/guide/feedback.md) | Offline product feedback entry point for CLI, Skill, integration, and documentation reports |
 | [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
-| [English cc-sdd migration guide](./guide/en/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
-| [Current generated skill index](./current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
-| [Current generated artifact index](./current-artifact-index.md) | Current installation and lifecycle artifact surface |
+| [Current generated skill index](./en/reference/current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
+| [Current generated artifact index](./en/reference/current-artifact-index.md) | Current installation and lifecycle artifact surface |
 
 The documentation site is configured by `mkdocs.yml`, built with the pinned
 dependency in `requirements-docs.txt`, and deployed by
@@ -118,7 +127,10 @@ repository root to verify it locally.
 | [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
 | [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement dashboard, run archive, findings worklist, and scenario contracts for embedded skills |
 
-This repository's behavioral verification skill lives at `.agents/skills/specbind-forward-test/`. It is a development asset and is never installed into a consumer project.
+This repository's behavioral verification skill lives at `.agents/skills/specbind-forward-test/`.
+The bilingual documentation maintenance skill lives at
+`.agents/skills/specbind-sync-docs/`. Both are repository development assets
+and are never installed into a consumer project.
 
 ## Decision records
 

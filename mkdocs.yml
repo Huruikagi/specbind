@@ -18,7 +18,7 @@ exclude_docs: |
 
 theme:
   name: material
-  language: ja
+  language: en
   features:
     - content.code.copy
     - navigation.indexes
@@ -33,18 +33,73 @@ theme:
       accent: indigo
       toggle:
         icon: material/brightness-7
-        name: ダークモードに切り替える
+        name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
-        name: ライトモードに切り替える
+        name: Switch to light mode
 
 plugins:
   - search:
-      lang: ja
+      lang: en
+  - i18n:
+      docs_structure: folder
+      fallback_to_default: false
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: ja
+          name: 日本語
+          build: true
+          theme:
+            palette:
+              - media: "(prefers-color-scheme: light)"
+                scheme: default
+                primary: indigo
+                accent: indigo
+                toggle:
+                  icon: material/brightness-7
+                  name: ダークモードに切り替える
+              - media: "(prefers-color-scheme: dark)"
+                scheme: slate
+                primary: indigo
+                accent: indigo
+                toggle:
+                  icon: material/brightness-4
+                  name: ライトモードに切り替える
+          nav:
+            - ホーム: index.md
+            - ユーザーガイド:
+                - ルートを選ぶ: guide/getting-started.md
+                - 新規プロジェクトで始める: guide/start-new-project.md
+                - 既存プロジェクトで始める: guide/start-existing-project.md
+                - 基本概念: guide/concepts.md
+                - 既存実装からSpecを確立する: guide/adopt-existing.md
+                - リリースする: guide/release.md
+                - カスタマイズ: guide/customization.md
+                - バグ報告と改善提案: guide/feedback.md
+                - Agentの削除とアンインストール: guide/uninstall.md
+                - cc-sddから移行: guide/migrate-from-cc-sdd.md
+          nav_translations:
+            Home: ホーム
+            User guide: ユーザーガイド
+            Choose a route: ルートを選ぶ
+            Start a new project: 新規プロジェクトで始める
+            Start with an existing project: 既存プロジェクトで始める
+            Core concepts: 基本概念
+            Adopt an existing implementation: 既存実装からSpecを確立する
+            Release a milestone: リリースする
+            Customize SpecBind: カスタマイズ
+            Report bugs and suggest improvements: バグ報告と改善提案
+            Remove an Agent or uninstall: Agentの削除とアンインストール
+            Migrate from cc-sdd: cc-sddから移行
 
 markdown_extensions:
   - admonition
@@ -58,23 +113,18 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - ドキュメント: index.md
-  - 日本語:
-      - ホーム: ja/index.md
-      - ユーザーガイド:
-          - Getting Started:
-              - ルートを選ぶ: ja/guide/getting-started.md
-              - 新規プロジェクトで始める: ja/guide/start-new-project.md
-              - 既存プロジェクトで始める: ja/guide/start-existing-project.md
-          - 基本概念: ja/guide/concepts.md
-          - 既存実装からSpecを確立する: ja/guide/adopt-existing.md
-          - リリースする: ja/guide/release.md
-          - カスタマイズ: ja/guide/customization.md
-          - バグ報告と改善提案: ja/guide/feedback.md
-          - Agentの削除とアンインストール: ja/guide/uninstall.md
-          - cc-sddから移行: ja/guide/migrate-from-cc-sdd.md
-  - English:
-      - Migrate from cc-sdd: guide/en/migrate-from-cc-sdd.md
-  - リファレンス:
-      - スキル一覧: current-skill-index.md
-      - 成果物一覧: current-artifact-index.md
+  - Home: index.md
+  - User guide:
+      - Choose a route: guide/getting-started.md
+      - Start a new project: guide/start-new-project.md
+      - Start with an existing project: guide/start-existing-project.md
+      - Core concepts: guide/concepts.md
+      - Adopt an existing implementation: guide/adopt-existing.md
+      - Release a milestone: guide/release.md
+      - Customize SpecBind: guide/customization.md
+      - Report bugs and suggest improvements: guide/feedback.md
+      - Remove an Agent or uninstall: guide/uninstall.md
+      - Migrate from cc-sdd: guide/migrate-from-cc-sdd.md
+  - Reference:
+      - Skills: reference/current-skill-index.md
+      - Artifacts: reference/current-artifact-index.md

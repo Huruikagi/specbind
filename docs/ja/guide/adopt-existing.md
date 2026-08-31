@@ -99,8 +99,8 @@ Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで�
 - [基本概念](./concepts.md)
 - [既存プロジェクトで始める](./start-existing-project.md) — 通常のライフサイクルを一周する
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
-- [現在のスキル一覧](../../current-skill-index.md)
-- [現在の成果物一覧](../../current-artifact-index.md)
+- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
+- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 

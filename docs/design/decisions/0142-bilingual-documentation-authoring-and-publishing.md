@@ -47,24 +47,26 @@ Documentation authoring and publication hierarchy are separate concerns.
 The migration is phased. Phase 1 normalizes and continues Japanese authoring.
 Phase 2 creates the mirrored English content after the Japanese information
 architecture stabilizes. Phase 3 enables the complete bilingual publication
-experience. The build mechanism remains replaceable; no third-party i18n
-plugin becomes a product dependency merely to establish the content model.
+experience. The build mechanism remains replaceable; a pinned build-time i18n
+plugin may be used when it materially reduces navigation, search, and language
+switching maintenance while leaving content as ordinary Markdown.
 
-During Phase 1, the site root is a transition entry, the normalized Japanese
-tree is already published under `/ja/`, and existing English migration and
-reference pages remain available. The Japanese cc-sdd migration guide moves to:
+During Phase 1, the site root was a transition entry and the normalized Japanese
+tree was published under `/ja/`. The Japanese cc-sdd migration guide moved to:
 
 `https://huruikagi.github.io/specbind/ja/guide/migrate-from-cc-sdd/`
 
-The unused pre-1.0 Japanese migration URL is removed. CLI output uses the new
-canonical URL.
+The unused pre-1.0 Japanese migration URL was removed. The completed bilingual
+site uses `docs/en/` as the English source published at `/`, `docs/ja/` as the
+Japanese source published at `/ja/`, and `mkdocs-static-i18n` for one strict
+build with localized navigation, UI, search, and corresponding-page switching.
 
 ## Consequences
 
-- Normal feature documentation can continue in Japanese without stale English
-  blocking it.
+- New feature documentation can be drafted and stabilized in Japanese; once a
+  counterpart exists, later changes align it or explicitly record a deferral.
 - The source hierarchy now exposes the intended one-to-one translation paths.
-- English publication remains visibly transitional until the Japanese guide is
-  stable enough to translate.
+- English and Japanese guide updates must check the corresponding page and
+  either update it or record an intentional translation deferral.
 - Changes to embedded documentation URLs remain coordinated with CLI tests and
   accepted Decisions.

@@ -366,8 +366,8 @@ Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果�
 別の確認境界です。
 
 インストールされるファイルの全体像は
-[現在の成果物一覧](../../current-artifact-index.md)で確認できます。
+[現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）で確認できます。
 
 ---
 
-[ガイドの入口](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](../../current-artifact-index.md)
+[ガイドの入口](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）

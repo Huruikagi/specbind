@@ -30,8 +30,8 @@ Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証してい�
 
 ## リファレンス
 
-- [現在のスキル一覧](../current-skill-index.md) — インストールされる全スキル
-- [現在の成果物一覧](../current-artifact-index.md) — 作成・管理されるファイル
+- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/) — インストールされる全スキル（英語）
+- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/) — 作成・管理されるファイル（英語）
 
 ## cc-sddを利用中の場合
 

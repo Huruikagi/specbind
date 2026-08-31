@@ -67,7 +67,7 @@ Start by inspecting the specbind migrate cc-sdd findings and named files.
 Follow every stop condition, do not invent approval or completion evidence,
 and return to CLI validation before claiming that the cutover is complete.
 
-https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/
+https://huruikagi.github.io/specbind/guide/migrate-from-cc-sdd/
 ```
 
 Repository instructions in `AGENTS.md`, `CLAUDE.md`, and equivalent scoped
@@ -292,4 +292,4 @@ that Git cannot recover.
 
 ---
 
-[Documentation home](../../index.md) | [日本語](../../ja/guide/migrate-from-cc-sdd.md)
+[Documentation home](../index.md)

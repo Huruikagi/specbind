@@ -46,7 +46,7 @@ fn routes_semantic_findings_to_the_english_agent_guide() {
         .stderr(predicate::str::contains("MIGRATE_LANGUAGE_MIXED"))
         .stderr(predicate::str::contains("MIGRATE_RULE_REVIEW_REQUIRED"))
         .stderr(predicate::str::contains(
-            "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/",
+            "https://huruikagi.github.io/specbind/guide/migrate-from-cc-sdd/",
         ))
         .stderr(predicate::str::contains("No files were changed."));
 
@@ -77,7 +77,7 @@ fn routes_japanese_semantic_findings_to_the_same_english_agent_guide() {
         .stdout("")
         .stderr(predicate::str::contains("ERROR MANUAL_MIGRATION_REQUIRED"))
         .stderr(predicate::str::contains(
-            "https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/",
+            "https://huruikagi.github.io/specbind/guide/migrate-from-cc-sdd/",
         ));
 
     assert_eq!(before, snapshot(root.path()));

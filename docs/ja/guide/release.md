@@ -119,8 +119,8 @@ specbind release preflight         # 未bindや未受理のcompletionなど、�
 
 - [基本概念](./concepts.md)
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — Release / Git adapterの書き方
-- [現在のスキル一覧](../../current-skill-index.md)
-- [現在の成果物一覧](../../current-artifact-index.md)
+- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
+- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 

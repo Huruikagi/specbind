@@ -41,7 +41,7 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 - [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
 - [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
 - [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
-- [Generated skill index](./docs/current-skill-index.md) and [generated artifact index](./docs/current-artifact-index.md) are concise snapshots of the current interface.
+- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
 - [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
 
 ## Repository layout

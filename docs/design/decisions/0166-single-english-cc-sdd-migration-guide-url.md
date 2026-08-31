@@ -27,7 +27,7 @@ the Japanese documentation tree.
 Every `specbind migrate cc-sdd` diagnostic that requires guided work prints the
 same canonical English guide URL:
 
-`https://huruikagi.github.io/specbind/guide/en/migrate-from-cc-sdd/`
+`https://huruikagi.github.io/specbind/guide/migrate-from-cc-sdd/`
 
 The CLI does not select documentation from the legacy or target artifact
 language. Mixed, unsupported, or unresolved artifact language remains a

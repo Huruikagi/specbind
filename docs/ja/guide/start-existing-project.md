@@ -298,8 +298,8 @@ specbind spec status csv-export --json
 - [基本概念](./concepts.md)
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
-- [現在のスキル一覧](../../current-skill-index.md)
-- [現在の成果物一覧](../../current-artifact-index.md)
+- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
+- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 

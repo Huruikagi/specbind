@@ -6,10 +6,11 @@ site.
 
 ## Current authoring source
 
-During active pre-1.0 development, Japanese is the practical source of truth
-for public user documentation. Author and revise Japanese pages under
-`docs/ja/` without requiring a simultaneous English edit. The Japanese tree
-uses the relative paths intended for the eventual English tree:
+During active v1 development, Japanese is the practical source for drafting
+new public documentation and settling product explanations. Once a page has a
+counterpart, however, an edit in either language also reviews and aligns the
+other language in the same change unless synchronization is explicitly
+deferred. The Japanese tree uses the same relative paths as the English tree:
 
 ```text
 docs/ja/index.md
@@ -24,9 +25,9 @@ docs/ja/guide/uninstall.md
 docs/ja/guide/migrate-from-cc-sdd.md
 ```
 
-The existing English migration guide and English reference pages remain
-published during the transition, but they do not make English authoritative
-for changing Japanese guide content.
+The English tree mirrors the same user-guide paths under `docs/en/`. English
+reference pages live under `docs/en/reference/`; they are public but are not
+part of the Japanese-first translation contract.
 
 Internal architecture, design, repository, and forward-test documents are not
 part of the translation tree. Keep them in their existing repository-owned
@@ -34,13 +35,16 @@ locations and excluded from the public site.
 
 ## Publishing target
 
-Once a Japanese page or documentation area is stable enough, create or refresh
-the English counterpart from it. Preserve meaning and information architecture
-rather than translating word for word. Equivalent pages should keep matching
-relative paths:
+When a page in either language changes, review and refresh its counterpart in
+the same documentation change unless synchronization is intentionally deferred.
+Preserve meaning and information architecture rather than translating word for
+word. If synchronization is deferred, state that explicitly in the change or
+tracking Issue instead of allowing silent drift. The repository-local
+`specbind-sync-docs` Skill defines the repeatable check and verification flow.
+Equivalent pages keep matching relative paths:
 
 ```text
-English source:  docs/en/guide/getting-started.md
+English source: docs/en/guide/getting-started.md
 Japanese source: docs/ja/guide/getting-started.md
 
 English URL:  /guide/getting-started/
@@ -50,15 +54,17 @@ Japanese URL: /ja/guide/getting-started/
 The new-project, existing-project, and existing-implementation routes follow
 the same relative-path rule when English counterparts are added.
 
-The final bilingual build will publish English at the site root and Japanese
-under `/ja/`, with localized navigation, Material UI strings, search behavior,
-and page-to-page language switching. Until the English tree is ready, the root
-page is a transition entry and Japanese pages are published from `docs/ja/`.
+The bilingual build publishes English at the site root and Japanese under
+`/ja/`. `mkdocs-static-i18n` uses the folder structure to select corresponding
+pages and reconfigures navigation, Material UI strings, search behavior, and
+page-to-page language switching. The dependency is pinned in
+`requirements-docs.txt`; Markdown content remains ordinary files so the build
+mechanism stays replaceable.
 
 ## Verification
 
-Run the strict documentation build from the repository root after changing a
-public page, navigation, or documentation path:
+Run the strict bilingual build from the repository root after changing a
+public page, navigation, translation, or documentation path:
 
 ```sh
 python -m mkdocs build --strict
