@@ -12,6 +12,8 @@ use std::{
     path::Path,
 };
 
+use crate::config::ProjectLanguage;
+
 /// One embedded default shared rule.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DefaultRule {
@@ -21,6 +23,9 @@ pub struct DefaultRule {
     pub file_name: &'static str,
     /// One-line statement of the customizable responsibility it carries.
     pub purpose: &'static str,
+    /// Configured language for which installation offers this default.
+    /// `None` means every supported language.
+    default_language: Option<ProjectLanguage>,
     content: &'static str,
 }
 
@@ -35,6 +40,13 @@ impl DefaultRule {
     #[must_use]
     pub fn content(self) -> &'static str {
         self.content
+    }
+
+    /// Whether installation should offer this default for the configured language.
+    #[must_use]
+    pub fn installs_for(self, language: ProjectLanguage) -> bool {
+        self.default_language
+            .is_none_or(|expected| expected == language)
     }
 
     /// Reads the project's copy, if it has one.
@@ -76,46 +88,56 @@ impl DefaultRule {
     }
 }
 
-/// The complete Decisions 0093 and 0152 installed default set.
-///
-/// One English set serves both configured artifact languages; projects may
-/// localize or rewrite their installed copies.
+/// The complete accepted Rule catalog from Decisions 0093, 0152, and 0169.
 static DEFAULT_RULES: &[DefaultRule] = &[
     DefaultRule {
         selector: "ears-format",
         file_name: "ears-format.md",
         purpose: "Preferred EARS patterns, subject choice, and testability style for Requirements.",
+        default_language: None,
         content: include_str!("../../assets/rules/ears-format.md"),
     },
     DefaultRule {
         selector: "design-principles",
         file_name: "design-principles.md",
         purpose: "Project-adjustable architecture, interface, data-model, error-handling, diagram, and documentation preferences.",
+        default_language: None,
         content: include_str!("../../assets/rules/design-principles.md"),
     },
     DefaultRule {
         selector: "design-template-selection",
         file_name: "design-template-selection.md",
         purpose: "Required, conditional, or disabled selection policy for every Design template.",
+        default_language: None,
         content: include_str!("../../assets/rules/design-template-selection.md"),
     },
     DefaultRule {
         selector: "contract-principles",
         file_name: "contract-principles.md",
         purpose: "Project policy for seam ownership, compatibility posture, dependency direction, and warning severity.",
+        default_language: None,
         content: include_str!("../../assets/rules/contract-principles.md"),
     },
     DefaultRule {
         selector: "tasks-generation",
         file_name: "tasks-generation.md",
         purpose: "Project preferences for task sizing, decomposition, completion detail, and test grouping.",
+        default_language: None,
         content: include_str!("../../assets/rules/tasks-generation.md"),
     },
     DefaultRule {
         selector: "steering-principles",
         file_name: "steering-principles.md",
         purpose: "Project preferences for durable steering granularity, examples, and preservation.",
+        default_language: None,
         content: include_str!("../../assets/rules/steering-principles.md"),
+    },
+    DefaultRule {
+        selector: "language-style",
+        file_name: "language-style.md",
+        purpose: "Project preferences for natural-language prose while preserving exact product and machine identifiers.",
+        default_language: Some(ProjectLanguage::Ja),
+        content: include_str!("../../assets/rules/language-style.md"),
     },
 ];
 
@@ -126,6 +148,16 @@ pub const RULES_ROOT: &str = "settings/rules";
 #[must_use]
 pub fn defaults() -> &'static [DefaultRule] {
     DEFAULT_RULES
+}
+
+/// Lists the defaults installation offers for one configured language.
+pub fn installed_defaults(
+    language: ProjectLanguage,
+) -> impl Iterator<Item = DefaultRule> + 'static {
+    DEFAULT_RULES
+        .iter()
+        .copied()
+        .filter(move |entry| entry.installs_for(language))
 }
 
 /// Resolves one rule by its accepted selector.

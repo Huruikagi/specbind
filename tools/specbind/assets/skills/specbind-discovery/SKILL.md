@@ -6,6 +6,17 @@ argument-hint: "<what you want to change or local source path>"
 
 # Decide what the work is
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Take a change request and answer one question: **which durable boundaries does
 this work belong to?** Everything else follows from that answer.
 

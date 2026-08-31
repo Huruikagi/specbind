@@ -6,6 +6,17 @@ argument-hint: "[what should change, or review the current configuration]"
 
 # Configure SpecBind for this project
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Own the whole configuration run. Translate the maintainer's outcome into the
 supported configuration surface, use the owning CLI command or product Skill,
 validate the result, and finish authorized aftercare. Delegating one step does

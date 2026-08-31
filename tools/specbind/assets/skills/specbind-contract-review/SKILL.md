@@ -5,6 +5,17 @@ description: Judge whether the milestone's changes leave every persistent seam i
 
 # Review the contract graph
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 One review per milestone, between design approval and any task plan. The
 question is **not** "do the Specs in this milestone agree with each other." It is:
 

@@ -36,6 +36,7 @@ machine-level binary.
 | `{{SPEC_DIR}}/settings/rules/contract-principles.md` | Project seam and compatibility policy. |
 | `{{SPEC_DIR}}/settings/rules/tasks-generation.md` | Project task-decomposition preferences. |
 | `{{SPEC_DIR}}/settings/rules/steering-principles.md` | Project steering-authoring preferences. |
+| `{{SPEC_DIR}}/settings/rules/language-style.md` | Optional cross-artifact prose preferences; the Japanese default is installed only for `ja`. |
 | `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
 | `{{SPEC_DIR}}/settings/adapters/git.md` | Active default policy that commits each eligible workflow unit locally, without pushing or rewriting history. |
 | `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
@@ -70,7 +71,7 @@ Materialization removes `create` and carries the two durable scopes into the
 live artifact. `artifact read` preserves exact raw artifact bytes, and
 `steering read` preserves exact raw Markdown
 by default and accept `--for maintain` or `--for consume` to omit the unrelated
-durable instruction scope. `rule list/read` expose the six fixed project-owned
+durable instruction scope. `rule list/read` expose the seven fixed project-owned
 rule selectors without scanning the directory; rule reads provide the same raw,
 maintain, and consume modes and reject live `create` instructions.
 

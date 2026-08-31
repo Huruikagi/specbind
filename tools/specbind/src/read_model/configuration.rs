@@ -282,7 +282,7 @@ fn resolve_rules(
                 }
                 items.push(ConfigurationItem {
                     selector: entry.selector.to_owned(),
-                    state: if content == entry.content() {
+                    state: if entry.installs_for(language) && content == entry.content() {
                         "current-default"
                     } else {
                         "project-content"

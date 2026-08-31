@@ -65,6 +65,25 @@ fn embeds_the_accepted_skill_set_with_valid_metadata() {
 }
 
 #[test]
+fn every_product_skill_consumes_the_shared_language_style_rule() {
+    for entry in skill::all() {
+        let body = entry.body().expect("body");
+        assert_eq!(
+            body.matches("specbind rule read language-style --for consume")
+                .count(),
+            1,
+            "{} must read the language-style Rule exactly once",
+            entry.name
+        );
+        assert!(
+            body.contains("Apply returned policy only to natural-language prose."),
+            "{} must keep exact machine text outside the prose policy",
+            entry.name
+        );
+    }
+}
+
+#[test]
 fn renders_only_the_accepted_front_matter_per_agent() {
     for entry in skill::all() {
         let body = entry.body().expect("body");

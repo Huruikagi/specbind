@@ -308,3 +308,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0166](./design/decisions/0166-single-english-cc-sdd-migration-guide-url.md) | Accepted | One English cc-sdd migration guide URL for every CLI handoff |
 | [0167](./design/decisions/0167-named-template-creation-outputs.md) | Accepted | Agent-produced named outputs with mechanically validated template references |
 | [0168](./design/decisions/0168-milestone-drive-orchestrator.md) | Accepted | Milestone-wide drive orchestration with branch-local attention and reachable-work continuation |
+| [0169](./design/decisions/0169-language-aware-writing-style-rule.md) | Accepted | Japanese-default shared prose policy consumed by every product Skill |

@@ -6,6 +6,17 @@ argument-hint: "[--target-release <version>]"
 
 # Drive the active milestone to its next real boundary
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Use this Skill when the user asks to drive, continue, or advance the active
 milestone as far as possible. A request for one Roadmap item's implementation
 still belongs to `specbind-implement`.

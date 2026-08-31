@@ -6,6 +6,17 @@ argument-hint: "[what changed, or the subject to document]"
 
 # Maintain durable project guidance
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Steering carries what outlives any single change: how this project is built,
 what it values, and the constraints every change inherits. You author it. The
 CLI owns discovery and identity.

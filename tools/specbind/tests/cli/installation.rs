@@ -22,7 +22,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 86 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 87 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -40,7 +40,10 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/templates/roadmap.md [template]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 86 create, 0 replace, 0 keep\n",
+                "- create .specbind/settings/rules/language-style.md [rule]\n",
+            ))
+            .and(predicate::str::contains(
+                "\n  Summary: 87 create, 0 replace, 0 keep\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -190,6 +193,13 @@ fn applies_an_initial_installation_and_is_idempotent() {
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
+    assert!(
+        !root
+            .path()
+            .join(".specbind/settings/rules/language-style.md")
+            .exists(),
+        "English installation must not offer the Japanese style default"
+    );
 
     let mut installed = specbind_command();
     installed
@@ -370,6 +380,7 @@ fn shows_the_complete_configuration_without_claiming_global_readiness() {
             .and(predicate::str::contains(
                 "    design-template-selection: current-default\n",
             ))
+            .and(predicate::str::contains("    language-style: absent\n"))
             .and(predicate::str::contains("    release: scaffold\n"))
             .and(predicate::str::contains("    Documents: 0\n"))
             .and(predicate::str::contains(
@@ -768,7 +779,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 48 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 49 created, 0 replaced, 2 kept\n",
         ));
 
     assert_eq!(
@@ -790,6 +801,21 @@ fn never_overwrites_project_owned_settings_when_applying() {
         template.contains("requirement: 要件"),
         "the configured language must select the installed template"
     );
+    assert!(
+        root.path()
+            .join(".specbind/settings/rules/language-style.md")
+            .is_file(),
+        "Japanese installation must offer the language-style default"
+    );
+
+    let mut show = specbind_command();
+    show.current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "    language-style: current-default\n",
+        ));
 }
 
 #[test]

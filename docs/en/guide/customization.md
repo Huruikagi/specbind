@@ -142,9 +142,17 @@ Product protocols, Skill workflow, and CLI invariants are not project Rules.
 | `contract-principles.md` | Ownership, outward seams, compatibility, and dependency direction |
 | `tasks-generation.md` | Task size, decomposition, and testing work |
 | `steering-principles.md` | Durable Steering granularity, examples, and update policy |
+| `language-style.md` | Natural-language prose across artifacts and Skill reports while preserving exact identifiers |
 
-Only these known paths are read in v1. Adding an arbitrary Rule filename does
+Only these seven known paths are read in v1. Adding an arbitrary Rule filename does
 not extend the registry.
+
+Initial installation creates the six language-neutral defaults for every
+project. When `--language ja` is selected, it also creates the Japanese
+`language-style.md` default. That Rule is optional and project-owned: every
+product Skill reads it for natural-language prose, but its absence leaves the
+configured-language output contract intact. A later install keeps an existing
+copy rather than replacing it.
 
 ```sh
 specbind rule list

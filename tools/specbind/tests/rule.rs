@@ -1,22 +1,24 @@
-use specbind::rule;
+use specbind::{config::ProjectLanguage, rule};
 
 /// The complete Decision 0093 installed default set.
-const ACCEPTED_RULES: [&str; 6] = [
+const ACCEPTED_RULES: [&str; 7] = [
     "ears-format.md",
     "design-principles.md",
     "design-template-selection.md",
     "contract-principles.md",
     "tasks-generation.md",
     "steering-principles.md",
+    "language-style.md",
 ];
 
-const ACCEPTED_SELECTORS: [&str; 6] = [
+const ACCEPTED_SELECTORS: [&str; 7] = [
     "ears-format",
     "design-principles",
     "design-template-selection",
     "contract-principles",
     "tasks-generation",
     "steering-principles",
+    "language-style",
 ];
 
 #[test]
@@ -39,6 +41,21 @@ fn embeds_exactly_the_accepted_default_rule_set() {
     for unknown in ["deployment", "ears-format.md", "", "Ears-format"] {
         assert!(rule::find(unknown).is_none(), "{unknown} must not resolve");
     }
+}
+
+#[test]
+fn installs_language_style_by_default_only_for_japanese() {
+    let english = rule::installed_defaults(ProjectLanguage::En)
+        .map(|entry| entry.selector)
+        .collect::<Vec<_>>();
+    let japanese = rule::installed_defaults(ProjectLanguage::Ja)
+        .map(|entry| entry.selector)
+        .collect::<Vec<_>>();
+
+    assert!(!english.contains(&"language-style"));
+    assert!(japanese.contains(&"language-style"));
+    assert_eq!(english.len(), 6);
+    assert_eq!(japanese.len(), 7);
 }
 
 #[test]

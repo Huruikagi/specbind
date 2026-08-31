@@ -6,6 +6,17 @@ argument-hint: "<spec>"
 
 # Write the requirements
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 This phase Skill is normally dispatched by `specbind-plan`. Select it directly
 only when the user explicitly wants to author or revise Requirements without
 running the complete planning workflow.

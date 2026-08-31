@@ -25,6 +25,17 @@ shape. Reserve it now and fill it from the evidence:
 Naming a category in prose does not satisfy this contract. Do not rename the
 heading, omit a field, or return only a narrative diagnosis.
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 ```sh
 specbind protocol read debug
 ```

@@ -16,6 +16,12 @@ The accepted selector set is closed. Do not add meaning by dropping an unknown
 file below `settings/rules/`. An absent ordinary preference Rule means no
 project customization; product protocols and Skill obligations still apply.
 
+`language-style` is the cross-artifact prose preference consumed by every
+product Skill. Installation offers its Japanese default only when the
+configured language is `ja`; absence in any language is valid. Keep exact
+commands, paths, fields, states, diagnostics, structured output, and quoted
+output outside this prose policy.
+
 Rules may contain `maintain` and `consume` instructions, never `create`.
 Preserve non-waivable CLI structure, lifecycle, protocol, and Skill contracts.
 

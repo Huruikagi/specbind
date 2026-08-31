@@ -16,6 +16,17 @@ it is not authority to change lifecycle state. In particular, invalidating the
 design gate also deletes the milestone's accepted contract review. Report the
 finding and stop with every gate and review record exactly as you found them.
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 This is not a gate — the design phase does not wait for you. It is available
 before approval as a second opinion, and after approval when someone wants the
 design checked by something that did not write it.

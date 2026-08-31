@@ -6,6 +6,17 @@ argument-hint: "<spec>"
 
 # Validate one Spec's implementation
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 The gate between "every task is recorded complete" and "this Spec is done".
 
 Your verdict writes durable evidence, so it has to be earned. **You validate;

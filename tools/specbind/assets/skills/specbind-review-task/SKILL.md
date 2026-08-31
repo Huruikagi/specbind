@@ -21,6 +21,17 @@ verification gap instead. Capture `git status --short` before investigation and
 again before recording any deferred finding so this boundary is checked rather
 than assumed.
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 ## 0. Resolve the subject
 
 Use the explicit `<spec> <task-id>` when the invocation supplies it. When it

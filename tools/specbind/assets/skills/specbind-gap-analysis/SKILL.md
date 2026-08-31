@@ -6,6 +6,17 @@ argument-hint: "<spec>"
 
 # Analyze the distance between the need and what exists
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Establish what the repository already provides, name precisely what is missing,
 and hand the next phase material it can decide from. **You inform. You do not
 decide.**

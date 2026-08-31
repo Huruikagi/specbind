@@ -189,12 +189,20 @@ specbind steering read <selector> --for consume
 | --- | --- |
 | `ears-format.md` | RequirementsのEARS表現、主語の立て方、テストしやすさの好み |
 | `design-principles.md` | アーキテクチャ、インターフェース、データ、エラー処理、記述の細かさ |
+| `design-template-selection.md` | 各Designテンプレートを必須、条件付き、無効のどれにするか |
 | `contract-principles.md` | 所有境界、外部へ公開する接点、互換性、依存の向きに関する方針 |
 | `tasks-generation.md` | Taskの大きさ、分割の仕方、テスト作業の扱い |
 | `steering-principles.md` | Steeringに残す知識の粒度、例の書き方、更新の方針 |
+| `language-style.md` | 正確な識別子を保ちながら、成果物とスキルの報告を自然な日本語で書く方針 |
 
-v1のスキルが読むのは、この5つのパスだけです。別の名前でルールファイルを足しても
+v1のスキルが読むのは、この7つのパスだけです。別の名前でルールファイルを足しても
 読み込まれません。
+
+初回インストールでは、どの言語でも使う6つの既定ルールに加えて、`--language ja`を
+選んだ場合だけ日本語の`language-style.md`を作成します。このルールは任意で、
+プロジェクトが所有します。すべての製品スキルが成果物や報告を書く前に読みますが、
+ファイルがなくても設定言語で出力するという製品の契約は変わりません。後から
+インストールを実行しても、既存の内容は上書きされません。
 
 ```sh
 specbind rule list
@@ -202,7 +210,7 @@ specbind rule read ears-format --for consume
 specbind rule read ears-format --for maintain
 ```
 
-一覧は既知の5件と、各ファイルがプロジェクトに存在するかを返します。スキルが判断基準
+一覧は既知の7件と、各ファイルがプロジェクトに存在するかを返します。スキルが判断基準
 として使うときは`--for consume`、ルール自体を更新するときは`--for maintain`を指定します。
 省略すると、指示コメントを含むMarkdownをそのまま返します。ルール内でも
 `specbind:instruction maintain`と`consume`を使用できますが、初回作成専用の`create`は

@@ -36,7 +36,7 @@ Common mappings:
 | Rule | Offer review, never automatic rewrite |
 | Steering | Check active-work assumptions |
 | Adapter | Check the owning operational workflow |
-| Language | Enumerate retained old-language project content |
+| Language | Enumerate retained old-language project content, including `language-style` |
 | Project instructions | Verify exact managed blocks and Skill discovery |
 
 Declining optional follow-up completes the requested configuration change. Name

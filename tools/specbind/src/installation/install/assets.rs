@@ -280,7 +280,7 @@ pub(super) fn rule_entries(
     resolved: &ResolvedInputs,
 ) -> Result<Vec<PlanEntry>, InstallIssues> {
     let mut entries = Vec::new();
-    for default in rule::defaults() {
+    for default in rule::installed_defaults(resolved.language) {
         let relative = format!(
             "{}/{}/{}",
             resolved.spec_dir,

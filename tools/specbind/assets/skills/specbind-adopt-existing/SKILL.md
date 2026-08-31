@@ -6,6 +6,17 @@ argument-hint: "<area to adopt, or entire repository>"
 
 # Adopt an existing implementation
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Turn an explicitly selected part of a brownfield repository into new SpecBind
 Specs. Existing code and tests are **evidence**, never automatic authority for
 what the product ought to promise.

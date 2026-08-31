@@ -7,6 +7,11 @@ Decision 0152 expands the closed set with the required
 preference Rules, its absence fails because the Design candidate set would be
 unclassified.
 
+Decision 0169 expands the closed set again with the optional
+`language-style.md` prose Rule. Its embedded Japanese default is offered only
+when the configured project language is `ja`; the selector remains accepted
+and optional for every project language.
+
 [Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
 removes parallelization preferences from the retained task-generation rule.
 
@@ -40,10 +45,16 @@ under `{{SPEC_DIR}}/settings/rules/`; Decision 0152 adds the sixth
 | `contract-principles.md` | New for SpecBind | Project policy for shared ownership, public seams, compatibility posture, generated boundaries, dependency direction, and when warnings deserve stricter review. It does not define canonical Contract syntax, required graph validity, or cross-spec-review lifecycle. |
 | `tasks-generation.md` | Retained from cc-sdd | Project preferences for task sizing, decomposition, completion-detail style, test-work grouping, and conservative parallelization. It does not define `tasks.yaml`, positional IDs, dependency semantics, required coverage, approval, or execution state. |
 | `steering-principles.md` | Retained from cc-sdd | Project preferences for durable steering granularity, examples, preservation, and avoiding transient or obvious content. It does not define steering discovery, identity, installation, or synchronization workflow. |
+| `language-style.md` | New for SpecBind | Project preferences for natural-language prose across artifacts and reports while preserving exact product and machine identifiers. It does not define the configured language or weaken any Skill output contract. |
 
 The retained filenames preserve the useful cc-sdd customization vocabulary and make deliberate migration review easier. Their contents are rewritten for the Decision 0092 boundary; SpecBind does not copy the inherited files verbatim.
 
-All official default rules are English-authored under Decision 0076. They are ordinary UTF-8 OKF concept documents with first-line Front Matter containing `type: SpecBind Rule`. They have no SpecBind-owned `schema_version`, `artifact_id`, applicability list, priority, or enablement field in v1. Unknown top-level OKF extension fields carry no routing semantics.
+The six language-neutral default rules are English-authored under Decision
+0076. Decision 0169's language-style default is Japanese-authored and offered
+only for `ja`. They are ordinary UTF-8 OKF concept documents with first-line
+Front Matter containing `type: SpecBind Rule`. They have no SpecBind-owned
+`schema_version`, `artifact_id`, applicability list, priority, or enablement
+field in v1. Unknown top-level OKF extension fields carry no routing semantics.
 
 ### Content boundary
 
@@ -70,8 +81,14 @@ V1 uses explicit known-path loading rather than scanning every Markdown file or 
 | `contract-principles.md` | `specbind-design`, `specbind-validate-design`, `specbind-gap-analysis` when boundaries are relevant, and `specbind-contract-review`. |
 | `tasks-generation.md` | `specbind-tasks`. |
 | `steering-principles.md` | `specbind-steering`. |
+| `language-style.md` | Every product Skill before it authors an artifact or user-facing prose. |
 
-`specbind-quick-plan` and `specbind-batch-plan` use the same phase contracts and therefore the same applicable rules when they perform Requirements, Design, and Tasks work. They do not define separate quick-plan or batch-plan rule variants. Implementation, task review, completion validation, release, status, and debug use their product-managed contracts plus current project artifacts and steering; v1 installs no extra shared rule merely because one of those skills exists.
+Planning orchestrators use the same phase contracts and therefore the same
+applicable phase Rules when they perform Requirements, Design, and Tasks work.
+They do not define separate orchestration variants. Implementation, task
+review, completion validation, release, status, and debug continue to use their
+product-managed contracts plus current project artifacts and Steering; they
+consume `language-style` only for their natural-language reports.
 
 A skill reads each applicable file at most once per invocation. It does not silently substitute an embedded rule when a project file is absent, because the installed file is the user-owned policy source. Absence means that no project customization from that rule is applied; core protocol, skill, and CLI behavior remains intact.
 
@@ -85,7 +102,7 @@ specbind rule read <selector> --for maintain
 specbind rule read <selector> --for consume
 ```
 
-Selectors are the six accepted filenames without `.md`. `list` enumerates
+Selectors are the seven accepted filenames without `.md`. `list` enumerates
 that closed set rather than scanning the directory and reports each rule's
 type, path, and project presence. `read` returns the project's exact raw UTF-8
 Markdown when no purpose is supplied. Absence is the successful `NO_CHANGE
@@ -101,7 +118,7 @@ non-UTF-8 content fail the read rather than returning partial policy.
 
 V1 does not recursively load additional `settings/rules/**/*.md` files.
 Arbitrary automatic loading would make relevance and conflict precedence depend
-on filenames or directory order. Projects customize the six known files and
+on filenames or directory order. Projects customize the seven known files and
 use the Design-template selection Rule to classify arbitrary project-defined
 Design selectors; ordinary steering artifacts remain the destination for other
 additional durable project guidance.
@@ -109,11 +126,15 @@ additional durable project guidance.
 ### Installation and refresh
 
 - Official defaults are embedded in the Rust binary as installation assets under Decision 0077.
-- Initial installation writes every missing default rule and never overwrites an existing path.
+- Initial installation writes every missing language-neutral default Rule and,
+  for `ja`, the missing `language-style` default. It never overwrites an
+  existing path.
 - A later `specbind install` refresh creates newly introduced or otherwise missing default files as uncommitted changes for review, following the common settings contract. It does not merge updated official prose into a project-owned file.
 - Skills read only project files after installation; embedded copies are not runtime fallback policy.
 - Deleting a rule is valid between installs and leaves the core workflow defined. A later refresh may offer the missing default again under Decision 0077, and the project may remove that uncommitted addition before committing.
-- Installed rules use one English default set for both configured artifact languages. Projects may localize or rewrite their copies; rule language is not machine-validated.
+- Six installed Rules use one English default set for both configured artifact
+  languages. The `language-style` default is Japanese-only. Projects may
+  localize or rewrite their copies; Rule language is not machine-validated.
 
 ### cc-sdd disposition
 
@@ -140,7 +161,9 @@ The inherited files are classified as follows:
 
 ## Consequences
 
-- A new project receives six purposeful rule files rather than the complete inherited process library.
+- An English project receives six purposeful Rule files and a Japanese project
+  receives those six plus the optional language-style Rule, rather than the
+  complete inherited process library.
 - Four familiar cc-sdd customization topics remain available under familiar filenames.
 - Contract authoring receives a SpecBind-native project-policy surface, while OKF authoring uses an immutable product protocol.
 - Product protocols and skill implementations have concrete, separate destinations for semantic guidance and workflow control removed from templates and inherited rules.
@@ -149,12 +172,13 @@ The inherited files are classified as follows:
 
 ## Implementation status
 
-All six default rules are authored as embedded installation assets under
+All seven accepted rules are authored as embedded installation assets under
 `tools/specbind/assets/rules/`, and `specbind install --dry-run` plans them as
-create-or-keep entries alongside the Decision 0091 and 0152 templates. Each is
+language-aware create-or-keep entries alongside the Decision 0091 and 0152 templates. Each is
 a `SpecBind Rule` OKF concept with no `schema_version`, `artifact_id`,
-applicability, priority, or enablement Front Matter field, and the one English
-set serves both configured artifact languages. `rule list/read` expose the
+applicability, priority, or enablement Front Matter field. The six
+language-neutral defaults serve both configured artifact languages and the
+Japanese language-style default is offered only for `ja`. `rule list/read` expose the
 fixed selector set and project copies, including the Decision 0139 purpose
 projections; current consuming skills request `--for consume` and never resolve
 the settings path themselves. Decision 0152 gives the selection Rule a narrow

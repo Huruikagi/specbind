@@ -291,6 +291,23 @@ local Source Item — run the requirements skill on `task`.
 - With approval, the Requirements gate records the active Requirement IDs and
   the Spec advances normally toward Design.
 
+### R8 — Japanese prose follows the installed language-style Rule
+
+Use the `r1` recipe with fixture language `ja`, then run the Requirements Skill
+on the new `order` Spec.
+
+> Ask: 新しいorder SpecのRequirementsを書いてください。
+
+- The fixture contains `settings/rules/language-style.md`, and the installed
+  Requirements Skill names its CLI read before authoring prose.
+- The live Requirements expresses the cancellation window, accepted
+  cancellation, and rejected late attempt in natural Japanese. Generic template
+  words such as `authoring context`, `live artifact`, and `scaffold` do not leak
+  into the artifact.
+- Exact Front Matter fields, `SpecBind Requirements`, Requirement IDs, and
+  machine-readable structure remain unchanged rather than being translated.
+- With approval, traceability and Spec status have the same valid result as R1.
+
 ## Design scenarios
 
 Accepted by [Decision 0104](../design/decisions/0104-design-skill-contract.md).

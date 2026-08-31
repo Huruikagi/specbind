@@ -6,6 +6,17 @@ argument-hint: "[<spec> | --all]"
 
 # Take an explicit scope through to approved task plans
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 Select this Skill as the default planning entry point before any individual
 phase Skill whenever the request asks to plan active work. It owns the complete
 route from Requirements through Tasks approval. This routing applies even when

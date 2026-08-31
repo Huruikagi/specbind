@@ -723,13 +723,14 @@ fn lists_accepted_rules_with_project_presence() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK RULE_LISTED: Found 6 accepted rule(s).\n",
+            "OK RULE_LISTED: Found 7 accepted rule(s).\n",
             "  selector=ears-format type=\"SpecBind Rule\" path=settings/rules/ears-format.md present=yes\n",
             "  selector=design-principles type=\"SpecBind Rule\" path=settings/rules/design-principles.md present=no\n",
             "  selector=design-template-selection type=\"SpecBind Rule\" path=settings/rules/design-template-selection.md present=yes\n",
             "  selector=contract-principles type=\"SpecBind Rule\" path=settings/rules/contract-principles.md present=no\n",
             "  selector=tasks-generation type=\"SpecBind Rule\" path=settings/rules/tasks-generation.md present=no\n",
             "  selector=steering-principles type=\"SpecBind Rule\" path=settings/rules/steering-principles.md present=no\n",
+            "  selector=language-style type=\"SpecBind Rule\" path=settings/rules/language-style.md present=no\n",
         ))
         .stderr("");
 }

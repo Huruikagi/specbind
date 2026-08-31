@@ -6,6 +6,17 @@ argument-hint: "[version]"
 
 # Release the milestone
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 The whole milestone or nothing. There is no partial release and no subset
 option.
 

@@ -6,6 +6,17 @@ argument-hint: "<item> [tasks] [--review required|inline|off]"
 
 # Implement one item
 
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
+
 **One roadmap item per run.** Not the milestone. There is no orchestrator in v1;
 dependency waves are something you read, not something you execute.
 
