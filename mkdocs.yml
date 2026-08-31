@@ -81,6 +81,8 @@ plugins:
                 - 新規プロジェクトで始める: guide/start-new-project.md
                 - 既存プロジェクトで始める: guide/start-existing-project.md
                 - 基本概念: guide/concepts.md
+                - 1件ずつ計画・実装する: guide/implement-step-by-step.md
+                - PlanとDriveでMilestoneを進める: guide/implement-with-plan-and-drive.md
                 - 既存実装からSpecを確立する: guide/adopt-existing.md
                 - リリースする: guide/release.md
                 - カスタマイズ: guide/customization.md
@@ -94,6 +96,8 @@ plugins:
             Start a new project: 新規プロジェクトで始める
             Start with an existing project: 既存プロジェクトで始める
             Core concepts: 基本概念
+            Plan and implement one item at a time: 1件ずつ計画・実装する
+            Plan and Drive a Milestone: PlanとDriveでMilestoneを進める
             Adopt an existing implementation: 既存実装からSpecを確立する
             Release a milestone: リリースする
             Customize SpecBind: カスタマイズ
@@ -119,6 +123,8 @@ nav:
       - Start a new project: guide/start-new-project.md
       - Start with an existing project: guide/start-existing-project.md
       - Core concepts: guide/concepts.md
+      - Plan and implement one item at a time: guide/implement-step-by-step.md
+      - Plan and Drive a Milestone: guide/implement-with-plan-and-drive.md
       - Adopt an existing implementation: guide/adopt-existing.md
       - Release a milestone: guide/release.md
       - Customize SpecBind: guide/customization.md

@@ -205,57 +205,28 @@ $specbind-status
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
-## 7. Tasks承認まで進める
+## 7. 計画と実装の進め方を選ぶ
 
-Discoveryが報告したSpec IDを使い、標準の計画ワークフローで最初の1件を進めます。
-ここではSpec IDが`csv-export`だったとします。
-
-```text
-$specbind-plan csv-export
-```
-
-Planは、Requirements、Design、Design検証、Contract review、Tasksを順に実行し、
-Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
-Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
-
-まとめて承認しても、レビューやCLIの検査は省略されません。各Gateで個別に行う
-確認を、1回の実行に対する確認へまとめるだけです。1つずつ内容を見ながら進めたい
-場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
-
-Planが終わった時点では、実装はまだ始まっていません。Requirements、Design、Tasksの
-どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*`スキルを使います。
-
-## 8. 実装して検証する
-
-承認済みのTasksを実装します。
+最初の`csv-export`を段階ごとに確認する場合は、次の所有スキルを順に使います。
 
 ```text
+$specbind-plan-requirements csv-export
+$specbind-plan-design csv-export
+$specbind-contract-review
+$specbind-plan-tasks csv-export
 $specbind-implement csv-export
-```
-
-Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
-Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記録を行います。
-計画やDesignの問題が見つかった場合は、無理に実装を続けず、該当フェーズへ戻す
-ためにいったん停止します。
-
-全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
-
-```text
 $specbind-validate-implementation csv-export
 ```
 
-検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
-完了です。最後に状態を確認します。
+各段階で確認する内容、承認、上流へ戻る場合の扱いは、
+[1件ずつ計画・実装する](./implement-step-by-step.md)にまとめています。
 
-```text
-$specbind-status csv-export
-```
+複数のSpecやDirect itemを含むMilestoneでは、`$specbind-plan --all`のあとに
+`$specbind-drive`を使います。保留、別項目への継続、停止条件は
+[PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)を参照してください。
+どちらの経路もRelease前で停止します。
 
-この時点では、Milestoneはまだリリースされていません。最初の試用では、実装の検証
-までを完了地点にするのがおすすめです。実際に締めるところまで進める手順は
-[リリースする](./release.md)にまとめています。
-
-## 9. 生成された成果物を見る
+## 8. 生成された成果物を見る
 
 Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
@@ -296,6 +267,8 @@ specbind spec status csv-export --json
 ## 次に読む
 
 - [基本概念](./concepts.md)
+- [1件ずつ計画・実装する](./implement-step-by-step.md)
+- [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）

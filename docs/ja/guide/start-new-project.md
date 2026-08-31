@@ -251,61 +251,25 @@ $specbind-status
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
-## 7. Tasks承認まで進める
+## 7. 計画と実装の進め方を選ぶ
 
-Discoveryが複数のSpecを作ったので、標準の計画ワークフローでMilestone全体を
-進めます。
+最初のリリース範囲には複数のSpecがあるため、通常は次の組み合わせで進めます。
 
 ```text
 $specbind-plan --all
+$specbind-drive
 ```
 
-Planは、全SpecのRequirementsを作成し、依存順にDesignとDesign検証を進め、
-Milestone全体で1回のContract reviewを行ってから、各SpecのTasksを作成します。
-Tasksの承認まで進んだところで止まります。実行の最初に、Requirements、Design、
-Tasksの各Gateをこの実行の中でまとめて承認してよいか聞かれます。
+PlanでMilestone全体のRequirements、Design、Contract review、Tasksを確定し、Driveで
+安全に到達可能な実装と検証を進めます。局所的な判断待ちは保留して独立項目を続け、
+Release前で停止します。詳しい動作と停止条件は
+[PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)を参照してください。
 
-まとめて承認しても、レビューやCLIの検査は省略されません。各Gateで個別に行う
-確認を、1回の実行に対する確認へまとめるだけです。1つずつ内容を見ながら進めたい
-場合は、まとめての承認を断れば、各フェーズで個別に承認できます。
+各成果物とGateを段階ごとに確認する場合は、
+[1件ずつ計画・実装する](./implement-step-by-step.md)へ進みます。どちらも同じ所有スキル、
+レビュー、CLI evidenceを使い、各境界を自分で選ぶ粒度だけが異なります。
 
-Planが終わった時点では、実装はまだ始まっていません。Requirements、Design、Tasksの
-どれか1フェーズだけを明示的に進めたい場合は、対応する`specbind-plan-*`スキルを使います。
-
-## 8. 実装して検証する
-
-承認済みのTasksを、Roadmapの依存順にSpecごとに実装します。まず状態を確認します。
-
-```text
-$specbind-status
-$specbind-implement <着手可能なspec-id>
-```
-
-Implementが扱うのは1つのRoadmap itemだけで、着手できるTaskから順に実装します。
-Spec-backed itemでは、Taskごとに実装、レビュー、CLIへの進捗記録を行います。
-計画やDesignの問題が見つかった場合は、無理に実装を続けず、該当フェーズへ戻す
-ためにいったん停止します。
-
-全Taskが終わったら、Spec全体がRequirementsとDesignを満たしているか検証します。
-
-```text
-$specbind-validate-implementation <spec-id>
-```
-
-検証結果が`GO`になり、CLIがcompletion evidenceを受理すれば、そのSpecの実装は
-完了です。最後に状態を確認します。
-
-```text
-$specbind-status <spec-id>
-```
-
-完了したら、次に着手可能になったSpecでもImplementと検証を繰り返します。
-
-この時点では、Milestoneはまだリリースされていません。最初の試用では、実装の検証
-までを完了地点にするのがおすすめです。実際に締めるところまで進める手順は
-[リリースする](./release.md)にまとめています。
-
-## 9. 生成された成果物を見る
+## 8. 生成された成果物を見る
 
 Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
@@ -349,6 +313,8 @@ specbind spec status <spec-id> --json
 ## 次に読む
 
 - [基本概念](./concepts.md)
+- [1件ずつ計画・実装する](./implement-step-by-step.md)
+- [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
 - [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）

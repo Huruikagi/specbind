@@ -147,8 +147,10 @@ Discovery
 `specbind-plan` is the default entry from Requirements through Tasks approval.
 Use a named Spec or `--all`; an invocation without scope first asks which scope
 you intend. The phase-specific planning Skills are for explicit single-phase
-work. `specbind-implement` handles exactly one Roadmap item at a time, and v1
-executes its Tasks sequentially.
+work. `specbind-implement` handles exactly one Roadmap item at a time.
+`specbind-drive` selects safely reachable owning workflows across the Milestone
+one at a time and rereads CLI state after every handoff. It parks branch-local
+attention and continues independent work, but never executes Release.
 
 ## Project-owned configuration
 
@@ -165,5 +167,7 @@ Skill contract.
 ## Next
 
 - [Getting Started](./getting-started.md)
+- [Plan and implement one item at a time](./implement-step-by-step.md)
+- [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
 - [Customize SpecBind](./customization.md)
 - [Release a milestone](./release.md)

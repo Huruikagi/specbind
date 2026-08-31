@@ -167,8 +167,10 @@ Discovery
 この実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は変わりません。
 Requirements、Design、Tasksの1フェーズだけを扱う明示的な依頼では、それぞれ
 `specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を使います。
-`specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。v1には、
-Milestone全体を自動で実装するオーケストレータはありません。
+`specbind-implement`が実装するのは、1回につき1つのRoadmap itemだけです。
+`specbind-drive`はMilestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
+各委譲後にCLI状態を読み直します。局所的な判断待ちは保留して独立項目を続けますが、
+Releaseは実行せず、その手前で停止します。
 
 ## プロジェクト固有の設定
 
@@ -188,4 +190,4 @@ Milestone全体を自動で実装するオーケストレータはありませ�
 
 ---
 
-[ガイドの入口](../index.md) | [Getting Started](./getting-started.md) | [カスタマイズ](./customization.md)
+[ガイドの入口](../index.md) | [1件ずつ計画・実装する](./implement-step-by-step.md) | [PlanとDriveで進める](./implement-with-plan-and-drive.md)

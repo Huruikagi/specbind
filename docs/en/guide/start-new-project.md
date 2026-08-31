@@ -156,48 +156,27 @@ artifacts; source material is not authoritative by itself.
 Use `$specbind-status` at any time for a read-only explanation of state and next
 actions.
 
-## 7. Plan through Tasks approval
+## 7. Choose how to plan and implement
 
-Plan every Spec-backed item in dependency order:
+The first release scope contains several Specs, so the normal route is:
 
 ```text
 $specbind-plan --all
+$specbind-drive
 ```
 
-Plan authors Requirements, then Design with independent validation, performs
-one Milestone-wide Contract review, and authors Tasks. It stops after Tasks
-approval and does not implement. At the start it asks whether Requirements,
-Design, and Tasks approvals may be delegated for that named run. Delegation
-combines confirmation points; it does not skip reviews or CLI checks.
+Plan establishes Requirements, Design, Contract review, and Tasks for the
+Milestone. Drive then advances every safely reachable implementation and
+validation action, parks branch-local attention, and stops before Release. See
+[Plan and Drive a Milestone](./implement-with-plan-and-drive.md) for the full
+workflow and stopping conditions.
 
-Use the phase-specific `specbind-plan-*` Skills only when you explicitly want a
-single phase.
+To inspect every artifact and Gate separately, instead follow
+[Plan and implement one item at a time](./implement-step-by-step.md). Both
+routes use the same owning Skills, reviews, and CLI evidence; the difference is
+how explicitly you choose each boundary.
 
-## 8. Implement and validate
-
-Work on one ready Roadmap item at a time:
-
-```text
-$specbind-status
-$specbind-implement <ready-spec-id>
-```
-
-For a Spec-backed item, Implement processes Tasks sequentially, obtaining a
-review and recording progress after each one. If it discovers a planning or
-Design defect, it stops and routes the work back to the owning phase.
-
-After every Task is complete, validate the whole Spec:
-
-```text
-$specbind-validate-implementation <spec-id>
-$specbind-status <spec-id>
-```
-
-Repeat for newly unblocked Specs. For an initial trial, implementation
-validation is a reasonable stopping point; see [Release a milestone](./release.md)
-when you are ready to publish and close it.
-
-## 9. Inspect the artifacts
+## 8. Inspect the artifacts
 
 By default, artifacts live below `.specbind/specs/<spec>/`:
 
@@ -232,6 +211,8 @@ The two status commands also provide `--json` for tools and scripts.
 ## Next
 
 - [Core concepts](./concepts.md)
+- [Plan and implement one item at a time](./implement-step-by-step.md)
+- [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
 - [Release a milestone](./release.md)
 - [Customize SpecBind](./customization.md)
 - [Current generated skill index](../reference/current-skill-index.md)

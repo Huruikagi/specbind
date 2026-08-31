@@ -94,38 +94,28 @@ and the Agent writes a concise `brief.md`.
 
 Use `$specbind-status` for a read-only explanation at any point.
 
-## 7. Plan through Tasks approval
+## 7. Choose how to plan and implement
 
-If Discovery created `csv-export`, run:
-
-```text
-$specbind-plan csv-export
-```
-
-Plan proceeds through Requirements, Design, independent Design validation,
-Contract review, and Tasks, then stops after Tasks approval. It asks at the
-start whether the three Gate approvals may be delegated for this run.
-Delegation never skips review or CLI validation. Use phase-specific
-`specbind-plan-*` Skills only for an explicitly requested single phase.
-
-## 8. Implement and validate
+For the first `csv-export` change, you can inspect each boundary explicitly:
 
 ```text
+$specbind-plan-requirements csv-export
+$specbind-plan-design csv-export
+$specbind-contract-review
+$specbind-plan-tasks csv-export
 $specbind-implement csv-export
 $specbind-validate-implementation csv-export
-$specbind-status csv-export
 ```
 
-Implement handles one Roadmap item and processes its Tasks sequentially, with
-review and CLI progress recording after each Task. If planning or Design is
-wrong, it stops and routes the defect to the owning phase. Validation judges
-the completed Spec against Requirements and Design and records completion
-evidence only on `GO`.
+[Plan and implement one item at a time](./implement-step-by-step.md) explains
+what to review and approve at every step, including upstream rewinds.
 
-For an initial trial, implementation validation is a good stopping point. See
-[Release a milestone](./release.md) when you want to publish and close it.
+For a Milestone with several Specs or Direct items, use
+`$specbind-plan --all` followed by `$specbind-drive`. See
+[Plan and Drive a Milestone](./implement-with-plan-and-drive.md) for attention,
+continuation, and stopping behavior. Both routes stop before Release.
 
-## 9. Inspect the artifacts
+## 8. Inspect the artifacts
 
 ```text
 .specbind/
@@ -154,6 +144,8 @@ The two status commands also support `--json` for integrations.
 ## Next
 
 - [Core concepts](./concepts.md)
+- [Plan and implement one item at a time](./implement-step-by-step.md)
+- [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
 - [Release a milestone](./release.md)
 - [Customize SpecBind](./customization.md)
 - [Current generated skill index](../reference/current-skill-index.md)
