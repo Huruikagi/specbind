@@ -41,17 +41,18 @@ does not own, and when a later change should consult it.
 <!-- specbind:instruction maintain
 Record settled decisions, prohibitions, and selection criteria inherited by
 later changes. Exclude unsettled proposals and decisions needed by only one
-Spec. Do not create this document when there is no settled content.
+Spec. Give each decision or constraint a descriptive H3 heading and keep its
+reason, applicability, and exceptions beside it. Do not create this document
+when there is no settled content.
 -->
 
-## Reasons
-
-<!-- specbind:instruction maintain
-Record why each decision was selected, what it protects, and which viable
-alternative it rejected. Merge this into "Decisions and constraints" when each
-reason is clearer beside its decision; delete this section when nothing remains
-independent.
+<!-- specbind:instruction create
+Replace `<decision-or-constraint>` with a name for the actual judgment and
+repeat the H3 subsection for each independent judgment. Do not leave the empty
+example heading in a live artifact.
 -->
+
+### `<decision-or-constraint>`
 
 ## Examples
 

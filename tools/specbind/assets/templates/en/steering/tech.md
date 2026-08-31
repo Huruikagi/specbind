@@ -31,8 +31,17 @@ or version inventories available from manifests.
 <!-- specbind:instruction maintain
 For each consequential choice that had viable alternatives, state the selected
 direction, why it was selected, and what it protects. Omit choices obvious from
-the current setup that do not constrain future decisions.
+the current setup that do not constrain future decisions. Give each technology
+decision a descriptive H3 heading.
 -->
+
+<!-- specbind:instruction create
+Replace `<technology-decision>` with a name for the actual judgment and repeat
+the H3 subsection for each independent technology decision. Do not leave the
+empty example heading in a live artifact.
+-->
+
+### `<technology-decision>`
 
 ## Constraints every change inherits
 

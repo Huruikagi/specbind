@@ -77,9 +77,18 @@ this section when all relevant behavior is local and self-evident.
 
 <!-- specbind:instruction maintain
 For each new or changed component, state its responsibility, inputs, outputs,
-guarantees, and allowed dependencies. Include language-specific signatures only
-when their exact shape is itself a compatibility decision.
+guarantees, and allowed dependencies. Give each component or boundary a
+descriptive H3 heading. Include language-specific signatures only when their
+exact shape is itself a compatibility decision.
 -->
+
+<!-- specbind:instruction create
+Replace `<component-or-boundary>` with an actual name and repeat the H3
+subsection for every new or changed responsibility boundary. Do not leave the
+empty example heading in a live artifact.
+-->
+
+### `<component-or-boundary>`
 
 ## Data models
 

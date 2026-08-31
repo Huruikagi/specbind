@@ -42,3 +42,5 @@ do not preserve an empty section; consider removing this document itself.
 Replace the empty section with at least one real H3 heading and substantive
 implementation caution. Do not save a headings-only live artifact.
 -->
+
+### `<caution>`

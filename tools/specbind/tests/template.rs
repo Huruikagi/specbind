@@ -426,6 +426,70 @@ fn default_markdown_scaffolds_guide_every_top_level_section() {
     }
 }
 
+#[test]
+fn repeatable_decision_sections_have_minimal_h3_scaffolds() {
+    for (language, headings) in [
+        (
+            ProjectLanguage::En,
+            [
+                "### `<component-or-boundary>`",
+                "### `<caution>`",
+                "### `<decision-or-constraint>`",
+                "### `<technology-decision>`",
+            ],
+        ),
+        (
+            ProjectLanguage::Ja,
+            [
+                "### `<コンポーネントまたは境界>`",
+                "### `<注意事項>`",
+                "### `<決定または制約>`",
+                "### `<技術判断>`",
+            ],
+        ),
+    ] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        let contents = [
+            template::read_spec_template(root.path(), language, "design/main")
+                .expect("read design template")
+                .0,
+            template::read_spec_template(root.path(), language, "implementation-notes/main")
+                .expect("read implementation notes template")
+                .0,
+            template::read_steering_template(root.path(), language, "document")
+                .expect("read generic steering template")
+                .0,
+            template::read_steering_template(root.path(), language, "tech")
+                .expect("read technology steering template")
+                .0,
+        ];
+        for (content, heading) in contents.iter().zip(headings) {
+            assert!(content.contains(heading), "{language:?} missing {heading}");
+        }
+
+        let prose_only = [
+            template::read_spec_template(root.path(), language, "brief")
+                .expect("read brief template")
+                .0,
+            template::read_milestone_template(root.path(), language, "roadmap")
+                .expect("read roadmap template")
+                .0,
+            template::read_steering_template(root.path(), language, "product")
+                .expect("read product steering template")
+                .0,
+            template::read_steering_template(root.path(), language, "structure")
+                .expect("read structure steering template")
+                .0,
+        ];
+        assert!(
+            prose_only
+                .iter()
+                .all(|content| !content.contains("\n### `<")),
+            "{language:?} added a fill-in scaffold to a prose-oriented template"
+        );
+    }
+}
+
 fn assert_h2_sections_have_maintenance_guidance(
     language: ProjectLanguage,
     selector: &str,
