@@ -1,6 +1,6 @@
 ---
 name: specbind-sync-docs
-description: Keep SpecBind's English and Japanese public documentation aligned when either language is created, edited, moved, or removed. Use for changes under docs/en or docs/ja, bilingual navigation, or public documentation URLs; exclude English-only generated reference pages and internal repository documentation.
+description: Keep SpecBind's English and Japanese public documentation aligned and the Japanese copy natural and readable. Use for changes or language-quality reviews under docs/en or docs/ja, bilingual navigation, or public documentation URLs; exclude English-only generated reference pages and internal repository documentation.
 ---
 
 # Keep bilingual documentation aligned
@@ -28,13 +28,17 @@ language roots are not translation pairs.
 
 1. Inspect the requested change and the current Git diff. Identify every
    affected public page and its same-relative-path counterpart.
-2. Read both complete pages. When the edit changes product behavior, commands,
-   paths, or ownership, verify the current source or accepted Decision instead
-   of translating an assumption.
-3. Update both pages in the same change. Preserve meaning, information
-   architecture, examples, warnings, and link destinations, but write natural
-   documentation for each audience rather than translating sentence by
-   sentence.
+2. Read both complete pages. When Japanese content is created, edited, or
+   reviewed for readability, also read
+   [the Japanese style reference](references/japanese-style.md). When the edit
+   changes product behavior, commands, paths, or ownership, verify the current
+   source or accepted Decision instead of translating an assumption.
+3. Preserve meaning, information architecture, examples, warnings, and link
+   destinations, but write natural documentation for each audience rather than
+   translating sentence by sentence. Edit both counterparts when meaning or
+   information structure changes. For a Japanese-only wording improvement,
+   inspect the English counterpart but do not manufacture an English edit when
+   its meaning and structure already agree.
 4. If one counterpart does not exist, create it. If a page is intentionally
    language-specific, confirm that it is outside the paired scope or obtain an
    explicit decision to defer it; report the deferral and its tracking location.
@@ -57,5 +61,6 @@ and that their language selector links point to each other. When a public URL
 is a CLI contract, also update its source, focused tests, and accepted Decision,
 then run the focused test and `python scripts/check_decisions.py`.
 
-Report the page pairs changed, any intentional exceptions, and the verification
+Report the page pairs inspected and changed, any counterpart intentionally left
+unchanged after semantic comparison, any other exception, and the verification
 results.
