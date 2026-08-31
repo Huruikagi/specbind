@@ -52,8 +52,8 @@ Projects can adapt document templates, shared rules, and Git or release guidance
 
 ## Install the CLI
 
-The current binary release remains a Preview for Windows x64, Linux x64, and
-macOS ARM64.
+The current stable binary release supports Windows x64, Linux x64, and macOS
+ARM64.
 The latest stable release can be installed without choosing a version.
 
 With [mise](https://mise.jdx.dev/), on any supported platform:
@@ -65,14 +65,10 @@ mise use github:Huruikagi/specbind
 This installs the latest stable version eligible under your mise settings and
 records it in the mise configuration selected for the current directory. mise
 applies a minimum release age to `latest` by default, so during the first day
-after a stable release, select it explicitly with
-`github:Huruikagi/specbind@0.2.0` if needed.
-
-Prereleases are never selected as `latest`. Install this release candidate
-explicitly:
+after this release, select it explicitly if needed:
 
 ```sh
-mise use github:Huruikagi/specbind@1.0.0-rc.3
+mise use github:Huruikagi/specbind@1.0.0
 ```
 
 Without mise, use the platform installer.
@@ -87,19 +83,6 @@ WSL2/Linux or Apple Silicon macOS:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh | sh
-```
-
-Prereleases are never selected implicitly. Download the installer and name the
-version explicitly when testing a release candidate:
-
-```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/Huruikagi/specbind/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 1.0.0-rc.3
-```
-
-```sh
-curl -fsSLO https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh
-sh install.sh --version 1.0.0-rc.3
 ```
 
 Both installers verify the release archive against `SHA256SUMS`, install to the

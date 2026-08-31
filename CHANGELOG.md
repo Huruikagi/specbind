@@ -4,6 +4,16 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0 - 2026-08-31
+
+- Published the first stable SpecBind release after the complete `1.0.0-rc.3`
+  release candidate passed the Rust, inherited TypeScript, Decision, strict
+  documentation, behavioral forward-test, archive, installer, and mise gates.
+- Established the executable 1.x forward-compatibility contract. Migration from
+  0.x is not applicable because no external adopter depends on 0.x project
+  state; the maintainer accepts responsibility for maintainer-owned local
+  conversion.
+
 ## 1.0.0-rc.3 - 2026-08-31
 
 - Replaced the prose Contract artifact with a strict versioned YAML model and
