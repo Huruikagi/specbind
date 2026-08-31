@@ -737,6 +737,8 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     );
     assert!(body.contains("The Design phase owns both the Design set and `contract.yaml`"));
     assert!(body.contains("specbind spec design invalidate <spec>"));
+    assert!(body.contains("A response that stops on this finding is incomplete"));
+    assert!(body.contains("Include those facts in the reported outcome"));
     assert!(!body.contains("git ls-tree -r --name-only <baseline>"));
 }
 
@@ -752,6 +754,8 @@ fn steering_add_stops_before_inventing_missing_project_policy() {
     );
     assert!(body.contains("stop before creating a file"));
     assert!(body.contains("Do not\ncombine an accurate statement that tooling is absent with an invented normative\npolicy"));
+    assert!(body.contains("write-safety preflight for accepted completion"));
+    assert!(body.contains("supplies no document\n  content"));
     assert!(body.contains("write it only\nto the `project_path` reported"));
 }
 

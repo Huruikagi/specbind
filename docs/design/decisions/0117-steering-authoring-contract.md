@@ -294,9 +294,11 @@ rules; it may not relax these by doing so.
 
 - No gate, no approval, and no milestone requirement. Steering outlives
   milestones, and the skill runs whenever guidance changes.
-- The skill reads the codebase and the steering collection. It does not read Spec
-  or milestone state, which puts the transient content the `steering-principles`
-  rule excludes out of reach rather than merely discouraging it.
+- The skill reads the codebase and the steering collection. It does not use Spec
+  or milestone state as evidence for Steering content, which puts the transient
+  content the `steering-principles` rule excludes out of reach rather than
+  merely discouraging it. The lifecycle status read required by Decision 0119
+  remains a write-safety preflight only; it never becomes document content.
 - Reasoning that changed a routing or scoping decision still lands in a Brief or
   the Roadmap body under Decision 0098. This skill does not become the place
   where such reasoning is recorded.

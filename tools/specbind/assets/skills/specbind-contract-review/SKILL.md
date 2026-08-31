@@ -197,6 +197,12 @@ confirmation, run `specbind spec design invalidate <spec>`, and hand the work to
 `specbind-plan-design`. If Requirements must change, rewind the Requirements gate
 instead. Never leave the maintainer to infer the owning phase from the gate list.
 
+A response that stops on this finding is incomplete unless it names the Design
+phase as owner, enumerates the current state that invalidation removes, and gives
+the exact `specbind spec design invalidate <spec>` operation before asking for
+confirmation. Include those facts in the reported outcome even when no file or
+state changed during the review.
+
 ## 5. Write the assessment and accept
 
 The assessment is the durable explanation. Write it so a reader who did not

@@ -204,8 +204,11 @@ documents are the deliverable.
   and it ages against a tree the project does not maintain.
 - **Do not write transient content.** Current scope, in-flight migrations, and
   the status of work under way belong to the milestone that owns them. Do not
-  read Spec or milestone state to write steering — if you need it, it does not
-  belong in the document.
+  use Spec or milestone state as evidence for Steering content — if you need it
+  to decide what the document says, that content does not belong there. The
+  `specbind milestone status` read required by the authoring protocol is only a
+  write-safety preflight for accepted completion and supplies no document
+  content.
 - Steering is not a gate. This skill approves nothing, records no evidence, and
   is never required before other work proceeds.
 - Reasoning that changed a routing or scoping decision belongs in that Spec's
