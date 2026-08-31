@@ -322,6 +322,7 @@ fn reads_agent_bound_variables_and_preserves_create_guidance() {
             "research",
             "requirements",
             "design/main",
+            "design/ui",
             "implementation-notes/main",
         ] {
             let root = tempfile::tempdir().expect("temporary SpecBind root");
@@ -338,6 +339,54 @@ fn reads_agent_bound_variables_and_preserves_create_guidance() {
                 assert!(raw.contains("specbind:instruction create bind=artifact_id"));
             }
         }
+    }
+}
+
+#[test]
+fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
+    for (language, headings) in [
+        (
+            ProjectLanguage::En,
+            [
+                "## Design system application",
+                "## Screen inventory",
+                "## Screen design",
+                "### `<screen-id>` `<screen-name>`",
+                "#### Display items",
+                "#### Actions and outcomes",
+                "#### Layout and information hierarchy",
+            ],
+        ),
+        (
+            ProjectLanguage::Ja,
+            [
+                "## デザインシステムの適用",
+                "## 画面一覧",
+                "## 画面設計",
+                "### `<画面ID>` `<画面名>`",
+                "#### 表示項目",
+                "#### 操作と結果",
+                "#### レイアウトと情報階層",
+            ],
+        ),
+    ] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        let raw = template::read_spec_template(root.path(), language, "design/ui")
+            .expect("read UI template")
+            .0;
+
+        for heading in headings {
+            assert!(raw.contains(heading), "{language:?} missing {heading}");
+        }
+        assert!(raw.contains("ASCII"), "{language:?} missing ASCII guidance");
+        assert!(
+            raw.matches("specbind:instruction create").count() >= 3,
+            "{language:?} missing repeatable-screen creation guidance"
+        );
+        assert!(
+            raw.matches("specbind:instruction maintain").count() > 8,
+            "{language:?} missing section-local maintenance guidance"
+        );
     }
 }
 
