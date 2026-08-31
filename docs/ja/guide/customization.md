@@ -4,14 +4,14 @@ SpecBindのライフサイクルと検証はそのままに、成果物の書き
 判断基準、運用手順、役割ごとに使うモデルを、プロジェクトに合わせて調整できます。
 
 このページでは、何を変えたいときにどこを編集するのかをまとめます。通常は場所を
-先に調べて手作業する必要はありません。coding agentへ設定したい結果を伝えると、
+先に調べて手作業する必要はありません。コーディングエージェントへ設定したい結果を伝えると、
 `specbind-configure`が現在値を調べ、必要な変更、検証、アフターケアまで完遂します。
 
 ```sh
 specbind configuration show
 ```
 
-このコマンドは、Agentと役割設定、テンプレート、ルール、adapter、Steeringの現在値を
+このコマンドは、エージェントと役割設定、テンプレート、ルール、アダプター、Steeringの現在値を
 読み取り専用で要約します。`current-default`は現在の組み込み既定値と完全一致するという
 機械的な事実、`project-content`は異なるという事実だけを表し、意図的に設定済みかどうかは
 断定しません。
@@ -35,7 +35,7 @@ specbind configuration show
 テンプレートは、新しい成果物の構成と初期内容を決めるひな形です。見出し、節の
 分け方、例、テンプレート内の`specbind:instruction`コメントを調整できます。
 
-初回のinstallでプロジェクト側にコピーされるのは、構成をプロジェクトで所有する
+初回のインストールでプロジェクト側にコピーされるのは、構成をプロジェクトで所有する
 次の4つです。
 
 - `settings/templates/specs/requirements.md`
@@ -50,13 +50,13 @@ specbind configuration show
 `design/main`は必須、`design/ui`は画面、操作、表示状態、レスポンシブ動作、
 アクセシビリティなどのユーザー可視な責任がある場合だけ選択されます。
 
-独自のDesignテンプレートを追加する場合は、同じselectorの分類と、
+独自のDesignテンプレートを追加する場合は、同じセレクターの分類と、
 `conditional`なら適用条件もこのRuleに追加してください。テンプレートとの
-対応が欠落、重複、または不明な場合、Ruleの読み取りはfail closedします。
+対応が欠落、重複、または不明な場合、ルールの読み取りは安全側に停止します。
 
 Roadmapテンプレートは、マイルストーン全体の変更要求、境界、分解判断、依存関係の
-理由を書く本文だけをカスタマイズします。`milestone_id`、baseline、target release、
-work itemはCLIが所有するため、このテンプレートには書けません。
+理由を書く本文だけをカスタマイズします。`milestone_id`、基準、対象リリース、
+作業項目はCLIが所有するため、このテンプレートには書けません。
 
 Brief、Research、Contract、Implementation NotesのSpecテンプレートと、Steeringの
 テンプレートもCLIに埋め込んであります。変更したいプロジェクトだけが、CLIの一覧に
@@ -77,11 +77,11 @@ specbind template read milestone roadmap
 specbind template resolve spec <spec> <selector>
 ```
 
-結果にはtemplateの`Source`と、設定済みSpec rootを含むプロジェクトルート相対の
+結果にはテンプレートの`Source`と、設定済みのSpecルートを含むプロジェクトルート相対の
 `Project path`が含まれます。ファイル操作では`Project path`をそのまま使用します。
 
-成果物を初めて作るときは、raw templateとその`create` instructionをエージェントが
-読み、materializeします。Markdown本文では、プロジェクトが任意の名前付き生成出力を
+成果物を初めて作るときは、元のテンプレートとその`create`指示をエージェントが
+読み、成果物として生成します。Markdown本文では、プロジェクトが任意の名前付き生成出力を
 `{{名前}}`の形式で参照できます。名前は空ではなく、空白と波括弧を含まない
 必要がありますが、日本語を含むUnicode名を使用できます。
 
@@ -89,8 +89,8 @@ specbind template resolve spec <spec> <selector>
 specbind template read spec <selector>
 ```
 
-異なる名前ごとに、対応する`create output=<名前>` instructionがちょうど1つと、参照が
-1つ以上必要です。エージェントはinstructionを1回実行し、短い文字列またはMarkdown断片
+異なる名前ごとに、対応する`create output=<名前>`指示がちょうど1つと、参照が
+1つ以上必要です。エージェントは指示を1回実行し、短い文字列またはMarkdown断片
 全体を生成できます。同名の参照はすべてその同じ出力で置換します。CLIはこの対応だけを
 検証し、内容の生成や比較は行いません。
 
@@ -105,27 +105,27 @@ specbind template read spec <selector>
 
 `components`の出力は、それぞれ異なる複数のH3小節を含められます。それでも生成結果全体が
 1つのMarkdown断片です。既定テンプレートの`spec`と`artifact_id`も特別な組み込み出力では
-ありません。それぞれの`create output` instructionが、現在のauthoring contextやリテラルな
+ありません。それぞれの`create output`指示が、現在の作成時の文脈やリテラルな
 Front Matterから内容を生成するようエージェントへ指示します。
 
 出力宣言の欠落、重複、未使用、`create`以外での宣言、Front Matterでの参照はテンプレート
 診断になります。未展開の参照が残った成果物も無効です。`template read`は出力参照と
-instructionを含む元のテンプレートをbyte-exactに返します。
+指示を含む元のテンプレートをバイト単位でそのまま返します。
 
 read結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
 Requirementsは実際のRequirementとAcceptance Criterionを書くまで検証に失敗します。
 Brief、Research、Implementation Notesも、見出しやコメントだけでは有効になりません。
-作成指示に従って実内容を埋め、`create`コメントを除いてからlive artifactとして
+作成指示に従って実内容を埋め、`create`コメントを除いてから有効な成果物として
 検証・保存してください。
 
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。
 
 `specbind-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。
-同意した時点では候補と影響のpreviewだけを作り、format-only、instruction-update、
-structural、semantic、conflictに分類します。実際の書き換えは別に確認し、意味を変える
+同意した時点では候補と影響のプレビューだけを作り、`format-only`、`instruction-update`、
+`structural`、`semantic`、`conflict`に分類します。実際の書き換えは別に確認し、意味を変える
 変更はRequirementsやDesignなど、その成果物を所有するスキルへ引き渡します。Gate、
-completion、released archive、CLI所有の構造化状態は、テンプレートに合わせるという理由で
+完了記録、リリース済みアーカイブ、CLI所有の構造化状態は、テンプレートに合わせるという理由で
 直接書き換えません。
 
 `specbind:instruction`コメントには、用途を必ず1つ指定します。
@@ -163,7 +163,7 @@ specbind steering read <selector> --for consume
 共有ルールは、複数のエージェントが共通で参照する、プロジェクト固有の執筆方針と
 判断基準です。内容は強めても、緩めても、書き換えても、削除しても構いません。
 
-### template instructionとruleを使い分ける
+### テンプレート指示とルールを使い分ける
 
 どこに指示を書くか迷ったときは、その指示が1つの成果物に閉じるか、複数の作業で
 共有されるかで判断します。
@@ -183,7 +183,7 @@ specbind steering read <selector> --for consume
 複数の作業で同じ判断基準を使う場合は、独立した共有ルールに置きます。
 
 逆に、特定の見出しをどう埋めるか、その成果物のIDを更新時にどう保つかなど、1つの
-成果物だけに必要な指示は共有ルールへ重複させず、テンプレートのinstructionに置きます。
+成果物だけに必要な指示は共有ルールへ重複させず、テンプレートの指示に置きます。
 
 | ファイル | 書けること |
 | --- | --- |
@@ -212,9 +212,9 @@ specbind rule read ears-format --for maintain
 また、ルールで弱められないものがあります。成果物の必須構造、Gate、承認、状態の
 遷移、スキルの必須手順、CLIの検証です。
 
-## 運用adapter
+## 運用アダプター
 
-adapterは、プロジェクトごとに違う運用のやり方を、自然言語でエージェントに伝える
+アダプターは、プロジェクトごとに違う運用のやり方を、自然言語でエージェントに伝える
 場所です。本文は自由に書けます。コードブロックを書いても、自動実行されるフックには
 なりません。
 
@@ -239,30 +239,30 @@ specbind adapter read git
 方針として扱われません。内容を具体化したらマーカーを削除します。テンプレート用の
 `specbind:instruction`はアダプターの状態には影響しません。
 
-`release.md`が未設定のままリリースを始めると、Releaseスキルがリポジトリ内のworkflow、
-version manifest、build script、既存ドキュメントを調べて具体案を提示します。承認した
-実行では`release.md`だけを保存・ローカルcommitして停止し、公開は行いません。この設定
-変更後はcompletionを再検証してから、改めてリリースします。プロジェクト固有の作業が
+`release.md`が未設定のままリリースを始めると、Releaseスキルがリポジトリ内のワークフロー、
+バージョンマニフェスト、ビルドスクリプト、既存ドキュメントを調べて具体案を提示します。
+承認した実行では`release.md`だけを保存・ローカルコミットして停止し、公開は行いません。
+この設定変更後は完了記録を再検証してから、改めてリリースします。プロジェクト固有の作業が
 本当に不要なら、Front Matterを残して本文を空にすることで明示できます。
 
-`git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contract reviewの
+`git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contractレビューの
 受理、各実装Taskの完了、`specbind-configure`による1つの設定変更など、スキルが定めた
 安全な完了単位ごとに、関係するパスだけを
-ローカルコミットします。現在のブランチを使い、既定ではpushやamendなどの履歴書き換えを
-行いません。初回のRelease adapter設定と、`release finalize`が生成するlog・archive・
-cleanupも、それぞれ公開対象とは別のローカルcommitになります。自動コミットを望まない
+ローカルコミットします。現在のブランチを使い、既定では`push`や`amend`などの履歴書き換えを
+行いません。初回のリリースアダプター設定と、`release finalize`が生成するログ・アーカイブ・
+後片付けも、それぞれ公開対象とは別のローカルコミットになります。自動コミットを望まない
 場合は`git.md`の本文を空にしてください。ファイルを
-削除しても実行時は同じですが、次のinstallで既定値が再作成されます。既存のプロジェクト所有
-ファイルは、installを再実行しても上書きされません。
+削除しても実行時は同じですが、次のインストールで既定値が再作成されます。既存のプロジェクト所有
+ファイルは、インストールを再実行しても上書きされません。
 
-実装Taskはplanの順に1件ずつ実行します。1回の依頼で複数Taskを進める場合も、各Taskの
+実装Taskは計画の順に1件ずつ実行します。1回の依頼で複数Taskを進める場合も、各Taskの
 実装、レビュー、CLIへの完了記録が終わった直後に、そのTaskだけのチェックポイントを
-作ってから次へ進みます。複数Taskの完了を最後の1commitへまとめるのは既定動作では
-ありません。Spec全体のcompletion記録は、Taskの実装commitとは別です。
+作ってから次へ進みます。複数Taskの完了を最後の1コミットへまとめるのは既定動作では
+ありません。Spec全体の完了記録は、Taskの実装コミットとは別です。
 
-adapterはあくまで方針であり、広い権限を与えるものではありません。変更を伴うスキルの依頼は
-既定のローカルチェックポイントまでを含みますが、`git.md`にpushの方針を書いても、それだけで
-エージェントがpushできるようにはなりません。pushにはあなたの依頼と実行環境の権限が別途
+アダプターはあくまで方針であり、広い権限を与えるものではありません。変更を伴うスキルの依頼は
+既定のローカルチェックポイントまでを含みますが、`git.md`に`push`の方針を書いても、それだけで
+エージェントが`push`できるようにはなりません。`push`にはあなたの依頼と実行環境の権限が別途
 必要です。
 
 v1が読むのは上の3つだけです。`settings/adapters/`に好きなファイルを置いて種類を
@@ -284,23 +284,23 @@ specbind steering read <selector> --for consume
 ```
 
 SteeringはGateの入力ではなく、古くなったかどうかの判定にも使いません。ただし、
-completionを受理済みのMilestoneの途中で編集すると、completionの再検証が必要に
-なることがあります。Milestoneを始めてから最初のcompletionまでの間か、リリースの
+完了記録を受理済みのMilestoneの途中で編集すると、完了記録の再検証が必要に
+なることがあります。Milestoneを始めてから最初の完了記録までの間か、リリースの
 後片付けが終わったあとに更新すると、扱いやすくなります。
 
 ## プロジェクト設定と役割別モデル
 
-初回のinstallでは、成果物の言語、使うエージェント、Specの置き場所、ルート指示
+初回のインストールでは、成果物の言語、使うエージェント、Specの置き場所、ルート指示
 ファイルへの案内追加を選べます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --spec-dir .specbind --project-instructions
 ```
 
-`specDir`は初回のinstallで決まり、v1では導入後に変更できません。言語と、選んだ
+`specDir`は初回のインストールで決まり、v1では導入後に変更できません。言語と、選んだ
 エージェントは`.specbind.json`に保存されます。あとからエージェントを追加することは
-できます。1つのAgentを外すときは`specbind remove-agent`、連携全体を外すときは
-`specbind uninstall`を使います。詳しくは[Agentの削除とプロジェクトの
+できます。1つのエージェントを外すときは`specbind remove-agent`、連携全体を外すときは
+`specbind uninstall`を使います。詳しくは[エージェントの削除とプロジェクトの
 アンインストール](./uninstall.md)を参照してください。
 
 `.agents/skills/`と`AGENTS.md`の共通形式だけを導入する場合は`--agent generic`を
@@ -331,7 +331,7 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 役割は`planner`、`implementer`、`reviewer`、`debugger`、`researcher`の5つです。
 指定しなかった役割には、SpecBindの既定のモデルが使われます。
 
-変更したら、リポジトリがクリーンな状態でdry runの結果を確認し、installを実行し
+変更したら、リポジトリに未コミットの変更がない状態でドライランの結果を確認し、インストールを実行し
 直してください。`.codex/agents/specbind-*.toml`や`.claude/agents/specbind-*.md`は
 直接編集せず、設定から作り直します。
 
@@ -342,29 +342,29 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 
 - `.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`のスキル本体
 - `.codex/agents/specbind-*.toml`と`.claude/agents/specbind-*.md`の役割定義
-- CLIが埋め込むprotocolとschema
-- Gate、承認、fingerprint、状態の遷移、必須のトレーサビリティ
+- CLIが埋め込むプロトコルとスキーマ
+- Gate、承認、フィンガープリント、状態の遷移、必須のトレーサビリティ
 - `spec.yaml`、`tasks.yaml`、Roadmapなど、CLIが所有する構造化された状態
 - ルート指示ファイルの中の、SpecBind管理ブロック
 
 プロジェクト固有の方針を足したいときは、スキル本体を書き換えず、目的に応じて
-テンプレート、ルール、adapter、Steeringのどれかに置いてください。
+テンプレート、ルール、アダプター、Steeringのどれかに置いてください。
 
 ## 変更するときの進め方
 
-通常はcoding agentへ目的を伝え、`specbind-configure`に次の一連の作業を任せます。
+通常はコーディングエージェントへ目的を伝え、`specbind-configure`に次の一連の作業を任せます。
 
 1. `configuration show`と関係する`list`、`read`で現在値を確認する。
-2. 目的をテンプレート、ルール、adapter、Steering、install設定の所有面へ分類する。
+2. 目的をテンプレート、ルール、アダプター、Steering、インストール設定の所有面へ分類する。
 3. 変更案と影響を示し、必要な確認を得てプロジェクト所有面だけを変更する。
-4. installの再実行や専用スキルへの委譲を含め、所有する経路で反映する。
-5. 機械的な検証を再実行し、required、recommended、optionalに分けてアフターケアを
+4. インストールの再実行や専用スキルへの委譲を含め、所有する経路で反映する。
+5. 機械的な検証を再実行し、必須（`required`）、推奨（`recommended`）、任意（`optional`）に分けてアフターケアを
    完了または明示的に見送る。
 
 Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果物のスキルが所有します。
 `specbind-configure`はそれらへ委譲しても、依頼された設定変更全体の完了確認と報告を
-引き続き担当します。有効なGit adapterが定める狭いローカルcheckpointは通常の完了手順に
-含まれますが、削除、push、branch変更、tag、履歴操作、外部操作、ライフサイクル変更は
+引き続き担当します。有効なGitアダプターが定める狭いローカルチェックポイントは通常の完了手順に
+含まれますが、削除、`push`、ブランチ変更、タグ、履歴操作、外部操作、ライフサイクル変更は
 別の確認境界です。
 
 インストールされるファイルの全体像は

@@ -21,16 +21,16 @@ cc-sddなど別のSDD製品からの移行ではなく、信頼できる仕様�
 - 永続的なSpecがまだ存在しない
 - アクティブなMilestoneがない
 - Steeringがプロダクト、技術、構造の全体方針を説明している
-- Steeringを含むリポジトリがコミット済みで、worktreeがクリーン
+- Steeringを含むリポジトリがコミット済みで、作業ツリーに未コミットの変更がない
 - 採用対象が「リポジトリ全体」または具体的な領域として指定されている
 
-Steeringがまだなければ、先に`specbind-steering`をbootstrapモードで実行し、
+Steeringがまだなければ、先に`specbind-steering`を`bootstrap`モードで実行し、
 提案された方針を確認してコミットします。
 
 ## 標準ルート
 
 ```text
-Steeringのbootstrapまたは同期
+Steeringの作成または同期
   -> specbind-adopt-existing
   -> Spec境界候補の確認
   -> specbind-discovery
@@ -42,14 +42,14 @@ Steeringのbootstrapまたは同期
   -> specbind-plan-tasks
 ```
 
-最初の実行では、CLIが導入前チェック（preflight）を行い、前提条件がそろって
+最初の実行では、CLIが事前検査（preflight）を行い、前提条件がそろって
 いるかを確認します。
 
 ```sh
 specbind adoption preflight
 ```
 
-成功結果の`source_revision`は、調査の基準として固定するGit commitです。調査中に
+成功結果の`source_revision`は、調査の基準として固定するGitコミットです。調査中に
 実装、テスト、依存関係、設定、またはSteeringが変わった場合、結果を暗黙に
 追従させず停止します。
 
@@ -61,17 +61,17 @@ specbind adoption preflight
 Specを分割します。
 
 Spec境界は、ユーザーが確認するまで作成されません。確認後も、通常の
-`specbind-discovery`がRoadmap scopeをもう一度提示し、MilestoneとSpecの
-CLI-ownedな変更を担当します。
+`specbind-discovery`がRoadmapのスコープをもう一度提示し、MilestoneとSpecについて
+CLIが所有する変更を担当します。
 
-## Observationと意図
+## 観察結果と意図
 
-調査で見つかった挙動（Observation）は、一時ファイル
+調査で見つかった挙動（Observation、以降は「観察結果」）は、一時ファイル
 `.specbind/specs/adoption/reverse-discovery.yaml`（既定。場所は`.specbind.json`の
-`specDir`設定で変わります）にいったん記録されます。各Observationは、固定した
-revision上のパスと、symbol、テスト名、route、schema entryなどの位置を持ちます。
+`specDir`設定で変わります）にいったん記録されます。各観察結果は、固定した
+リビジョン上のパスと、シンボル、テスト名、ルート、スキーマ項目などの位置を持ちます。
 
-各Observationは、意図した仕様なのかどうかで、次のいずれかへ振り分けます。
+各観察結果は、意図した仕様なのかどうかで、次のいずれかへ振り分けます。
 
 | 扱い | 意味 |
 | --- | --- |
@@ -82,9 +82,9 @@ revision上のパスと、symbol、テスト名、route、schema entryなどの�
 | implementation_detail | 仕様化しない内部詳細 |
 | unknown | RequirementsまたはDesignで判断する未確定事項 |
 
-すべてのSpecについてBriefとResearchへの引き継ぎが完了すると、この調査記録
-（プロジェクト単位のdossier）は現在のtreeから削除されます。Git履歴には調査経緯が
-残り、SpecごとのResearchは通常のリリース確定（release finalization）まで
+すべてのSpecについてBriefとResearchへの引き継ぎが完了すると、このプロジェクト単位の
+調査記録は現在のファイル群から削除されます。Git履歴には調査経緯が残り、Specごとの
+Researchは通常のリリース確定処理まで
 保持されます。
 
 ## 通常ライフサイクルへの復帰
@@ -92,7 +92,7 @@ revision上のパスと、symbol、テスト名、route、schema entryなどの�
 採用スキルはRequirementsやDesignを直接作成・承認しません。確認済みの意図を
 Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
 以後は通常の`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を
-使用します。Reverse専用のRequirementsやDesignスキルはありません。
+使用します。既存実装からの採用専用となるRequirementsやDesignスキルはありません。
 
 ## 次に読む
 
@@ -104,4 +104,4 @@ Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで�
 
 ---
 
-[Getting Started](./getting-started.md) | [既存プロジェクトで始める](./start-existing-project.md)
+[はじめに](./getting-started.md) | [既存プロジェクトで始める](./start-existing-project.md)

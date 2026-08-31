@@ -5,7 +5,7 @@
 
 まだ実装を始めていない場合は、[新規プロジェクトで始める](./start-new-project.md)へ
 進んでください。必要な環境とエージェントについては、
-[Getting Started](./getting-started.md)の「どちらのルートでも必要なもの」を
+[はじめに](./getting-started.md)の「どちらのルートでも必要なもの」を
 確認しておいてください。
 
 !!! info "用語について"
@@ -109,17 +109,17 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 
 ### セッションを開き直す
 
-導入したら、対象プロジェクトでcoding agentのセッションを開き直してください。
+導入したら、対象プロジェクトでコーディングエージェントのセッションを開き直してください。
 そうしないと、エージェントが新しいスキルを認識できないことがあります。
 
 以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
 読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
-`specbind-*`というスキル名は同じですが、呼び出し方はagentごとに異なります。
-利用するagentのスキル選択または自動Discoveryの方法に読み替えてください。
+`specbind-*`というスキル名は同じですが、呼び出し方はエージェントごとに異なります。
+利用するエージェントのスキル選択または自動Discoveryの方法に読み替えてください。
 
 ## 3. 設定は既定のまま進める
 
-初回のinstallが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
+初回のインストールが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
 設定レビューを行うよう案内が表示されます。ただし最初は、この案内に従って設定を
 見直す前に、既定値のまま最初の変更を一周することをおすすめします。SpecBindの
 既定のテンプレートや判断基準は、そのまま使えるように設計されています。一周した
@@ -143,7 +143,7 @@ Specへ引き継ぐ専用ワークフローです。今後の変更からSpecBin
 
 このワークフローは、プロダクト・技術・構造の全体方針を説明するSteeringが
 用意されていることを前提にします。まだなければ、先に`specbind-steering`を
-bootstrapモードで実行します。詳しい前提条件と流れは
+`bootstrap`モードで実行します。詳しい前提条件と流れは
 [既存実装からSpecを確立する](./adopt-existing.md)にまとめています。
 
 以下では、これから行う最初の変更を通常のライフサイクルで進めます。
@@ -221,10 +221,10 @@ $specbind-validate-implementation csv-export
 各段階で確認する内容、承認、上流へ戻る場合の扱いは、
 [1件ずつ計画・実装する](./implement-step-by-step.md)にまとめています。
 
-複数のSpecやDirect itemを含むMilestoneでは、`$specbind-plan --all`のあとに
+複数のSpecやDirect項目を含むMilestoneでは、`$specbind-plan --all`のあとに
 `$specbind-drive`を使います。保留、別項目への継続、停止条件は
 [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)を参照してください。
-どちらの経路もRelease前で停止します。
+どちらの経路もリリース前で停止します。
 
 ## 8. 生成された成果物を見る
 
@@ -256,7 +256,7 @@ specbind artifact list csv-export
 ```
 
 周辺ツールやスクリプトからMilestoneとSpecの状態を読む場合に限り、2つの
-statusコマンドはコマンド固有のJSON出力も提供します。通常の利用では既定の
+`status`コマンドはコマンド固有のJSON出力も提供します。通常の利用では既定の
 簡潔なテキスト出力をそのまま使います。
 
 ```sh
@@ -276,4 +276,4 @@ specbind spec status csv-export --json
 
 ---
 
-[Getting Started](./getting-started.md) | [新規プロジェクトで始める](./start-new-project.md)
+[はじめに](./getting-started.md) | [新規プロジェクトで始める](./start-new-project.md)

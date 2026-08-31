@@ -87,7 +87,7 @@ plugins:
                 - リリースする: guide/release.md
                 - カスタマイズ: guide/customization.md
                 - バグ報告と改善提案: guide/feedback.md
-                - Agentの削除とアンインストール: guide/uninstall.md
+                - エージェントの削除とアンインストール: guide/uninstall.md
                 - cc-sddから移行: guide/migrate-from-cc-sdd.md
           nav_translations:
             Home: ホーム
@@ -102,7 +102,7 @@ plugins:
             Release a milestone: リリースする
             Customize SpecBind: カスタマイズ
             Report bugs and suggest improvements: バグ報告と改善提案
-            Remove an Agent or uninstall: Agentの削除とアンインストール
+            Remove an Agent or uninstall: エージェントの削除とアンインストール
             Migrate from cc-sdd: cc-sddから移行
 
 markdown_extensions:
