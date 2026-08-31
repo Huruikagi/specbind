@@ -57,8 +57,8 @@ The inherited cc-sdd skill set mixes product phases, compatibility names, initia
 
 ## Follow-up tracking
 
-- Milestone-wide implementation orchestration is tracked by
-  [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+- Decision 0168 accepts the post-v1 `specbind-drive` orchestration contract;
+  implementation is tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 - A guided customization skill is tracked by
   [Issue #10](https://github.com/Huruikagi/specbind/issues/10).
 

@@ -143,13 +143,16 @@ User request
             -> per-spec requirements and design
             -> one contract review
             -> per-spec tasks approval
-            -> stop; implementation remains per-item in v1
+            -> specbind-drive selects safe reachable delivery work
+            -> per-item implementation and milestone validation
+            -> stop at release readiness
 ```
 
-Milestone-wide implementation orchestration after this stopping point is
-tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9). It must
-compose the existing per-item implementation contract rather than define a
-second progress or validation model.
+Decision 0168 accepts `specbind-drive` as a milestone-wide controller over this
+flow. It composes the existing Plan, per-item implementation, validation, and
+guarded CLI contracts rather than defining a second progress or validation
+model. Its implementation remains tracked by
+[Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 
 ## Existing-system work
 
@@ -188,6 +191,7 @@ layout can be judged as a durable Spec boundary. Gap analysis remains optional.
 | Implementation | Code and tests for one Spec-backed or Direct Roadmap item, progress recording, and maintenance of durable spec-specific knowledge | Silent changes to approved requirements, design, or contract; multi-item orchestration in v1 |
 | Task review | Independent or inline task-level conformance review according to the run-scoped review mode | Spec-level implementation acceptance |
 | Implementation validation | One Spec's complete task integration, full verification, requirements/design/boundary judgment, and run-scoped candidate evidence produced between the Decision 0086 CLI completion calls | Replacing task-level review, directly mutating completion state, or persisting failed attempts |
+| Milestone drive orchestration | Select one status-reported action at a time, delegate its owning workflow, re-read state, park branch-local attention, and continue through independent reachable work | Authoring phase artifacts, defining another progress model, silently expanding authority, concurrent mutation in the first implementation, or release execution |
 | Contract review | Contract-first dependency, ownership, invariant, impact, and downstream analysis, recorded once as accepted project state | Loading Tasks, replacing local Design review, reviewing Direct items, or copying results into per-Spec evidence |
 | Completion verification | Evidence for a specific success claim | Broad design or implementation work |
 | Release agent orchestration | Read the adapter, call stateless `specbind release preflight`, execute project phases, reconcile any external partial success, prepare per-spec summaries when Spec-backed work exists, call whole-milestone CLI finalization, and report outcomes | Treating preflight as mutation authority, claiming a subset release, automatically rolling back external systems, reimplementing lifecycle mutations, or bypassing core gates |
@@ -235,8 +239,8 @@ extensions are tracked explicitly:
 
 - guarded active-Spec scope removal and milestone abandonment in
   [Issue #8](https://github.com/Huruikagi/specbind/issues/8);
-- milestone-wide implementation orchestration in
-  [Issue #9](https://github.com/Huruikagi/specbind/issues/9);
+- implementation of the accepted milestone drive orchestration contract from
+  Decision 0168 in [Issue #9](https://github.com/Huruikagi/specbind/issues/9);
 - established-Spec decomposition and responsibility migration in
   [Issue #6](https://github.com/Huruikagi/specbind/issues/6);
 - capability and Spec retirement in

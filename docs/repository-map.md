@@ -307,3 +307,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0165](./design/decisions/0165-release-binding-preserves-completion.md) | Accepted | Completion-preserving active-Roadmap release binding and rebinding |
 | [0166](./design/decisions/0166-single-english-cc-sdd-migration-guide-url.md) | Accepted | One English cc-sdd migration guide URL for every CLI handoff |
 | [0167](./design/decisions/0167-named-template-creation-outputs.md) | Accepted | Agent-produced named outputs with mechanically validated template references |
+| [0168](./design/decisions/0168-milestone-drive-orchestrator.md) | Accepted | Milestone-wide drive orchestration with branch-local attention and reachable-work continuation |

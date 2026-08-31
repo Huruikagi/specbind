@@ -37,6 +37,7 @@ Related documents:
 - [Decision 0153: unified quick-plan orchestrator](./decisions/0153-unified-quick-plan-orchestrator.md)
 - [Decision 0161: default Plan and phase Skill namespace](./decisions/0161-default-plan-and-phase-skill-namespace.md)
 - [Decision 0154: guided configuration workflow](./decisions/0154-guided-configuration-workflow.md)
+- [Decision 0168: milestone-wide drive orchestrator](./decisions/0168-milestone-drive-orchestrator.md)
 
 Skills that may create Git checkpoints or push read the project-owned
 `settings/adapters/git.md` contract when present. The active default chooses one
@@ -78,6 +79,7 @@ accepted by Decision 0075. Compatibility aliases are not shipped.
 | None | `specbind-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
 | None | `specbind-release` | New | Implemented | Complete a release and close its active milestone. |
 | None | `specbind-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
+| None | `specbind-drive` | New | Accepted | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
 
 This classification now records the implemented v1 migration from the inherited
 set. Future rows should use `Rename` only when responsibility is unchanged;
@@ -181,16 +183,58 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must report an After finalize failure as follow-up work without reopening the finalized milestone.
 - Must consume concise English CLI results and stable codes, then translate or explain them in the user's language when useful. V1 has no JSON output mode under Decision 0074.
 
-## Post-v1 candidates
+## `specbind-drive`
+
+Status: Accepted
+
+Current equivalent: None
+
+### Purpose
+
+Drive an active milestone through safe reachable delivery work without making
+the user resume each owning workflow manually.
+
+### Intended behavior
+
+- Read `specbind milestone status --json` as the authoritative scheduler input.
+- Delegate one action at a time to the existing owning Plan, Implementation,
+  validation, or guarded CLI workflow.
+- Re-read state after every delegation.
+- Park branch-local waits, blocks, external prerequisites, and human decisions
+  in a run-local attention set while independent work remains reachable.
+- Stop at `release_ready`, on an unsafe shared handoff, or after all safe
+  reachable work is exhausted.
+
+### Inputs
+
+- An active milestone.
+- Optional run-scoped authority already supported by an owning workflow.
+
+### Writes
+
+- No driver-owned artifact or progress state.
+- Only the writes performed by the delegated owning workflows under their
+  existing contracts.
+
+### Boundaries
+
+- Does not author phase artifacts or bypass their review and gate contracts.
+- Does not execute release publication or finalization.
+- Does not silently invalidate accepted gates, change scope, reclassify Direct
+  work, or grant itself external or destructive authority.
+- Does not dispatch concurrent mutating workflows in the first implementation.
+- Does not persist its attention set or treat retained context as workflow
+  state.
+
+## Post-v1 implementation tracking
 
 - Existing-implementation adoption from Issue #2 is implemented by
   `specbind-adopt-existing` under Decision 0143. It establishes confirmed Brief
   and Research inputs, then returns to the ordinary phase skills rather than
   adding reverse variants for each phase.
 
-- A milestone-wide implementation orchestrator with dependency-wave and
-  subagent coordination, tracked by
-  [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+- The accepted `specbind-drive` contract from Decision 0168 remains tracked for
+  implementation by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 Agent removal and project uninstall are intentionally CLI-only under Decision
 0141. Their plan-by-default commands provide the exact confirmation surface, so
 they do not add a dedicated product-managed Skill.

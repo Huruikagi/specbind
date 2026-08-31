@@ -248,8 +248,11 @@ The project-local append-only Change Brief behavior is the observed problem, not
 
 Plan's default routing and named and all-Spec scope modes through Tasks approval
 are fixed by Decision 0161. Implementation remains one Roadmap item per
-`specbind-implement` invocation; a milestone-wide implementation orchestrator
-is tracked by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+`specbind-implement` invocation. Decision 0168 accepts `specbind-drive` as the
+thin milestone-wide controller that composes those existing runs, parks
+branch-local attention while independent work remains reachable, and stops
+before release execution. Its implementation is tracked by
+[Issue #9](https://github.com/Huruikagi/specbind/issues/9).
 
 ## Open questions
 
