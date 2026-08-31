@@ -40,8 +40,8 @@ as though it belonged to one of them.
 ## 1. Read the change first
 
 ```sh
-git diff
 git status --short
+git diff
 ```
 
 **The diff is what happened. The report is what someone believes happened.** If

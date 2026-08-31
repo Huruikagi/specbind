@@ -693,6 +693,11 @@ fn task_review_puts_its_no_write_rule_before_commands() {
     assert!(preamble.contains("cannot create\ncaches, coverage data, reports, lockfiles"));
     assert!(preamble.contains("before investigation and\nagain before recording"));
     assert!(body.contains("This is the one permitted repository mutation"));
+    assert!(
+        body.find("git status --short")
+            .expect("initial status capture")
+            < body.find("git diff").expect("diff read")
+    );
     assert!(body.contains("after the\nbefore/after probe status matched"));
 
     for required in [
