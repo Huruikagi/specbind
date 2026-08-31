@@ -251,8 +251,9 @@ are fixed by Decision 0161. Implementation remains one Roadmap item per
 `specbind-implement` invocation. Decision 0168 accepts `specbind-drive` as the
 thin milestone-wide controller that composes those existing runs, parks
 branch-local attention while independent work remains reachable, and stops
-before release execution. Its implementation is tracked by
-[Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+before release execution. It is implemented by the embedded `specbind-drive`
+package; [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains the
+design and implementation history.
 
 ## Open questions
 

@@ -151,8 +151,9 @@ User request
 Decision 0168 accepts `specbind-drive` as a milestone-wide controller over this
 flow. It composes the existing Plan, per-item implementation, validation, and
 guarded CLI contracts rather than defining a second progress or validation
-model. Its implementation remains tracked by
-[Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+model. It is implemented by the embedded `specbind-drive` package; [Issue
+#9](https://github.com/Huruikagi/specbind/issues/9) retains the design and
+implementation history.
 
 ## Existing-system work
 
@@ -239,8 +240,8 @@ extensions are tracked explicitly:
 
 - guarded active-Spec scope removal and milestone abandonment in
   [Issue #8](https://github.com/Huruikagi/specbind/issues/8);
-- implementation of the accepted milestone drive orchestration contract from
-  Decision 0168 in [Issue #9](https://github.com/Huruikagi/specbind/issues/9);
+- follow-up evidence or contract changes for the implemented milestone drive
+  orchestration from Decision 0168 in [Issue #9](https://github.com/Huruikagi/specbind/issues/9);
 - established-Spec decomposition and responsibility migration in
   [Issue #6](https://github.com/Huruikagi/specbind/issues/6);
 - capability and Spec retirement in

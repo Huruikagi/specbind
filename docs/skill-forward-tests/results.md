@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `035f093` | DR1 — pass | [Milestone Drive branch-local attention](./runs/2026-09-01-codex-035f093-drive.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `c012d50` | R6 — pass | [Named template creation outputs](./runs/2026-09-01-codex-c012d50-named-outputs.md) |
 | 2026-08-31 | Codex | session default / fresh-context subagent | `20ca375` | completed-Task status recovery — pass | [Spec status routes to validation](./runs/2026-08-31-codex-20ca375-spec-status-validation.md) |
 | 2026-08-31 | Codex | session default / fresh-context subagents | `1a843d9` | RT1, S5 — pass | [Final v1 recovery confirmations](./runs/2026-08-31-codex-1a843d9-v1-rc3-final.md) |

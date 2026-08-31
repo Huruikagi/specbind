@@ -233,8 +233,9 @@ the user resume each owning workflow manually.
   and Research inputs, then returns to the ordinary phase skills rather than
   adding reverse variants for each phase.
 
-- The accepted `specbind-drive` contract from Decision 0168 remains tracked for
-  implementation by [Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+- The accepted `specbind-drive` contract from Decision 0168 is implemented;
+  [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains its design
+  and implementation history.
 Agent removal and project uninstall are intentionally CLI-only under Decision
 0141. Their plan-by-default commands provide the exact confirmation surface, so
 they do not add a dedicated product-managed Skill.
