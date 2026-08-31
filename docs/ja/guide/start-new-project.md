@@ -191,8 +191,8 @@ Steeringは、プロジェクト全体で長く維持する目的、技術上の
 記録する場所です。空のSteeringも有効なので、最初の範囲を始めるためだけに方針を
 作り足す必要はありません。
 
-すでに決めた長期的な方針がある場合だけ、Discoveryの前に`specbind-steering`へ
-bootstrapを依頼できます。
+すでに決めた長期的な方針がある場合は、Discoveryの前に`specbind-steering`へ
+bootstrapを依頼しておくことができます。
 
 ```text
 $specbind-steering この新規プロジェクトで、すでに決めた長期的な方針から
@@ -208,7 +208,7 @@ $specbind-steering この新規プロジェクトで、すでに決めた長期�
 用意したディレクトリを、最初のリリース範囲としてdiscoveryスキルへ渡します。
 
 ```text
-$specbind-discovery docs/product-definition/ を最初のリリース範囲の入力にして
+$specbind-discovery docs/product-definition/ の内容を最初のリリース範囲としたい
 ```
 
 Discoveryはコレクションを全部棚卸しし、各ファイルをどの作業に使うか、今回は
@@ -216,17 +216,15 @@ Discoveryはコレクションを全部棚卸しし、各ファイルをどの�
 Discoveryの範囲外で、決まっていれば5節のSteering、まだなら後続のDesignで扱います。
 
 Discoveryは、プロジェクトの現在の状態（Spec、Steering、Milestone）を読んだうえで、
-入力を次のどれかに分類します。
-
-- **Direct** — 既存の仕様を変えずにできる小さな変更
-- **既存Specの更新** — すでにある能力の振る舞いや境界を変える
-- **新規Spec** — プロジェクトに新しい責務（Spec）を1つ増やす
+入力を分類します。新規プロジェクトではまだ既存のSpecが無いので、今回の範囲は
+**Direct**（既存の仕様を変えずにできる小さな変更）か **新規Spec**（プロジェクトに
+新しい責務を1つ増やす）のいずれかになります。
 
 Specは「プロジェクトが持ち続ける1つの能力の境界」で、責務を表す短いkebab-caseの
 IDが付きます（用語は[基本概念](./concepts.md)）。今回の範囲がタスク管理と
 リマインダーの2つの責務に分かれるなら、それぞれ別の新規Specになります。
 
-スキルは提案を次の項目で示します。
+分類の結果は、次の項目にまとめて提案されます。
 
 - **Work items** — 今回行う作業の一覧
 - **New Specs** — 新しく作る責務の境界
