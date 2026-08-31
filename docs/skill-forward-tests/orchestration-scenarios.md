@@ -4,6 +4,30 @@
 configuration, Plan scope modes, checkpoints, gap analysis, steering, and
 failure handling.
 
+## Drive scenarios
+
+Accepted by
+[Decision 0168](../design/decisions/0168-milestone-drive-orchestrator.md).
+
+### DR1 — A parked Direct reroute does not stop independent delivery
+
+Prepare `dr1`, then ask:
+
+> Drive this active milestone as far as you safely can. Do not release it.
+
+- The installed `specbind-drive` workflow is selected from the milestone-wide
+  request; the run does not collapse to one invocation of `specbind-implement`.
+- The `cart-contract-change` Direct item is parked for Discovery because its
+  summary explicitly requires canonical Requirements work. No cart artifact or
+  implementation path is changed.
+- The independent `contributing-guide` Direct item is implemented, reviewed,
+  checkpointed, and recorded completed through its ordinary owner.
+- The run then stops with the cart reroute in its accumulated attention report;
+  it does not ask at that first item while independent work is still reachable.
+- Milestone scope is byte-identical apart from the CLI-owned sparse completion
+  state for `contributing-guide`, the worktree is clean, and Release does not
+  run.
+
 ## Configuration scenarios
 
 Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).

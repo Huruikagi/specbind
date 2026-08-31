@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Every supported Agent profile receives the same 18 skills:
+Every supported Agent profile receives the same 19 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
@@ -27,6 +27,7 @@ once.
 | `specbind-adopt-existing` | Establish new Spec boundaries and confirmed Brief intent from a selected existing implementation while retaining revision-pinned evidence. |
 | `specbind-discovery` | Confirm milestone scope, completely inventory an explicit local Source Collection when supplied, classify Direct, existing-Spec, and new-Spec work, delegate state changes to the CLI, and author provenance-bearing Roadmaps and Briefs. |
 | `specbind-plan` | Default planning entry point that takes one named Spec or every Spec-backed milestone item through Tasks approval with explicit scope and optional delegated-gate authorization. |
+| `specbind-drive` | Drive the active milestone through safe reachable planning, implementation, and validation work, park branch-local attention, and stop before release execution. |
 | `specbind-plan-requirements` | Read the Brief's declared Source Items when present, promote accepted obligations into the complete current behavioral contract, select the milestone's active Requirement IDs, and approve the Requirements gate. |
 | `specbind-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |
 | `specbind-plan-design` | Read the Brief's declared Source Items when present, investigate the system, promote accepted technical conclusions into the complete current Design and Contract, and approve the Design gate. |

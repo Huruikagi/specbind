@@ -175,5 +175,6 @@ than trusting a previous conversation or driver report.
 
 ## Implementation status
 
-Accepted but not yet implemented. Implementation remains tracked by
-[Issue #9](https://github.com/Huruikagi/specbind/issues/9).
+Implemented by the embedded `specbind-drive` package, installation registry,
+project routing instructions, mechanical tests, generated reference index, and
+behavioral forward-test scenario. Issue #9 retains the design history.

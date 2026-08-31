@@ -79,7 +79,7 @@ accepted by Decision 0075. Compatibility aliases are not shipped.
 | None | `specbind-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
 | None | `specbind-release` | New | Implemented | Complete a release and close its active milestone. |
 | None | `specbind-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
-| None | `specbind-drive` | New | Accepted | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
+| None | `specbind-drive` | New | Implemented | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
 
 This classification now records the implemented v1 migration from the inherited
 set. Future rows should use `Rename` only when responsibility is unchanged;
@@ -185,7 +185,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 
 ## `specbind-drive`
 
-Status: Accepted
+Status: Implemented
 
 Current equivalent: None
 

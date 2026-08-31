@@ -10,6 +10,10 @@ the only supported writer of machine state.
   Skill.
 - Work through those installed `specbind-*` Skills. Use `specbind-discovery` to
   turn a request into scope, and `specbind-status` to see where work stands.
+- Use `specbind-drive` when the user asks to drive, continue, or advance the
+  active milestone as far as safely possible. It may cross planning,
+  implementation, and validation while preserving each owning Skill. A request
+  to implement one named Roadmap item still uses `specbind-implement`.
 - Use `specbind-plan` as the default planning entry point when the user asks to
   plan active work. It coordinates Requirements through Tasks approval. Use
   `specbind-plan-requirements`, `specbind-plan-design`, or

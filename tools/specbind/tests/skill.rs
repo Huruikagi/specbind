@@ -1,12 +1,13 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 18] = [
+const ACCEPTED_SKILLS: [&str; 19] = [
     "specbind-adopt-existing",
     "specbind-contract-review",
     "specbind-configure",
     "specbind-debug",
     "specbind-discovery",
+    "specbind-drive",
     "specbind-gap-analysis",
     "specbind-implement",
     "specbind-plan",
@@ -21,6 +22,26 @@ const ACCEPTED_SKILLS: [&str; 18] = [
     "specbind-validate-implementation",
     "specbind-verify-completion",
 ];
+
+#[test]
+fn drive_uses_authoritative_actions_and_parks_local_attention() {
+    let drive = skill::find("specbind-drive").expect("drive skill");
+    let metadata = drive.metadata().expect("drive metadata");
+    assert!(metadata.description.contains("safe reachable"));
+    let body = drive.body().expect("drive body");
+    for required in [
+        "specbind milestone status --json",
+        "CONTINUE_ELSEWHERE",
+        "STOP_RUN",
+        "HUMAN_DECISION",
+        "Create no queue, checkpoint, batch status, or authority artifact.",
+        "Never dispatch",
+        "`specbind-release`",
+        "One mutating owner at a time",
+    ] {
+        assert!(body.contains(required), "drive must contain {required}");
+    }
+}
 
 #[test]
 fn embeds_the_accepted_skill_set_with_valid_metadata() {

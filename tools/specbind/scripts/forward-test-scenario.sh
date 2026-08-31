@@ -15,6 +15,7 @@
 #
 # Scenarios:
 #   base   the fixture as built, nothing added
+#   dr1    two independent Direct items; one requires a Spec reroute
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
 #   d9     base plus an uncommitted edit to an owned file
@@ -1144,6 +1145,43 @@ i3)
         '! specbind adapter read git | grep -q "specbind:instruction"'
     expect "the Direct checkpoint policy is missing" \
         'specbind adapter read git | grep -q "immediately before its completion handshake"'
+    ;;
+
+dr1)
+    milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"cart-contract-change","summary":"Change cart observable behavior and update its canonical Requirements to cap quantities at 99."},{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
+    {
+        echo "---"
+        echo "type: SpecBind Git Adapter"
+        echo "---"
+        echo
+        echo "# Git adapter"
+        echo
+        echo "## When to checkpoint"
+        echo
+        echo "Commit each reviewed Direct implementation before its completion handshake."
+        echo "After successful Direct completion, commit its CLI-owned Roadmap metadata separately."
+        echo
+        echo "## What to include"
+        echo
+        echo "Include only the current Direct implementation paths, then only the active Roadmap for its metadata checkpoint."
+        echo
+        echo "## Commit messages"
+        echo
+        echo 'Prefix implementation with `direct:` and metadata with `state:`.'
+        echo
+        echo "## Branches and pushing"
+        echo
+        echo "Stay on the current branch and never push."
+    } > .specbind/settings/adapters/git.md
+    git add .specbind/settings/adapters/git.md
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Configure Drive checkpoints"
+    expect "the Drive fixture does not expose two implementation actions" \
+        'test "$(specbind milestone status --json | grep -o '"'"'"action":"implementation"'"'"' | wc -l | tr -d " ")" = 2'
+    expect "the contributing guide already exists" \
+        '! test -e CONTRIBUTING.md'
+    expect "the cart Requirements already contain the cap" \
+        '! grep -q "above 99" .specbind/specs/cart/requirements.md'
     ;;
 
 d10 | x4)
