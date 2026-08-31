@@ -68,6 +68,7 @@ nav:
               - 既存プロジェクトで始める: ja/guide/start-existing-project.md
           - 基本概念: ja/guide/concepts.md
           - 既存実装からSpecを確立する: ja/guide/adopt-existing.md
+          - リリースする: ja/guide/release.md
           - カスタマイズ: ja/guide/customization.md
           - バグ報告と改善提案: ja/guide/feedback.md
           - Agentの削除とアンインストール: ja/guide/uninstall.md
