@@ -18,10 +18,34 @@ one — which layer owns persistence, what may call what, which parts are
 generated. These are the statements that decide where new work goes.
 -->
 
-## Stack
+## Technology foundation
+
+<!-- specbind:instruction maintain
+Record languages, runtimes, frameworks, and execution environments that affect
+later decisions, together with the role each plays. Do not duplicate dependency
+or version inventories available from manifests.
+-->
 
 ## Decisions and their reasons
 
+<!-- specbind:instruction maintain
+For each consequential choice that had viable alternatives, state the selected
+direction, why it was selected, and what it protects. Omit choices obvious from
+the current setup that do not constrain future decisions.
+-->
+
 ## Constraints every change inherits
 
-## Verification
+<!-- specbind:instruction maintain
+Record dependency direction, generated assets, persistence, compatibility, and
+supported-environment boundaries that no change may violate. Delete this
+section when every such constraint is already clear beside its decision.
+-->
+
+## Standard verification
+
+<!-- specbind:instruction maintain
+Record project-wide verification layers, standard commands, and required
+environments. Keep verification specific to one Spec in its Design. Delete this
+section when the project has no settled shared standard yet.
+-->

@@ -391,6 +391,61 @@ fn ui_scaffolds_cover_multiple_screens_and_design_system_application() {
 }
 
 #[test]
+fn default_markdown_scaffolds_guide_every_top_level_section() {
+    for language in [ProjectLanguage::En, ProjectLanguage::Ja] {
+        let root = tempfile::tempdir().expect("temporary SpecBind root");
+        for selector in [
+            "brief",
+            "research",
+            "requirements",
+            "design/main",
+            "design/ui",
+            "implementation-notes/main",
+        ] {
+            let content = template::read_spec_template(root.path(), language, selector)
+                .expect("read spec template")
+                .0;
+            assert_h2_sections_have_maintenance_guidance(language, selector, &content);
+        }
+
+        let roadmap = template::read_milestone_template(root.path(), language, "roadmap")
+            .expect("read roadmap template")
+            .0;
+        assert_h2_sections_have_maintenance_guidance(language, "roadmap", &roadmap);
+
+        for selector in ["document", "product", "tech", "structure"] {
+            let content = template::read_steering_template(root.path(), language, selector)
+                .expect("read steering template")
+                .0;
+            assert_h2_sections_have_maintenance_guidance(
+                language,
+                &format!("steering/{selector}"),
+                &content,
+            );
+        }
+    }
+}
+
+fn assert_h2_sections_have_maintenance_guidance(
+    language: ProjectLanguage,
+    selector: &str,
+    content: &str,
+) {
+    let sections = content.split("\n## ").skip(1).collect::<Vec<_>>();
+    assert!(
+        !sections.is_empty(),
+        "{language:?} {selector} has no H2 scaffold sections"
+    );
+    for section in sections {
+        let heading = section.lines().next().unwrap_or_default();
+        assert!(
+            section.contains("specbind:instruction maintain"),
+            "{language:?} {selector} section {heading:?} has no maintenance guidance"
+        );
+    }
+}
+
+#[test]
 fn accepts_arbitrary_bound_variables_and_rejects_binding_faults() {
     let cases = [
         (

@@ -23,15 +23,49 @@ explains the request, boundaries, decomposition, and reasoning behind them.
 
 ## Milestone-wide change request
 
+<!-- specbind:instruction maintain
+Explain why this milestone is one delivery and state the request shared across
+its work items. Do not duplicate each Spec's Requirements or the Front Matter
+work-item inventory.
+-->
+
 ## Desired outcome
+
+<!-- specbind:instruction maintain
+State what is true for users or the project when the whole milestone is
+complete. Do not enumerate completion conditions for individual work items.
+-->
 
 ## Approach and decomposition decisions
 
+<!-- specbind:instruction maintain
+Explain the boundaries used to split the request into Specs or Direct work items
+and why those pieces ship together. Delete this section for one work item whose
+decomposition needs no additional explanation.
+-->
+
 ## Scope boundaries
+
+<!-- specbind:instruction maintain
+Describe what this delivery includes and which adjacent work it excludes at
+milestone scope. Keep detailed responsibility boundaries inside each Spec's
+Requirements.
+-->
 
 ## Dependency and ordering rationale
 
+<!-- specbind:instruction maintain
+Explain non-obvious reasons behind Front Matter dependencies or ordering,
+shared prerequisites, and boundaries that prevent parallel work. Delete this
+section when there is no dependency or ordering decision to explain.
+-->
+
 ## Constraints and unresolved questions
+
+<!-- specbind:instruction maintain
+Record milestone-wide deadlines, external conditions, unresolved decisions, and
+when they block the next work. Delete this section when none apply.
+-->
 
 ## Source collection and coverage
 

@@ -65,7 +65,8 @@ users, and main entry point. Keep item and state details in each screen's
 Describe transitions between screens and cross-screen operations such as back,
 cancel, and resume. Keep operations contained within one screen under that
 screen's "Actions and outcomes" section. Use a flow diagram only when prose or
-a table would leave the relationship easy to misread.
+a table would leave the relationship easy to misread. Delete this section when
+there is no cross-screen flow.
 -->
 
 ## Screen design
@@ -119,7 +120,8 @@ for a shared cross-screen flow.
 <!-- specbind:instruction maintain
 Describe applicable loading, empty, error, and unavailable states together with
 input-validation timing, placement, and recovery after correction. Do not
-invent states merely to fill a checklist.
+invent states merely to fill a checklist. Delete this subsection for a screen
+with no distinct state or input behavior.
 -->
 
 #### Layout and information hierarchy
@@ -129,7 +131,8 @@ Describe the spatial relationship of major regions, the priority of information
 and actions, and composition changes across viewport widths. Use a simple ASCII
 wireframe only when prose or a table would make the spatial relationship easy
 to misread. Treat it as a structural aid, not a pixel, color, or visual-finish
-specification.
+specification. Delete this subsection when the existing design system applies
+without a screen-specific decision.
 -->
 
 ## Responsive behavior
@@ -138,7 +141,8 @@ specification.
 Record shared breakpoint reasoning, input-method differences, and the
 information priority preserved through rearrangement rather than simple hiding.
 Keep screen-specific composition changes under that screen's "Layout and
-information hierarchy" section.
+information hierarchy" section. Delete this section when the Spec adds or
+changes nothing from the design system's shared responsive behavior.
 -->
 
 ## Accessibility
@@ -146,7 +150,8 @@ information hierarchy" section.
 <!-- specbind:instruction maintain
 State the keyboard, focus order, assistive reading, contrast, reduced-motion, or
 other usage guarantees this Spec provides. Do not duplicate common design-system
-standards; describe their application and any exception.
+standards; describe their application and any exception. Delete this section
+when the Spec adds or changes no accessibility guarantee.
 -->
 
 ## Component, data, and service boundaries

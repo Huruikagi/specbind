@@ -17,10 +17,34 @@ file goes, how things are named, which direction dependencies run. A pattern
 stated once covers directories nobody has created yet.
 -->
 
-## How the tree is organized
+## Organization principles
+
+<!-- specbind:instruction maintain
+Describe the axis by which code and assets are divided, such as responsibility,
+layer, or capability. Do not copy the directory tree; state principles that also
+apply to locations not created yet.
+-->
 
 ## Naming
 
+<!-- specbind:instruction maintain
+Record only naming rules needed to infer an element's role or placement. Omit
+language defaults and formatting owned by tools. Delete this section when the
+project has no distinct naming decision.
+-->
+
 ## Where new work goes
 
+<!-- specbind:instruction maintain
+Explain how to decide which boundary owns a new responsibility and when to add
+to an existing boundary or create one. Give criteria usable for unknown future
+changes rather than a current directory inventory.
+-->
+
 ## Conventions worth an example
+
+<!-- specbind:instruction maintain
+Give one representative placement or naming example when the principle alone is
+easy to misapply. Delete this section when a newcomer can place new work without
+an example.
+-->

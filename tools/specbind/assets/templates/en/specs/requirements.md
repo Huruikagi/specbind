@@ -33,11 +33,34 @@ requirement.
 
 ## Context
 
+<!-- specbind:instruction maintain
+Briefly state the user or system need this Spec serves and the context needed to
+understand its complete current behavior. Do not record change history or an
+implementation proposal.
+-->
+
 ## Scope
+
+<!-- specbind:instruction maintain
+Define the boundary of behavior this Spec currently owns. Express in-scope and
+out-of-scope items as responsibilities to users or systems rather than adjacent
+Specs or implementation areas.
+-->
 
 ### In scope
 
+<!-- specbind:instruction maintain
+List the responsibilities this Spec accepts. Do not introduce work that has no
+corresponding Requirement below.
+-->
+
 ### Out of scope
+
+<!-- specbind:instruction maintain
+Record only responsibilities that could reasonably be mistaken as in scope but
+that this Spec deliberately does not own. Delete this subsection when there is
+no meaningful exclusion.
+-->
 
 ## Requirements
 
@@ -46,4 +69,11 @@ Replace this empty section with at least one real Requirement before writing the
 live artifact. Use `### Requirement N: Title`, an optional objective, then
 `#### Acceptance Criteria` and a non-empty ordered list. The empty scaffold is
 deliberately not a valid live Requirements artifact.
+-->
+
+<!-- specbind:instruction maintain
+Make each Requirement group one cohesive responsibility and its acceptance
+criteria the observable contract for that responsibility. Do not duplicate the
+same behavior in Context or Scope. If no current Requirement remains, do not
+save an empty document; revisit the Spec's responsibility and lifecycle.
 -->

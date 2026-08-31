@@ -27,3 +27,18 @@ Requirements, Design, and Contract documents do not already carry.
 Treat this as implementation memory, not specification authority. This document
 is never an approval gate input.
 -->
+
+## Implementation cautions
+
+<!-- specbind:instruction maintain
+Give each independently useful topic a descriptive H3 heading. Keep together
+the fact, reason, impact, and verification or workaround the next implementer
+needs. Remove activity history, facts obvious from current code, and decisions
+already owned by Requirements, Design, or Contract. When no caution remains,
+do not preserve an empty section; consider removing this document itself.
+-->
+
+<!-- specbind:instruction create
+Replace the empty section with at least one real H3 heading and substantive
+implementation caution. Do not save a headings-only live artifact.
+-->
