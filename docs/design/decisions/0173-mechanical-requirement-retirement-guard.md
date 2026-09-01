@@ -31,6 +31,13 @@ Failure to read or parse the established baseline artifact fails closed with
 `SPEC_REQUIREMENTS_BASELINE_READ_FAILED`. A `new_specs` participant has no
 baseline Requirements artifact and is not subject to this comparison.
 
+When the retirement diagnostic rejects an authoring phase's first approval
+attempt, no invalidation is needed because no gate transition occurred. The
+Requirements Skill restores the named IDs and unaffected behavior, repeats its
+semantic and traceability checks, and retries approval once. A repeated
+diagnostic stops the phase. A baseline-read failure is not recoverable by
+rewriting the live artifact and stops immediately.
+
 The mechanical guard supplements rather than replaces the Skill's semantic
 preservation ledger. Canonical IDs can prove that an obligation slot survived;
 the authoring review must still prove that unaffected behavior was not narrowed

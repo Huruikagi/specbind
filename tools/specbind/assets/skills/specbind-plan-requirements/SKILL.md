@@ -325,6 +325,15 @@ authority. Without either form, present your result and stop.
 Never approve to resolve a failing check. A refused approval is information
 about the artifact; report the diagnostic rather than working around it.
 
+`SPEC_REQUIREMENTS_RETIREMENT_UNSUPPORTED` means the approval wrote no gate
+evidence and the Spec remains in Requirements. It is mechanical confirmation
+that this phase's preservation preflight failed, not a reason to invalidate a
+gate. Restore every named baseline ID and its unaffected behavior from the
+original maintain projection, repeat the complete preservation reconciliation
+and traceability check, then retry approval once. If the diagnostic repeats,
+stop. `SPEC_REQUIREMENTS_BASELINE_READ_FAILED` is not authoring feedback; stop
+without retry because the immutable comparison source is unavailable.
+
 ## 6. Checkpoint
 
 Only after the approval succeeds is this work eligible to commit. A draft you

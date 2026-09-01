@@ -630,6 +630,10 @@ fn requirements_audits_existing_obligations_before_approval() {
     assert!(body.contains("repeat the preservation-ledger reconciliation"));
     assert!(body.contains("discovering a loss after approval is a failed workflow"));
     assert!(body.contains("Do not create a Requirement solely to require tests"));
+    assert!(body.contains("`SPEC_REQUIREMENTS_RETIREMENT_UNSUPPORTED`"));
+    assert!(body.contains("not a reason to invalidate a\ngate"));
+    assert!(body.contains("retry approval once"));
+    assert!(body.contains("`SPEC_REQUIREMENTS_BASELINE_READ_FAILED`"));
 }
 
 #[test]
