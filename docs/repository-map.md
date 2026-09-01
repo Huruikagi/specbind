@@ -127,10 +127,16 @@ repository root to verify it locally.
 | [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
 | [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement dashboard, run archive, findings worklist, and scenario contracts for embedded skills |
 
-This repository's behavioral verification skill lives at `.agents/skills/specbind-forward-test/`.
-The bilingual documentation maintenance skill lives at
-`.agents/skills/specbind-sync-docs/`. Both are repository development assets
-and are never installed into a consumer project.
+This repository's development Skills are:
+
+- `.agents/skills/specbind-forward-test/` for behavioral verification of
+  embedded product Skills;
+- `.agents/skills/specbind-sync-docs/` for bilingual public-documentation
+  maintenance; and
+- `.agents/skills/specbind-resolve-dogfooding/` for triage, product fixes,
+  delivery, and Issue disposition of maintainer dogfooding findings.
+
+They are never installed into a consumer project.
 
 ## Decision records
 
