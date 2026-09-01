@@ -11,14 +11,13 @@ fixture.
 
 | ID | First seen | Scenario | Finding | Evidence | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
-| FT-0013 | `dfd858e` | R8 | Requirements authoring can treat the active Roadmap as a Steering document even though `steering list` excludes it, then stop on an invalid selector. | Two fresh Codex drivers read the two listed Steering documents, additionally ran `steering read roadmap --for consume`, received `STEERING_READ_INVALID`, and stopped before authoring. | Make the listed Steering inventory a closed read set and distinguish the Roadmap stored beside it, then rerun R8. |
+| None | — | — | — | — | — |
 
 ## Fixed, behavioral confirmation pending
 
 | ID | First seen | Scenario | Finding | Resolution | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
-| FT-0011 | `388b8bc` | R8 | Requirements authoring can mistake an intentionally abstract before/after boundary for missing information and stop instead of preserving its stated abstraction. | `dfd858e` requires preserving an abstract but observable before/after boundary without inventing its duration, trigger, or closing event. | Rerun R8 after FT-0013 no longer stops the workflow before authoring. |
-| FT-0012 | `c012d50` | R6, R8 | The new-Spec path can issue a Contract read even though the Skill already says no Contract exists before Design. | `dfd858e` forbids a Contract read on the new-Spec branch and uses `artifact list` as the existing-Spec existence check. | Rerun a new-Spec Requirements scenario after FT-0013 no longer stops the workflow before authoring. |
+| FT-0015 | `78ec888` | HP1 | A phase-owned deferred Design finding can make the bounded dirty handoff fail before independent validation. | `d68ae66` admits only the exact active deferred-adapter destination alongside Design and Contract, then checkpoints it after READY approval. | Rerun HP1 through Design validation when the host permits fresh phase execution. |
 
 ## Resolved after migration
 
@@ -37,6 +36,12 @@ Historical resolved findings through 2026-08-30 remain in the
 | FT-0008 | `d993293` | S5 | Steering authoring said not to read milestone state while requiring a completion-safety status preflight. | `7e6fd42` limits status to write-safety and excludes it from content evidence. | `1a843d9`: fresh authoring used status only for safety; independent readers supplied content evidence. |
 | FT-0009 | `8aaa198` | RT1 | Review prose required initial status capture, but its command example listed the diff first. | `1a843d9` puts `git status --short` before `git diff` and tests that order. | `1a843d9`: fresh deferred review followed the aligned order and reported no ambiguity. |
 | FT-0010 | `8aaa198` | HP1 | After every Task completed, `spec status` still reported implementation while milestone status routed to validation. | `20ca375` derives per-Spec validation when no Task is pending or blocked and tests text plus JSON output. | `20ca375`: at the same completed-Task fixture revision, fresh CLI reads agreed on validation and left the worktree clean. |
+| FT-0011 | `388b8bc` | R8 | Requirements authoring can mistake an intentionally abstract before/after boundary for missing information and stop instead of preserving its stated abstraction. | `dfd858e` requires preserving an abstract but observable boundary without invention. | `78ec888`: fresh R8 authored and approved the intended Japanese before/after contract. |
+| FT-0012 | `c012d50` | R6, R8 | The new-Spec path can issue a Contract read before Design creates one. | `dfd858e` forbids that read and uses artifact inventory only on the existing-Spec branch. | `78ec888`: fresh R8 completed new-Spec Requirements without the Contract probe. |
+| FT-0013 | `dfd858e` | R8 | Requirements can infer the active Roadmap as an unlisted Steering selector. | `42724f6` makes `steering list` the closed set and explicitly excludes the Roadmap. | `78ec888`: fresh R8 read only the listed Steering documents and completed. |
+| FT-0014 | `42724f6` | R8 | Requirements can infer a writable path from artifact inventory instead of the configured template target. | `78ec888` requires `template resolve` and the exact `Project path`. | `78ec888`: only `.specbind/specs/order/requirements.md` was written. |
+| FT-0016 | `d68ae66` | HP1 | Fresh Plan phases can select another `specbind` when project-local execution context is omitted. | `57ec8f6` carries working directory, executable, version, PATH facts, and forbids fallback. | `3b294db`: the fresh Design receiver named the exact fixture CLI and stopped on environment denial instead of selecting another binary. |
+| FT-0017 | `57ec8f6` | HP1 | Existing Requirements preservation can be detected only after approval, after baseline IDs were lost. | `3b294db` combines a pre-approval ledger with CLI baseline-ID rejection and one bounded repair. | `3b294db`: fresh Requirements retained all five baseline IDs, added `1.4`, kept tests out of Requirements, and reached approval with no loss. |
 
 ## Active environment limitations
 
@@ -45,7 +50,7 @@ Historical resolved findings through 2026-08-30 remain in the
 | ENV-0001 | A Claude Code Agent-tool subagent does not see fixture-installed Skills in its registry. | A fallback that reads the packaged `SKILL.md` can measure the body, but not platform selection or dispatch. A run that instead infers commands is environment-invalid. |
 | ENV-0002 | The Claude Code driver appends its own status line after the agent report. | Exact terminal result blocks must be judged before the harness-owned line; the extra line is not Skill output. |
 | ENV-0003 | A Claude Code Agent-tool subagent refuses approval relayed by the driving session. | Authoring scenarios that cross approval are environment-blocked at the draft boundary unless consent comes from the user through a valid channel. |
-| ENV-0004 | A Codex subagent's host safety layer can reject an exact explicit gate approval relayed by the driving session. | Judge the authored artifact before the boundary and, when the maintainer has explicitly approved the exact artifact and IDs, record any driving-session execution separately from agent behavior. |
+| ENV-0004 | A Codex subagent's host safety layer can reject an exact approved lifecycle mutation or a project-local CLI check relayed by the driving session. | Judge work before the boundary; execute only an explicitly approved exact mutation separately when permitted, and classify a blocked fresh-phase CLI check as environment-blocked without binary fallback. |
 
 Remove an environment row when it no longer affects interpretation. Do not move
 it into the product finding lifecycle merely because it recurs.

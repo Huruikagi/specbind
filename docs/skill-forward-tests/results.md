@@ -14,6 +14,13 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `3b294db` | HP1 — environment blocked after correct Requirements preservation | [Final RC planning journey](./runs/2026-09-01-codex-3b294db-hp1.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `8ee613d` | HP1 — environment blocked; split planning product failure retained | [Requirements semantic preflight](./runs/2026-09-01-codex-8ee613d-hp1.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `57ec8f6` | HP1 — product failure | [Requirements preservation ordering](./runs/2026-09-01-codex-57ec8f6-hp1.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `d68ae66` | HP1 — product failure | [Project-local CLI dispatch](./runs/2026-09-01-codex-d68ae66-hp1.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `78ec888` | R8 — pass; HP1 — product failure | [Requirements recovery and Design handoff](./runs/2026-09-01-codex-78ec888-planning.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `42724f6` | R8 — product failure; blocked attempt retained | [Resolved Requirements path routing](./runs/2026-09-01-codex-42724f6-r8.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `b8485c2` | HP1 — environment invalid/blocked | [Initial RC journey attempts](./runs/2026-09-01-codex-b8485c2-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `dfd858e` | R8 — product failure; environment-invalid fallback retained | [Requirements finding remediation](./runs/2026-09-01-codex-dfd858e-requirements.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `388b8bc` | R8 — pass | [Japanese language-style Rule](./runs/2026-09-01-codex-388b8bc-language-style.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `035f093` | DR1 — pass | [Milestone Drive branch-local attention](./runs/2026-09-01-codex-035f093-drive.md) |
@@ -65,8 +72,8 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 1
-- Fixed, behavioral confirmation pending: 2
+- Open reproduced product findings: 0
+- Fixed, behavioral confirmation pending: 1
 - Active environment limitations: 4
 
 The authoritative rows and stable identifiers are in

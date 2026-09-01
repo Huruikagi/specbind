@@ -1300,10 +1300,12 @@ fn resolve(root: &clap::Command, skill: &str, invocation: &[String]) {
             continue;
         };
         let name = long.split('=').next().unwrap_or(long);
+        let clap_builtin = index == 0 && matches!(name, "help" | "version");
         assert!(
-            command
-                .get_arguments()
-                .any(|argument| argument.get_long() == Some(name)),
+            clap_builtin
+                || command
+                    .get_arguments()
+                    .any(|argument| argument.get_long() == Some(name)),
             "{skill}: `specbind {}` uses unknown option --{name}",
             invocation.join(" ")
         );
