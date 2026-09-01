@@ -20,8 +20,8 @@ pub use apply::apply;
 pub use input::read_installed_config;
 
 use assets::{
-    adapter_entries, agent_role_entries, config_entry, project_instruction_entries, rule_entries,
-    skill_entries, template_entries,
+    adapter_entries, agent_role_entries, config_entry, project_instruction_entries,
+    retired_skill_entries, rule_entries, skill_entries, template_entries,
 };
 use guard::require_replaceable_repository;
 use input::{read_existing_config, resolve_inputs};
@@ -76,6 +76,8 @@ pub enum PlanAction {
     Replace,
     /// The target exists and is left untouched because the project owns it.
     Keep,
+    /// A retired exact product-managed file exists and would be removed.
+    Remove,
 }
 
 impl PlanAction {
@@ -85,6 +87,7 @@ impl PlanAction {
             Self::Create => "create",
             Self::Replace => "replace",
             Self::Keep => "keep",
+            Self::Remove => "remove",
         }
     }
 }
@@ -126,7 +129,7 @@ pub struct InstallPlan {
 
 impl InstallPlan {
     #[must_use]
-    pub fn counts(&self) -> (usize, usize, usize) {
+    pub fn counts(&self) -> (usize, usize, usize, usize) {
         let count = |action: PlanAction| {
             self.entries
                 .iter()
@@ -137,6 +140,7 @@ impl InstallPlan {
             count(PlanAction::Create),
             count(PlanAction::Replace),
             count(PlanAction::Keep),
+            count(PlanAction::Remove),
         )
     }
 }
@@ -192,11 +196,12 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     entries.extend(rule_entries(project_root, &resolved)?);
     entries.extend(adapter_entries(project_root, &resolved)?);
     entries.extend(skill_entries(project_root, &resolved)?);
+    entries.extend(retired_skill_entries(project_root, &resolved)?);
     entries.extend(agent_role_entries(project_root, &resolved)?);
     entries.extend(project_instruction_entries(project_root, &resolved)?);
     if entries
         .iter()
-        .any(|entry| entry.action == PlanAction::Replace)
+        .any(|entry| matches!(entry.action, PlanAction::Replace | PlanAction::Remove))
     {
         require_replaceable_repository(project_root)?;
     }

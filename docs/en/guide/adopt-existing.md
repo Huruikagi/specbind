@@ -30,9 +30,7 @@ Bootstrap or synchronize Steering
   -> create Specs and Briefs
   -> resume specbind-adopt-existing
   -> confirm observations and intent per Spec
-  -> specbind-plan-requirements
-  -> specbind-plan-design
-  -> specbind-plan-tasks
+  -> specbind-plan
 ```
 
 The first run checks adoption prerequisites with:
@@ -81,8 +79,9 @@ history, and each Spec's Research remains until normal release finalization.
 
 Adoption does not author or approve Requirements or Design. It stops after
 handing confirmed intent to the Brief and implementation evidence and design
-constraints to Research. Continue with the ordinary Requirements, Design, and
-Tasks planning Skills; there are no reverse-specific authoring Skills.
+constraints to Research. Continue with `specbind-plan` through the ordinary
+Requirements, Design, and Tasks phases; there are no reverse-specific
+authoring Skills.
 
 ## Next
 

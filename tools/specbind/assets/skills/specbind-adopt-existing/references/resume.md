@@ -115,5 +115,5 @@ adapter-directed commit; push is never inferred.
 Report each Spec as ready for its normal next command:
 
 ```text
-specbind-plan-requirements <spec>
+specbind-plan <spec> requirements
 ```

@@ -1,14 +1,14 @@
 ---
 name: specbind-plan
-description: Orchestrate planning by default whenever the user asks to plan active work or take it through approved task plans. Supports one named Spec or explicitly all Specs; when neither scope is stated, ask before any phase work.
-argument-hint: "[<spec> | --all]"
+description: Plan active Spec work through Requirements, Design, Contract Review, and Tasks, or run one explicitly requested planning phase for one named Spec. Ordinary planning uses one named Spec or explicit all-Spec scope.
+argument-hint: "[<spec> | --all] [requirements|design|tasks]"
 ---
 
-# Take an explicit scope through to approved task plans
+# Plan active Spec work
 
 ## Apply project language style
 
-Before authoring any artifact or user-facing prose, read:
+Before authoring orchestration or user-facing prose, read:
 
 ```sh
 specbind rule read language-style --for consume
@@ -17,22 +17,52 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-Select this Skill as the default planning entry point before any individual
-phase Skill whenever the request asks to plan active work. It owns the complete
-route from Requirements through Tasks approval. This routing applies even when
-the request names neither a Spec nor all Specs. Do not infer the current
-actionable phase and start it directly; establish planning scope first.
+Select this Skill for every planning request. It owns both the complete route
+from Requirements through Tasks approval and an explicitly requested single
+Requirements, Design, or Tasks phase. The phase procedures are references in
+this package, not separately selectable Skills.
 
-Orchestrate planning for either one named Spec or every Spec-backed
+For the complete route, orchestrate either one named Spec or every Spec-backed
 participant in the active milestone. **You orchestrate and stay light.** The
-phase skills author everything, the CLI owns every state change, and dispatched
-runs do the artifact reading.
+phase receivers author everything, the CLI owns every state change, and
+dispatched runs do the artifact reading.
 
 Delegation changes approval pauses, not checks. Named and all-Spec scope, and
 delegated and explicit approval, use the same phases, gates, reviews, protocols,
 and guards.
 
-## 1. Establish the scope before doing work
+## 1. Select complete or single-phase mode
+
+Use **single-phase mode** only when the maintainer explicitly asks to author,
+revise, resume, or rerun exactly one of Requirements, Design, or Tasks for one
+named Spec. The request must identify both the Spec and the phase. A request to
+plan, continue planning, finish planning, or take work to an approved plan is
+the **complete route**, even when the CLI currently reports one phase as
+actionable. Never infer single-phase mode from lifecycle state.
+
+If a single-phase request omits the Spec or names more than one phase, read
+milestone status only to present the exact missing choices, then stop for the
+maintainer's selection. Single-phase mode never expands to another Spec or
+silently continues to a later phase.
+
+For a valid single-phase request, also run `specbind spec status <spec>` and
+reject a Direct item. Then read exactly one procedure completely:
+
+- Requirements: [Requirements phase](references/requirements.md)
+- Design and Contract: [Design phase](references/design.md)
+- Tasks: [Tasks phase](references/tasks.md)
+
+Follow that procedure with the authority the maintainer supplied and stop after
+its phase result. The selected procedure owns its artifact inputs, gate,
+checkpoint, rewind boundaries, and response. Do not apply the complete-route
+scope question, delegation bundle, scheduler, Design validation sequence, or
+Contract Review unless the selected procedure itself routes to one of those
+independent owners. An explicit phase request is not gate approval unless it
+also explicitly authorizes that gate after the procedure's stated consequences.
+
+The remaining sections define the complete route.
+
+## 2. Establish complete-route scope before doing work
 
 ```sh
 specbind milestone status
@@ -66,7 +96,7 @@ and stop if the target is Direct. In all scope, exclude Direct items and report
 them at the end as remaining work. If no milestone is active, say so and stop;
 scope belongs to discovery.
 
-## 2. Get delegation authorized
+## 3. Get delegation authorized
 
 Once scope is explicit, present before doing anything:
 
@@ -88,7 +118,7 @@ Delegation never covers invalidating an approved gate. If the run discovers a
 rewind is needed, stop and ask. It also does not accept the Contract Review:
 that review requires no approval authority.
 
-## 3. Follow the CLI's phase-relative scheduling
+## 4. Follow the CLI's phase-relative scheduling
 
 The phases do not share one dependency shape:
 
@@ -110,7 +140,7 @@ the global barrier. If outside-scope work must progress before the selected item
 can reach Tasks approval, report that blocker and stop. An explicit all-scope
 request or discovery owns scope expansion.
 
-## 4. Run the owned phases
+## 5. Run the owned phases
 
 Before the first dispatch, establish the exact project working directory and
 confirm `specbind --version` from there. Record the executable resolution and
@@ -118,7 +148,8 @@ any project-local `PATH` entry or equivalent environment fact required to
 reproduce that same resolution. Do not assume a fresh receiver inherits the
 orchestrator's current directory or process environment.
 
-Each phase is a fresh dispatch. Give it the Spec identity, phase, and, when
+Each phase is a fresh dispatch. Give it the Spec identity, phase, the exact
+installed path to the applicable reference in this package, and, when
 delegation was accepted, the workflow name `specbind-plan` plus the
 authorized gate names. It reads its own artifact inputs; authorization omitted
 from the dispatch does not reach it. Also give every phase, Design validator,
@@ -140,18 +171,22 @@ skill, scope, or authority. Fallback is only for an absent role. A configured
 role whose model cannot start is an environment failure, not permission to
 change models.
 
+The receiver reads the named reference completely and follows it as the phase
+procedure. Do not assume that a fresh receiver can discover or invoke another
+Skill, and do not inline or summarize the reference in its brief.
+
 Per item, in order:
 
-1. `specbind-plan-requirements` — Requirements and its gate
-2. `specbind-plan-design` without Design-gate authority — Design set and Contract;
+1. [Requirements phase](references/requirements.md) — Requirements and its gate
+2. [Design phase](references/design.md) without Design-gate authority — Design set and Contract;
    stop before approval and checkpoint
 3. `specbind-validate-design` — an independent verdict
-4. re-dispatch `specbind-plan-design` with delegated authority for Design approval
+4. re-dispatch the [Design phase](references/design.md) with delegated authority for Design approval
    and its checkpoint
 
 **Design validation is mandatory.** A `NO-GO` blocks approval. It is a validator
 verdict, not a phase status: return its complete findings to that item's
-`specbind-plan-design` run for one revision, then dispatch fresh validation. Stop if
+Design-phase receiver for one revision, then dispatch fresh validation. Stop if
 Design reports a requirements rewind or another user-owned decision, or if the
 fresh validator repeats `NO-GO`. Never approve a rejected draft, repair its
 artifacts in the orchestrator, or let remediation change another item's scope.
@@ -186,13 +221,13 @@ current Design approval:
 
 After the review is accepted:
 
-6. `specbind-plan-tasks` — `tasks.yaml` and its gate, for every in-scope item now
+6. [Tasks phase](references/tasks.md) — `tasks.yaml` and its gate, for every in-scope item now
    actionable; parallel in all scope
 
 Gap analysis is not on this path. Run `specbind-gap-analysis` first when
 brownfield uncertainty requires it; this Skill does not decide that for you.
 
-## 5. Treat the global barrier as global
+## 6. Treat the global barrier as global
 
 Contract Review reads the complete participating Contract graph. Dispatch
 `specbind-contract-review` once and honor its outcome. Do not accept it yourself,
@@ -203,7 +238,7 @@ scope does not narrow it: if another participant lacks current Design approval,
 report the outside-scope blocker instead of dispatching that participant or
 attempting a review that cannot pass.
 
-## 6. Read the returned status, not the prose
+## 7. Read the returned status, not the prose
 
 Every dispatch returns a status. **The status decides what happens next.**
 
@@ -224,7 +259,7 @@ create a checkpoint owned by the dispatched phase.
 
 Never infer success because nothing said otherwise.
 
-## 7. Continue only within the selected scope
+## 8. Continue only within the selected scope
 
 In all scope, continue as far as reachable work permits:
 
@@ -239,7 +274,7 @@ extra bookkeeping; each Spec holds its current state.
 In named scope, stop when the selected item completes or reaches an in-scope or
 outside-scope blocker. Do not make progress on unselected items.
 
-## 8. Report
+## 9. Report
 
 In the project's language, report:
 
@@ -255,7 +290,7 @@ In the project's language, report:
 
 - **Stop after Tasks approval.** Never implement, validate completion, or touch
   release.
-- Author nothing yourself and never finish work owned by a phase Skill.
+- Author nothing yourself and never finish work owned by a phase receiver.
 - No scope changes: no Roadmap items, new Specs, removals, or silent expansion.
 - Same rules, protocols, and criteria under delegated or explicit approval.
   There is no all-Spec variant of them.

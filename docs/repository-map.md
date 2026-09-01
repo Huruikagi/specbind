@@ -319,3 +319,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0171](./design/decisions/0171-project-local-plan-dispatch-environment.md) | Accepted | Project-local execution environment carried into fresh Plan dispatches |
 | [0172](./design/decisions/0172-requirements-preservation-preflight.md) | Accepted | Existing Requirements preservation proved before approval |
 | [0173](./design/decisions/0173-mechanical-requirement-retirement-guard.md) | Accepted | Established Requirement ID removal rejected mechanically |
+| [0174](./design/decisions/0174-plan-phase-procedures-as-references.md) | Accepted | Requirements, Design, and Tasks procedures packaged as references of the single Plan Skill |

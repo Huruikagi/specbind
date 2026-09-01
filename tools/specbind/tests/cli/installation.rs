@@ -43,7 +43,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 87 create, 0 replace, 0 keep\n",
+                "\n  Summary: 87 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -111,7 +111,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 48 create, 0 replace, 2 keep\n",
+                    "\n  Summary: 48 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -163,7 +163,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
                 "OK INSTALL_APPLIED: Applied 50 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 50 created, 0 replaced, 0 kept\n",
+                "\n  Summary: 50 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
@@ -257,12 +257,12 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     for relative in [
         ".claude/skills/specbind-plan/SKILL.md",
         ".agents/skills/specbind-plan/SKILL.md",
-        ".claude/skills/specbind-plan-requirements/SKILL.md",
-        ".agents/skills/specbind-plan-requirements/SKILL.md",
-        ".claude/skills/specbind-plan-design/SKILL.md",
-        ".agents/skills/specbind-plan-design/SKILL.md",
-        ".claude/skills/specbind-plan-tasks/SKILL.md",
-        ".agents/skills/specbind-plan-tasks/SKILL.md",
+        ".claude/skills/specbind-plan/references/requirements.md",
+        ".agents/skills/specbind-plan/references/requirements.md",
+        ".claude/skills/specbind-plan/references/design.md",
+        ".agents/skills/specbind-plan/references/design.md",
+        ".claude/skills/specbind-plan/references/tasks.md",
+        ".agents/skills/specbind-plan/references/tasks.md",
         ".claude/skills/specbind-drive/SKILL.md",
         ".agents/skills/specbind-drive/SKILL.md",
         ".claude/skills/specbind-configure/references/aftercare.md",
@@ -334,12 +334,70 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     );
 }
 
+#[test]
+fn refresh_removes_retired_plan_phase_entrypoints_under_the_repository_guard() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    let mut install = specbind_command();
+    install
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "codex",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    for agent_root in [".agents/skills", ".claude/skills"] {
+        for retired in specbind::skill::retired_names() {
+            write(
+                root.path(),
+                &format!("{agent_root}/{retired}/SKILL.md"),
+                "former product-managed phase skill\n",
+            );
+        }
+    }
+    let mut dirty_retire = specbind_command();
+    dirty_retire
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
+
+    commit_all(root.path());
+    let mut retire = specbind_command();
+    retire
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- remove .agents/skills/specbind-plan-design/SKILL.md [skill]",
+        ));
+    assert_removed_plan_skill_aliases_are_absent(root.path());
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-plan/references/design.md")
+            .is_file()
+    );
+}
+
 fn assert_removed_plan_skill_aliases_are_absent(root: &std::path::Path) {
     for removed in [
         "specbind-quick-plan",
         "specbind-requirements",
         "specbind-design",
         "specbind-tasks",
+        "specbind-plan-requirements",
+        "specbind-plan-design",
+        "specbind-plan-tasks",
     ] {
         for agent_root in [".claude/skills", ".agents/skills"] {
             assert!(
@@ -779,7 +837,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 49 created, 0 replaced, 2 kept\n",
+            "\n  Summary: 49 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

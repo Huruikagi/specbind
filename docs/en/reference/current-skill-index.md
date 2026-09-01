@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Every supported Agent profile receives the same 19 skills:
+Every supported Agent profile receives the same 16 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
@@ -26,14 +26,11 @@ once.
 | `specbind-configure` | Review and change supported SpecBind project configuration, coordinate the owning workflow, verify the result, and complete authorized aftercare. |
 | `specbind-adopt-existing` | Establish new Spec boundaries and confirmed Brief intent from a selected existing implementation while retaining revision-pinned evidence. |
 | `specbind-discovery` | Confirm milestone scope, completely inventory an explicit local Source Collection when supplied, classify Direct, existing-Spec, and new-Spec work, delegate state changes to the CLI, and author provenance-bearing Roadmaps and Briefs. |
-| `specbind-plan` | Default planning entry point that takes one named Spec or every Spec-backed milestone item through Tasks approval with explicit scope and optional delegated-gate authorization. |
+| `specbind-plan` | The only planning entry point: take one named Spec or every Spec-backed milestone item through Tasks approval, or run one explicitly requested Requirements, Design, or Tasks phase for one named Spec. |
 | `specbind-drive` | Drive the active milestone through safe reachable planning, implementation, and validation work, park branch-local attention, and stop before release execution. |
-| `specbind-plan-requirements` | Read the Brief's declared Source Items when present, promote accepted obligations into the complete current behavioral contract, select the milestone's active Requirement IDs, and approve the Requirements gate. |
 | `specbind-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |
-| `specbind-plan-design` | Read the Brief's declared Source Items when present, investigate the system, promote accepted technical conclusions into the complete current Design and Contract, and approve the Design gate. |
 | `specbind-validate-design` | Independently judge Design coverage, boundaries, buildability, self-containment, and architectural fit. |
 | `specbind-contract-review` | Review the milestone's complete persistent Contract graph and accept the review required before Tasks authoring. |
-| `specbind-plan-tasks` | Author the executable structured task plan, verify schema and Requirement coverage, and approve the Tasks gate. |
 | `specbind-implement` | Implement one Spec-backed or Direct Roadmap item using the required dispatched implementation and review cycle. |
 | `specbind-review-task` | Judge one implemented Task from its actual diff and approved inputs without applying fixes. |
 | `specbind-debug` | Establish and categorize the root cause of a stopped run and return a bounded next action without applying it. |
@@ -43,8 +40,8 @@ once.
 | `specbind-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
 | `specbind-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
 
-There are no compatibility aliases for earlier `kiro-*` or `specbind-*` Skill
-names. Milestone and Spec initialization
+There are no compatibility aliases for earlier `kiro-*` or removed
+phase-specific `specbind-plan-*` Skill names. Milestone and Spec initialization
 are deterministic CLI operations invoked by `specbind-discovery`, not separate
 skills.
 

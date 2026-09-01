@@ -101,7 +101,9 @@ Prepare `a2` with dispatch instrumentation, then ask:
 
 ## Plan scenarios
 
-Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md).
+Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md)
+as superseded for phase packaging by
+[Decision 0174](../design/decisions/0174-plan-phase-procedures-as-references.md).
 
 ### Q0 — A bare invocation asks for scope without starting work
 
@@ -362,7 +364,7 @@ Run a gap analysis substantial enough to produce a research document.
   none.
 - Not everything is marked for promotion. A document where every finding must be
   promoted has not made the judgment this scenario checks.
-- Run `specbind-plan-design` afterwards. Conclusions marked Design or Contract appear
+- Run `specbind-plan` afterwards for that Spec's Design phase. Conclusions marked Design or Contract appear
   in the design set; a Requirements mark was surfaced as a rewind decision rather
   than silently written or silently dropped.
 

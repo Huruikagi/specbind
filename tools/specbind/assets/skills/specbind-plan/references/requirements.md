@@ -1,14 +1,9 @@
----
-name: specbind-plan-requirements
-description: Run the individual Requirements planning phase only when explicitly requested; author or revise the complete behavioral contract, select active Requirement IDs, and approve its gate. Use specbind-plan for ordinary planning.
-argument-hint: "<spec>"
----
-
-# Write the requirements
+# Requirements phase
 
 ## Apply project language style
 
-Before authoring any artifact or user-facing prose, read:
+Before authoring any artifact or user-facing prose, read this once unless this
+receiver already read it for the current `specbind-plan` run:
 
 ```sh
 specbind rule read language-style --for consume
@@ -17,9 +12,9 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-This phase Skill is normally dispatched by `specbind-plan`. Select it directly
-only when the user explicitly wants to author or revise Requirements without
-running the complete planning workflow.
+This is the complete Requirements procedure selected by `specbind-plan`. Read it
+only for a Requirements phase, whether the parent is running the complete
+planning workflow or the maintainer explicitly requested this phase alone.
 
 Produce the document every later phase is verified against: this Spec's
 **complete current behavioral contract**, not the delta this milestone requested.

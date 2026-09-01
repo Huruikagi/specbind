@@ -81,7 +81,7 @@ SpecBindが管理する成果物、具体的には `requirements.md` や
 ### 書き込まれる内容を確認する
 
 同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
-`keep`の計画を確認できます。
+`keep`と、廃止された製品管理対象に対する`remove`の計画を確認できます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --project-instructions
@@ -207,13 +207,14 @@ $specbind-status
 
 ## 7. 計画と実装の進め方を選ぶ
 
-最初の`csv-export`を段階ごとに確認する場合は、次の所有スキルを順に使います。
+最初の`csv-export`を段階ごとに確認する場合は、`specbind-plan`のフェーズを
+明示して順に進めます。
 
 ```text
-$specbind-plan-requirements csv-export
-$specbind-plan-design csv-export
+$specbind-plan csv-export requirements
+$specbind-plan csv-export design
 $specbind-contract-review
-$specbind-plan-tasks csv-export
+$specbind-plan csv-export tasks
 $specbind-implement csv-export
 $specbind-validate-implementation csv-export
 ```
@@ -244,7 +245,7 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
 `spec.yaml`、`roadmap.md`、`tasks.yaml`に入っている実行状態は、CLIの持ち物です。
 状態を進める目的で手編集しないでください。Requirements、Design、Contract、
-Tasksの計画部分は、それぞれを所有するスキル経由で保守します。
+Tasksの計画部分は、`specbind-plan`の対応するフェーズを通して保守します。
 
 現在の状態は、CLIから直接確認することもできます。
 

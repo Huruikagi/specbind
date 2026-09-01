@@ -37,10 +37,34 @@ pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutco
                 .filter(|entry| entry.category == "config"),
         );
     for entry in ordered {
+        let target = project_root.join(&entry.path);
+        if entry.action == PlanAction::Remove {
+            verify_expected_state(&target, entry)?;
+            fs::remove_file(&target).map_err(|error| {
+                one_issue(
+                    "INSTALL_WRITE_FAILED",
+                    Some(entry.path.clone()),
+                    error.to_string(),
+                )
+            })?;
+            if let Some(parent) = target.parent() {
+                match fs::remove_dir(parent) {
+                    Ok(()) => {}
+                    Err(error) if error.kind() == std::io::ErrorKind::DirectoryNotEmpty => {}
+                    Err(error) => {
+                        return Err(one_issue(
+                            "INSTALL_WRITE_FAILED",
+                            Some(entry.path.clone()),
+                            error.to_string(),
+                        ));
+                    }
+                }
+            }
+            continue;
+        }
         let Some(content) = entry.content.as_deref() else {
             continue;
         };
-        let target = project_root.join(&entry.path);
         verify_expected_state(&target, entry)?;
         if let Some(parent) = target.parent() {
             fs::create_dir_all(parent).map_err(|error| {
@@ -100,7 +124,7 @@ fn verify_expected_state(target: &Path, entry: &PlanEntry) -> Result<(), Install
     }
     let expected = match entry.action {
         PlanAction::Create => false,
-        PlanAction::Replace => true,
+        PlanAction::Replace | PlanAction::Remove => true,
         PlanAction::Keep => return Ok(()),
     };
     if present == expected {

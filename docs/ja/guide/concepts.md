@@ -167,8 +167,8 @@ Discovery
 するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを対象に
 します。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。各Gateの承認を
 この実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は変わりません。
-Requirements、Design、Tasksの1フェーズだけを扱う明示的な依頼では、それぞれ
-`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を使います。
+Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Specとフェーズを
+明示して同じ`specbind-plan`を使います。
 `specbind-implement`が実装するのは、1回につき1つのRoadmap項目だけです。
 `specbind-drive`はMilestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
 各委譲後にCLI状態を読み直します。局所的な判断待ちは保留して独立項目を続けますが、

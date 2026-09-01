@@ -179,7 +179,7 @@ write any other path.
 - **Never edit the design or the contract.** A validator that fixes what it
   found is judging its own work.
 - **Never invalidate the design gate**, whatever the verdict. That rewind
-  belongs to `specbind-plan-design`, which states its cost first — it also deletes
+  belongs to `specbind-plan` in explicit Design-phase mode, which states its cost first — it also deletes
   the milestone's accepted contract review — and requires confirmation. Your
   verdict is information; acting on it is someone else's decision.
 - Approve nothing, and record no machine state.

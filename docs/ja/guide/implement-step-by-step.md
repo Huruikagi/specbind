@@ -24,7 +24,7 @@ Contract、Tasksを作らず、`specbind-implement <item-id>`へ直接進みま�
 ## 2. Requirementsを作成する
 
 ```text
-$specbind-plan-requirements csv-export
+$specbind-plan csv-export requirements
 ```
 
 Requirementsは今回の差分だけではなく、そのSpecが現在保証する振る舞い全体です。
@@ -37,7 +37,7 @@ Acceptance Criteriaへ書き直されていることを確認します。
 ## 3. DesignとContractを作成・検証する
 
 ```text
-$specbind-plan-design csv-export
+$specbind-plan csv-export design
 ```
 
 DesignはRequirementsをどう実現するかを定め、Contractは外部責任、依存関係、所有する
@@ -64,7 +64,7 @@ Contractレビューは1つのSpecだけを見る処理ではありません。�
 ## 5. Tasksを作成する
 
 ```text
-$specbind-plan-tasks csv-export
+$specbind-plan csv-export tasks
 ```
 
 TasksはRequirementsとDesignを実行可能な順序へ分解します。各Taskの対象、完了条件、

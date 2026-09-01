@@ -1,14 +1,9 @@
----
-name: specbind-plan-tasks
-description: Run the individual Tasks planning phase only when explicitly requested; author the executable task plan, verify schema and Requirement coverage, and approve its gate. Use specbind-plan for ordinary planning.
-argument-hint: "<spec>"
----
-
-# Plan the work
+# Tasks phase
 
 ## Apply project language style
 
-Before authoring any artifact or user-facing prose, read:
+Before authoring any artifact or user-facing prose, read this once unless this
+receiver already read it for the current `specbind-plan` run:
 
 ```sh
 specbind rule read language-style --for consume
@@ -17,9 +12,9 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-This phase Skill is normally dispatched by `specbind-plan`. Select it directly
-only when the user explicitly wants to author or revise Tasks without running
-the complete planning workflow.
+This is the complete Tasks procedure selected by `specbind-plan`. Read it only
+for a Tasks phase, whether the parent is running the complete planning workflow
+or the maintainer explicitly requested this phase alone.
 
 Turn the approved design into `tasks.yaml`: the ordered plan an implementer
 executes and the CLI derives progress from.
@@ -57,7 +52,8 @@ review, because the review is still valid at the tasks state.
 `spec status` must report the design gate approved and fresh, and the Spec a
 current participant of the active milestone.
 
-If it does not, stop and say so. Route the user to `specbind-plan-design`. Never
+If it does not, stop and say so. Route the user to `specbind-plan` in explicit
+Design-phase mode. Never
 approve or invalidate an upstream gate, and never edit the requirements, design,
 or contract to make a plan work.
 

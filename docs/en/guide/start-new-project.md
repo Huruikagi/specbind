@@ -72,7 +72,8 @@ definitions. `--language en` selects English managed artifacts.
 `--project-instructions` adds a marked SpecBind block to `AGENTS.md` or
 `CLAUDE.md` without changing text outside the marker.
 
-Preview the exact `create`, `replace`, and `keep` actions first when desired:
+Preview the exact `create`, `replace`, `keep`, and retired-product-asset
+`remove` actions first when desired:
 
 ```sh
 specbind install --dry-run --agent codex --language en --project-instructions

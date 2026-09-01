@@ -80,7 +80,7 @@ Run D3 to completion, then in the same session ask for the D4 work.
 From the `d7` recipe — `cart` in implementation with every gate approved — ask to
 split one planned task into two without changing behavior.
 
-This became measurable once `specbind-plan-tasks` was embedded. No command authors
+This became measurable once the Tasks phase was embedded in `specbind-plan`. No command authors
 plan content, so before that skill existed no one owned the authoring and a run
 correctly stopped; it measured the skill's absence rather than the rewind rule.
 

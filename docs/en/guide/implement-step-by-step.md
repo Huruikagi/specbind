@@ -25,7 +25,7 @@ Requirements, Design, Contract, or Tasks and goes directly to
 ## 2. Author Requirements
 
 ```text
-$specbind-plan-requirements csv-export
+$specbind-plan csv-export requirements
 ```
 
 Requirements describe the complete current behavior of the Spec, not only this
@@ -39,7 +39,7 @@ decisions here instead of hiding them in ambiguous wording to move forward.
 ## 3. Author and validate Design and Contract
 
 ```text
-$specbind-plan-design csv-export
+$specbind-plan csv-export design
 ```
 
 Design explains how the Requirements will be realized. Contract structures
@@ -69,7 +69,7 @@ more convenient.
 ## 5. Author Tasks
 
 ```text
-$specbind-plan-tasks csv-export
+$specbind-plan csv-export tasks
 ```
 
 Tasks turn Requirements and Design into an executable order. Review each Task's

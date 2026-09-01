@@ -99,10 +99,10 @@ Use `$specbind-status` for a read-only explanation at any point.
 For the first `csv-export` change, you can inspect each boundary explicitly:
 
 ```text
-$specbind-plan-requirements csv-export
-$specbind-plan-design csv-export
+$specbind-plan csv-export requirements
+$specbind-plan csv-export design
 $specbind-contract-review
-$specbind-plan-tasks csv-export
+$specbind-plan csv-export tasks
 $specbind-implement csv-export
 $specbind-validate-implementation csv-export
 ```

@@ -105,18 +105,6 @@ static SKILLS: &[Skill] = &[
         source: include_str!("../../assets/skills/specbind-plan/SKILL.md"),
     },
     Skill {
-        name: "specbind-plan-design",
-        source: include_str!("../../assets/skills/specbind-plan-design/SKILL.md"),
-    },
-    Skill {
-        name: "specbind-plan-requirements",
-        source: include_str!("../../assets/skills/specbind-plan-requirements/SKILL.md"),
-    },
-    Skill {
-        name: "specbind-plan-tasks",
-        source: include_str!("../../assets/skills/specbind-plan-tasks/SKILL.md"),
-    },
-    Skill {
         name: "specbind-release",
         source: include_str!("../../assets/skills/specbind-release/SKILL.md"),
     },
@@ -144,6 +132,12 @@ static SKILLS: &[Skill] = &[
         name: "specbind-verify-completion",
         source: include_str!("../../assets/skills/specbind-verify-completion/SKILL.md"),
     },
+];
+
+static RETIRED_SKILL_NAMES: &[&str] = &[
+    "specbind-plan-design",
+    "specbind-plan-requirements",
+    "specbind-plan-tasks",
 ];
 
 static ADOPT_EXISTING_RESOURCES: &[SkillResource] = &[
@@ -204,6 +198,21 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     },
 ];
 
+static PLAN_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/design.md",
+        source: include_str!("../../assets/skills/specbind-plan/references/design.md"),
+    },
+    SkillResource {
+        relative_path: "references/requirements.md",
+        source: include_str!("../../assets/skills/specbind-plan/references/requirements.md"),
+    },
+    SkillResource {
+        relative_path: "references/tasks.md",
+        source: include_str!("../../assets/skills/specbind-plan/references/tasks.md"),
+    },
+];
+
 static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
     relative_path: "references/bootstrap-release-adapter.md",
     source: include_str!(
@@ -215,6 +224,12 @@ static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
 #[must_use]
 pub fn all() -> &'static [Skill] {
     SKILLS
+}
+
+/// Lists exact former product-managed Skill identities removed on refresh.
+#[must_use]
+pub fn retired_names() -> &'static [&'static str] {
+    RETIRED_SKILL_NAMES
 }
 
 impl Skill {
@@ -299,6 +314,7 @@ impl Skill {
             "specbind-configure" => CONFIGURE_RESOURCES,
             "specbind-discovery" => DISCOVERY_RESOURCES,
             "specbind-implement" => IMPLEMENT_RESOURCES,
+            "specbind-plan" => PLAN_RESOURCES,
             "specbind-release" => RELEASE_RESOURCES,
             _ => &[],
         }

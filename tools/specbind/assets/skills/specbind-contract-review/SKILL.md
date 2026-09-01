@@ -205,7 +205,7 @@ The Design phase owns both the Design set and `contract.yaml`; status has no
 separate Contract gate. If Requirements remain valid and the finding requires a
 Design or Contract change, present the complete rewind cost, obtain explicit
 confirmation, run `specbind spec design invalidate <spec>`, and hand the work to
-`specbind-plan-design`. If Requirements must change, rewind the Requirements gate
+`specbind-plan` in explicit Design-phase mode. If Requirements must change, rewind the Requirements gate
 instead. Never leave the maintainer to infer the owning phase from the gate list.
 
 A response that stops on this finding is incomplete unless it names the Design

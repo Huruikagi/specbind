@@ -119,7 +119,7 @@ SpecBindが管理する成果物、具体的には `requirements.md` や
 ### 書き込まれる内容を確認する
 
 同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
-`keep`の計画を確認できます。
+`keep`と、廃止された製品管理対象に対する`remove`の計画を確認できます。
 
 ```sh
 specbind install --dry-run --agent codex --language ja --project-instructions

@@ -11,7 +11,7 @@ pub fn install_dry_run(start: &Path, inputs: &install::InstallInputs) -> Command
     };
     match install::plan(&project_root, inputs) {
         Ok(plan) => {
-            let (create, replace, keep) = plan.counts();
+            let (create, replace, keep, remove) = plan.counts();
             let mut output = format!(
                 "OK INSTALL_PLANNED: Planned {} action(s) for {} agent(s).\n",
                 plan.entries.len(),
@@ -21,7 +21,7 @@ pub fn install_dry_run(start: &Path, inputs: &install::InstallInputs) -> Command
             push_field(
                 &mut output,
                 "Summary",
-                &format!("{create} create, {replace} replace, {keep} keep"),
+                &format!("{create} create, {replace} replace, {keep} keep, {remove} remove"),
             );
             CommandOutput::success(output.into_bytes())
         }
@@ -49,18 +49,18 @@ pub fn install_apply(start: &Path, inputs: &install::InstallInputs) -> CommandOu
             ),
         ),
         Ok(outcome) => {
-            let (create, replace, keep) = outcome.plan.counts();
+            let (create, replace, keep, remove) = outcome.plan.counts();
             let mut output = format!(
                 "OK INSTALL_APPLIED: Applied {} action(s) for {} agent(s).
 ",
-                create + replace,
+                create + replace + remove,
                 outcome.plan.agents.len()
             );
             push_install_summary(&mut output, &outcome.plan);
             push_field(
                 &mut output,
                 "Summary",
-                &format!("{create} created, {replace} replaced, {keep} kept"),
+                &format!("{create} created, {replace} replaced, {keep} kept, {remove} removed"),
             );
             if outcome.plan.initial {
                 push_field(

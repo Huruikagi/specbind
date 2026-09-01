@@ -146,8 +146,9 @@ Discovery
 
 `specbind-plan` is the default entry from Requirements through Tasks approval.
 Use a named Spec or `--all`; an invocation without scope first asks which scope
-you intend. The phase-specific planning Skills are for explicit single-phase
-work. `specbind-implement` handles exactly one Roadmap item at a time.
+you intend. An explicit request for one named Spec and one Requirements,
+Design, or Tasks phase uses that phase's procedure from the same Plan Skill.
+`specbind-implement` handles exactly one Roadmap item at a time.
 `specbind-drive` selects safely reachable owning workflows across the Milestone
 one at a time and rereads CLI state after every handoff. It parks branch-local
 attention and continues independent work, but never executes Release.

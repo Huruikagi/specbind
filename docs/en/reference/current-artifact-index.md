@@ -62,7 +62,7 @@ to be materialized. The required `design-template-selection` Rule classifies
 each `design/<artifact_id>` as `required`, `conditional`, or `disabled` and
 provides project-owned conditions for conditional entries. The CLI validates a
 complete one-to-one classification when that Rule is listed or read;
-`specbind-plan-design` evaluates conditional prose against the current Spec. The
+the Design phase of `specbind-plan` evaluates conditional prose against the current Spec. The
 default selects `design/main` for every Spec and selects `design/ui` only for a
 user-visible screen or interaction responsibility.
 
@@ -112,13 +112,13 @@ The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 | Artifact | Current lifecycle and owner |
 | --- | --- |
 | `spec.yaml` | Persistent structured lifecycle, active-change, Requirement-selection, gate, and completion state maintained only through guarded CLI operations. |
-| `requirements.md` | Persistent complete current Requirements maintained by `specbind-plan-requirements`. |
-| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by `specbind-plan-design`; `artifact_id` is its stable selector. |
+| `requirements.md` | Persistent complete current Requirements maintained by the Requirements phase of `specbind-plan`. |
+| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by the Design phase of `specbind-plan`; `artifact_id` is its stable selector. |
 | `contract.yaml` | Persistent strict versioned Contract maintained with Design and reviewed milestone-wide. |
 | `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
 | `brief.md` | Active-milestone input authored by discovery; records the exact relevant Source Items when a collection was supplied and is removed by successful release finalization. |
 | `research.md` | Optional active-milestone gap-analysis result replaced by `specbind-gap-analysis` and removed by finalization. |
-| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by `specbind-plan-tasks`, progressed by implementation, and removed by finalization. |
+| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by the Tasks phase of `specbind-plan`, progressed by implementation, and removed by finalization. |
 | `log.md` | Persistent newest-first release history maintained by release finalization for Spec-backed milestones. |
 
 Markdown artifacts are discovered by their OKF type and, for collections, their

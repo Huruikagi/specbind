@@ -15,12 +15,12 @@ the only supported writer of machine state.
   implementation, and validation while preserving each owning Skill. A request
   to implement one named Roadmap item still uses `specbind-implement`.
 - Use `specbind-plan` as the default planning entry point when the user asks to
-  plan active work. It coordinates Requirements through Tasks approval. Use
-  `specbind-plan-requirements`, `specbind-plan-design`, or
-  `specbind-plan-tasks` directly only when the user explicitly asks to work on
-  that individual phase. If a planning request names neither one Spec nor all
-  Specs, select `specbind-plan` and let it ask for scope; do not start the
-  currently actionable phase directly.
+  plan active work. It coordinates Requirements through Tasks approval and is
+  also the single entry point when the user explicitly asks to work on only
+  Requirements, Design, or Tasks for one named Spec. If an ordinary planning
+  request names neither one Spec nor all Specs, select `specbind-plan` and let
+  it ask for scope; do not infer a single-phase request from the currently
+  actionable phase.
 - When every Task for a named Spec is complete and the user asks whether that
   Spec is done, complete, or ready, use `specbind-validate-implementation`.
   Do not answer that question from status or consequence-free claim checking.

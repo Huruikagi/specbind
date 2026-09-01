@@ -52,13 +52,15 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("Use `specbind-plan` as the default planning entry point")
     );
-    assert!(applied.content.contains(
-        "Use\n  `specbind-plan-requirements`, `specbind-plan-design`, or\n  `specbind-plan-tasks` directly only"
-    ));
     assert!(
         applied
             .content
-            .contains("do not start the\n  currently actionable phase directly")
+            .contains("also the single entry point when the user explicitly asks")
+    );
+    assert!(
+        applied
+            .content
+            .contains("do not infer a single-phase request from the currently\n  actionable phase")
     );
     assert!(
         applied

@@ -37,9 +37,7 @@ Steeringの作成または同期
   -> SpecとBriefの作成
   -> specbind-adopt-existingを再開
   -> Specごとの観察と意図の確認
-  -> specbind-plan-requirements
-  -> specbind-plan-design
-  -> specbind-plan-tasks
+  -> specbind-plan
 ```
 
 最初の実行では、CLIが事前検査（preflight）を行い、前提条件がそろって
@@ -91,8 +89,8 @@ Researchは通常のリリース確定処理まで
 
 採用スキルはRequirementsやDesignを直接作成・承認しません。確認済みの意図を
 Briefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
-以後は通常の`specbind-plan-requirements`、`specbind-plan-design`、`specbind-plan-tasks`を
-使用します。既存実装からの採用専用となるRequirementsやDesignスキルはありません。
+以後は`specbind-plan`で通常のRequirements、Design、Tasksフェーズを進めます。
+既存実装からの採用専用となるRequirementsやDesignスキルはありません。
 
 ## 次に読む
 
