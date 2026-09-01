@@ -17,7 +17,7 @@ fn adoption_preflight_requires_committed_steering() {
         .stdout("")
         .stderr(
             predicate::str::starts_with("ERROR ADOPTION_STEERING_REQUIRED:")
-                .and(predicate::str::contains("specbind-steering")),
+                .and(predicate::str::contains("sb-steering")),
         );
 }
 

@@ -122,7 +122,7 @@ static ROLES: &[AgentRole] = &[
         default_model: "gpt-5.6-terra",
         default_reasoning_effort: ReasoningEffort::Medium,
         default_claude_model: "sonnet",
-        description: "Use for one implementation or repair task dispatched by specbind-implement.",
+        description: "Use for one implementation or repair task dispatched by sb-implement.",
         developer_instructions: "Implement exactly one dispatched task. Treat its brief, artifact references, repository instructions, and task-implementation protocol as authoritative. Stay inside the assigned boundary, run the required verification, preserve unrelated changes, do not record task progress or create commits, and return the exact structured status requested by the dispatcher.",
     },
     AgentRole {

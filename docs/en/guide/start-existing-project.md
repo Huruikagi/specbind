@@ -50,7 +50,7 @@ the coding-agent session so it discovers the Skills. Examples below use Codex
 
 ## 3. Keep the defaults for the first cycle
 
-Although installation suggests `specbind-configure`, first complete one real
+Although installation suggests `sb-configure`, first complete one real
 change with the defaults. Adjust only demonstrated mismatches afterward using
 [Customize SpecBind](./customization.md).
 
@@ -61,11 +61,11 @@ change with the defaults. Adjust only demonstrated mismatches afterward using
 | Use SpecBind for the next change | Continue on this page |
 | Establish Specs from working implementation | [Establish Specs from an existing implementation](./adopt-existing.md) |
 
-The existing-implementation route of `specbind-discovery` does not treat current
+The existing-implementation route of `sb-discovery` does not treat current
 code as automatically correct. It investigates code and tests as evidence,
 confirms the intent to preserve, and then hands it to the ordinary lifecycle.
 Adoption requires durable Steering; bootstrap it first with
-`specbind-steering` when absent.
+`sb-steering` when absent.
 
 ## 5. Choose the first change
 
@@ -83,7 +83,7 @@ other capabilities or consumers depend.
 Describe the change and point to any relevant Issue or notes:
 
 ```text
-$specbind-discovery Allow users to download the contents of the list screen as
+$sb-discovery Allow users to download the contents of the list screen as
 a CSV file.
 ```
 
@@ -93,26 +93,26 @@ new Specs, Gate invalidations, and dependencies. Review the classification and
 responsibility boundary before approval. The CLI then creates lifecycle state
 and the Agent writes a concise `brief.md`.
 
-Use `$specbind-status` for a read-only explanation at any point.
+Use `$sb-status` for a read-only explanation at any point.
 
 ## 7. Choose how to plan and implement
 
 For the first `csv-export` change, you can inspect each boundary explicitly:
 
 ```text
-$specbind-plan csv-export requirements
-$specbind-plan csv-export design
-$specbind-contract-review
-$specbind-plan csv-export tasks
-$specbind-implement csv-export
-$specbind-validate-implementation csv-export
+$sb-plan csv-export requirements
+$sb-plan csv-export design
+$sb-contract-review
+$sb-plan csv-export tasks
+$sb-implement csv-export
+$sb-validate-implementation csv-export
 ```
 
 [Plan and implement one item at a time](./implement-step-by-step.md) explains
 what to review and approve at every step, including upstream rewinds.
 
 For a Milestone with several Specs or Direct items, use
-`$specbind-plan --all` followed by `$specbind-drive`. See
+`$sb-plan --all` followed by `$sb-drive`. See
 [Plan and Drive a Milestone](./implement-with-plan-and-drive.md) for attention,
 continuation, and stopping behavior. Both routes stop before Release.
 

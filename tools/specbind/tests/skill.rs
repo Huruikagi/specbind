@@ -2,26 +2,26 @@ use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
 const ACCEPTED_SKILLS: [&str; 15] = [
-    "specbind-contract-review",
-    "specbind-configure",
-    "specbind-debug",
-    "specbind-discovery",
-    "specbind-drive",
-    "specbind-gap-analysis",
-    "specbind-implement",
-    "specbind-plan",
-    "specbind-release",
-    "specbind-review-task",
-    "specbind-status",
-    "specbind-steering",
-    "specbind-validate-design",
-    "specbind-validate-implementation",
-    "specbind-verify-completion",
+    "sb-contract-review",
+    "sb-configure",
+    "sb-debug",
+    "sb-discovery",
+    "sb-drive",
+    "sb-gap-analysis",
+    "sb-implement",
+    "sb-plan",
+    "sb-release",
+    "sb-review-task",
+    "sb-status",
+    "sb-steering",
+    "sb-validate-design",
+    "sb-validate-implementation",
+    "sb-verify-completion",
 ];
 
 #[test]
 fn drive_uses_authoritative_actions_and_parks_local_attention() {
-    let drive = skill::find("specbind-drive").expect("drive skill");
+    let drive = skill::find("sb-drive").expect("drive skill");
     let metadata = drive.metadata().expect("drive metadata");
     assert!(metadata.description.contains("safe reachable"));
     let body = drive.body().expect("drive body");
@@ -32,7 +32,7 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
         "HUMAN_DECISION",
         "Create no queue, checkpoint, batch status, or authority artifact.",
         "Never dispatch",
-        "`specbind-release`",
+        "`sb-release`",
         "One mutating owner at a time",
     ] {
         assert!(body.contains(required), "drive must contain {required}");
@@ -138,11 +138,11 @@ fn installs_each_skill_to_the_accepted_target() {
 #[test]
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
-        ("specbind-configure", 6),
-        ("specbind-discovery", 3),
-        ("specbind-implement", 2),
-        ("specbind-plan", 3),
-        ("specbind-release", 1),
+        ("sb-configure", 6),
+        ("sb-discovery", 3),
+        ("sb-implement", 2),
+        ("sb-plan", 3),
+        ("sb-release", 1),
     ] {
         let entry = skill::find(name).expect("progressive skill package");
         let resources = entry.resources();
@@ -168,7 +168,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
 
 #[test]
 fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
-    let body = skill_package_text("specbind-discovery");
+    let body = skill_package_text("sb-discovery");
     for required in [
         "references/adopt-start.md",
         "references/adopt-resume.md",
@@ -184,7 +184,7 @@ fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_owners
         "Existing code and tests are **evidence**",
         "stop immediately",
         "Do not author `requirements.md` here.",
-        "specbind-plan <spec> requirements",
+        "sb-plan <spec> requirements",
     ] {
         assert!(
             body.contains(required),
@@ -237,7 +237,7 @@ fn every_live_markdown_read_names_its_instruction_projection() {
 fn discovery_reads_the_scope_schema_before_first_creation() {
     let body = skill::all()
         .iter()
-        .find(|entry| entry.name == "specbind-discovery")
+        .find(|entry| entry.name == "sb-discovery")
         .expect("discovery skill")
         .body()
         .expect("discovery body");
@@ -258,7 +258,7 @@ fn discovery_reads_the_scope_schema_before_first_creation() {
 
 #[test]
 fn discovery_rechecks_completion_immediately_before_brief_authoring() {
-    let body = skill::find("specbind-discovery")
+    let body = skill::find("sb-discovery")
         .expect("discovery skill")
         .body()
         .expect("body");
@@ -279,7 +279,7 @@ fn discovery_rechecks_completion_immediately_before_brief_authoring() {
 
 #[test]
 fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
-    let body = skill::find("specbind-discovery")
+    let body = skill::find("sb-discovery")
         .expect("discovery skill")
         .body()
         .expect("discovery body");
@@ -294,7 +294,7 @@ fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
 
 #[test]
 fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
-    let body = skill::find("specbind-discovery")
+    let body = skill::find("sb-discovery")
         .expect("discovery skill")
         .body()
         .expect("discovery body");
@@ -340,7 +340,7 @@ fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
 
 #[test]
 fn local_source_collection_is_complete_confirmed_and_preserved() {
-    let discovery = skill_package_text("specbind-discovery");
+    let discovery = skill_package_text("sb-discovery");
     for required in [
         "references/local-files.md",
         "specbind protocol read source-material",
@@ -359,7 +359,7 @@ fn local_source_collection_is_complete_confirmed_and_preserved() {
 
 #[test]
 fn planning_promotes_declared_source_items_into_canonical_artifacts() {
-    let requirements = skill_resource_text("specbind-plan", "references/requirements.md");
+    let requirements = skill_resource_text("sb-plan", "references/requirements.md");
     for required in [
         "If the Brief declares Source Items",
         "specbind protocol read source-material",
@@ -373,7 +373,7 @@ fn planning_promotes_declared_source_items_into_canonical_artifacts() {
         );
     }
 
-    let design = skill_resource_text("specbind-plan", "references/design.md");
+    let design = skill_resource_text("sb-plan", "references/design.md");
     for required in [
         "If the Brief declares Source Items",
         "specbind protocol read source-material",
@@ -466,23 +466,23 @@ fn every_registered_role_named_by_a_skill_exists_and_every_role_is_consumed() {
 fn reviewing_skills_require_an_explicit_finding_disposition() {
     for (name, body) in [
         (
-            "specbind-plan requirements",
-            skill_resource_text("specbind-plan", "references/requirements.md"),
+            "sb-plan requirements",
+            skill_resource_text("sb-plan", "references/requirements.md"),
         ),
         (
-            "specbind-plan design",
-            skill_resource_text("specbind-plan", "references/design.md"),
+            "sb-plan design",
+            skill_resource_text("sb-plan", "references/design.md"),
         ),
         (
-            "specbind-validate-design",
-            skill::find("specbind-validate-design")
+            "sb-validate-design",
+            skill::find("sb-validate-design")
                 .expect("reviewing skill")
                 .body()
                 .expect("body"),
         ),
         (
-            "specbind-review-task",
-            skill::find("specbind-review-task")
+            "sb-review-task",
+            skill::find("sb-review-task")
                 .expect("reviewing skill")
                 .body()
                 .expect("body"),
@@ -497,7 +497,7 @@ fn reviewing_skills_require_an_explicit_finding_disposition() {
 
 #[test]
 fn design_does_not_retire_an_export_only_to_silence_a_warning() {
-    let body = skill_resource_text("specbind-plan", "references/design.md");
+    let body = skill_resource_text("sb-plan", "references/design.md");
 
     assert!(body.contains("`CONTRACT_GRAPH_EXPORT_UNCONSUMED` is also a warning"));
     assert!(body.contains(
@@ -511,7 +511,7 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
 
 #[test]
 fn design_queries_direct_contract_neighbors_before_reading_them() {
-    let body = skill_resource_text("specbind-plan", "references/design.md");
+    let body = skill_resource_text("sb-plan", "references/design.md");
     let dependencies = body
         .find("specbind contract dependencies <spec>")
         .expect("direct dependency query");
@@ -535,12 +535,12 @@ fn design_queries_direct_contract_neighbors_before_reading_them() {
 
 #[test]
 fn planning_orchestrator_handoffs_its_delegation_identity() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
     assert!(body.contains("request to run this skill is **not**"));
-    assert!(body.contains("workflow name `specbind-plan`"));
+    assert!(body.contains("workflow name `sb-plan`"));
     assert!(body.contains("authorized gate names"));
     assert!(body.contains("authorization omitted"));
     assert!(body.contains("from the dispatch does not reach it"));
@@ -548,7 +548,7 @@ fn planning_orchestrator_handoffs_its_delegation_identity() {
 
 #[test]
 fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -560,7 +560,7 @@ fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
 
 #[test]
 fn planning_dispatch_carries_project_local_execution_environment() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -578,7 +578,7 @@ fn planning_dispatch_carries_project_local_execution_environment() {
 
 #[test]
 fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -597,12 +597,12 @@ fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
 
 #[test]
 fn design_phase_checkpoints_its_verified_deferred_destination_after_validation() {
-    let body = skill_resource_text("specbind-plan", "references/design.md");
+    let body = skill_resource_text("sb-plan", "references/design.md");
     assert!(body.contains("approval re-dispatch after independent validation"));
     assert!(body.contains("exact active deferred-adapter destination"));
     assert!(body.contains("gate-updated `spec.yaml`"));
 
-    let validation = skill::find("specbind-validate-design").expect("validation skill");
+    let validation = skill::find("sb-validate-design").expect("validation skill");
     let validation_body = validation.body().expect("validation body");
     assert!(validation_body.contains("adapter write happens only after the verdict"));
     assert!(validation_body.contains("Report the exact\nproject-relative destination"));
@@ -610,7 +610,7 @@ fn design_phase_checkpoints_its_verified_deferred_destination_after_validation()
 
 #[test]
 fn planning_orchestrator_validates_design_before_delegated_approval() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -621,7 +621,7 @@ fn planning_orchestrator_validates_design_before_delegated_approval() {
 
 #[test]
 fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
@@ -634,7 +634,7 @@ fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
 
 #[test]
 fn requirements_audits_existing_obligations_before_approval() {
-    let body = skill_resource_text("specbind-plan", "references/requirements.md");
+    let body = skill_resource_text("sb-plan", "references/requirements.md");
 
     assert!(body.contains("mandatory preservation audit before\napproval"));
     assert!(body.contains("git diff -- <requirements-path>"));
@@ -658,7 +658,7 @@ fn requirements_audits_existing_obligations_before_approval() {
 
 #[test]
 fn requirements_preserves_abstract_boundaries_and_avoids_new_spec_contract_probe() {
-    let body = skill_resource_text("specbind-plan", "references/requirements.md");
+    let body = skill_resource_text("sb-plan", "references/requirements.md");
 
     assert!(body.contains("Preserve an intentionally abstract but observable boundary"));
     assert!(body.contains("without inventing a duration"));
@@ -679,7 +679,7 @@ fn requirements_preserves_abstract_boundaries_and_avoids_new_spec_contract_probe
 
 #[test]
 fn requirements_treats_the_listed_steering_inventory_as_closed() {
-    let body = skill_resource_text("specbind-plan", "references/requirements.md");
+    let body = skill_resource_text("sb-plan", "references/requirements.md");
     for required in [
         "Treat that listing as the complete, closed set for this read.",
         "the active Roadmap is milestone state stored beside Steering",
@@ -694,7 +694,7 @@ fn requirements_treats_the_listed_steering_inventory_as_closed() {
 
 #[test]
 fn requirements_resolves_the_new_artifact_project_path_before_writing() {
-    let body = skill_resource_text("specbind-plan", "references/requirements.md");
+    let body = skill_resource_text("sb-plan", "references/requirements.md");
     let new_spec = body.find("- **New Spec**").expect("new Spec branch");
     let resolve = body[new_spec..]
         .find("specbind template resolve spec <spec> requirements")
@@ -711,7 +711,7 @@ fn requirements_resolves_the_new_artifact_project_path_before_writing() {
 #[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
-        skill::find("specbind-validate-implementation").expect("implementation validation skill");
+        skill::find("sb-validate-implementation").expect("implementation validation skill");
     let body = validation.body().expect("validation body");
 
     assert!(body.contains("Preserve the executed command verbatim"));
@@ -724,7 +724,7 @@ fn implementation_validation_preserves_exact_executed_command_text() {
 
 #[test]
 fn planning_metadata_exposes_complete_and_single_phase_modes() {
-    let plan = skill::find("specbind-plan")
+    let plan = skill::find("sb-plan")
         .expect("plan")
         .metadata()
         .expect("metadata");
@@ -753,7 +753,7 @@ fn planning_metadata_exposes_complete_and_single_phase_modes() {
 
 #[test]
 fn planning_phase_procedures_are_directly_routed_references() {
-    let plan = skill::find("specbind-plan").expect("plan");
+    let plan = skill::find("sb-plan").expect("plan");
     let body = plan.body().expect("body");
     for (path, artifact) in [
         ("references/requirements.md", "Requirements"),
@@ -761,9 +761,9 @@ fn planning_phase_procedures_are_directly_routed_references() {
         ("references/tasks.md", "Tasks"),
     ] {
         assert!(body.contains(path), "Plan must route {path}");
-        let procedure = skill_resource_text("specbind-plan", path);
+        let procedure = skill_resource_text("sb-plan", path);
         assert!(procedure.contains(artifact), "{path}");
-        assert!(procedure.contains("selected by `specbind-plan`"), "{path}");
+        assert!(procedure.contains("selected by `sb-plan`"), "{path}");
     }
     assert!(body.contains("single-phase mode"));
     assert!(body.contains("Never infer single-phase mode from lifecycle state"));
@@ -773,7 +773,7 @@ fn planning_phase_procedures_are_directly_routed_references() {
 
 #[test]
 fn planning_orchestrator_requires_explicit_scope_without_mutation() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
@@ -792,7 +792,7 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
 
 #[test]
 fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
-    let body = skill::find("specbind-plan")
+    let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
@@ -803,7 +803,7 @@ fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
 
 #[test]
 fn tasks_skill_audits_verification_readiness_before_approval() {
-    let body = skill_resource_text("specbind-plan", "references/tasks.md");
+    let body = skill_resource_text("sb-plan", "references/tasks.md");
 
     assert!(body.contains("execution-readiness audit"));
     assert!(body.contains("canonical test command that is currently\nabsent"));
@@ -812,7 +812,7 @@ fn tasks_skill_audits_verification_readiness_before_approval() {
 
 #[test]
 fn design_skill_investigates_the_real_verification_foundation() {
-    let body = skill_resource_text("specbind-plan", "references/design.md");
+    let body = skill_resource_text("sb-plan", "references/design.md");
 
     assert!(body.contains("Confirm that each named command exists"));
     assert!(body.contains("own creation of the missing script or test\ninterface"));
@@ -821,7 +821,7 @@ fn design_skill_investigates_the_real_verification_foundation() {
 
 #[test]
 fn design_validation_puts_its_read_only_stop_rule_before_commands() {
-    let body = skill::find("specbind-validate-design")
+    let body = skill::find("sb-validate-design")
         .expect("design validation skill")
         .body()
         .expect("body");
@@ -841,7 +841,7 @@ fn design_validation_puts_its_read_only_stop_rule_before_commands() {
 
 #[test]
 fn task_review_puts_its_no_write_rule_before_commands() {
-    let body = skill::find("specbind-review-task")
+    let body = skill::find("sb-review-task")
         .expect("task review skill")
         .body()
         .expect("body");
@@ -874,7 +874,7 @@ fn task_review_puts_its_no_write_rule_before_commands() {
 
 #[test]
 fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
-    let body = skill::find("specbind-contract-review")
+    let body = skill::find("sb-contract-review")
         .expect("contract review skill")
         .body()
         .expect("body");
@@ -908,7 +908,7 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
 
 #[test]
 fn steering_add_stops_before_inventing_missing_project_policy() {
-    let body = skill::find("specbind-steering")
+    let body = skill::find("sb-steering")
         .expect("steering skill")
         .body()
         .expect("body");
@@ -927,7 +927,7 @@ fn steering_add_stops_before_inventing_missing_project_policy() {
 
 #[test]
 fn implementation_workflow_carries_notes_and_all_failure_routes() {
-    let body = skill_package_text("specbind-implement");
+    let body = skill_package_text("sb-implement");
 
     for required in [
         "specbind artifact list <spec>",
@@ -966,11 +966,11 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
 
 #[test]
 fn direct_review_and_debug_resolve_omitted_subjects_without_guessing() {
-    let review = skill::find("specbind-review-task")
+    let review = skill::find("sb-review-task")
         .expect("task review skill")
         .body()
         .expect("body");
-    let debug = skill::find("specbind-debug")
+    let debug = skill::find("sb-debug")
         .expect("debug skill")
         .body()
         .expect("body");
@@ -985,7 +985,7 @@ fn direct_review_and_debug_resolve_omitted_subjects_without_guessing() {
 
 #[test]
 fn status_names_machine_health_without_claiming_semantic_alignment() {
-    let body = skill::find("specbind-status")
+    let body = skill::find("sb-status")
         .expect("status skill")
         .body()
         .expect("body");
@@ -998,11 +998,11 @@ fn status_names_machine_health_without_claiming_semantic_alignment() {
 #[test]
 fn authoring_skills_produce_each_template_output_once_for_all_references() {
     for name in [
-        "specbind-discovery",
-        "specbind-plan",
-        "specbind-gap-analysis",
-        "specbind-implement",
-        "specbind-steering",
+        "sb-discovery",
+        "sb-plan",
+        "sb-gap-analysis",
+        "sb-implement",
+        "sb-steering",
     ] {
         let body = skill_package_text(name);
         let same_output = body.contains("same produced output") || body.contains("same\noutput");
@@ -1019,7 +1019,7 @@ fn authoring_skills_produce_each_template_output_once_for_all_references() {
 
 #[test]
 fn implementation_workflow_is_sequential_and_checkpoints_each_completed_task() {
-    let body = skill_package_text("specbind-implement");
+    let body = skill_package_text("sb-implement");
 
     for required in [
         "Task execution is sequential.",
@@ -1039,7 +1039,7 @@ fn implementation_workflow_is_sequential_and_checkpoints_each_completed_task() {
 
 #[test]
 fn implementation_dispatch_carries_project_local_operating_authority() {
-    let body = skill_package_text("specbind-implement");
+    let body = skill_package_text("sb-implement");
 
     assert!(body.contains("project-local instruction files"));
     assert!(body.contains("required\n  non-destructive bookkeeping inside the project"));
@@ -1049,11 +1049,11 @@ fn implementation_dispatch_carries_project_local_operating_authority() {
 #[test]
 fn adapter_consumers_use_the_dedicated_scaffold_marker() {
     for name in [
-        "specbind-discovery",
-        "specbind-plan",
-        "specbind-contract-review",
-        "specbind-implement",
-        "specbind-release",
+        "sb-discovery",
+        "sb-plan",
+        "sb-contract-review",
+        "sb-implement",
+        "sb-release",
     ] {
         let body = skill_package_text(name);
         assert!(
@@ -1063,8 +1063,7 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
         assert!(
             body.contains("marker classifies the whole\ndocument")
                 || body.contains("marker classifies the whole document")
-                || (name == "specbind-release"
-                    && body.contains("Do not interpret\nits remaining body")),
+                || (name == "sb-release" && body.contains("Do not interpret\nits remaining body")),
             "{name} must make the marker override the entire adapter body"
         );
         assert!(
@@ -1076,7 +1075,7 @@ fn adapter_consumers_use_the_dedicated_scaffold_marker() {
 
 #[test]
 fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
-    let body = skill_package_text("specbind-release");
+    let body = skill_package_text("sb-release");
 
     for required in [
         "Stop after bootstrap",
@@ -1130,7 +1129,7 @@ fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
 
 #[test]
 fn direct_debug_surface_can_report_an_undetermined_owner() {
-    let debug = skill::find("specbind-debug").expect("debug skill");
+    let debug = skill::find("sb-debug").expect("debug skill");
     let metadata = debug.metadata().expect("debug metadata");
     assert!(
         metadata
@@ -1161,7 +1160,7 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
         );
     }
 
-    let implement = skill::find("specbind-implement")
+    let implement = skill::find("sb-implement")
         .expect("implementation skill")
         .metadata()
         .expect("implementation metadata");
@@ -1174,7 +1173,7 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
 
 #[test]
 fn implementation_completion_questions_route_to_validation_not_status() {
-    let validation = skill::find("specbind-validate-implementation")
+    let validation = skill::find("sb-validate-implementation")
         .expect("implementation validation skill")
         .metadata()
         .expect("validation metadata");
@@ -1185,7 +1184,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .contains("whether a named Spec with every Task complete is done")
     );
 
-    let status = skill::find("specbind-status")
+    let status = skill::find("sb-status")
         .expect("status skill")
         .metadata()
         .expect("status metadata");
@@ -1195,15 +1194,14 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .contains("do not use to judge whether completed implementation is actually done")
     );
     assert!(
-        skill::find("specbind-status")
+        skill::find("sb-status")
             .expect("status skill")
             .body()
             .expect("status body")
-            .contains("use\n`specbind-validate-implementation`")
+            .contains("use\n`sb-validate-implementation`")
     );
 
-    let claim_verification =
-        skill::find("specbind-verify-completion").expect("claim verification skill");
+    let claim_verification = skill::find("sb-verify-completion").expect("claim verification skill");
     assert!(
         claim_verification
             .metadata()
@@ -1215,10 +1213,10 @@ fn implementation_completion_questions_route_to_validation_not_status() {
         claim_verification
             .body()
             .expect("claim verification body")
-            .contains("use `specbind-validate-implementation` instead")
+            .contains("use `sb-validate-implementation` instead")
     );
 
-    let validation_body = skill::find("specbind-validate-implementation")
+    let validation_body = skill::find("sb-validate-implementation")
         .expect("implementation validation skill")
         .body()
         .expect("implementation validation body");
@@ -1231,7 +1229,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
 
 #[test]
 fn task_review_and_debug_discover_split_designs_before_reading_them() {
-    for name in ["specbind-review-task", "specbind-debug"] {
+    for name in ["sb-review-task", "sb-debug"] {
         let body = skill::find(name)
             .expect("inspection skill")
             .body()

@@ -157,11 +157,11 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 
 ## 4. 設定は既定のまま進める
 
-初回のインストールが成功すると、`specbind-configure`で設定レビューを行うよう案内されます。
+初回のインストールが成功すると、`sb-configure`で設定レビューを行うよう案内されます。
 ただし最初は、この案内に従う前に、既定値のまま最初のリリース範囲を一周することを
 おすすめします。SpecBindの既定のテンプレートや判断基準は、そのまま使えるように
 設計されています。特に新規プロジェクトでは、まだ判断材料が少ないので、一周して
-調整したい面が見えてから`specbind-configure`に見直しを依頼すれば十分です。方法は
+調整したい面が見えてから`sb-configure`に見直しを依頼すれば十分です。方法は
 [プロジェクトに合わせてカスタマイズする](./customization.md)にまとめています。
 
 ## 5. 最初のリリース範囲を用意する
@@ -192,11 +192,11 @@ Steeringは、プロジェクト全体で長く維持する目的、技術上の
 記録する場所です。空のSteeringも有効なので、最初の範囲を始めるためだけに方針を
 作り足す必要はありません。
 
-すでに決めた長期的な方針がある場合は、Discoveryの前に`specbind-steering`へ
+すでに決めた長期的な方針がある場合は、Discoveryの前に`sb-steering`へ
 `bootstrap`モードでの作成を依頼しておくことができます。
 
 ```text
-$specbind-steering この新規プロジェクトで、すでに決めた長期的な方針から
+$sb-steering この新規プロジェクトで、すでに決めた長期的な方針から
 最初のSteeringを提案して。書く前に内容を確認したい。
 ```
 
@@ -209,7 +209,7 @@ $specbind-steering この新規プロジェクトで、すでに決めた長期�
 用意したディレクトリを、最初のリリース範囲としてdiscoveryスキルへ渡します。
 
 ```text
-$specbind-discovery docs/product-definition/ の内容を最初のリリース範囲としたい
+$sb-discovery docs/product-definition/ の内容を最初のリリース範囲としたい
 ```
 
 Discoveryはコレクションを全部棚卸しし、各ファイルをどの作業に使うか、今回は
@@ -246,7 +246,7 @@ Designが該当ファイルを読み、採用した内容を正規の成果物�
 途中で状態を確認したくなったら、次のように依頼できます。
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
@@ -256,8 +256,8 @@ $specbind-status
 最初のリリース範囲には複数のSpecがあるため、通常は次の組み合わせで進めます。
 
 ```text
-$specbind-plan --all
-$specbind-drive
+$sb-plan --all
+$sb-drive
 ```
 
 PlanでMilestone全体のRequirements、Design、Contractレビュー、Tasksを確定し、Driveで

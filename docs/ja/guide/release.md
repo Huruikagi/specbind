@@ -12,7 +12,7 @@ Specだけを切り出す方法はありません。
 
 次がそろっていることが前提です。
 
-- 参加する全SpecがImplementと`specbind-validate-implementation`を終え、CLIが
+- 参加する全SpecがImplementと`sb-validate-implementation`を終え、CLIが
   完了を裏付ける記録（completion evidence）を受理している
   （`specbind milestone status`で確認できます）
 - このMilestoneを実際に出すと決めている
@@ -26,7 +26,7 @@ Specだけを切り出す方法はありません。
 `.specbind/settings/adapters/release.md`（リリースアダプター）に自然言語で書きます。
 CLIもSpecBindも、この手順を代行しません。
 
-- **未設定のまま`specbind-release`を実行した場合** — スキルがリポジトリ内の
+- **未設定のまま`sb-release`を実行した場合** — スキルがリポジトリ内の
   リリース用ワークフロー、バージョンマニフェスト、ビルドスクリプト、既存の
   `RELEASE`/`CHANGELOG`などを調べ、Prepare（準備）・Publish（公開）・
   Verify（検証）・After-finalize（確定後処理）の
@@ -34,17 +34,17 @@ CLIもSpecBindも、この手順を代行しません。
   **その回はそこで停止します**（バージョンの紐付けも公開もしません）。
 - **設定を変更したあと** — `release.md`の保存は通常のプロジェクト変更なので、
   完了を裏付ける記録を受理済みのSpecは、それぞれ完了処理のやり直しが必要に
-  なります。やり直してから、改めて`specbind-release`を実行します。
+  なります。やり直してから、改めて`sb-release`を実行します。
 - **プロジェクト固有の作業が本当に不要なら** — Front Matterを残して本文を空に
   すると、「リリースに固有の手順は不要」という明示になります。
 
 書き方の詳細は[プロジェクトに合わせてカスタマイズする](./customization.md)の
 アダプターの節にあります。
 
-## 2. specbind-release を実行する
+## 2. sb-release を実行する
 
 ```text
-$specbind-release 1.0.0
+$sb-release 1.0.0
 ```
 
 リリースの操作は、基本的にこのスキル1つで進みます。バージョンの紐付けから確定処理まで
@@ -101,12 +101,12 @@ Verifyまで通ったら、参加する各Specの成果（要求ではなく、�
 - RoadmapはCLIによってリリースアーカイブへ移ります。各Specはリリース後も残り、次の
   変更の出発点として待機状態（`idle`）に戻ります
 - `log.md`にこのMilestoneの記録が追加されます
-- Milestoneはクローズされ、次の`specbind-discovery`が新しいMilestoneを開始できます
+- Milestoneはクローズされ、次の`sb-discovery`が新しいMilestoneを開始できます
 - `git.md`に方針があれば、確定処理が生成したログ・アーカイブ・後片付けは、公開対象とは
   別のローカルコミットになります
 
 このMilestoneで新規Specを追加した、Contractが動いた、あるいはまだSteeringが1つも
-ない状態でリリースした場合は、`specbind-steering`を一度回しておくとよいです。
+ない状態でリリースした場合は、`sb-steering`を一度回しておくとよいです。
 確定処理の後はSteeringの編集がふたたび自由になります。
 
 ## 現在の状態を確認する

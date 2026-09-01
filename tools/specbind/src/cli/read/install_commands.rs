@@ -66,7 +66,7 @@ pub fn install_apply(start: &Path, inputs: &install::InstallInputs) -> CommandOu
                 push_field(
                     &mut output,
                     "Next",
-                    "Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.",
+                    "Ask your coding agent to use sb-configure to review and configure SpecBind for this project.",
                 );
             }
             CommandOutput::success(output.into_bytes())

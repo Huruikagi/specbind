@@ -5,7 +5,7 @@ SpecBindのライフサイクルと検証はそのままに、成果物の書き
 
 このページでは、何を変えたいときにどこを編集するのかをまとめます。通常は場所を
 先に調べて手作業する必要はありません。コーディングエージェントへ設定したい結果を伝えると、
-`specbind-configure`が現在値を調べ、必要な変更、検証、アフターケアまで完遂します。
+`sb-configure`が現在値を調べ、必要な変更、検証、アフターケアまで完遂します。
 
 ```sh
 specbind configuration show
@@ -121,7 +121,7 @@ Brief、Research、Implementation Notesも、見出しやコメントだけで�
 テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
 成果物から、新しいテンプレートが使われます。
 
-`specbind-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。
+`sb-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。
 同意した時点では候補と影響のプレビューだけを作り、`format-only`、`instruction-update`、
 `structural`、`semantic`、`conflict`に分類します。実際の書き換えは別に確認し、意味を変える
 変更はRequirementsやDesignなど、その成果物を所有するスキルへ引き渡します。Gate、
@@ -254,7 +254,7 @@ specbind adapter read git
 本当に不要なら、Front Matterを残して本文を空にすることで明示できます。
 
 `git`にも動作する既定値があります。Discoveryの完了、各Gateの承認、Contractレビューの
-受理、各実装Taskの完了、`specbind-configure`による1つの設定変更など、スキルが定めた
+受理、各実装Taskの完了、`sb-configure`による1つの設定変更など、スキルが定めた
 安全な完了単位ごとに、関係するパスだけを
 ローカルコミットします。現在のブランチを使い、既定では`push`や`amend`などの履歴書き換えを
 行いません。初回のリリースアダプター設定と、`release finalize`が生成するログ・アーカイブ・
@@ -282,7 +282,7 @@ Steeringは、製品の目的、技術方針、構造、テスト方針、セキ
 これから先の作業でも参照するプロジェクトの知識です。作業中だけのメモや、すぐに
 変わる状態は書きません。
 
-`specbind-steering`スキルが、現在の一覧を確認したうえで、初期作成、既存文書の同期、
+`sb-steering`スキルが、現在の一覧を確認したうえで、初期作成、既存文書の同期、
 1文書の追加を行います。既定の`product`、`tech`、`structure`という分け方は提案です。
 名前を変えても、統合しても、分割しても、使わなくても構いません。
 
@@ -360,7 +360,7 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 
 ## 変更するときの進め方
 
-通常はコーディングエージェントへ目的を伝え、`specbind-configure`に次の一連の作業を任せます。
+通常はコーディングエージェントへ目的を伝え、`sb-configure`に次の一連の作業を任せます。
 
 1. `configuration show`と関係する`list`、`read`で現在値を確認する。
 2. 目的をテンプレート、ルール、アダプター、Steering、インストール設定の所有面へ分類する。
@@ -369,8 +369,8 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 5. 機械的な検証を再実行し、必須（`required`）、推奨（`recommended`）、任意（`optional`）に分けてアフターケアを
    完了または明示的に見送る。
 
-Steeringの執筆は`specbind-steering`、成果物の意味変更は各成果物のスキルが所有します。
-`specbind-configure`はそれらへ委譲しても、依頼された設定変更全体の完了確認と報告を
+Steeringの執筆は`sb-steering`、成果物の意味変更は各成果物のスキルが所有します。
+`sb-configure`はそれらへ委譲しても、依頼された設定変更全体の完了確認と報告を
 引き続き担当します。有効なGitアダプターが定める狭いローカルチェックポイントは通常の完了手順に
 含まれますが、削除、`push`、ブランチ変更、タグ、履歴操作、外部操作、ライフサイクル変更は
 別の確認境界です。

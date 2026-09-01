@@ -22,7 +22,7 @@ each approved Requirements, Design, or Tasks gate, an accepted Contract review,
 each completed implementation Task, a confirmed one-time Release adapter
 bootstrap, and successful release finalization. Keep completion and finalized
 release metadata in their own checkpoints when those workflows require one. A
-completed `specbind-configure` change and its required or authorized aftercare
+completed `sb-configure` change and its required or authorized aftercare
 form one configuration checkpoint; declined optional aftercare is not included.
 
 ## What to include

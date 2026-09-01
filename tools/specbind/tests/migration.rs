@@ -120,7 +120,7 @@ fn applies_and_rejoins_an_exact_deterministic_migration() {
     assert!(root.path().join(".specbind/settings").is_dir());
     assert!(
         root.path()
-            .join(".agents/skills/specbind-discovery/SKILL.md")
+            .join(".agents/skills/sb-discovery/SKILL.md")
             .is_file()
     );
     assert!(!root.path().join(".agents/skills/kiro-spec-init").exists());

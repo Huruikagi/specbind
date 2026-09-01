@@ -14,18 +14,18 @@ Claude Code uses `/`.
 ## 1. Confirm the current boundary
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 Review the Roadmap classification, dependencies, current Gates, and next safe
 actions. This guide is for a Spec-backed item. A Direct item has no
 Requirements, Design, Contract, or Tasks and goes directly to
-`specbind-implement <item-id>`.
+`sb-implement <item-id>`.
 
 ## 2. Author Requirements
 
 ```text
-$specbind-plan csv-export requirements
+$sb-plan csv-export requirements
 ```
 
 Requirements describe the complete current behavior of the Spec, not only this
@@ -39,7 +39,7 @@ decisions here instead of hiding them in ambiguous wording to move forward.
 ## 3. Author and validate Design and Contract
 
 ```text
-$specbind-plan csv-export design
+$sb-plan csv-export design
 ```
 
 Design explains how the Requirements will be realized. Contract structures
@@ -54,7 +54,7 @@ Requirements, return to their owning phase instead of compensating in Design.
 ## 4. Review Contracts across the Milestone
 
 ```text
-$specbind-contract-review
+$sb-contract-review
 ```
 
 Contract review is Milestone-wide, not a review of only the named Spec. Every
@@ -69,7 +69,7 @@ more convenient.
 ## 5. Author Tasks
 
 ```text
-$specbind-plan csv-export tasks
+$sb-plan csv-export tasks
 ```
 
 Tasks turn Requirements and Design into an executable order. Review each Task's
@@ -81,7 +81,7 @@ Tasks approval completes planning. It does not begin implementation.
 ## 6. Implement one Roadmap item
 
 ```text
-$specbind-implement csv-export
+$sb-implement csv-export
 ```
 
 Implement owns exactly one Roadmap item. For a Spec-backed item, it processes
@@ -99,8 +99,8 @@ through the owning phase.
 After every Task is complete, validate the Spec as a whole:
 
 ```text
-$specbind-validate-implementation csv-export
-$specbind-status csv-export
+$sb-validate-implementation csv-export
+$sb-status csv-export
 ```
 
 Validation evaluates the implementation against current Requirements and
@@ -110,7 +110,7 @@ item and may make dependent Roadmap items actionable.
 ## 8. Choose the next boundary
 
 Repeat the process for another unfinished item. You may switch to
-`specbind-drive` at this point; Drive reconstructs work from current CLI state
+`sb-drive` at this point; Drive reconstructs work from current CLI state
 and does not redo completed phases.
 
 Completion validation does not run Release. Publication and Milestone

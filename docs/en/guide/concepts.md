@@ -88,7 +88,7 @@ approval and completion evidence.
 Approval may be:
 
 - **explicit** — you review and approve at that Gate; or
-- **delegated** — you authorize a named run such as `specbind-plan` to approve
+- **delegated** — you authorize a named run such as `sb-plan` to approve
   specified Gates after their normal reviews and checks pass.
 
 Delegation does not skip review and does not authorize invalidating an existing
@@ -144,12 +144,12 @@ Discovery
   -> release and finalization
 ```
 
-`specbind-plan` is the default entry from Requirements through Tasks approval.
+`sb-plan` is the default entry from Requirements through Tasks approval.
 Use a named Spec or `--all`; an invocation without scope first asks which scope
 you intend. An explicit request for one named Spec and one Requirements,
 Design, or Tasks phase uses that phase's procedure from the same Plan Skill.
-`specbind-implement` handles exactly one Roadmap item at a time.
-`specbind-drive` selects safely reachable owning workflows across the Milestone
+`sb-implement` handles exactly one Roadmap item at a time.
+`sb-drive` selects safely reachable owning workflows across the Milestone
 one at a time and rereads CLI state after every handoff. It parks branch-local
 attention and continues independent work, but never executes Release.
 
@@ -157,7 +157,7 @@ attention and continues independent work, but never executes Release.
 
 Templates, Rules, and adapters below `.specbind/settings/`, plus Steering below
 `.specbind/steering/`, are project-owned. Product-managed Skills, protocols,
-schemas, and CLI state transitions are not. Use `specbind-configure` to route a
+schemas, and CLI state transitions are not. Use `sb-configure` to route a
 change to the correct owner and complete its verification and aftercare.
 
 Codex and generic integrations share `.agents/skills/`; Claude Code uses

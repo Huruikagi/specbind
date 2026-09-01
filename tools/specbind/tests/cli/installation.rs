@@ -166,7 +166,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
                 "\n  Summary: 49 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
-                "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
+                "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
             )),
         )
         .stderr("");
@@ -184,12 +184,12 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
-        ".agents/skills/specbind-discovery/references/adopt-start.md",
-        ".agents/skills/specbind-configure/SKILL.md",
-        ".agents/skills/specbind-configure/references/aftercare.md",
-        ".agents/skills/specbind-drive/SKILL.md",
-        ".agents/skills/specbind-implement/references/direct.md",
-        ".agents/skills/specbind-release/references/bootstrap-release-adapter.md",
+        ".agents/skills/sb-discovery/references/adopt-start.md",
+        ".agents/skills/sb-configure/SKILL.md",
+        ".agents/skills/sb-configure/references/aftercare.md",
+        ".agents/skills/sb-drive/SKILL.md",
+        ".agents/skills/sb-implement/references/direct.md",
+        ".agents/skills/sb-release/references/bootstrap-release-adapter.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
@@ -244,43 +244,39 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         .assert()
         .success()
         .stdout(
-            predicate::str::contains("- create .claude/skills/specbind-status/SKILL.md [skill]\n")
-                .and(predicate::str::contains(
-                    "- create .agents/skills/specbind-status/SKILL.md [skill]\n",
-                )),
+            predicate::str::contains("- create .claude/skills/sb-status/SKILL.md [skill]\n").and(
+                predicate::str::contains("- create .agents/skills/sb-status/SKILL.md [skill]\n"),
+            ),
         );
 
-    let claude = fs::read_to_string(root.path().join(".claude/skills/specbind-status/SKILL.md"))
+    let claude = fs::read_to_string(root.path().join(".claude/skills/sb-status/SKILL.md"))
         .expect("rendered Claude Code skill");
-    let codex = fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
+    let codex = fs::read_to_string(root.path().join(".agents/skills/sb-status/SKILL.md"))
         .expect("rendered Codex skill");
     for relative in [
-        ".claude/skills/specbind-plan/SKILL.md",
-        ".agents/skills/specbind-plan/SKILL.md",
-        ".claude/skills/specbind-plan/references/requirements.md",
-        ".agents/skills/specbind-plan/references/requirements.md",
-        ".claude/skills/specbind-plan/references/design.md",
-        ".agents/skills/specbind-plan/references/design.md",
-        ".claude/skills/specbind-plan/references/tasks.md",
-        ".agents/skills/specbind-plan/references/tasks.md",
-        ".claude/skills/specbind-drive/SKILL.md",
-        ".agents/skills/specbind-drive/SKILL.md",
-        ".claude/skills/specbind-configure/references/aftercare.md",
-        ".agents/skills/specbind-configure/references/aftercare.md",
-        ".claude/skills/specbind-discovery/references/adopt-start.md",
-        ".agents/skills/specbind-discovery/references/adopt-start.md",
-        ".claude/skills/specbind-implement/references/spec-backed.md",
-        ".agents/skills/specbind-implement/references/spec-backed.md",
-        ".claude/skills/specbind-release/references/bootstrap-release-adapter.md",
-        ".agents/skills/specbind-release/references/bootstrap-release-adapter.md",
+        ".claude/skills/sb-plan/SKILL.md",
+        ".agents/skills/sb-plan/SKILL.md",
+        ".claude/skills/sb-plan/references/requirements.md",
+        ".agents/skills/sb-plan/references/requirements.md",
+        ".claude/skills/sb-plan/references/design.md",
+        ".agents/skills/sb-plan/references/design.md",
+        ".claude/skills/sb-plan/references/tasks.md",
+        ".agents/skills/sb-plan/references/tasks.md",
+        ".claude/skills/sb-drive/SKILL.md",
+        ".agents/skills/sb-drive/SKILL.md",
+        ".claude/skills/sb-configure/references/aftercare.md",
+        ".agents/skills/sb-configure/references/aftercare.md",
+        ".claude/skills/sb-discovery/references/adopt-start.md",
+        ".agents/skills/sb-discovery/references/adopt-start.md",
+        ".claude/skills/sb-implement/references/spec-backed.md",
+        ".agents/skills/sb-implement/references/spec-backed.md",
+        ".claude/skills/sb-release/references/bootstrap-release-adapter.md",
+        ".agents/skills/sb-release/references/bootstrap-release-adapter.md",
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
     assert_retired_skill_files_are_absent(root.path());
-    assert!(
-        claude.starts_with("---\nname: specbind-status\n"),
-        "{claude}"
-    );
+    assert!(claude.starts_with("---\nname: sb-status\n"), "{claude}");
     assert!(claude.contains("argument-hint:"), "{claude}");
     assert!(!codex.contains("argument-hint:"), "{codex}");
     for forbidden in ["allowed-tools", "disable-model-invocation"] {
@@ -304,8 +300,8 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     // to overwrite it while it is uncommitted.
     write(
         root.path(),
-        ".agents/skills/specbind-status/SKILL.md",
-        "---\nname: specbind-status\ndescription: edited\n---\n# Local\n",
+        ".agents/skills/sb-status/SKILL.md",
+        "---\nname: sb-status\ndescription: edited\n---\n# Local\n",
     );
     let mut refresh = specbind_command();
     refresh
@@ -324,10 +320,10 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "- replace .agents/skills/specbind-status/SKILL.md [skill]\n",
+            "- replace .agents/skills/sb-status/SKILL.md [skill]\n",
         ));
     assert_eq!(
-        fs::read_to_string(root.path().join(".agents/skills/specbind-status/SKILL.md"))
+        fs::read_to_string(root.path().join(".agents/skills/sb-status/SKILL.md"))
             .expect("refreshed skill"),
         codex,
         "a refresh restores the product asset"
@@ -394,7 +390,7 @@ fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
     assert_retired_skill_files_are_absent(root.path());
     assert!(
         root.path()
-            .join(".agents/skills/specbind-plan/references/design.md")
+            .join(".agents/skills/sb-plan/references/design.md")
             .is_file()
     );
     assert!(
@@ -413,19 +409,14 @@ fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
 }
 
 fn assert_retired_skill_files_are_absent(root: &std::path::Path) {
-    for removed in [
-        "specbind-quick-plan",
-        "specbind-requirements",
-        "specbind-design",
-        "specbind-tasks",
-        "specbind-plan-requirements",
-        "specbind-plan-design",
-        "specbind-plan-tasks",
-    ] {
+    for removed in specbind::skill::retired_names() {
+        if *removed == "specbind-adopt-existing" {
+            continue;
+        }
         for agent_root in [".claude/skills", ".agents/skills"] {
             assert!(
                 !root.join(agent_root).join(removed).exists(),
-                "removed alias {agent_root}/{removed}"
+                "removed retired package {agent_root}/{removed}"
             );
         }
     }
@@ -540,7 +531,7 @@ fn installs_generic_shared_surfaces_once_without_generic_roles() {
     let stdout = String::from_utf8(output.stdout).expect("UTF-8 output");
     assert_eq!(
         stdout
-            .matches(".agents/skills/specbind-status/SKILL.md [skill]")
+            .matches(".agents/skills/sb-status/SKILL.md [skill]")
             .count(),
         1,
         "shared Skill target must be planned once: {stdout}"
@@ -552,7 +543,7 @@ fn installs_generic_shared_surfaces_once_without_generic_roles() {
     );
     assert!(
         root.path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(root.path().join("AGENTS.md").is_file());
@@ -591,7 +582,7 @@ fn installs_generic_without_any_host_specific_roles() {
 
     assert!(
         root.path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(root.path().join("AGENTS.md").is_file());

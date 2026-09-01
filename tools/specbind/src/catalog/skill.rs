@@ -69,68 +69,83 @@ impl std::error::Error for SkillError {}
 /// The complete embedded skill set.
 static SKILLS: &[Skill] = &[
     Skill {
-        name: "specbind-contract-review",
-        source: include_str!("../../assets/skills/specbind-contract-review/SKILL.md"),
+        name: "sb-contract-review",
+        source: include_str!("../../assets/skills/sb-contract-review/SKILL.md"),
     },
     Skill {
-        name: "specbind-configure",
-        source: include_str!("../../assets/skills/specbind-configure/SKILL.md"),
+        name: "sb-configure",
+        source: include_str!("../../assets/skills/sb-configure/SKILL.md"),
     },
     Skill {
-        name: "specbind-debug",
-        source: include_str!("../../assets/skills/specbind-debug/SKILL.md"),
+        name: "sb-debug",
+        source: include_str!("../../assets/skills/sb-debug/SKILL.md"),
     },
     Skill {
-        name: "specbind-discovery",
-        source: include_str!("../../assets/skills/specbind-discovery/SKILL.md"),
+        name: "sb-discovery",
+        source: include_str!("../../assets/skills/sb-discovery/SKILL.md"),
     },
     Skill {
-        name: "specbind-drive",
-        source: include_str!("../../assets/skills/specbind-drive/SKILL.md"),
+        name: "sb-drive",
+        source: include_str!("../../assets/skills/sb-drive/SKILL.md"),
     },
     Skill {
-        name: "specbind-gap-analysis",
-        source: include_str!("../../assets/skills/specbind-gap-analysis/SKILL.md"),
+        name: "sb-gap-analysis",
+        source: include_str!("../../assets/skills/sb-gap-analysis/SKILL.md"),
     },
     Skill {
-        name: "specbind-implement",
-        source: include_str!("../../assets/skills/specbind-implement/SKILL.md"),
+        name: "sb-implement",
+        source: include_str!("../../assets/skills/sb-implement/SKILL.md"),
     },
     Skill {
-        name: "specbind-plan",
-        source: include_str!("../../assets/skills/specbind-plan/SKILL.md"),
+        name: "sb-plan",
+        source: include_str!("../../assets/skills/sb-plan/SKILL.md"),
     },
     Skill {
-        name: "specbind-release",
-        source: include_str!("../../assets/skills/specbind-release/SKILL.md"),
+        name: "sb-release",
+        source: include_str!("../../assets/skills/sb-release/SKILL.md"),
     },
     Skill {
-        name: "specbind-review-task",
-        source: include_str!("../../assets/skills/specbind-review-task/SKILL.md"),
+        name: "sb-review-task",
+        source: include_str!("../../assets/skills/sb-review-task/SKILL.md"),
     },
     Skill {
-        name: "specbind-status",
-        source: include_str!("../../assets/skills/specbind-status/SKILL.md"),
+        name: "sb-status",
+        source: include_str!("../../assets/skills/sb-status/SKILL.md"),
     },
     Skill {
-        name: "specbind-steering",
-        source: include_str!("../../assets/skills/specbind-steering/SKILL.md"),
+        name: "sb-steering",
+        source: include_str!("../../assets/skills/sb-steering/SKILL.md"),
     },
     Skill {
-        name: "specbind-validate-design",
-        source: include_str!("../../assets/skills/specbind-validate-design/SKILL.md"),
+        name: "sb-validate-design",
+        source: include_str!("../../assets/skills/sb-validate-design/SKILL.md"),
     },
     Skill {
-        name: "specbind-validate-implementation",
-        source: include_str!("../../assets/skills/specbind-validate-implementation/SKILL.md"),
+        name: "sb-validate-implementation",
+        source: include_str!("../../assets/skills/sb-validate-implementation/SKILL.md"),
     },
     Skill {
-        name: "specbind-verify-completion",
-        source: include_str!("../../assets/skills/specbind-verify-completion/SKILL.md"),
+        name: "sb-verify-completion",
+        source: include_str!("../../assets/skills/sb-verify-completion/SKILL.md"),
     },
 ];
 
 static RETIRED_SKILL_NAMES: &[&str] = &[
+    "specbind-contract-review",
+    "specbind-configure",
+    "specbind-debug",
+    "specbind-discovery",
+    "specbind-drive",
+    "specbind-gap-analysis",
+    "specbind-implement",
+    "specbind-plan",
+    "specbind-release",
+    "specbind-review-task",
+    "specbind-status",
+    "specbind-steering",
+    "specbind-validate-design",
+    "specbind-validate-implementation",
+    "specbind-verify-completion",
     "specbind-adopt-existing",
     "specbind-plan-design",
     "specbind-plan-requirements",
@@ -140,34 +155,61 @@ static RETIRED_SKILL_NAMES: &[&str] = &[
 static RETIRED_ENTRYPOINT_ONLY_FILES: &[&str] = &["SKILL.md"];
 static RETIRED_ADOPT_EXISTING_FILES: &[&str] =
     &["references/resume.md", "references/start.md", "SKILL.md"];
+static RETIRED_CONFIGURE_FILES: &[&str] = &[
+    "references/adapters.md",
+    "references/aftercare.md",
+    "references/installation-and-agents.md",
+    "references/rules.md",
+    "references/steering.md",
+    "references/templates-and-reconciliation.md",
+    "SKILL.md",
+];
+static RETIRED_DISCOVERY_FILES: &[&str] = &[
+    "references/adopt-resume.md",
+    "references/adopt-start.md",
+    "references/local-files.md",
+    "SKILL.md",
+];
+static RETIRED_IMPLEMENT_FILES: &[&str] = &[
+    "references/direct.md",
+    "references/spec-backed.md",
+    "SKILL.md",
+];
+static RETIRED_PLAN_FILES: &[&str] = &[
+    "references/design.md",
+    "references/requirements.md",
+    "references/tasks.md",
+    "SKILL.md",
+];
+static RETIRED_RELEASE_FILES: &[&str] = &["references/bootstrap-release-adapter.md", "SKILL.md"];
 
 static CONFIGURE_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/adapters.md",
-        source: include_str!("../../assets/skills/specbind-configure/references/adapters.md"),
+        source: include_str!("../../assets/skills/sb-configure/references/adapters.md"),
     },
     SkillResource {
         relative_path: "references/aftercare.md",
-        source: include_str!("../../assets/skills/specbind-configure/references/aftercare.md"),
+        source: include_str!("../../assets/skills/sb-configure/references/aftercare.md"),
     },
     SkillResource {
         relative_path: "references/installation-and-agents.md",
         source: include_str!(
-            "../../assets/skills/specbind-configure/references/installation-and-agents.md"
+            "../../assets/skills/sb-configure/references/installation-and-agents.md"
         ),
     },
     SkillResource {
         relative_path: "references/rules.md",
-        source: include_str!("../../assets/skills/specbind-configure/references/rules.md"),
+        source: include_str!("../../assets/skills/sb-configure/references/rules.md"),
     },
     SkillResource {
         relative_path: "references/steering.md",
-        source: include_str!("../../assets/skills/specbind-configure/references/steering.md"),
+        source: include_str!("../../assets/skills/sb-configure/references/steering.md"),
     },
     SkillResource {
         relative_path: "references/templates-and-reconciliation.md",
         source: include_str!(
-            "../../assets/skills/specbind-configure/references/templates-and-reconciliation.md"
+            "../../assets/skills/sb-configure/references/templates-and-reconciliation.md"
         ),
     },
 ];
@@ -175,49 +217,47 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
 static DISCOVERY_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/adopt-resume.md",
-        source: include_str!("../../assets/skills/specbind-discovery/references/adopt-resume.md"),
+        source: include_str!("../../assets/skills/sb-discovery/references/adopt-resume.md"),
     },
     SkillResource {
         relative_path: "references/adopt-start.md",
-        source: include_str!("../../assets/skills/specbind-discovery/references/adopt-start.md"),
+        source: include_str!("../../assets/skills/sb-discovery/references/adopt-start.md"),
     },
     SkillResource {
         relative_path: "references/local-files.md",
-        source: include_str!("../../assets/skills/specbind-discovery/references/local-files.md"),
+        source: include_str!("../../assets/skills/sb-discovery/references/local-files.md"),
     },
 ];
 
 static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/direct.md",
-        source: include_str!("../../assets/skills/specbind-implement/references/direct.md"),
+        source: include_str!("../../assets/skills/sb-implement/references/direct.md"),
     },
     SkillResource {
         relative_path: "references/spec-backed.md",
-        source: include_str!("../../assets/skills/specbind-implement/references/spec-backed.md"),
+        source: include_str!("../../assets/skills/sb-implement/references/spec-backed.md"),
     },
 ];
 
 static PLAN_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/design.md",
-        source: include_str!("../../assets/skills/specbind-plan/references/design.md"),
+        source: include_str!("../../assets/skills/sb-plan/references/design.md"),
     },
     SkillResource {
         relative_path: "references/requirements.md",
-        source: include_str!("../../assets/skills/specbind-plan/references/requirements.md"),
+        source: include_str!("../../assets/skills/sb-plan/references/requirements.md"),
     },
     SkillResource {
         relative_path: "references/tasks.md",
-        source: include_str!("../../assets/skills/specbind-plan/references/tasks.md"),
+        source: include_str!("../../assets/skills/sb-plan/references/tasks.md"),
     },
 ];
 
 static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
     relative_path: "references/bootstrap-release-adapter.md",
-    source: include_str!(
-        "../../assets/skills/specbind-release/references/bootstrap-release-adapter.md"
-    ),
+    source: include_str!("../../assets/skills/sb-release/references/bootstrap-release-adapter.md"),
 }];
 
 /// Lists every embedded skill.
@@ -237,6 +277,11 @@ pub fn retired_names() -> &'static [&'static str] {
 pub fn retired_files(name: &str) -> &'static [&'static str] {
     match name {
         "specbind-adopt-existing" => RETIRED_ADOPT_EXISTING_FILES,
+        "specbind-configure" => RETIRED_CONFIGURE_FILES,
+        "specbind-discovery" => RETIRED_DISCOVERY_FILES,
+        "specbind-implement" => RETIRED_IMPLEMENT_FILES,
+        "specbind-plan" => RETIRED_PLAN_FILES,
+        "specbind-release" => RETIRED_RELEASE_FILES,
         _ => RETIRED_ENTRYPOINT_ONLY_FILES,
     }
 }
@@ -319,11 +364,11 @@ impl Skill {
     #[must_use]
     pub fn resources(self) -> &'static [SkillResource] {
         match self.name {
-            "specbind-configure" => CONFIGURE_RESOURCES,
-            "specbind-discovery" => DISCOVERY_RESOURCES,
-            "specbind-implement" => IMPLEMENT_RESOURCES,
-            "specbind-plan" => PLAN_RESOURCES,
-            "specbind-release" => RELEASE_RESOURCES,
+            "sb-configure" => CONFIGURE_RESOURCES,
+            "sb-discovery" => DISCOVERY_RESOURCES,
+            "sb-implement" => IMPLEMENT_RESOURCES,
+            "sb-plan" => PLAN_RESOURCES,
+            "sb-release" => RELEASE_RESOURCES,
             _ => &[],
         }
     }

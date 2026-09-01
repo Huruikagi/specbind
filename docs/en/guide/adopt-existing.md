@@ -1,6 +1,6 @@
 # Establish Specs from an existing implementation
 
-The existing-implementation route of `specbind-discovery` investigates working
+The existing-implementation route of `sb-discovery` investigates working
 code and tests and organizes the evidence into candidate SpecBind Specs. It is
 for an existing project without a trusted specification, not for migration from
 another SDD product such as cc-sdd.
@@ -17,20 +17,20 @@ promoted through the Brief into Requirements.
 - The repository, including Steering, is committed and the worktree is clean.
 - The adoption target is explicitly the whole repository or a concrete area.
 
-If Steering is absent, run `specbind-steering` in bootstrap mode first, review
+If Steering is absent, run `sb-steering` in bootstrap mode first, review
 the proposal, and commit it.
 
 ## Standard route
 
 ```text
 Bootstrap or synchronize Steering
-  -> specbind-discovery for the selected existing area
+  -> sb-discovery for the selected existing area
   -> confirm candidate Spec boundaries
-  -> continue specbind-discovery
+  -> continue sb-discovery
   -> create Specs and Briefs
-  -> resume specbind-discovery
+  -> resume sb-discovery
   -> confirm observations and intent per Spec
-  -> specbind-plan
+  -> sb-plan
 ```
 
 The first run checks adoption prerequisites with:
@@ -52,7 +52,7 @@ investigates only the requested adoption area deeply. Specs are divided by
 durable responsibility, not directory size or estimated task count.
 
 No Spec boundary is created before user confirmation. After confirmation, the
-ordinary route in the same `specbind-discovery` Skill presents the Roadmap scope
+ordinary route in the same `sb-discovery` Skill presents the Roadmap scope
 again and owns the CLI-managed Milestone and Spec changes. These remain two
 separate confirmations.
 
@@ -80,7 +80,7 @@ history, and each Spec's Research remains until normal release finalization.
 
 Discovery's adoption route does not author or approve Requirements or Design.
 It stops after handing confirmed intent to the Brief and implementation evidence
-and design constraints to Research. Continue with `specbind-plan` through the
+and design constraints to Research. Continue with `sb-plan` through the
 ordinary Requirements, Design, and Tasks phases; there are no reverse-specific
 authoring Skills.
 

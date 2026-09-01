@@ -37,11 +37,7 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("When the classification is genuinely\n  unclear, enter the flow")
     );
-    assert!(
-        applied
-            .content
-            .contains("use `specbind-validate-implementation`")
-    );
+    assert!(applied.content.contains("use `sb-validate-implementation`"));
     assert!(
         applied
             .content
@@ -50,7 +46,7 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
-            .contains("Use `specbind-plan` as the default planning entry point")
+            .contains("Use `sb-plan` as the default planning entry point")
     );
     assert!(
         applied
@@ -83,21 +79,17 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("A request matching a\n  pending Spec-backed or Direct item")
     );
-    assert!(
-        applied
-            .content
-            .contains("routes to\n  `specbind-implement`")
-    );
+    assert!(applied.content.contains("routes to\n  `sb-implement`"));
     assert!(applied.content.contains(
         "that match takes precedence even when the requested\n  output also looks like durable"
     ));
-    assert!(applied.content.contains("use\n  `specbind-review-task`"));
+    assert!(applied.content.contains("use\n  `sb-review-task`"));
     assert!(
         applied
             .content
             .contains("judge the actual diff without fixing")
     );
-    assert!(applied.content.contains("use\n  `specbind-debug` directly"));
+    assert!(applied.content.contains("use\n  `sb-debug` directly"));
     assert!(
         applied
             .content

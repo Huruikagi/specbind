@@ -310,7 +310,7 @@ pending — ask for confirmation that the cart work is complete.
 
 Accepted by [Decision 0111](../design/decisions/0111-review-task-and-debug-skill-contracts.md).
 Both skills are also exercised inside the implementation scenarios, where
-`specbind-implement` dispatches them; these measure direct invocation.
+`sb-implement` dispatches them; these measure direct invocation.
 
 ### RT1 — A wrong implementation is rejected, not repaired
 

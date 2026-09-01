@@ -15,8 +15,8 @@ Prepare `dr1`, then ask:
 
 > Drive this active milestone as far as you safely can. Do not release it.
 
-- The installed `specbind-drive` workflow is selected from the milestone-wide
-  request; the run does not collapse to one invocation of `specbind-implement`.
+- The installed `sb-drive` workflow is selected from the milestone-wide
+  request; the run does not collapse to one invocation of `sb-implement`.
 - The `cart-contract-change` Direct item is parked for Discovery because its
   summary explicitly requires canonical Requirements work. No cart artifact or
   implementation path is changed.
@@ -40,7 +40,7 @@ Use the base fixture and ask:
 
 - `.specbind.json` records only the implementer capability override and keeps
   every unrelated install choice.
-- `.codex/agents/specbind-implementer.toml` is regenerated from that setting;
+- `.codex/agents/sb-implementer.toml` is regenerated from that setting;
   no generated Agent file is edited as the source of truth.
 - `specbind configuration show` reports the implementer as `overridden`, and a
   final `specbind install --dry-run` has no create or replace action.
@@ -131,7 +131,7 @@ proposes.
   started.
 - Exactly one confirmation was taken. A prompt at each gate is the failure.
 - `specbind spec status <spec>` afterwards reports
-  `Delegated gates: requirements (specbind-plan), design (specbind-plan), tasks (specbind-plan)`.
+  `Delegated gates: requirements (sb-plan), design (sb-plan), tasks (sb-plan)`.
 
 ### Q2 — Declining delegation does not end the run
 
@@ -148,7 +148,7 @@ Run Plan against a Spec whose design has a defect design validation catches.
 
 > Ask: take the cart change through to an approved plan in one go.
 
-- `specbind-validate-design` ran, between authoring and design approval.
+- `sb-validate-design` ran, between authoring and design approval.
 - Its `NO-GO` **stopped the run.** Approving the design gate and reporting the
   verdict as advisory is the failure.
 
@@ -182,7 +182,7 @@ Spec.
 - The exact complete Spec-backed scope and the Requirements, Design, and Tasks
   delegated gates are presented before phase work starts.
 - The workflow identity presented for durable gate evidence is
-  `specbind-plan`; none of the removed `specbind-quick-plan` or batch workflow
+  `sb-plan`; none of the removed `specbind-quick-plan` or batch workflow
   identifiers is selected or suggested.
 - The run stops for the one delegation confirmation before authoring.
 
@@ -366,7 +366,7 @@ Run a gap analysis substantial enough to produce a research document.
   none.
 - Not everything is marked for promotion. A document where every finding must be
   promoted has not made the judgment this scenario checks.
-- Run `specbind-plan` afterwards for that Spec's Design phase. Conclusions marked Design or Contract appear
+- Run `sb-plan` afterwards for that Spec's Design phase. Conclusions marked Design or Contract appear
   in the design set; a Requirements mark was surfaced as a rewind decision rather
   than silently written or silently dropped.
 

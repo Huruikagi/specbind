@@ -321,3 +321,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0173](./design/decisions/0173-mechanical-requirement-retirement-guard.md) | Accepted | Established Requirement ID removal rejected mechanically |
 | [0174](./design/decisions/0174-plan-phase-procedures-as-references.md) | Accepted | Requirements, Design, and Tasks procedures packaged as references of the single Plan Skill |
 | [0175](./design/decisions/0175-existing-adoption-as-discovery-references.md) | Accepted | Existing-implementation adoption procedures packaged as references of Discovery |
+| [0176](./design/decisions/0176-skill-namespace-separation.md) | Accepted | `sb-*` Skill namespace separated from the `specbind` CLI |

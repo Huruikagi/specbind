@@ -85,15 +85,15 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
         .success()
         .stdout(predicate::str::starts_with("OK AGENT_REMOVAL_PLANNED:"))
         .stdout(predicate::str::contains(
-            "remove .agents/skills/specbind-status/SKILL.md [skill]",
+            "remove .agents/skills/sb-status/SKILL.md [skill]",
         ))
         .stdout(predicate::str::contains(
-            "remove .agents/skills/specbind-configure/references/aftercare.md [skill]",
+            "remove .agents/skills/sb-configure/references/aftercare.md [skill]",
         ))
         .stdout(predicate::str::contains("retain AGENTS.md").not());
     assert!(
         root.path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .is_file(),
         "planning must not mutate"
     );
@@ -107,13 +107,13 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-configure/references/aftercare.md")
+            .join(".agents/skills/sb-configure/references/aftercare.md")
             .exists()
     );
     assert!(
@@ -124,7 +124,7 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
     );
     assert!(
         root.path()
-            .join(".claude/skills/specbind-status/SKILL.md")
+            .join(".claude/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(
@@ -174,10 +174,10 @@ fn removing_codex_retains_surfaces_shared_with_generic() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "retain .agents/skills/specbind-status/SKILL.md [skill]",
+            "retain .agents/skills/sb-status/SKILL.md [skill]",
         ))
         .stdout(predicate::str::contains(
-            "retain .agents/skills/specbind-configure/references/aftercare.md [skill]",
+            "retain .agents/skills/sb-configure/references/aftercare.md [skill]",
         ))
         .stdout(predicate::str::contains(
             "remove .codex/agents/specbind-planner.toml [agent-role]",
@@ -193,7 +193,7 @@ fn removing_codex_retains_surfaces_shared_with_generic() {
 
     assert!(
         root.path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(root.path().join("AGENTS.md").is_file());
@@ -217,7 +217,7 @@ fn removing_generic_retains_surfaces_required_by_codex() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "retain .agents/skills/specbind-status/SKILL.md [skill]",
+            "retain .agents/skills/sb-status/SKILL.md [skill]",
         ))
         .stdout(predicate::str::contains(
             "retain AGENTS.md [project-instructions]",
@@ -225,7 +225,7 @@ fn removing_generic_retains_surfaces_required_by_codex() {
 
     assert!(
         root.path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(
@@ -250,7 +250,7 @@ fn removing_generic_drops_only_its_unshared_surfaces() {
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
     assert_eq!(
@@ -259,7 +259,7 @@ fn removing_generic_drops_only_its_unshared_surfaces() {
     );
     assert!(
         root.path()
-            .join(".claude/skills/specbind-status/SKILL.md")
+            .join(".claude/skills/sb-status/SKILL.md")
             .is_file()
     );
     assert!(root.path().join("CLAUDE.md").is_file());
@@ -278,7 +278,7 @@ fn uninstall_deduplicates_generic_and_codex_shared_surfaces() {
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
     assert!(
@@ -320,7 +320,7 @@ fn uninstall_retain_keeps_the_complete_spec_dir_and_surrounding_instructions() {
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
     assert_eq!(
@@ -351,7 +351,7 @@ fn uninstall_remove_deletes_the_tracked_spec_dir_and_project_integration() {
     assert!(
         !root
             .path()
-            .join(".agents/skills/specbind-status/SKILL.md")
+            .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
 }
@@ -388,7 +388,7 @@ fn removal_rejects_unrelated_dirty_worktree_state() {
 #[test]
 fn apply_converges_from_exact_already_removed_targets() {
     let root = installed(&["codex", "claude-code"], true);
-    fs::remove_file(root.path().join(".agents/skills/specbind-status/SKILL.md"))
+    fs::remove_file(root.path().join(".agents/skills/sb-status/SKILL.md"))
         .expect("simulate interrupted skill removal");
     let agents_path = root.path().join("AGENTS.md");
     let agents = fs::read_to_string(&agents_path).expect("AGENTS.md");
@@ -403,14 +403,14 @@ fn apply_converges_from_exact_already_removed_targets() {
         .success()
         .stdout(predicate::str::starts_with("OK AGENT_REMOVAL_APPLIED:"))
         .stdout(predicate::str::contains(
-            "absent .agents/skills/specbind-status/SKILL.md",
+            "absent .agents/skills/sb-status/SKILL.md",
         ))
         .stdout(predicate::str::contains("absent AGENTS.md"));
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
     assert!(!config.contains("codex"));
     assert!(
         root.path()
-            .join(".claude/skills/specbind-status/SKILL.md")
+            .join(".claude/skills/sb-status/SKILL.md")
             .is_file()
     );
 }

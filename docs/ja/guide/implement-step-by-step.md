@@ -14,17 +14,17 @@ Milestoneと対象Specは、先にDiscoveryで作成しておきます。まだ�
 ## 1. 現在地と対象を確認する
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 Roadmapの分類、依存関係、現在有効なGate、次に進められる操作を確認します。この
 ページの手順はSpec項目向けです。Direct項目にはRequirements、Design、
-Contract、Tasksを作らず、`specbind-implement <item-id>`へ直接進みます。
+Contract、Tasksを作らず、`sb-implement <item-id>`へ直接進みます。
 
 ## 2. Requirementsを作成する
 
 ```text
-$specbind-plan csv-export requirements
+$sb-plan csv-export requirements
 ```
 
 Requirementsは今回の差分だけではなく、そのSpecが現在保証する振る舞い全体です。
@@ -37,7 +37,7 @@ Acceptance Criteriaへ書き直されていることを確認します。
 ## 3. DesignとContractを作成・検証する
 
 ```text
-$specbind-plan csv-export design
+$sb-plan csv-export design
 ```
 
 DesignはRequirementsをどう実現するかを定め、Contractは外部責任、依存関係、所有する
@@ -50,7 +50,7 @@ Requirements自体の問題なら、Designで補わずRequirementsへ戻しま�
 ## 4. Milestone全体のContractをレビューする
 
 ```text
-$specbind-contract-review
+$sb-contract-review
 ```
 
 Contractレビューは1つのSpecだけを見る処理ではありません。進行中のMilestoneに含まれる
@@ -64,7 +64,7 @@ Contractレビューは1つのSpecだけを見る処理ではありません。�
 ## 5. Tasksを作成する
 
 ```text
-$specbind-plan csv-export tasks
+$sb-plan csv-export tasks
 ```
 
 TasksはRequirementsとDesignを実行可能な順序へ分解します。各Taskの対象、完了条件、
@@ -75,7 +75,7 @@ Tasks承認までは計画です。この時点では実装は始まっていま
 ## 6. 1つのRoadmap項目を実装する
 
 ```text
-$specbind-implement csv-export
+$sb-implement csv-export
 ```
 
 Implementは1回につき1つのRoadmap項目を担当します。Spec項目ではTaskを順番に
@@ -91,8 +91,8 @@ Implementは1回につき1つのRoadmap項目を担当します。Spec項目で�
 全Taskが完了したら、個々のTaskではなくSpec全体を検証します。
 
 ```text
-$specbind-validate-implementation csv-export
-$specbind-status csv-export
+$sb-validate-implementation csv-export
+$sb-status csv-export
 ```
 
 検証は現在のRequirementsとDesignに対して実装を評価します。結果が`GO`となり、CLIが
@@ -102,7 +102,7 @@ $specbind-status csv-export
 ## 8. 次の境界を選ぶ
 
 Milestoneに未完了項目があれば、次の項目で同じ手順を繰り返します。ここからまとめて
-進めたい場合は`specbind-drive`へ切り替えてもかまいません。Driveは現在のCLI状態から
+進めたい場合は`sb-drive`へ切り替えてもかまいません。Driveは現在のCLI状態から
 再開するため、このページで進めた内容をやり直しません。
 
 すべての実装検証が終わっても、リリースはまだ実行されていません。公開とMilestoneの

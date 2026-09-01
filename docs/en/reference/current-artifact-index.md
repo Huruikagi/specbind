@@ -62,7 +62,7 @@ to be materialized. The required `design-template-selection` Rule classifies
 each `design/<artifact_id>` as `required`, `conditional`, or `disabled` and
 provides project-owned conditions for conditional entries. The CLI validates a
 complete one-to-one classification when that Rule is listed or read;
-the Design phase of `specbind-plan` evaluates conditional prose against the current Spec. The
+the Design phase of `sb-plan` evaluates conditional prose against the current Spec. The
 default selects `design/main` for every Spec and selects `design/ui` only for a
 user-visible screen or interaction responsibility.
 
@@ -97,11 +97,11 @@ settings.
 
 | Artifact or path | Current lifecycle and owner |
 | --- | --- |
-| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by the existing-implementation route of `specbind-discovery`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
+| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by the existing-implementation route of `sb-discovery`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
 | `{{SPEC_DIR}}/deferred.md` | Optional project-wide OKF concept created by the default deferred adapter when the first non-blocking finding is recorded. It is not a gate, fingerprint input, lifecycle artifact, or source of work. |
 | `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope and records complete Source Collection disposition when supplied. |
-| `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `specbind-steering` and selected by `artifact_id`. |
-| `{{SPEC_DIR}}/state/contract-review.md` | Current accepted milestone-wide Contract review for a Spec-backed milestone; authored by `specbind-contract-review` and persisted by the CLI. |
+| `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `sb-steering` and selected by `artifact_id`. |
+| `{{SPEC_DIR}}/state/contract-review.md` | Current accepted milestone-wide Contract review for a Spec-backed milestone; authored by `sb-contract-review` and persisted by the CLI. |
 | `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Final released Roadmap archive written by release finalization. |
 | `{{SPEC_DIR}}/releases/<version>-contract-review.md` | Final accepted Contract-review archive for a Spec-backed release. |
 
@@ -112,13 +112,13 @@ The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
 | Artifact | Current lifecycle and owner |
 | --- | --- |
 | `spec.yaml` | Persistent structured lifecycle, active-change, Requirement-selection, gate, and completion state maintained only through guarded CLI operations. |
-| `requirements.md` | Persistent complete current Requirements maintained by the Requirements phase of `specbind-plan`. |
-| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by the Design phase of `specbind-plan`; `artifact_id` is its stable selector. |
+| `requirements.md` | Persistent complete current Requirements maintained by the Requirements phase of `sb-plan`. |
+| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by the Design phase of `sb-plan`; `artifact_id` is its stable selector. |
 | `contract.yaml` | Persistent strict versioned Contract maintained with Design and reviewed milestone-wide. |
 | `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
 | `brief.md` | Active-milestone input authored by discovery; records the exact relevant Source Items when a collection was supplied and is removed by successful release finalization. |
-| `research.md` | Optional active-milestone gap-analysis result replaced by `specbind-gap-analysis` and removed by finalization. |
-| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by the Tasks phase of `specbind-plan`, progressed by implementation, and removed by finalization. |
+| `research.md` | Optional active-milestone gap-analysis result replaced by `sb-gap-analysis` and removed by finalization. |
+| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by the Tasks phase of `sb-plan`, progressed by implementation, and removed by finalization. |
 | `log.md` | Persistent newest-first release history maintained by release finalization for Spec-backed milestones. |
 
 Markdown artifacts are discovered by their OKF type and, for collections, their

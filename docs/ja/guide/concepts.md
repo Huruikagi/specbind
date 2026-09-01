@@ -99,7 +99,7 @@ Requirements、Design、TasksにはそれぞれGateがあります。Gateの承�
 承認には2つの形があります。
 
 - **明示的な承認（explicit）** — あなたがそのGateで内容を確認して承認する
-- **委任による承認（delegated）** — `specbind-plan`など、名前の付いた1回の実行に対して、承認を
+- **委任による承認（delegated）** — `sb-plan`など、名前の付いた1回の実行に対して、承認を
   あらかじめ委任する
 
 委任しても、レビューや検査は省略されません。また、承認済みGateを破棄したり、
@@ -163,14 +163,14 @@ Discovery
   -> リリース
 ```
 
-`specbind-plan`は、RequirementsからTasks承認までを進める標準の入口です。Specを指定
+`sb-plan`は、RequirementsからTasks承認までを進める標準の入口です。Specを指定
 するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを対象に
 します。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。各Gateの承認を
 この実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は変わりません。
 Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Specとフェーズを
-明示して同じ`specbind-plan`を使います。
-`specbind-implement`が実装するのは、1回につき1つのRoadmap項目だけです。
-`specbind-drive`はMilestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
+明示して同じ`sb-plan`を使います。
+`sb-implement`が実装するのは、1回につき1つのRoadmap項目だけです。
+`sb-drive`はMilestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
 各委譲後にCLI状態を読み直します。局所的な判断待ちは保留して独立項目を続けますが、
 リリースは実行せず、その手前で停止します。
 

@@ -119,12 +119,12 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 
 ## 3. 設定は既定のまま進める
 
-初回のインストールが成功すると、最後に`specbind-configure`でプロジェクトに合わせた
+初回のインストールが成功すると、最後に`sb-configure`でプロジェクトに合わせた
 設定レビューを行うよう案内が表示されます。ただし最初は、この案内に従って設定を
 見直す前に、既定値のまま最初の変更を一周することをおすすめします。SpecBindの
 既定のテンプレートや判断基準は、そのまま使えるように設計されています。一周した
 うえで、成果物の様式や粒度が自分のプロジェクトに合わないと感じた面だけ、あとから
-`specbind-configure`に見直しを依頼すれば十分です。具体的なカスタマイズ方法は
+`sb-configure`に見直しを依頼すれば十分です。具体的なカスタマイズ方法は
 [プロジェクトに合わせてカスタマイズする](./customization.md)にまとめています。
 
 ## 4. 導入方法を選ぶ
@@ -136,13 +136,13 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 | これから行う変更をSpecBindで進める | このページの続きを進める |
 | すでに動いている実装からSpecを確立する | [既存実装からSpecを確立する](./adopt-existing.md) |
 
-`specbind-discovery`の既存実装ルートは、既存コードをそのまま正しい仕様とみなす
+`sb-discovery`の既存実装ルートは、既存コードをそのまま正しい仕様とみなす
 機能ではありません。コードとテストを証拠として調査し、維持したい意図を確認して
 からSpecへ引き継ぎます。今後の変更からSpecBindを使い始めるだけなら、採用ルートは
 不要です。
 
 このワークフローは、プロダクト・技術・構造の全体方針を説明するSteeringが
-用意されていることを前提にします。まだなければ、先に`specbind-steering`を
+用意されていることを前提にします。まだなければ、先に`sb-steering`を
 `bootstrap`モードで実行します。詳しい前提条件と流れは
 [既存実装からSpecを確立する](./adopt-existing.md)にまとめています。
 
@@ -170,7 +170,7 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 あれば、その場所も伝えます。
 
 ```text
-$specbind-discovery 一覧画面に表示している内容を、CSVファイルとして
+$sb-discovery 一覧画面に表示している内容を、CSVファイルとして
 ダウンロードできるようにしたい。
 ```
 
@@ -200,30 +200,30 @@ Discoveryは、プロジェクトの現在の状態（Spec、Steering、Mileston
 途中で状態を確認したくなったら、次のように依頼できます。
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
 ## 7. 計画と実装の進め方を選ぶ
 
-最初の`csv-export`を段階ごとに確認する場合は、`specbind-plan`のフェーズを
+最初の`csv-export`を段階ごとに確認する場合は、`sb-plan`のフェーズを
 明示して順に進めます。
 
 ```text
-$specbind-plan csv-export requirements
-$specbind-plan csv-export design
-$specbind-contract-review
-$specbind-plan csv-export tasks
-$specbind-implement csv-export
-$specbind-validate-implementation csv-export
+$sb-plan csv-export requirements
+$sb-plan csv-export design
+$sb-contract-review
+$sb-plan csv-export tasks
+$sb-implement csv-export
+$sb-validate-implementation csv-export
 ```
 
 各段階で確認する内容、承認、上流へ戻る場合の扱いは、
 [1件ずつ計画・実装する](./implement-step-by-step.md)にまとめています。
 
-複数のSpecやDirect項目を含むMilestoneでは、`$specbind-plan --all`のあとに
-`$specbind-drive`を使います。保留、別項目への継続、停止条件は
+複数のSpecやDirect項目を含むMilestoneでは、`$sb-plan --all`のあとに
+`$sb-drive`を使います。保留、別項目への継続、停止条件は
 [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)を参照してください。
 どちらの経路もリリース前で停止します。
 
@@ -245,7 +245,7 @@ Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
 `spec.yaml`、`roadmap.md`、`tasks.yaml`に入っている実行状態は、CLIの持ち物です。
 状態を進める目的で手編集しないでください。Requirements、Design、Contract、
-Tasksの計画部分は、`specbind-plan`の対応するフェーズを通して保守します。
+Tasksの計画部分は、`sb-plan`の対応するフェーズを通して保守します。
 
 現在の状態は、CLIから直接確認することもできます。
 

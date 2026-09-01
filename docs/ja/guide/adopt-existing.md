@@ -1,6 +1,6 @@
 # 既存実装からSpecを確立する
 
-`specbind-discovery`の既存実装ルートは、すでに動いているコードとテストを調査し、
+`sb-discovery`の既存実装ルートは、すでに動いているコードとテストを調査し、
 新しいSpecBind Specの候補へ整理するための初期導入ワークフローです。
 cc-sddなど別のSDD製品からの移行ではなく、信頼できる仕様がまだない
 既存プロジェクトを対象にします。
@@ -24,20 +24,20 @@ cc-sddなど別のSDD製品からの移行ではなく、信頼できる仕様�
 - Steeringを含むリポジトリがコミット済みで、作業ツリーに未コミットの変更がない
 - 採用対象が「リポジトリ全体」または具体的な領域として指定されている
 
-Steeringがまだなければ、先に`specbind-steering`を`bootstrap`モードで実行し、
+Steeringがまだなければ、先に`sb-steering`を`bootstrap`モードで実行し、
 提案された方針を確認してコミットします。
 
 ## 標準ルート
 
 ```text
 Steeringの作成または同期
-  -> 対象領域を指定してspecbind-discovery
+  -> 対象領域を指定してsb-discovery
   -> Spec境界候補の確認
-  -> specbind-discoveryを続行
+  -> sb-discoveryを続行
   -> SpecとBriefの作成
-  -> specbind-discoveryを再開
+  -> sb-discoveryを再開
   -> Specごとの観察と意図の確認
-  -> specbind-plan
+  -> sb-plan
 ```
 
 最初の実行では、CLIが事前検査（preflight）を行い、前提条件がそろって
@@ -59,7 +59,7 @@ specbind adoption preflight
 Specを分割します。
 
 Spec境界は、ユーザーが確認するまで作成されません。確認後は、同じ
-`specbind-discovery`の通常ルートがRoadmapのスコープをもう一度提示し、Milestoneと
+`sb-discovery`の通常ルートがRoadmapのスコープをもう一度提示し、Milestoneと
 SpecについてCLIが所有する変更を担当します。この2回の確認は統合後も別々です。
 
 ## 観察結果と意図
@@ -89,7 +89,7 @@ Researchは通常のリリース確定処理まで
 
 Discoveryの既存実装ルートはRequirementsやDesignを直接作成・承認しません。
 確認済みの意図をBriefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
-以後は`specbind-plan`で通常のRequirements、Design、Tasksフェーズを進めます。
+以後は`sb-plan`で通常のRequirements、Design、Tasksフェーズを進めます。
 既存実装からの採用専用となるRequirementsやDesignスキルはありません。
 
 ## 次に読む

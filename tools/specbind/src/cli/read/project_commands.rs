@@ -160,7 +160,10 @@ fn adoption_steering_count(specbind_root: &Path) -> Result<usize, CommandOutput>
         return Err(CommandOutput::failure(
             "ADOPTION_STEERING_REQUIRED",
             "Existing-project adoption requires a non-empty Steering baseline.",
-            vec!["Run specbind-steering in bootstrap mode, review it, and commit it before retrying.".to_owned()],
+            vec![
+                "Run sb-steering in bootstrap mode, review it, and commit it before retrying."
+                    .to_owned(),
+            ],
         ));
     }
     Ok(inventory.documents.len())

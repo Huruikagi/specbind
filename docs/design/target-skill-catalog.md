@@ -62,25 +62,25 @@ are not shipped.
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
-| `kiro-debug` | `specbind-debug` | Change | Implemented | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
-| `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, explicit local Source Collections, or selected existing implementations; confirm durable boundaries and invoke guarded milestone initialization or update. |
-| `kiro-impl` | `specbind-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
-| `kiro-review` | `specbind-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
-| `kiro-spec-design` | `specbind-plan` Design reference | Merge | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
+| `kiro-debug` | `sb-debug` | Change | Implemented | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
+| `kiro-discovery` | `sb-discovery` | Change | Implemented | Analyze requests, explicit local Source Collections, or selected existing implementations; confirm durable boundaries and invoke guarded milestone initialization or update. |
+| `kiro-impl` | `sb-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
+| `kiro-review` | `sb-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
+| `kiro-spec-design` | `sb-plan` Design reference | Merge | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
 | `kiro-spec-init` | None | Remove | Implemented | Initialization is a deterministic Rust CLI operation invoked by discovery. |
-| `kiro-spec-quick` and `kiro-spec-batch` | `specbind-plan` | Merge | Implemented | Bring one named Spec or every Spec-backed milestone item through Tasks approval using one explicit scope and delegated gates. |
-| `kiro-spec-requirements` | `specbind-plan` Requirements reference | Merge | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
-| `kiro-spec-status` | `specbind-status` | Change | Implemented | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
-| `kiro-spec-tasks` | `specbind-plan` Tasks reference | Merge | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |
-| `kiro-steering` and `kiro-steering-custom` | `specbind-steering` | Merge | Implemented | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
-| `kiro-validate-design` | `specbind-validate-design` | Change | Implemented | Review technical design quality and design-to-contract consistency. |
-| `kiro-validate-gap` | `specbind-gap-analysis` | Change | Implemented | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
-| `kiro-validate-impl` | `specbind-validate-implementation` | Change | Implemented | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
-| `kiro-verify-completion` | `specbind-verify-completion` | Change | Implemented | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
-| None | `specbind-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
-| None | `specbind-release` | New | Implemented | Complete a release and close its active milestone. |
-| None | `specbind-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
-| None | `specbind-drive` | New | Implemented | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
+| `kiro-spec-quick` and `kiro-spec-batch` | `sb-plan` | Merge | Implemented | Bring one named Spec or every Spec-backed milestone item through Tasks approval using one explicit scope and delegated gates. |
+| `kiro-spec-requirements` | `sb-plan` Requirements reference | Merge | Implemented | Maintain current requirements and freeze active Requirement IDs in `spec.yaml`. |
+| `kiro-spec-status` | `sb-status` | Change | Implemented | Route no-argument requests to current milestone status, explicit Spec requests to per-Spec status, and task questions to task read models; explain history only from separate authoritative history reads. |
+| `kiro-spec-tasks` | `sb-plan` Tasks reference | Merge | Implemented | Create a milestone-local plan covering the active requirement set after contract review. |
+| `kiro-steering` and `kiro-steering-custom` | `sb-steering` | Merge | Implemented | Bootstrap, synchronize, or add project guidance identified by OKF type and `artifact_id`. |
+| `kiro-validate-design` | `sb-validate-design` | Change | Implemented | Review technical design quality and design-to-contract consistency. |
+| `kiro-validate-gap` | `sb-gap-analysis` | Change | Implemented | Compare a brownfield codebase with intended requirements and persist current milestone research when useful. |
+| `kiro-validate-impl` | `sb-validate-implementation` | Change | Implemented | Validate one Spec's complete implementation and active-requirement coverage through the Decision 0086 preflight, transient evidence, acceptance, and invalidation contract. |
+| `kiro-verify-completion` | `sb-verify-completion` | Change | Implemented | Apply the mandatory completion-verification protocol without becoming a workflow stage. |
+| None | `sb-contract-review` | New | Implemented | Review the complete current contract graph after Design approval and before Tasks authoring. |
+| None | `sb-release` | New | Implemented | Complete a release and close its active milestone. |
+| None | `sb-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
+| None | `sb-drive` | New | Implemented | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
 
 This classification now records the implemented v1 migration from the inherited
 set. Future rows should use `Rename` only when responsibility is unchanged;
@@ -123,7 +123,7 @@ One responsibility stated from the user's perspective.
 
 For a new skill, add a `New` row to the working catalog and set `Current equivalent` to `None`. For a merge or split, name every affected current skill so migration work remains visible.
 
-## `specbind-release`
+## `sb-release`
 
 Status: Implemented
 
@@ -184,7 +184,7 @@ Complete a release and close the active milestone represented by `roadmap.md`.
 - Must report an After finalize failure as follow-up work without reopening the finalized milestone.
 - Must consume concise English CLI results and stable codes, then translate or explain them in the user's language when useful. V1 has no JSON output mode under Decision 0074.
 
-## `specbind-drive`
+## `sb-drive`
 
 Status: Implemented
 
@@ -231,11 +231,11 @@ the user resume each owning workflow manually.
 
 - Existing-implementation adoption from Issue #2 is implemented by the
   conditional `adopt-start.md` and `adopt-resume.md` references of
-  `specbind-discovery` under Decisions 0143 and 0175. It establishes confirmed
+  `sb-discovery` under Decisions 0143 and 0175. It establishes confirmed
   Brief and Research inputs, then returns to the ordinary phase skills rather
   than adding reverse variants for each phase.
 
-- The accepted `specbind-drive` contract from Decision 0168 is implemented;
+- The accepted `sb-drive` contract from Decision 0168 is implemented;
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains its design
   and implementation history.
 Agent removal and project uninstall are intentionally CLI-only under Decision

@@ -1,8 +1,8 @@
 # PlanとDriveでMilestoneを進める
 
 このページでは、複数のSpecやDirect項目を含む進行中のMilestoneを、計画の確定から
-実装検証の完了までまとめて進めます。最初に`specbind-plan --all`で計画をレビューし、
-その後`specbind-drive`で安全に到達可能な作業を進めるのが通常の推奨経路です。
+実装検証の完了までまとめて進めます。最初に`sb-plan --all`で計画をレビューし、
+その後`sb-drive`で安全に到達可能な作業を進めるのが通常の推奨経路です。
 
 Driveはリリースを実行しません。局所的な問題があっても独立した作業が残っていれば
 そちらを進め、すべての到達可能な作業が尽きた時点で、必要な判断をまとめて報告します。
@@ -13,7 +13,7 @@ Driveはリリースを実行しません。局所的な問題があっても独
 作成しておきます。開始時には作業ツリーに未コミットの変更がないことを確認してください。
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 Driveは現在の状態をCLIから毎回読み直します。以前の会話や前回のDrive報告を、進捗の
@@ -22,7 +22,7 @@ Driveは現在の状態をCLIから毎回読み直します。以前の会話や
 ## 2. Milestone全体を計画する
 
 ```text
-$specbind-plan --all
+$sb-plan --all
 ```
 
 Planは、対象となる全SpecのRequirements、依存順のDesignと独立検証、Milestone全体の
@@ -40,7 +40,7 @@ Gate承認権限がありません。必要な承認がなければ、その項�
 ## 3. 到達可能な作業をDriveする
 
 ```text
-$specbind-drive
+$sb-drive
 ```
 
 Driveは`specbind milestone status --json`が示す着手可能な操作だけを選び、1回に
@@ -51,10 +51,10 @@ Driveは`specbind milestone status --json`が示す着手可能な操作だけ�
 
 | 状態 | 所有するワークフロー |
 | --- | --- |
-| 未完了の計画 | `specbind-plan`と各計画フェーズ |
-| Contractレビュー | `specbind-contract-review` |
-| 実装 | `specbind-implement <item-id>` |
-| Spec全体の実装検証 | `specbind-validate-implementation <spec-id>` |
+| 未完了の計画 | `sb-plan`と各計画フェーズ |
+| Contractレビュー | `sb-contract-review` |
+| 実装 | `sb-implement <item-id>` |
+| Spec全体の実装検証 | `sb-validate-implementation <spec-id>` |
 | リリース前 | 状態を報告して停止 |
 
 各委譲後に、DriveはGitの作業ツリーとMilestoneの状態を読み直します。最初の実装では、
@@ -100,7 +100,7 @@ Driveは最後に、次の内容をまとめて報告します。
 - リリースを実行していないこと
 
 保留一覧はその実行だけの報告で、永続的なキューではありません。判断や外部条件を解決したら、
-もう一度`$specbind-drive`を実行します。Driveは最新状態から到達可能な作業を再構築します。
+もう一度`$sb-drive`を実行します。Driveは最新状態から到達可能な作業を再構築します。
 
 ## 6. リリース前で止める
 
@@ -109,7 +109,7 @@ Driveは最後に、次の内容をまとめて報告します。
 リリース前の紐付けまで進める場合は、次のように依頼できます。
 
 ```text
-$specbind-drive --target-release 1.2.0
+$sb-drive --target-release 1.2.0
 ```
 
 この指定でも、Driveは配布物の作成、公開、検証、確定処理を実行しません。状態が

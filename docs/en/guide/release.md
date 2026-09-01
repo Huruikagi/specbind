@@ -9,7 +9,7 @@ release only a subset of participating Specs.
 Before starting:
 
 - every participating Spec has completed implementation and
-  `specbind-validate-implementation`, and the CLI has accepted its completion
+  `sb-validate-implementation`, and the CLI has accepted its completion
   evidence; and
 - you have decided to publish this Milestone.
 
@@ -21,7 +21,7 @@ new Milestone later instead of exercising release immediately.
 Project-specific Prepare, Publish, Verify, and cleanup instructions live as
 natural language in `.specbind/settings/adapters/release.md`.
 
-- If the adapter is still a scaffold, `specbind-release` investigates release
+- If the adapter is still a scaffold, `sb-release` investigates release
   workflows, version manifests, build scripts, and release documentation and
   proposes concrete instructions. After approval it saves and locally commits
   only `release.md`, then stops without binding or publishing a version.
@@ -33,10 +33,10 @@ natural language in `.specbind/settings/adapters/release.md`.
 
 See [Customize SpecBind](./customization.md) for adapter ownership and editing.
 
-## 2. Run specbind-release
+## 2. Run sb-release
 
 ```text
-$specbind-release 1.0.0
+$sb-release 1.0.0
 ```
 
 The Skill orchestrates the flow from release binding through finalization,
@@ -88,12 +88,12 @@ and does not duplicate history.
 - The Roadmap moves to the release archive, while durable Specs remain and
   return to idle state.
 - Each Spec's `log.md` receives the Milestone record.
-- The Milestone closes and the next `specbind-discovery` may start another.
+- The Milestone closes and the next `sb-discovery` may start another.
 - When configured, the Git adapter checkpoints finalization metadata separately
   from the published product revision.
 
 If the Milestone added a Spec, changed a Contract, or released before any
-Steering existed, run `specbind-steering` once. Steering is freely editable
+Steering existed, run `sb-steering` once. Steering is freely editable
 again after finalization.
 
 ## Inspect readiness directly

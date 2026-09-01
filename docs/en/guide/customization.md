@@ -1,12 +1,12 @@
 # Customize SpecBind for a project
 
 SpecBind exposes specific project-owned customization surfaces. Start with the
-desired outcome rather than editing files by guesswork. `specbind-configure`
+desired outcome rather than editing files by guesswork. `sb-configure`
 inspects current state, routes the change to its owner, verifies it, and
 completes required aftercare.
 
 ```text
-$specbind-configure Make Requirements acceptance criteria more test-oriented.
+$sb-configure Make Requirements acceptance criteria more test-oriented.
 ```
 
 Examples below use the default `.specbind` root. Substitute the configured
@@ -94,7 +94,7 @@ creation instructions, replaces output references, adds real content, removes `c
 comments, and then validates the result.
 
 Template changes affect future materialization by default. Existing artifacts
-are not silently rewritten. When asked, `specbind-configure` previews
+are not silently rewritten. When asked, `sb-configure` previews
 reconciliation candidates as format-only, instruction-update, structural,
 semantic, or conflict. Applying changes requires a separate confirmation, and
 semantic changes route to the artifact-owning workflow. Reconciliation never
@@ -203,7 +203,7 @@ apply: writing `push` into the adapter does not itself authorize pushing.
 
 Steering records durable project knowledge such as product purpose,
 technology, structure, testing, and security direction. Do not use it for
-temporary task notes or rapidly changing state. `specbind-steering` can
+temporary task notes or rapidly changing state. `sb-steering` can
 bootstrap, synchronize, repair, or add documents after inspecting the current
 catalog.
 
@@ -272,7 +272,7 @@ of modifying product-managed files.
 
 ## Recommended change flow
 
-Give the coding agent the outcome and let `specbind-configure`:
+Give the coding agent the outcome and let `sb-configure`:
 
 1. inspect current configuration and relevant catalogs;
 2. classify the request by ownership;
@@ -281,7 +281,7 @@ Give the coding agent the outcome and let `specbind-configure`:
 5. rerun mechanical verification and complete or explicitly defer required,
    recommended, and optional aftercare.
 
-Steering authoring remains owned by `specbind-steering`, and semantic artifact
+Steering authoring remains owned by `sb-steering`, and semantic artifact
 changes remain owned by their planning Skills. Configuration still owns the
 end-to-end result when it delegates. Deletion, push, branch changes, tags,
 history operations, external actions, and lifecycle changes retain their own

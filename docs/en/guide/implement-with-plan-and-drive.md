@@ -2,8 +2,8 @@
 
 This guide advances an active Milestone containing several Specs or Direct
 items from accepted planning through implementation validation. The normal
-recommended route is to review the complete plan with `specbind-plan --all`,
-then let `specbind-drive` advance every safely reachable action.
+recommended route is to review the complete plan with `sb-plan --all`,
+then let `sb-drive` advance every safely reachable action.
 
 Drive never runs Release. When one branch needs attention, it continues an
 independent branch when safe and accumulates required decisions until reachable
@@ -15,7 +15,7 @@ Discovery must already have confirmed scope, Specs, Direct items, and
 dependencies and created an active Milestone. Start with a clean worktree.
 
 ```text
-$specbind-status
+$sb-status
 ```
 
 Drive rereads current CLI state throughout the run. It does not treat an older
@@ -24,7 +24,7 @@ conversation or a previous Drive report as authoritative progress.
 ## 2. Plan the complete Milestone
 
 ```text
-$specbind-plan --all
+$sb-plan --all
 ```
 
 Plan processes Requirements for every selected Spec, Design and independent
@@ -44,7 +44,7 @@ authority, it parks that item and looks for another reachable action.
 ## 3. Drive reachable work
 
 ```text
-$specbind-drive
+$sb-drive
 ```
 
 Drive selects only actions exposed by `specbind milestone status --json` and
@@ -55,10 +55,10 @@ Typical ownership is:
 
 | State | Owning workflow |
 | --- | --- |
-| Incomplete planning | `specbind-plan` and its phase workflows |
-| Contract review | `specbind-contract-review` |
-| Implementation | `specbind-implement <item-id>` |
-| Whole-Spec implementation validation | `specbind-validate-implementation <spec-id>` |
+| Incomplete planning | `sb-plan` and its phase workflows |
+| Contract review | `sb-contract-review` |
+| Implementation | `sb-implement <item-id>` |
+| Whole-Spec implementation validation | `sb-validate-implementation <spec-id>` |
 | Release boundary | Report status and stop |
 
 After every handoff, Drive rereads Git worktree state and Milestone status. The
@@ -106,7 +106,7 @@ The final report identifies:
 - confirmation that Release did not run.
 
 Attention is a run-local report, not a persistent queue. After resolving a
-decision or external condition, invoke `$specbind-drive` again. It reconstructs
+decision or external condition, invoke `$sb-drive` again. It reconstructs
 reachable work from current state.
 
 ## 6. Stop before Release
@@ -117,7 +117,7 @@ authorize guarded binding while still stopping before Release, supply it
 explicitly:
 
 ```text
-$specbind-drive --target-release 1.2.0
+$sb-drive --target-release 1.2.0
 ```
 
 This still does not build, publish, verify, or finalize a release. Drive

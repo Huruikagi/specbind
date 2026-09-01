@@ -98,7 +98,7 @@ Claude Code and the equivalent invocation mechanism in a generic host.
 
 ## 4. Keep the defaults for the first cycle
 
-The installer suggests a configuration review with `specbind-configure`.
+The installer suggests a configuration review with `sb-configure`.
 For a new project, first complete one cycle with the defaults. After you have
 real artifacts to evaluate, use [Customize SpecBind](./customization.md) to
 change only the surfaces that do not fit.
@@ -123,7 +123,7 @@ If you already have stable product, technology, structure, security, or testing
 guidance that should apply beyond this Milestone, establish it separately with:
 
 ```text
-$specbind-steering
+$sb-steering
 ```
 
 Do not use Steering for temporary release scope or unstable implementation
@@ -134,7 +134,7 @@ notes.
 Give Discovery the collection and the delivery intent in an ordinary request:
 
 ```text
-$specbind-discovery Use docs/product-definition/ as the source collection for
+$sb-discovery Use docs/product-definition/ as the source collection for
 the first release, including task management and reminders.
 ```
 
@@ -154,7 +154,7 @@ coverage, while each Brief points only to the source items relevant to that
 Spec. Requirements and Design later promote accepted content into authoritative
 artifacts; source material is not authoritative by itself.
 
-Use `$specbind-status` at any time for a read-only explanation of state and next
+Use `$sb-status` at any time for a read-only explanation of state and next
 actions.
 
 ## 7. Choose how to plan and implement
@@ -162,8 +162,8 @@ actions.
 The first release scope contains several Specs, so the normal route is:
 
 ```text
-$specbind-plan --all
-$specbind-drive
+$sb-plan --all
+$sb-drive
 ```
 
 Plan establishes Requirements, Design, Contract review, and Tasks for the
