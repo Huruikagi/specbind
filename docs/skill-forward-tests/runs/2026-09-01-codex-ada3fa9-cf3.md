@@ -30,5 +30,5 @@ template edit; no candidate-set change was inferred.
 
 ## Cleanup
 
-- Fixture paths removed: pending after this run record is committed.
-- Main worktree after recording: contains this confirmation record and dashboard projection.
+- Fixture path removed: `C:\Users\hurui\AppData\Local\Temp\sb-cf3`.
+- Main worktree after recording: clean before this cleanup-record update.
