@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `dfd858e` | R8 — product failure; environment-invalid fallback retained | [Requirements finding remediation](./runs/2026-09-01-codex-dfd858e-requirements.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `388b8bc` | R8 — pass | [Japanese language-style Rule](./runs/2026-09-01-codex-388b8bc-language-style.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `035f093` | DR1 — pass | [Milestone Drive branch-local attention](./runs/2026-09-01-codex-035f093-drive.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `c012d50` | R6 — pass | [Named template creation outputs](./runs/2026-09-01-codex-c012d50-named-outputs.md) |
@@ -64,9 +65,9 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 0
-- Active environment limitations: 3
+- Open reproduced product findings: 1
+- Fixed, behavioral confirmation pending: 2
+- Active environment limitations: 4
 
 The authoritative rows and stable identifiers are in
 [the findings worklist](./findings.md). Historical resolved findings through the

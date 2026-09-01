@@ -11,12 +11,14 @@ fixture.
 
 | ID | First seen | Scenario | Finding | Evidence | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
-| FT-0011 | `388b8bc` | R8 | Requirements authoring can mistake an intentionally abstract before/after boundary for missing information and stop instead of preserving its stated abstraction. | Two fresh Codex drivers stopped on the same cancellation-window Brief until told not to invent a duration or closing event. | Clarify the Requirements contract's treatment of intentionally abstract boundaries, then rerun R8 without the extra clarification. |
-| FT-0012 | `c012d50` | R6, R8 | The new-Spec path can issue a Contract read even though the Skill already says no Contract exists before Design. | Both fresh runs executed `artifact read order contract --for consume` and received `ARTIFACT_SELECTOR_NOT_FOUND` before continuing. | Give the new-Spec branch an explicit no-Contract read rule or a non-error existence route, then rerun a new-Spec Requirements scenario. |
+| FT-0013 | `dfd858e` | R8 | Requirements authoring can treat the active Roadmap as a Steering document even though `steering list` excludes it, then stop on an invalid selector. | Two fresh Codex drivers read the two listed Steering documents, additionally ran `steering read roadmap --for consume`, received `STEERING_READ_INVALID`, and stopped before authoring. | Make the listed Steering inventory a closed read set and distinguish the Roadmap stored beside it, then rerun R8. |
 
 ## Fixed, behavioral confirmation pending
 
-None.
+| ID | First seen | Scenario | Finding | Resolution | Next confirmation |
+| --- | --- | --- | --- | --- | --- |
+| FT-0011 | `388b8bc` | R8 | Requirements authoring can mistake an intentionally abstract before/after boundary for missing information and stop instead of preserving its stated abstraction. | `dfd858e` requires preserving an abstract but observable before/after boundary without inventing its duration, trigger, or closing event. | Rerun R8 after FT-0013 no longer stops the workflow before authoring. |
+| FT-0012 | `c012d50` | R6, R8 | The new-Spec path can issue a Contract read even though the Skill already says no Contract exists before Design. | `dfd858e` forbids a Contract read on the new-Spec branch and uses `artifact list` as the existing-Spec existence check. | Rerun a new-Spec Requirements scenario after FT-0013 no longer stops the workflow before authoring. |
 
 ## Resolved after migration
 
