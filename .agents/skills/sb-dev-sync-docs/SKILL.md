@@ -1,5 +1,5 @@
 ---
-name: specbind-sync-docs
+name: sb-dev-sync-docs
 description: Keep SpecBind's English and Japanese public documentation aligned and the Japanese copy natural and readable. Use for changes or language-quality reviews under docs/en or docs/ja, bilingual navigation, or public documentation URLs; exclude English-only generated reference pages and internal repository documentation.
 ---
 

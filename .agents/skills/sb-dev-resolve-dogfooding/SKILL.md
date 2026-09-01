@@ -1,5 +1,5 @@
 ---
-name: specbind-resolve-dogfooding
+name: sb-dev-resolve-dogfooding
 description: Triage and resolve open dogfooding-labeled Issues in Huruikagi/specbind through contract analysis, product implementation, verification, commit and push, and evidence-backed Issue disposition. Use when asked to work through SpecBind dogfooding findings; do not use for general Issue triage.
 ---
 
@@ -75,9 +75,9 @@ For each actionable Issue:
    the affected surface. Follow the root `AGENTS.md` validation commands and
    inspect the final diff.
 5. When an embedded product Skill under `tools/specbind/assets/skills/` changes
-   materially, read and use `../specbind-forward-test/SKILL.md` before calling
+   materially, read and use `../sb-dev-forward-test/SKILL.md` before calling
    the Issue resolved. When paired public documentation changes, read and use
-   `../specbind-sync-docs/SKILL.md`.
+   `../sb-dev-sync-docs/SKILL.md`.
 6. Commit the completed unit to `main` with the required Codex co-author trailer
    and push it to `origin/main`. Combine Issues in one commit only when one
    inseparable contract change resolves them and the shared validation proves

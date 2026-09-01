@@ -1,5 +1,5 @@
 ---
-name: specbind-forward-test
+name: sb-dev-forward-test
 description: Run the behavioral forward tests for SpecBind's embedded skills against a fixture project, using subagents with no prior context. Use when a product-managed skill changed materially, before a release, or when a decision's effect on agent behavior needs checking.
 ---
 

@@ -20,7 +20,7 @@ The root `.kiro/` directory is not used to develop SpecBind and is intentionally
 - Keep changes narrow and preserve unrelated work in the worktree.
 - When changing installed behavior, update the relevant source, templates, tests, and documentation together.
 - Keep Claude Code and Codex templates aligned where they implement the same contract, while preserving platform-specific invocation syntax and capabilities.
-- To verify embedded product skills behaviorally, use `.agents/skills/specbind-forward-test/SKILL.md`. Those runs are manual and never part of CI.
+- To verify embedded product skills behaviorally, use `.agents/skills/sb-dev-forward-test/SKILL.md`. Those runs are manual and never part of CI.
 
 ## Rust Toolchain and Dependencies
 

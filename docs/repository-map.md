@@ -129,11 +129,11 @@ repository root to verify it locally.
 
 This repository's development Skills are:
 
-- `.agents/skills/specbind-forward-test/` for behavioral verification of
+- `.agents/skills/sb-dev-forward-test/` for behavioral verification of
   embedded product Skills;
-- `.agents/skills/specbind-sync-docs/` for bilingual public-documentation
+- `.agents/skills/sb-dev-sync-docs/` for bilingual public-documentation
   maintenance; and
-- `.agents/skills/specbind-resolve-dogfooding/` for triage, product fixes,
+- `.agents/skills/sb-dev-resolve-dogfooding/` for triage, product fixes,
   delivery, and Issue disposition of maintainer dogfooding findings.
 
 They are never installed into a consumer project.

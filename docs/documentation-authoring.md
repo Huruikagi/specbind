@@ -40,7 +40,7 @@ the same documentation change unless synchronization is intentionally deferred.
 Preserve meaning and information architecture rather than translating word for
 word. If synchronization is deferred, state that explicitly in the change or
 tracking Issue instead of allowing silent drift. The repository-local
-`specbind-sync-docs` Skill defines the repeatable check and verification flow.
+`sb-dev-sync-docs` Skill defines the repeatable check and verification flow.
 Equivalent pages keep matching relative paths:
 
 ```text
