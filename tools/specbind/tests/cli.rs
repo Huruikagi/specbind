@@ -112,6 +112,26 @@ fn gate_task_fixture() -> &'static str {
 /// `requirements` state with no approval evidence yet.
 fn write_gate_fixture(root: &Path) {
     write(root, "baseline.txt", "baseline\n");
+    write(
+        root,
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
     commit_all(root);
     let baseline = git_stdout(root, &["rev-parse", "HEAD"]);
     write(

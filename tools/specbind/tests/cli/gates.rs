@@ -100,6 +100,68 @@ fn walks_every_gate_from_requirements_to_implementation() {
 }
 
 #[test]
+fn requirements_approval_rejects_ids_removed_since_the_milestone_baseline() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n2. It reports the result.\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Update checkout\n---\n# Roadmap\n"
+        ),
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works differently.\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {REVIEW_MILESTONE}\n  state: requirements\n  requirement_ids: null\n"
+        ),
+    );
+
+    let mut approve = specbind_command();
+    approve
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--delegation-workflow",
+            "specbind-plan",
+            "--requirement-ids",
+            "1.1",
+        ])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "SPEC_REQUIREMENTS_RETIREMENT_UNSUPPORTED",
+        ));
+
+    let spec = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("read unchanged spec state");
+    assert!(spec.contains("state: requirements"));
+    assert!(!spec.contains("gate_evidence:"));
+}
+
+#[test]
 fn reports_worktree_dirt_only_when_a_clean_revision_would_unlock_progress() {
     let root = project_fixture();
     write_gate_fixture(root.path());

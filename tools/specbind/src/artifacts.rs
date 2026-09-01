@@ -105,4 +105,5 @@ pub use resolution::{resolve_gate_inputs, resolve_spec, resolve_tasks, resolve_t
 pub(crate) use discovery::{
     collection_id, is_kebab_id, recognized_kind, selector, split_frontmatter,
 };
+pub(crate) use resolution::requirements_ids_from_content;
 pub(crate) use resolution::resolve_contract_projection;

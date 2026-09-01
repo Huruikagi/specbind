@@ -309,6 +309,37 @@ fn resolve_requirements_projection(
     }
 }
 
+pub(crate) fn requirements_ids_from_content(content: &str) -> Option<Vec<String>> {
+    let (frontmatter, body) = split_frontmatter(content).ok()?;
+    let value = serde_saphyr::from_str::<Value>(frontmatter).ok()?;
+    let mapping = value.as_object()?;
+    let labels = mapping.get("heading_labels")?.as_object()?;
+    let expected = BTreeSet::from(["acceptance_criteria", "requirement"]);
+    if mapping.get("type").and_then(Value::as_str) != Some("SpecBind Requirements")
+        || labels.keys().map(String::as_str).collect::<BTreeSet<_>>() != expected
+    {
+        return None;
+    }
+    let requirement_label = labels.get("requirement")?.as_str()?;
+    let acceptance_label = labels.get("acceptance_criteria")?.as_str()?;
+    if !valid_label(requirement_label) || !valid_label(acceptance_label) {
+        return None;
+    }
+    requirements::parse(
+        &instruction::mask(body),
+        requirement_label,
+        acceptance_label,
+    )
+    .ok()
+    .map(|document| {
+        document
+            .requirement_ids()
+            .into_iter()
+            .map(str::to_owned)
+            .collect()
+    })
+}
+
 fn resolve_design_projection(
     specbind_root: &Path,
     artifact: &Artifact,

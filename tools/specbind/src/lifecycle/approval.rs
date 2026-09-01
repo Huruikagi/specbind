@@ -495,9 +495,14 @@ fn guard_and_build(
             )
         })?;
     match gate {
-        Gate::Requirements => {
-            build_requirements(specbind_root, canonical_spec, context, request, passed_at)
-        }
+        Gate::Requirements => build_requirements(
+            project_root,
+            specbind_root,
+            canonical_spec,
+            context,
+            request,
+            passed_at,
+        ),
         Gate::Design => build_design(specbind_root, canonical_spec, context, request, passed_at),
         Gate::Tasks => build_tasks(
             project_root,
@@ -607,6 +612,7 @@ fn validate_prior_gates(
 }
 
 fn build_requirements(
+    project_root: &Path,
     specbind_root: &Path,
     canonical_spec: &str,
     context: &Context,
@@ -644,6 +650,16 @@ fn build_requirements(
             "the active Requirement ID selection must be unique",
         ));
     }
+    let mut preservation_issues = Vec::new();
+    validate_requirements_preservation(
+        project_root,
+        specbind_root,
+        canonical_spec,
+        context,
+        &report.requirement_ids,
+        &mut preservation_issues,
+    );
+    finish_issues(preservation_issues)?;
     let input_revisions = RequirementsInputRevisions {
         requirements: WireFingerprint(fingerprint.to_string()),
     };
@@ -678,6 +694,77 @@ fn build_requirements(
         approved,
         requirement_ids,
     })
+}
+
+fn validate_requirements_preservation(
+    project_root: &Path,
+    specbind_root: &Path,
+    canonical_spec: &str,
+    context: &Context,
+    current_ids: &[String],
+    issues: &mut Vec<ApprovalIssue>,
+) {
+    if !context
+        .roadmap
+        .spec_updates
+        .iter()
+        .any(|item| item.spec == canonical_spec)
+    {
+        return;
+    }
+    let Ok(specbind_relative) = specbind_root.strip_prefix(project_root) else {
+        issues.push(issue(
+            "SPEC_REQUIREMENTS_BASELINE_READ_FAILED",
+            Some(format!("specs/{canonical_spec}/requirements.md")),
+            "cannot resolve the configured SpecBind root relative to the Git project",
+        ));
+        return;
+    };
+    let relative = specbind_relative
+        .join("specs")
+        .join(canonical_spec)
+        .join("requirements.md")
+        .to_string_lossy()
+        .replace('\\', "/");
+    let baseline_ref = format!("{}:{relative}", context.roadmap.baseline_revision);
+    let baseline = match repository::output(project_root, &["show", &baseline_ref]) {
+        Ok(source) => source,
+        Err(error) => {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_BASELINE_READ_FAILED",
+                Some(format!("specs/{canonical_spec}/requirements.md")),
+                format!("cannot read established Requirements at the milestone baseline: {error}"),
+            ));
+            return;
+        }
+    };
+    let Some(baseline_ids) = artifacts::requirements_ids_from_content(&baseline) else {
+        issues.push(issue(
+            "SPEC_REQUIREMENTS_BASELINE_READ_FAILED",
+            Some(format!("specs/{canonical_spec}/requirements.md")),
+            "established Requirements at the milestone baseline are not a valid Requirements artifact",
+        ));
+        return;
+    };
+    let current = current_ids
+        .iter()
+        .map(String::as_str)
+        .collect::<std::collections::BTreeSet<_>>();
+    let missing = baseline_ids
+        .iter()
+        .filter(|id| !current.contains(id.as_str()))
+        .cloned()
+        .collect::<Vec<_>>();
+    if !missing.is_empty() {
+        issues.push(issue(
+            "SPEC_REQUIREMENTS_RETIREMENT_UNSUPPORTED",
+            Some(format!("specs/{canonical_spec}/requirements.md")),
+            format!(
+                "requirements approval cannot remove established Requirement IDs: {}",
+                missing.join(", ")
+            ),
+        ));
+    }
 }
 
 fn build_design(
