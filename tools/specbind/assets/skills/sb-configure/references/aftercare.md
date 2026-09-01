@@ -42,9 +42,14 @@ Common mappings:
 Declining optional follow-up completes the requested configuration change. Name
 what remains and its effect without reporting it as a failure.
 
-After required and authorized aftercare, read the Git adapter. Treat the
-configuration change as one eligible workflow unit: when the active adapter
-requires a local checkpoint, stage only that unit and create it before
+After required and authorized aftercare, read the Git adapter:
+
+```sh
+specbind adapter read git
+```
+
+Treat the configuration change as one eligible workflow unit: when the active
+adapter requires a local checkpoint, stage only that unit and create it before
 reporting completion. Never absorb unrelated changes or optional aftercare that
 was declined.
 

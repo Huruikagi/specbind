@@ -167,6 +167,22 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
 }
 
 #[test]
+fn configure_aftercare_names_the_exact_git_adapter_read_command() {
+    let configure = skill::find("sb-configure").expect("configure skill");
+    let aftercare = configure
+        .resources()
+        .iter()
+        .find(|resource| resource.relative_path == "references/aftercare.md")
+        .expect("configure aftercare reference")
+        .content();
+
+    assert!(
+        aftercare.contains("specbind adapter read git"),
+        "configure aftercare must name the exact Git adapter read command"
+    );
+}
+
+#[test]
 fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
     let body = skill_package_text("sb-discovery");
     for required in [
