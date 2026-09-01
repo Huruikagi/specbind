@@ -249,6 +249,22 @@ responsibility, `sb-configure` presents the existing-surface and
 conditional-candidate options and asks which is intended. It does not infer a
 new candidate from a future technology label alone.
 
+## One-off Design supplements
+
+During Design authoring, the Agent may find that one Spec has a durable
+responsibility with its own ownership boundary or verification concern, but no
+existing selected Design communicates it clearly. It proposes a Spec-local
+supplement with an artifact ID, covered Requirements, target path, and the
+alternative of extending an existing Design. It creates the supplement only
+after confirmation.
+
+The one-off document lives at `specs/<spec>/design/<artifact_id>.md` below the
+configured SpecBind root and is an ordinary `SpecBind Design`: traceability,
+validation, fingerprints, and the Design Gate include it. It does not add a
+project template or edit `design-template-selection`. If the same responsibility
+later recurs independently, the Agent recommends reviewing promotion to a
+project-owned conditional candidate.
+
 ## Project settings and role models
 
 Initial installation selects artifact language, Agents, Spec root, and project

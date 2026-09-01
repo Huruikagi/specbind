@@ -285,6 +285,31 @@ responsibility seams a reader would follow independently, and give each
 `artifact_id` a name for a durable concern rather than a slice of this
 milestone's work.
 
+When investigation shows a durable responsibility with its own ownership
+boundary, failure or verification concern, and no selected project candidate
+that communicates it clearly, propose a **Spec-local one-off Design
+supplement**. Do this after the candidate-set report and before writing; do not
+wait for the maintainer to guess the document format in advance.
+
+State the proposed lowercase-kebab `artifact_id`, responsibility, covered
+Requirement IDs, the alternative of extending an existing Design, and the
+target `specs/<spec>/design/<artifact_id>.md` below the configured SpecBind
+root. Ask for explicit confirmation before creating it. A technology label,
+future possibility, or temporary milestone slice is not enough; never create a
+precautionary supplement.
+
+After confirmation, read `design/main` as the scaffold shape and author the
+supplement at that stated path. Replace its identity with the confirmed
+`artifact_id`, remove every `create` instruction, preserve `maintain` and
+`consume` instructions, and add complete live traceability. It is an ordinary
+live `SpecBind Design`, so include it in the complete set, checks, validation,
+and gate approval. Do not add a project template or change
+`design-template-selection` for this one-off decision.
+
+If a later Spec independently needs the same focused responsibility, recommend
+that `sb-configure` evaluate promotion to a project-owned conditional candidate
+after the current Design phase. Do not change project configuration yourself.
+
 Identity churn is expensive here. Adding or removing a design identity
 invalidates approval by itself, so reorganizing an established Spec's design set
 needs a stated reason — it is not housekeeping to do in passing.

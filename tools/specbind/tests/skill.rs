@@ -219,6 +219,23 @@ fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edi
 }
 
 #[test]
+fn design_proposes_confirmed_spec_local_supplements_without_polluting_project_policy() {
+    let body = skill_package_text("sb-plan");
+    for required in [
+        "Spec-local one-off Design\nsupplement",
+        "target `specs/<spec>/design/<artifact_id>.md`",
+        "Ask for explicit confirmation before creating it.",
+        "Do not add a project template or change\n`design-template-selection`",
+        "recommend\nthat `sb-configure` evaluate promotion",
+    ] {
+        assert!(
+            body.contains(required),
+            "Design procedure must preserve one-off supplement boundary: {required}"
+        );
+    }
+}
+
+#[test]
 fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
     let body = skill_package_text("sb-discovery");
     for required in [

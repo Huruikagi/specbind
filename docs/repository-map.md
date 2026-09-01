@@ -324,3 +324,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0176](./design/decisions/0176-skill-namespace-separation.md) | Accepted | `sb-*` Skill namespace separated from the `specbind` CLI |
 | [0177](./design/decisions/0177-steering-scaffold-conformance-check.md) | Accepted | Mechanical verification of a materialized Steering scaffold |
 | [0178](./design/decisions/0178-github-milestone-discovery-source-provider.md) | Accepted | GitHub Milestone Discovery source provider |
+| [0179](./design/decisions/0179-spec-local-one-off-design-supplements.md) | Accepted | Evidence-backed Spec-local one-off Design supplements |

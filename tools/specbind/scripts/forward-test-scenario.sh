@@ -38,6 +38,7 @@
 #   ds5    ds2 plus a `checkout` Spec consuming the cart export
 #   ds7    a new dashboard Spec whose user-visible screen requires Design UI
 #   ds8    a new parser Spec whose library-only behavior must omit Design UI
+#   ds9    a new infrastructure Spec whose durable operations concern needs a one-off Design proposal
 #   t1     ds4's state: design approved and the review accepted, no plan yet
 #   t2     t1 without the accepted contract review
 #   t3     an approved three-task plan with the first two already completed
@@ -708,7 +709,7 @@ ds1)
         '! test -e .specbind/specs/order/contract.yaml'
     ;;
 
-ds7 | ds8)
+ds7 | ds8 | ds9)
     if [ "$scenario" = ds7 ]; then
         spec=dashboard
         summary="Add a customer account overview screen."
@@ -718,7 +719,7 @@ ds7 | ds8)
         title="Show the account overview screen"
         objective="A customer can understand their account status from one accessible screen."
         criterion="The account overview screen presents account status and recent activity with defined loading, empty, error, responsive, and keyboard-navigation behavior."
-    else
+    elif [ "$scenario" = ds8 ]; then
         spec=parser
         summary="Expose a library function that parses catalog identifiers."
         problem="Callers parse catalog identifiers inconsistently."
@@ -727,6 +728,15 @@ ds7 | ds8)
         title="Parse a catalog identifier"
         objective="A caller can normalize a catalog identifier through one library API without inventing input or error semantics."
         criterion="The library function parse_catalog_identifier accepts exactly three ASCII letters, a hyphen, and four digits case-insensitively, returns the same identifier with its letters uppercased, and otherwise returns an InvalidCatalogIdentifier error carrying the original input; no screen, interaction, or user-visible UI behavior changes."
+    else
+        spec=infrastructure
+        summary="Establish a deployable runtime foundation."
+        problem="The service has no defined deployment or recovery behavior."
+        desired="The service can be deployed with explicit configuration ownership and recover predictably from a failed runtime dependency."
+        context="This Spec owns the runtime deployment boundary, configuration and Secret ownership, health signals, and recovery from an unavailable dependency. No user-visible screen or existing project Design candidate owns these guarantees."
+        title="Operate the service runtime"
+        objective="An operator can deploy and recover the service using explicit runtime guarantees."
+        criterion="The deployment declares configuration and Secret ownership, exposes a health signal, and states the operator recovery action when its required runtime dependency is unavailable."
     fi
     milestone "{\"schemaVersion\":1,\"workItems\":{\"newSpecs\":[{\"spec\":\"$spec\",\"summary\":\"$summary\"}]}}"
     brief "$spec" "$problem" "$desired"
