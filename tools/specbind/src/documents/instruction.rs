@@ -100,6 +100,46 @@ pub fn validate_live(body: &str) -> Vec<InstructionIssue> {
     issues
 }
 
+/// Verifies the instruction and placeholder obligations of one materialized
+/// artifact against the exact scaffold that created it.
+///
+/// This deliberately compares only durable instruction comments and authored
+/// placeholders. Ordinary prose belongs to the live artifact after creation.
+#[must_use]
+pub fn verify_materialization(template: &str, live: &str) -> Vec<InstructionIssue> {
+    let (template_instructions, _) = inspect(template);
+    let (live_instructions, mut issues) = inspect(live);
+    issues.extend(validate_live(live));
+
+    let template_durable = durable_comments(template, &template_instructions);
+    let live_durable = durable_comments(live, &live_instructions);
+    if template_durable != live_durable {
+        issues.push(InstructionIssue {
+            code: "ARTIFACT_DURABLE_INSTRUCTIONS_MISMATCH",
+            message:
+                "live artifact durable instructions do not exactly match the selected scaffold"
+                    .to_owned(),
+        });
+    }
+
+    let placeholders =
+        angle_placeholders(&mask_instruction_ranges(template, &template_instructions));
+    let leaked = angle_placeholders(&mask_instruction_ranges(live, &live_instructions));
+    for placeholder in placeholders.intersection(&leaked) {
+        issues.push(InstructionIssue {
+            code: "ARTIFACT_TEMPLATE_PLACEHOLDER_LEAK",
+            message: format!("live artifact retains scaffold placeholder {placeholder}"),
+        });
+    }
+    issues.sort_by(|left, right| {
+        left.code
+            .cmp(right.code)
+            .then(left.message.cmp(&right.message))
+    });
+    issues.dedup();
+    issues
+}
+
 /// Removes scoped instruction comments not addressed to `scope`.
 ///
 /// The remaining Markdown bytes are preserved exactly, including Front Matter,
@@ -286,6 +326,36 @@ fn mask_instruction_ranges(content: &str, instructions: &[Instruction]) -> Strin
     String::from_utf8_lossy(&bytes).into_owned()
 }
 
+fn durable_comments(content: &str, instructions: &[Instruction]) -> Vec<String> {
+    let mut comments = instructions
+        .iter()
+        .filter(|instruction| {
+            matches!(
+                instruction.scope,
+                InstructionScope::Maintain | InstructionScope::Consume
+            )
+        })
+        .map(|instruction| content[instruction.range.clone()].to_owned())
+        .collect::<Vec<_>>();
+    comments.sort();
+    comments
+}
+
+fn angle_placeholders(content: &str) -> BTreeSet<String> {
+    let mut placeholders = BTreeSet::new();
+    let mut rest = content;
+    while let Some(start) = rest.find('<') {
+        let after = &rest[start + 1..];
+        let Some(end) = after.find('>') else { break };
+        let value = &after[..end];
+        if !value.is_empty() && !value.chars().any(char::is_whitespace) {
+            placeholders.insert(format!("<{value}>"));
+        }
+        rest = &after[end + 1..];
+    }
+    placeholders
+}
+
 fn comment_ranges(content: &str) -> Vec<Range<usize>> {
     let mut comments = Vec::new();
     let mut open: Option<Range<usize>> = None;
@@ -358,6 +428,35 @@ mod tests {
         assert_eq!(
             validate_live("<!-- specbind:instruction create Start. -->")[0].code,
             "ARTIFACT_CREATE_INSTRUCTION_LEAK"
+        );
+    }
+
+    #[test]
+    fn verifies_durable_comments_and_scaffold_placeholders() {
+        let template = concat!(
+            "<!-- specbind:instruction create Draft it. -->\n",
+            "<!-- specbind:instruction maintain Preserve it. -->\n",
+            "### <decision>\n",
+        );
+        let valid = "<!-- specbind:instruction maintain Preserve it. -->\n### Actual decision\n";
+        assert!(verify_materialization(template, valid).is_empty());
+
+        let invalid = concat!(
+            "<!-- specbind:instruction maintain Preserve only part. -->\n",
+            "<!-- specbind:instruction create Leaked. -->\n",
+            "### <decision>\n",
+        );
+        let codes = verify_materialization(template, invalid)
+            .into_iter()
+            .map(|issue| issue.code)
+            .collect::<Vec<_>>();
+        assert_eq!(
+            codes,
+            vec![
+                "ARTIFACT_CREATE_INSTRUCTION_LEAK",
+                "ARTIFACT_DURABLE_INSTRUCTIONS_MISMATCH",
+                "ARTIFACT_TEMPLATE_PLACEHOLDER_LEAK",
+            ]
         );
     }
 

@@ -184,6 +184,9 @@ fn run_steering(start: &Path, command: SteeringCommand) -> CommandOutput {
         SteeringCommand::Read { selector, purpose } => {
             specbind::cli::steering_read(start, &selector, purpose.as_deref())
         }
+        SteeringCommand::Check { selector, template } => {
+            specbind::cli::steering_check(start, &selector, &template)
+        }
     }
 }
 

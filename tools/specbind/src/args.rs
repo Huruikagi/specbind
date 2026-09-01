@@ -259,6 +259,14 @@ pub enum SteeringCommand {
         #[arg(long = "for", value_parser = ["maintain", "consume"])]
         purpose: Option<String>,
     },
+    /// Verify one materialized document against the selected Steering scaffold.
+    Check {
+        /// The `artifact_id` of the materialized Steering document.
+        selector: String,
+        /// The Steering template selector that was materialized.
+        #[arg(long)]
+        template: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]

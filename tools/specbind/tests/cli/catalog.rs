@@ -425,6 +425,67 @@ fn lists_and_reads_the_steering_template_scope() {
 }
 
 #[test]
+fn checks_a_materialized_steering_document_against_its_selected_scaffold() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/settings/templates/steering/product.md",
+        concat!(
+            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "<!-- specbind:instruction create Draft the first version. -->\n",
+            "<!-- specbind:instruction maintain Preserve this exact guidance. -->\n",
+            "### <project-fact>\n",
+        ),
+    );
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        concat!(
+            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "<!-- specbind:instruction maintain Preserve this exact guidance. -->\n",
+            "### Actual project fact\n",
+        ),
+    );
+
+    let mut valid = specbind_command();
+    valid
+        .current_dir(root.path())
+        .args(["steering", "check", "product", "--template", "product"])
+        .assert()
+        .success()
+        .stdout("OK STEERING_CHECKED: product conforms to scaffold product.\n")
+        .stderr("");
+
+    write(
+        root.path(),
+        ".specbind/steering/product.md",
+        concat!(
+            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "<!-- specbind:instruction maintain Changed guidance. -->\n",
+            "<!-- specbind:instruction create Leaked. -->\n",
+            "### <project-fact>\n",
+        ),
+    );
+    let mut invalid = specbind_command();
+    invalid
+        .current_dir(root.path())
+        .args(["steering", "check", "product", "--template", "product"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR STEERING_CHECK_FAILED:")
+                .and(predicate::str::contains("ARTIFACT_CREATE_INSTRUCTION_LEAK"))
+                .and(predicate::str::contains(
+                    "ARTIFACT_DURABLE_INSTRUCTIONS_MISMATCH",
+                ))
+                .and(predicate::str::contains(
+                    "ARTIFACT_TEMPLATE_PLACEHOLDER_LEAK",
+                )),
+        );
+}
+
+#[test]
 fn falls_back_to_embedded_defaults_in_the_configured_language() {
     let root = project_fixture();
 

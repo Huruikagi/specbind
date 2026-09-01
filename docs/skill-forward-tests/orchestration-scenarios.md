@@ -470,6 +470,9 @@ Ask for a steering document about the project's testing approach.
   `specbind steering list`. No repository-root `steering/` path was created.
 - The `document` scaffold's `create` instruction is absent from the written
   file, while its `maintain` instruction remains unchanged.
+- `specbind steering check <artifact_id> --template document` succeeds, proving
+  the materialized document retained complete durable instructions and no
+  scaffold placeholder or creation guidance.
 - The document contains the supplied policy and supported project facts only; it
   does not invent a runner, command, CI requirement, or additional obligation.
 

@@ -204,9 +204,16 @@ document that does not appear was authored wrong** — bad Front Matter, wrong
 type, or a colliding identity. Fix it and list again. Do not report success on a
 document the CLI cannot see.
 
-For a newly materialized document, compare every retained instruction comment
-against the scaffold once more. Each complete durable block must still match;
-`create` must not remain.
+For every newly materialized document, run the mechanical scaffold check with
+the document identity and the template selector used to create it:
+
+```sh
+specbind steering check <artifact_id> --template <selector>
+```
+
+It verifies complete durable instruction blocks, leaked `create` guidance,
+unresolved named outputs, and scaffold placeholders. Any `ERROR` stops the
+workflow; do not recreate this comparison with a project script.
 
 ## 6. Report
 
