@@ -778,6 +778,10 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
     assert!(body.contains("Never infer single-phase mode from lifecycle state"));
     assert!(body.contains("stopping response itself must name the available Spec choices"));
     assert!(body.contains("not the required scope\nquestion"));
+    assert!(body.contains("First action: fail closed on an unspecified scope"));
+    assert!(body.contains("before reading phase procedures, Spec\nartifacts"));
+    assert!(body.contains("only workflow reads permitted are the language-style Rule below and\n`specbind milestone status`"));
+    assert!(body.contains("This first-action guard takes\nprecedence"));
 }
 
 #[test]

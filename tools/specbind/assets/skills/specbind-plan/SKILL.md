@@ -6,6 +6,21 @@ argument-hint: "[<spec> | --all] [requirements|design|tasks]"
 
 # Plan active Spec work
 
+## First action: fail closed on an unspecified scope
+
+Classify the maintainer's request **before reading phase procedures, Spec
+artifacts, templates, protocols, Steering, or implementation**. For a request
+such as "plan the active work" that names neither one Spec nor all Specs, the
+only workflow reads permitted are the language-style Rule below and
+`specbind milestone status`. Then name every available Spec choice, also name
+the all-Spec choice, ask the maintainer to select one, and stop.
+
+An `Actionable` item, a single participating Spec, or an obvious next phase is
+not scope authorization. Do not run `specbind spec status`, select a phase
+reference, investigate missing artifact details, or dispatch a phase until the
+maintainer chooses named or all-Spec scope. This first-action guard takes
+precedence over every later routing and scheduling instruction.
+
 ## Apply project language style
 
 Before authoring orchestration or user-facing prose, read:
