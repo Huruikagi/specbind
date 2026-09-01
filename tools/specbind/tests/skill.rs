@@ -591,6 +591,28 @@ fn requirements_audits_existing_obligations_before_approval() {
 }
 
 #[test]
+fn requirements_preserves_abstract_boundaries_and_avoids_new_spec_contract_probe() {
+    let requirements = skill::find("specbind-plan-requirements").expect("requirements skill");
+    let body = requirements.body().expect("requirements body");
+
+    assert!(body.contains("Preserve an intentionally abstract but observable boundary"));
+    assert!(body.contains("without inventing a duration"));
+    assert!(body.contains("cannot determine an observable\naccepted or rejected outcome"));
+    assert!(body.contains("Do not run a Contract read in this branch"));
+    assert!(body.contains("artifact inventory as the non-error existence check"));
+    assert!(body.contains("specbind artifact list <spec>"));
+
+    let new_spec = body.find("- **New Spec**").expect("new Spec branch");
+    let existing_spec = body
+        .find("- **Existing Spec**")
+        .expect("existing Spec branch");
+    let contract_read = body
+        .find("specbind artifact read <spec> contract --for consume")
+        .expect("conditional Contract read");
+    assert!(new_spec < existing_spec && existing_spec < contract_read);
+}
+
+#[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
         skill::find("specbind-validate-implementation").expect("implementation validation skill");

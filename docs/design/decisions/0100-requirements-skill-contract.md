@@ -53,10 +53,12 @@ only its discovery-authored Brief when this skill starts. The two paths differ:
   0059 template, read through `specbind template read spec requirements`, and
   authors the Spec's first complete contract from the Brief. `spec status`
   reporting a missing Requirements artifact is the expected starting state, not
-  a fault.
+  a fault. This branch does not probe for a Contract: the lifecycle state has
+  already established that Design has not created one.
 - **Existing Spec.** The skill reads the current Requirements and revises them
   in place, keeping the document the Spec's complete current contract as the
-  review protocol requires.
+  review protocol requires. When Contract context may exist, `artifact list`
+  provides the non-error existence check before any Contract read.
 
 Before approving an existing Spec, the skill performs a preservation audit
 against the Requirements it read at entry, using the file diff when Git is
@@ -68,6 +70,14 @@ unaffected owned behavior. Approval is not a probe for discovering that loss.
 The Contract is read when present, as context for the boundary this Spec owns.
 It is never authored here: Decision 0092 gives the design phase that artifact,
 so a new Spec has none until Design runs.
+
+The Brief may intentionally define behavior through an abstract but observable
+ordering boundary, such as accepting an action before a named window closes and
+rejecting it afterward. Requirements preserves that abstraction. It does not
+invent a duration, closing event, trigger mechanism, or other policy that the
+Brief did not state merely to make the boundary more concrete. Clarification is
+needed only when the supplied boundary does not determine an observable
+accepted or rejected outcome without inventing behavior.
 
 Steering is read whole, as in discovery, because a project constraint on
 behavior that is missed here is absent from the contract every later phase is

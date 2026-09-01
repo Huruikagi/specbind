@@ -89,22 +89,35 @@ not a fault.
   Replace it with at least one real Requirement and Acceptance Criterion before
   the first write; never persist the scaffold as completion.
 
+  Do not run a Contract read in this branch. The lifecycle state already says
+  that Design has not created one, so `ARTIFACT_SELECTOR_NOT_FOUND` would add no
+  information.
+
 - **Existing Spec** — read the current requirements and revise them in place:
 
   ```sh
   specbind artifact read <spec> requirements --for maintain
   ```
 
-Read the contract when the Spec has one, as context for the boundary it owns:
+  Use the artifact inventory as the non-error existence check, then read the
+  Contract as boundary context only when the inventory lists it:
 
-```sh
-specbind artifact read <spec> contract --for consume
-```
+  ```sh
+  specbind artifact list <spec>
+  specbind artifact read <spec> contract --for consume
+  ```
 
 Never author the contract here. A new Spec has none until the design phase runs,
 and that is correct.
 
 ## 2. Write the contract
+
+Preserve an intentionally abstract but observable boundary from the Brief. For
+example, if it says an action is accepted before a named window closes and
+rejected afterward, express those outcomes without inventing a duration,
+closing event, trigger mechanism, or other unstated policy. Ask for
+clarification only when the supplied boundary cannot determine an observable
+accepted or rejected outcome without inventing behavior.
 
 Read the protocol that owns semantic quality, and the project's writing
 preference, before writing:
