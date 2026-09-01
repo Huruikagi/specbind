@@ -218,6 +218,31 @@ but editing project content after completion evidence has been accepted can
 require completion revalidation. The simplest windows are before the first
 completion in a Milestone or after release cleanup.
 
+## Recommended order for shaping a project
+
+For an initial post-install review, or when template choices depend on unknown
+project characteristics, start by proposing Steering bootstrap or
+synchronization. Then compare the accepted durable guidance and repository
+facts with the current Requirements and Design templates and their shared
+Rules. Update an existing template or Rule when a responsibility is common to
+that surface; add a Design template only when a distinct durable responsibility
+needs its own recurring design decisions and traceability across multiple
+Specs.
+
+An empty Steering collection remains valid. Do not create it merely because it
+is empty, and do not block an explicit narrow template edit that does not need
+missing project guidance. Steering records durable project facts; the
+`design-template-selection` Rule still decides whether each candidate applies
+to one Spec.
+
+Technology labels alone do not require another template. User-visible Web or
+mobile work normally uses the existing UI candidate. API compatibility and
+infrastructure conventions normally begin in Steering and the Design or
+Contract Rules. Add a conditional candidate such as `design/api` or
+`design/infrastructure` only when that responsibility repeatedly needs
+independent design treatment; write its condition in terms of the
+responsibility, not framework presence.
+
 ## Project settings and role models
 
 Initial installation selects artifact language, Agents, Spec root, and project

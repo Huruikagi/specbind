@@ -36,6 +36,20 @@ candidate exactly once as `required`, `conditional`, or `disabled`; give every
 conditional entry an applicability condition. Re-run both the template list and
 Rule read before completion.
 
+Before adding a candidate, compare current Steering, repository facts, the main
+Design, and the shared Design and Contract Rules. Prefer updating those existing
+surfaces when the proposed content is a common heading, convention, or
+cross-cutting judgment. Add a candidate only for a durable responsibility that
+needs distinct recurring design decisions and traceability; a technology label
+or framework presence alone is insufficient.
+
+For example, user-visible Web or mobile behavior normally selects the existing
+UI candidate. API compatibility or infrastructure conventions normally begin
+in Steering and the Design or Contract Rules. A project may add `design/api` or
+`design/infrastructure` when those responsibilities repeatedly need independent
+design treatment. Their selection conditions must describe the responsibility,
+not merely the presence of a technology.
+
 ## Default effect
 
 A template edit affects future materialization only. State explicitly that no

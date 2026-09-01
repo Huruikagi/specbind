@@ -55,6 +55,32 @@ When one request spans several surfaces, state the dependency order and complete
 one coherent surface at a time. Re-read `configuration show` after each change
 that affects the inputs of the next.
 
+### Recommended starting order for project shaping
+
+For an initial post-install review, or when a template decision depends on
+unknown project-wide characteristics, recommend this order:
+
+1. Establish or synchronize durable Steering through `sb-steering`.
+2. Compare that Steering and repository facts with the current Requirements and
+   Design templates and their shared Rules.
+3. Update an existing template or Rule when the responsibility and its
+   structure are common to its current scope. Add a Design template only when a
+   distinct responsibility needs its own recurring design decisions and
+   traceability across multiple Specs.
+
+An empty Steering collection is valid. Do not bootstrap it merely because it is
+empty, and do not delay an explicit, narrow template edit that does not depend
+on missing project guidance. When Steering is needed, ask whether bootstrap,
+synchronization, or an addition is intended; `sb-steering` owns that choice.
+
+Technology labels alone are not a template boundary. For example, Web or mobile
+work first uses the existing UI candidate when user-visible behavior changes;
+API or infrastructure conventions usually belong in Steering and Design or
+Contract Rules first. A platform-specific Design candidate is justified only
+when its independent responsibility would otherwise be repeatedly obscured in
+the main Design. Steering records durable project facts; it does not replace
+the per-Spec applicability decision in `design-template-selection`.
+
 ## 3. Preserve ownership and authority
 
 - Edit only project-owned configuration and durable knowledge through their

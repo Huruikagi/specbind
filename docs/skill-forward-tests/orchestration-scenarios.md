@@ -64,6 +64,27 @@ status, then ask:
 - The active Git adapter produces one local checkpoint containing only the
   project-owned template.
 
+### CF3 — Project shaping establishes guidance before adding a Design candidate
+
+Use the base fixture and ask:
+
+> Ask: Review this project's durable guidance and then configure the Design
+> templates for future API and infrastructure changes. Keep existing artifacts
+> unchanged.
+
+- The agent reads the current Steering inventory and documents before deciding
+  whether a new candidate is warranted. It does not bootstrap merely because a
+  collection is empty, nor treat Steering as a substitute for the selection
+  Rule.
+- It compares repository facts, the current main and UI candidates, and the
+  Design and Contract Rules before proposing an API or infrastructure candidate.
+- It updates an existing template or Rule when that fully represents the
+  responsibility. If it proposes a candidate, it explains the independent
+  recurring responsibility and changes the matching
+  `design-template-selection` classification in the same transaction.
+- Existing artifacts and lifecycle state remain unchanged because the request
+  declines reconciliation.
+
 ## Existing-implementation adoption scenarios
 
 Accepted by [Decision 0143](../design/decisions/0143-existing-implementation-adoption.md)

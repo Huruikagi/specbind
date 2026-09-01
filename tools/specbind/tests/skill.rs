@@ -183,6 +183,40 @@ fn configure_aftercare_names_the_exact_git_adapter_read_command() {
 }
 
 #[test]
+fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edits() {
+    let configure = skill::find("sb-configure").expect("configure skill");
+    let body = configure.body().expect("configure body");
+    let templates = configure
+        .resources()
+        .iter()
+        .find(|resource| resource.relative_path == "references/templates-and-reconciliation.md")
+        .expect("configure templates reference")
+        .content();
+
+    for required in [
+        "Establish or synchronize durable Steering through `sb-steering`.",
+        "Technology labels alone are not a template boundary.",
+        "does not replace\nthe per-Spec applicability decision in `design-template-selection`.",
+        "Do not bootstrap it merely because it is\nempty",
+    ] {
+        assert!(
+            body.contains(required),
+            "configure skill must preserve project-shaping guidance: {required}"
+        );
+    }
+    for required in [
+        "distinct recurring design decisions and traceability",
+        "framework presence alone is insufficient",
+        "conditions must describe the responsibility",
+    ] {
+        assert!(
+            templates.contains(required),
+            "configure template procedure must preserve candidate criteria: {required}"
+        );
+    }
+}
+
+#[test]
 fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
     let body = skill_package_text("sb-discovery");
     for required in [
