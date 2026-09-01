@@ -10,9 +10,10 @@ decisions, author and review artifacts, implement changes, and explain results.
 The CLI validates structure and consistency and records approvals, progress,
 and lifecycle transitions.
 
-SpecBind started from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd/tree/main)
-and retains many concepts from cc-sdd v3, reorganized around SpecBind's current
-contracts.
+SpecBind started from [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd/tree/main),
+which itself inherited from Kiro. It retains many concepts from cc-sdd v3,
+reorganized around SpecBind's current contracts. We are grateful to Kiro,
+cc-sdd, and their contributors for that foundation.
 
 ## Supported environments
 

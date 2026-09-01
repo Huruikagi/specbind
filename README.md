@@ -172,7 +172,7 @@ languages are not currently part of the supported product contract.
 
 ## Upstream and attribution
 
-SpecBind began from the source code of [cc-sdd](https://github.com/gotalab/cc-sdd) by gotalab. We are grateful to the original project and its contributors for the foundation.
+SpecBind began from the source code of [cc-sdd](https://github.com/gotalab/cc-sdd) by gotalab, which itself inherited from Kiro. We are grateful to Kiro, the original project, and their contributors for the foundation.
 
 SpecBind is an independent project and is not affiliated with or endorsed by gotalab. The original copyright and MIT license notice are retained in [LICENSE](./LICENSE).
 
