@@ -9,15 +9,14 @@ fixture.
 
 ## Open
 
-| ID | First seen | Scenario | Finding | Evidence | Next confirmation |
-| --- | --- | --- | --- | --- | --- |
-| FT-0020 | `8db72c0` | DS9 | The one-off supplement assessment appeared only in the later splitting guidance, so Design authoring could create `design/main` and Contract before considering an independently reviewable infrastructure responsibility. | `58e6155` makes the assessment mandatory before any Design or Contract write. | `58e6155`: fresh DS9 proposed `runtime-operations` and stopped with no Design or Contract artifact. |
+No reproduced product findings are open.
 
 ## Fixed, behavioral confirmation pending
 
 | ID | First seen | Scenario | Finding | Resolution | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
 | FT-0019 | `086620a` | CF3 | A request to configure future API and infrastructure Design templates can be read as authority to add candidates even when no current Steering or repository fact establishes those independent responsibilities. | `ada3fa9` makes candidate addition fail closed on that missing responsibility and directs the existing-template or Rule path first. | `ada3fa9`: fresh CF3 updated only the main Design template, preserved the candidate set and Rule, and left existing artifacts unchanged. |
+| FT-0022 | `0886c8d` | DS9 | The default Design scaffold describes `requirement_ids` as an array but does not say IDs such as `1.1` must be YAML strings, so they can be authored as invalid YAML numbers. | `3ea662b` requires quoted YAML strings such as `"1.1"` in both shipped Design scaffolds and the Design procedure. | Rerun a fresh Design authoring branch that creates a `1.1` traceability entry. |
 | FT-0018 | `163909b` | A1, A2 | After adoption moved under Discovery, ordinary-route reads competed with adoption preflight and the fresh-reader boundary was too easy for the orchestrator to replace with its own inspection. | `630f08e` scopes ordinary project-shape reads and makes both independent evidence lines non-negotiable; `8329421` forbids redundant milestone/Spec reads and permits capacity-limited sequential fresh readers. | Rerun A1 and A2 on `8329421` when the fresh driver can consume the installed Skill and dispatch instrumentation can retain every context line. |
 | FT-0015 | `78ec888` | HP1 | A phase-owned deferred Design finding can make the bounded dirty handoff fail before independent validation. | `d68ae66` admits only the exact active deferred-adapter destination alongside Design and Contract, then checkpoints it after READY approval. | Rerun HP1 through Design validation when the host permits fresh phase execution. |
 
@@ -28,6 +27,8 @@ Historical resolved findings through 2026-08-30 remain in the
 
 | ID | First seen | Scenario | Finding | Resolution | Behavioral confirmation |
 | --- | --- | --- | --- | --- | --- |
+| FT-0020 | `8db72c0` | DS9 | The one-off supplement assessment appeared only in later splitting guidance, so authoring could create `design/main` and Contract before considering independently reviewable operations. | `58e6155` moved the assessment before any Design or Contract write. | `58e6155`: fresh DS9 proposed `runtime-operations` before writing any Design or Contract. |
+| FT-0021 | `f516d32` | DS9 | The focused one-off assessment allowed `design/main` itself to count as an applicable candidate, so an independent operations responsibility could be collapsed into it. | `0886c8d` makes `design/main` the alternative to assess, not a candidate that defeats the supplement. | `0886c8d`: fresh DS9 created `design/main`, `design/runtime-operations`, and Contract before ordinary Design approval. |
 | FT-0001 | `1736d0c` | S5 | A Steering read failure did not name the project path searched. | `6df80fc` adds `searched_project_path=.specbind/steering` to unknown and ambiguous selector diagnostics. | `7e6fd42`: fresh unknown and ambiguous branches both named `.specbind/steering`. |
 | FT-0002 | `1736d0c` | X1 | Contract Review did not name Design as the owner of `contract.yaml` or provide the exact rewind command. | `7e6fd42` requires the Design owner, full rewind state, and exact invalidation command in the terminal report. | `7e6fd42`: fresh review reported the boundary, then invalidated only after confirmation. |
 | FT-0003 | `1736d0c` | X1 | Acceptance used a prefixed deep-input selector without explaining its relation to the selector returned by `artifact list`. | `ae6c562` maps an exact listed selector to its persisted deep-input identity. | `7e6fd42`: accepted review recorded `specs/cart#design/main` and its fingerprint. |

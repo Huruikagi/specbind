@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `0886c8d` | DS9 — pass | [One-off Design materialization](./runs/2026-09-01-codex-0886c8d-ds9.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `f516d32` | DS9 — product failure | [Focused one-off Design assessment](./runs/2026-09-01-codex-f516d32-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `58e6155` | DS9 — pass | [One-off Design supplement confirmation](./runs/2026-09-01-codex-58e6155-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `8db72c0` | DS9 — product failure | [One-off Design supplement proposal](./runs/2026-09-01-codex-8db72c0-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `ada3fa9` | CF3 — pass | [Configuration candidate inference confirmation](./runs/2026-09-01-codex-ada3fa9-cf3.md) |
@@ -86,7 +88,7 @@ invalid runs, retries, and debrief dispositions, remains in
 ## Current finding state
 
 - Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 2
+- Fixed, behavioral confirmation pending: 3
 - Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in
