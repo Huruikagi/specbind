@@ -545,9 +545,28 @@ fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
     assert!(body.contains("one deliberate exception"));
     assert!(body.contains("Design artifact paths"));
     assert!(body.contains("Contract path"));
+    assert!(
+        body.contains("exact project-relative destination named by the active deferred adapter")
+    );
+    assert!(body.contains("not infer it from a conventional filename"));
+    assert!(body.contains("verified deferred destination when\npresent"));
     assert!(body.contains("`spec.yaml`"));
     assert!(body.contains("After `READY`"));
-    assert!(body.contains("normal clean handoff is mandatory"));
+    assert!(body.contains("normal clean handoff remains mandatory"));
+}
+
+#[test]
+fn design_phase_checkpoints_its_verified_deferred_destination_after_validation() {
+    let design = skill::find("specbind-plan-design").expect("design skill");
+    let body = design.body().expect("design body");
+    assert!(body.contains("approval re-dispatch after independent validation"));
+    assert!(body.contains("exact active deferred-adapter destination"));
+    assert!(body.contains("gate-updated `spec.yaml`"));
+
+    let validation = skill::find("specbind-validate-design").expect("validation skill");
+    let validation_body = validation.body().expect("validation body");
+    assert!(validation_body.contains("adapter write happens only after the verdict"));
+    assert!(validation_body.contains("Report the exact\nproject-relative destination"));
 }
 
 #[test]

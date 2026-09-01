@@ -147,10 +147,20 @@ before validation, stop; a later verdict cannot retroactively restore the order.
 That unapproved Design handoff is the one deliberate exception to the general
 clean-checkpoint rule. Before validation, require the dirty set to contain only
 the Design artifact paths and that Spec's Contract path reported by its author.
-No `spec.yaml`, unrelated item, generated output, or earlier-phase artifact may
-be dirty. The validator is read-only. After `READY`, the approval dispatch owns
-the checkpoint and the normal clean handoff is mandatory before Contract Review.
-Never mix several Specs' drafts in one dirty validation handoff.
+When the author actually recorded a `DEFERRED` finding, the set may also contain
+the exact project-relative destination named by the active deferred adapter.
+Verify that destination through `adapter list` and `adapter read deferred`; do
+not infer it from a conventional filename or admit another adapter output. Pass
+the verified path to the validator and approval dispatch as a phase-owned path.
+
+The validator changes no Design, Contract, or lifecycle path. After its verdict,
+it may append a deferred finding only to that same verified destination and must
+report the write. After `READY`, the approval dispatch owns the checkpoint for
+the Design set, Contract, gate state, and verified deferred destination when
+present. The normal clean handoff remains mandatory before Contract Review. No
+unreported path, `spec.yaml` before approval, unrelated item, generated output,
+or earlier-phase artifact may be dirty. Never mix several Specs' drafts in one
+dirty validation handoff.
 
 Once **every participating Spec**, not merely every item in named scope, holds
 current Design approval:

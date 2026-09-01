@@ -480,6 +480,12 @@ When the adapter has guidance, follow it. The request to perform this mutating
 phase authorizes the adapter's narrow local checkpoint as its ordinary final
 step. It does not authorize anything broader:
 
+- When this is the approval re-dispatch after independent validation, the
+  Design set, Contract, and exact active deferred-adapter destination written by
+  the authoring or validation dispatch are outputs of this same Design phase.
+  Include those reported paths with the gate-updated `spec.yaml`; fresh context
+  does not make the earlier Design dispatch's outputs unrelated.
+
 - An explicit user or root instruction that forbids commits wins, and tool
   permissions still apply.
 - Delegated approval authorizes the gate, while the orchestrated phase request

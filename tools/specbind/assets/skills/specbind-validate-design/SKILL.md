@@ -169,6 +169,11 @@ far enough to avoid recording the same finding twice; nothing in it is a source
 of work for you, and no entry there becomes work until a person puts it on the
 Roadmap.
 
+This adapter write happens only after the verdict. Report the exact
+project-relative destination and whether you changed it so an orchestrator can
+keep that phase-owned path inside the bounded unapproved-Design handoff. Do not
+write any other path.
+
 ## Boundaries
 
 - **Never edit the design or the contract.** A validator that fixes what it
