@@ -69,10 +69,6 @@ impl std::error::Error for SkillError {}
 /// The complete embedded skill set.
 static SKILLS: &[Skill] = &[
     Skill {
-        name: "specbind-adopt-existing",
-        source: include_str!("../../assets/skills/specbind-adopt-existing/SKILL.md"),
-    },
-    Skill {
         name: "specbind-contract-review",
         source: include_str!("../../assets/skills/specbind-contract-review/SKILL.md"),
     },
@@ -135,21 +131,15 @@ static SKILLS: &[Skill] = &[
 ];
 
 static RETIRED_SKILL_NAMES: &[&str] = &[
+    "specbind-adopt-existing",
     "specbind-plan-design",
     "specbind-plan-requirements",
     "specbind-plan-tasks",
 ];
 
-static ADOPT_EXISTING_RESOURCES: &[SkillResource] = &[
-    SkillResource {
-        relative_path: "references/resume.md",
-        source: include_str!("../../assets/skills/specbind-adopt-existing/references/resume.md"),
-    },
-    SkillResource {
-        relative_path: "references/start.md",
-        source: include_str!("../../assets/skills/specbind-adopt-existing/references/start.md"),
-    },
-];
+static RETIRED_ENTRYPOINT_ONLY_FILES: &[&str] = &["SKILL.md"];
+static RETIRED_ADOPT_EXISTING_FILES: &[&str] =
+    &["references/resume.md", "references/start.md", "SKILL.md"];
 
 static CONFIGURE_RESOURCES: &[SkillResource] = &[
     SkillResource {
@@ -182,10 +172,20 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
     },
 ];
 
-static DISCOVERY_RESOURCES: &[SkillResource] = &[SkillResource {
-    relative_path: "references/local-files.md",
-    source: include_str!("../../assets/skills/specbind-discovery/references/local-files.md"),
-}];
+static DISCOVERY_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/adopt-resume.md",
+        source: include_str!("../../assets/skills/specbind-discovery/references/adopt-resume.md"),
+    },
+    SkillResource {
+        relative_path: "references/adopt-start.md",
+        source: include_str!("../../assets/skills/specbind-discovery/references/adopt-start.md"),
+    },
+    SkillResource {
+        relative_path: "references/local-files.md",
+        source: include_str!("../../assets/skills/specbind-discovery/references/local-files.md"),
+    },
+];
 
 static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     SkillResource {
@@ -230,6 +230,15 @@ pub fn all() -> &'static [Skill] {
 #[must_use]
 pub fn retired_names() -> &'static [&'static str] {
     RETIRED_SKILL_NAMES
+}
+
+/// Lists the exact former product-managed files removed for one retired Skill.
+#[must_use]
+pub fn retired_files(name: &str) -> &'static [&'static str] {
+    match name {
+        "specbind-adopt-existing" => RETIRED_ADOPT_EXISTING_FILES,
+        _ => RETIRED_ENTRYPOINT_ONLY_FILES,
+    }
 }
 
 impl Skill {
@@ -310,7 +319,6 @@ impl Skill {
     #[must_use]
     pub fn resources(self) -> &'static [SkillResource] {
         match self.name {
-            "specbind-adopt-existing" => ADOPT_EXISTING_RESOURCES,
             "specbind-configure" => CONFIGURE_RESOURCES,
             "specbind-discovery" => DISCOVERY_RESOURCES,
             "specbind-implement" => IMPLEMENT_RESOURCES,

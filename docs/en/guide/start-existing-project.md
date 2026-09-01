@@ -61,10 +61,11 @@ change with the defaults. Adjust only demonstrated mismatches afterward using
 | Use SpecBind for the next change | Continue on this page |
 | Establish Specs from working implementation | [Establish Specs from an existing implementation](./adopt-existing.md) |
 
-Adoption does not treat current code as automatically correct. It investigates
-code and tests as evidence, confirms the intent to preserve, and then hands it
-to the ordinary lifecycle. Adoption requires durable Steering; bootstrap it
-first with `specbind-steering` when absent.
+The existing-implementation route of `specbind-discovery` does not treat current
+code as automatically correct. It investigates code and tests as evidence,
+confirms the intent to preserve, and then hands it to the ordinary lifecycle.
+Adoption requires durable Steering; bootstrap it first with
+`specbind-steering` when absent.
 
 ## 5. Choose the first change
 

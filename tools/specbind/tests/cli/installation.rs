@@ -22,7 +22,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 87 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 85 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -43,7 +43,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 87 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 85 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -111,7 +111,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 48 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 47 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -160,10 +160,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 50 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 49 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 50 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 49 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use specbind-configure to review and configure SpecBind for this project.\n",
@@ -184,7 +184,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
-        ".agents/skills/specbind-adopt-existing/references/start.md",
+        ".agents/skills/specbind-discovery/references/adopt-start.md",
         ".agents/skills/specbind-configure/SKILL.md",
         ".agents/skills/specbind-configure/references/aftercare.md",
         ".agents/skills/specbind-drive/SKILL.md",
@@ -267,8 +267,8 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         ".agents/skills/specbind-drive/SKILL.md",
         ".claude/skills/specbind-configure/references/aftercare.md",
         ".agents/skills/specbind-configure/references/aftercare.md",
-        ".claude/skills/specbind-adopt-existing/references/start.md",
-        ".agents/skills/specbind-adopt-existing/references/start.md",
+        ".claude/skills/specbind-discovery/references/adopt-start.md",
+        ".agents/skills/specbind-discovery/references/adopt-start.md",
         ".claude/skills/specbind-implement/references/spec-backed.md",
         ".agents/skills/specbind-implement/references/spec-backed.md",
         ".claude/skills/specbind-release/references/bootstrap-release-adapter.md",
@@ -276,7 +276,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     ] {
         assert!(root.path().join(relative).is_file(), "missing {relative}");
     }
-    assert_removed_plan_skill_aliases_are_absent(root.path());
+    assert_retired_skill_files_are_absent(root.path());
     assert!(
         claude.starts_with("---\nname: specbind-status\n"),
         "{claude}"
@@ -335,7 +335,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
 }
 
 #[test]
-fn refresh_removes_retired_plan_phase_entrypoints_under_the_repository_guard() {
+fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
     let mut install = specbind_command();
@@ -356,13 +356,20 @@ fn refresh_removes_retired_plan_phase_entrypoints_under_the_repository_guard() {
 
     for agent_root in [".agents/skills", ".claude/skills"] {
         for retired in specbind::skill::retired_names() {
-            write(
-                root.path(),
-                &format!("{agent_root}/{retired}/SKILL.md"),
-                "former product-managed phase skill\n",
-            );
+            for file in specbind::skill::retired_files(retired) {
+                write(
+                    root.path(),
+                    &format!("{agent_root}/{retired}/{file}"),
+                    "former product-managed skill file\n",
+                );
+            }
         }
     }
+    write(
+        root.path(),
+        ".agents/skills/specbind-adopt-existing/notes.md",
+        "project-owned extra content\n",
+    );
     let mut dirty_retire = specbind_command();
     dirty_retire
         .current_dir(root.path())
@@ -380,16 +387,32 @@ fn refresh_removes_retired_plan_phase_entrypoints_under_the_repository_guard() {
         .success()
         .stdout(predicate::str::contains(
             "- remove .agents/skills/specbind-plan-design/SKILL.md [skill]",
+        ))
+        .stdout(predicate::str::contains(
+            "- remove .agents/skills/specbind-adopt-existing/references/start.md [skill]",
         ));
-    assert_removed_plan_skill_aliases_are_absent(root.path());
+    assert_retired_skill_files_are_absent(root.path());
     assert!(
         root.path()
             .join(".agents/skills/specbind-plan/references/design.md")
             .is_file()
     );
+    assert!(
+        root.path()
+            .join(".agents/skills/specbind-adopt-existing/notes.md")
+            .is_file(),
+        "refresh must preserve extra project content"
+    );
+    assert!(
+        !root
+            .path()
+            .join(".claude/skills/specbind-adopt-existing")
+            .exists(),
+        "refresh removes the empty retired package directory"
+    );
 }
 
-fn assert_removed_plan_skill_aliases_are_absent(root: &std::path::Path) {
+fn assert_retired_skill_files_are_absent(root: &std::path::Path) {
     for removed in [
         "specbind-quick-plan",
         "specbind-requirements",
@@ -403,6 +426,18 @@ fn assert_removed_plan_skill_aliases_are_absent(root: &std::path::Path) {
             assert!(
                 !root.join(agent_root).join(removed).exists(),
                 "removed alias {agent_root}/{removed}"
+            );
+        }
+    }
+    for agent_root in [".claude/skills", ".agents/skills"] {
+        for file in specbind::skill::retired_files("specbind-adopt-existing") {
+            assert!(
+                !root
+                    .join(agent_root)
+                    .join("specbind-adopt-existing")
+                    .join(file)
+                    .exists(),
+                "retired adoption file {agent_root}/{file}"
             );
         }
     }
@@ -837,7 +872,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 49 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 48 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

@@ -97,7 +97,7 @@ settings.
 
 | Artifact or path | Current lifecycle and owner |
 | --- | --- |
-| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by `specbind-adopt-existing`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
+| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by the existing-implementation route of `specbind-discovery`, then deleted after every accepted Spec has a complete Brief and Research handoff. |
 | `{{SPEC_DIR}}/deferred.md` | Optional project-wide OKF concept created by the default deferred adapter when the first non-blocking finding is recorded. It is not a gate, fingerprint input, lifecycle artifact, or source of work. |
 | `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope and records complete Source Collection disposition when supplied. |
 | `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `specbind-steering` and selected by `artifact_id`. |

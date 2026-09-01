@@ -1,4 +1,7 @@
-# Resume an existing-implementation adoption
+# Resume existing-implementation adoption through Discovery
+
+Read this procedure only when selected by `specbind-discovery` after ordinary
+Discovery created the dossier's exact candidate Specs and Briefs.
 
 Read the dossier and verify:
 

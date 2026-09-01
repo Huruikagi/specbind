@@ -288,7 +288,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0140](./design/decisions/0140-release-adapter-bootstrap-and-finalization-checkpoint.md) | Accepted | One-time Release adapter bootstrap and post-finalization metadata checkpoint |
 | [0141](./design/decisions/0141-guarded-agent-removal-and-project-uninstall.md) | Accepted | Exact planned agent removal and explicit durable-knowledge uninstall policy |
 | [0142](./design/decisions/0142-bilingual-documentation-authoring-and-publishing.md) | Accepted | Japanese-first documentation authoring and English-default bilingual publishing hierarchy |
-| [0143](./design/decisions/0143-existing-implementation-adoption.md) | Accepted | Steering-first adoption of existing implementations through evidence-backed reverse discovery |
+| [0143](./design/decisions/0143-existing-implementation-adoption.md) | Superseded by 0175 | Steering-first adoption of existing implementations through evidence-backed reverse discovery |
 | [0144](./design/decisions/0144-major-version-compatibility-and-migration.md) | Accepted | Executable-major compatibility boundary and required migration route between majors |
 | [0145](./design/decisions/0145-customizable-roadmap-body-template.md) | Accepted | Installed project-owned template for milestone-wide Roadmap prose |
 | [0146](./design/decisions/0146-sequential-v1-tasks-and-per-task-checkpoints.md) | Accepted | Sequential v1 Tasks and one default checkpoint per completed Task |
@@ -320,3 +320,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0172](./design/decisions/0172-requirements-preservation-preflight.md) | Accepted | Existing Requirements preservation proved before approval |
 | [0173](./design/decisions/0173-mechanical-requirement-retirement-guard.md) | Accepted | Established Requirement ID removal rejected mechanically |
 | [0174](./design/decisions/0174-plan-phase-procedures-as-references.md) | Accepted | Requirements, Design, and Tasks procedures packaged as references of the single Plan Skill |
+| [0175](./design/decisions/0175-existing-adoption-as-discovery-references.md) | Accepted | Existing-implementation adoption procedures packaged as references of Discovery |

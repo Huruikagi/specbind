@@ -1,6 +1,6 @@
 # 0143: Adopt existing implementations through Steering-first reverse discovery
 
-Status: Accepted
+Status: Superseded by 0175
 
 ## Context
 

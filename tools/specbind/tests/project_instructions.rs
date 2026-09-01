@@ -55,6 +55,17 @@ fn creates_a_file_holding_only_the_block() {
     assert!(
         applied
             .content
+            .contains("establish new Specs from an explicitly\n  selected existing implementation")
+    );
+    assert!(
+        applied
+            .content
+            .contains("Existing code and tests are evidence rather than intended")
+    );
+    assert!(!applied.content.contains("specbind-adopt-existing"));
+    assert!(
+        applied
+            .content
             .contains("also the single entry point when the user explicitly asks")
     );
     assert!(

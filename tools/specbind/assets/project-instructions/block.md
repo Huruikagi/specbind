@@ -9,7 +9,10 @@ the only supported writer of machine state.
   Skill name into a `specbind ...` command. CLI syntax comes from the selected
   Skill.
 - Work through those installed `specbind-*` Skills. Use `specbind-discovery` to
-  turn a request into scope, and `specbind-status` to see where work stands.
+  turn a request into scope or to establish new Specs from an explicitly
+  selected existing implementation, and `specbind-status` to see where work
+  stands. Existing code and tests are evidence rather than intended
+  specification; the adoption route requires committed Steering.
 - Use `specbind-drive` when the user asks to drive, continue, or advance the
   active milestone as far as safely possible. It may cross planning,
   implementation, and validation while preserving each owning Skill. A request
@@ -34,9 +37,6 @@ the only supported writer of machine state.
 - Use `specbind-steering` when the request creates or updates durable,
   project-wide guidance, including conventions for testing, APIs, security, or
   deployment. This route does not require a Spec or observable behavior change.
-- Use `specbind-adopt-existing` only when the user explicitly wants to establish
-  new Specs from an existing implementation. It requires committed Steering and
-  treats code and tests as evidence rather than intended specification.
 - For a change request, run `specbind milestone status` before choosing between
   discovery, steering, ordinary work, or implementation. A request matching a
   pending Spec-backed or Direct item is tracked delivery work and routes to

@@ -1,7 +1,7 @@
 ---
 name: specbind-discovery
-description: Turn a change request or explicit local Source Collection into confirmed milestone scope. Decides whether work is Direct, an update to an existing Spec, or a new Spec, then delegates every state change to the CLI and writes the briefs.
-argument-hint: "<what you want to change or local source path>"
+description: Turn a change request, local Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the evidence-backed adoption preparation around it.
+argument-hint: "<change, local source path, or existing area to adopt>"
 ---
 
 # Decide what the work is
@@ -16,6 +16,49 @@ specbind rule read language-style --for consume
 
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
+
+## Select ordinary or existing-implementation Discovery
+
+Use the existing-implementation route only when the maintainer explicitly asks
+to establish new Specs from working code and tests, or explicitly resumes an
+adoption already recorded in the project dossier. An ordinary change to an
+existing repository is still ordinary Discovery and never triggers an
+implementation scan merely because code exists.
+
+Resolve `specDir` from `.specbind.json` and check the one adoption dossier:
+
+```text
+<specDir>/adoption/reverse-discovery.yaml
+```
+
+Then select exactly one route:
+
+- Explicit adoption with no dossier: read [Adoption start](references/adopt-start.md)
+  completely and follow it. Stop at its handoff back to ordinary Discovery.
+- A dossier whose confirmed candidate Specs and Briefs have not yet been
+  created: use the ordinary Discovery procedure below for exactly that
+  confirmed candidate set. The dossier is evidence for the proposal, not
+  lifecycle authority; still present and confirm Discovery's complete
+  four-field scope before mutation. Do not load the resume procedure yet.
+- A dossier whose exact candidate Specs are active and each has a Brief: read
+  [Adoption resume](references/adopt-resume.md) completely and follow it.
+- Any partial or mismatched handoff: stop and report the discrepancy. Never
+  invent a second dossier, silently change its candidates, or treat an ordinary
+  Research artifact as adoption state.
+
+The adoption references are two conditional procedures around ordinary
+Discovery, not separate Skills. Existing code and tests are **evidence**, never
+automatic authority for what the product ought to promise. Adoption requires
+committed Steering, supports only an initial project with no persistent Specs,
+and owns only the temporary dossier, per-Spec adoption Research, and narrow
+user-confirmed Brief revision. It owns no lifecycle state or Gate. Requirements,
+Design, Tasks, implementation, and validation remain with their normal owners.
+Do not change implementation, tests, dependencies, configuration, or Steering
+while establishing the adoption baseline.
+
+The remaining numbered procedure is the ordinary Discovery route. Adoption
+Start and Resume follow only their selected reference; the dossier-to-scope
+handoff uses the numbered procedure and its independent confirmation.
 
 Take a change request and answer one question: **which durable boundaries does
 this work belong to?** Everything else follows from that answer.

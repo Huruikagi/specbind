@@ -56,13 +56,14 @@ work eligible nor grants push, branch, or history-rewriting authority.
 
 ## Working catalog
 
-Decision 0174 provides the current unified planning name within the v1 public Skill set
-accepted by Decision 0075. Compatibility aliases are not shipped.
+Decisions 0174 and 0175 provide the current unified Plan and Discovery names
+within the v1 public Skill set accepted by Decision 0075. Compatibility aliases
+are not shipped.
 
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
 | `kiro-debug` | `specbind-debug` | Change | Implemented | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
-| `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, classify Roadmap items, confirm scope, and invoke guarded milestone initialization or update. |
+| `kiro-discovery` | `specbind-discovery` | Change | Implemented | Analyze requests, explicit local Source Collections, or selected existing implementations; confirm durable boundaries and invoke guarded milestone initialization or update. |
 | `kiro-impl` | `specbind-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
 | `kiro-review` | `specbind-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
 | `kiro-spec-design` | `specbind-plan` Design reference | Merge | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
@@ -228,10 +229,11 @@ the user resume each owning workflow manually.
 
 ## Post-v1 implementation tracking
 
-- Existing-implementation adoption from Issue #2 is implemented by
-  `specbind-adopt-existing` under Decision 0143. It establishes confirmed Brief
-  and Research inputs, then returns to the ordinary phase skills rather than
-  adding reverse variants for each phase.
+- Existing-implementation adoption from Issue #2 is implemented by the
+  conditional `adopt-start.md` and `adopt-resume.md` references of
+  `specbind-discovery` under Decisions 0143 and 0175. It establishes confirmed
+  Brief and Research inputs, then returns to the ordinary phase skills rather
+  than adding reverse variants for each phase.
 
 - The accepted `specbind-drive` contract from Decision 0168 is implemented;
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains its design

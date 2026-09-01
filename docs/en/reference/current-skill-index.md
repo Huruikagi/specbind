@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0075](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0075-v1-skill-and-orchestration-scope.md).
 
-Every supported Agent profile receives the same 16 skills:
+Every supported Agent profile receives the same 15 skills:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/specbind-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$specbind-*`
@@ -24,8 +24,7 @@ once.
 | Skill | Current role |
 | --- | --- |
 | `specbind-configure` | Review and change supported SpecBind project configuration, coordinate the owning workflow, verify the result, and complete authorized aftercare. |
-| `specbind-adopt-existing` | Establish new Spec boundaries and confirmed Brief intent from a selected existing implementation while retaining revision-pinned evidence. |
-| `specbind-discovery` | Confirm milestone scope, completely inventory an explicit local Source Collection when supplied, classify Direct, existing-Spec, and new-Spec work, delegate state changes to the CLI, and author provenance-bearing Roadmaps and Briefs. |
+| `specbind-discovery` | Confirm milestone scope from a request, explicit local Source Collection, or selected existing implementation; classify durable boundaries, delegate state changes to the CLI, and author provenance-bearing Roadmaps, Briefs, and adoption Research handoffs. |
 | `specbind-plan` | The only planning entry point: take one named Spec or every Spec-backed milestone item through Tasks approval, or run one explicitly requested Requirements, Design, or Tasks phase for one named Spec. |
 | `specbind-drive` | Drive the active milestone through safe reachable planning, implementation, and validation work, park branch-local attention, and stop before release execution. |
 | `specbind-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |
@@ -40,10 +39,10 @@ once.
 | `specbind-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
 | `specbind-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
 
-There are no compatibility aliases for earlier `kiro-*` or removed
-phase-specific `specbind-plan-*` Skill names. Milestone and Spec initialization
-are deterministic CLI operations invoked by `specbind-discovery`, not separate
-skills.
+There are no compatibility aliases for earlier `kiro-*`, removed phase-specific
+`specbind-plan-*`, or `specbind-adopt-existing` Skill names. Milestone and Spec
+initialization and existing-implementation adoption are routed through
+`specbind-discovery`, not separate skills.
 
 ## Sources of truth
 

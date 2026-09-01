@@ -1,9 +1,9 @@
 # Establish Specs from an existing implementation
 
-`specbind-adopt-existing` is an initial-adoption workflow that investigates
-working code and tests and organizes the evidence into candidate SpecBind
-Specs. It is for an existing project without a trusted specification, not for
-migration from another SDD product such as cc-sdd.
+The existing-implementation route of `specbind-discovery` investigates working
+code and tests and organizes the evidence into candidate SpecBind Specs. It is
+for an existing project without a trusted specification, not for migration from
+another SDD product such as cc-sdd.
 
 The implementation is evidence, not the intended specification. Observed
 behavior may be a requirement, bug, historical constraint, implementation
@@ -24,11 +24,11 @@ the proposal, and commit it.
 
 ```text
 Bootstrap or synchronize Steering
-  -> specbind-adopt-existing
+  -> specbind-discovery for the selected existing area
   -> confirm candidate Spec boundaries
-  -> specbind-discovery
+  -> continue specbind-discovery
   -> create Specs and Briefs
-  -> resume specbind-adopt-existing
+  -> resume specbind-discovery
   -> confirm observations and intent per Spec
   -> specbind-plan
 ```
@@ -51,9 +51,10 @@ APIs, entry points, module boundaries, tests, and dependencies. It then
 investigates only the requested adoption area deeply. Specs are divided by
 durable responsibility, not directory size or estimated task count.
 
-No Spec boundary is created before user confirmation. After confirmation,
-ordinary `specbind-discovery` presents the Roadmap scope again and owns the
-CLI-managed Milestone and Spec changes.
+No Spec boundary is created before user confirmation. After confirmation, the
+ordinary route in the same `specbind-discovery` Skill presents the Roadmap scope
+again and owns the CLI-managed Milestone and Spec changes. These remain two
+separate confirmations.
 
 ## Observations and intent
 
@@ -77,10 +78,10 @@ history, and each Spec's Research remains until normal release finalization.
 
 ## Return to the ordinary lifecycle
 
-Adoption does not author or approve Requirements or Design. It stops after
-handing confirmed intent to the Brief and implementation evidence and design
-constraints to Research. Continue with `specbind-plan` through the ordinary
-Requirements, Design, and Tasks phases; there are no reverse-specific
+Discovery's adoption route does not author or approve Requirements or Design.
+It stops after handing confirmed intent to the Brief and implementation evidence
+and design constraints to Research. Continue with `specbind-plan` through the
+ordinary Requirements, Design, and Tasks phases; there are no reverse-specific
 authoring Skills.
 
 ## Next

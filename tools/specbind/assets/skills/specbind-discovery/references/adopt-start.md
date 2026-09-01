@@ -1,4 +1,7 @@
-# Start an existing-implementation adoption
+# Start existing-implementation adoption through Discovery
+
+Read this procedure only when selected by `specbind-discovery` for an explicit
+initial adoption and no adoption dossier exists.
 
 The user must name the area being adopted. A broad description such as
 "authentication and account management" is sufficient; an omitted scope is
@@ -123,7 +126,8 @@ specbind adapter read git
 Absence or inactive guidance means no adapter-directed commit. Otherwise follow
 the adapter narrowly, staging only the dossier. Never infer push authority.
 
-Now hand the confirmed candidate set to `specbind-discovery` as one self-contained
-request to create those new Specs. Discovery owns its own four-field scope
+Now hand the confirmed candidate set back to the ordinary route in the
+`specbind-discovery` entrypoint as one self-contained later request to create
+those new Specs. Ordinary Discovery still owns its four-field scope
 confirmation, milestone mutation, and initial Briefs. Stop this invocation; do
 not collapse its confirmation into the adoption-boundary confirmation.

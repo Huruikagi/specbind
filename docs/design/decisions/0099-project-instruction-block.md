@@ -5,6 +5,9 @@ Status: Accepted
 Decision 0160 supersedes the change-request routing paragraph below: active
 milestone matching now precedes Steering, discovery, ordinary-work, and
 implementation classification rather than guarding ordinary work alone.
+Decision 0175 supersedes the separate `specbind-adopt-existing` routing bullet:
+existing-implementation adoption is now a conditional route of
+`specbind-discovery`.
 
 ## Context
 

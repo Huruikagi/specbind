@@ -66,7 +66,9 @@ status, then ask:
 
 ## Existing-implementation adoption scenarios
 
-Accepted by [Decision 0143](../design/decisions/0143-existing-implementation-adoption.md).
+Accepted by [Decision 0143](../design/decisions/0143-existing-implementation-adoption.md)
+and packaged under Discovery by
+[Decision 0175](../design/decisions/0175-existing-adoption-as-discovery-references.md).
 
 ### A1 — Adoption stops at a missing Steering baseline
 
@@ -74,7 +76,7 @@ Prepare `a1`, then ask:
 
 > Adopt the existing cart and order implementation into SpecBind Specs.
 
-- The agent discovers the installed adoption workflow and runs
+- The agent discovers the installed Discovery adoption route and runs
   `specbind adoption preflight`.
 - It stops on `ADOPTION_STEERING_REQUIRED` and routes the maintainer to Steering
   bootstrap.

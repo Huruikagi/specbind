@@ -196,3 +196,6 @@ renderer and exact-target removal logic from a single file to the complete known
 Skill package. `specbind-configure` introduced conditional references;
 `specbind-adopt-existing`, `specbind-implement`, and `specbind-release` also use
 them for mutually exclusive invocations or a separately stopping branch.
+[Decision 0175](./0175-existing-adoption-as-discovery-references.md) later
+retires the separate adoption package and moves its two procedures into the
+`specbind-discovery` package.

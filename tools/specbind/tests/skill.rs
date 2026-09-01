@@ -1,8 +1,7 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 16] = [
-    "specbind-adopt-existing",
+const ACCEPTED_SKILLS: [&str; 15] = [
     "specbind-contract-review",
     "specbind-configure",
     "specbind-debug",
@@ -139,9 +138,8 @@ fn installs_each_skill_to_the_accepted_target() {
 #[test]
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
-        ("specbind-adopt-existing", 2),
         ("specbind-configure", 6),
-        ("specbind-discovery", 1),
+        ("specbind-discovery", 3),
         ("specbind-implement", 2),
         ("specbind-plan", 3),
         ("specbind-release", 1),
@@ -169,11 +167,13 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
 }
 
 #[test]
-fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
-    let body = skill_package_text("specbind-adopt-existing");
+fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
+    let body = skill_package_text("specbind-discovery");
     for required in [
+        "references/adopt-start.md",
+        "references/adopt-resume.md",
         "specbind adoption preflight",
-        "specbind-discovery",
+        "ordinary Discovery",
         "source_revision",
         "Existing code and tests are **evidence**",
         "stop immediately",
@@ -182,7 +182,7 @@ fn adoption_skill_keeps_evidence_separate_from_intent_and_phase_ownership() {
     ] {
         assert!(
             body.contains(required),
-            "adoption skill must contain {required}"
+            "Discovery adoption package must contain {required}"
         );
     }
 }
@@ -995,7 +995,6 @@ fn authoring_skills_produce_each_template_output_once_for_all_references() {
         "specbind-discovery",
         "specbind-plan",
         "specbind-gap-analysis",
-        "specbind-adopt-existing",
         "specbind-implement",
         "specbind-steering",
     ] {
