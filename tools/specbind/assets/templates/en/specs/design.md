@@ -18,8 +18,9 @@ and keep it in the title so split Design documents remain distinguishable.
 # `{{spec}}` Design — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
-Add a Front Matter `requirement_ids` array listing every Requirement ID this
-document covers, and repeat each one in an italic body marker of the exact form
+Add a Front Matter `requirement_ids` array of quoted YAML strings, such as
+`"1.1"`, listing every Requirement ID this document covers, and repeat each one
+in an italic body marker of the exact form
 `_Requirements: 1.1, 1.2_` next to the section that satisfies it. The Front Matter
 set and the union of the body markers must match exactly.
 

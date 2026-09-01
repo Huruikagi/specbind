@@ -297,9 +297,9 @@ the union of the set; requirements outside the active set may stay mapped by the
 existing design and are not re-argued.
 
 Write the traceability exactly as the profile requires — a Front Matter
-`requirement_ids` array, and an italic `_Requirements: 1.1, 1.2_` marker beside
-each section that satisfies them. The Front Matter set and the union of the body
-markers must match exactly.
+`requirement_ids` array of quoted YAML strings such as `"1.1"`, and an italic
+`_Requirements: 1.1, 1.2_` marker beside each section that satisfies them. The
+Front Matter set and the union of the body markers must match exactly.
 
 ### Splitting
 

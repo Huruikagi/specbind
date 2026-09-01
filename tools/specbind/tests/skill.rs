@@ -227,6 +227,7 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
         "Materialize one as part of the current Design\ndraft",
         "candidate other than `design/main` communicates that\n  responsibility clearly",
         "`design/main` is the alternative to\nassess",
+        "array of quoted YAML strings such as `\"1.1\"`",
         "Before authoring or revising any Design, assess whether the current change needs",
         "Runtime deployment, configuration or Secret ownership, health signals,",
         "Do not add a project template or change\n`design-template-selection`",

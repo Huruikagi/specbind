@@ -18,8 +18,8 @@ artifact_id: main
 # `{{spec}}` の設計 — `{{artifact_id}}`
 
 <!-- specbind:instruction maintain
-この文書が扱う Requirement ID をすべて列挙した `requirement_ids` 配列を Front Matter に
-追加し、同じ ID を `_Requirements: 1.1, 1.2_` という厳密な形式のイタリック本文マーカーとして、
+この文書が扱う Requirement ID をすべて引用符付き YAML 文字列（例: `"1.1"`）で列挙した
+`requirement_ids` 配列を Front Matter に追加し、同じ ID を `_Requirements: 1.1, 1.2_` という厳密な形式のイタリック本文マーカーとして、
 それを満たす節の近くに記載する。Front Matter の集合と本文マーカーの和は完全に一致する必要がある。
 
 大きな変更は、それぞれに `artifact_id` とファイルを与えて複数の設計文書に分割する。
