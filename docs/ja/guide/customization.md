@@ -325,8 +325,9 @@ Web、モバイル、API、インフラといった技術ラベルだけでテ�
 
 Designの作成中に、あるSpecだけが独立した所有境界や検証上の関心を持つ継続的な責任を
 含み、既存の選択済みDesignでは明確に表せないことがあります。その場合、エージェントは
-artifact ID、対応するRequirements、配置先、既存Designへ統合する案を示して、Specローカルの
-補足Designを提案します。作成するのは確認を得たあとだけです。
+artifact ID、対応するRequirements、配置先、既存Designへ統合する案を記録したSpecローカルの
+補足Designを、現在のDesignドラフトとして作成します。これだけのために確認で止まることはなく、
+通常のDesign Gateがレビュー境界のままです。
 
 この1回限りの文書は、設定済みSpecBindルート配下の
 `specs/<spec>/design/<artifact_id>.md`に置きます。通常の`SpecBind Design`なので、

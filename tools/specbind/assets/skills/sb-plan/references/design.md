@@ -241,8 +241,8 @@ the current change, and cover every active Requirement.
 ### Required Spec-local decomposition assessment
 
 Before authoring or revising any Design, assess whether the current change needs
-a Spec-local one-off supplement. Propose one, and stop for confirmation before
-writing **any** Design or Contract, when all of these are true:
+a Spec-local one-off supplement. Materialize one as part of the current Design
+draft when all of these are true:
 
 - a durable responsibility has its own ownership boundary and failure or
   verification concern;
@@ -253,9 +253,10 @@ writing **any** Design or Contract, when all of these are true:
 Runtime deployment, configuration or Secret ownership, health signals,
 dependency recovery, external API compatibility, migrations, and security
 boundaries are prompts to perform this assessment, not automatic supplement
-names. The proposal names the responsibility, artifact ID, covered Requirements,
-target path, and the `design/main` alternative. It is not permission to create
-an empty precautionary document.
+names. Record the responsibility, artifact ID, covered Requirements, target
+path, and the `design/main` alternative in the Design set. This is part of
+ordinary authoring, not a separate confirmation boundary, and is not permission
+to create an empty precautionary document.
 
 **No Design exists — whether the Spec is new or established** — for every
 selected selector, resolve and read it:
@@ -306,20 +307,20 @@ milestone's work.
 
 When investigation shows a durable responsibility with its own ownership
 boundary, failure or verification concern, and no selected project candidate
-that communicates it clearly, propose a **Spec-local one-off Design
-supplement**. Do this after the candidate-set report and before writing; do not
-wait for the maintainer to guess the document format in advance.
+that communicates it clearly, materialize a **Spec-local one-off Design
+supplement**. Do this after the candidate-set report and before writing the
+complete set; do not wait for the maintainer to guess the document format in
+advance.
 
-State the proposed lowercase-kebab `artifact_id`, responsibility, covered
+State the assessed lowercase-kebab `artifact_id`, responsibility, covered
 Requirement IDs, the alternative of extending an existing Design, and the
 target `specs/<spec>/design/<artifact_id>.md` below the configured SpecBind
-root. Ask for explicit confirmation before creating it. A technology label,
-future possibility, or temporary milestone slice is not enough; never create a
-precautionary supplement.
+root in the authored set. A technology label, future possibility, or temporary
+milestone slice is not enough; never create a precautionary supplement.
 
-After confirmation, read `design/main` as the scaffold shape and author the
-supplement at that stated path. Replace its identity with the confirmed
-`artifact_id`, remove every `create` instruction, preserve `maintain` and
+Read `design/main` as the scaffold shape and author the supplement at that
+stated path. Replace its identity with the assessed `artifact_id`, remove every
+`create` instruction, preserve `maintain` and
 `consume` instructions, and add complete live traceability. It is an ordinary
 live `SpecBind Design`, so include it in the complete set, checks, validation,
 and gate approval. Do not add a project template or change

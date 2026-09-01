@@ -219,12 +219,12 @@ fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edi
 }
 
 #[test]
-fn design_proposes_confirmed_spec_local_supplements_without_polluting_project_policy() {
+fn design_materializes_spec_local_supplements_without_polluting_project_policy() {
     let body = skill_package_text("sb-plan");
     for required in [
         "Spec-local one-off Design\nsupplement",
         "target `specs/<spec>/design/<artifact_id>.md`",
-        "Ask for explicit confirmation before creating it.",
+        "Materialize one as part of the current Design\ndraft",
         "Before authoring or revising any Design, assess whether the current change needs",
         "Runtime deployment, configuration or Secret ownership, health signals,",
         "Do not add a project template or change\n`design-template-selection`",
@@ -232,7 +232,7 @@ fn design_proposes_confirmed_spec_local_supplements_without_polluting_project_po
     ] {
         assert!(
             body.contains(required),
-            "Design procedure must preserve one-off supplement boundary: {required}"
+            "Design procedure must preserve one-off supplement contract: {required}"
         );
     }
 }

@@ -85,20 +85,23 @@ Use the base fixture and ask:
   candidate set, selection Rule, existing artifacts, and lifecycle state remain
   unchanged; only the project-owned main Design template changes.
 
-### DS9 — Design proposes a one-off supplement without changing project policy
+### DS9 — Design materializes a one-off supplement without changing project policy
 
 Prepare a Spec whose approved Requirements introduce a durable infrastructure
 responsibility with its own deployment and recovery guarantees, while the
 project has no applicable infrastructure Design candidate. Ask to author that
 Spec's Design.
 
-- The agent reports the selected project candidates, then proposes a focused
+- The agent reports the selected project candidates, then creates a focused
   Spec-local `design/infrastructure` supplement with its covered Requirements,
-  target path, and the alternative of extending `design/main`.
-- It stops for confirmation before writing a Design or Contract.
-- After confirmation, the live supplement is a valid `SpecBind Design` and is
-  included in traceability and Design approval, while the project template
-  inventory and `design-template-selection` Rule remain byte-identical.
+  target path, and the alternative of extending `design/main` in the Design
+  draft.
+- It does not stop for a decomposition-only confirmation. The live supplement,
+  complete Design set, and Contract are ready for the ordinary Design approval
+  boundary.
+- The supplement is a valid `SpecBind Design` included in traceability, while
+  the project template inventory and `design-template-selection` Rule remain
+  byte-identical.
 
 ## Existing-implementation adoption scenarios
 

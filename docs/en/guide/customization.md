@@ -253,10 +253,11 @@ new candidate from a future technology label alone.
 
 During Design authoring, the Agent may find that one Spec has a durable
 responsibility with its own ownership boundary or verification concern, but no
-existing selected Design communicates it clearly. It proposes a Spec-local
-supplement with an artifact ID, covered Requirements, target path, and the
-alternative of extending an existing Design. It creates the supplement only
-after confirmation.
+existing selected Design communicates it clearly. It creates a Spec-local
+supplement in the current Design draft, recording an artifact ID, covered
+Requirements, target path, and the alternative of extending an existing Design.
+This does not add a separate confirmation pause: the ordinary Design Gate
+remains the review boundary.
 
 The one-off document lives at `specs/<spec>/design/<artifact_id>.md` below the
 configured SpecBind root and is an ordinary `SpecBind Design`: traceability,
