@@ -238,6 +238,25 @@ with the concrete reason. A mode is not a substitute for judgment: the selected
 set must still contain at least one Design, own every responsibility required by
 the current change, and cover every active Requirement.
 
+### Required Spec-local decomposition assessment
+
+Before authoring or revising any Design, assess whether the current change needs
+a Spec-local one-off supplement. Propose one, and stop for confirmation before
+writing **any** Design or Contract, when all of these are true:
+
+- a durable responsibility has its own ownership boundary and failure or
+  verification concern;
+- no selected project candidate communicates that responsibility clearly; and
+- placing it only in `design/main` would hide its independently reviewable
+  decisions or Requirement traceability.
+
+Runtime deployment, configuration or Secret ownership, health signals,
+dependency recovery, external API compatibility, migrations, and security
+boundaries are prompts to perform this assessment, not automatic supplement
+names. The proposal names the responsibility, artifact ID, covered Requirements,
+target path, and the `design/main` alternative. It is not permission to create
+an empty precautionary document.
+
 **No Design exists — whether the Spec is new or established** — for every
 selected selector, resolve and read it:
 

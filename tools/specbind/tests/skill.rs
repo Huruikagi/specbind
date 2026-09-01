@@ -225,6 +225,8 @@ fn design_proposes_confirmed_spec_local_supplements_without_polluting_project_po
         "Spec-local one-off Design\nsupplement",
         "target `specs/<spec>/design/<artifact_id>.md`",
         "Ask for explicit confirmation before creating it.",
+        "Before authoring or revising any Design, assess whether the current change needs",
+        "Runtime deployment, configuration or Secret ownership, health signals,",
         "Do not add a project template or change\n`design-template-selection`",
         "recommend\nthat `sb-configure` evaluate promotion",
     ] {

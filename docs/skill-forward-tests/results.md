@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `8db72c0` | DS9 — product failure | [One-off Design supplement proposal](./runs/2026-09-01-codex-8db72c0-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `ada3fa9` | CF3 — pass | [Configuration candidate inference confirmation](./runs/2026-09-01-codex-ada3fa9-cf3.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `086620a` | CF3 — product failure | [Configuration candidate inference](./runs/2026-09-01-codex-086620a-cf3.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `3da9af7` | D15 canonical URL selector — pass; full multi-entry fixture remains blocked | [GitHub Milestone canonical URL](./runs/2026-09-01-codex-3da9af7-github-milestone-url.md) |

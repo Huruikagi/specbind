@@ -95,7 +95,7 @@ Spec's Design.
 - The agent reports the selected project candidates, then proposes a focused
   Spec-local `design/infrastructure` supplement with its covered Requirements,
   target path, and the alternative of extending `design/main`.
-- It stops for confirmation before creating the supplement.
+- It stops for confirmation before writing a Design or Contract.
 - After confirmation, the live supplement is a valid `SpecBind Design` and is
   included in traceability and Design approval, while the project template
   inventory and `design-template-selection` Rule remain byte-identical.

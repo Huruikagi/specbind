@@ -11,7 +11,7 @@ fixture.
 
 | ID | First seen | Scenario | Finding | Evidence | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
-| None | — | — | — | — | — |
+| FT-0020 | `8db72c0` | DS9 | The one-off supplement assessment appeared only in the later splitting guidance, so Design authoring could create `design/main` and Contract before considering an independently reviewable infrastructure responsibility. | Pending. | Rerun DS9 after the assessment becomes mandatory before any Design or Contract write. |
 
 ## Fixed, behavioral confirmation pending
 
