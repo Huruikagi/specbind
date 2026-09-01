@@ -117,6 +117,13 @@ not a fault.
   specbind artifact read <spec> contract --for consume
   ```
 
+  Immediately after this read and before drafting, build a private preservation
+  ledger in working memory. Enumerate every existing Requirement group and
+  acceptance criterion by its canonical ID, plus the unaffected owned behavior
+  expressed by Context, Scope, and Objective. Do not write this ledger to the
+  project. If you cannot account for the complete maintain projection, stop
+  before editing rather than authoring from a partial baseline.
+
 Never author the contract here. A new Spec has none until the design phase runs,
 and that is correct.
 
@@ -165,6 +172,13 @@ comments already returned by the maintain projection.
 Keep technology, structure, and mechanism out. Those belong to design, which is
 also why steering that is technical in nature cannot be carried in this
 document — do not try to smuggle it in as a requirement.
+
+A request for automated tests, coverage, or a canonical verification command is
+delivery evidence, not by itself observable product behavior. Write the behavior
+that evidence must verify; Design and Tasks own the testing mechanism and
+coverage work. Do not create a Requirement solely to require tests unless the
+test capability is itself part of the user-visible or system-visible product
+contract.
 
 Do not renumber existing requirement groups to close gaps. Identity is
 positional, so renumbering silently reassigns IDs that `spec.yaml`, design
@@ -224,15 +238,18 @@ something you know to be weak.
 For an existing Spec, the review includes a mandatory preservation audit before
 approval. Compare the authored file with the current Requirements you read at
 the start (and inspect `git diff -- <requirements-path>` when Git is available).
-Account for every pre-existing requirement group and acceptance criterion by its
-original ID: it must still be present as that live identity, with only the
+Reconcile the authored file against the private preservation ledger. Account for
+every pre-existing requirement group and acceptance criterion by its original
+ID: it must still be present as that live identity, with only the
 in-place revision this milestone actually needs. Context, Scope, and Objective
 must also continue to describe unaffected owned behavior. A rewritten document
 that silently narrows the Spec is not ready even when its new criteria are
 well-formed. If any existing obligation disappeared, stop before approval;
-restore it unless the requested result truly needs retirement, in which case use
-the unsupported-retirement stop above. Never use the approve command as the
-operation that reveals this loss.
+restore an accidental omission in the same draft unless the requested result
+truly needs retirement, in which case use the unsupported-retirement stop above.
+Before presenting or approving, state to yourself that every ledger entry is
+accounted for and zero obligations were lost. Never use the approve command as
+the operation that reveals this loss.
 
 When the review has findings, report each one in this shape:
 
@@ -267,6 +284,12 @@ workflow only when a person puts it on the Roadmap.
 
 Approve only when the protocol's judgment is satisfied **and** you hold authority
 for this gate. Authority is one of two things, never their absence:
+
+Immediately before any approval command, rerun the traceability check. For an
+existing Spec, also repeat the preservation-ledger reconciliation and require a
+zero-lost-obligations result. This is a blocking preflight, including under
+delegated approval; discovering a loss after approval is a failed workflow, not
+a reason to invalidate the gate and repair it afterwards.
 
 - **Explicit** — the user approved this document and this selection after seeing
   them.

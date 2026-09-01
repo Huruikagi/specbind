@@ -625,6 +625,11 @@ fn requirements_audits_existing_obligations_before_approval() {
     assert!(body.contains("including its opening marker, body, and closing marker"));
     assert!(body.contains("Never invent aliases such as `R2.AC1`"));
     assert!(body.contains("specbind check traceability <spec>"));
+    assert!(body.contains("private preservation\n  ledger in working memory"));
+    assert!(body.contains("zero obligations were lost"));
+    assert!(body.contains("repeat the preservation-ledger reconciliation"));
+    assert!(body.contains("discovering a loss after approval is a failed workflow"));
+    assert!(body.contains("Do not create a Requirement solely to require tests"));
 }
 
 #[test]
