@@ -4,6 +4,20 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.2.0 - 2026-09-02
+
+- Added complete, fail-closed GitHub Milestone discovery through the external
+  `sb-discovery` provider, without adding network or credential state to the
+  SpecBind CLI.
+- Made configuration Steering-first and added automatic, Spec-local one-off
+  Design supplements for independently justified design decisions.
+- Consolidated the installed product Skill surface under the `sb-*` namespace,
+  including unified planning, milestone driving, and Discovery-owned adoption
+  procedures.
+- Expanded the English and Japanese public guides, templates, and shared
+  writing guidance while preserving the established 1.x CLI compatibility
+  surface and diagnostics.
+
 ## 1.1.0 - 2026-09-01
 
 - Promoted `1.1.0-rc.1` to the stable `1.1.0` release without product changes
