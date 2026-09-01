@@ -9,7 +9,10 @@ fixture.
 
 ## Open
 
-No reproduced unresolved product finding remains.
+| ID | First seen | Scenario | Finding | Evidence | Next confirmation |
+| --- | --- | --- | --- | --- | --- |
+| FT-0011 | `388b8bc` | R8 | Requirements authoring can mistake an intentionally abstract before/after boundary for missing information and stop instead of preserving its stated abstraction. | Two fresh Codex drivers stopped on the same cancellation-window Brief until told not to invent a duration or closing event. | Clarify the Requirements contract's treatment of intentionally abstract boundaries, then rerun R8 without the extra clarification. |
+| FT-0012 | `c012d50` | R6, R8 | The new-Spec path can issue a Contract read even though the Skill already says no Contract exists before Design. | Both fresh runs executed `artifact read order contract --for consume` and received `ARTIFACT_SELECTOR_NOT_FOUND` before continuing. | Give the new-Spec branch an explicit no-Contract read rule or a non-error existence route, then rerun a new-Spec Requirements scenario. |
 
 ## Fixed, behavioral confirmation pending
 
@@ -40,6 +43,7 @@ Historical resolved findings through 2026-08-30 remain in the
 | ENV-0001 | A Claude Code Agent-tool subagent does not see fixture-installed Skills in its registry. | A fallback that reads the packaged `SKILL.md` can measure the body, but not platform selection or dispatch. A run that instead infers commands is environment-invalid. |
 | ENV-0002 | The Claude Code driver appends its own status line after the agent report. | Exact terminal result blocks must be judged before the harness-owned line; the extra line is not Skill output. |
 | ENV-0003 | A Claude Code Agent-tool subagent refuses approval relayed by the driving session. | Authoring scenarios that cross approval are environment-blocked at the draft boundary unless consent comes from the user through a valid channel. |
+| ENV-0004 | A Codex subagent's host safety layer can reject an exact explicit gate approval relayed by the driving session. | Judge the authored artifact before the boundary and, when the maintainer has explicitly approved the exact artifact and IDs, record any driving-session execution separately from agent behavior. |
 
 Remove an environment row when it no longer affects interpretation. Do not move
 it into the product finding lifecycle merely because it recurs.
