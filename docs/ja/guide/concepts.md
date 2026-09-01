@@ -61,15 +61,19 @@ Directとして始めた作業が、実は仕様やContractの変更を必要と
 
 ## DiscoveryのSource Collection
 
-Discoveryには、プロジェクト内のGitで追跡済みのテキストファイルまたは
-ディレクトリを、ひとまとまりのSource Collectionとして渡せます。Discoveryは
-コレクション全体を棚卸しし、RoadmapにすべてのSource Itemの振り分けを、各Briefに
-そのSpecが参照するSource Itemを記録します。読めない項目や未追跡の項目があれば、
-一部だけを使って進めずに停止します。
+Discoveryには、プロジェクト内のGitで追跡済みのテキストファイルやディレクトリ、
+または明示したGitHubリポジトリのMilestoneを、ひとまとまりのSource Collectionとして
+渡せます。Discoveryはコレクション全体を棚卸しし、RoadmapにすべてのSource Itemの
+振り分けを、各BriefにそのSpecが参照する項目だけを記録します。読めないローカル項目、
+アクセスできないGitHub項目、GitHubの不完全なページ送りがあれば、一部だけを使って
+進めずに停止します。GitHub Milestoneは`OWNER/REPO`とMilestone番号の両方を指定し、
+openとclosedのIssueを対象にします。コメントとタイムラインイベントは入力資料では
+ありません。
 
 Source Collectionは正規の仕様そのものではありません。RequirementsとDesignは
 Briefが指定した資料を読み、採用する振る舞いや技術上の結論を自身の成果物へ
-書き直します。元資料を更新した場合は自動同期されないため、必要な範囲を指定して
+書き直します。リモートの入力文脈はDiscovery時に確定し、後続の工程で黙って
+再取得しません。元資料を更新した場合は自動同期されないため、必要な範囲を指定して
 Discoveryを明示的にやり直します。
 
 ## 永続成果物とMilestone固有成果物

@@ -187,6 +187,28 @@ ask Discovery to treat that directory as the first release scope.
 - No Requirements, Design, or Contract exists. Both input files are
   byte-identical to their committed starting state.
 
+### D15 — A complete GitHub Milestone becomes multi-Spec provenance
+
+From a fresh fixture with authenticated read-only GitHub access, ask Discovery
+to use an explicit `OWNER/REPO` and Milestone number prepared for this scenario.
+The Milestone has open and closed Issues, one shared Issue, and known entries
+whose dispositions are excluded, duplicate, and unresolved.
+
+> Ask: use `OWNER/REPO` Milestone `NUMBER` as the release source and run Discovery.
+
+- Before confirmation, Source coverage identifies the canonical repository and
+  numbered Milestone and lists every open and closed Issue exactly once, with
+  number, URL, title, state, observed update time, and disposition. Pull
+  requests, if returned, are visible as non-Issue exclusions.
+- An inaccessible Issue, failed page, ambiguous Milestone, or incomplete
+  pagination leaves no mutation, invalidation, or Brief. The partial result is
+  not eligible for confirmation.
+- After Discovery-only approval of a complete fixture, the Roadmap has the
+  complete collection mapping; each Brief holds only its relevant exact Issue
+  subset; and a shared Issue may be present in several Briefs.
+- The run proves no GitHub mutation occurred. Later planning uses the approved
+  Brief context and does not automatically re-query or synchronize GitHub.
+
 ## Requirements scenarios
 
 Accepted by [Decision 0100](../design/decisions/0100-requirements-skill-contract.md).

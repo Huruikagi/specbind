@@ -93,6 +93,8 @@ fn source_material_is_context_that_must_be_promoted() {
         "Every item receives a visible disposition",
         "Source items and Briefs are not fingerprinted Gate inputs",
         "Requirements and Design read the declared source items as context",
+        "remote Source Item\nuses the Discovery-captured context recorded",
+        "not\nsilently re-queried",
         "Permission to read a source grants no authority",
     ] {
         assert!(

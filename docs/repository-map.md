@@ -323,3 +323,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0175](./design/decisions/0175-existing-adoption-as-discovery-references.md) | Accepted | Existing-implementation adoption procedures packaged as references of Discovery |
 | [0176](./design/decisions/0176-skill-namespace-separation.md) | Accepted | `sb-*` Skill namespace separated from the `specbind` CLI |
 | [0177](./design/decisions/0177-steering-scaffold-conformance-check.md) | Accepted | Mechanical verification of a materialized Steering scaffold |
+| [0178](./design/decisions/0178-github-milestone-discovery-source-provider.md) | Accepted | GitHub Milestone Discovery source provider |

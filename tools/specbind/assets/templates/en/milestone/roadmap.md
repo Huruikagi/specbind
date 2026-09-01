@@ -71,7 +71,7 @@ when they block the next work. Delete this section when none apply.
 
 <!-- specbind:instruction maintain
 When Discovery used an explicit Source Collection, preserve its provider,
-project-relative collection locator, every item's disposition, relevant work
+collection locator, every item's disposition, relevant work
 items, and the reason for each mapping. Omit this section when no collection was
 supplied.
 -->

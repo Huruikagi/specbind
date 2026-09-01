@@ -167,6 +167,7 @@ static RETIRED_CONFIGURE_FILES: &[&str] = &[
 static RETIRED_DISCOVERY_FILES: &[&str] = &[
     "references/adopt-resume.md",
     "references/adopt-start.md",
+    "references/github-milestone.md",
     "references/local-files.md",
     "SKILL.md",
 ];
@@ -222,6 +223,10 @@ static DISCOVERY_RESOURCES: &[SkillResource] = &[
     SkillResource {
         relative_path: "references/adopt-start.md",
         source: include_str!("../../assets/skills/sb-discovery/references/adopt-start.md"),
+    },
+    SkillResource {
+        relative_path: "references/github-milestone.md",
+        source: include_str!("../../assets/skills/sb-discovery/references/github-milestone.md"),
     },
     SkillResource {
         relative_path: "references/local-files.md",

@@ -1,7 +1,7 @@
 ---
 name: sb-discovery
-description: Turn a change request, local Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the evidence-backed adoption preparation around it.
-argument-hint: "<change, local source path, or existing area to adopt>"
+description: Turn a change request, Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the evidence-backed adoption preparation around it.
+argument-hint: "<change, source path, GitHub Milestone, or existing area to adopt>"
 ---
 
 # Decide what the work is
@@ -101,6 +101,20 @@ confirmation and authoring flow.
 Do not open an inferred requirements folder, select a promising subset, or treat
 an external URL as the local provider. Without an explicit local locator, the
 ordinary conversational request path below is unchanged.
+
+### When the request names a GitHub Milestone
+
+Use this route only when the maintainer explicitly supplies both a GitHub
+`OWNER/REPO` and a Milestone number as Discovery input. Read [the GitHub
+Milestone procedure](references/github-milestone.md) completely and follow it
+before classification. It performs one complete read-only acquisition, adds
+Source coverage to the normal confirmation and authoring flow, and never turns
+GitHub metadata into specification authority.
+
+Do not infer a repository from a URL, choose a Milestone by title, or search a
+user's Issues for a likely collection. Without both explicit identities, ask the
+maintainer to provide them; do not use the local provider or ordinary request
+path as a substitute.
 
 ### Does this need the workflow at all?
 

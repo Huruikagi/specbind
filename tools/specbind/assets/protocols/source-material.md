@@ -37,7 +37,10 @@ and relevance, not a second uncontrolled edition of the document.
 
 ## Promote meaning into canonical artifacts
 
-Requirements and Design read the declared source items as context. Every
+Requirements and Design read the declared source items as context. A local
+Source Item is read again from its exact declared locator; a remote Source Item
+uses the Discovery-captured context recorded in the approved Brief and is not
+silently re-queried. Every
 behavioral obligation accepted from them is restated in complete current
 Requirements. Every technical conclusion needed after the milestone is restated
 in complete current Design or Contract. A link, citation, source quotation, or
@@ -50,8 +53,8 @@ document describes it. Tasks and implementation consume the canonical
 Requirements, Design, and Contract rather than reconstructing decisions from
 source material.
 
-Source items and Briefs are not fingerprinted Gate inputs. A later change to a
-source does not silently reinterpret an approval. It returns through an explicit
+Source items and Briefs are not fingerprinted Gate inputs. A later source change
+does not silently reinterpret an approval. It returns through an explicit
 Discovery request and the ordinary confirmed scope and rewind flow.
 
 ## Keep acquisition read-only

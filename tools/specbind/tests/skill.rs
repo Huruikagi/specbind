@@ -139,7 +139,7 @@ fn installs_each_skill_to_the_accepted_target() {
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 6),
-        ("sb-discovery", 3),
+        ("sb-discovery", 4),
         ("sb-implement", 2),
         ("sb-plan", 3),
         ("sb-release", 1),
@@ -369,6 +369,37 @@ fn local_source_collection_is_complete_confirmed_and_preserved() {
         assert!(
             discovery.contains(required),
             "Discovery package must contain {required}"
+        );
+    }
+}
+
+#[test]
+fn github_milestone_source_collection_is_complete_read_only_and_preserved() {
+    let discovery = skill_package_text("sb-discovery");
+    for required in [
+        "references/github-milestone.md",
+        "both a GitHub\n`OWNER/REPO` and a Milestone number",
+        "Do not infer a repository",
+    ] {
+        assert!(
+            discovery.contains(required),
+            "Discovery package must contain {required}"
+        );
+    }
+
+    let provider = skill_resource_text("sb-discovery", "references/github-milestone.md");
+    for required in [
+        "gh auth status",
+        "--paginate --slurp",
+        "state=all",
+        "pull_request",
+        "Do not read comments or timeline events",
+        "partial acquisition stops before classification",
+        "they do not\nsilently re-query GitHub",
+    ] {
+        assert!(
+            provider.contains(required),
+            "GitHub provider missing {required}"
         );
     }
 }

@@ -55,17 +55,21 @@ stop and return to Discovery instead of adding artifacts ad hoc.
 
 ## Discovery source collections
 
-Discovery can accept a tracked project file or directory as one Source
-Collection. It inventories every text file, records each Source Item's Roadmap
-destination or exclusion reason, and lists only a Spec's relevant items in its
-Brief. An unreadable or untracked item stops the collection rather than allowing
-partial coverage.
+Discovery can accept a tracked project file or directory, or an explicitly
+identified GitHub repository Milestone, as one Source Collection. It inventories
+every source item, records each item's Roadmap destination or exclusion reason,
+and lists only a Spec's relevant items in its Brief. An unreadable local item,
+inaccessible GitHub entry, or incomplete GitHub page stops the collection rather
+than allowing partial coverage. A GitHub Milestone must name both `OWNER/REPO`
+and its Milestone number; open and closed Issues are included, while comments
+and timeline events are not source material.
 
 Source material is input, not authoritative specification. Requirements and
 Design read the Brief-declared sources and promote accepted behavior and
-technical conclusions into their own artifacts. Updating a source does not
-automatically synchronize downstream artifacts; rerun Discovery explicitly for
-the intended scope.
+technical conclusions into their own artifacts. Remote source context is
+captured during Discovery and is not silently re-queried. Updating any source
+does not automatically synchronize downstream artifacts; rerun Discovery
+explicitly for the intended scope.
 
 ## Durable and Milestone-local artifacts
 

@@ -65,7 +65,7 @@ Front Matterが示す依存関係や順序のうち、自明でない理由、�
 ## Source Collectionと振り分け
 
 <!-- specbind:instruction maintain
-Discoveryが明示的なSource Collectionを使った場合、provider、プロジェクト相対の
-collection locator、全項目のdisposition、関係するwork item、振り分け理由を保つ。
+Discoveryが明示的なSource Collectionを使った場合、provider、collection locator、
+全項目のdisposition、関係するwork item、振り分け理由を保つ。
 コレクションが無い場合はこの節を省略する。
 -->
