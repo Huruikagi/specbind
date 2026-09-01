@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `db7686e` | S5 — pass | [Steering scaffold check](./runs/2026-09-01-codex-db7686e-steering-check.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `b1498fa` | D1 — environment-invalid attempt retained | [Skill namespace separation](./runs/2026-09-01-codex-b1498fa-skill-namespace.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `630f08e` | A1, A2 — environment-invalid attempts retained | [Adoption dispatch clarification](./runs/2026-09-01-codex-630f08e-adoption-discovery.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `163909b` | A1 — pass; A2 — product failure | [Adoption folded into Discovery](./runs/2026-09-01-codex-163909b-adoption-discovery.md) |
