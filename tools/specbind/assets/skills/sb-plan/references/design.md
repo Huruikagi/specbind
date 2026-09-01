@@ -246,7 +246,8 @@ draft when all of these are true:
 
 - a durable responsibility has its own ownership boundary and failure or
   verification concern;
-- no selected project candidate communicates that responsibility clearly; and
+- no selected project candidate other than `design/main` communicates that
+  responsibility clearly; and
 - placing it only in `design/main` would hide its independently reviewable
   decisions or Requirement traceability.
 
@@ -256,7 +257,9 @@ boundaries are prompts to perform this assessment, not automatic supplement
 names. Record the responsibility, artifact ID, covered Requirements, target
 path, and the `design/main` alternative in the Design set. This is part of
 ordinary authoring, not a separate confirmation boundary, and is not permission
-to create an empty precautionary document.
+to create an empty precautionary document. `design/main` is the alternative to
+assess, not a reason to collapse an independently reviewable responsibility
+into the default document.
 
 **No Design exists — whether the Spec is new or established** — for every
 selected selector, resolve and read it:
@@ -307,7 +310,8 @@ milestone's work.
 
 When investigation shows a durable responsibility with its own ownership
 boundary, failure or verification concern, and no selected project candidate
-that communicates it clearly, materialize a **Spec-local one-off Design
+other than `design/main` that communicates it clearly, materialize a
+**Spec-local one-off Design
 supplement**. Do this after the candidate-set report and before writing the
 complete set; do not wait for the maintainer to guess the document format in
 advance.

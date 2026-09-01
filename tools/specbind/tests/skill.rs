@@ -225,6 +225,8 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
         "Spec-local one-off Design\nsupplement",
         "target `specs/<spec>/design/<artifact_id>.md`",
         "Materialize one as part of the current Design\ndraft",
+        "candidate other than `design/main` communicates that\n  responsibility clearly",
+        "`design/main` is the alternative to\nassess",
         "Before authoring or revising any Design, assess whether the current change needs",
         "Runtime deployment, configuration or Secret ownership, health signals,",
         "Do not add a project template or change\n`design-template-selection`",

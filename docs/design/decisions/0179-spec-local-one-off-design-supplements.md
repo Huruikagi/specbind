@@ -21,8 +21,10 @@ though the normal Design gate remains the review boundary.
 - During Design authoring, the Skill materializes a Spec-local supplement when all
   of these hold: the current change has a durable responsibility; it has an
   independent ownership boundary, failure or verification concern, or both; an
-  existing selected Design does not communicate it clearly; and no
-  project-owned candidate is already applicable.
+  existing focused Design does not communicate it clearly; and no project-owned
+  candidate other than `design/main` is already applicable. The default main
+  Design is the alternative to assess, not evidence that an independently
+  reviewable responsibility needs no supplement.
 - The assessment records a lowercase-kebab `artifact_id`, the responsibility,
   covered Requirement IDs, the alternative of extending an existing Design,
   and the intended path `specs/<spec>/design/<artifact_id>.md` below the

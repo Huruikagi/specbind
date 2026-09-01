@@ -93,9 +93,10 @@ project has no applicable infrastructure Design candidate. Ask to author that
 Spec's Design.
 
 - The agent reports the selected project candidates, then creates a focused
-  Spec-local `design/infrastructure` supplement with its covered Requirements,
-  target path, and the alternative of extending `design/main` in the Design
-  draft.
+  Spec-local supplement (with a durable responsibility-derived artifact ID)
+  with its covered Requirements, target path, and the alternative of extending
+  `design/main` in the Design draft. `design/main` alone is not a reason to
+  reject this independently reviewable split.
 - It does not stop for a decomposition-only confirmation. The live supplement,
   complete Design set, and Contract are ready for the ordinary Design approval
   boundary.
