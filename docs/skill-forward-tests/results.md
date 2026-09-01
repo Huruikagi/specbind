@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `bcc05ca` | HP1 — environment blocked before product workflow | [Stable promotion journey](./runs/2026-09-01-codex-bcc05ca-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `3b294db` | HP1 — environment blocked after correct Requirements preservation | [Final RC planning journey](./runs/2026-09-01-codex-3b294db-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `8ee613d` | HP1 — environment blocked; split planning product failure retained | [Requirements semantic preflight](./runs/2026-09-01-codex-8ee613d-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `57ec8f6` | HP1 — product failure | [Requirements preservation ordering](./runs/2026-09-01-codex-57ec8f6-hp1.md) |
