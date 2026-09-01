@@ -613,6 +613,22 @@ fn requirements_preserves_abstract_boundaries_and_avoids_new_spec_contract_probe
 }
 
 #[test]
+fn requirements_treats_the_listed_steering_inventory_as_closed() {
+    let requirements = skill::find("specbind-plan-requirements").expect("requirements skill");
+    let body = requirements.body().expect("requirements body");
+    for required in [
+        "Treat that listing as the complete, closed set for this read.",
+        "the active Roadmap is milestone state stored beside Steering",
+        "must not be passed to `steering read`",
+    ] {
+        assert!(
+            body.contains(required),
+            "Requirements must prevent unlisted Roadmap-as-Steering reads: {required}"
+        );
+    }
+}
+
+#[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
         skill::find("specbind-validate-implementation").expect("implementation validation skill");

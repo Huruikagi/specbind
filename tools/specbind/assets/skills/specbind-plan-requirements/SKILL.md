@@ -61,6 +61,11 @@ selector, a type, and a path, and nothing in that says whether a document
 constrains this Spec's behavior. A project constraint missed here is absent from
 the contract every later phase checks against, so it is missed everywhere.
 
+Treat that listing as the complete, closed set for this read. Do not enumerate
+the storage directory or invent another selector from a nearby filename. In
+particular, the active Roadmap is milestone state stored beside Steering; it is
+not a Steering document and must not be passed to `steering read`.
+
 If `steering list` or `steering read` prints an `ERROR` line, stop. Authoring a
 contract against a knowingly partial view of the project's constraints produces
 something nobody can trust. `Found 0 steering document(s).` is a complete answer
