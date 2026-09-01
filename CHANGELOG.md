@@ -4,6 +4,13 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.1.0 - 2026-09-01
+
+- Promoted `1.1.0-rc.1` to the stable `1.1.0` release without product changes
+  after the full native build, forward-test, archive, checksum, installer, and
+  mise verification gates completed. The documented 1.x compatibility surface
+  remains unchanged.
+
 ## 1.1.0-rc.1 - 2026-09-01
 
 - Expanded the English and Japanese Requirements, Design, UI, research,
