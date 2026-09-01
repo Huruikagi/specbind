@@ -15,6 +15,11 @@ specbind adoption preflight
 ```
 
 It must report `ADOPTION_PREFLIGHT_READY`. Any other result stops this run.
+This command already checks for existing Specs, an active milestone, the
+Steering prerequisite, repository cleanliness, and the committed source
+revision. Do not precede or follow it with the ordinary Discovery route's
+`specbind milestone status` or `specbind spec list`; those reads duplicate the
+preflight and blur which route owns the start.
 Do not perform the routed recovery during the same invocation. In particular:
 
 - `ADOPTION_STEERING_REQUIRED` routes to a separate `specbind-steering`
@@ -55,7 +60,9 @@ again from a new clean revision.
 
 This is a non-negotiable fresh-reader boundary. Before the orchestrator reads
 implementation or test files or synthesizes candidate boundaries, dispatch at
-least two fresh readers for independent evidence lines:
+least two fresh readers for independent evidence lines. Run them concurrently
+when capacity permits; sequential fresh readers are valid when capacity is
+limited, provided neither inherits the other's findings:
 
 - one for public behavior, tests, schemas, and observable entry points;
 - one for structure, dependency direction, ownership, and neighboring seams.
