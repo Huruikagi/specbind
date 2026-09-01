@@ -198,6 +198,7 @@ fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edi
         "Technology labels alone are not a template boundary.",
         "does not replace\nthe per-Spec applicability decision in `design-template-selection`.",
         "Do not bootstrap it merely because it is\nempty",
+        "do not infer\none.",
     ] {
         assert!(
             body.contains(required),
@@ -208,6 +209,7 @@ fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edi
         "distinct recurring design decisions and traceability",
         "framework presence alone is insufficient",
         "conditions must describe the responsibility",
+        "If a request names a future technology but the current Steering and repository",
     ] {
         assert!(
             templates.contains(required),

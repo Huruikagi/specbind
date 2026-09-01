@@ -81,6 +81,12 @@ when its independent responsibility would otherwise be repeatedly obscured in
 the main Design. Steering records durable project facts; it does not replace
 the per-Spec applicability decision in `design-template-selection`.
 
+When a request names a future technical category but Steering and repository
+facts do not establish that independent recurring responsibility, do not infer
+one. Explain the existing-template or Rule option and the conditional-candidate
+option, then ask which outcome is intended before changing the candidate set or
+its selection Rule.
+
 ## 3. Preserve ownership and authority
 
 - Edit only project-owned configuration and durable knowledge through their

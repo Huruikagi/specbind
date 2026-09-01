@@ -78,12 +78,12 @@ Use the base fixture and ask:
   Rule.
 - It compares repository facts, the current main and UI candidates, and the
   Design and Contract Rules before proposing an API or infrastructure candidate.
-- It updates an existing template or Rule when that fully represents the
-  responsibility. If it proposes a candidate, it explains the independent
-  recurring responsibility and changes the matching
-  `design-template-selection` classification in the same transaction.
-- Existing artifacts and lifecycle state remain unchanged because the request
-  declines reconciliation.
+- Because the base fixture establishes neither an external API nor independent
+  infrastructure responsibility, it presents existing-surface and
+  conditional-candidate options and asks which is intended before writing.
+- It does not infer a new candidate from the future technology labels. The
+  candidate set, Rule, existing artifacts, and lifecycle state remain unchanged
+  before that answer.
 
 ## Existing-implementation adoption scenarios
 

@@ -243,6 +243,12 @@ Contract Rules. Add a conditional candidate such as `design/api` or
 independent design treatment; write its condition in terms of the
 responsibility, not framework presence.
 
+If a request mentions possible future API or infrastructure work but current
+Steering and repository facts do not establish a distinct recurring
+responsibility, `sb-configure` presents the existing-surface and
+conditional-candidate options and asks which is intended. It does not infer a
+new candidate from a future technology label alone.
+
 ## Project settings and role models
 
 Initial installation selects artifact language, Agents, Spec root, and project

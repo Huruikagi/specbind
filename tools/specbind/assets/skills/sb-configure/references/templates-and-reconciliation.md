@@ -50,6 +50,12 @@ in Steering and the Design or Contract Rules. A project may add `design/api` or
 design treatment. Their selection conditions must describe the responsibility,
 not merely the presence of a technology.
 
+If a request names a future technology but the current Steering and repository
+facts do not establish an independent recurring responsibility, present the
+existing-surface and conditional-candidate options and ask the maintainer to
+choose. Do not infer that a request for possible future API or infrastructure
+work authorizes a new candidate.
+
 ## Default effect
 
 A template edit affects future materialization only. State explicitly that no
