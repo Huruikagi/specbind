@@ -48,26 +48,85 @@ Review and commit the installed files; the installer does not commit. Reopen
 the coding-agent session so it discovers the Skills. Examples below use Codex
 `$skill` syntax; Claude Code uses `/skill`.
 
-## 3. Keep the defaults for the first cycle
-
-Although installation suggests `sb-configure`, first complete one real
-change with the defaults. Adjust only demonstrated mismatches afterward using
-[Customize SpecBind](./customization.md).
-
-## 4. Choose the adoption route
+## 3. Choose a first-cycle route
 
 | Goal | Route |
 | --- | --- |
 | Use SpecBind for the next change | Continue on this page |
-| Establish Specs from working implementation | [Establish Specs from an existing implementation](./adopt-existing.md) |
+| Establish Specs from working implementation, then prepare the full plan | [Full-support route](#full-support-route) |
 
-The existing-implementation route of `sb-discovery` does not treat current
-code as automatically correct. It investigates code and tests as evidence,
-confirms the intent to preserve, and then hands it to the ordinary lifecycle.
-Adoption requires durable Steering; bootstrap it first with
-`sb-steering` when absent.
+For a small first change, keeping the defaults is a good way to learn the
+normal lifecycle. Adjust only demonstrated mismatches afterward using
+[Customize SpecBind](./customization.md). Continue with [Choose the first
+change](#first-change).
 
-## 5. Choose the first change
+## Full-support route for an existing implementation {#full-support-route}
+
+Choose this route when the repository already has substantial code but no
+trusted Specs, and you want to establish project guidance and plan the adopted
+work before implementation. It ends with Tasks approval; it does not start
+implementation or release work.
+
+1. **Shape the project with `sb-configure`.** Start with an initial review,
+   such as:
+
+   ```text
+   $sb-configure Review this project's initial configuration for adopting the
+   existing implementation. Start with the Steering it needs.
+   ```
+
+   `sb-configure` first reads the mechanical configuration summary. When
+   durable guidance is needed, it routes Steering bootstrap or synchronization
+   to `sb-steering`. Review and commit the resulting Steering before adoption;
+   Discovery pins that revision as its evidence.
+
+2. **Run focused configuration reviews until the common project surfaces fit.**
+   Ask `sb-configure` again after Steering is established to compare it and the
+   repository with the Requirements and Design templates and shared Rules. For
+   example:
+
+   ```text
+   $sb-configure Use the confirmed Steering and repository facts to review the
+   Requirements and Design templates and shared Rules for this project.
+   ```
+
+   Make a separate follow-up request for each remaining surface—templates,
+   Rules, Agents, or operational adapters. `sb-configure` rereads the summary
+   after each relevant change and completes its required aftercare. A new Design
+   template is appropriate only for a distinct recurring responsibility; a
+   technology label alone is not enough. Existing Specs and lifecycle artifacts
+   are not silently reconciled by configuration.
+
+3. **Start existing-implementation Discovery.** With committed Steering and a
+   clean worktree, ask for a bounded adoption target, for example:
+
+   ```text
+   $sb-discovery Establish Specs from the existing implementation across this
+   repository. Investigate the current code and tests as evidence, and ask me
+   to confirm the boundaries and intended behavior before creating anything.
+   ```
+
+   Discovery runs its adoption preflight, pins the inspected revision, and asks
+   separately to confirm candidate Spec boundaries, ordinary Milestone scope,
+   and the observed behavior or intent for each Spec. Current code is evidence,
+   not automatically the specification. See [Establish Specs from an existing
+   implementation](./adopt-existing.md) for the investigation and confirmation
+   details.
+
+4. **Plan every adopted Spec.** Once Discovery has created the Specs, Briefs,
+   and Research handoffs, run:
+
+   ```text
+   $sb-plan --all
+   ```
+
+   Plan asks once whether it may accept the Requirements, Design, and Tasks
+   Gates for every selected Spec, or it pauses at each Gate for your explicit
+   approval. It runs Design validation and the milestone-wide Contract Review
+   before Tasks. After Tasks approval, review the plan and choose a later
+   implementation run deliberately; this route stops here.
+
+## 4. Choose the first change {#first-change}
 
 Start with one small behavior rather than several features or release work. For
 example:
@@ -78,7 +137,7 @@ If no existing Spec owns this behavior, it likely introduces one new durable
 responsibility. CSV columns and format can also become a Contract on which
 other capabilities or consumers depend.
 
-## 6. Confirm scope with Discovery
+## 5. Confirm scope with Discovery
 
 Describe the change and point to any relevant Issue or notes:
 
@@ -95,7 +154,7 @@ and the Agent writes a concise `brief.md`.
 
 Use `$sb-status` for a read-only explanation at any point.
 
-## 7. Choose how to plan and implement
+## 6. Choose how to plan and implement
 
 For the first `csv-export` change, you can inspect each boundary explicitly:
 
@@ -116,7 +175,7 @@ For a Milestone with several Specs or Direct items, use
 [Plan and Drive a Milestone](./implement-with-plan-and-drive.md) for attention,
 continuation, and stopping behavior. Both routes stop before Release.
 
-## 8. Inspect the artifacts
+## 7. Inspect the artifacts
 
 ```text
 .specbind/
