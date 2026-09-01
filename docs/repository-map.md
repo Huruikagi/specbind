@@ -85,6 +85,7 @@ in [Implementation architecture](./architecture.md).
 | [English Getting Started](./en/guide/getting-started.md) | Route selection for new and existing projects |
 | [English new-project guide](./en/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [English existing-project guide](./en/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
+| [English update guide](./en/guide/update.md) | Binary update through the installation client followed by guarded project-asset refresh |
 | [English existing-implementation adoption guide](./en/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
 | [English release guide](./en/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
 | [English core concepts](./en/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
@@ -96,6 +97,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese Getting Started](./ja/guide/getting-started.md) | Route selection for new and existing projects |
 | [Japanese new-project guide](./ja/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [Japanese existing-project guide](./ja/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
+| [Japanese update guide](./ja/guide/update.md) | Installation-client binary update and guarded project-asset refresh in Japanese |
 | [Japanese existing-implementation adoption guide](./ja/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
 | [Japanese release guide](./ja/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
 | [Japanese basic concepts](./ja/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
@@ -325,3 +327,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0177](./design/decisions/0177-steering-scaffold-conformance-check.md) | Accepted | Mechanical verification of a materialized Steering scaffold |
 | [0178](./design/decisions/0178-github-milestone-discovery-source-provider.md) | Accepted | GitHub Milestone Discovery source provider |
 | [0179](./design/decisions/0179-spec-local-one-off-design-supplements.md) | Accepted | Evidence-backed Spec-local one-off Design supplements |
+| [0180](./design/decisions/0180-delegate-binary-updates-to-installation-clients.md) | Accepted | Binary updates delegated to installation clients and separated from project-asset refresh |

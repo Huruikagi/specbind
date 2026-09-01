@@ -28,10 +28,11 @@ Linux x64 is verified on WSL2, and macOS ARM64 is verified on Apple Silicon CI.
    - [Plan and implement one item at a time](./guide/implement-step-by-step.md)
    - [Plan and Drive a Milestone](./guide/implement-with-plan-and-drive.md)
    - [Release a milestone](./guide/release.md)
-3. [Core concepts](./guide/concepts.md) — understand the model behind the workflow
-4. [Customize SpecBind](./guide/customization.md) — adapt supported project-owned surfaces
-5. [Report bugs and suggest improvements](./guide/feedback.md)
-6. [Remove an Agent or uninstall](./guide/uninstall.md)
+3. [Update SpecBind](./guide/update.md) — update the binary and refresh product-managed project files
+4. [Core concepts](./guide/concepts.md) — understand the model behind the workflow
+5. [Customize SpecBind](./guide/customization.md) — adapt supported project-owned surfaces
+6. [Report bugs and suggest improvements](./guide/feedback.md)
+7. [Remove an Agent or uninstall](./guide/uninstall.md)
 
 ## Reference
 

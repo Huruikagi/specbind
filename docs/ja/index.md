@@ -26,10 +26,11 @@ Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証してい�
    - [1件ずつ計画・実装する](./guide/implement-step-by-step.md)
    - [PlanとDriveでMilestoneを進める](./guide/implement-with-plan-and-drive.md)
    - [リリースする](./guide/release.md)
-3. [SpecBindの考え方](./guide/concepts.md) — 何を目指して、どう実現するのか
-4. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
-5. [バグ報告と改善提案](./guide/feedback.md) — 教えてください
-6. [エージェントの削除とアンインストール](./guide/uninstall.md) — やめたくなったら
+3. [SpecBindをアップデートする](./guide/update.md) — バイナリとプロジェクト内の製品管理対象を更新する
+4. [SpecBindの考え方](./guide/concepts.md) — 何を目指して、どう実現するのか
+5. [カスタマイズ](./guide/customization.md) — やりたいことに合わせて
+6. [バグ報告と改善提案](./guide/feedback.md) — 教えてください
+7. [エージェントの削除とアンインストール](./guide/uninstall.md) — やめたくなったら
 
 ## リファレンス
 

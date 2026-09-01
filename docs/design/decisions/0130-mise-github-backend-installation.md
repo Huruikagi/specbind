@@ -6,6 +6,10 @@ Decision [0163](./0163-macos-arm64-release-target.md) extends this installation
 and smoke-test boundary to the native macOS ARM64 archive. macOS Intel and
 Linux ARM64 remain unsupported.
 
+Decision [0180](./0180-delegate-binary-updates-to-installation-clients.md)
+assigns later binary updates to mise or the original installation client and
+keeps them separate from `specbind install` project-asset refresh.
+
 ## Context
 
 [Decision 0124](./0124-pre-1.0-binary-release-line.md) makes GitHub Releases

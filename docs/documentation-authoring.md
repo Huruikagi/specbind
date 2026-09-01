@@ -17,6 +17,7 @@ docs/ja/index.md
 docs/ja/guide/getting-started.md
 docs/ja/guide/start-new-project.md
 docs/ja/guide/start-existing-project.md
+docs/ja/guide/update.md
 docs/ja/guide/adopt-existing.md
 docs/ja/guide/concepts.md
 docs/ja/guide/customization.md

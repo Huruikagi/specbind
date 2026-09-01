@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+The reservation of `specbind update` for a future binary self-update command
+and its Issue 13 follow-up are superseded by [Decision
+0180](./0180-delegate-binary-updates-to-installation-clients.md). The
+project-asset refresh semantics of `specbind install` remain accepted.
+
 Post-cutover preservation of the legacy source is superseded by [Decision
 0127](./0127-retire-cc-sdd-source-at-final-cutover.md). The read-only planning
 and fail-closed conversion boundaries remain accepted.
@@ -95,8 +100,10 @@ Decision 0130 adds installation through mise's GitHub backend.
   [Decision 0141](./0141-guarded-agent-removal-and-project-uninstall.md).
 - Tested macOS and Linux ARM64 release targets are tracked by
   [Issue #12](https://github.com/Huruikagi/specbind/issues/12).
-- Guarded binary self-update is tracked by
-  [Issue #13](https://github.com/Huruikagi/specbind/issues/13).
+- The guarded binary self-update follow-up from
+  [Issue #13](https://github.com/Huruikagi/specbind/issues/13) is resolved by
+  [Decision 0180](./0180-delegate-binary-updates-to-installation-clients.md),
+  which delegates binary updates to the installation client.
 
 Code signing, notarization, and additional package-manager channels remain
 options rather than committed work.
