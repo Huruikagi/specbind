@@ -10,7 +10,7 @@ SpecBindの大きな特徴は、エージェントのスキルと`specbind` CLI�
 
 また、[gotlab/cc-sdd](https://github.com/gotalab/cc-sdd/tree/main)を起点に
 設計しています。cc-sddはKiroから継承されたものであり、Kiro、cc-sdd、そして
-そのコントリビューターの皆さんに、この土台への感謝を表します。多くの概念はcc-sdd v3から
+そのコントリビューターの皆さんが築いてきた知見と取り組みに、深く感謝します。多くの概念はcc-sdd v3から
 継承されており、いくつかの変更を加えて再構成しています。
 
 ## 対応環境
