@@ -532,7 +532,7 @@ fn accepts_arbitrary_named_outputs_and_rejects_output_faults() {
     let cases = [
         (
             "---\ntype: SpecBind Brief\n---\n# `{{spec}}` Brief\n",
-            "TEMPLATE_OUTPUT_MISSING",
+            "TEMPLATE_VARIABLE_BINDING_MISSING",
         ),
         (
             concat!(
@@ -540,7 +540,7 @@ fn accepts_arbitrary_named_outputs_and_rejects_output_faults() {
                 "<!-- specbind:instruction create output=spec Use it. -->\n",
                 "# Brief\n",
             ),
-            "TEMPLATE_OUTPUT_FRONTMATTER_FORBIDDEN",
+            "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
         ),
     ];
     for (content, expected) in cases {
@@ -568,6 +568,21 @@ fn accepts_arbitrary_named_outputs_and_rejects_output_faults() {
         ),
     )
     .expect("write arbitrary output template");
+    let inventory = template::discover_spec_templates(root.path(), ProjectLanguage::En);
+    assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
+
+    let root = tempfile::tempdir().expect("temporary SpecBind root");
+    let target = root.path().join("settings/templates/specs/brief.md");
+    fs::create_dir_all(target.parent().expect("template parent")).expect("create parent");
+    fs::write(
+        target,
+        concat!(
+            "---\ntype: SpecBind Brief\n---\n",
+            "<!-- specbind:instruction create bind=spec Use the Spec identity. -->\n",
+            "# `{{spec}}` Brief\n",
+        ),
+    )
+    .expect("write 1.0-compatible bind template");
     let inventory = template::discover_spec_templates(root.path(), ProjectLanguage::En);
     assert!(inventory.issues.is_empty(), "{:?}", inventory.issues);
 }

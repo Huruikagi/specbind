@@ -4,6 +4,24 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.1.0-rc.1 - 2026-09-01
+
+- Expanded the English and Japanese Requirements, Design, UI, research,
+  implementation-notes, Roadmap, and Steering templates with stronger
+  creation and maintenance guidance, while keeping project-owned templates
+  opt-in and future-materialization oriented.
+- Added `specbind-drive` to advance an active milestone across planning,
+  implementation, and validation through the existing owning Skills and their
+  guarded boundaries.
+- Reframed template placeholders as named creation outputs, including Markdown
+  fragments for repeatable structures. Templates published with `1.0.0` that
+  use `create bind=<name>` remain valid throughout 1.x, and their established
+  diagnostic codes remain stable.
+- Added a Japanese language-style Rule and improved the readability of the
+  Japanese public guide without changing exact product or machine identifiers.
+- Added complete English and Japanese guides for step-by-step implementation
+  and plan-and-drive delivery.
+
 ## 1.0.0 - 2026-08-31
 
 - Published the first stable SpecBind release after the complete `1.0.0-rc.3`

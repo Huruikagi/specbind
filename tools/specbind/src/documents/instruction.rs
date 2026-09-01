@@ -69,7 +69,7 @@ pub fn validate_template_frontmatter(frontmatter: &str) -> Vec<InstructionIssue>
     output_references(frontmatter)
         .into_iter()
         .map(|name| InstructionIssue {
-            code: "TEMPLATE_OUTPUT_FRONTMATTER_FORBIDDEN",
+            code: "TEMPLATE_VARIABLE_FRONTMATTER_FORBIDDEN",
             message: format!("template output reference {name} is forbidden in Front Matter"),
         })
         .collect()
@@ -93,7 +93,7 @@ pub fn validate_live(body: &str) -> Vec<InstructionIssue> {
     }
     if !output_references(&mask_instruction_ranges(body, &instructions)).is_empty() {
         issues.push(InstructionIssue {
-            code: "ARTIFACT_TEMPLATE_OUTPUT_LEAK",
+            code: "ARTIFACT_TEMPLATE_VARIABLE_LEAK",
             message: "live artifact contains an unresolved template output reference".to_owned(),
         });
     }
@@ -164,20 +164,21 @@ fn inspect(content: &str) -> (Vec<Instruction>, Vec<InstructionIssue>) {
             });
             continue;
         };
-        let output = remainder
-            .split_whitespace()
-            .nth(1)
-            .and_then(|token| token.strip_prefix("output="))
-            .map(ToOwned::to_owned);
+        let output = remainder.split_whitespace().nth(1).and_then(|token| {
+            token
+                .strip_prefix("output=")
+                .or_else(|| token.strip_prefix("bind="))
+                .map(ToOwned::to_owned)
+        });
         if output.as_deref().is_some_and(str::is_empty) {
             issues.push(InstructionIssue {
-                code: "INSTRUCTION_OUTPUT_INVALID",
+                code: "INSTRUCTION_BINDING_INVALID",
                 message: "specbind:instruction output must name a creation output".to_owned(),
             });
         }
         if output.is_some() && scope != InstructionScope::Create {
             issues.push(InstructionIssue {
-                code: "INSTRUCTION_OUTPUT_SCOPE_INVALID",
+                code: "INSTRUCTION_BINDING_SCOPE_INVALID",
                 message: "only a create instruction may produce a named template output".to_owned(),
             });
         }
@@ -200,7 +201,7 @@ fn validate_outputs(body: &str, instructions: &[Instruction]) -> Vec<Instruction
         };
         if !valid_output_name(output) {
             issues.push(InstructionIssue {
-                code: "TEMPLATE_OUTPUT_NAME_INVALID",
+                code: "TEMPLATE_VARIABLE_NAME_INVALID",
                 message: format!(
                     "template output name {output:?} must be non-empty and contain no whitespace or braces"
                 ),
@@ -211,7 +212,7 @@ fn validate_outputs(body: &str, instructions: &[Instruction]) -> Vec<Instruction
     for (output, count) in &outputs {
         if *count > 1 {
             issues.push(InstructionIssue {
-                code: "TEMPLATE_OUTPUT_DUPLICATE",
+                code: "TEMPLATE_VARIABLE_BINDING_DUPLICATE",
                 message: format!(
                     "template output {output} is produced by more than one create instruction"
                 ),
@@ -219,7 +220,7 @@ fn validate_outputs(body: &str, instructions: &[Instruction]) -> Vec<Instruction
         }
         if !references.contains(*output) {
             issues.push(InstructionIssue {
-                code: "TEMPLATE_OUTPUT_UNUSED",
+                code: "TEMPLATE_VARIABLE_BINDING_UNUSED",
                 message: format!("create instruction produces unused template output {output}"),
             });
         }
@@ -227,7 +228,7 @@ fn validate_outputs(body: &str, instructions: &[Instruction]) -> Vec<Instruction
     for reference in references {
         if !valid_output_name(&reference) {
             issues.push(InstructionIssue {
-                code: "TEMPLATE_OUTPUT_NAME_INVALID",
+                code: "TEMPLATE_VARIABLE_NAME_INVALID",
                 message: format!(
                     "template output name {reference:?} must be non-empty and contain no whitespace or braces"
                 ),
@@ -235,7 +236,7 @@ fn validate_outputs(body: &str, instructions: &[Instruction]) -> Vec<Instruction
         }
         if !outputs.contains_key(reference.as_str()) {
             issues.push(InstructionIssue {
-                code: "TEMPLATE_OUTPUT_MISSING",
+                code: "TEMPLATE_VARIABLE_BINDING_MISSING",
                 message: format!(
                     "template output reference {reference} requires exactly one create instruction with output={reference}"
                 ),
@@ -371,13 +372,13 @@ mod tests {
         assert!(validate_spec_template(valid, None).is_empty());
 
         let missing = validate_spec_template("# `{{title}}` Requirements\n", None);
-        assert_eq!(missing[0].code, "TEMPLATE_OUTPUT_MISSING");
+        assert_eq!(missing[0].code, "TEMPLATE_VARIABLE_BINDING_MISSING");
 
         let unused = validate_spec_template(
             "<!-- specbind:instruction create output=spec Render the identity. -->\n# Requirements\n",
             None,
         );
-        assert_eq!(unused[0].code, "TEMPLATE_OUTPUT_UNUSED");
+        assert_eq!(unused[0].code, "TEMPLATE_VARIABLE_BINDING_UNUSED");
 
         let duplicate = validate_spec_template(
             concat!(
@@ -390,7 +391,7 @@ mod tests {
         assert!(
             duplicate
                 .iter()
-                .any(|issue| issue.code == "TEMPLATE_OUTPUT_DUPLICATE")
+                .any(|issue| issue.code == "TEMPLATE_VARIABLE_BINDING_DUPLICATE")
         );
 
         let durable = validate_spec_template(
@@ -403,7 +404,7 @@ mod tests {
         assert!(
             durable
                 .iter()
-                .any(|issue| issue.code == "INSTRUCTION_OUTPUT_SCOPE_INVALID")
+                .any(|issue| issue.code == "INSTRUCTION_BINDING_SCOPE_INVALID")
         );
 
         let legacy_bind = validate_spec_template(
@@ -413,11 +414,7 @@ mod tests {
             ),
             None,
         );
-        assert!(
-            legacy_bind
-                .iter()
-                .any(|issue| issue.code == "TEMPLATE_OUTPUT_MISSING")
-        );
+        assert!(legacy_bind.is_empty());
     }
 
     #[test]
@@ -448,14 +445,14 @@ mod tests {
         assert!(
             issues
                 .iter()
-                .any(|issue| issue.code == "TEMPLATE_OUTPUT_NAME_INVALID")
+                .any(|issue| issue.code == "TEMPLATE_VARIABLE_NAME_INVALID")
         );
     }
 
     #[test]
     fn live_artifacts_reject_unresolved_output_references() {
         let issues = validate_live("{{今日の天気}}の日に作成。\n");
-        assert_eq!(issues[0].code, "ARTIFACT_TEMPLATE_OUTPUT_LEAK");
+        assert_eq!(issues[0].code, "ARTIFACT_TEMPLATE_VARIABLE_LEAK");
     }
 
     #[test]

@@ -69,11 +69,17 @@ binding, and scalar-value model.
 
 ## Compatibility
 
-`create output=<name>` replaces `create bind=<name>` without a legacy alias.
-The maintainer identified the former wording and scalar interpretation as a
-contract error and requested a clean correction. Existing project-owned
-templates are not silently rewritten: their owners must preview and explicitly
-authorize reconciliation before using the new contract. Live artifacts contain
+`create output=<name>` is the preferred syntax. To preserve Decision 0144's
+same-major forward-upgrade guarantee, the CLI also accepts the `create
+bind=<name>` syntax published in `1.0.0` as a compatibility alias throughout
+the 1.x executable line. The alias has the same validation and materialization
+semantics as `output=`; it does not retain the former scalar interpretation.
+
+Existing project-owned templates are not silently rewritten. Their owners may
+preview and explicitly authorize reconciliation to the preferred terminology,
+but an upgrade does not require that reconciliation before the templates remain
+usable. Diagnostic codes published in `1.0.0` remain stable even where their
+names use the former variable or binding terminology. Live artifacts contain
 neither `create` instructions nor unresolved references, so they require no
 migration.
 
@@ -87,5 +93,5 @@ migration.
   placeholder merely because each generated subsection differs.
 - The official Design scaffold uses a `components` output to demonstrate the
   fragment-producing case.
-- Projects that still carry `create bind=<name>` must reconcile those templates
-  deliberately; SpecBind does not maintain two names for one authoring concept.
+- Projects that still carry `create bind=<name>` continue to work in 1.x and
+  may reconcile deliberately when adopting the preferred terminology.
