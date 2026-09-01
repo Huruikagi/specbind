@@ -629,6 +629,23 @@ fn requirements_treats_the_listed_steering_inventory_as_closed() {
 }
 
 #[test]
+fn requirements_resolves_the_new_artifact_project_path_before_writing() {
+    let requirements = skill::find("specbind-plan-requirements").expect("requirements skill");
+    let body = requirements.body().expect("requirements body");
+    let new_spec = body.find("- **New Spec**").expect("new Spec branch");
+    let resolve = body[new_spec..]
+        .find("specbind template resolve spec <spec> requirements")
+        .expect("Requirements target resolution");
+    let read = body[new_spec..]
+        .find("specbind template read spec requirements")
+        .expect("Requirements template read");
+    assert!(resolve < read);
+    assert!(body.contains("Write the authored document only to the resolved `Project path`."));
+    assert!(body.contains("do not reconstruct it from an artifact"));
+    assert!(body.contains("inventory `path`, the template-relative `Output path`"));
+}
+
+#[test]
 fn implementation_validation_preserves_exact_executed_command_text() {
     let validation =
         skill::find("specbind-validate-implementation").expect("implementation validation skill");

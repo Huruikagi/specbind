@@ -82,8 +82,13 @@ not a fault.
   contract from the brief:
 
   ```sh
+  specbind template resolve spec <spec> requirements
   specbind template read spec requirements
   ```
+
+  Write the authored document only to the resolved `Project path`. It already
+  includes the configured SpecBind root; do not reconstruct it from an artifact
+  inventory `path`, the template-relative `Output path`, or the default root.
 
   Follow every `create output=<name>` instruction once to produce its named
   output. An output may be a short string or a Markdown fragment. Replace every
