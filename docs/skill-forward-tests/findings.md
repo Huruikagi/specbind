@@ -51,6 +51,7 @@ Historical resolved findings through 2026-08-30 remain in the
 | ENV-0002 | The Claude Code driver appends its own status line after the agent report. | Exact terminal result blocks must be judged before the harness-owned line; the extra line is not Skill output. |
 | ENV-0003 | A Claude Code Agent-tool subagent refuses approval relayed by the driving session. | Authoring scenarios that cross approval are environment-blocked at the draft boundary unless consent comes from the user through a valid channel. |
 | ENV-0004 | A Codex subagent's host safety layer can reject fixture-required instrumentation, an exact approved lifecycle mutation, or a project-local CLI check relayed by the driving session. | Judge work before the boundary; execute only an explicitly approved exact mutation separately when permitted, and classify a blocked instrumentation or fresh-phase CLI check as environment-blocked without binary fallback. |
+| ENV-0005 | A fresh Codex subagent does not receive fixture-installed Skills in its platform registry. | The driver must discover the conventional `.agents/skills/` tree from project instructions; a run that guesses another root or proceeds without reading the installed Skill is environment-invalid. |
 
 Remove an environment row when it no longer affects interpretation. Do not move
 it into the product finding lifecycle merely because it recurs.

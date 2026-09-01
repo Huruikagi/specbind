@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `65a54e8` | Q0 — pass | [Planning scope fail-closed confirmation](./runs/2026-09-01-codex-65a54e8-q0.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `38a2951` | T1 — pass; Q0 — invalid attempts retained | [Plan phase package consolidation](./runs/2026-09-01-codex-38a2951-plan-merge.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `bcc05ca` | HP1 — environment blocked before product workflow | [Stable promotion journey](./runs/2026-09-01-codex-bcc05ca-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `3b294db` | HP1 — environment blocked after correct Requirements preservation | [Final RC planning journey](./runs/2026-09-01-codex-3b294db-hp1.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `8ee613d` | HP1 — environment blocked; split planning product failure retained | [Requirements semantic preflight](./runs/2026-09-01-codex-8ee613d-hp1.md) |
@@ -75,7 +77,7 @@ invalid runs, retries, and debrief dispositions, remains in
 
 - Open reproduced product findings: 0
 - Fixed, behavioral confirmation pending: 1
-- Active environment limitations: 4
+- Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in
 [the findings worklist](./findings.md). Historical resolved findings through the
