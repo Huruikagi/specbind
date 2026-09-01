@@ -152,7 +152,7 @@ tidy up.
 
 ## 2. Read the project shape
 
-Always:
+On the ordinary Discovery route:
 
 ```sh
 specbind milestone status

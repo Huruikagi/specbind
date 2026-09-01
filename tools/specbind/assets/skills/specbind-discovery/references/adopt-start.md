@@ -53,10 +53,19 @@ again from a new clean revision.
 
 ## Map broadly, then investigate only the selected area
 
-Dispatch fresh readers for independent evidence lines. Use the registered
-`specbind-researcher` role when available, with ordinary fresh readers only when
-the role is absent. A configured role that cannot start is an environment or
-configuration failure, not permission to substitute another model.
+This is a non-negotiable fresh-reader boundary. Before the orchestrator reads
+implementation or test files or synthesizes candidate boundaries, dispatch at
+least two fresh readers for independent evidence lines:
+
+- one for public behavior, tests, schemas, and observable entry points;
+- one for structure, dependency direction, ownership, and neighboring seams.
+
+Use the registered `specbind-researcher` role when available, with ordinary
+fresh readers only when the role is absent. The orchestrator synthesizes their
+reported evidence and does not replace either line with its own repository
+inspection. A configured role that cannot start is an environment or
+configuration failure, not permission to substitute another model or continue
+the map in the orchestrator.
 
 The shallow repository map covers:
 
