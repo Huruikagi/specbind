@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `630f08e` | A1, A2 — environment-invalid attempts retained | [Adoption dispatch clarification](./runs/2026-09-01-codex-630f08e-adoption-discovery.md) |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `163909b` | A1 — pass; A2 — product failure | [Adoption folded into Discovery](./runs/2026-09-01-codex-163909b-adoption-discovery.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `65a54e8` | Q0 — pass | [Planning scope fail-closed confirmation](./runs/2026-09-01-codex-65a54e8-q0.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `38a2951` | T1 — pass; Q0 — invalid attempts retained | [Plan phase package consolidation](./runs/2026-09-01-codex-38a2951-plan-merge.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `bcc05ca` | HP1 — environment blocked before product workflow | [Stable promotion journey](./runs/2026-09-01-codex-bcc05ca-hp1.md) |
@@ -76,7 +78,7 @@ invalid runs, retries, and debrief dispositions, remains in
 ## Current finding state
 
 - Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 1
+- Fixed, behavioral confirmation pending: 2
 - Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in

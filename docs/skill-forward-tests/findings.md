@@ -17,6 +17,7 @@ fixture.
 
 | ID | First seen | Scenario | Finding | Resolution | Next confirmation |
 | --- | --- | --- | --- | --- | --- |
+| FT-0018 | `163909b` | A1, A2 | After adoption moved under Discovery, ordinary-route reads competed with adoption preflight and the fresh-reader boundary was too easy for the orchestrator to replace with its own inspection. | `630f08e` scopes ordinary project-shape reads and makes both independent evidence lines non-negotiable; `8329421` forbids redundant milestone/Spec reads and permits capacity-limited sequential fresh readers. | Rerun A1 and A2 on `8329421` when the fresh driver can consume the installed Skill and dispatch instrumentation can retain every context line. |
 | FT-0015 | `78ec888` | HP1 | A phase-owned deferred Design finding can make the bounded dirty handoff fail before independent validation. | `d68ae66` admits only the exact active deferred-adapter destination alongside Design and Contract, then checkpoints it after READY approval. | Rerun HP1 through Design validation when the host permits fresh phase execution. |
 
 ## Resolved after migration
