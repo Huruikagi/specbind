@@ -79,11 +79,11 @@ Use the base fixture and ask:
 - It compares repository facts, the current main and UI candidates, and the
   Design and Contract Rules before proposing an API or infrastructure candidate.
 - Because the base fixture establishes neither an external API nor independent
-  infrastructure responsibility, it presents existing-surface and
-  conditional-candidate options and asks which is intended before writing.
+  infrastructure responsibility, it extends the existing main Design with
+  conditional API and operations guidance rather than adding candidates.
 - It does not infer a new candidate from the future technology labels. The
-  candidate set, Rule, existing artifacts, and lifecycle state remain unchanged
-  before that answer.
+  candidate set, selection Rule, existing artifacts, and lifecycle state remain
+  unchanged; only the project-owned main Design template changes.
 
 ## Existing-implementation adoption scenarios
 

@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `ada3fa9` | CF3 — pass | [Configuration candidate inference confirmation](./runs/2026-09-01-codex-ada3fa9-cf3.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `086620a` | CF3 — product failure | [Configuration candidate inference](./runs/2026-09-01-codex-086620a-cf3.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `3da9af7` | D15 canonical URL selector — pass; full multi-entry fixture remains blocked | [GitHub Milestone canonical URL](./runs/2026-09-01-codex-3da9af7-github-milestone-url.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `e381126` | D15 — environment blocked; authenticated fallback and confirmation boundary measured | [GitHub Milestone provider](./runs/2026-09-01-codex-e381126-github-milestone.md) |
