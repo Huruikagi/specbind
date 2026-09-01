@@ -194,7 +194,9 @@ to use an explicit `OWNER/REPO` and Milestone number prepared for this scenario.
 The Milestone has open and closed Issues, one shared Issue, and known entries
 whose dispositions are excluded, duplicate, and unresolved.
 
-> Ask: use `OWNER/REPO` Milestone `NUMBER` as the release source and run Discovery.
+> Ask: use `OWNER/REPO` Milestone `NUMBER`, or
+> `https://github.com/OWNER/REPO/milestone/NUMBER`, as the release source and
+> run Discovery.
 
 - Before confirmation, Source coverage identifies the canonical repository and
   numbered Milestone and lists every open and closed Issue exactly once, with
@@ -203,6 +205,9 @@ whose dispositions are excluded, duplicate, and unresolved.
 - An inaccessible Issue, failed page, ambiguous Milestone, or incomplete
   pagination leaves no mutation, invalidation, or Brief. The partial result is
   not eligible for confirmation.
+- A canonical URL produces the same proposal as separate identities. A URL with
+  a query, fragment, wrong host, or additional path stops before GitHub reads or
+  mutation.
 - After Discovery-only approval of a complete fixture, the Roadmap has the
   complete collection mapping; each Brief holds only its relevant exact Issue
   subset; and a shared Issue may be present in several Briefs.

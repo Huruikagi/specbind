@@ -1,8 +1,16 @@
 # GitHub Milestone Source Collection
 
 Use this procedure only when the maintainer explicitly supplies canonical
-`OWNER/REPO` and a Milestone number as Discovery input. Do not infer either
-identity from a URL or select a similarly named Milestone.
+`OWNER/REPO` and a Milestone number, or exactly
+`https://github.com/OWNER/REPO/milestone/NUMBER`, as Discovery input. The URL
+form is a complete explicit selector: parse its owner, repository, and decimal
+Milestone number before acquisition, then use them exactly as if they had been
+stated separately.
+
+Accept no other URL shape. A different host, missing component, extra path,
+query, fragment, percent-encoded path component, or non-decimal number stops
+for clarification. Do not search, normalize, redirect, or infer identities from
+a near match or a similarly named Milestone.
 
 Read the shared semantic contract once before acquisition:
 
@@ -24,8 +32,9 @@ gh api repos/OWNER/REPO/milestones/MILESTONE_NUMBER
 gh api --paginate --slurp 'repos/OWNER/REPO/issues?milestone=MILESTONE_NUMBER&state=all&per_page=100'
 ```
 
-Replace only the explicit identities; do not turn these read commands into a
-write. The `--paginate --slurp` result is one logical inventory: retain every
+Replace only the explicit identities parsed from the separate input or exact
+URL; do not turn these read commands into a write. The `--paginate --slurp`
+result is one logical inventory: retain every
 page and stop if any page is unavailable or cannot be accounted for. Confirm
 that the returned canonical repository and numbered Milestone match the request.
 A missing, inaccessible, or ambiguous identity is partial acquisition, not an

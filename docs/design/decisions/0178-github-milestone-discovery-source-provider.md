@@ -14,7 +14,12 @@ Issues, exclusions, provenance, and the normal Discovery confirmation boundary.
 `github-milestone` is the first remote Source Collection provider. It is a
 progressive `sb-discovery` reference, not a Rust CLI capability.
 
-The maintainer supplies both a canonical `OWNER/REPO` and a Milestone number.
+The maintainer supplies either both a canonical `OWNER/REPO` and a Milestone
+number, or the exact canonical URL
+`https://github.com/OWNER/REPO/milestone/NUMBER`. Discovery parses that URL as
+the same two explicit identities; it does not infer them. A URL with a different
+host, path shape, query, fragment, empty component, or non-numeric number is
+not a collection selector and stops for clarification.
 Discovery reads the selected repository and numbered Milestone through an
 available authenticated GitHub integration; authenticated `gh` is the fallback.
 It must prove that the returned repository and Milestone identities match the
@@ -55,8 +60,8 @@ an explicit Discovery rerun and ordinary confirmed scope/update and rewind flow.
   promotion boundaries, including the remote no-requery rule.
 - `sb-discovery/references/github-milestone.md` owns identity resolution,
   complete read-only acquisition, entry handling, and failure stops.
-- `sb-discovery` selects that procedure only for an explicit GitHub repository
-  and Milestone request.
+- `sb-discovery` selects that procedure only for explicit repository/Milestone
+  identities, whether stated separately or supplied by the exact canonical URL.
 - The Rust CLI packages the new embedded reference but adds no network client,
   OAuth, credentials, GitHub model, or source lifecycle state.
 
@@ -69,7 +74,8 @@ an explicit Discovery rerun and ordinary confirmed scope/update and rewind flow.
 
 ## Verification
 
-Mechanical tests cover packaged resources, provider selection, fallback
+Mechanical tests cover packaged resources, canonical-URL parsing and rejection,
+provider selection, fallback
 commands, complete pagination, partial-acquisition stops, non-Issue handling,
 and the no-requery promotion boundary. Forward-test scenario D15 exercises a
 fixture against an authenticated read-only GitHub Milestone where available.

@@ -60,9 +60,11 @@ identified GitHub repository Milestone, as one Source Collection. It inventories
 every source item, records each item's Roadmap destination or exclusion reason,
 and lists only a Spec's relevant items in its Brief. An unreadable local item,
 inaccessible GitHub entry, or incomplete GitHub page stops the collection rather
-than allowing partial coverage. A GitHub Milestone must name both `OWNER/REPO`
-and its Milestone number; open and closed Issues are included, while comments
-and timeline events are not source material.
+than allowing partial coverage. A GitHub Milestone may name `OWNER/REPO` and its
+Milestone number separately, or use the exact canonical URL
+`https://github.com/OWNER/REPO/milestone/NUMBER`; other URL shapes are rejected.
+Open and closed Issues are included, while comments and timeline events are not
+source material.
 
 Source material is input, not authoritative specification. Requirements and
 Design read the Brief-declared sources and promote accepted behavior and

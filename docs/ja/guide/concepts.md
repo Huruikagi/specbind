@@ -66,9 +66,10 @@ Discoveryには、プロジェクト内のGitで追跡済みのテキストフ�
 渡せます。Discoveryはコレクション全体を棚卸しし、RoadmapにすべてのSource Itemの
 振り分けを、各BriefにそのSpecが参照する項目だけを記録します。読めないローカル項目、
 アクセスできないGitHub項目、GitHubの不完全なページ送りがあれば、一部だけを使って
-進めずに停止します。GitHub Milestoneは`OWNER/REPO`とMilestone番号の両方を指定し、
-openとclosedのIssueを対象にします。コメントとタイムラインイベントは入力資料では
-ありません。
+進めずに停止します。GitHub Milestoneは`OWNER/REPO`とMilestone番号を別々に指定するか、
+厳密な正規URLの`https://github.com/OWNER/REPO/milestone/NUMBER`を指定します。別のURL
+形式は受け付けません。openとclosedのIssueを対象にします。コメントとタイムライン
+イベントは入力資料ではありません。
 
 Source Collectionは正規の仕様そのものではありません。RequirementsとDesignは
 Briefが指定した資料を読み、採用する振る舞いや技術上の結論を自身の成果物へ

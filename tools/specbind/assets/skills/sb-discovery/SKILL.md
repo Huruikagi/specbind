@@ -104,17 +104,20 @@ ordinary conversational request path below is unchanged.
 
 ### When the request names a GitHub Milestone
 
-Use this route only when the maintainer explicitly supplies both a GitHub
-`OWNER/REPO` and a Milestone number as Discovery input. Read [the GitHub
-Milestone procedure](references/github-milestone.md) completely and follow it
-before classification. It performs one complete read-only acquisition, adds
-Source coverage to the normal confirmation and authoring flow, and never turns
-GitHub metadata into specification authority.
+Use this route when the maintainer explicitly supplies both a GitHub
+`OWNER/REPO` and a Milestone number, or the exact canonical URL
+`https://github.com/OWNER/REPO/milestone/NUMBER`. Read [the GitHub Milestone
+procedure](references/github-milestone.md) completely and follow it before
+classification. It performs one complete read-only acquisition, adds Source
+coverage to the normal confirmation and authoring flow, and never turns GitHub
+metadata into specification authority.
 
-Do not infer a repository from a URL, choose a Milestone by title, or search a
-user's Issues for a likely collection. Without both explicit identities, ask the
-maintainer to provide them; do not use the local provider or ordinary request
-path as a substitute.
+Parse only that exact URL shape into its explicit repository and Milestone
+identities; then verify both against GitHub's returned values. Do not infer from
+another URL, accept query or fragment text, choose a Milestone by title, or
+search a user's Issues for a likely collection. Without valid explicit
+identities, ask the maintainer to provide them; do not use the local provider or
+ordinary request path as a substitute.
 
 ### Does this need the workflow at all?
 

@@ -378,8 +378,8 @@ fn github_milestone_source_collection_is_complete_read_only_and_preserved() {
     let discovery = skill_package_text("sb-discovery");
     for required in [
         "references/github-milestone.md",
-        "both a GitHub\n`OWNER/REPO` and a Milestone number",
-        "Do not infer a repository",
+        "or the exact canonical URL",
+        "Parse only that exact URL shape",
     ] {
         assert!(
             discovery.contains(required),
@@ -390,6 +390,9 @@ fn github_milestone_source_collection_is_complete_read_only_and_preserved() {
     let provider = skill_resource_text("sb-discovery", "references/github-milestone.md");
     for required in [
         "gh auth status",
+        "https://github.com/OWNER/REPO/milestone/NUMBER",
+        "Accept no other URL shape",
+        "query, fragment, percent-encoded path component",
         "--paginate --slurp",
         "state=all",
         "pull_request",
