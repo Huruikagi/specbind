@@ -62,7 +62,7 @@ Read the directly applicable reference completely before changing anything:
 two rounds all go to the same place: **a fresh dispatch that receives the
 failure and the inputs, and not the failed attempts.**
 
-Use the registered `sb-debugger` role when available, with an ordinary
+Use the registered `specbind-debugger` role when available, with an ordinary
 fresh subagent as the fallback. Never substitute the implementer or reviewer
 role: fresh diagnostic judgment is the reason this dispatch exists.
 

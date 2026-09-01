@@ -50,7 +50,7 @@ you never separately made.
 
 ### Dispatch a fresh implementer
 
-Use the registered `sb-implementer` role when the host provides it;
+Use the registered `specbind-implementer` role when the host provides it;
 otherwise dispatch an ordinary fresh subagent with the same brief and protocol.
 The role selects capability, not scope or authority.
 Fallback is only for an absent role. If a registered role exists but its

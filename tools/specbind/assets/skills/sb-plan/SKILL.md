@@ -180,7 +180,7 @@ as a workflow or artifact defect. Correct the dispatch payload or environment
 before the bounded retry. These operating facts grant no additional scope,
 mutation, or approval authority.
 
-Use the registered `sb-planner` role when the host provides it; otherwise
+Use the registered `specbind-planner` role when the host provides it; otherwise
 use an ordinary fresh subagent. The role changes capability, never the owning
 skill, scope, or authority. Fallback is only for an absent role. A configured
 role whose model cannot start is an environment failure, not permission to
