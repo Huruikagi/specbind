@@ -112,10 +112,27 @@ request or discovery owns scope expansion.
 
 ## 4. Run the owned phases
 
+Before the first dispatch, establish the exact project working directory and
+confirm `specbind --version` from there. Record the executable resolution and
+any project-local `PATH` entry or equivalent environment fact required to
+reproduce that same resolution. Do not assume a fresh receiver inherits the
+orchestrator's current directory or process environment.
+
 Each phase is a fresh dispatch. Give it the Spec identity, phase, and, when
 delegation was accepted, the workflow name `specbind-plan` plus the
 authorized gate names. It reads its own artifact inputs; authorization omitted
-from the dispatch does not reach it.
+from the dispatch does not reach it. Also give every phase, Design validator,
+and Contract Review receiver the exact project working directory, the
+project-local instruction files that apply there, and the confirmed `specbind`
+executable, version, and required environment facts. The receiver must start in
+that directory and reproduce the same CLI resolution before artifact work.
+
+If the receiver cannot reproduce the confirmed executable and version, treat
+that as an environment failure. It must not fall back to another `specbind`,
+silently alter `PATH`, install a replacement, or reinterpret missing commands
+as a workflow or artifact defect. Correct the dispatch payload or environment
+before the bounded retry. These operating facts grant no additional scope,
+mutation, or approval authority.
 
 Use the registered `specbind-planner` role when the host provides it; otherwise
 use an ordinary fresh subagent. The role changes capability, never the owning

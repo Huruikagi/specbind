@@ -537,6 +537,24 @@ fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
 }
 
 #[test]
+fn planning_dispatch_carries_project_local_execution_environment() {
+    let body = skill::find("specbind-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+
+    for required in [
+        "exact project working directory",
+        "project-local instruction files",
+        "confirmed `specbind`\nexecutable, version, and required environment facts",
+        "must not fall back to another `specbind`",
+        "grant no additional scope",
+    ] {
+        assert!(body.contains(required), "plan must contain {required}");
+    }
+}
+
+#[test]
 fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
     let body = skill::find("specbind-plan")
         .expect("planning orchestrator")
