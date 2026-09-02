@@ -3,7 +3,7 @@
 このページでは、まだ実装を始めていないプロジェクトへSpecBindを導入し、最初の
 リリース範囲を複数の責務へ分けて、スコープの確認から実装の検証まで進めます。
 
-必要な環境とエージェントについては、[はじめに](./getting-started.md)の
+必要な環境とエージェントについては、[ルートを選ぶ](./getting-started.md)の
 「どちらのルートでも必要なもの」を確認しておいてください。
 
 !!! info "用語について"
@@ -52,119 +52,34 @@ git commit -m "Initialize project"
 `git status --short`で追加対象を確認してからステージしてください。コミットする内容や
 メッセージは、プロジェクトの方針に合わせます。
 
-## 2. CLIをインストールする
+## 2. SpecBindをインストールする
 
-対象プロジェクトのルートで、[mise](https://mise.jdx.dev/)を使ってSpecBindを
-インストールします。
+CLIの導入とプロジェクトへの配置は、両ルート共通の
+[SpecBindをインストールする](./install.md)にまとめています。
 
 ```sh
 mise use github:Huruikagi/specbind
 mise lock
-```
-
-`mise use`はSpecBindを`mise.toml`へ追加し、`mise lock`は選ばれたバージョンと
-配布物のチェックサムを`mise.lock`へ記録します。
-
-インストールできたか確認します。
-
-```sh
-specbind --version
-```
-
-追加または更新された`mise.toml`と`mise.lock`の内容を確認し、どちらもGitへ
-コミットしてください。これにより、チームで同じバージョンのSpecBindを使えます。
-
-miseを使わないインストール方法は、
-[README](https://github.com/Huruikagi/specbind#install-the-cli)を参照してください。
-
-## 3. SpecBindを導入する
-
-今インストールしたCLIの最初の仕事として、
-SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
-
-このガイドではCodexを例に進めます。
-
-```sh
 specbind install --agent codex --language ja --project-instructions
 ```
 
-### `--agent`
+エージェントの選び方、`--dry-run`での事前確認、書き込まれるファイル、コミットと
+セッションの開き直しは、そのページを参照してください。手順1で作った土台とは
+分けてコミットします。
 
-使うコーディングエージェントに合わせて、`--agent`の値を選んでください。
+インストールが済んだら、このページへ戻ってきてください。以降のスキル呼び出しは
+Codexの表記（`$`）で示します。Claude Codeでは`/`に読み替えてください。
 
-| 使うエージェント | 指定する値 |
-| --- | --- |
-| Codex | `codex` |
-| Claude Code | `claude-code` |
-| Agent Skillsと`AGENTS.md`に対応するその他のエージェント | `generic` |
-
-複数のエージェントを使う場合は、`--agent codex --agent claude-code`のように
-`--agent`を繰り返します。
-
-`generic`が作るのは、`.agents/skills/`のAgent Skillsとルート`AGENTS.md`の
-案内ブロックだけです。サブエージェント定義は作りません。
-
-### `--language ja`
-
-SpecBindが管理する成果物、具体的には `requirements.md` や
-`design.md` の言語を日本語にします。
-
-### `--project-instructions`
-
-`AGENTS.md`または
-`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
-もともと書いてある既存の文章はそのまま残ります。
-普通はつけたほうがいいでしょう。
-
-### 書き込まれる内容を確認する
-
-同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
-`keep`と、廃止された製品管理対象に対する`remove`の計画を確認できます。
-
-```sh
-specbind install --dry-run --agent codex --language ja --project-instructions
-```
-
-主に、次のファイルが追加されます。
-
-```text
-.specbind.json
-.specbind/settings/
-.agents/skills/specbind-*/       # Codexとgenericで共有
-.codex/agents/specbind-*.toml    # Codexの役割別モデル設定
-.claude/skills/specbind-*/       # Claude Code
-.claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
-AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
-```
-
-CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定されます。
-変更する場合は、
-[カスタマイズガイド](./customization.md)の「プロジェクト設定と役割別モデル」を
-参照してください。
-
-生成された内容をレビューし、手順1で作った土台へのコミットとは分けてコミットして
-ください。SpecBindのインストーラ自体はコミットを行いません。
-
-### セッションを開き直す
-
-導入したら、対象プロジェクトでコーディングエージェントのセッションを開き直してください。
-そうしないと、エージェントが新しいスキルを認識できないことがあります。
-
-以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
-読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
-`specbind-*`というスキル名は同じですが、呼び出し方はエージェントごとに異なります。
-利用するエージェントのスキル選択または自動Discoveryの方法に読み替えてください。
-
-## 4. 設定は既定のまま進める
+## 3. 設定は既定のまま進める
 
 初回のインストールが成功すると、`sb-configure`で設定レビューを行うよう案内されます。
 ただし最初は、この案内に従う前に、既定値のまま最初のリリース範囲を一周することを
 おすすめします。SpecBindの既定のテンプレートや判断基準は、そのまま使えるように
 設計されています。特に新規プロジェクトでは、まだ判断材料が少ないので、一周して
 調整したい面が見えてから`sb-configure`に見直しを依頼すれば十分です。方法は
-[プロジェクトに合わせてカスタマイズする](./customization.md)にまとめています。
+[カスタマイズ](./customization.md)にまとめています。
 
-## 5. 最初のリリース範囲を用意する
+## 4. 最初のリリース範囲を用意する
 
 新規プロジェクトでは、1つの小さな機能に絞る必要はありません。最初のリリースで
 一緒に届けたいプロダクト範囲をまとめて用意します。Discoveryが入力全体を読み、
@@ -204,7 +119,7 @@ $sb-steering この新規プロジェクトで、すでに決めた長期的な�
 技術や構造を先回りして決める必要はありません。作成した場合は内容を確認し、
 コミットしてから続けます。
 
-## 6. Discoveryでスコープを確認する
+## 5. Discoveryでスコープを確認する
 
 用意したディレクトリを、最初のリリース範囲としてdiscoveryスキルへ渡します。
 
@@ -214,7 +129,7 @@ $sb-discovery docs/product-definition/ の内容を最初のリリース範囲�
 
 Discoveryはコレクションを全部棚卸しし、各ファイルをどの作業に使うか、今回は
 使わないかを示します。細かい要件や設計は後続のPlanで詰めます。技術や構成の選定も
-Discoveryの範囲外で、決まっていれば5節のSteering、まだなら後続のDesignで扱います。
+Discoveryの範囲外で、決まっていれば手順4のSteering、まだなら後続のDesignで扱います。
 
 Discoveryは、プロジェクトの現在の状態（Spec、Steering、Milestone）を読んだうえで、
 入力を分類します。新規プロジェクトではまだ既存のSpecが無いので、今回の範囲は
@@ -251,7 +166,7 @@ $sb-status
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
-## 7. 計画と実装の進め方を選ぶ
+## 6. 計画と実装の進め方を選ぶ
 
 最初のリリース範囲には複数のSpecがあるため、通常は次の組み合わせで進めます。
 
@@ -269,7 +184,7 @@ PlanでMilestone全体のRequirements、Design、Contractレビュー、Tasksを
 [1件ずつ計画・実装する](./implement-step-by-step.md)へ進みます。どちらも同じ所有スキル、
 レビュー、CLIが記録する証拠を使い、各境界を自分で選ぶ粒度だけが異なります。
 
-## 8. 生成された成果物を見る
+## 7. 生成された成果物を見る
 
 Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
@@ -316,10 +231,10 @@ specbind spec status <spec-id> --json
 - [1件ずつ計画・実装する](./implement-step-by-step.md)
 - [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
-- [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
+- [カスタマイズ](./customization.md) — 一周して調整したい点が見えてから
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
 - [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 
-[はじめに](./getting-started.md) | [既存プロジェクトで始める](./start-existing-project.md)
+[ユーザーガイド](../index.md) | [SpecBindをインストールする](./install.md) | [既存プロジェクトで始める](./start-existing-project.md)

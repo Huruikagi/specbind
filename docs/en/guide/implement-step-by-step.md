@@ -129,4 +129,4 @@ work to advance, use [Plan and Drive a Milestone](./implement-with-plan-and-driv
 
 ---
 
-[Core concepts](./concepts.md) | [Plan and Drive a Milestone](./implement-with-plan-and-drive.md) | [Release a milestone](./release.md)
+[User guide](../index.md) | [Plan and Drive a Milestone](./implement-with-plan-and-drive.md) | [Release a milestone](./release.md)

@@ -101,10 +101,10 @@ Then choose the route that matches the repository:
 - [Start with an existing project](./docs/en/guide/start-existing-project.md)
   when code or tests already exist.
 
-The [Getting Started guide](./docs/en/guide/getting-started.md) explains both
-routes and their prerequisites. The
-[Japanese Getting Started guide](./docs/ja/guide/getting-started.md) covers the
-same workflow in Japanese.
+[Choose a route](./docs/en/guide/getting-started.md) explains both routes and
+their prerequisites, and [Install SpecBind](./docs/en/guide/install.md) covers
+the installation step they share. The Japanese guide covers the same workflow
+under [ルートを選ぶ](./docs/ja/guide/getting-started.md).
 
 ## Learn more
 

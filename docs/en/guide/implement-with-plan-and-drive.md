@@ -136,4 +136,4 @@ To review every artifact and Gate separately, use
 
 ---
 
-[Core concepts](./concepts.md) | [Plan and implement one item at a time](./implement-step-by-step.md) | [Release a milestone](./release.md)
+[User guide](../index.md) | [Plan and implement one item at a time](./implement-step-by-step.md) | [Release a milestone](./release.md)

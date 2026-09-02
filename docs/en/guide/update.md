@@ -86,3 +86,7 @@ Update the binary by rerunning the same installer used to place it. See
 for the available installers and supported environments. After updating the
 binary, the `specbind install --dry-run` and `specbind install` project-refresh
 steps are the same as the mise flow.
+
+---
+
+[User guide](../index.md) | [Install SpecBind](./install.md) | [Remove an Agent or uninstall](./uninstall.md)

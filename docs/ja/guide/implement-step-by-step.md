@@ -120,4 +120,4 @@ Milestoneに複数の独立項目があり、安全に進められる範囲を�
 
 ---
 
-[基本概念](./concepts.md) | [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md) | [リリースする](./release.md)
+[ユーザーガイド](../index.md) | [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md) | [リリースする](./release.md)

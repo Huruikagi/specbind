@@ -38,7 +38,7 @@ CLIもSpecBindも、この手順を代行しません。
 - **プロジェクト固有の作業が本当に不要なら** — Front Matterを残して本文を空に
   すると、「リリースに固有の手順は不要」という明示になります。
 
-書き方の詳細は[プロジェクトに合わせてカスタマイズする](./customization.md)の
+書き方の詳細は[カスタマイズ](./customization.md)の
 アダプターの節にあります。
 
 ## 2. sb-release を実行する
@@ -121,10 +121,10 @@ specbind release preflight         # 未紐付けや未受理の完了記録な�
 ## 次に読む
 
 - [基本概念](./concepts.md)
-- [プロジェクトに合わせてカスタマイズする](./customization.md) — リリース / Gitアダプターの書き方
+- [カスタマイズ](./customization.md) — リリース / Gitアダプターの書き方
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
 - [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 
-[はじめに](./getting-started.md) | [基本概念](./concepts.md)
+[ユーザーガイド](../index.md) | [基本概念](./concepts.md) | [カスタマイズ](./customization.md)

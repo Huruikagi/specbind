@@ -1,7 +1,8 @@
-# Getting Started
+# Choose a route
 
 How you start with SpecBind depends on whether your project already has an
-implementation. Choose the route that matches its current state.
+implementation. Choose the route that matches its current state. Both routes
+share the same [Install SpecBind](./install.md) step.
 
 !!! info "Terminology"
     Terms used in these guides, including Spec, Steering, Milestone, and Gate,
@@ -21,11 +22,13 @@ you are still exploring what to build, prototype without SpecBind first.
 
 ## Start with an existing project
 
-Use this route when the repository already contains code or tests. You can
-either use SpecBind for the next change or establish Specs from the existing
-implementation.
+Use this route when the repository already contains code or tests. After
+installation, choose between:
 
-[Start with an existing project](./start-existing-project.md)
+| Goal | Route |
+| --- | --- |
+| Use SpecBind for the next change | [Start with an existing project](./start-existing-project.md) |
+| Make the working implementation the current baseline specification | [Establish Specs from an existing implementation](./adopt-existing.md) |
 
 ## Requirements for either route
 
@@ -51,4 +54,4 @@ normal workflow.
 
 ---
 
-[Guide home](../index.md) | [Core concepts](./concepts.md)
+[User guide](../index.md) | [Install SpecBind](./install.md) | [Core concepts](./concepts.md)

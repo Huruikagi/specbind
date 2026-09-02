@@ -41,3 +41,7 @@ useful.
 
 If neither form fits, you may open a blank Issue. Prefer the structured forms
 for reproducible defects and product or workflow changes.
+
+---
+
+[User guide](../index.md) | [Choose a route](./getting-started.md)
