@@ -137,7 +137,7 @@ project defaults or integration need review.
 
 ## Development
 
-The workspace pins Rust 1.97.1, Rustfmt, and Clippy through [`rust-toolchain.toml`](./tools/specbind/rust-toolchain.toml). Install [Rustup](https://rustup.rs/) before running Cargo commands. Windows development with the default MSVC target also requires Visual Studio Build Tools with the **Desktop development with C++** workload and a Windows SDK.
+The workspace uses Rust 1.98.0, Rustfmt, and Clippy for development through [`rust-toolchain.toml`](./tools/specbind/rust-toolchain.toml), while [`Cargo.toml`](./tools/specbind/Cargo.toml) retains Rust 1.97.1 as the minimum supported Rust version. Install [Rustup](https://rustup.rs/) before running Cargo commands. Windows development with the default MSVC target also requires Visual Studio Build Tools with the **Desktop development with C++** workload and a Windows SDK.
 
 Run the current CLI from the Rust workspace:
 
