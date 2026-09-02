@@ -63,9 +63,9 @@ The main installed surfaces are:
 ```text
 .specbind.json
 .specbind/settings/
-.agents/skills/specbind-*/       # shared by Codex and generic
+.agents/skills/sb-*/             # shared by Codex and generic
 .codex/agents/specbind-*.toml    # Codex role configuration
-.claude/skills/specbind-*/       # Claude Code
+.claude/skills/sb-*/             # Claude Code
 .claude/agents/specbind-*.md     # Claude Code role configuration
 AGENTS.md / CLAUDE.md            # when project instructions are enabled
 ```
@@ -84,7 +84,7 @@ Then reopen the coding-agent session so it discovers the new Skills.
 !!! info "Skill invocation syntax"
     The examples in this guide use Codex `$skill` syntax. Claude Code uses
     `/skill` with the same Skill names and arguments. A `generic` host installs
-    the same `specbind-*` Skills; use that host's Skill selection or automatic
+    the same `sb-*` Skills; use that host's Skill selection or automatic
     discovery mechanism.
 
 ## Next

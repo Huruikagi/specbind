@@ -73,7 +73,8 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
 - `scripts/check_decisions.py` — Decision filename, heading, identifier, and repository-map consistency check
-- `.github/workflows/rust.yml` — Windows and Linux Rust verification
+- `.github/workflows/rust.yml` — ordinary Linux Rust verification
+- `.github/workflows/release.yml` — native Windows, Linux, and macOS release verification and packaging
 - `.github/workflows/decisions.yml` — focused Decision-index verification for affected pushes and pull requests
 
 ## User documentation

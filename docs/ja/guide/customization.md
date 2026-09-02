@@ -402,7 +402,7 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 次はSpecBindが管理している製品側の契約です。直接編集しても、サポートされた
 カスタマイズにはなりません。
 
-- `.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`のスキル本体
+- `.agents/skills/sb-*/`と`.claude/skills/sb-*/`のスキル本体
 - `.codex/agents/specbind-*.toml`と`.claude/agents/specbind-*.md`の役割定義
 - CLIが埋め込むプロトコルとスキーマ
 - Gate、承認、フィンガープリント、状態の遷移、必須のトレーサビリティ

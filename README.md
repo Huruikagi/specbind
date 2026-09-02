@@ -12,6 +12,7 @@ SpecBind combines agent skills with a deterministic CLI:
 - **Skills own judgment.** Agents help discover the right scope, author requirements and designs, review contracts, plan tasks, implement changes, and evaluate results.
 - **The CLI owns invariants.** It validates artifacts and traceability, records approvals and task progress, detects stale downstream work, and guards lifecycle and release transitions.
 - **Specs stay alive.** A Spec describes a product capability across milestones and releases. Later changes update the same durable requirements, design, and external contract instead of starting from a disposable plan.
+- **Existing products can establish a baseline.** Evidence-backed reverse discovery can establish durable Specs from a fixed implementation revision without presenting existing behavior as a new release.
 - **Milestones make delivery explicit.** A Roadmap groups the work intended for a release, including dependencies across Specs and smaller Direct changes that do not need their own Spec.
 - **Contracts expose cross-Spec seams early.** A contract-first review happens before task planning, so ownership conflicts, dependency cycles, and integration assumptions surface before implementation.
 
@@ -33,7 +34,7 @@ discover scope
 
 Approvals bind each phase to the exact inputs that were reviewed. If an upstream artifact changes, SpecBind marks the affected downstream evidence stale rather than letting an agent silently continue from an obsolete plan. Faster orchestration can reuse the same artifacts and guards without defining a weaker workflow.
 
-Projects can adapt document templates, shared rules, and Git or release guidance while keeping the product's validation and state transitions consistent. SpecBind is developed and tested with Codex and Claude Code, and provides shared Agent Skills and `AGENTS.md` integration for other compatible agents. English and Japanese are the v1 artifact languages.
+Projects can adapt document templates, shared rules, and Git, release, or final-validation guidance while keeping the product's validation and state transitions consistent. SpecBind is developed and tested with Codex and Claude Code, and provides shared Agent Skills and `AGENTS.md` integration for other compatible agents. English and Japanese are the v1 artifact languages.
 
 ## Get started
 
@@ -47,13 +48,15 @@ With [mise](https://mise.jdx.dev/), on any supported platform:
 
 ```sh
 mise use github:Huruikagi/specbind
+mise lock
 ```
 
 This installs the latest stable version eligible under your mise settings and
 records it in the mise configuration selected for the current directory. mise
 applies a minimum release age to `latest` by default. If a newly published
 stable release is not eligible yet, select that version explicitly with
-`github:Huruikagi/specbind@<version>`.
+`github:Huruikagi/specbind@<version>`. `mise lock` records the selected version
+and distribution checksum so the project can use the same release consistently.
 
 Without mise, use the platform installer.
 
@@ -89,10 +92,11 @@ integration and English artifact defaults:
 specbind install --agent codex --language en --project-instructions
 ```
 
-Use `claude-code` instead of `codex` for Claude Code, and `ja` instead of `en`
-for Japanese artifacts. The command installs the product-managed Skills and
-creates project-owned templates, rules, and adapter guidance under
-`.specbind/settings/`.
+Use `claude-code` instead of `codex` for Claude Code, or `generic` for another
+host that supports Agent Skills and `AGENTS.md`. Repeat `--agent` to install
+more than one integration, and use `ja` instead of `en` for Japanese artifacts.
+The command installs the product-managed Skills and creates project-owned
+templates, rules, and adapter guidance under `.specbind/settings/`.
 
 Then choose the route that matches the repository:
 
@@ -106,14 +110,23 @@ their prerequisites, and [Install SpecBind](./docs/en/guide/install.md) covers
 the installation step they share. The Japanese guide covers the same workflow
 under [ルートを選ぶ](./docs/ja/guide/getting-started.md).
 
+Review and commit the installed files, then reopen the coding-agent session so
+it discovers the new Skills. Codex invokes them as `$sb-*`; Claude Code uses
+`/sb-*`. Follow the selected route into `sb-discovery`, then use `sb-plan` and
+`sb-drive` to advance the active milestone. Use `sb-configure` whenever the
+project defaults or integration need review.
+
 ## Learn more
 
 - [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
-- [English user guide](./docs/en/index.md) and [Japanese user guide](./docs/ja/index.md) cover installation, delivery, customization, and removal.
+- [English user guide](./docs/en/index.md) and [Japanese user guide](./docs/ja/index.md) cover installation, delivery, customization, updating, and removal.
+- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
+
+### Design and development references
+
 - [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
 - [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
 - [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
-- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
 - [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
 
 ## Repository layout
@@ -143,7 +156,10 @@ cargo test --workspace --all-features
 cargo build --workspace --release
 ```
 
-`Cargo.lock` is committed because SpecBind distributes an application binary. The same checks run on Windows and Linux in [the Rust workflow](./.github/workflows/rust.yml).
+`Cargo.lock` is committed because SpecBind distributes an application binary.
+The ordinary [Rust workflow](./.github/workflows/rust.yml) runs these checks on
+Linux. The [release workflow](./.github/workflows/release.yml) repeats them while
+building the supported native archives on Windows, Linux, and macOS.
 
 The versioned Rust DTOs under [`src/schema/`](./tools/specbind/src/schema/) are the structural source of truth for structured artifacts. After changing them, regenerate the checked-in Draft 2020-12 schemas and review the resulting diff:
 

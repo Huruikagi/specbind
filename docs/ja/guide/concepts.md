@@ -185,7 +185,7 @@ Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Sp
 持ち物です。初回の導入で既定値を作りますが、そのあと`specbind install`を実行
 しても、プロジェクト側の設定を上書きしません。
 
-一方、`.agents/skills/specbind-*/`と`.claude/skills/specbind-*/`はSpecBind製品
+一方、`.agents/skills/sb-*/`と`.claude/skills/sb-*/`はSpecBind製品
 側の持ち物です。`specbind install`を再実行すると、Gitに未コミットの変更がないことを
 確認したうえで、現在の埋め込み版へ更新します。スキルファイルを直接編集する
 やり方は、サポートしているカスタマイズ方法ではありません。

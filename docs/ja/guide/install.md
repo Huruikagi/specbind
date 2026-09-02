@@ -85,9 +85,9 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 ```text
 .specbind.json
 .specbind/settings/
-.agents/skills/specbind-*/       # Codexとgenericで共有
+.agents/skills/sb-*/             # Codexとgenericで共有
 .codex/agents/specbind-*.toml    # Codexの役割別モデル設定
-.claude/skills/specbind-*/       # Claude Code
+.claude/skills/sb-*/             # Claude Code
 .claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
 AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 ```
@@ -107,7 +107,7 @@ CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定�
 !!! info "スキルの呼び出し表記"
     このガイドのスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の
     `$`を`/`に読み替えてください。スキル名と引数は同じです。`generic`を選んだ
-    場合も`specbind-*`というスキル名は同じですが、呼び出し方はエージェントごとに
+    場合も`sb-*`というスキル名は同じですが、呼び出し方はエージェントごとに
     異なります。利用するエージェントのスキル選択または自動Discoveryの方法に
     読み替えてください。
 
