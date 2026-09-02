@@ -208,6 +208,10 @@ Before confirmation:
 
 - The complete proposal identifies the `Bookshp` README heading as a suspected
   product-name defect without turning it into Spec scope or a blocking unknown.
+- Steering fixes the otherwise ambiguous quantity behavior: numeric quantities,
+  including zero and negative values, are accumulated in this existing version;
+  non-numeric input behavior is outside the selected baseline. The proposal has
+  no blocking semantic unknown on that boundary.
 - The agent discovers the Deferred Findings Adapter through `adapter list` and
   its reported selector. It does not try a type-derived selector.
 - No `.specbind/deferred.md`, milestone, Spec, Brief, or Research exists, and
