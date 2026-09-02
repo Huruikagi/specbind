@@ -24,6 +24,9 @@ bootstrap, and successful release finalization. Keep completion and finalized
 release metadata in their own checkpoints when those workflows require one. A
 completed `sb-configure` change and its required or authorized aftercare
 form one configuration checkpoint; declined optional aftercare is not included.
+The explicit SpecBind update procedure is the exception: its binary-selection
+change and product-asset refresh are two separate checkpoints so the refresh
+starts from the clean worktree required by the installer.
 
 ## What to include
 

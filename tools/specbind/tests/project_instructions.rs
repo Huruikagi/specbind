@@ -1,5 +1,14 @@
 use specbind::{install::Agent, project_instructions};
 
+fn assert_explicit_update_route(content: &str) {
+    assert!(content.contains(
+        "explicitly asks to update the SpecBind binary, change its\n  mise-selected version"
+    ));
+    assert!(
+        content.contains("select `sb-configure` directly before ordinary change-request routing")
+    );
+}
+
 #[test]
 fn writes_each_agent_its_own_instruction_file() {
     // A shared file would leave one agent without instructions, because each
@@ -27,6 +36,7 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("do not translate a\n  Skill name into a `specbind ...` command")
     );
+    assert_explicit_update_route(&applied.content);
     assert!(
         applied
             .content

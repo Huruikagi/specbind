@@ -192,6 +192,12 @@ fn states_that_the_git_adapter_grants_no_authority() {
             scaffold.contains("sb-configure"),
             "configuration changes must be named as eligible checkpoints: {scaffold}"
         );
+        assert!(
+            (scaffold.contains("binary-selection") || scaffold.contains("バイナリ選択"))
+                && (scaffold.contains("two separate checkpoints")
+                    || scaffold.contains("別々のcheckpoint")),
+            "the explicit update workflow must retain two checkpoints: {scaffold}"
+        );
     }
 }
 

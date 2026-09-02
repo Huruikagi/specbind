@@ -8,6 +8,11 @@ the only supported writer of machine state.
   shell commands. Select them through the agent platform; do not translate a
   Skill name into a `specbind ...` command. CLI syntax comes from the selected
   Skill.
+- When the user explicitly asks to update the SpecBind binary, change its
+  mise-selected version, or refresh project assets as part of that update,
+  select `sb-configure` directly before ordinary change-request routing. Its
+  update procedure proves installation ownership and preserves the separate
+  binary-selection and project-asset checkpoints.
 - Work through those installed `specbind-*` Skills. Use `sb-discovery` to
   turn a request into scope or to establish new Specs from an explicitly
   selected existing implementation, and `sb-status` to see where work

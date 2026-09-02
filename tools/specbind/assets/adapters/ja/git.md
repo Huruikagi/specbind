@@ -24,7 +24,9 @@ Requirements・Design・Tasksの各Gate、受理されたContract review、完�
 それぞれ1単位です。completionとリリース確定の状態メタデータは、各ワークフローが
 要求するときは別のチェックポイントにします。`sb-configure`で完了した変更と、
 そのrequiredまたは承認済みのアフターケアは1つの設定checkpointにします。見送った
-optionalなアフターケアは含めません。
+optionalなアフターケアは含めません。明示的なSpecBind update手順だけは例外です。
+バイナリ選択の変更と製品資産のrefreshを別々のcheckpointにし、installerが要求する
+clean worktreeからrefreshを開始します。
 
 ## 何を含めるか
 
