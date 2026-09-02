@@ -63,6 +63,11 @@ locator, and claim. Decision
 [0185](./0185-reverse-deferred-finding-checkpoint.md) fixes the mutation order:
 the proposal names pending records, `milestone create` captures the clean fixed
 revision first, and the verified local destination is written only afterwards.
+Before the proposal, synthesis reconciles every direct difference found between
+valid Steering and selected evidence. Each difference appears as a blocking
+unknown, deferred unknown, suspected defect, or explicitly excluded historical
+detail; a reader finding cannot disappear merely because it does not change a
+Spec boundary.
 
 The CLI finalizes with:
 

@@ -444,6 +444,9 @@ fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation()
     assert!(body.contains("do not guess `deferred-findings`"));
     assert!(body.contains("pending adapter records"));
     assert!(body.contains("verified deferred destination when written as one\nDiscovery unit"));
+    assert!(body.contains("one closed contradiction ledger"));
+    assert!(body.contains("Give every difference exactly one visible disposition"));
+    assert!(body.contains("Do not silently drop a naming, behavior, or\nboundary mismatch"));
 }
 
 /// Every documented invocation must reference a real command route and only

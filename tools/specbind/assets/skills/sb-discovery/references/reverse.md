@@ -53,6 +53,15 @@ implementation detail, suspected defect, blocking unknown, or deferred unknown.
 A deferred unknown is allowed only when every later answer leaves current Spec
 meaning unchanged. Otherwise it is blocking.
 
+After the fresh readers return, build one closed contradiction ledger before
+synthesizing the proposal. Compare every direct claim they touched in valid
+Steering with the corresponding selected implementation, test, or product
+documentation evidence. Give every difference exactly one visible disposition:
+blocking unknown, deferred unknown, pending suspected-defect record, or excluded
+historical detail with its reason. Do not silently drop a naming, behavior, or
+boundary mismatch merely because it does not change a Spec's meaning. The
+proposal fields below are the projection of this complete ledger.
+
 Discover the Deferred Findings Adapter rather than deriving a selector from its
 type name:
 

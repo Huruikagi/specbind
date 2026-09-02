@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `29b247c` | A3 — product failure; direct Steering/evidence contradiction omitted | [Reverse contradiction classification](./runs/2026-09-03-codex-29b247c-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `a52853e` | A3 — scenario invalid; quantity semantics remained a blocking unknown | [Reverse establishment quantity boundary](./runs/2026-09-03-codex-a52853e-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `2086d1e` | A3 — scenario invalid; maintained behavior made the intended suspected defect blocking | [Reverse establishment ordering](./runs/2026-09-03-codex-2086d1e-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `9dadf34` | U1, U2 — pass; one environment-invalid U2 attempt retained | [Explicit update workflow confirmation](./runs/2026-09-03-codex-9dadf34-update-confirmation.md) |
