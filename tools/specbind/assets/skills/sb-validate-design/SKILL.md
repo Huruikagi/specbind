@@ -41,6 +41,18 @@ specbind check contracts
 
 These are cheap, and a structural failure makes semantic review premature.
 
+There is one phase-relative result during dependency-ordered reverse
+establishment. If `check contracts` fails, run `specbind milestone status` and
+inspect every error. Continue to semantic review only when all errors are
+`CONTRACT_GRAPH_CONTRACT_UNAVAILABLE`, every source names another participant
+in this same reverse milestone, and status proves each named participant is
+waiting for an earlier Design dependency and is not yet actionable. The current
+Spec's Contract must be readable. State that the whole graph is provisional;
+do not report the command as passing. An unavailable current Contract, an
+unavailable Contract outside that exact waiting set, any other graph error, or
+an unproved status is a structural `NOT_READY`; the complete graph remains
+mandatory at milestone Contract Review.
+
 **Fix the review scope from the status output before reading prose.** The
 `Requirement coverage: design N/N` count is over the active Requirement IDs for
 this milestone. The Requirements document is a complete persistent contract and

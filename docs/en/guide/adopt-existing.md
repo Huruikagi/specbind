@@ -124,10 +124,14 @@ maintained behavior. Other independent Specs can continue, but Contract Review
 and finalization wait. A question may be deferred only when every later answer
 would leave current Spec meaning unchanged.
 
-An active Deferred Findings Adapter may record behavior that looks defective as
-a suspected defect with the source revision, evidence locator, and claim. It is
-not automatically a bug or requirement, and reverse establishment does not fix
-it. Sending anything outside the project still needs separate authority.
+Discovery uses `specbind adapter list` to locate the active Deferred Findings
+Adapter and reads its reported selector instead of deriving a command from the
+type name. Behavior that looks defective may be proposed as a suspected defect
+with the source revision, evidence locator, and claim. To preserve the clean
+fixed baseline, Discovery records it at the verified local destination only
+after the reverse milestone has been created. It is not automatically a bug or
+requirement, and reverse establishment does not fix it. Sending anything outside
+the project still needs separate authority.
 
 ## No Tasks and no release
 
@@ -136,6 +140,13 @@ Contract Review owners. Design approval moves a reverse Spec to
 `adoption_ready`. No `tasks.yaml` is authored, no implementation or validation
 work begins, and no Release Adapter, tag, publication, or `target_release` is
 created.
+
+For dependent reverse Specs, Design proceeds in dependency order. A Design
+check may report the complete Contract graph as provisional only while another
+reverse participant is still waiting for that earlier Design and therefore has
+no Contract yet. No other graph error is waived. The milestone-wide Contract
+Review starts only after every Design and Contract exists and requires the
+normal complete graph.
 
 If an ordinary change request arrives, finish reverse first and create a new
 ordinary Milestone afterward. An emergency requires explicit abandonment with

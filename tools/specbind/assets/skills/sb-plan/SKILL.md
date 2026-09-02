@@ -258,6 +258,10 @@ Contract Review reads the complete participating Contract graph. Dispatch
 `sb-contract-review` once and honor its outcome. Do not accept it yourself,
 compress its findings, or proceed to Tasks without an accepted review.
 
+The phase-relative reverse Design allowance for a waiting participant's absent
+Contract ends here. Contract Review accepts no provisional graph: every
+participating Contract must exist and the complete structural check must pass.
+
 A single-Spec milestone still has this barrier. In a multi-Spec milestone, named
 scope does not narrow it: if another participant lacks current Design approval,
 report the outside-scope blocker instead of dispatching that participant or

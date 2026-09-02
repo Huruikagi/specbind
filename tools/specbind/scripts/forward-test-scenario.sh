@@ -21,6 +21,7 @@
 #   dr1    two independent Direct items; one requires a Spec reroute
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
+#   a3     a2 plus one suspected defect and local reverse checkpoint policy
 #   d9     base plus an uncommitted edit to an owned file
 #   d12    base plus a steering document that cannot be parsed
 #   d14    a greenfield project with a tracked two-file local Source Collection
@@ -485,7 +486,7 @@ EOF
         'grep -q "fixture-old-package" .agents/skills/sb-configure/references/update.md'
     ;;
 
-a1 | a2)
+a1 | a2 | a3)
     rm -rf .specbind/specs
     if [ "$scenario" = a1 ]; then
         rm -rf .specbind/steering
@@ -514,6 +515,45 @@ artifact_id: technology
 The service is a Python codebase. Repository-local tests are the verification
 surface; adoption documents current behavior but does not change source code.
 EOF
+        if [ "$scenario" = a3 ]; then
+            cat >> .specbind/steering/product.md <<'EOF'
+
+Cart additions reject quantities below one and tell the caller to provide a
+positive quantity. This maintained behavior applies to the existing version.
+EOF
+            cat > .specbind/settings/adapters/git.md <<'EOF'
+---
+type: SpecBind Git Adapter
+---
+
+# Git adapter
+
+## When to checkpoint
+
+Commit each completed reverse Discovery, Requirements, Design, Contract Review,
+and finalization unit before dependent work begins.
+
+## What to include
+
+Include only the reverse artifacts, gate state, verified local deferred-finding
+destination, and finalization history produced by that unit. Never include
+implementation source files.
+
+## Commit messages
+
+Prefix each message with `adopt:`.
+
+## Branches and pushing
+
+Stay on the current branch and never push.
+EOF
+            expect "the a3 Git checkpoint policy is inactive" \
+                'specbind adapter list | grep -q "selector=git .*state=active"'
+            expect "the a3 suspected defect is not reproducible" \
+                '! grep -q "quantity < 1" src/cart.py'
+            expect "the deferred destination exists before reverse Discovery" \
+                '! test -e .specbind/deferred.md'
+        fi
     fi
     expect "the adoption fixture still has a persistent Spec" \
         'specbind spec list | grep -q "Found 0 spec(s)"'

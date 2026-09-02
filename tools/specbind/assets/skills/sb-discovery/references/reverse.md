@@ -53,10 +53,25 @@ implementation detail, suspected defect, blocking unknown, or deferred unknown.
 A deferred unknown is allowed only when every later answer leaves current Spec
 meaning unchanged. Otherwise it is blocking.
 
-If an active Deferred Findings Adapter accepts the exact local destination,
-record a suspected defect with source revision, locator, and claim. Do not call
-it a confirmed bug or correct it. Deduplicate on those three fields. External
-posting needs separate authority. Findings never change the reverse scope.
+Discover the Deferred Findings Adapter rather than deriving a selector from its
+type name:
+
+```sh
+specbind adapter list
+specbind adapter read deferred
+```
+
+The listing must report selector `deferred`, type `SpecBind Deferred Findings
+Adapter`, and `state=active` before you follow it. `state=absent` or
+`NO_CHANGE ADAPTER_ABSENT` means the project has no destination. Any mismatch
+or `ERROR` stops adapter use; do not guess `deferred-findings` or another
+selector.
+
+When the active adapter accepts an exact local destination, prepare a suspected
+defect with source revision, locator, and claim, and inspect the destination only
+far enough to deduplicate on those three fields. Do not call it a confirmed bug,
+correct it, or write the destination before the reverse milestone exists.
+External posting needs separate authority. Findings never change reverse scope.
 
 ## Present one complete proposal
 
@@ -79,7 +94,7 @@ Reverse Specs: <id, responsibility, maintained intent, evidence basis>
 Dependencies: <Spec edges or None>
 Blocking unknowns: <questions that prevent meaningful Specs or None>
 Deferred unknowns: <recorded non-semantic choices or None>
-Suspected defects: <recorded findings or None>
+Suspected defects: <pending adapter records or None>
 Excluded area: <outside the reverse scope or None>
 After confirmation: create the reverse milestone and continue through
 Requirements, Design, Design validation, Contract Review, and adoption finalize.
@@ -108,8 +123,17 @@ adoption record at `<specDir>/adoption/reverse-discovery.yaml` until
 finalization; record the fixed revision, selected area, proposal, observation
 classifications, and exact evidence locators without copying source text.
 
-Checkpoint only reverse artifacts according to the active Git Adapter. Never
-infer push authority.
+Only after milestone creation and provenance verification, rerun
+`specbind adapter list` and `specbind adapter read deferred`. If the same exact
+local destination is still active, append each pending suspected defect that is
+not already present. If it is absent or changed, record nothing and report the
+adapter mismatch; never invent or recover a destination. This post-creation
+write preserves the fixed clean baseline.
+
+Checkpoint the reverse Roadmap and Spec state, Briefs, Research, temporary
+adoption record, and the verified deferred destination when written as one
+Discovery unit according to the active Git Adapter. Admit no other dirty path.
+Never infer push authority.
 
 ## Continue without routine pauses
 

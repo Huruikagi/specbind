@@ -59,7 +59,10 @@ Deferred Findings Adapter as a suspected defect, tied to the source revision
 and evidence locator. It is not treated as a confirmed bug, is not corrected
 in this workflow, and does not change the revision. External transmission still
 requires the adapter's normal authority. Duplicate identity is source revision,
-locator, and claim.
+locator, and claim. Decision
+[0185](./0185-reverse-deferred-finding-checkpoint.md) fixes the mutation order:
+the proposal names pending records, `milestone create` captures the clean fixed
+revision first, and the verified local destination is written only afterwards.
 
 The CLI finalizes with:
 
@@ -80,6 +83,12 @@ Deferred unknowns are permitted only when a later answer cannot alter current
 Spec meaning. Otherwise the affected Spec remains blocked. Starting a reverse
 run therefore means completing it in one continuous orchestration unless an
 explicit stop condition occurs.
+
+Decision [0186](./0186-reverse-design-contract-preflight.md) makes the reused
+Design graph preflight phase-relative. A not-yet-actionable downstream reverse
+Spec may temporarily lack its Contract during an earlier Design wave; every
+other graph error still blocks, and the milestone Contract Review still
+requires the complete graph after all Designs exist.
 
 ## Consequences
 

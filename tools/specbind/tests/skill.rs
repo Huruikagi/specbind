@@ -425,6 +425,27 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
     );
 }
 
+#[test]
+fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation() {
+    let body = skill_resource_text("sb-discovery", "references/reverse.md");
+    let list = body
+        .find("specbind adapter list")
+        .expect("adapter discovery");
+    let read = body
+        .find("specbind adapter read deferred")
+        .expect("exact deferred selector");
+    let create = body
+        .find("specbind milestone create --scope")
+        .expect("milestone creation");
+    let write = body
+        .find("Only after milestone creation and provenance verification")
+        .expect("post-creation finding write");
+    assert!(list < read && read < create && create < write);
+    assert!(body.contains("do not guess `deferred-findings`"));
+    assert!(body.contains("pending adapter records"));
+    assert!(body.contains("verified deferred destination when written as one\nDiscovery unit"));
+}
+
 /// Every documented invocation must reference a real command route and only
 /// options that route accepts. The command graph is walked, never executed.
 #[test]
@@ -773,6 +794,43 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
     assert!(
         body.contains("For an export this change adds or alters, name the managed or external")
     );
+}
+
+#[test]
+fn reverse_design_checks_tolerate_only_waiting_participant_contracts() {
+    for (name, body) in [
+        (
+            "sb-plan design",
+            skill_resource_text("sb-plan", "references/design.md"),
+        ),
+        (
+            "sb-validate-design",
+            skill::find("sb-validate-design")
+                .expect("validation skill")
+                .body()
+                .expect("validation body"),
+        ),
+    ] {
+        let normalized = body.split_whitespace().collect::<Vec<_>>().join(" ");
+        for required in [
+            "all errors are `CONTRACT_GRAPH_CONTRACT_UNAVAILABLE`",
+            "another participant in this same reverse milestone",
+            "waiting for an earlier Design dependency",
+            "The current Spec's Contract must be readable",
+            "complete graph remains mandatory",
+        ] {
+            assert!(
+                normalized.contains(required),
+                "{name} must contain {required}"
+            );
+        }
+    }
+
+    let orchestrator = skill::find("sb-plan")
+        .expect("planning orchestrator")
+        .body()
+        .expect("orchestrator body");
+    assert!(orchestrator.contains("Contract Review accepts no provisional graph"));
 }
 
 #[test]

@@ -83,6 +83,13 @@ The skill runs `specbind check traceability <spec>` and
 `specbind check contracts` because they are cheap and a structural failure makes
 semantic review premature.
 
+Decision [0186](./0186-reverse-design-contract-preflight.md) later narrows that
+premise for dependency-ordered reverse establishment. Missing Contracts are
+provisional only for other reverse participants that current milestone status
+proves are waiting for an earlier Design dependency. The current Contract and
+every other graph error remain mandatory, and the complete graph is still
+required at Contract Review.
+
 It never presents them as its contribution. The protocol says a review that only
 repeats what the CLI already verified "has not reviewed anything," and the
 distinction matters most here: complete traceability markers are exactly the

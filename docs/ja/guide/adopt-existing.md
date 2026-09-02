@@ -116,9 +116,12 @@ establishment:
 独立した別のSpecは進められますが、Contract Reviewとファイナライズは待ちます。どの回答に
 なっても現在のSpecの意味が変わらない問いだけ、後回しにできます。
 
-有効なDeferred Findings Adapterがあれば、欠陥に見える挙動を、ソースリビジョン、証拠の
-位置、主張とともに「バグの疑い」として記録できます。自動的にバグや要件にはならず、この
-経路では修正しません。プロジェクト外への送信には、別の権限が必要です。
+Discoveryは`specbind adapter list`で有効なDeferred Findings Adapterを探し、種別名から
+コマンドを推測せず、一覧に示されたselectorを読みます。欠陥に見える挙動は、ソース
+リビジョン、証拠の位置、主張とともに「バグの疑い」として提案できます。クリーンな固定
+リビジョンを保つため、確認済みのローカル保存先へ記録するのは、リバースMilestoneを
+作成した後です。自動的にバグや要件にはならず、この経路では修正しません。プロジェクト
+外への送信には、別の権限が必要です。
 
 ## Tasksもリリースも作らない
 
@@ -126,6 +129,12 @@ establishment:
 再利用します。Designを承認すると、リバースSpecは`adoption_ready`になります。
 `tasks.yaml`は作らず、実装や実装検証も始めません。Release Adapter、タグ、公開、
 `target_release`も作りません。
+
+依存関係があるリバースSpecのDesignは、その順序に従って進めます。後続のリバースSpecが
+先行Designの完了を待っていて、まだContractを持たない間に限り、Designの検査はContract
+グラフ全体を暫定状態として扱えます。それ以外のグラフエラーは見逃しません。Milestone
+全体のContract Reviewは、すべてのDesignとContractがそろってから開始し、通常どおり
+完全なグラフを必須とします。
 
 途中で通常の変更依頼が来た場合は、先にリバースを完了し、その後に新しい通常Milestoneを
 作ります。緊急時は`specbind milestone reverse abandon --milestone-id <id>`で明示的に

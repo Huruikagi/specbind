@@ -190,6 +190,12 @@ clean. Ownership overlaps and cycles are warnings under Decision 0078; the skill
 states why an overlap is acceptable or treats it as a finding, rather than
 passing it silently to review.
 
+Decision [0186](./0186-reverse-design-contract-preflight.md) later permits one
+phase-relative result: while a reverse Design dependency wave is in progress,
+another participating Spec that milestone status proves is still waiting may
+lack its not-yet-authored Contract. No other graph error is waived, and the
+complete graph remains mandatory at the milestone Contract Review barrier.
+
 ### Self-review before approval
 
 The `design-validation` protocol is the standard the skill applies to its own

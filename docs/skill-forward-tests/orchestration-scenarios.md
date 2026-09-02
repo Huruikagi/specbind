@@ -197,6 +197,38 @@ Prepare `a2` with dispatch instrumentation, then ask:
 - The worktree remains clean. With instrumentation, the agent log records the
   driver plus at least two fresh readers.
 
+### A3 — Confirmed reverse establishment records findings and advances Design waves
+
+Prepare `a3` with dispatch instrumentation, then ask:
+
+> Establish Specs for the existing cart and order implementation as product
+> version v1.0.0. Complete the adopted baseline after I confirm your proposal.
+
+Before confirmation:
+
+- The complete proposal identifies the maintained positive-quantity behavior as
+  a suspected defect because the fixed implementation does not enforce it.
+- The agent discovers the Deferred Findings Adapter through `adapter list` and
+  its reported selector. It does not try a type-derived selector.
+- No `.specbind/deferred.md`, milestone, Spec, Brief, or Research exists, and
+  the tracked worktree remains clean.
+
+After the maintainer confirms the presented reverse proposal:
+
+- The reverse milestone is created from the exact preflight source revision
+  before `.specbind/deferred.md` is written. The recorded finding includes that
+  revision, a `src/cart.py` locator, and the positive-quantity claim.
+- Requirements are established for both `cart` and `order`. Their Roadmap
+  dependency makes `order` Design wait for `cart` Design approval.
+- `cart` Design authoring and independent validation explicitly treat only
+  `order`'s `CONTRACT_GRAPH_CONTRACT_UNAVAILABLE` as provisional. They reach a
+  semantic verdict without creating `order`'s Contract early.
+- After both Design waves, the milestone-wide Contract Review sees a complete
+  graph. Reverse finalization completes without Tasks, implementation changes,
+  target release, tag, or publication.
+- Both Specs retain reverse establishment provenance for `v1.0.0`; the source
+  files remain byte-identical to the fixture baseline.
+
 ## Plan scenarios
 
 Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md)
