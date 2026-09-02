@@ -34,5 +34,5 @@ The fixture was clean before and after the read-only debrief.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fixed-build retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-fe35de1`
 - Main worktree after recording: FT-0029 fix and this run record only

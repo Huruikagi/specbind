@@ -36,5 +36,5 @@ and Contract before and after the read-only debrief.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fixed-build retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-3407b96`
 - Main worktree after recording: FT-0028 fix and this run record only

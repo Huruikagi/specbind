@@ -33,5 +33,5 @@ finding set was incomplete for this scenario.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fixed-build retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-29b247c`
 - Main worktree after recording: FT-0027 fix and this run record only

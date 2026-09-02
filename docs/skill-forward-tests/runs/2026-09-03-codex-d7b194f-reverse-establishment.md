@@ -32,5 +32,5 @@ The tracked worktree was clean before and after the read-only debrief.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fresh retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-d7b194f`
 - Main worktree after recording: A3 instrumentation-scope repair and this run record only

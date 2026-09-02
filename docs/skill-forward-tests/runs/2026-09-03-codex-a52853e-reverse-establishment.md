@@ -32,5 +32,5 @@ question. No mutation was authorized.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fresh retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-a52853e`
 - Main worktree after recording: scenario repair and this run record only

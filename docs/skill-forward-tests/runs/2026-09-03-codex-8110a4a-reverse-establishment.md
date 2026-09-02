@@ -32,5 +32,5 @@ approvable proposal. No confirmation was given.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fresh retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-8110a4a`
 - Main worktree after recording: A3 authority repair and this run record only

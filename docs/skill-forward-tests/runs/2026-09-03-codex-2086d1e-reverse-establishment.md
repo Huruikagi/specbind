@@ -33,5 +33,5 @@ was given because the scenario had not reached an approvable boundary.
 
 ## Cleanup
 
-- Fixture paths removed: pending until the fresh retry is complete
+- Fixture paths removed: `C:\Users\hurui\AppData\Local\Temp\sb-a3-2086d1e`
 - Main worktree after recording: scenario repair and this run record only
