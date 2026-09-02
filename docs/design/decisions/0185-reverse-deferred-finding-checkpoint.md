@@ -36,6 +36,12 @@ stashing it introduces an unowned operation outside the documented workflow.
   Roadmap, Spec state, Briefs, Research, and temporary adoption record. It is
   not a general dirty-worktree exception and does not authorize external
   transmission or push.
+- The temporary adoption record carries the exact project-relative destination
+  on each suspected defect. Finalization admits a changed destination as
+  expected reverse output only when it is normalized, remains inside the
+  configured SpecBind root, and stays outside managed lifecycle directories
+  such as `steering/`, `specs/`, `settings/`, `state/`, and `adoption/`. Every
+  other post-baseline path still fails source-drift validation.
 
 ## Consequences
 
@@ -47,8 +53,9 @@ stashing it introduces an unowned operation outside the documented workflow.
 
 ## Verification
 
-Focused Skill tests require selector discovery, a pre-creation no-write
-boundary, a post-creation adapter recheck, and one reverse Discovery checkpoint.
-A fresh reverse fixture with an active local Deferred Findings Adapter verifies
+Focused Skill and CLI tests require selector discovery, a pre-creation no-write
+boundary, a post-creation adapter recheck, one reverse Discovery checkpoint,
+and finalization that admits only the checkpointed safe local destination. A
+fresh reverse fixture with an active local Deferred Findings Adapter verifies
 that the proposal leaves the repository clean and the confirmed continuation
 records the finding only after the milestone exists.

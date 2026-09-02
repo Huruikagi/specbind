@@ -1,7 +1,11 @@
 //! Guarded finalization for a reverse-established baseline.
 
-use std::{fmt, fs, path::Path};
+use std::{
+    fmt, fs,
+    path::{Component, Path},
+};
 
+use serde::Deserialize;
 use time::OffsetDateTime;
 
 use crate::{
@@ -45,6 +49,17 @@ struct SpecPlan {
     log_path: String,
     log_update: LogUpdate,
     cleanup: Vec<String>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct AdoptionRecord {
+    #[serde(default)]
+    suspected_defects: Vec<SuspectedDefect>,
+}
+
+#[derive(Debug, Deserialize)]
+struct SuspectedDefect {
+    destination: Option<String>,
 }
 
 impl fmt::Display for FinalizeIssues {
@@ -370,11 +385,16 @@ fn ensure_source_unchanged(
         .filter_map(|item| item.strip_prefix("spec:"))
         .map(|spec| format!("{root}/specs/{spec}/"))
         .collect::<Vec<_>>();
-    let allowed_exact = [
+    let mut allowed_exact = vec![
         format!("{root}/steering/roadmap.md"),
         format!("{root}/state/contract-review.md"),
         format!("{root}/adoption/reverse-discovery.yaml"),
     ];
+    allowed_exact.extend(deferred_finding_destinations(
+        project_root,
+        specbind_root,
+        &root,
+    )?);
     let changed = output
         .lines()
         .map(str::trim)
@@ -399,6 +419,80 @@ fn ensure_source_unchanged(
             ),
         ))
     }
+}
+
+fn deferred_finding_destinations(
+    project_root: &Path,
+    specbind_root: &Path,
+    specbind_relative: &str,
+) -> Result<Vec<String>, FinalizeIssues> {
+    let record_path = specbind_root.join("adoption/reverse-discovery.yaml");
+    if !record_path.exists() {
+        return Ok(Vec::new());
+    }
+    let source = read_regular(specbind_root, "adoption/reverse-discovery.yaml")?;
+    let record: AdoptionRecord = serde_saphyr::from_str(&source).map_err(|error| {
+        one_issue(
+            "ADOPTION_RECORD_INVALID",
+            Some("adoption/reverse-discovery.yaml".to_owned()),
+            error.to_string(),
+        )
+    })?;
+    let protected = [
+        "adoption",
+        "baselines",
+        "bin",
+        "releases",
+        "settings",
+        "specs",
+        "state",
+        "steering",
+    ];
+    let mut destinations = Vec::new();
+    for destination in record
+        .suspected_defects
+        .into_iter()
+        .filter_map(|defect| defect.destination)
+    {
+        let path = Path::new(&destination);
+        let components = path.components().collect::<Vec<_>>();
+        if path.is_absolute()
+            || components.is_empty()
+            || components
+                .iter()
+                .any(|component| !matches!(component, Component::Normal(_)))
+        {
+            return Err(invalid_finding_destination(&destination));
+        }
+        let absolute = project_root.join(path);
+        let relative_to_specbind = absolute
+            .strip_prefix(specbind_root)
+            .map_err(|_| invalid_finding_destination(&destination))?;
+        let first = relative_to_specbind
+            .components()
+            .next()
+            .and_then(|component| component.as_os_str().to_str())
+            .ok_or_else(|| invalid_finding_destination(&destination))?;
+        if protected.contains(&first) {
+            return Err(invalid_finding_destination(&destination));
+        }
+        let normalized = path.to_string_lossy().replace('\\', "/");
+        if normalized == specbind_relative || destinations.contains(&normalized) {
+            continue;
+        }
+        destinations.push(normalized);
+    }
+    Ok(destinations)
+}
+
+fn invalid_finding_destination(destination: &str) -> FinalizeIssues {
+    one_issue(
+        "ADOPTION_FINDING_DESTINATION_INVALID",
+        Some("adoption/reverse-discovery.yaml".to_owned()),
+        format!(
+            "deferred finding destination must be a project-relative path inside the configured SpecBind root and outside managed lifecycle directories: {destination}"
+        ),
+    )
 }
 
 fn ensure_clean_repository(project_root: &Path) -> Result<(), FinalizeIssues> {
@@ -625,5 +719,27 @@ fn issue(code: &'static str, path: Option<String>, message: impl Into<String>) -
         code,
         path,
         message: message.into(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn deferred_destination_cannot_exempt_managed_lifecycle_state() {
+        let project = tempfile::tempdir().expect("temporary project");
+        let specbind = project.path().join(".specbind");
+        fs::create_dir_all(specbind.join("adoption")).expect("adoption directory");
+        fs::write(
+            specbind.join("adoption/reverse-discovery.yaml"),
+            "suspected_defects:\n  - destination: .specbind/steering/product.md\n",
+        )
+        .expect("adoption record");
+
+        let error = deferred_finding_destinations(project.path(), &specbind, ".specbind")
+            .expect_err("managed destination must remain protected");
+
+        assert_eq!(error.issues[0].code, "ADOPTION_FINDING_DESTINATION_INVALID");
     }
 }

@@ -75,6 +75,12 @@ value is used literally. It never lives under the `specs/` child that contains
 durable Specs. This keeps transient orchestration evidence outside Spec
 discovery and the Contract graph.
 
+When that record names a local deferred-finding destination, source-drift
+validation accepts the checkpointed write only inside the configured SpecBind
+root and outside its managed lifecycle directories. The exception is exact and
+cannot waive implementation, Steering, Spec, settings, or lifecycle-state
+drift.
+
 The CLI finalizes with:
 
 ```sh

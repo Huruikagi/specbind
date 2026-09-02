@@ -452,6 +452,8 @@ fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation()
     assert!(body.contains(
         "outside it prevents the record from\nentering Spec discovery or the Contract graph"
     ));
+    assert!(body.contains("exact project-relative `destination`"));
+    assert!(body.contains("distinguish the adapter output from source\ndrift"));
 }
 
 /// Every documented invocation must reference a real command route and only

@@ -136,7 +136,10 @@ a `specs/` segment: for `"specDir": ".specbind"`, write
 durable Specs; keeping the temporary record outside it prevents the record from
 entering Spec discovery or the Contract graph. Record the fixed revision,
 selected area, proposal, observation classifications, and exact evidence
-locators without copying source text.
+locators without copying source text. For every pending suspected defect that
+is written, also record its exact project-relative `destination`; finalization
+uses that checkpointed field to distinguish the adapter output from source
+drift.
 
 Only after milestone creation and provenance verification, rerun
 `specbind adapter list` and `specbind adapter read deferred`. If the same exact

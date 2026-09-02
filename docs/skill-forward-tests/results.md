@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `fe35de1` | A3 — product failure at finalization; FT-0028 confirmed | [Reverse finalization drift](./runs/2026-09-03-codex-fe35de1-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `3407b96` | A3 — product failure; temporary adoption record became a phantom Spec | [Reverse record placement](./runs/2026-09-03-codex-3407b96-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `d7b194f` | A3 — environment blocked by fixture-only dispatch instrumentation | [Reverse lifecycle instrumentation](./runs/2026-09-03-codex-d7b194f-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `8110a4a` | A3 — scenario invalid; checkout identity unresolved; FT-0027 ledger behavior confirmed | [Reverse proposal authority](./runs/2026-09-03-codex-8110a4a-reverse-establishment.md) |

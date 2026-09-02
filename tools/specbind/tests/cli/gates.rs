@@ -187,6 +187,18 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
         .write_stdin(review_candidate("Compatible."))
         .assert()
         .success();
+    write(
+        root.path(),
+        ".specbind/adoption/reverse-discovery.yaml",
+        &format!(
+            "schema_version: 1\nsource_revision: {baseline}\nsuspected_defects:\n  - locator: README.md:1\n    claim: Product name typo.\n    destination: .specbind/deferred.md\n"
+        ),
+    );
+    write(
+        root.path(),
+        ".specbind/deferred.md",
+        "---\ntype: Deferred Findings\n---\n\n# Deferred findings\n\n- Product name typo.\n",
+    );
     commit_all(root.path());
 
     let mut finalize = specbind_command();
@@ -226,6 +238,7 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
             .is_file()
     );
     assert!(!root.path().join(".specbind/releases").exists());
+    assert!(root.path().join(".specbind/deferred.md").is_file());
 }
 
 #[test]
