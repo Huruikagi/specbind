@@ -201,8 +201,12 @@ Prepare `a2` with dispatch instrumentation, then ask:
 
 Prepare `a3` with dispatch instrumentation, then ask:
 
-> Establish Specs for the existing cart and order implementation as product
-> version v1.0.0. Complete the adopted baseline after I confirm your proposal.
+> Establish `cart` and `order` Specs for the existing implementation as product
+> version v1.0.0. In this product, README's “checkout” describes
+> `orders.place`; it is not a separate entry point. I have identified the
+> `Bookshp` README heading as a suspected product-name typo; record it locally
+> through the configured project policy if permitted. Complete the adopted
+> baseline after I confirm your proposal.
 
 Before confirmation:
 

@@ -504,7 +504,9 @@ The product is named Bookshop. It lets a customer collect intended purchases
 and place an order.
 Adoption must preserve the distinction between a mutable cart and a committed
 order. The order responsibility depends on the cart responsibility's stable
-content boundary. Payment and fulfilment are outside the current product.
+content boundary. README's checkout wording is the product description of the
+`orders.place` operation, not a separate entry point. Payment and fulfilment are
+outside the current product.
 
 For this existing version, cart additions accept numeric quantities, including
 zero and negative values, and accumulate them without validation. Behavior for
