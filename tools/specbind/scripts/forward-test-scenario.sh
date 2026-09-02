@@ -15,6 +15,9 @@
 #
 # Scenarios:
 #   base   the fixture as built, nothing added
+#   u1     base fixture used to prove refusal without project-local mise ownership
+#   u2     controlled moving-selector SpecBind update with an old installed package marker
+#   u3     controlled exact-pin SpecBind update that requires an explicit target
 #   dr1    two independent Direct items; one requires a Spec reroute
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
@@ -352,7 +355,134 @@ EOF
 leave_dirty=no
 
 case "$scenario" in
-base)
+base | u1)
+    ;;
+
+u2 | u3)
+    mkdir -p .forward-test/mise-bin
+    printf '%s\n' ".forward-test/" >> .gitignore
+    if [ "$scenario" = u2 ]; then
+        selector=latest
+    else
+        selector=1.2.0
+    fi
+    {
+        echo "[tools]"
+        echo "\"github:Huruikagi/specbind\" = \"$selector\""
+    } > mise.toml
+    printf '%s\n' 'version = "1.2.0"' > mise.lock
+    printf '%s\n' '1.2.0' > .forward-test/specbind-version
+    cat > .forward-test/mise-bin/mise <<'EOF'
+#!/usr/bin/env sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+version=$(cat "$root/.forward-test/specbind-version")
+case "${1:-} ${2:-}" in
+    "config ls")
+        echo "$root/mise.toml  github:Huruikagi/specbind"
+        ;;
+    "tool github:Huruikagi/specbind")
+        selector=$(sed -n 's/.*= "\([^"]*\)"/\1/p' "$root/mise.toml")
+        printf '{"backend":"github:Huruikagi/specbind","requested_versions":["%s"],"active_versions":["%s"],"config_source":{"type":"mise.toml","path":"%s/mise.toml"}}\n' "$selector" "$version" "$root"
+        ;;
+    "upgrade github:Huruikagi/specbind")
+        printf '%s\n' '1.3.0' > "$root/.forward-test/specbind-version"
+        printf '%s\n' 'version = "1.3.0"' > "$root/mise.lock"
+        ;;
+    "use github:Huruikagi/specbind@"*)
+        target=${2#*@}
+        printf '%s\n' "$target" > "$root/.forward-test/specbind-version"
+        printf '%s\n' "version = \"$target\"" > "$root/mise.lock"
+        sed 's/= "[^"]*"/= "'"$target"'"/' "$root/mise.toml" > "$root/mise.next"
+        mv "$root/mise.next" "$root/mise.toml"
+        ;;
+    *)
+        echo "controlled mise: unsupported arguments: $*" >&2
+        exit 2
+        ;;
+esac
+EOF
+    chmod +x .forward-test/mise-bin/mise
+    cat > .forward-test/mise-bin/specbind <<'EOF'
+#!/usr/bin/env sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+if [ "${1:-}" = --version ]; then
+    echo "specbind $(cat "$root/.forward-test/specbind-version")"
+    exit 0
+fi
+exec "$root/.specbind/bin/specbind" "$@"
+EOF
+    chmod +x .forward-test/mise-bin/specbind
+    case "$(uname -s)" in
+        MINGW* | MSYS* | CYGWIN*)
+            cat > .forward-test/client-double.rs <<'EOF'
+use std::{env, fs, path::PathBuf, process::{exit, Command}};
+
+fn main() {
+    let executable = env::current_exe().expect("current executable");
+    let name = executable.file_stem().and_then(|value| value.to_str()).unwrap_or("");
+    let root = executable.parent().and_then(|path| path.parent()).and_then(|path| path.parent())
+        .expect("fixture root").to_path_buf();
+    let arguments = env::args().skip(1).collect::<Vec<_>>();
+    if name.eq_ignore_ascii_case("specbind") {
+        if arguments.first().map(String::as_str) == Some("--version") {
+            println!("specbind {}", read_version(&root));
+            return;
+        }
+        let status = Command::new(root.join(".specbind/bin/specbind.exe"))
+            .args(&arguments).status().expect("fixture specbind must start");
+        exit(status.code().unwrap_or(1));
+    }
+    let operation = arguments.iter().take(2).map(String::as_str).collect::<Vec<_>>();
+    match operation.as_slice() {
+        ["config", "ls"] => println!("{}  github:Huruikagi/specbind", root.join("mise.toml").display()),
+        ["tool", "github:Huruikagi/specbind"] => {
+            let config = fs::read_to_string(root.join("mise.toml")).expect("mise config");
+            let selector = config.split('"').nth(3).expect("selector");
+            let path = root.join("mise.toml").to_string_lossy().replace('\\', "\\\\");
+            println!("{{\"backend\":\"github:Huruikagi/specbind\",\"requested_versions\":[\"{selector}\"],\"active_versions\":[\"{}\"],\"config_source\":{{\"type\":\"mise.toml\",\"path\":\"{path}\"}}}}", read_version(&root));
+        }
+        ["upgrade", "github:Huruikagi/specbind"] => set_version(&root, "1.3.0", false),
+        ["use", value] if value.starts_with("github:Huruikagi/specbind@") => {
+            set_version(&root, value.split_once('@').expect("target").1, true)
+        }
+        _ => {
+            eprintln!("controlled mise: unsupported arguments: {}", arguments.join(" "));
+            exit(2);
+        }
+    }
+}
+
+fn read_version(root: &PathBuf) -> String {
+    fs::read_to_string(root.join(".forward-test/specbind-version"))
+        .expect("version state").trim().to_owned()
+}
+
+fn set_version(root: &PathBuf, version: &str, change_selector: bool) {
+    fs::write(root.join(".forward-test/specbind-version"), version).expect("version state");
+    fs::write(root.join("mise.lock"), format!("version = \"{version}\"\n")).expect("lockfile");
+    if change_selector {
+        let config = fs::read_to_string(root.join("mise.toml")).expect("mise config");
+        let old = config.split('"').nth(3).expect("selector");
+        fs::write(root.join("mise.toml"), config.replacen(old, version, 1)).expect("mise config");
+    }
+}
+EOF
+            rustc --edition 2021 .forward-test/client-double.rs \
+                -o .forward-test/mise-bin/mise.exe
+            cp .forward-test/mise-bin/mise.exe \
+                .forward-test/mise-bin/specbind.exe
+            ;;
+    esac
+    printf '\n<!-- fixture-old-package -->\n' \
+        >> .agents/skills/sb-configure/references/update.md
+    printf '\n<!-- fixture-old-package -->\n' \
+        >> .claude/skills/sb-configure/references/update.md
+    expect "the controlled mise config is not project-local" \
+        'grep -q "github:Huruikagi/specbind" mise.toml'
+    expect "the old installed package marker is absent" \
+        'grep -q "fixture-old-package" .agents/skills/sb-configure/references/update.md'
     ;;
 
 a1 | a2)
@@ -1301,6 +1431,10 @@ echo "  language: $language"
 echo
 echo "Put the CLI on PATH before starting the session:"
 echo
-echo "    export PATH=\"$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
+if [ "$scenario" = u2 ] || [ "$scenario" = u3 ]; then
+    echo "    export PATH=\"$(CDPATH= cd -- .forward-test/mise-bin && pwd):$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
+else
+    echo "    export PATH=\"$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
+fi
 echo
 echo "The docs/skill-forward-tests.md index routes to the request and expectations."

@@ -213,6 +213,7 @@ static RETIRED_CONFIGURE_FILES: &[&str] = &[
     "references/rules.md",
     "references/steering.md",
     "references/templates-and-reconciliation.md",
+    "references/update.md",
     "SKILL.md",
 ];
 static RETIRED_DISCOVERY_FILES: &[&str] = &[
@@ -264,6 +265,10 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
         source: include_str!(
             "../../assets/skills/sb-configure/references/templates-and-reconciliation.md"
         ),
+    },
+    SkillResource {
+        relative_path: "references/update.md",
+        source: include_str!("../../assets/skills/sb-configure/references/update.md"),
     },
 ];
 

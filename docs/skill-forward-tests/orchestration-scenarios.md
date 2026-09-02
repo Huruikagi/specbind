@@ -85,6 +85,57 @@ Use the base fixture and ask:
   candidate set, selection Rule, existing artifacts, and lifecycle state remain
   unchanged; only the project-owned main Design template changes.
 
+### U1 — Update refuses unproved mise ownership
+
+Use the base fixture and ask:
+
+> Update SpecBind to the latest supported version.
+
+- The natural request discovers `sb-configure` and loads its update reference.
+- Because the selected project has no mise configuration for
+  `github:Huruikagi/specbind`, the run stops before any mise mutation or
+  `specbind install` apply. A global, parent, or PATH-visible installation is
+  not accepted as project ownership.
+- It reports the current version, clean repository state, failed ownership
+  proof, and the original-installation-client boundary. The worktree and HEAD
+  remain unchanged.
+
+### U2 — A proved moving selector completes two update checkpoints
+
+Prepare `u2`, whose controlled local installation-client double reports a
+project-owned `latest` selector and changes the tracked lock plus simulated
+binary version from `1.2.0` to `1.3.0`. Its initially installed update reference
+has a committed old-package marker that the embedded refresh removes. Ask:
+
+> Update SpecBind to the latest supported version.
+
+- The natural request discovers `sb-configure`, proves the exact GitHub backend
+  and project config source, preserves `latest`, and invokes the installation
+  client's upgrade operation.
+- One binary-selection commit contains only `mise.lock`; the worktree is clean
+  before the project refresh.
+- The run presents the complete install plan, applies it, and rereads the newly
+  installed `SKILL.md`, update reference, and aftercare reference. The old-package
+  marker is absent before aftercare continues.
+- A second commit contains only the refreshed update references for the two
+  installed Agent targets. Final `specbind install --dry-run` reports no pending
+  product-managed change, the worktree is clean, and no push, branch, release,
+  or unrelated mutation occurs.
+
+### U3 — An exact pin requires an explicit target
+
+Prepare `u3`, which is the controlled update fixture with an exact `1.2.0`
+selector, then ask:
+
+> Update SpecBind to the latest supported version.
+
+- The natural request discovers `sb-configure` and proves the local mise owner,
+  but it does not infer an exact target from “latest supported version”.
+- It stops and asks for the target version before invoking either `mise upgrade`
+  or `mise use`.
+- The simulated binary remains `1.2.0`; `mise.toml`, `mise.lock`, the installed
+  old-package marker, HEAD, and the clean worktree are unchanged.
+
 ### DS9 — Design materializes a one-off supplement without changing project policy
 
 Prepare a Spec whose approved Requirements introduce a durable infrastructure

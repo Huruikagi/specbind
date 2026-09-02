@@ -1,6 +1,6 @@
 ---
 name: sb-configure
-description: Configure SpecBind for a project and complete the resulting aftercare. Use for initial post-install review or later changes to Agents, role models, artifact language, project instructions, templates, shared Rules, operational adapters, Steering, or existing artifacts affected by configuration changes.
+description: Configure or explicitly update SpecBind for a project and complete the resulting aftercare. Use for an explicit SpecBind binary or project-asset update request, initial post-install review, or later changes to Agents, role models, artifact language, project instructions, templates, shared Rules, operational adapters, Steering, or existing artifacts affected by configuration changes.
 argument-hint: "[what should change, or review the current configuration]"
 ---
 
@@ -48,6 +48,8 @@ that part of the change. Do not load unrelated procedures.
 - Release, Git, deferred-finding, or final implementation-validation procedure:
   [adapters](references/adapters.md)
 - Durable project knowledge: [Steering](references/steering.md)
+- Explicit SpecBind binary update, mise-selected version change, or
+  update-coupled product-asset refresh: [update](references/update.md)
 
 Read [aftercare](references/aftercare.md) after every mutation and before
 reporting completion.

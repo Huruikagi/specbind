@@ -209,7 +209,7 @@ fn installs_each_skill_to_the_accepted_target() {
 #[test]
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
-        ("sb-configure", 6),
+        ("sb-configure", 7),
         ("sb-discovery", 5),
         ("sb-implement", 2),
         ("sb-plan", 3),
@@ -252,6 +252,48 @@ fn configure_aftercare_names_the_exact_git_adapter_read_command() {
         aftercare.contains("specbind adapter read git"),
         "configure aftercare must name the exact Git adapter read command"
     );
+}
+
+#[test]
+fn configure_update_routes_and_preserves_the_two_phase_refresh_contract() {
+    let configure = skill::find("sb-configure").expect("configure skill");
+    let metadata = configure.metadata().expect("configure metadata");
+    assert!(metadata.description.contains("explicitly update SpecBind"));
+
+    let update = configure
+        .resources()
+        .iter()
+        .find(|resource| resource.relative_path == "references/update.md")
+        .expect("configure update reference")
+        .content();
+    for required in [
+        "mise tool github:Huruikagi/specbind --json",
+        "requested_versions",
+        "config_source",
+        "An exact pin does not advance without an explicit target",
+        "mise upgrade github:Huruikagi/specbind",
+        "mise use github:Huruikagi/specbind@<version>",
+        "specbind install --dry-run",
+        "Present every reported `create`, `replace`, `keep`, and `remove` action.",
+        "Mandatory post-replacement reload",
+        ".agents/skills/sb-configure/references/update.md",
+        ".claude/skills/sb-configure/references/aftercare.md",
+        "Resume at **Post-refresh continuation**",
+        "binary-selection checkpoint",
+        "asset-refresh checkpoint",
+        "Updating never authorizes a push",
+    ] {
+        assert!(
+            update.contains(required),
+            "configure update procedure must preserve: {required}"
+        );
+    }
+    for forbidden in ["self-update command", "background network operation"] {
+        assert!(
+            update.contains(forbidden),
+            "configure update procedure must explicitly reject: {forbidden}"
+        );
+    }
 }
 
 #[test]

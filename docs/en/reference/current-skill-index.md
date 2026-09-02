@@ -31,7 +31,7 @@ declare tool dependencies. See
 
 | Skill | Current role |
 | --- | --- |
-| `sb-configure` | Review and change supported SpecBind project configuration, coordinate the owning workflow, verify the result, and complete authorized aftercare. |
+| `sb-configure` | Review and change supported SpecBind project configuration, or execute an explicitly requested installation-client binary update and guarded project-asset refresh; verify the result and complete authorized aftercare. |
 | `sb-discovery` | Confirm milestone scope from a request, explicit local Source Collection, or selected existing implementation; classify durable boundaries, delegate state changes to the CLI, and author provenance-bearing Roadmaps, Briefs, and adoption Research handoffs. |
 | `sb-plan` | The only planning entry point: take one named Spec or every Spec-backed milestone item through Tasks approval, or run one explicitly requested Requirements, Design, or Tasks phase for one named Spec. |
 | `sb-drive` | Drive the active milestone through safe reachable planning, implementation, and validation work, park branch-local attention, and stop before release execution. |
