@@ -61,6 +61,60 @@ fn embeds_the_accepted_skill_set_with_valid_metadata() {
 }
 
 #[test]
+fn codex_skill_interface_metadata_is_branded_and_invocable() {
+    let mut display_names = std::collections::BTreeSet::new();
+    for entry in skill::all() {
+        assert!(
+            entry.display_name.starts_with("SpecBind "),
+            "{}",
+            entry.name
+        );
+        assert!(display_names.insert(entry.display_name), "{}", entry.name);
+        assert!(
+            (25..=64).contains(&entry.short_description.chars().count()),
+            "{}: short_description must contain 25 to 64 characters",
+            entry.name
+        );
+        assert!(
+            entry.default_prompt.contains(&format!("${}", entry.name)),
+            "{}: default_prompt must name the exact Skill",
+            entry.name
+        );
+
+        for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
+            let files = entry.render_files(agent).expect("rendered package");
+            let metadata = files
+                .iter()
+                .find(|file| file.target.ends_with("/agents/openai.yaml"));
+            if agent == Agent::Codex {
+                let metadata = metadata.expect("Codex UI metadata");
+                let value: serde_json::Value =
+                    serde_saphyr::from_str(&metadata.content).expect("valid openai.yaml");
+                assert_eq!(
+                    value["interface"]["display_name"].as_str(),
+                    Some(entry.display_name)
+                );
+                assert_eq!(
+                    value["interface"]["short_description"].as_str(),
+                    Some(entry.short_description)
+                );
+                assert_eq!(
+                    value["interface"]["default_prompt"].as_str(),
+                    Some(entry.default_prompt)
+                );
+                assert!(value.get("policy").is_none());
+                assert!(value.get("dependencies").is_none());
+            } else {
+                assert!(
+                    metadata.is_none(),
+                    "{agent:?} must not receive OpenAI metadata"
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn every_product_skill_consumes_the_shared_language_style_rule() {
     for entry in skill::all() {
         let body = entry.body().expect("body");
@@ -132,6 +186,23 @@ fn installs_each_skill_to_the_accepted_target() {
             entry.target(Agent::Generic),
             format!(".agents/skills/{}/SKILL.md", entry.name)
         );
+        assert!(
+            entry
+                .targets(Agent::Codex)
+                .contains(&format!(".agents/skills/{}/agents/openai.yaml", entry.name))
+        );
+        assert!(
+            !entry
+                .targets(Agent::ClaudeCode)
+                .iter()
+                .any(|target| target.ends_with("/agents/openai.yaml"))
+        );
+        assert!(
+            !entry
+                .targets(Agent::Generic)
+                .iter()
+                .any(|target| target.ends_with("/agents/openai.yaml"))
+        );
     }
 }
 
@@ -160,7 +231,8 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
         }
         for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
             let files = entry.render_files(agent).expect("rendered package");
-            assert_eq!(files.len(), expected_resources + 1, "{name}");
+            let expected_files = expected_resources + 1 + usize::from(agent == Agent::Codex);
+            assert_eq!(files.len(), expected_files, "{name}: {agent:?}");
             assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
         }
     }

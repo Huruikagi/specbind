@@ -1,5 +1,15 @@
 use super::*;
 
+fn assert_codex_status_metadata(root: &Path) {
+    let metadata = fs::read_to_string(root.join(".agents/skills/sb-status/agents/openai.yaml"))
+        .expect("rendered Codex skill metadata");
+    assert!(
+        metadata.contains("display_name: \"SpecBind Status\""),
+        "{metadata}"
+    );
+    assert!(metadata.contains("Use $sb-status"), "{metadata}");
+}
+
 #[test]
 fn plans_an_initial_installation_without_writing() {
     let root = tempfile::tempdir().expect("temporary project root");
@@ -22,7 +32,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 90 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 105 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -43,7 +53,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 90 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 105 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -111,7 +121,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 50 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 65 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -160,10 +170,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 52 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 67 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 52 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 67 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -245,7 +255,10 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         .success()
         .stdout(
             predicate::str::contains("- create .claude/skills/sb-status/SKILL.md [skill]\n").and(
-                predicate::str::contains("- create .agents/skills/sb-status/SKILL.md [skill]\n"),
+                predicate::str::contains("- create .agents/skills/sb-status/SKILL.md [skill]\n")
+                    .and(predicate::str::contains(
+                        "- create .agents/skills/sb-status/agents/openai.yaml [skill]\n",
+                    )),
             ),
         );
 
@@ -253,6 +266,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         .expect("rendered Claude Code skill");
     let codex = fs::read_to_string(root.path().join(".agents/skills/sb-status/SKILL.md"))
         .expect("rendered Codex skill");
+    assert_codex_status_metadata(root.path());
     for relative in [
         ".claude/skills/sb-plan/SKILL.md",
         ".agents/skills/sb-plan/SKILL.md",
@@ -864,7 +878,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 51 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 66 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

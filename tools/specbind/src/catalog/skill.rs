@@ -18,6 +18,12 @@ use crate::install::Agent;
 pub struct Skill {
     /// Skill identity, matching the source directory name.
     pub name: &'static str,
+    /// Human-facing name shown by `OpenAI` Skill interfaces.
+    pub display_name: &'static str,
+    /// Compact human-facing description shown by `OpenAI` Skill interfaces.
+    pub short_description: &'static str,
+    /// Example prompt inserted by `OpenAI` Skill interfaces.
+    pub default_prompt: &'static str,
     source: &'static str,
 }
 
@@ -70,62 +76,107 @@ impl std::error::Error for SkillError {}
 static SKILLS: &[Skill] = &[
     Skill {
         name: "sb-contract-review",
+        display_name: "SpecBind Contract Review",
+        short_description: "Review the milestone contract graph.",
+        default_prompt: "Use $sb-contract-review to review the active milestone contract graph.",
         source: include_str!("../../assets/skills/sb-contract-review/SKILL.md"),
     },
     Skill {
         name: "sb-configure",
+        display_name: "SpecBind Configure",
+        short_description: "Configure a SpecBind project safely.",
+        default_prompt: "Use $sb-configure to review and update this project's SpecBind configuration.",
         source: include_str!("../../assets/skills/sb-configure/SKILL.md"),
     },
     Skill {
         name: "sb-debug",
+        display_name: "SpecBind Debug",
+        short_description: "Diagnose why a SpecBind workflow stopped.",
+        default_prompt: "Use $sb-debug to diagnose why the current SpecBind workflow stopped.",
         source: include_str!("../../assets/skills/sb-debug/SKILL.md"),
     },
     Skill {
         name: "sb-discovery",
+        display_name: "SpecBind Discovery",
+        short_description: "Discover and classify milestone work.",
+        default_prompt: "Use $sb-discovery to discover and classify the requested milestone work.",
         source: include_str!("../../assets/skills/sb-discovery/SKILL.md"),
     },
     Skill {
         name: "sb-drive",
+        display_name: "SpecBind Drive",
+        short_description: "Drive safe milestone work to release readiness.",
+        default_prompt: "Use $sb-drive to advance the active milestone through safe reachable work.",
         source: include_str!("../../assets/skills/sb-drive/SKILL.md"),
     },
     Skill {
         name: "sb-gap-analysis",
+        display_name: "SpecBind Gap Analysis",
+        short_description: "Compare planned work with the repository.",
+        default_prompt: "Use $sb-gap-analysis to compare the intended work with this repository.",
         source: include_str!("../../assets/skills/sb-gap-analysis/SKILL.md"),
     },
     Skill {
         name: "sb-implement",
+        display_name: "SpecBind Implement",
+        short_description: "Implement one planned milestone item.",
+        default_prompt: "Use $sb-implement to implement one planned item from the active milestone.",
         source: include_str!("../../assets/skills/sb-implement/SKILL.md"),
     },
     Skill {
         name: "sb-plan",
+        display_name: "SpecBind Plan",
+        short_description: "Plan Spec work through approval gates.",
+        default_prompt: "Use $sb-plan to plan the active Spec work through its approval gates.",
         source: include_str!("../../assets/skills/sb-plan/SKILL.md"),
     },
     Skill {
         name: "sb-release",
+        display_name: "SpecBind Release",
+        short_description: "Release and finalize an active milestone.",
+        default_prompt: "Use $sb-release to release and finalize the active milestone.",
         source: include_str!("../../assets/skills/sb-release/SKILL.md"),
     },
     Skill {
         name: "sb-review-task",
+        display_name: "SpecBind Task Review",
+        short_description: "Review one implemented task independently.",
+        default_prompt: "Use $sb-review-task to independently review one implemented task.",
         source: include_str!("../../assets/skills/sb-review-task/SKILL.md"),
     },
     Skill {
         name: "sb-status",
+        display_name: "SpecBind Status",
+        short_description: "Explain lifecycle state and next steps.",
+        default_prompt: "Use $sb-status to explain the current lifecycle state and next available action.",
         source: include_str!("../../assets/skills/sb-status/SKILL.md"),
     },
     Skill {
         name: "sb-steering",
+        display_name: "SpecBind Steering",
+        short_description: "Maintain durable project steering.",
+        default_prompt: "Use $sb-steering to establish or update this project's durable guidance.",
         source: include_str!("../../assets/skills/sb-steering/SKILL.md"),
     },
     Skill {
         name: "sb-validate-design",
+        display_name: "SpecBind Design Validation",
+        short_description: "Validate a SpecBind design independently.",
+        default_prompt: "Use $sb-validate-design to independently validate the active Spec design.",
         source: include_str!("../../assets/skills/sb-validate-design/SKILL.md"),
     },
     Skill {
         name: "sb-validate-implementation",
+        display_name: "SpecBind Implementation Validation",
+        short_description: "Validate implementation against requirements.",
+        default_prompt: "Use $sb-validate-implementation to validate the active Spec implementation.",
         source: include_str!("../../assets/skills/sb-validate-implementation/SKILL.md"),
     },
     Skill {
         name: "sb-verify-completion",
+        display_name: "SpecBind Completion Verification",
+        short_description: "Verify an explicit completion claim.",
+        default_prompt: "Use $sb-verify-completion to verify this explicit completion claim.",
         source: include_str!("../../assets/skills/sb-verify-completion/SKILL.md"),
     },
 ];
@@ -397,19 +448,29 @@ impl Skill {
             target: self.resource_target(agent, resource.relative_path),
             content: resource.source.to_owned(),
         }));
+        if agent == Agent::Codex {
+            files.push(RenderedSkillFile {
+                target: self.resource_target(agent, "agents/openai.yaml"),
+                content: self.render_openai_yaml(),
+            });
+        }
         Ok(files)
     }
 
     /// Returns every exact install target owned by this package for one Agent.
     #[must_use]
     pub fn targets(self, agent: Agent) -> Vec<String> {
-        std::iter::once(self.target(agent))
+        let mut targets = std::iter::once(self.target(agent))
             .chain(
                 self.resources()
                     .iter()
                     .map(|resource| self.resource_target(agent, resource.relative_path)),
             )
-            .collect()
+            .collect::<Vec<_>>();
+        if agent == Agent::Codex {
+            targets.push(self.resource_target(agent, "agents/openai.yaml"));
+        }
+        targets
     }
 
     /// Returns the project-relative install target for one agent.
@@ -428,6 +489,13 @@ impl Skill {
             .strip_suffix("/SKILL.md")
             .expect("skill entrypoint always ends in /SKILL.md");
         format!("{package_root}/{relative_path}")
+    }
+
+    fn render_openai_yaml(self) -> String {
+        format!(
+            "interface:\n  display_name: \"{}\"\n  short_description: \"{}\"\n  default_prompt: \"{}\"\n",
+            self.display_name, self.short_description, self.default_prompt
+        )
     }
 
     fn split(self) -> Result<(&'static str, &'static str), SkillError> {

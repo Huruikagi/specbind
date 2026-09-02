@@ -336,3 +336,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0180](./design/decisions/0180-delegate-binary-updates-to-installation-clients.md) | Accepted | Binary updates delegated to installation clients and separated from project-asset refresh |
 | [0181](./design/decisions/0181-reverse-spec-establishment.md) | Accepted | Reverse Specs established from a fixed implementation revision as a non-release baseline |
 | [0182](./design/decisions/0182-project-validation-adapter.md) | Accepted | Project-specific final implementation validation adapter |
+| [0183](./design/decisions/0183-codex-skill-interface-metadata.md) | Accepted | Branded Codex interface metadata for product-managed Skills |

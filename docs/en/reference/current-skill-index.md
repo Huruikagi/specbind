@@ -21,6 +21,14 @@ Every supported Agent profile receives the same 15 skills:
 Selecting both Codex and generic installs each shared `.agents/skills/` target
 once.
 
+Codex installations also receive
+`.agents/skills/<skill>/agents/openai.yaml`. It presents branded names such as
+`SpecBind Plan`, a compact UI description, and an example prompt that names the
+exact `$sb-*` identifier. This OpenAI-specific metadata is not installed for
+Claude Code or the generic profile. It does not change implicit invocation or
+declare tool dependencies. See
+[Decision 0183](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0183-codex-skill-interface-metadata.md).
+
 | Skill | Current role |
 | --- | --- |
 | `sb-configure` | Review and change supported SpecBind project configuration, coordinate the owning workflow, verify the result, and complete authorized aftercare. |

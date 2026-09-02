@@ -24,6 +24,14 @@ fn git(root: &Path, arguments: &[&str]) {
     );
 }
 
+fn assert_codex_status_metadata_absent(root: &Path) {
+    assert!(
+        !root
+            .join(".agents/skills/sb-status/agents/openai.yaml")
+            .exists()
+    );
+}
+
 fn installed(agents: &[&str], project_instructions: bool) -> TempDir {
     let root = tempfile::tempdir().expect("fixture root");
     git(root.path(), &["init", "-q"]);
@@ -88,6 +96,9 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
             "remove .agents/skills/sb-status/SKILL.md [skill]",
         ))
         .stdout(predicate::str::contains(
+            "remove .agents/skills/sb-status/agents/openai.yaml [skill]",
+        ))
+        .stdout(predicate::str::contains(
             "remove .agents/skills/sb-configure/references/aftercare.md [skill]",
         ))
         .stdout(predicate::str::contains("retain AGENTS.md").not());
@@ -110,6 +121,7 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
             .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
+    assert_codex_status_metadata_absent(root.path());
     assert!(
         !root
             .path()
@@ -180,6 +192,9 @@ fn removing_codex_retains_surfaces_shared_with_generic() {
             "retain .agents/skills/sb-configure/references/aftercare.md [skill]",
         ))
         .stdout(predicate::str::contains(
+            "remove .agents/skills/sb-status/agents/openai.yaml [skill]",
+        ))
+        .stdout(predicate::str::contains(
             "remove .codex/agents/specbind-planner.toml [agent-role]",
         ))
         .stdout(predicate::str::contains(
@@ -196,6 +211,7 @@ fn removing_codex_retains_surfaces_shared_with_generic() {
             .join(".agents/skills/sb-status/SKILL.md")
             .is_file()
     );
+    assert_codex_status_metadata_absent(root.path());
     assert!(root.path().join("AGENTS.md").is_file());
     assert!(
         !root
@@ -226,6 +242,11 @@ fn removing_generic_retains_surfaces_required_by_codex() {
     assert!(
         root.path()
             .join(".agents/skills/sb-status/SKILL.md")
+            .is_file()
+    );
+    assert!(
+        root.path()
+            .join(".agents/skills/sb-status/agents/openai.yaml")
             .is_file()
     );
     assert!(
