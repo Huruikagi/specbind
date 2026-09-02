@@ -206,8 +206,8 @@ Prepare `a3` with dispatch instrumentation, then ask:
 
 Before confirmation:
 
-- The complete proposal identifies the maintained positive-quantity behavior as
-  a suspected defect because the fixed implementation does not enforce it.
+- The complete proposal identifies the `Bookshp` README heading as a suspected
+  product-name defect without turning it into Spec scope or a blocking unknown.
 - The agent discovers the Deferred Findings Adapter through `adapter list` and
   its reported selector. It does not try a type-derived selector.
 - No `.specbind/deferred.md`, milestone, Spec, Brief, or Research exists, and
@@ -217,7 +217,7 @@ After the maintainer confirms the presented reverse proposal:
 
 - The reverse milestone is created from the exact preflight source revision
   before `.specbind/deferred.md` is written. The recorded finding includes that
-  revision, a `src/cart.py` locator, and the positive-quantity claim.
+  revision, the `README.md` heading locator, and the product-name claim.
 - Requirements are established for both `cart` and `order`. Their Roadmap
   dependency makes `order` Design wait for `cart` Design approval.
 - `cart` Design authoring and independent validation explicitly treat only

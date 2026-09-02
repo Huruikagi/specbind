@@ -500,9 +500,11 @@ artifact_id: product
 
 # Product
 
-The bookshop lets a customer collect intended purchases and place an order.
+The product is named Bookshop. It lets a customer collect intended purchases
+and place an order.
 Adoption must preserve the distinction between a mutable cart and a committed
-order. Payment and fulfilment are outside the current product.
+order. The order responsibility depends on the cart responsibility's stable
+content boundary. Payment and fulfilment are outside the current product.
 EOF
         cat > .specbind/steering/technology.md <<'EOF'
 ---
@@ -516,11 +518,6 @@ The service is a Python codebase. Repository-local tests are the verification
 surface; adoption documents current behavior but does not change source code.
 EOF
         if [ "$scenario" = a3 ]; then
-            cat >> .specbind/steering/product.md <<'EOF'
-
-Cart additions reject quantities below one and tell the caller to provide a
-positive quantity. This maintained behavior applies to the existing version.
-EOF
             cat > .specbind/settings/adapters/git.md <<'EOF'
 ---
 type: SpecBind Git Adapter
@@ -550,7 +547,7 @@ EOF
             expect "the a3 Git checkpoint policy is inactive" \
                 'specbind adapter list | grep -q "selector=git .*state=active"'
             expect "the a3 suspected defect is not reproducible" \
-                '! grep -q "quantity < 1" src/cart.py'
+                'grep -q "^# Bookshp$" README.md'
             expect "the deferred destination exists before reverse Discovery" \
                 '! test -e .specbind/deferred.md'
         fi
