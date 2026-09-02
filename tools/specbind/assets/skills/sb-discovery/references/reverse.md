@@ -31,9 +31,11 @@ result stale and requires a new run. Do not rebaseline it.
 
 ## Collect independent evidence
 
-Map the repository broadly, then inspect the selected area deeply. Use fresh
-readers for independent evidence lines when the host supports them: one for
-observable behavior and tests, and one for structure, dependencies, and seams.
+Map the repository broadly, then inspect the selected area deeply. When the
+host exposes agent delegation, you MUST dispatch at least two fresh readers in
+parallel before synthesizing the boundary proposal: one for observable behavior
+and tests, and one for structure, dependencies, and seams. If delegation is not
+available, collect those evidence lines yourself and say so in the proposal.
 All claims are about the fixed revision.
 
 For each candidate Spec collect precise project-relative locators for:
