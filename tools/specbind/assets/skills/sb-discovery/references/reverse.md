@@ -21,9 +21,11 @@ specbind steering read <every-selector> --for consume
 
 The preflight must report `ADOPTION_PREFLIGHT_READY`. Record its exact
 `source_revision`. Steering must establish product purpose, technology and
-verification constraints, and responsibility placement. Missing or
+verification constraints, and responsibility placement. Missing or internally
 contradictory Steering stops and routes to `sb-steering`; do not repair it in
-this run.
+this run. A difference between valid Steering and observed implementation is
+not itself a reason to bypass the proposal: classify it below as a suspected
+defect or an unknown.
 
 The revision is fixed. From now until finalization, do not change code, tests,
 dependencies, configuration, or Steering. A changed source makes the reverse
@@ -60,6 +62,11 @@ posting needs separate authority. Findings never change the reverse scope.
 
 This is one complete proposal and the only confirmation boundary for the
 reverse run.
+
+Do not stop before this proposal merely because implementation evidence differs
+from valid Steering. Put the exact semantic question under `Blocking unknowns`
+when its answer changes maintained meaning; otherwise classify it as a
+suspected defect or deferred unknown.
 
 Present exactly one proposal containing:
 
