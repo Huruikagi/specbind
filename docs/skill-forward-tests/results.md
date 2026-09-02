@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `d10bf9c` | A1 — pass; explicit reverse routing confirmed before status/list reads | [Existing-implementation routing](./runs/2026-09-02-codex-d10bf9c-adoption-routing.md) |
 | 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `7ffd343` | VI4 — pass | [Project Validation adapter](./runs/2026-09-02-codex-7ffd343-validation-adapter.md) |
 | 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `efba29e` | A2 — pass | [Reverse establishment proposal confirmation](./runs/2026-09-02-codex-efba29e-reverse-discovery.md) |
 | 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `d76af34` | A2 — product failure | [Reverse conflict classification](./runs/2026-09-02-codex-d76af34-reverse-discovery.md) |
