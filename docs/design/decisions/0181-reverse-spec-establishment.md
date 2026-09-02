@@ -69,6 +69,12 @@ unknown, deferred unknown, suspected defect, or explicitly excluded historical
 detail; a reader finding cannot disappear merely because it does not change a
 Spec boundary.
 
+The temporary adoption record lives at
+`<configured specDir>/adoption/reverse-discovery.yaml`, where the configured
+value is used literally. It never lives under the `specs/` child that contains
+durable Specs. This keeps transient orchestration evidence outside Spec
+discovery and the Contract graph.
+
 The CLI finalizes with:
 
 ```sh

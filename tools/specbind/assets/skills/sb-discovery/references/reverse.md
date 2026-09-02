@@ -127,10 +127,16 @@ specbind milestone create --scope <external-candidate-or->
 
 Verify that every created `spec.yaml` contains matching `establishment.kind:
 reverse`, `source_revision`, `baseline_version`, and `milestone_id`. Write each
-confirmed Brief and evidence-oriented Research handoff. Keep the temporary
-adoption record at `<specDir>/adoption/reverse-discovery.yaml` until
-finalization; record the fixed revision, selected area, proposal, observation
-classifications, and exact evidence locators without copying source text.
+confirmed Brief and evidence-oriented Research handoff. Read `specDir` from
+`.specbind.json` and use that value literally for the temporary adoption record
+at `<specDir>/adoption/reverse-discovery.yaml` until finalization. Do not insert
+a `specs/` segment: for `"specDir": ".specbind"`, write
+`.specbind/adoption/reverse-discovery.yaml`, never
+`.specbind/specs/adoption/reverse-discovery.yaml`. The `specs/` child contains
+durable Specs; keeping the temporary record outside it prevents the record from
+entering Spec discovery or the Contract graph. Record the fixed revision,
+selected area, proposal, observation classifications, and exact evidence
+locators without copying source text.
 
 Only after milestone creation and provenance verification, rerun
 `specbind adapter list` and `specbind adapter read deferred`. If the same exact

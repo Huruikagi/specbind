@@ -26,12 +26,18 @@ Requirements, Design, Contract Review, and non-release finalization. An
 ordinary change to an existing repository never triggers an implementation
 scan merely because code exists.
 
-Resolve `specDir` from `.specbind.json` and check the one temporary adoption
-record:
+Resolve `specDir` from `.specbind.json` and use that configured value literally
+as the root for the one temporary adoption record:
 
 ```text
 <specDir>/adoption/reverse-discovery.yaml
 ```
+
+Do not insert a `specs/` segment: with `"specDir": ".specbind"`, the exact
+path is `.specbind/adoption/reverse-discovery.yaml`, never
+`.specbind/specs/adoption/reverse-discovery.yaml`. The `specs/` child is the
+durable Spec collection; the temporary record must remain outside Spec
+discovery and the Contract graph.
 
 For a temporary adoption record created by an older installed version, select
 exactly one legacy recovery route. The compatibility procedures are

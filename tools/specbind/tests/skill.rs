@@ -447,6 +447,11 @@ fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation()
     assert!(body.contains("one closed contradiction ledger"));
     assert!(body.contains("Give every difference exactly one visible disposition"));
     assert!(body.contains("Do not silently drop a naming, behavior, or\nboundary mismatch"));
+    assert!(body.contains("use that value literally"));
+    assert!(body.contains("never\n`.specbind/specs/adoption/reverse-discovery.yaml`"));
+    assert!(body.contains(
+        "outside it prevents the record from\nentering Spec discovery or the Contract graph"
+    ));
 }
 
 /// Every documented invocation must reference a real command route and only
