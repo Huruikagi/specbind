@@ -47,6 +47,11 @@ the only supported writer of machine state.
   owns; or adds a durable responsibility. When the classification is genuinely
   unclear, enter the flow. Anything else is ordinary work: say in one line that
   it needs no Spec, and do it.
+- An explicit request to establish Specs from an existing implementation is
+  not a change request for that routing check. Select `sb-discovery` directly
+  and let its selected reverse or legacy-adoption procedure run
+  `specbind adoption preflight` before any ordinary `specbind milestone status`
+  or `specbind spec list` read.
 - Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
   `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
   validated. The task plan itself is authored, by the skill that owns it.

@@ -74,6 +74,12 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("run `specbind milestone status` before choosing between")
     );
+    assert!(applied.content.contains(
+        "An explicit request to establish Specs from an existing implementation is\n  not a change request for that routing check"
+    ));
+    assert!(applied.content.contains(
+        "run\n  `specbind adoption preflight` before any ordinary `specbind milestone status`\n  or `specbind spec list` read"
+    ));
     assert!(
         applied
             .content
