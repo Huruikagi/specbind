@@ -12,7 +12,7 @@ PATH、miseなどのパッケージマネージャー設定は削除しません
 
 たとえばCodex連携の削除計画を確認します。
 
-```powershell
+```sh
 specbind remove-agent codex
 ```
 
@@ -22,21 +22,19 @@ Claude Code連携、`.specbind/`以下のSpecsや設定、マーカー外の
 `AGENTS.md`本文は保持されます。
 
 `generic`も選ばれている場合、Codexと共有する`.agents/skills/`以下の管理対象スキルと
-`AGENTS.md`の管理ブロックは`retain`として表示され、Codex固有の
-役割定義だけが削除されます。
-逆に`generic`を外してCodexが残る場合も、共有対象は保持され、設定だけが更新
-されます。削除後に残るエージェントのどれも必要としない対象だけが削除されます。
+`AGENTS.md`の管理ブロックは`retain`として表示され、Codex固有の役割定義だけが削除
+されます。逆に`generic`を外してCodexが残る場合も、共有対象は保持され、設定だけが
+更新されます。削除後に残るエージェントのどれも必要としない対象だけが削除されます。
 
 内容を確認したら適用します。
 
-```powershell
+```sh
 specbind remove-agent codex --apply
 ```
 
-Claude Codeを外す場合は`claude-code`、共通形式の連携を外す場合は`generic`を
-指定します。最後の1エージェントはこの
-コマンドでは削除できません。プロジェクト全体のアンインストールを使い、
-永続知識を残すか削除するか明示してください。
+Claude Codeを外す場合は`claude-code`、共通形式の連携を外す場合は`generic`を指定
+します。最後の1エージェントは、このコマンドでは削除できません。プロジェクト全体の
+アンインストールを使い、永続知識を残すか削除するか明示してください。
 
 ## SpecBind連携全体を外す
 
@@ -45,20 +43,19 @@ Claude Codeを外す場合は`claude-code`、共通形式の連携を外す場�
 
 ### Specsや履歴を残す
 
-```powershell
+```sh
 specbind uninstall --knowledge retain
 specbind uninstall --knowledge retain --apply
 ```
 
-`retain`はエージェント用スキル、役割定義、ルート指示ブロック、
-`.specbind.json`を削除しますが、設定されていた`specDir`全体を残します。
-別のワークフローへ移行するとき、後でSpecBindを再導入するとき、Requirements、
-Design、Contract、Steering、ログ、リリース履歴を通常のプロジェクト文書として
-参照し続けるときに使います。
+`retain`はエージェント用スキル、役割定義、ルート指示ブロック、`.specbind.json`を
+削除しますが、設定されていた`specDir`全体を残します。別のワークフローへ移行する
+とき、後でSpecBindを再導入するとき、Requirements、Design、Contract、Steering、
+ログ、リリース履歴を通常のプロジェクト文書として参照し続けるときに使います。
 
 ### Specsや履歴も削除する
 
-```powershell
+```sh
 specbind uninstall --knowledge remove
 specbind uninstall --knowledge remove --apply
 ```
@@ -72,7 +69,7 @@ specbind uninstall --knowledge remove --apply
 ない場合だけ実行できます。削除前のコミットから復元できます。たとえば既定構成なら、
 削除直後、ほかの編集を始める前に次のように連携全体を戻せます。
 
-```powershell
+```sh
 git restore --source=HEAD -- .
 ```
 
@@ -85,9 +82,9 @@ git restore --source=HEAD -- .
 ## 停止したとき
 
 計画または適用が`dirty`、`untracked`、`ignored`、`link-like`、マーカー不正などを
-報告した場合、SpecBindは対象を推測したり強制削除したりしません。
-診断に表示されたパスを確認し、残す内容をコミットまたは別の場所へ移してから
-同じ計画を再実行してください。
+報告した場合、SpecBindは対象を推測したり強制削除したりしません。診断に表示された
+パスを確認し、残す内容をコミットまたは別の場所へ移してから、同じ計画を再実行して
+ください。
 
 適用が途中で停止した場合も、すでに削除済みの対象は`absent`として認識されます。
 `.specbind.json`は最後に更新または削除される完了マーカーなので、同じコマンドを
