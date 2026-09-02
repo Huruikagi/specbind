@@ -61,15 +61,24 @@ Directとして始めた作業が、実は仕様やContractの変更を必要と
 
 ## DiscoveryのSource Collection
 
-Discoveryには、プロジェクト内のGitで追跡済みのテキストファイルやディレクトリ、
-または明示したGitHubリポジトリのMilestoneを、ひとまとまりのSource Collectionとして
-渡せます。Discoveryはコレクション全体を棚卸しし、RoadmapにすべてのSource Itemの
-振り分けを、各BriefにそのSpecが参照する項目だけを記録します。読めないローカル項目、
-アクセスできないGitHub項目、GitHubの不完全なページ送りがあれば、一部だけを使って
-進めずに停止します。GitHub Milestoneは`OWNER/REPO`とMilestone番号を別々に指定するか、
-厳密な正規URLの`https://github.com/OWNER/REPO/milestone/NUMBER`を指定します。別のURL
-形式は受け付けません。openとclosedのIssueを対象にします。コメントとタイムライン
-イベントは入力資料ではありません。
+Discoveryには、入力資料をひとまとまりのSource Collectionとして渡せます。渡せるのは
+次の2種類です。
+
+- プロジェクト内のGitで追跡済みのテキストファイル、またはディレクトリ
+- 明示したGitHubリポジトリのMilestone
+
+Discoveryはコレクション全体を棚卸しし、RoadmapにすべてのSource Itemの振り分けを、
+各BriefにそのSpecが参照する項目だけを記録します。読めないローカル項目、アクセス
+できないGitHub項目、GitHubの不完全なページ送りがあれば、一部だけを使って進めずに
+停止します。
+
+GitHub Milestoneの指定方法は次のどちらかで、ほかのURL形式は受け付けません。
+
+- `OWNER/REPO`とMilestone番号を別々に指定する
+- 厳密な正規URLの`https://github.com/OWNER/REPO/milestone/NUMBER`を指定する
+
+対象はopenとclosedのIssueです。コメントとタイムラインイベントは入力資料では
+ありません。
 
 Source Collectionは正規の仕様そのものではありません。RequirementsとDesignは
 Briefが指定した資料を読み、採用する振る舞いや技術上の結論を自身の成果物へ
@@ -97,9 +106,8 @@ Requirements、Design、TasksにはそれぞれGateがあります。Gateの承�
 チェック印ではなく、レビューした入力のリビジョンとフィンガープリントに結び付いた証拠です。
 
 そのため、上流の成果物が変わると、影響を受ける下流の承認や、完了を裏付ける記録
-（completion evidence）は
-無効、または古い状態になります。エージェントが古いDesignやTasksのまま黙って
-進んでしまうのを防ぐための仕組みです。
+（completion evidence）は無効、または古い状態になります。エージェントが古いDesignや
+Tasksのまま黙って進んでしまうのを防ぐための仕組みです。
 
 承認には2つの形があります。
 
@@ -168,14 +176,18 @@ Discovery
   -> リリース
 ```
 
-`sb-plan`は、RequirementsからTasks承認までを進める標準の入口です。Specを指定
-するとその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを対象に
-します。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。各Gateの承認を
-この実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は変わりません。
-Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Specとフェーズを
-明示して同じ`sb-plan`を使います。
-`sb-implement`が実装するのは、1回につき1つのRoadmap項目だけです。
-`sb-drive`はMilestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
+この流れを進めるスキルは3つです。
+
+**`sb-plan`** — RequirementsからTasks承認までを進める標準の入口です。Specを指定する
+とその1件、`--all`または全Specという明示的な依頼ではMilestone内の全Specを対象に
+します。対象を付けずに呼び出すと、作業を始める前にどちらかを確認します。各Gateの
+承認をこの実行へ委任すれば確認回数を減らせますが、使う成果物、レビュー、CLIの検査は
+変わりません。Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Specと
+フェーズを明示して同じ`sb-plan`を使います。
+
+**`sb-implement`** — 1回につき1つのRoadmap項目だけを実装します。
+
+**`sb-drive`** — Milestone全体から安全に到達可能な所有ワークフローを1つずつ選び、
 各委譲後にCLI状態を読み直します。局所的な判断待ちは保留して独立項目を続けますが、
 リリースは実行せず、その手前で停止します。
 

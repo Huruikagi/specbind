@@ -12,7 +12,7 @@ binary, PATH entries, or package-manager configuration such as mise.
 
 For example, inspect the Codex removal plan:
 
-```powershell
+```sh
 specbind remove-agent codex
 ```
 
@@ -24,7 +24,7 @@ another selected Agent still needs them.
 
 Apply the reviewed plan with:
 
-```powershell
+```sh
 specbind remove-agent codex --apply
 ```
 
@@ -36,7 +36,7 @@ explicitly choose what happens to durable knowledge.
 
 ### Retain Specs and history
 
-```powershell
+```sh
 specbind uninstall --knowledge retain
 specbind uninstall --knowledge retain --apply
 ```
@@ -49,7 +49,7 @@ project documentation.
 
 ### Remove Specs and history
 
-```powershell
+```sh
 specbind uninstall --knowledge remove
 specbind uninstall --knowledge remove --apply
 ```
@@ -60,7 +60,7 @@ Git, the repository is clean, and it contains no ignored or untracked files,
 symlinks, junctions, or reparse points. The deleted content can then be restored
 from the commit before uninstall.
 
-```powershell
+```sh
 git restore --source=HEAD -- .
 ```
 

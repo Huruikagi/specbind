@@ -39,19 +39,13 @@ SpecBindを始める手順は、プロジェクトに既存実装があるかど
 
 ### 使えるエージェントについて
 
-開発者はCodexとClaude Codeを利用しており、この2つでテストを進めています。
+SpecBindはCodexとClaude Codeで開発・テストしています。動作を確認済みなのは、
+この2つです。
 
-それ以外のコーディングエージェントでも、
-Agent Skillsと`AGENTS.md`に対応していれば
-（試してないけど）多分動くはずです。
-具体的には
-
-- Cursor
-- GitHub Copilot
-- Devin
-- ほか...
-
-うまくいかなかったら[バグ報告と改善提案](./feedback.md)から教えてください。
+そのほかのコーディングエージェントも、Agent Skillsと`AGENTS.md`に対応していれば
+動作する見込みです。Cursor、GitHub Copilot、Devinなどが該当しますが、いずれも同じ
+検証は行っていません。うまくいかなかった場合は
+[バグ報告と改善提案](./feedback.md)から教えてください。
 
 ## SpecBindがやらないこと
 
