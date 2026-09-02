@@ -26,28 +26,31 @@ Requirements, Design, Contract Review, and non-release finalization. An
 ordinary change to an existing repository never triggers an implementation
 scan merely because code exists.
 
-Resolve `specDir` from `.specbind.json` and check the one adoption dossier:
+Resolve `specDir` from `.specbind.json` and check the one temporary adoption
+record:
 
 ```text
 <specDir>/adoption/reverse-discovery.yaml
 ```
 
-For a dossier created by an older installed version, select exactly one legacy
-recovery route. The compatibility procedures are [Adoption start](references/adopt-start.md)
-and [Adoption resume](references/adopt-resume.md); do not load either for a new
+For a temporary adoption record created by an older installed version, select
+exactly one legacy recovery route. The compatibility procedures are
+[Adoption start](references/adopt-start.md) and
+[Adoption resume](references/adopt-resume.md); do not load either for a new
 reverse run:
 
-- Explicit reverse establishment with no dossier: use the reverse procedure
-  above, not the legacy start/resume references.
-- A dossier whose confirmed candidate Specs and Briefs have not yet been
-  created: use the ordinary Discovery procedure below for exactly that
-  confirmed candidate set. The dossier is evidence for the proposal, not
+- Explicit reverse establishment with no temporary adoption record: use the
+  reverse procedure above, not the legacy start/resume references.
+- A temporary adoption record whose confirmed candidate Specs and Briefs have
+  not yet been created: use the ordinary Discovery procedure below for exactly
+  that confirmed candidate set. The record is evidence for the proposal, not
   lifecycle authority; still present and confirm Discovery's complete
   four-field scope before mutation. Do not load the resume procedure yet.
-- A dossier whose exact candidate Specs are active and each has a Brief: read
-  [Adoption resume](references/adopt-resume.md) completely and follow it.
+- A temporary adoption record whose exact candidate Specs are active and each
+  has a Brief: read [Adoption resume](references/adopt-resume.md) completely and
+  follow it.
 - Any partial or mismatched handoff: stop and report the discrepancy. Never
-  invent a second dossier, silently change its candidates, or treat an ordinary
+  create a second record, silently change its candidates, or treat an ordinary
   Research artifact as adoption state.
 
 Existing code and tests are **evidence**, never automatic authority for what
@@ -57,8 +60,9 @@ Tasks, and never changes implementation, tests, dependencies, configuration,
 or Steering.
 
 The remaining numbered procedure is the ordinary Discovery route. Adoption
-Start and Resume follow only their selected reference; the dossier-to-scope
-handoff uses the numbered procedure and its independent confirmation.
+Start and Resume follow only their selected reference. When the recorded
+candidates are handed to ordinary Discovery, use the numbered procedure and
+its independent confirmation.
 
 Take a change request and answer one question: **which durable boundaries does
 this work belong to?** Everything else follows from that answer.

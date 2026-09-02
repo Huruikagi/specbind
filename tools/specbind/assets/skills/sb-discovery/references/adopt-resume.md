@@ -1,17 +1,18 @@
 # Resume existing-implementation adoption through Discovery
 
 Read this procedure only when selected by `sb-discovery` after ordinary
-Discovery created the dossier's exact candidate Specs and Briefs.
+Discovery created the exact candidate Specs and Briefs recorded in the temporary
+adoption record.
 
-Read the dossier and verify:
+Read the temporary adoption record and verify:
 
 - its version is `1` and its `source_revision` is a full existing commit;
 - the repository has the active milestone and exact new Specs recorded as
   accepted boundary candidates;
 - each candidate has a Brief;
 - Steering is readable and unchanged from the source revision;
-- changes since `source_revision` are limited to the tracked dossier and the
-  ordinary Discovery-created SpecBind paths. Any implementation, test,
+- changes since `source_revision` are limited to the tracked adoption record and
+  the ordinary Discovery-created SpecBind paths. Any implementation, test,
   configuration, dependency, or unrelated documentation change makes the
   evidence baseline stale and stops the run.
 
@@ -34,7 +35,7 @@ may run in parallel, but user reconciliation and Brief changes remain per Spec.
 
 For the current Spec, inspect implementation, tests, schemas, public interfaces,
 and runtime checks that lie inside or cross its boundary. Record observations in
-the dossier using this shape:
+the temporary adoption record using this shape:
 
 ```yaml
 - id: OBS-001
@@ -104,16 +105,16 @@ after writing it. Do not author `requirements.md` here.
 Repeat until every accepted boundary has a complete Brief and Research handoff
 and no observation remains `pending`.
 
-## Retire the project dossier and checkpoint
+## Retire the temporary adoption record and checkpoint
 
 Delete `<specDir>/adoption/reverse-discovery.yaml` only after every accepted
 candidate has been materialized and read back. The file disappears from the
 current tree but remains in Git history. Do not delete the per-Spec Research;
 normal release finalization owns that lifecycle.
 
-Read the Git adapter and checkpoint only the Brief, Research, and dossier
-deletion paths this phase produced. A missing or inactive adapter means no
-adapter-directed commit; push is never inferred.
+Read the Git adapter and checkpoint only the Brief and Research changes and the
+adoption record deletion this phase produced. A missing or inactive adapter
+means no adapter-directed commit; push is never inferred.
 
 Report each Spec as ready for its normal next command:
 

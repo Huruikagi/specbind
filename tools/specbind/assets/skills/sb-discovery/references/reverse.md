@@ -103,10 +103,10 @@ specbind milestone create --scope <external-candidate-or->
 
 Verify that every created `spec.yaml` contains matching `establishment.kind:
 reverse`, `source_revision`, `baseline_version`, and `milestone_id`. Write each
-confirmed Brief and evidence-oriented Research handoff. Keep the dossier at
-`<specDir>/adoption/reverse-discovery.yaml` until finalization; record the fixed
-revision, selected area, proposal, observation classifications, and exact
-evidence locators without copying source text.
+confirmed Brief and evidence-oriented Research handoff. Keep the temporary
+adoption record at `<specDir>/adoption/reverse-discovery.yaml` until
+finalization; record the fixed revision, selected area, proposal, observation
+classifications, and exact evidence locators without copying source text.
 
 Checkpoint only reverse artifacts according to the active Git Adapter. Never
 infer push authority.
@@ -145,7 +145,7 @@ specbind milestone reverse finalize --log-entries <path-or->
 ```
 
 Finalization writes Baseline entries to each `log.md`, retains establishment
-provenance, archives Roadmap and Contract Review under `baselines/`, removes
-temporary Brief, Research, and dossier artifacts, and closes the milestone.
-It must not run a Release Adapter, bind a target release, tag, publish, or claim
-that the product was released.
+provenance, archives Roadmap and Contract Review under `baselines/`, removes the
+temporary Brief and Research artifacts and the adoption record, and closes the
+milestone. It must not run a Release Adapter, bind a target release, tag,
+publish, or claim that the product was released.

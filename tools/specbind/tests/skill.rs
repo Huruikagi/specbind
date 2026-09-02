@@ -403,6 +403,7 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
         "references/reverse.md",
         "specbind adoption preflight",
         "one complete proposal",
+        "temporary adoption record",
         "baseline_version",
         "reverseSpecs",
         "source_revision",
@@ -418,6 +419,10 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
             "Discovery adoption package must contain {required}"
         );
     }
+    assert!(
+        !body.to_ascii_lowercase().contains("dossier"),
+        "Discovery adoption package must describe the temporary record without treating dossier as a product term"
+    );
 }
 
 /// Every documented invocation must reference a real command route and only

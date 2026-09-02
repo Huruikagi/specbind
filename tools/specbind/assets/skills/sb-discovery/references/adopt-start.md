@@ -1,7 +1,7 @@
 # Start existing-implementation adoption through Discovery
 
 Read this procedure only when selected by `sb-discovery` for an explicit
-initial adoption and no adoption dossier exists.
+initial adoption and no temporary adoption record exists.
 
 The user must name the area being adopted. A broad description such as
 "authentication and account management" is sufficient; an omitted scope is
@@ -110,10 +110,10 @@ The request to run this skill is **not** confirmation of the boundaries. Revise
 the proposal on feedback and stop when the same substantive disagreement
 survives one revision.
 
-After explicit confirmation, create the UTF-8 dossier at the exact path named by
-the entrypoint. It is a transient, Git-tracked investigation ledger rather than
-lifecycle state. Use this version-1 shape and keep candidate and observation IDs
-stable:
+After explicit confirmation, create the UTF-8 temporary adoption record at the
+exact path named by the entrypoint. It is a transient, Git-tracked investigation
+ledger rather than lifecycle state. Use this version-1 shape and keep candidate
+and observation IDs stable:
 
 ```yaml
 schema_version: 1
@@ -129,18 +129,18 @@ boundary_candidates:
 observations: []
 ```
 
-Paths are project-root-relative POSIX paths. The dossier contains no secrets,
+Paths are project-root-relative POSIX paths. The record contains no secrets,
 credentials, generated dumps, or source excerpts. It records claims and precise
 locations, not copied implementation.
 
-Checkpoint only the dossier through the project's Git adapter:
+Checkpoint only the temporary adoption record through the project's Git adapter:
 
 ```sh
 specbind adapter read git
 ```
 
 Absence or inactive guidance means no adapter-directed commit. Otherwise follow
-the adapter narrowly, staging only the dossier. Never infer push authority.
+the adapter narrowly, staging only the record. Never infer push authority.
 
 Now hand the confirmed candidate set back to the ordinary route in the
 `sb-discovery` entrypoint as one self-contained later request to create
