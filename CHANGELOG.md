@@ -4,6 +4,20 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.3.0 - 2026-09-02
+
+- Added reverse Spec establishment from a fixed implementation revision,
+  including independent discovery evidence, guarded conflict handling, and
+  baseline finalization that does not misrepresent adopted behavior as a new
+  release.
+- Added project-owned final implementation validation adapters and routed the
+  validation Skill through their exact commands and evidence requirements.
+- Added Codex Skill interface metadata and strengthened adoption routing so
+  existing-product establishment is selected before ordinary status-driven
+  planning.
+- Restructured and expanded the English and Japanese user guides, including a
+  complete shared installation path for new and existing projects.
+
 ## 1.2.0 - 2026-09-02
 
 - Added complete, fail-closed GitHub Milestone discovery through the external
