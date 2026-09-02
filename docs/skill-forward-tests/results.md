@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `9dadf34` | U1, U2 — pass; one environment-invalid U2 attempt retained | [Explicit update workflow confirmation](./runs/2026-09-03-codex-9dadf34-update-confirmation.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `51f765c` | U1 — product failure; U2, U3 — pass | [Explicit update workflow](./runs/2026-09-03-codex-51f765c-update.md) |
 | 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `d10bf9c` | A1 — pass; explicit reverse routing confirmed before status/list reads | [Existing-implementation routing](./runs/2026-09-02-codex-d10bf9c-adoption-routing.md) |
 | 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `7ffd343` | VI4 — pass | [Project Validation adapter](./runs/2026-09-02-codex-7ffd343-validation-adapter.md) |
