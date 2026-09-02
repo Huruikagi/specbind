@@ -45,7 +45,8 @@ that part of the change. Do not load unrelated procedures.
   existing-artifact alignment:
   [templates and reconciliation](references/templates-and-reconciliation.md)
 - Shared authoring or judgment policy: [Rules](references/rules.md)
-- Release, Git, or deferred-finding policy: [adapters](references/adapters.md)
+- Release, Git, deferred-finding, or final implementation-validation procedure:
+  [adapters](references/adapters.md)
 - Durable project knowledge: [Steering](references/steering.md)
 
 Read [aftercare](references/aftercare.md) after every mutation and before

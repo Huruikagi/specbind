@@ -2,7 +2,7 @@ use std::fs;
 
 use specbind::{adapter, config::ProjectLanguage};
 
-const ACCEPTED_SELECTORS: [&str; 3] = ["release", "git", "deferred"];
+const ACCEPTED_SELECTORS: [&str; 4] = ["release", "git", "deferred", "validation"];
 
 #[test]
 fn accepts_a_closed_selector_set() {
@@ -17,6 +17,7 @@ fn accepts_a_closed_selector_set() {
     assert!(adapter::find("release").is_some());
     assert!(adapter::find("git").is_some());
     assert!(adapter::find("deferred").is_some());
+    assert!(adapter::find("validation").is_some());
     for unknown in ["deploy", "release.md", "", "Release"] {
         assert!(
             adapter::find(unknown).is_none(),
@@ -190,6 +191,32 @@ fn states_that_the_git_adapter_grants_no_authority() {
         assert!(
             scaffold.contains("sb-configure"),
             "configuration changes must be named as eligible checkpoints: {scaffold}"
+        );
+    }
+}
+
+#[test]
+fn states_the_validation_adapter_boundary() {
+    let validation = adapter::find("validation").expect("validation adapter");
+    for scaffold in [
+        validation.scaffold(ProjectLanguage::En),
+        validation.scaffold(ProjectLanguage::Ja),
+    ] {
+        assert!(
+            scaffold.contains("sb-validate-implementation"),
+            "the consuming workflow must be explicit: {scaffold}"
+        );
+        assert!(
+            scaffold.contains("MANUAL_VERIFY_REQUIRED"),
+            "unavailable required checks must fail closed: {scaffold}"
+        );
+        assert!(
+            scaffold.contains("permission") || scaffold.contains("権限"),
+            "adapter guidance must grant no authority: {scaffold}"
+        );
+        assert!(
+            scaffold.contains("repair") || scaffold.contains("修正"),
+            "the validator must not repair its own findings: {scaffold}"
         );
     }
 }

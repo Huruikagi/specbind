@@ -183,6 +183,46 @@ fn configure_aftercare_names_the_exact_git_adapter_read_command() {
 }
 
 #[test]
+fn configuration_and_final_validation_share_the_validation_adapter_contract() {
+    let configure = skill::find("sb-configure").expect("configure skill");
+    let adapters = configure
+        .resources()
+        .iter()
+        .find(|resource| resource.relative_path == "references/adapters.md")
+        .expect("configure adapters reference")
+        .content();
+    for required in [
+        "The `validation` adapter adds project-specific work",
+        "Present a complete replacement for a scaffold\nor an exact diff for active guidance.",
+        "cannot replace, waive, narrow, or declare them passed",
+        "The adapter grants no credential, external mutation, source edit, or finding\n  repair authority.",
+    ] {
+        assert!(
+            adapters.contains(required),
+            "configure must preserve the Validation adapter boundary: {required}"
+        );
+    }
+
+    let validation = skill::find("sb-validate-implementation")
+        .expect("implementation validation skill")
+        .body()
+        .expect("implementation validation body");
+    for required in [
+        "specbind adapter read validation",
+        "Fix the complete required set before running anything.",
+        "is `MANUAL_VERIFY_REQUIRED`",
+        "it must not\nedit source or repair a finding it will judge",
+        "as `custom` only when an exact command actually\nran and returned zero",
+        "remain run-scoped semantic evidence",
+    ] {
+        assert!(
+            validation.contains(required),
+            "final validation must preserve the adapter contract: {required}"
+        );
+    }
+}
+
+#[test]
 fn configure_recommends_steering_before_project_shaping_but_preserves_narrow_edits() {
     let configure = skill::find("sb-configure").expect("configure skill");
     let body = configure.body().expect("configure body");

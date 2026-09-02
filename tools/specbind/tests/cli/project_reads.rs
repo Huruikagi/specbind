@@ -642,10 +642,11 @@ fn lists_accepted_adapters_with_project_presence() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK ADAPTER_LISTED: Found 3 accepted adapter(s).\n",
+            "OK ADAPTER_LISTED: Found 4 accepted adapter(s).\n",
             "  selector=release type=\"SpecBind Release Adapter\" path=settings/adapters/release.md present=no state=absent\n",
             "  selector=git type=\"SpecBind Git Adapter\" path=settings/adapters/git.md present=yes state=active\n",
             "  selector=deferred type=\"SpecBind Deferred Findings Adapter\" path=settings/adapters/deferred.md present=no state=absent\n",
+            "  selector=validation type=\"SpecBind Validation Adapter\" path=settings/adapters/validation.md present=no state=absent\n",
         ))
         .stderr("");
 }
@@ -916,6 +917,21 @@ fn installs_localized_adapter_scaffolds_and_keeps_project_copies() {
         "{release}"
     );
     assert!(release.contains("# リリースアダプタ"), "{release}");
+
+    let validation = fs::read_to_string(
+        root.path()
+            .join(".specbind/settings/adapters/validation.md"),
+    )
+    .expect("validation adapter");
+    assert!(
+        validation.starts_with("---\ntype: SpecBind Validation Adapter\n---\n"),
+        "{validation}"
+    );
+    assert!(validation.contains("# 検証アダプター"), "{validation}");
+    assert!(
+        validation.contains("specbind:adapter-scaffold"),
+        "{validation}"
+    );
 
     let git_adapter = fs::read_to_string(root.path().join(".specbind/settings/adapters/git.md"))
         .expect("git adapter");

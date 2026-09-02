@@ -1,6 +1,6 @@
 //! Catalog of project-owned operational adapter contracts.
 //!
-//! Decision 0101 gives release and Git guidance one home below
+//! Decision 0101 gives operational guidance one home below
 //! `settings/adapters/`. The selector set is closed: an unknown file there is
 //! never listed, never readable, and never acquires meaning by existing. That
 //! is what keeps the directory organization rather than an extension loader.
@@ -78,6 +78,14 @@ static ADAPTERS: &[Adapter] = &[
         purpose: "Project destination for a review finding that is real but does not hold a gate.",
         english: include_str!("../../assets/adapters/en/deferred.md"),
         japanese: include_str!("../../assets/adapters/ja/deferred.md"),
+    },
+    Adapter {
+        selector: "validation",
+        file_name: "validation.md",
+        artifact_type: "SpecBind Validation Adapter",
+        purpose: "Additional project-specific procedures for final implementation validation.",
+        english: include_str!("../../assets/adapters/en/validation.md"),
+        japanese: include_str!("../../assets/adapters/ja/validation.md"),
     },
 ];
 

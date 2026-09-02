@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0182](./0182-project-validation-adapter.md) extends the closed
+selector set with the optional `validation` adapter and assigns its consumption
+to final implementation validation.
+
 [Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
 supersedes the untouched Release scaffold's no-action interpretation and adds
 the Release bootstrap and finalization checkpoints.

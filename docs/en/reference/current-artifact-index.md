@@ -40,6 +40,7 @@ machine-level binary.
 | `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
 | `{{SPEC_DIR}}/settings/adapters/git.md` | Active default policy that commits each eligible workflow unit locally, without pushing or rewriting history. |
 | `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
+| `{{SPEC_DIR}}/settings/adapters/validation.md` | Optional project-specific procedures added to final Spec implementation validation. |
 | `.claude/skills/<skill>/SKILL.md` and known `references/` | Product-managed Claude Code rendering of each of the 19 embedded Skill packages. |
 | `.agents/skills/<skill>/SKILL.md` and known `references/` | Product-managed Codex rendering of each of the 19 embedded Skill packages. |
 | `.codex/agents/specbind-*.toml` | Product-managed Codex role adapters for planning, implementation, review, diagnosis, and bounded research; model capability may be overridden through `.specbind.json`. |

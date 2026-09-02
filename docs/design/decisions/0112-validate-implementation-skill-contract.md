@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0182](./0182-project-validation-adapter.md) adds the project-specific
+Validation adapter to the required-set derivation while retaining this
+decision's verdict, no-repair, and evidence boundaries.
+
 ## Context
 
 [Decision 0086](./0086-completion-cli-handshake.md) fixes the Spec completion

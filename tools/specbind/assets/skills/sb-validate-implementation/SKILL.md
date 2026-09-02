@@ -89,6 +89,32 @@ workflow.
 
 ## 3. Gather the evidence
 
+Read the project-specific validation procedure before fixing the required set:
+
+```sh
+specbind adapter read validation
+```
+
+`NO_CHANGE ADAPTER_ABSENT`, an adapter whose whole body is classified as a
+scaffold, or an intentionally empty body adds no project-specific work. An
+active adapter adds every applicable procedure to this run. It supplements the
+mandatory protocol and canonical project checks; it never replaces, waives,
+narrows, or declares them passed.
+
+Interpret the free-form guidance rather than treating Markdown or code blocks as
+an executable hook. It may require commands, browser or device interaction,
+connected tools such as MCP servers, manual checks, setup, observable success,
+or cleanup. Apply the user's request and normal tool, credential, and external
+mutation boundaries independently: the adapter grants no permission. Never put
+a secret in recorded evidence.
+
+Fix the complete required set before running anything. An applicable adapter
+check that returns a known mismatch is `NO-GO`. One that is mandatory but cannot
+be performed because its command, environment, credential, device, or tool is
+unavailable is `MANUAL_VERIFY_REQUIRED`; do not invent or substitute a weaker
+route. The validator may perform authorized setup and cleanup, but it must not
+edit source or repair a finding it will judge.
+
 Derive the required mechanical checks from this project's own automation and
 conventions — its test command, build, lint, typecheck, smoke. Fix that required
 set **before** running anything, then run those exact commands.
@@ -186,6 +212,12 @@ timestamp, fingerprint, or pass flag; the CLI owns those.
 
 Put no secret in a command string. Names of environment variables are fine;
 values are not.
+
+Record a validation-adapter step as `custom` only when an exact command actually
+ran and returned zero. Browser, device, connected-tool, or manual observations
+without an exact command remain run-scoped semantic evidence; do not invent a
+command or a persisted pass flag for them. They are still mandatory for this
+run's `GO` when the adapter requires them.
 
 ### When several Specs converge
 

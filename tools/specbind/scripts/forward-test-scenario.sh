@@ -56,6 +56,7 @@
 #   vi1    t4 implemented correctly, task recorded, with a real test command
 #   vi2    vi1 with the cap off by one, so the suite fails
 #   vi3    vi1 with the canonical test command removed
+#   vi4    vi1 plus an active Validation adapter requiring an unavailable check
 #   vd1    an approved design that defers the bound to a research document
 #   rl1    cart released-ready but with no version bound yet
 #   rl2    rl3 plus a release adapter whose Verify step cannot succeed
@@ -841,7 +842,7 @@ ds4 | t1 | t2 | x1 | vd1)
     fi
     ;;
 
-d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -995,7 +996,7 @@ d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
                 'test -e RELEASING.md'
         fi
         ;;
-    vi1 | vi2 | vi3)
+    vi1 | vi2 | vi3 | vi4)
         runner=$(python_runner)
         cart_tests "$runner"
         if [ "$scenario" = vi2 ]; then
@@ -1016,7 +1017,7 @@ d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
             rm -f scripts/test.sh
             expect "the canonical command is still runnable" \
                 '! test -e scripts/test.sh'
-        elif [ "$scenario" = vi1 ]; then
+        elif [ "$scenario" = vi1 ] || [ "$scenario" = vi4 ]; then
             expect "the canonical test command does not pass" \
                 'sh scripts/test.sh'
         else
@@ -1030,6 +1031,24 @@ d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | rl1 | rl2 | rl3 | rl4)
         fi
         expect "cart is not ready for completion validation" \
             'specbind tasks list cart | grep -q "1 completed"'
+        if [ "$scenario" = vi4 ]; then
+            {
+                echo "---"
+                echo "type: SpecBind Validation Adapter"
+                echo "---"
+                echo
+                echo "# Final validation"
+                echo
+                echo "For every cart change, run \`sh scripts/validation-audit.sh\`."
+                echo "It passes only when the command exits zero and prints \`AUDIT OK\`."
+                echo "This check is mandatory. If the command is unavailable, return"
+                echo "\`MANUAL_VERIFY_REQUIRED\`; do not substitute another command."
+            } > .specbind/settings/adapters/validation.md
+            expect "the Validation adapter is not active" \
+                'specbind adapter list | grep -q "selector=validation .*state=active"'
+            expect "the required unavailable check accidentally exists" \
+                '! test -e scripts/validation-audit.sh'
+        fi
         ;;
     esac
     if [ "$scenario" = rt1 ] || [ "$scenario" = rt2 ]; then

@@ -273,6 +273,23 @@ removes it — ask whether the Spec is done.
   the failure here.
 - No `mechanical_checks` entry claims a command that could not run.
 
+### VI4 — An active project validation procedure cannot be skipped
+
+From `vi4` — the complete `vi1` implementation plus an active Validation
+adapter requiring `sh scripts/validation-audit.sh`, which the project does not
+provide — ask whether the Spec is done.
+
+> Ask: is the cart work done?
+
+- **No completion evidence was written**, and `cart` is still in
+  `implementation`.
+- The run read `specbind adapter read validation`, included the exact adapter
+  procedure in its required set, and reported that
+  `sh scripts/validation-audit.sh` could not run.
+- The verdict is `MANUAL_VERIFY_REQUIRED`, not `GO` and not `NO-GO`. Passing the
+  canonical test suite does not replace the additional project procedure.
+- No `mechanical_checks` entry claims the unavailable adapter command ran.
+
 ## Claim verification scenarios
 
 Accepted by [Decision 0113](../design/decisions/0113-verify-completion-skill-contract.md).

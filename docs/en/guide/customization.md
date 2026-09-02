@@ -18,7 +18,7 @@ Examples below use the default `.specbind` root. Substitute the configured
 | --- | --- | --- |
 | Structure, headings, or examples in Requirements, Design, or Roadmap | `settings/templates/` | `template list/read` |
 | Shared authoring and judgment criteria | `settings/rules/` | `rule list/read` |
-| Release, Git, or deferred-finding operations | `settings/adapters/` | `adapter list/read` |
+| Release, Git, deferred-finding, or final implementation-validation operations | `settings/adapters/` | `adapter list/read` |
 | Durable project context | `steering/` | `steering list/read` |
 | Spec root, artifact language, or selected Agents | `.specbind.json` and `install` | `install --dry-run` |
 | Models used for Agent roles | `.specbind.json` `agentRoles` | `install --dry-run` after editing |
@@ -175,6 +175,7 @@ are guidance for the Agent, not automatically executed hooks.
 | `release.md` | Prepare, publish, verify, and clean up a release |
 | `git.md` | Checkpoint size, staging, commit messages, branch, and push policy |
 | `deferred.md` | Destination for real findings that do not hold a Gate |
+| `validation.md` | Additional project-specific procedures for final Spec implementation validation |
 
 ```sh
 specbind adapter list
@@ -198,6 +199,22 @@ The Git adapter's default checkpoints each safe workflow unit locally on the
 current branch and does not push or rewrite history. Implementation Tasks are
 processed and checkpointed one at a time. Agent authorization boundaries still
 apply: writing `push` into the adapter does not itself authorize pushing.
+
+The Validation adapter is an inactive scaffold until a project defines extra
+final-validation procedure. `sb-configure` can inspect existing scripts, CI,
+runtime instructions, fixtures, browser or device setup, and connected-tool
+integration, then propose a complete replacement or an update. Active applicable
+steps add to the mandatory completion protocol and canonical repository checks;
+they never replace or weaken them. A known mismatch is `NO-GO`, while a required
+step that cannot run because its environment, credential, device, manual
+observer, or tool is unavailable is `MANUAL_VERIFY_REQUIRED`.
+
+The body may describe commands, browser or device interaction, connected tools
+such as MCP servers, manual observations, setup, observable success, and
+cleanup. The adapter grants no credential use, external mutation, source edit,
+or permission to repair a finding. An empty body explicitly adds no project-
+specific procedure. Changing this adapter after completion was accepted makes
+that earlier evidence stale through the ordinary project-revision rule.
 
 ## Steering
 

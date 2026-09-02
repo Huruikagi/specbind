@@ -22,7 +22,7 @@ specbind configuration show
 | --- | --- | --- |
 | RequirementsやDesignなどの構成、見出し、例 | `.specbind/settings/templates/` | `specbind template list`、`specbind template read` |
 | Requirements、Design、Contract、Tasks、Steeringの書き方や判断基準 | `.specbind/settings/rules/` | `specbind rule list`、`specbind rule read` |
-| リリース、Git、保留した指摘の届け先 | `.specbind/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
+| リリース、Git、保留した指摘の届け先、実装完了時に追加する検証手順 | `.specbind/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
 | プロジェクトについてエージェントが長く参照する知識 | `.specbind/steering/` | `specbind steering list`、`specbind steering read` |
 | Specの置き場所、成果物の言語、使うエージェント | `.specbind.json`と`specbind install`のオプション | `specbind install --dry-run ...` |
 | 役割ごとのモデルと推論の深さ | `.specbind.json`の`agentRoles` | 設定後に`specbind install --dry-run` |
@@ -231,6 +231,7 @@ specbind rule read ears-format --for maintain
 | `release.md` | リリースの準備、公開、検証、後片付け |
 | `git.md` | どの単位で区切るか、ステージング、コミットメッセージ、ブランチ、pushの方針 |
 | `deferred.md` | Gateを止めるほどではない指摘を残す先（Issue tracker、wiki、ファイルなど） |
+| `validation.md` | Spec全体の実装を最終検証するとき、プロジェクト固有で追加して行う手順 |
 
 ```sh
 specbind adapter list
@@ -273,7 +274,21 @@ specbind adapter read git
 エージェントが`push`できるようにはなりません。`push`にはあなたの依頼と実行環境の権限が別途
 必要です。
 
-v1が読むのは上の3つだけです。`settings/adapters/`に好きなファイルを置いて種類を
+`validation.md`は、プロジェクトが追加の最終検証手順を定めるまでは未設定のひな形です。
+`sb-configure`は既存のスクリプト、CI、実行手順、fixture、ブラウザや実機の設定、接続済み
+ツールとの連携を調べ、ひな形を置き換える全文または現在の方針への変更案を提示できます。
+有効な手順は、必須のcompletion-verification protocolとリポジトリの標準チェックに追加
+されます。置き換えたり弱めたりすることはできません。不一致が確認できた場合は`NO-GO`、
+必要な環境、認証、実機、人による確認、ツールなどが利用できず必須手順を実行できない場合は
+`MANUAL_VERIFY_REQUIRED`となります。
+
+本文には、コマンド、ブラウザや実機の操作、MCPサーバーなどの接続済みツール、人による
+目視確認、準備、合否を判断できる結果、後片付けを記載できます。アダプターだけで認証情報の
+利用、外部変更、ソース編集、指摘の修正を行う権限は得られません。本文を空にした場合は、
+プロジェクト固有の追加手順なしという意味です。完了記録を受理したあとに変更すると、通常の
+プロジェクトrevisionの規則によって以前の完了記録は古くなり、再検証が必要になります。
+
+v1が読むのは上の4つだけです。`settings/adapters/`に好きなファイルを置いて種類を
 増やす仕組みではありません。
 
 ## Steering
