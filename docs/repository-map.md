@@ -138,6 +138,8 @@ repository root to verify it locally.
 
 This repository's development Skills are:
 
+- `.agents/skills/sb-dev-merge-dependabot/` for sequential Dependabot review,
+  integration, main-CI confirmation, and affected dependency validation;
 - `.agents/skills/sb-dev-forward-test/` for behavioral verification of
   embedded product Skills;
 - `.agents/skills/sb-dev-sync-docs/` for bilingual public-documentation
