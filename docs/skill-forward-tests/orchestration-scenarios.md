@@ -199,7 +199,9 @@ Prepare `a2` with dispatch instrumentation, then ask:
 
 ### A3 — Confirmed reverse establishment records findings and advances Design waves
 
-Prepare `a3` with dispatch instrumentation, then ask:
+Prepare `a3` without dispatch instrumentation, then ask. A2 already owns the
+fresh-reader dispatch measurement; A3 measures the post-confirmation lifecycle,
+and unrelated instrumentation must not block it.
 
 > Establish `cart` and `order` Specs for the existing implementation as product
 > version v1.0.0. In this product, README's “checkout” describes
