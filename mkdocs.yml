@@ -110,6 +110,8 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  - markdown_cjk_spacing.cjk_spacing:
+      segment_break: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
