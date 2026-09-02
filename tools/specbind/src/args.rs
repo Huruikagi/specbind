@@ -390,6 +390,25 @@ pub enum MilestoneCommand {
         #[arg(long)]
         revision: String,
     },
+    /// Finalize a reverse-establishment milestone.
+    Reverse {
+        #[command(subcommand)]
+        command: ReverseCommand,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ReverseCommand {
+    /// Finalize established Specs as an adopted baseline, not a release.
+    Finalize {
+        #[arg(long)]
+        log_entries: Option<String>,
+    },
+    /// Abandon the active reverse milestone before urgent ordinary work.
+    Abandon {
+        #[arg(long)]
+        milestone_id: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]

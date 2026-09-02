@@ -106,9 +106,8 @@ Spec's Design.
 
 ## Existing-implementation adoption scenarios
 
-Accepted by [Decision 0143](../design/decisions/0143-existing-implementation-adoption.md)
-and packaged under Discovery by
-[Decision 0175](../design/decisions/0175-existing-adoption-as-discovery-references.md).
+Accepted by [Decision 0181](../design/decisions/0181-reverse-spec-establishment.md),
+building on the Steering-first evidence boundary from Decisions 0143 and 0175.
 
 ### A1 — Adoption stops at a missing Steering baseline
 
@@ -124,18 +123,24 @@ Prepare `a1`, then ask:
   create a milestone, or create a Spec.
 - The worktree remains clean.
 
-### A2 — Adoption proposes boundaries before writing
+### A2 — Reverse establishment presents one complete proposal before writing
 
 Prepare `a2` with dispatch instrumentation, then ask:
 
-> Adopt the existing cart and order implementation into SpecBind Specs. Stop
-> when you need my first confirmation.
+> Establish Specs for the existing cart and order implementation as product
+> version v1.0.0. Stop when you need my confirmation.
 
 - Preflight succeeds and the returned full source revision is the fixture HEAD.
 - Every Steering document is read, and fresh readers map the repository before
   the driver synthesizes the boundary proposal.
-- The proposal names `cart` and `order` responsibilities, their dependency or
-  seam, the selected adoption scope, unmanaged area, and uncertainties.
+- One proposal names reverse mode, the fixed source revision, baseline version
+  `v1.0.0`, `cart` and `order` responsibilities, their dependency or seam,
+  maintained intent, blocking and deferred unknowns, suspected defects, and
+  the excluded area.
+- It says the confirmed continuation reaches Requirements, Design validation,
+  Contract Review, and adoption finalization, with no Tasks, implementation
+  change, or product release. It does not request a separate boundary and
+  Roadmap-scope confirmation.
 - No dossier, milestone, Spec, Brief, or Research is written before the user
   confirms the boundary set.
 - The worktree remains clean. With instrumentation, the agent log records the

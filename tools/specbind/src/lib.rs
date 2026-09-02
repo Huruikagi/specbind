@@ -21,8 +21,8 @@ pub use foundation::{config, fingerprint, yaml};
 pub(crate) use infrastructure::{guarded_fs, repository};
 pub use installation::{agent_role, install, project_instructions, removal};
 pub use lifecycle::{
-    approval, completion, cross_spec_review, milestone, release, release_finalize, release_log,
-    task_progress,
+    adoption_finalize, approval, completion, cross_spec_review, milestone, release,
+    release_finalize, release_log, task_progress,
 };
 pub use read_model::{
     configuration, contract_graph, freshness, milestone_scope, milestone_status, release_readiness,

@@ -13,6 +13,13 @@
     "workItems": {
       "$ref": "#/$defs/WorkItemsDocument"
     },
+    "baselineVersion": {
+      "description": "Existing product version represented by a reverse-only baseline.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "body": {
       "description": "Free-form Roadmap Markdown body. Omitting it preserves the current\nprose on an update and writes a minimal body on creation.",
       "type": [
@@ -41,6 +48,15 @@
           }
         },
         "specUpdates": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SpecItemDocument"
+          }
+        },
+        "reverseSpecs": {
           "type": [
             "array",
             "null"

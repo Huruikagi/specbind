@@ -53,14 +53,23 @@ fn render(roadmap: &RoadmapDocument, body: Option<&str>) -> String {
     if !roadmap.spec_updates.is_empty() {
         categories.push(spec_category("specUpdates", &roadmap.spec_updates));
     }
+    if !roadmap.reverse_specs.is_empty() {
+        categories.push(spec_category("reverseSpecs", &roadmap.reverse_specs));
+    }
     if !roadmap.direct_changes.is_empty() {
         categories.push(direct_category(&roadmap.direct_changes));
     }
     let body = body.map_or_else(String::new, |body| {
         format!(",\n  \"body\": {}", quote(body))
     });
+    let baseline_version = roadmap
+        .baseline_version
+        .as_ref()
+        .map_or_else(String::new, |value| {
+            format!(",\n  \"baselineVersion\": {}", quote(value))
+        });
     format!(
-        "{{\n  \"schemaVersion\": 1,\n  \"workItems\": {{\n{}\n  }}{body}\n}}\n",
+        "{{\n  \"schemaVersion\": 1,\n  \"workItems\": {{\n{}\n  }}{baseline_version}{body}\n}}\n",
         categories.join(",\n")
     )
 }

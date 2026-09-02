@@ -111,6 +111,76 @@ fn refuses_creation_on_a_dirty_repository_or_conflicting_state() {
 }
 
 #[test]
+fn creates_a_versioned_reverse_scope_with_provenance_and_locks_it() {
+    let root = project_fixture();
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    let mut create = specbind_command();
+    create
+        .current_dir(root.path())
+        .args(["milestone", "create", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"baselineVersion":"v2.4.0","workItems":{"reverseSpecs":[{"spec":"payments","summary":"Establish payments"}]}}"#,
+        )
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("\n  Reverse specs: 1\n"));
+
+    let spec = fs::read_to_string(root.path().join(".specbind/specs/payments/spec.yaml"))
+        .expect("initialized reverse Spec");
+    assert!(spec.contains("kind: reverse"), "{spec}");
+    assert!(
+        spec.contains(&format!("source_revision: {baseline}")),
+        "{spec}"
+    );
+    assert!(spec.contains("baseline_version: v2.4.0"), "{spec}");
+
+    let mut update = specbind_command();
+    update
+        .current_dir(root.path())
+        .args(["milestone", "update-scope", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"baselineVersion":"v2.4.0","workItems":{"reverseSpecs":[{"spec":"payments","summary":"Establish payments"}]}}"#,
+        )
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MILESTONE_REVERSE_SCOPE_LOCKED"));
+
+    let mut rebaseline = specbind_command();
+    rebaseline
+        .current_dir(root.path())
+        .args(["milestone", "rebaseline", "--revision", &baseline])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "MILESTONE_REVERSE_BASELINE_LOCKED",
+        ));
+
+    commit_all(root.path());
+    let roadmap = fs::read_to_string(root.path().join(".specbind/steering/roadmap.md"))
+        .expect("reverse Roadmap");
+    let milestone_id = roadmap
+        .lines()
+        .find_map(|line| line.strip_prefix("milestone_id: "))
+        .expect("milestone ID");
+    let mut abandon = specbind_command();
+    abandon
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "reverse",
+            "abandon",
+            "--milestone-id",
+            milestone_id,
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("OK ADOPTION_ABANDONED:"));
+    assert!(!root.path().join(".specbind/steering/roadmap.md").exists());
+    assert!(!root.path().join(".specbind/specs/payments").exists());
+}
+
+#[test]
 fn rejects_invalid_scope_documents() {
     let root = project_fixture();
     commit_all(root.path());

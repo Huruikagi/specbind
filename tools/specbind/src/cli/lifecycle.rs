@@ -13,7 +13,8 @@ pub use completion_commands::{
 };
 pub use gate_commands::{spec_gate_approve, spec_gate_invalidate};
 pub use milestone_commands::{
-    milestone_bind_release, milestone_create, milestone_rebaseline, milestone_update_scope,
+    milestone_bind_release, milestone_create, milestone_rebaseline, milestone_reverse_abandon,
+    milestone_reverse_finalize, milestone_update_scope,
 };
 pub use release_commands::{release_finalize, release_preflight};
 pub use review_commands::{milestone_review_accept, milestone_review_status};

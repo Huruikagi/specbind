@@ -15,7 +15,25 @@ pub mod v1 {
     )]
     pub struct SpecDocument {
         pub schema_version: SchemaVersion,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub establishment: Option<Establishment>,
         pub active_change: Nullable<ActiveChange>,
+    }
+
+    /// Immutable provenance for a Spec first established from existing code.
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(deny_unknown_fields)]
+    pub struct Establishment {
+        pub kind: EstablishmentKind,
+        pub source_revision: ImplementationRevision,
+        pub baseline_version: NonEmptyString,
+        pub milestone_id: MilestoneId,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(rename_all = "snake_case")]
+    pub enum EstablishmentKind {
+        Reverse,
     }
 
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -79,6 +97,7 @@ pub mod v1 {
         Requirements,
         Design,
         Tasks,
+        AdoptionReady,
         Implementation,
         ReleaseReady,
     }

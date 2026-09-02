@@ -205,14 +205,14 @@ pub fn approve(
             "gate approval lost its active change",
         )
     })?;
-    active.state = gate.approved_state();
+    active.state = approved_state(&current.roadmap, canonical_spec, gate);
     let mut container = active.gate_evidence.take().unwrap_or(GateEvidence {
         requirements: None,
         design: None,
         tasks: None,
         completion: None,
     });
-    let approval = match evidence {
+    let mut approval = match evidence {
         BuiltEvidence::Requirements {
             evidence,
             approved,
@@ -237,6 +237,7 @@ pub fn approve(
             approved
         }
     };
+    approval.state = active.state;
     active.gate_evidence = Some(container);
     persist(specbind_root, canonical_spec, &wire, gate)?;
     Ok(ApproveOutcome::Approved(approval))
@@ -915,7 +916,13 @@ fn validate_traceability(
 
 fn identical_fresh_approval(context: &Context, request: &ApprovalRequest) -> Option<GateApproval> {
     let active = context.wire.active_change.0.as_ref()?;
-    if active.state != request.gate.approved_state() {
+    let expected_state =
+        if request.gate == Gate::Design && !context.roadmap.reverse_specs.is_empty() {
+            WorkflowState::AdoptionReady
+        } else {
+            request.gate.approved_state()
+        };
+    if active.state != expected_state {
         return None;
     }
     let container = active.gate_evidence.as_ref()?;
@@ -947,7 +954,7 @@ fn identical_fresh_approval(context: &Context, request: &ApprovalRequest) -> Opt
         return None;
     }
     Some(GateApproval {
-        state: request.gate.approved_state(),
+        state: active.state,
         passed_at,
         approval_mode: mode,
         delegation_workflow: workflow,
@@ -1050,8 +1057,26 @@ pub fn state_name(state: WorkflowState) -> &'static str {
         WorkflowState::Requirements => "requirements",
         WorkflowState::Design => "design",
         WorkflowState::Tasks => "tasks",
+        WorkflowState::AdoptionReady => "adoption_ready",
         WorkflowState::Implementation => "implementation",
         WorkflowState::ReleaseReady => "release_ready",
+    }
+}
+
+fn approved_state(
+    roadmap: &crate::roadmap::RoadmapDocument,
+    canonical_spec: &str,
+    gate: Gate,
+) -> WorkflowState {
+    if gate == Gate::Design
+        && roadmap
+            .reverse_specs
+            .iter()
+            .any(|item| canonical_spec.is_empty() || item.spec == canonical_spec)
+    {
+        WorkflowState::AdoptionReady
+    } else {
+        gate.approved_state()
     }
 }
 

@@ -1,9 +1,99 @@
 //! Milestone mutation command execution and rendering.
 
 use super::super::{
-    CommandOutput, ExternalInputError, MilestoneIssue, Path, SCOPE_INPUT, config, escape,
-    milestone, push_field, read_external_input,
+    CommandOutput, ExternalInputError, LOG_ENTRIES_INPUT, MilestoneIssue, Path, SCOPE_INPUT,
+    adoption_finalize, config, escape, milestone, push_field, read_external_input,
 };
+
+#[must_use]
+pub fn milestone_reverse_finalize(start: &Path, log_entries_source: Option<&str>) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let log_entries = match log_entries_source {
+        Some(source) => {
+            match read_external_input(&LOG_ENTRIES_INPUT, start, &paths.project_root, source) {
+                Ok(input) => Some(input),
+                Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+            }
+        }
+        None => None,
+    };
+    match adoption_finalize::finalize(
+        &paths.project_root,
+        &paths.specbind_root,
+        paths.language,
+        log_entries.as_deref(),
+    ) {
+        Ok(outcome) => CommandOutput::success(
+            format!(
+                "OK ADOPTION_FINALIZED: Adopted baseline {} across {} specs; no product release was created.\n",
+                escape(&outcome.baseline_version),
+                outcome.specs,
+            )
+            .into_bytes(),
+        ),
+        Err(error) => {
+            let mut issues = error.issues.into_iter();
+            let Some(first) = issues.next() else {
+                return CommandOutput::failure(
+                    "ADOPTION_FINALIZE_FAILED",
+                    "Reverse adoption finalization failed.",
+                    vec![],
+                );
+            };
+            let render = |issue: &adoption_finalize::FinalizeIssue| {
+                let path = issue
+                    .path
+                    .as_ref()
+                    .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+                format!("{}{path} {}", issue.code, escape(&issue.message))
+            };
+            let mut details = vec![render(&first)];
+            details.extend(issues.map(|issue| render(&issue)));
+            CommandOutput::failure(first.code, "Reverse adoption finalization failed.", details)
+        }
+    }
+}
+
+#[must_use]
+pub fn milestone_reverse_abandon(start: &Path, milestone_id: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    match adoption_finalize::abandon(&paths.project_root, &paths.specbind_root, milestone_id) {
+        Ok(outcome) => CommandOutput::success(
+            format!(
+                "OK ADOPTION_ABANDONED: Abandoned reverse milestone {} and removed {} unestablished specs.\n",
+                escape(&outcome.milestone_id),
+                outcome.specs_removed,
+            )
+            .into_bytes(),
+        ),
+        Err(error) => {
+            let mut issues = error.issues.into_iter();
+            let Some(first) = issues.next() else {
+                return CommandOutput::failure(
+                    "ADOPTION_ABANDON_FAILED",
+                    "Reverse abandonment failed.",
+                    vec![],
+                );
+            };
+            let render = |issue: &adoption_finalize::FinalizeIssue| {
+                let path = issue
+                    .path
+                    .as_ref()
+                    .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+                format!("{}{path} {}", issue.code, escape(&issue.message))
+            };
+            let mut details = vec![render(&first)];
+            details.extend(issues.map(|issue| render(&issue)));
+            CommandOutput::failure(first.code, "Reverse abandonment failed.", details)
+        }
+    }
+}
 
 #[must_use]
 pub fn milestone_bind_release(start: &Path, version: &str, rebind: bool) -> CommandOutput {
@@ -205,6 +295,9 @@ pub fn milestone_rebaseline(start: &Path, revision: &str) -> CommandOutput {
 fn push_scope_counts(output: &mut String, counts: &milestone::ScopeCounts) {
     push_field(output, "New specs", &counts.new_specs.to_string());
     push_field(output, "Spec updates", &counts.spec_updates.to_string());
+    if counts.reverse_specs > 0 {
+        push_field(output, "Reverse specs", &counts.reverse_specs.to_string());
+    }
     push_field(output, "Direct changes", &counts.direct_changes.to_string());
 }
 

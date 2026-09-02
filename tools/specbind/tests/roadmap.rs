@@ -83,6 +83,43 @@ fn rejects_a_nonportable_bound_release() {
 }
 
 #[test]
+fn accepts_only_an_unbound_versioned_reverse_scope() {
+    let input =
+        roadmap("  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n")
+            .replace(
+                "baseline_revision:",
+                "baseline_version: v2.4.0\nbaseline_revision:",
+            );
+    let parsed = roadmap::parse(&input).expect("valid reverse Roadmap");
+    assert_eq!(parsed.baseline_version.as_deref(), Some("v2.4.0"));
+    assert_eq!(parsed.reverse_specs[0].spec, "checkout");
+
+    for (invalid, code) in [
+        (
+            input.replace("baseline_version: v2.4.0\n", ""),
+            "ROADMAP_BASELINE_VERSION_REQUIRED",
+        ),
+        (
+            input.replace(
+                "  reverse_specs:",
+                "  new_specs:\n    - spec: account\n      summary: Add account\n  reverse_specs:",
+            ),
+            "ROADMAP_REVERSE_SCOPE_MIXED",
+        ),
+        (
+            input.replace("target_release: null", "target_release: v2.4.0"),
+            "ROADMAP_REVERSE_RELEASE_INVALID",
+        ),
+    ] {
+        let error = roadmap::parse(&invalid).expect_err("invalid reverse Roadmap");
+        assert!(
+            error.issues.iter().any(|issue| issue.code == code),
+            "{error:?}"
+        );
+    }
+}
+
+#[test]
 fn marks_one_direct_item_completed_and_preserves_the_body() {
     let input = roadmap(
         "  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: release-notes\n      summary: Write notes\n      depends_on:\n        - direct: docs\n",

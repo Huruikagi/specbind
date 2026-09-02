@@ -54,6 +54,7 @@ pub enum WorkflowAction {
     Tasks,
     Implementation,
     Validation,
+    AdoptionFinalize,
     Release,
 }
 
@@ -233,6 +234,13 @@ fn next_action(
                 WorkflowAction::Tasks
             }
         }
+        Some(WorkflowState::AdoptionReady) => {
+            if contract_review.is_some_and(|status| status != ReviewFreshnessStatus::Fresh) {
+                WorkflowAction::ContractReview
+            } else {
+                WorkflowAction::AdoptionFinalize
+            }
+        }
         Some(WorkflowState::Implementation) => {
             if freshness.tasks.status != FreshnessStatus::Fresh {
                 WorkflowAction::Tasks
@@ -291,7 +299,12 @@ fn contract_review(
 ) -> Option<ReviewFreshnessStatus> {
     if !matches!(
         declared_state,
-        Some(WorkflowState::Tasks | WorkflowState::Implementation | WorkflowState::ReleaseReady)
+        Some(
+            WorkflowState::AdoptionReady
+                | WorkflowState::Tasks
+                | WorkflowState::Implementation
+                | WorkflowState::ReleaseReady
+        )
     ) {
         return None;
     }
@@ -432,6 +445,7 @@ pub fn state_name(state: Option<WorkflowState>) -> &'static str {
         None => "idle",
         Some(WorkflowState::Requirements) => "requirements",
         Some(WorkflowState::Design) => "design",
+        Some(WorkflowState::AdoptionReady) => "adoption_ready",
         Some(WorkflowState::Tasks) => "tasks",
         Some(WorkflowState::Implementation) => "implementation",
         Some(WorkflowState::ReleaseReady) => "release_ready",
@@ -457,6 +471,7 @@ pub fn action_name(action: WorkflowAction) -> &'static str {
         WorkflowAction::Tasks => "tasks",
         WorkflowAction::Implementation => "implementation",
         WorkflowAction::Validation => "validation",
+        WorkflowAction::AdoptionFinalize => "adoption_finalize",
         WorkflowAction::Release => "release",
     }
 }

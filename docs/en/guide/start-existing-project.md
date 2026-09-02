@@ -53,7 +53,7 @@ the coding-agent session so it discovers the Skills. Examples below use Codex
 | Goal | Route |
 | --- | --- |
 | Use SpecBind for the next change | Continue on this page |
-| Establish Specs from working implementation, then prepare the full plan | [Full-support route](#full-support-route) |
+| Establish Specs from working implementation as the current baseline | [Full-support route](#full-support-route) |
 
 For a small first change, keeping the defaults is a good way to learn the
 normal lifecycle. Adjust only demonstrated mismatches afterward using
@@ -64,8 +64,9 @@ change](#first-change).
 
 Choose this route when the repository already has substantial code but no
 trusted Specs, and you want to establish project guidance and plan the adopted
-work before implementation. It ends with Tasks approval; it does not start
-implementation or release work.
+product before making a change. It ends with accepted Requirements, Design,
+and Contract Review plus a non-release baseline archive. It creates no Tasks,
+implementation change, or product release.
 
 1. **Shape the project with `sb-configure`.** Start with an initial review,
    such as:
@@ -102,29 +103,30 @@ implementation or release work.
 
    ```text
    $sb-discovery Establish Specs from the existing implementation across this
-   repository. Investigate the current code and tests as evidence, and ask me
-   to confirm the boundaries and intended behavior before creating anything.
+   repository as existing version v2.4.0. Investigate the current code and
+   tests as evidence, and ask me to confirm the boundaries and maintained
+   behavior before creating anything.
    ```
 
-   Discovery runs its adoption preflight, pins the inspected revision, and asks
-   separately to confirm candidate Spec boundaries, ordinary Milestone scope,
-   and the observed behavior or intent for each Spec. Current code is evidence,
-   not automatically the specification. See [Establish Specs from an existing
-   implementation](./adopt-existing.md) for the investigation and confirmation
-   details.
+   Discovery runs its adoption preflight, pins the inspected revision, and
+   presents one complete reverse proposal: the existing `baseline_version`,
+   Spec boundaries, maintained intent, evidence, unknowns, suspected defects,
+   dependencies, and excluded area. Current code is evidence, not automatically
+   the specification.
 
-4. **Plan every adopted Spec.** Once Discovery has created the Specs, Briefs,
-   and Research handoffs, run:
+4. **Let Discovery finish the baseline.** After you confirm that proposal,
+   the same invocation creates the reverse milestone and continues through
+   Requirements, Design validation, Design approval, and the milestone-wide
+   Contract Review. It does not stop for routine phase confirmations and never
+   creates Tasks. It stops only for a question whose answer would change the
+   Spec, source drift, or a failed lifecycle check.
 
-   ```text
-   $sb-plan --all
-   ```
-
-   Plan asks once whether it may accept the Requirements, Design, and Tasks
-   Gates for every selected Spec, or it pauses at each Gate for your explicit
-   approval. It runs Design validation and the milestone-wide Contract Review
-   before Tasks. After Tasks approval, review the plan and choose a later
-   implementation run deliberately; this route stops here.
+   Finalization records a `Baseline v2.4.0` entry in each Spec log and archives
+   the Roadmap and Contract Review under `baselines/`. The established Specs
+   then behave like ordinary existing Specs while retaining their source
+   revision and version provenance. See [Establish Specs from an existing
+   implementation](./adopt-existing.md) for the complete stopping and
+   finalization rules.
 
 ## 4. Choose the first change {#first-change}
 

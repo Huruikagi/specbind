@@ -8,8 +8,9 @@ use clap::Parser as _;
 use specbind::args::{
     AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command,
     ConfigurationCommand, ContractCommand, DirectCommand, GateCommand, MigrateCommand,
-    MilestoneCommand, ProtocolCommand, ReleaseCommand, ReviewCommand, RuleCommand, SchemaCommand,
-    SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand, TemplateCommand,
+    MilestoneCommand, ProtocolCommand, ReleaseCommand, ReverseCommand, ReviewCommand, RuleCommand,
+    SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
+    TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -248,6 +249,12 @@ fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
         MilestoneCommand::Rebaseline { revision } => {
             specbind::cli::milestone_rebaseline(start, &revision)
         }
+        MilestoneCommand::Reverse {
+            command: ReverseCommand::Finalize { log_entries },
+        } => specbind::cli::milestone_reverse_finalize(start, log_entries.as_deref()),
+        MilestoneCommand::Reverse {
+            command: ReverseCommand::Abandon { milestone_id },
+        } => specbind::cli::milestone_reverse_abandon(start, &milestone_id),
     }
 }
 

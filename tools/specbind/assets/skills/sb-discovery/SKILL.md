@@ -1,6 +1,6 @@
 ---
 name: sb-discovery
-description: Turn a change request, Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the evidence-backed adoption preparation around it.
+description: Turn a change request, Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the fixed-revision reverse-establishment orchestration.
 argument-hint: "<change, source path, GitHub Milestone, or existing area to adopt>"
 ---
 
@@ -19,11 +19,12 @@ means no additional project preference; any `ERROR` line stops the workflow.
 
 ## Select ordinary or existing-implementation Discovery
 
-Use the existing-implementation route only when the maintainer explicitly asks
-to establish new Specs from working code and tests, or explicitly resumes an
-adoption already recorded in the project dossier. An ordinary change to an
-existing repository is still ordinary Discovery and never triggers an
-implementation scan merely because code exists.
+Use reverse mode only when the maintainer explicitly asks to establish Specs
+from working code and tests. Read [Reverse establishment](references/reverse.md)
+completely and follow it. It owns the confirmed orchestration through
+Requirements, Design, Contract Review, and non-release finalization. An
+ordinary change to an existing repository never triggers an implementation
+scan merely because code exists.
 
 Resolve `specDir` from `.specbind.json` and check the one adoption dossier:
 
@@ -31,10 +32,13 @@ Resolve `specDir` from `.specbind.json` and check the one adoption dossier:
 <specDir>/adoption/reverse-discovery.yaml
 ```
 
-Then select exactly one route:
+For a dossier created by an older installed version, select exactly one legacy
+recovery route. The compatibility procedures are [Adoption start](references/adopt-start.md)
+and [Adoption resume](references/adopt-resume.md); do not load either for a new
+reverse run:
 
-- Explicit adoption with no dossier: read [Adoption start](references/adopt-start.md)
-  completely and follow it. Stop at its handoff back to ordinary Discovery.
+- Explicit reverse establishment with no dossier: use the reverse procedure
+  above, not the legacy start/resume references.
 - A dossier whose confirmed candidate Specs and Briefs have not yet been
   created: use the ordinary Discovery procedure below for exactly that
   confirmed candidate set. The dossier is evidence for the proposal, not
@@ -46,15 +50,11 @@ Then select exactly one route:
   invent a second dossier, silently change its candidates, or treat an ordinary
   Research artifact as adoption state.
 
-The adoption references are two conditional procedures around ordinary
-Discovery, not separate Skills. Existing code and tests are **evidence**, never
-automatic authority for what the product ought to promise. Adoption requires
-committed Steering, supports only an initial project with no persistent Specs,
-and owns only the temporary dossier, per-Spec adoption Research, and narrow
-user-confirmed Brief revision. It owns no lifecycle state or Gate. Requirements,
-Design, Tasks, implementation, and validation remain with their normal owners.
-Do not change implementation, tests, dependencies, configuration, or Steering
-while establishing the adoption baseline.
+Existing code and tests are **evidence**, never automatic authority for what
+the product ought to promise. Reverse establishment requires committed
+Steering, supports only an initial project with no persistent Specs, creates no
+Tasks, and never changes implementation, tests, dependencies, configuration,
+or Steering.
 
 The remaining numbered procedure is the ordinary Discovery route. Adoption
 Start and Resume follow only their selected reference; the dossier-to-scope

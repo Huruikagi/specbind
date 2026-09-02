@@ -28,7 +28,7 @@ use std::{
 };
 
 use crate::{
-    adapter, approval,
+    adapter, adoption_finalize, approval,
     artifacts::{self, Artifact, DiscoveryIssue},
     completion::{self, CompletionIssue},
     config,

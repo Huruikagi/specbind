@@ -29,6 +29,12 @@ pub enum LogUpdate {
     Unchanged,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LogEntryKind {
+    Release,
+    Baseline,
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct RawDocument {
@@ -154,16 +160,52 @@ pub fn update_log(
     summary: &str,
     relative_path: &str,
 ) -> Result<LogUpdate, Vec<LogIssue>> {
-    let desired = canonical_entry(language, version, milestone_id, roadmap_path, summary);
-    validate_generated_entry(&desired, language, version, milestone_id, roadmap_path).map_err(
-        |message| {
-            vec![issue(
-                "LOG_INPUT_INVALID",
-                Some(relative_path.to_owned()),
-                message,
-            )]
-        },
-    )?;
+    update_log_entry(
+        existing,
+        language,
+        date,
+        LogEntryKind::Release,
+        version,
+        milestone_id,
+        roadmap_path,
+        summary,
+        relative_path,
+    )
+}
+
+/// Renders or recognizes one canonical release or adopted-baseline entry.
+///
+/// # Errors
+///
+/// Returns existing-log profile, generated-Markdown, or milestone-conflict diagnostics.
+#[allow(clippy::too_many_arguments)]
+pub fn update_log_entry(
+    existing: &str,
+    language: ProjectLanguage,
+    date: Date,
+    kind: LogEntryKind,
+    version: &str,
+    milestone_id: &str,
+    roadmap_path: &str,
+    summary: &str,
+    relative_path: &str,
+) -> Result<LogUpdate, Vec<LogIssue>> {
+    let desired = canonical_entry(language, kind, version, milestone_id, roadmap_path, summary);
+    validate_generated_entry(
+        &desired,
+        language,
+        kind,
+        version,
+        milestone_id,
+        roadmap_path,
+    )
+    .map_err(|message| {
+        vec![issue(
+            "LOG_INPUT_INVALID",
+            Some(relative_path.to_owned()),
+            message,
+        )]
+    })?;
     let mut document = parse_log(existing, relative_path)?;
     let marker = format!("`{milestone_id}`");
     let matches = document
@@ -219,16 +261,29 @@ pub fn verify_entry(
     summary: &str,
     relative_path: &str,
 ) -> Result<(), Vec<LogIssue>> {
-    let desired = canonical_entry(language, version, milestone_id, roadmap_path, summary);
-    validate_generated_entry(&desired, language, version, milestone_id, roadmap_path).map_err(
-        |message| {
-            vec![issue(
-                "LOG_INPUT_INVALID",
-                Some(relative_path.to_owned()),
-                message,
-            )]
-        },
-    )?;
+    let desired = canonical_entry(
+        language,
+        LogEntryKind::Release,
+        version,
+        milestone_id,
+        roadmap_path,
+        summary,
+    );
+    validate_generated_entry(
+        &desired,
+        language,
+        LogEntryKind::Release,
+        version,
+        milestone_id,
+        roadmap_path,
+    )
+    .map_err(|message| {
+        vec![issue(
+            "LOG_INPUT_INVALID",
+            Some(relative_path.to_owned()),
+            message,
+        )]
+    })?;
     let document = parse_log(existing, relative_path)?;
     let marker = format!("`{milestone_id}`");
     let matches = document
@@ -352,6 +407,7 @@ fn render_log(document: &LogDocument) -> String {
 fn validate_generated_entry(
     input: &str,
     language: ProjectLanguage,
+    kind: LogEntryKind,
     version: &str,
     milestone_id: &str,
     roadmap_path: &str,
@@ -381,7 +437,7 @@ fn validate_generated_entry(
             _ => {}
         }
     }
-    let expected_label = format!("{} {version}", release_label(language));
+    let expected_label = format!("{} {version}", entry_label(language, kind));
     if unordered_lists == 1
         && items == 1
         && paragraphs <= 1
@@ -399,17 +455,24 @@ fn validate_generated_entry(
 
 fn canonical_entry(
     language: ProjectLanguage,
+    kind: LogEntryKind,
     version: &str,
     milestone_id: &str,
     roadmap_path: &str,
     summary: &str,
 ) -> String {
-    match language {
-        ProjectLanguage::En => format!(
+    match (language, kind) {
+        (ProjectLanguage::En, LogEntryKind::Release) => format!(
             "* **Release {version}** — {summary} ([roadmap]({roadmap_path}), milestone `{milestone_id}`)"
         ),
-        ProjectLanguage::Ja => format!(
+        (ProjectLanguage::Ja, LogEntryKind::Release) => format!(
             "* **リリース {version}** — {summary} ([ロードマップ]({roadmap_path}), マイルストーン `{milestone_id}`)"
+        ),
+        (ProjectLanguage::En, LogEntryKind::Baseline) => format!(
+            "* **Baseline {version}** — {summary} ([roadmap]({roadmap_path}), milestone `{milestone_id}`)"
+        ),
+        (ProjectLanguage::Ja, LogEntryKind::Baseline) => format!(
+            "* **ベースライン {version}** — {summary} ([ロードマップ]({roadmap_path}), マイルストーン `{milestone_id}`)"
         ),
     }
 }
@@ -421,10 +484,12 @@ fn title(language: ProjectLanguage) -> &'static str {
     }
 }
 
-fn release_label(language: ProjectLanguage) -> &'static str {
-    match language {
-        ProjectLanguage::En => "Release",
-        ProjectLanguage::Ja => "リリース",
+fn entry_label(language: ProjectLanguage, kind: LogEntryKind) -> &'static str {
+    match (language, kind) {
+        (ProjectLanguage::En, LogEntryKind::Release) => "Release",
+        (ProjectLanguage::Ja, LogEntryKind::Release) => "リリース",
+        (ProjectLanguage::En, LogEntryKind::Baseline) => "Baseline",
+        (ProjectLanguage::Ja, LogEntryKind::Baseline) => "ベースライン",
     }
 }
 

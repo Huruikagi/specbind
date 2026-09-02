@@ -1,0 +1,142 @@
+# Establish Specs from a fixed existing implementation
+
+Read this procedure completely only when the maintainer explicitly asks to
+establish Specs from existing code and tests. This is reverse establishment,
+not ordinary change Discovery and not a product release.
+
+## Fix the evidence and version
+
+The maintainer must name the selected area and the product version already
+represented by the code. If either is missing, ask only for the missing value
+before mutation. `baseline_version` names an existing version; never invent the
+next version or bind `target_release`.
+
+Run:
+
+```sh
+specbind adoption preflight
+specbind steering list
+specbind steering read <every-selector> --for consume
+```
+
+The preflight must report `ADOPTION_PREFLIGHT_READY`. Record its exact
+`source_revision`. Steering must establish product purpose, technology and
+verification constraints, and responsibility placement. Missing or
+contradictory Steering stops and routes to `sb-steering`; do not repair it in
+this run.
+
+The revision is fixed. From now until finalization, do not change code, tests,
+dependencies, configuration, or Steering. A changed source makes the reverse
+result stale and requires a new run. Do not rebaseline it.
+
+## Collect independent evidence
+
+Map the repository broadly, then inspect the selected area deeply. Use fresh
+readers for independent evidence lines when the host supports them: one for
+observable behavior and tests, and one for structure, dependencies, and seams.
+All claims are about the fixed revision.
+
+For each candidate Spec collect precise project-relative locators for:
+
+- externally observable behavior and acceptance evidence;
+- owned responsibility, public entry points, and neighboring boundaries;
+- structural constraints relevant to Design; and
+- unknowns, contradictions, and suspected defects.
+
+Code is evidence, never specification authority. Classify an observation as
+maintained requirement, Design constraint, historical constraint,
+implementation detail, suspected defect, blocking unknown, or deferred unknown.
+A deferred unknown is allowed only when every later answer leaves current Spec
+meaning unchanged. Otherwise it is blocking.
+
+If an active Deferred Findings Adapter accepts the exact local destination,
+record a suspected defect with source revision, locator, and claim. Do not call
+it a confirmed bug or correct it. Deduplicate on those three fields. External
+posting needs separate authority. Findings never change the reverse scope.
+
+## Present one complete proposal
+
+This is one complete proposal and the only confirmation boundary for the
+reverse run.
+
+Present exactly one proposal containing:
+
+```text
+Mode: reverse
+Source revision: <full object ID>
+Baseline version: <existing product version>
+Selected area: <area>
+Reverse Specs: <id, responsibility, maintained intent, evidence basis>
+Dependencies: <Spec edges or None>
+Blocking unknowns: <questions that prevent meaningful Specs or None>
+Deferred unknowns: <recorded non-semantic choices or None>
+Suspected defects: <recorded findings or None>
+Excluded area: <outside the reverse scope or None>
+After confirmation: create the reverse milestone and continue through
+Requirements, Design, Design validation, Contract Review, and adoption finalize.
+No Tasks, implementation change, or product release will be created.
+```
+
+The invocation is not confirmation. Revise the proposal on feedback. Do not
+create partial scope while any candidate has a blocking semantic unknown.
+After the maintainer explicitly confirms this visible proposal, do not ask for
+a second boundary, scope, or phase confirmation.
+
+## Create the reverse milestone
+
+Create one external candidate JSON document with `schemaVersion: 1`, the
+confirmed `baselineVersion`, and only `workItems.reverseSpecs`. Each item has
+`spec`, `summary`, and optional `dependsOn`. Then run:
+
+```sh
+specbind milestone create --scope <external-candidate-or->
+```
+
+Verify that every created `spec.yaml` contains matching `establishment.kind:
+reverse`, `source_revision`, `baseline_version`, and `milestone_id`. Write each
+confirmed Brief and evidence-oriented Research handoff. Keep the dossier at
+`<specDir>/adoption/reverse-discovery.yaml` until finalization; record the fixed
+revision, selected area, proposal, observation classifications, and exact
+evidence locators without copying source text.
+
+Checkpoint only reverse artifacts according to the active Git Adapter. Never
+infer push authority.
+
+## Continue without routine pauses
+
+The confirmation above authorizes this establishment orchestration, including
+Requirements and Design gate acceptance under delegated workflow `sb-discovery`.
+For every reverse Spec, follow the installed `sb-plan` Requirements and Design
+procedures and their full checks. Run Design validation, then the milestone
+Contract Review. Do not select or author the Tasks procedure. Design approval
+must report `adoption_ready`.
+
+Keep progressing every independent Spec when one is blocked. Stop the affected
+Spec only for a question whose answer changes maintained meaning; global
+Contract Review and finalization wait until all such questions are resolved.
+Stop the whole run on source drift, invalid evidence, a failed mechanical
+guard, or an implementation/configuration/Steering change.
+
+An ordinary change request arriving during this run may be explained as a
+future proposal, but it must not update the reverse Roadmap. Finalize reverse
+first, then use a new ordinary milestone. For an emergency, show the active
+milestone ID and ask for explicit abandonment. Only after confirmation run
+`specbind milestone reverse abandon --milestone-id <id>`; never delete lifecycle
+state manually. After the urgent change, reverse starts again from the new
+clean revision.
+
+## Finalize as an adopted baseline
+
+When every reverse Spec is `adoption_ready` and the Contract Review is fresh,
+prepare exact one-line `log_entries` summaries for every participating Spec and
+run:
+
+```sh
+specbind milestone reverse finalize --log-entries <path-or->
+```
+
+Finalization writes Baseline entries to each `log.md`, retains establishment
+provenance, archives Roadmap and Contract Review under `baselines/`, removes
+temporary Brief, Research, and dossier artifacts, and closes the milestone.
+It must not run a Release Adapter, bind a target release, tag, publish, or claim
+that the product was released.

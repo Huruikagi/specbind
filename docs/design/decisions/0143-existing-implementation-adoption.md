@@ -2,6 +2,9 @@
 
 Status: Superseded by 0175
 
+Decision [0181](./0181-reverse-spec-establishment.md) now owns the reverse
+Roadmap category, terminal state, and non-release finalization.
+
 ## Context
 
 [Issue #2](https://github.com/Huruikagi/specbind/issues/2) proposes a brownfield

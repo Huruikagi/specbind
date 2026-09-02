@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Partially superseded by [Decision 0181](./0181-reverse-spec-establishment.md),
+which replaces the stop-before-Requirements handoff with one confirmed reverse
+orchestration through Design and Contract Review.
+
 Supersedes: the independent `specbind-adopt-existing` Skill identity and
 cross-Skill routing accepted by [Decision 0143](./0143-existing-implementation-adoption.md).
 Its evidence, confirmation, dossier, and phase-ownership boundaries remain

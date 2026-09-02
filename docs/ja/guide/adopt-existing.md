@@ -1,104 +1,99 @@
 # 既存実装からSpecを確立する
 
-`sb-discovery`の既存実装ルートは、すでに動いているコードとテストを調査し、
-新しいSpecBind Specの候補へ整理するための初期導入ワークフローです。
-cc-sddなど別のSDD製品からの移行ではなく、信頼できる仕様がまだない
-既存プロジェクトを対象にします。
+`sb-discovery`の明示的なリバースモードは、固定した既存リビジョンがすでに表している
+プロダクトについて、永続的なSpecを確立します。動くコードはあるが信頼できる仕様がない
+プロジェクト向けであり、別のSDD製品からの移行でも、新しい変更の提供でもありません。
 
-既存実装は証拠であって、意図した仕様そのものではありません。現在の挙動は、
-正式な要件、バグ、歴史的制約、内部実装、または判断が必要な不明点になり得ます。
-ユーザーが確認した挙動だけがBriefを経てRequirementsへ進みます。
-
-!!! info "用語について"
-    用語（Spec、Steering、Milestone、Brief、Research など）は[基本概念](./concepts.md)、
-    既存プロジェクトの通常の流れは
-    [既存プロジェクトで始める](./start-existing-project.md)にまとめています。
+実装は証拠であって、仕様を決める権威ではありません。観察した挙動は、維持する意図、
+構造上の制約、歴史的な事情、内部詳細、バグの疑い、または判断が必要な問いになり得ます。
 
 ## 前提条件
 
-初回の導入では、次が必要です。
+- 永続的なSpecがなく、アクティブなMilestoneもない
+- Steeringがプロダクトの目的、技術制約、構造を扱っている
+- Steeringを含むリポジトリがコミット済みで、作業ツリーがクリーンである
+- 対象をリポジトリ全体または具体的な領域として指定する
+- そのリビジョンが表す既存のプロダクトバージョンを指定する
 
-- 永続的なSpecがまだ存在しない
-- アクティブなMilestoneがない
-- Steeringがプロダクト、技術、構造の全体方針を説明している
-- Steeringを含むリポジトリがコミット済みで、作業ツリーに未コミットの変更がない
-- 採用対象が「リポジトリ全体」または具体的な領域として指定されている
+Steeringが不足している場合は、先に`sb-configure`と`sb-steering`を使い、結果を
+コミットします。設定とリバース確立は別の実行です。
 
-Steeringがまだなければ、先に`sb-steering`を`bootstrap`モードで実行し、
-提案された方針を確認してコミットします。
-
-## 標準ルート
+## 1回の確認から最後まで進む経路
 
 ```text
-Steeringの作成または同期
-  -> 対象領域を指定してsb-discovery
-  -> Spec境界候補の確認
-  -> sb-discoveryを続行
-  -> SpecとBriefの作成
-  -> sb-discoveryを再開
-  -> Specごとの観察と意図の確認
-  -> sb-plan
+Steeringを設定してコミット
+  -> 対象領域と既存バージョンを指定してsb-discovery
+  -> source_revisionを固定
+  -> コードとテストを調査
+  -> 完全なリバース提案を1回確認
+  -> リバースRoadmap、Spec、Brief、Researchを作成
+  -> Requirements
+  -> Designと独立したDesign検証
+  -> Contract Review
+  -> adoption finalize
 ```
 
-最初の実行では、CLIが事前検査（preflight）を行い、前提条件がそろって
-いるかを確認します。
+提案には`baseline_version`、`reverseSpecs`候補、維持する意図と根拠、依存関係、
+停止が必要な不明点と後回しにできる不明点、バグの疑い、対象外が含まれます。この完全な
+提案を確認するまで何も作りません。確認後は、通常のフェーズ確認では止まらず進みます。
+
+Roadmapは`newSpecs`や`specUpdates`ではなく`reverseSpecs`を使い、`target_release`を
+持ちません。作成した各Specには、次の来歴が残ります。
+
+```yaml
+establishment:
+  kind: reverse
+  source_revision: <固定したGitリビジョン>
+  baseline_version: <既存のプロダクトバージョン>
+  milestone_id: <リバースMilestone>
+```
+
+## リビジョン固定と不明点
+
+`specbind adoption preflight`が返す`source_revision`を固定します。完了するまで、実装、
+テスト、依存関係、設定、Steeringを変更できません。リバースのスコープ更新やrebaselineも
+できません。ソースが変わった場合は停止し、新しいクリーンなリビジョンからやり直します。
+
+維持する挙動を意味のある形で書くために回答が必要なら、その問いは該当Specを停止します。
+独立した別のSpecは進められますが、Contract Reviewとファイナライズは待ちます。どの回答に
+なっても現在のSpecの意味が変わらない問いだけ、後回しにできます。
+
+有効なDeferred Findings Adapterがあれば、欠陥に見える挙動を、ソースリビジョン、証拠の
+位置、主張とともに「バグの疑い」として記録できます。自動的にバグや要件にはならず、この
+経路では修正しません。プロジェクト外への送信には、別の権限が必要です。
+
+## Tasksもリリースも作らない
+
+リバースでは、通常のRequirements、Design、Design検証、Contract Reviewの担当を
+再利用します。Designを承認すると、リバースSpecは`adoption_ready`になります。
+`tasks.yaml`は作らず、実装や実装検証も始めません。Release Adapter、タグ、公開、
+`target_release`も作りません。
+
+途中で通常の変更依頼が来た場合は、先にリバースを完了し、その後に新しい通常Milestoneを
+作ります。緊急時は`specbind milestone reverse abandon --milestone-id <id>`で明示的に
+リバースを中断し、通常Discoveryで変更を進めたあと、新しいリビジョンからやり直します。
+ライフサイクル状態を手作業で削除しないでください。
+
+## ファイナライズと履歴
+
+すべてのSpecが`adoption_ready`になり、Contract Reviewがfreshになると、Discoveryは
+次を実行します。
 
 ```sh
-specbind adoption preflight
+specbind milestone reverse finalize --log-entries <path-or->
 ```
 
-成功結果の`source_revision`は、調査の基準として固定するGitコミットです。調査中に
-実装、テスト、依存関係、設定、またはSteeringが変わった場合、結果を暗黙に
-追従させず停止します。
-
-## 調査の深さ
-
-まずリポジトリ全体を浅く読み、公開API、主要エントリポイント、モジュール境界、
-テスト群、依存関係を把握します。その後、ユーザーが指定した採用領域だけを深く
-調査します。ディレクトリの大きさや想定タスク数ではなく、長く残る責任の境界で
-Specを分割します。
-
-Spec境界は、ユーザーが確認するまで作成されません。確認後は、同じ
-`sb-discovery`の通常ルートがRoadmapのスコープをもう一度提示し、Milestoneと
-SpecについてCLIが所有する変更を担当します。この2回の確認は統合後も別々です。
-
-## 観察結果と意図
-
-調査で見つかった挙動（Observation、以降は「観察結果」）は、一時ファイル
-`.specbind/specs/adoption/reverse-discovery.yaml`（既定。場所は`.specbind.json`の
-`specDir`設定で変わります）にいったん記録されます。各観察結果は、固定した
-リビジョン上のパスと、シンボル、テスト名、ルート、スキーマ項目などの位置を持ちます。
-
-各観察結果は、意図した仕様なのかどうかで、次のいずれかへ振り分けます。
-
-| 扱い | 意味 |
-| --- | --- |
-| requirement | 意図した挙動としてBriefからRequirementsへ進める |
-| design | 技術・構造上の制約としてResearchからDesignへ進める |
-| bug | 現在の挙動を仕様にせず、必要なら通常の修正作業へ入れる |
-| historical_constraint | 当面維持するが、プロダクトの約束にはしない |
-| implementation_detail | 仕様化しない内部詳細 |
-| unknown | RequirementsまたはDesignで判断する未確定事項 |
-
-すべてのSpecについてBriefとResearchへの引き継ぎが完了すると、このプロジェクト単位の
-調査記録は現在のファイル群から削除されます。Git履歴には調査経緯が残り、Specごとの
-Researchは通常のリリース確定処理まで
-保持されます。
-
-## 通常ライフサイクルへの復帰
-
-Discoveryの既存実装ルートはRequirementsやDesignを直接作成・承認しません。
-確認済みの意図をBriefへ、実装証拠とDesign向け制約をResearchへ渡したところで停止します。
-以後は`sb-plan`で通常のRequirements、Design、Tasksフェーズを進めます。
-既存実装からの採用専用となるRequirementsやDesignスキルはありません。
+ファイナライズは、確立の来歴を残したままactive changeを閉じ、一時的なBriefとResearchを
+削除し、各Specの`log.md`へ`ベースライン <version>`を記録します。RoadmapとContract
+Reviewは`baselines/`へ履歴化され、アクティブなMilestoneが閉じます。これらは採用の記録で
+あり、プロダクトリリースの記録ではありません。
 
 ## 次に読む
 
 - [基本概念](./concepts.md)
-- [既存プロジェクトで始める](./start-existing-project.md) — 通常のライフサイクルを一周する
-- [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
+- [既存プロジェクトで始める](./start-existing-project.md)
+- [プロジェクトに合わせてカスタマイズする](./customization.md)
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
-- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 

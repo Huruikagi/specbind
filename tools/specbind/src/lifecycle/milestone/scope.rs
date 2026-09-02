@@ -11,7 +11,8 @@ use crate::{
     schema::{
         runtime,
         spec::v1::{
-            ActiveChange, MilestoneId, Nullable, SchemaVersion, SpecDocument, WorkflowState,
+            ActiveChange, Establishment, EstablishmentKind, ImplementationRevision, MilestoneId,
+            NonEmptyString, Nullable, SchemaVersion, SpecDocument, WorkflowState,
         },
     },
 };
@@ -27,6 +28,7 @@ const DEFAULT_BODY: &str = "# Roadmap\n";
 pub struct ScopeCounts {
     pub new_specs: usize,
     pub spec_updates: usize,
+    pub reverse_specs: usize,
     pub direct_changes: usize,
 }
 
@@ -89,9 +91,11 @@ pub fn create(
     let rendered = render(
         &milestone_id,
         &baseline_revision,
+        scope.baseline_version.as_deref(),
         None,
         &scope.new_specs,
         &scope.spec_updates,
+        &scope.reverse_specs,
         &scope.direct_changes,
         &body,
     )?;
@@ -121,6 +125,13 @@ pub fn update_scope(
     let scope = candidate::parse(candidate_json, "MILESTONE_SCOPE_INVALID")?;
     let source = read_roadmap(specbind_root, "scope update")?;
     let current = roadmap::parse(&source).map_err(roadmap_failure)?;
+    if !current.reverse_specs.is_empty() || !scope.reverse_specs.is_empty() {
+        return Err(one_issue(
+            "MILESTONE_REVERSE_SCOPE_LOCKED",
+            Some(ROADMAP_RELATIVE.to_owned()),
+            "a reverse milestone has immutable scope and cannot use update-scope",
+        ));
+    }
     let body = scope
         .body
         .clone()
@@ -129,9 +140,11 @@ pub fn update_scope(
     let rendered = render(
         &current.milestone_id,
         &current.baseline_revision,
+        current.baseline_version.as_deref(),
         current.target_release.as_deref(),
         &scope.new_specs,
         &scope.spec_updates,
+        &scope.reverse_specs,
         &direct_changes,
         &body,
     )?;
@@ -197,6 +210,13 @@ pub fn rebaseline(
     }
     let source = read_roadmap(specbind_root, "rebaseline")?;
     let current = roadmap::parse(&source).map_err(roadmap_failure)?;
+    if !current.reverse_specs.is_empty() {
+        return Err(one_issue(
+            "MILESTONE_REVERSE_BASELINE_LOCKED",
+            Some(ROADMAP_RELATIVE.to_owned()),
+            "a reverse milestone is fixed to its source revision and cannot be rebaselined",
+        ));
+    }
     if current.baseline_revision == revision {
         return Ok(RebaselineOutcome::NoChange {
             milestone_id: current.milestone_id,
@@ -209,9 +229,11 @@ pub fn rebaseline(
     let rendered = render(
         &current.milestone_id,
         revision,
+        current.baseline_version.as_deref(),
         current.target_release.as_deref(),
         &current.new_specs,
         &current.spec_updates,
+        &current.reverse_specs,
         &current.direct_changes,
         existing_body(&source),
     )?;
@@ -232,6 +254,8 @@ struct RoadmapFrontmatter<'a> {
     artifact_type: &'static str,
     milestone_id: &'a str,
     baseline_revision: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    baseline_version: Option<&'a str>,
     target_release: Option<&'a str>,
     work_items: WorkItemsFrontmatter<'a>,
 }
@@ -242,6 +266,8 @@ struct WorkItemsFrontmatter<'a> {
     new_specs: Option<Vec<SpecItemFrontmatter<'a>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     spec_updates: Option<Vec<SpecItemFrontmatter<'a>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    reverse_specs: Option<Vec<SpecItemFrontmatter<'a>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     direct_changes: Option<Vec<DirectItemFrontmatter<'a>>>,
 }
@@ -264,12 +290,18 @@ struct DirectItemFrontmatter<'a> {
     status: Option<DirectStatus>,
 }
 
+#[allow(
+    clippy::too_many_arguments,
+    reason = "Roadmap-owned fields remain explicit at the serialization boundary"
+)]
 fn render(
     milestone_id: &str,
     baseline_revision: &str,
+    baseline_version: Option<&str>,
     target_release: Option<&str>,
     new_specs: &[SpecItem],
     spec_updates: &[SpecItem],
+    reverse_specs: &[SpecItem],
     direct_changes: &[DirectItem],
     body: &str,
 ) -> Result<String, super::MilestoneIssues> {
@@ -277,10 +309,12 @@ fn render(
         artifact_type: "SpecBind Roadmap",
         milestone_id,
         baseline_revision,
+        baseline_version,
         target_release,
         work_items: WorkItemsFrontmatter {
             new_specs: spec_frontmatter(new_specs),
             spec_updates: spec_frontmatter(spec_updates),
+            reverse_specs: spec_frontmatter(reverse_specs),
             direct_changes: (!direct_changes.is_empty()).then(|| {
                 direct_changes
                     .iter()
@@ -374,6 +408,7 @@ fn counts(document: &RoadmapDocument) -> ScopeCounts {
     ScopeCounts {
         new_specs: document.new_specs.len(),
         spec_updates: document.spec_updates.len(),
+        reverse_specs: document.reverse_specs.len(),
         direct_changes: document.direct_changes.len(),
     }
 }
@@ -440,6 +475,19 @@ fn validate_participants(
             ));
         }
     }
+    for item in &document.reverse_specs {
+        if retained.contains(&item.spec) {
+            continue;
+        }
+        let directory = specbind_root.join(format!("specs/{}", item.spec));
+        if fs::symlink_metadata(&directory).is_ok() {
+            issues.push(issue(
+                "MILESTONE_SPEC_ALREADY_EXISTS",
+                Some(format!("specs/{}", item.spec)),
+                "a reverse Spec must not have an existing Spec directory",
+            ));
+        }
+    }
     for item in &document.spec_updates {
         if retained.contains(&item.spec) {
             continue;
@@ -485,6 +533,21 @@ fn initialize_participants(
         let path = specbind_root.join(&relative);
         let wire = SpecDocument {
             schema_version: SchemaVersion(1),
+            establishment: document
+                .reverse_specs
+                .iter()
+                .any(|item| item.spec == spec)
+                .then(|| Establishment {
+                    kind: EstablishmentKind::Reverse,
+                    source_revision: ImplementationRevision(document.baseline_revision.clone()),
+                    baseline_version: NonEmptyString(
+                        document
+                            .baseline_version
+                            .clone()
+                            .expect("validated reverse Roadmap has baseline_version"),
+                    ),
+                    milestone_id: MilestoneId(document.milestone_id.clone()),
+                }),
             active_change: Nullable(Some(ActiveChange {
                 milestone_id: MilestoneId(document.milestone_id.clone()),
                 state: WorkflowState::Requirements,

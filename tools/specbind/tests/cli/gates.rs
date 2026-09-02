@@ -100,6 +100,135 @@ fn walks_every_gate_from_requirements_to_implementation() {
 }
 
 #[test]
+fn reverse_design_approval_enters_adoption_ready_without_tasks() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\nbaseline_version: v2.4.0\ntarget_release: null\nwork_items:\n  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n---\n# Roadmap\n"
+        ),
+    );
+    let spec_path = root.path().join(".specbind/specs/checkout/spec.yaml");
+    let active = fs::read_to_string(&spec_path).expect("active Spec");
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: {baseline}\n  baseline_version: v2.4.0\n  milestone_id: {REVIEW_MILESTONE}\n{}",
+            active
+                .strip_prefix("schema_version: 1\n")
+                .expect("schema prefix")
+        ),
+    );
+    approve_requirements(root.path());
+
+    let mut design = specbind_command();
+    design
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--delegation-workflow",
+            "sb-discovery",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("\n  State: adoption_ready\n"));
+
+    let mut status = specbind_command();
+    status
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("\n  Next action: contract_review\n")
+                .and(predicate::str::contains("tasks.yaml").not()),
+        );
+}
+
+#[test]
+fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\nbaseline_version: v2.4.0\ntarget_release: null\nwork_items:\n  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n---\n# Roadmap\n"
+        ),
+    );
+    let active = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("active Spec");
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: {baseline}\n  baseline_version: v2.4.0\n  milestone_id: {REVIEW_MILESTONE}\n{}",
+            active
+                .strip_prefix("schema_version: 1\n")
+                .expect("schema prefix")
+        ),
+    );
+    approve_requirements(root.path());
+    approve_design(root.path());
+    let mut review = specbind_command();
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let mut finalize = specbind_command();
+    finalize
+        .current_dir(root.path())
+        .args([
+            "milestone",
+            "reverse",
+            "finalize",
+            "--log-entries",
+            "-",
+        ])
+        .write_stdin(
+            r#"{"log_entries":[{"spec":"checkout","summary":"Established checkout from the existing product."}]}"#,
+        )
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "OK ADOPTION_FINALIZED: Adopted baseline v2.4.0 across 1 specs; no product release was created.",
+        ));
+
+    let spec = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("final Spec");
+    assert!(spec.contains("establishment:"), "{spec}");
+    assert!(spec.contains("active_change: null"), "{spec}");
+    let log = fs::read_to_string(root.path().join(".specbind/specs/checkout/log.md"))
+        .expect("baseline log");
+    assert!(log.contains("**Baseline v2.4.0**"), "{log}");
+    assert!(
+        root.path()
+            .join(".specbind/baselines/v2.4.0-roadmap.md")
+            .is_file()
+    );
+    assert!(
+        root.path()
+            .join(".specbind/baselines/v2.4.0-contract-review.md")
+            .is_file()
+    );
+    assert!(!root.path().join(".specbind/releases").exists());
+}
+
+#[test]
 fn requirements_approval_rejects_ids_removed_since_the_milestone_baseline() {
     let root = project_fixture();
     write(

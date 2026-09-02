@@ -66,6 +66,7 @@ fn validate(document: &wire::SpecDocument) -> Vec<super::SemanticIssue> {
         }
         WorkflowState::Design
         | WorkflowState::Tasks
+        | WorkflowState::AdoptionReady
         | WorkflowState::Implementation
         | WorkflowState::ReleaseReady => match &active.requirement_ids.0 {
             None => issues.push(issue(
@@ -95,7 +96,7 @@ fn expected_gate_names(state: WorkflowState) -> Vec<&'static str> {
     match state {
         WorkflowState::Requirements => vec![],
         WorkflowState::Design => vec!["requirements"],
-        WorkflowState::Tasks => vec!["requirements", "design"],
+        WorkflowState::Tasks | WorkflowState::AdoptionReady => vec!["requirements", "design"],
         WorkflowState::Implementation => vec!["requirements", "design", "tasks"],
         WorkflowState::ReleaseReady => vec!["requirements", "design", "tasks", "completion"],
     }
@@ -150,6 +151,7 @@ fn state_name(state: WorkflowState) -> &'static str {
         WorkflowState::Requirements => "requirements",
         WorkflowState::Design => "design",
         WorkflowState::Tasks => "tasks",
+        WorkflowState::AdoptionReady => "adoption_ready",
         WorkflowState::Implementation => "implementation",
         WorkflowState::ReleaseReady => "release_ready",
     }

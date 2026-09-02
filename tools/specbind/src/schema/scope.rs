@@ -21,6 +21,9 @@ pub mod v1 {
         #[schemars(extend("const" = 1))]
         pub schema_version: u64,
         pub work_items: WorkItemsDocument,
+        /// Existing product version represented by a reverse-only baseline.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub baseline_version: Option<String>,
         /// Free-form Roadmap Markdown body. Omitting it preserves the current
         /// prose on an update and writes a minimal body on creation.
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -36,6 +39,8 @@ pub mod v1 {
         pub new_specs: Option<Vec<SpecItemDocument>>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         pub spec_updates: Option<Vec<SpecItemDocument>>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub reverse_specs: Option<Vec<SpecItemDocument>>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
         pub direct_changes: Option<Vec<DirectItemDocument>>,
     }

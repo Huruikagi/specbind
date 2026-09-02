@@ -131,15 +131,20 @@ fn validate_participating_spec(
         issues.push(review_issue(
             "CONTRACT_REVIEW_SPEC_STATE_INVALID",
             Some(source),
-            "participating spec must have an active change in tasks state",
+            "participating spec must have an active change ready for contract review",
         ));
         return;
     };
-    if active.milestone_id.0 != milestone_id || active.state != WorkflowState::Tasks {
+    if active.milestone_id.0 != milestone_id
+        || !matches!(
+            active.state,
+            WorkflowState::Tasks | WorkflowState::AdoptionReady
+        )
+    {
         issues.push(review_issue(
             "CONTRACT_REVIEW_SPEC_STATE_INVALID",
             Some(source.clone()),
-            "participating spec must match the Roadmap milestone and be in tasks state",
+            "participating spec must match the Roadmap milestone and be ready for contract review",
         ));
     }
     let gate_inputs = resolve_gate_inputs(specbind_root, canonical_spec);

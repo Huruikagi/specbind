@@ -7,6 +7,16 @@
     "schema_version": {
       "$ref": "#/$defs/SchemaVersion"
     },
+    "establishment": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Establishment"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "active_change": {
       "anyOf": [
         {
@@ -30,6 +40,49 @@
       "minimum": 0,
       "maximum": 255,
       "const": 1
+    },
+    "Establishment": {
+      "description": "Immutable provenance for a Spec first established from existing code.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/EstablishmentKind"
+        },
+        "source_revision": {
+          "$ref": "#/$defs/ImplementationRevision"
+        },
+        "baseline_version": {
+          "$ref": "#/$defs/NonEmptyString"
+        },
+        "milestone_id": {
+          "$ref": "#/$defs/MilestoneId"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "source_revision",
+        "baseline_version",
+        "milestone_id"
+      ]
+    },
+    "EstablishmentKind": {
+      "type": "string",
+      "enum": [
+        "reverse"
+      ]
+    },
+    "ImplementationRevision": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "NonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MilestoneId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
     "ActiveChange": {
       "type": "object",
@@ -61,16 +114,13 @@
         "requirement_ids"
       ]
     },
-    "MilestoneId": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-    },
     "WorkflowState": {
       "type": "string",
       "enum": [
         "requirements",
         "design",
         "tasks",
+        "adoption_ready",
         "implementation",
         "release_ready"
       ]
@@ -197,10 +247,6 @@
       "enum": [
         "delegated"
       ]
-    },
-    "NonEmptyString": {
-      "type": "string",
-      "minLength": 1
     },
     "DesignGateEvidence": {
       "anyOf": [
@@ -375,10 +421,6 @@
         "implementation_revision",
         "mechanical_checks"
       ]
-    },
-    "ImplementationRevision": {
-      "type": "string",
-      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
     },
     "MechanicalCheck": {
       "type": "object",

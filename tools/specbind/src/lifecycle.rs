@@ -1,5 +1,6 @@
 //! Guarded application lifecycle services.
 
+pub mod adoption_finalize;
 pub mod approval;
 pub mod completion;
 pub mod cross_spec_review;

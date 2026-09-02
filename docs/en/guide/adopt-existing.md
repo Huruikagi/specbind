@@ -1,88 +1,102 @@
 # Establish Specs from an existing implementation
 
-The existing-implementation route of `sb-discovery` investigates working
-code and tests and organizes the evidence into candidate SpecBind Specs. It is
-for an existing project without a trusted specification, not for migration from
-another SDD product such as cc-sdd.
+The explicit reverse mode of `sb-discovery` establishes durable Specs for the
+product a fixed existing revision already represents. It is for a project with
+working code but no trusted specification, not migration from another SDD
+product and not delivery of a new change.
 
-The implementation is evidence, not the intended specification. Observed
-behavior may be a requirement, bug, historical constraint, implementation
-detail, or an unresolved question. Only behavior confirmed by the user is
-promoted through the Brief into Requirements.
+Implementation is evidence, not specification authority. An observed behavior
+may be maintained intent, a structural constraint, a historical accident, an
+internal detail, a suspected defect, or a question that needs your decision.
 
 ## Prerequisites
 
-- No durable Specs exist yet and no Milestone is active.
-- Steering describes product, technology, and structural direction.
-- The repository, including Steering, is committed and the worktree is clean.
-- The adoption target is explicitly the whole repository or a concrete area.
+- No durable Specs exist and no Milestone is active.
+- Steering covers product purpose, technology constraints, and structure.
+- The repository, including Steering, is committed and clean.
+- You name the whole repository or a concrete area.
+- You provide the existing product version represented by that revision.
 
-If Steering is absent, run `sb-steering` in bootstrap mode first, review
-the proposal, and commit it.
+If Steering is incomplete, use `sb-configure` and `sb-steering` first, then
+commit the result. Configuration and reverse establishment are separate runs.
 
-## Standard route
+## One confirmed, continuous route
 
 ```text
-Bootstrap or synchronize Steering
-  -> sb-discovery for the selected existing area
-  -> confirm candidate Spec boundaries
-  -> continue sb-discovery
-  -> create Specs and Briefs
-  -> resume sb-discovery
-  -> confirm observations and intent per Spec
-  -> sb-plan
+Configure and commit Steering
+  -> sb-discovery with selected area and existing version
+  -> fix source_revision
+  -> inspect code and tests
+  -> confirm one complete reverse proposal
+  -> create reverse Roadmap, Specs, Briefs, and Research
+  -> Requirements
+  -> Design and independent Design validation
+  -> Contract Review
+  -> adoption finalize
 ```
 
-The first run checks adoption prerequisites with:
+The proposal includes `baseline_version`, the candidate `reverseSpecs`, their
+maintained intent and evidence, dependencies, blocking and deferred unknowns,
+suspected defects, and excluded areas. Nothing is created before you confirm
+that complete proposal. After confirmation, the run continues without routine
+phase pauses.
+
+The Roadmap uses `reverseSpecs`, not `newSpecs` or `specUpdates`, and has no
+`target_release`. Every created Spec retains this provenance:
+
+```yaml
+establishment:
+  kind: reverse
+  source_revision: <fixed Git revision>
+  baseline_version: <existing product version>
+  milestone_id: <reverse milestone>
+```
+
+## Fixed-revision and unknown rules
+
+`specbind adoption preflight` returns the `source_revision`. Implementation,
+tests, dependencies, configuration, and Steering must not change until the run
+finishes. Reverse scope cannot be updated or rebaselined. Source drift stops the
+run and requires restarting from the new clean revision.
+
+A question blocks its Spec when an answer is needed to state meaningful
+maintained behavior. Other independent Specs can continue, but Contract Review
+and finalization wait. A question may be deferred only when every later answer
+would leave current Spec meaning unchanged.
+
+An active Deferred Findings Adapter may record behavior that looks defective as
+a suspected defect with the source revision, evidence locator, and claim. It is
+not automatically a bug or requirement, and reverse establishment does not fix
+it. Sending anything outside the project still needs separate authority.
+
+## No Tasks and no release
+
+Reverse reuses the ordinary Requirements, Design, Design validation, and
+Contract Review owners. Design approval moves a reverse Spec to
+`adoption_ready`. No `tasks.yaml` is authored, no implementation or validation
+work begins, and no Release Adapter, tag, publication, or `target_release` is
+created.
+
+If an ordinary change request arrives, finish reverse first and create a new
+ordinary Milestone afterward. An emergency requires explicit abandonment with
+`specbind milestone reverse abandon --milestone-id <id>`; the urgent change
+then uses ordinary Discovery, and reverse restarts later from the new revision.
+Do not manually delete lifecycle state.
+
+## Finalization and history
+
+When every Spec is `adoption_ready` and Contract Review is fresh, Discovery
+runs:
 
 ```sh
-specbind adoption preflight
+specbind milestone reverse finalize --log-entries <path-or->
 ```
 
-The returned `source_revision` pins the Git commit used as investigation
-evidence. If implementation, tests, dependencies, configuration, or Steering
-change during the investigation, the workflow stops instead of silently
-following the new state.
-
-## Investigation depth and Spec boundaries
-
-The workflow first scans the whole repository shallowly to identify public
-APIs, entry points, module boundaries, tests, and dependencies. It then
-investigates only the requested adoption area deeply. Specs are divided by
-durable responsibility, not directory size or estimated task count.
-
-No Spec boundary is created before user confirmation. After confirmation, the
-ordinary route in the same `sb-discovery` Skill presents the Roadmap scope
-again and owns the CLI-managed Milestone and Spec changes. These remain two
-separate confirmations.
-
-## Observations and intent
-
-Observations are temporarily recorded in
-`.specbind/specs/adoption/reverse-discovery.yaml` by default. Each one points
-to evidence at the pinned revision using a path and a symbol, test name, route,
-schema entry, or similar locator.
-
-| Disposition | Meaning |
-| --- | --- |
-| `requirement` | Intended behavior promoted through Brief to Requirements |
-| `design` | Technical or structural constraint promoted through Research to Design |
-| `bug` | Existing behavior that should not become the specification |
-| `historical_constraint` | Temporarily preserved but not a product promise |
-| `implementation_detail` | Internal detail that is not specified |
-| `unknown` | Open question for Requirements or Design |
-
-After every Spec has a complete Brief and Research handoff, the project-wide
-dossier is removed from the current tree. Git retains the investigation
-history, and each Spec's Research remains until normal release finalization.
-
-## Return to the ordinary lifecycle
-
-Discovery's adoption route does not author or approve Requirements or Design.
-It stops after handing confirmed intent to the Brief and implementation evidence
-and design constraints to Research. Continue with `sb-plan` through the
-ordinary Requirements, Design, and Tasks phases; there are no reverse-specific
-authoring Skills.
+Finalization clears active change state while retaining establishment
+provenance, removes temporary Brief and Research evidence, and writes a
+`Baseline <version>` entry to each Spec `log.md`. It archives the Roadmap and
+Contract Review under `baselines/` and closes the active milestone. These are
+adoption records, not product-release records.
 
 ## Next
 
@@ -90,4 +104,7 @@ authoring Skills.
 - [Start with an existing project](./start-existing-project.md)
 - [Customize SpecBind](./customization.md)
 - [Current generated skill index](../reference/current-skill-index.md)
-- [Current generated artifact index](../reference/current-artifact-index.md)
+
+---
+
+[Getting started](./getting-started.md) | [Start with an existing project](./start-existing-project.md)

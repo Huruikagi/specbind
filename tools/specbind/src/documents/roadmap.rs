@@ -16,9 +16,11 @@ use crate::release;
 pub struct RoadmapDocument {
     pub milestone_id: String,
     pub baseline_revision: String,
+    pub baseline_version: Option<String>,
     pub target_release: Option<String>,
     pub new_specs: Vec<SpecItem>,
     pub spec_updates: Vec<SpecItem>,
+    pub reverse_specs: Vec<SpecItem>,
     pub direct_changes: Vec<DirectItem>,
 }
 
@@ -93,6 +95,8 @@ pub struct CrossSpecWorkItems {
     pub new_specs: Vec<CrossSpecItem>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub spec_updates: Vec<CrossSpecItem>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub reverse_specs: Vec<CrossSpecItem>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -129,6 +133,8 @@ struct RawRoadmap {
     artifact_type: String,
     milestone_id: String,
     baseline_revision: String,
+    #[serde(default)]
+    baseline_version: Option<String>,
     target_release: Value,
     work_items: RawWorkItems,
     #[serde(flatten)]
@@ -140,6 +146,7 @@ struct RawRoadmap {
 struct RawWorkItems {
     new_specs: Option<Vec<SpecItem>>,
     spec_updates: Option<Vec<SpecItem>>,
+    reverse_specs: Option<Vec<SpecItem>>,
     direct_changes: Option<Vec<DirectItem>>,
 }
 
@@ -149,6 +156,10 @@ struct RawWorkItems {
 ///
 /// Returns structural or cross-item diagnostics when no authoritative scope can
 /// be derived.
+#[allow(
+    clippy::too_many_lines,
+    reason = "Roadmap validation reports the complete cross-field issue set in one pass"
+)]
 pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
     let frontmatter = split_frontmatter(content).map_err(single_issue)?;
     let raw = serde_saphyr::from_str::<RawRoadmap>(frontmatter)
@@ -189,6 +200,17 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
             "target_release must be null or match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
         ));
     }
+    if raw
+        .baseline_version
+        .as_deref()
+        .is_some_and(|value| !release::valid_version(value))
+    {
+        issues.push(issue(
+            "ROADMAP_BASELINE_VERSION_INVALID",
+            "/baseline_version",
+            "baseline_version must be absent or match ^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+        ));
+    }
     for (category, empty) in [
         (
             "new_specs",
@@ -198,6 +220,13 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
             "spec_updates",
             raw.work_items
                 .spec_updates
+                .as_ref()
+                .is_some_and(Vec::is_empty),
+        ),
+        (
+            "reverse_specs",
+            raw.work_items
+                .reverse_specs
                 .as_ref()
                 .is_some_and(Vec::is_empty),
         ),
@@ -219,22 +248,65 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
     }
     let new_specs = raw.work_items.new_specs.unwrap_or_default();
     let spec_updates = raw.work_items.spec_updates.unwrap_or_default();
+    let reverse_specs = raw.work_items.reverse_specs.unwrap_or_default();
     let direct_changes = raw.work_items.direct_changes.unwrap_or_default();
-    if new_specs.is_empty() && spec_updates.is_empty() && direct_changes.is_empty() {
+    if new_specs.is_empty()
+        && spec_updates.is_empty()
+        && reverse_specs.is_empty()
+        && direct_changes.is_empty()
+    {
         issues.push(issue(
             "ROADMAP_WORK_ITEMS_EMPTY",
             "/work_items",
             "work_items must contain at least one non-empty category",
         ));
     }
-    validate_items(&new_specs, &spec_updates, &direct_changes, &mut issues);
+    if reverse_specs.is_empty() && raw.baseline_version.is_some() {
+        issues.push(issue(
+            "ROADMAP_BASELINE_VERSION_UNEXPECTED",
+            "/baseline_version",
+            "baseline_version is allowed only for a reverse-only milestone",
+        ));
+    }
+    if !reverse_specs.is_empty() {
+        if raw.baseline_version.is_none() {
+            issues.push(issue(
+                "ROADMAP_BASELINE_VERSION_REQUIRED",
+                "/baseline_version",
+                "a reverse milestone requires baseline_version",
+            ));
+        }
+        if !new_specs.is_empty() || !spec_updates.is_empty() || !direct_changes.is_empty() {
+            issues.push(issue(
+                "ROADMAP_REVERSE_SCOPE_MIXED",
+                "/work_items",
+                "reverse_specs cannot be mixed with delivery work items",
+            ));
+        }
+        if !raw.target_release.is_null() {
+            issues.push(issue(
+                "ROADMAP_REVERSE_RELEASE_INVALID",
+                "/target_release",
+                "a reverse milestone cannot bind target_release",
+            ));
+        }
+    }
+    validate_items(
+        &new_specs,
+        &spec_updates,
+        &reverse_specs,
+        &direct_changes,
+        &mut issues,
+    );
     if issues.is_empty() {
         Ok(RoadmapDocument {
             milestone_id: raw.milestone_id,
             baseline_revision: raw.baseline_revision,
+            baseline_version: raw.baseline_version,
             target_release: raw.target_release.as_str().map(str::to_owned),
             new_specs,
             spec_updates,
+            reverse_specs,
             direct_changes,
         })
     } else {
@@ -253,6 +325,7 @@ impl RoadmapDocument {
             work_items: CrossSpecWorkItems {
                 new_specs: normalized_items(&self.new_specs),
                 spec_updates: normalized_items(&self.spec_updates),
+                reverse_specs: normalized_items(&self.reverse_specs),
             },
         }
     }
@@ -263,6 +336,7 @@ impl RoadmapDocument {
             .new_specs
             .iter()
             .chain(&self.spec_updates)
+            .chain(&self.reverse_specs)
             .map(|item| item.spec.clone())
             .collect::<Vec<_>>();
         ids.sort();
@@ -389,11 +463,12 @@ pub fn bind_release(
 fn validate_items(
     new_specs: &[SpecItem],
     spec_updates: &[SpecItem],
+    reverse_specs: &[SpecItem],
     direct_changes: &[DirectItem],
     issues: &mut Vec<RoadmapIssue>,
 ) {
     let mut keys = BTreeSet::new();
-    for item in new_specs.iter().chain(spec_updates) {
+    for item in new_specs.iter().chain(spec_updates).chain(reverse_specs) {
         validate_identity(&item.spec, "spec", issues);
         validate_summary(&item.summary, &item.spec, issues);
         if !keys.insert(format!("spec:{}", item.spec)) {
@@ -428,6 +503,7 @@ fn validate_items(
     for (key, dependencies) in new_specs
         .iter()
         .chain(spec_updates)
+        .chain(reverse_specs)
         .map(|item| (format!("spec:{}", item.spec), &item.depends_on))
         .chain(
             direct_changes

@@ -95,6 +95,8 @@ struct StatusDiagnosticData<'a> {
 #[serde(rename_all = "camelCase")]
 struct MilestoneStatusData<'a> {
     milestone_id: &'a str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    baseline_version: Option<&'a str>,
     target_release: Option<&'a str>,
     stage: &'static str,
     health: &'static str,
@@ -216,6 +218,11 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
     );
     push_field(
         &mut output,
+        "Baseline version",
+        model.baseline_version.as_deref().unwrap_or("none"),
+    );
+    push_field(
+        &mut output,
         "Target release",
         model.target_release.as_deref().unwrap_or("none"),
     );
@@ -279,7 +286,13 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
             );
         }
     }
-    if release_readiness_evaluated(model.stage) {
+    if model.stage == milestone_status::DeliveryStage::AdoptionReady {
+        push_field(
+            &mut output,
+            "Release readiness",
+            "not applicable to reverse adoption",
+        );
+    } else if release_readiness_evaluated(model.stage) {
         push_inline_list(&mut output, "Release blockers", &model.release_blockers);
     } else {
         push_field(
@@ -296,6 +309,7 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
     let release_readiness_evaluated = release_readiness_evaluated(model.stage);
     let data = MilestoneStatusData {
         milestone_id: &model.milestone_id,
+        baseline_version: model.baseline_version.as_deref(),
         target_release: model.target_release.as_deref(),
         stage: milestone_status::stage_name(model.stage),
         health: match model.health {

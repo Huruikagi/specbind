@@ -27,10 +27,11 @@ Long-lived specs need to remain the current description of the product, but mile
 | `SpecBind Contract` | The current minimal cross-spec seam manifest. | The discovered singleton is revised only when externally observable seams change. | Preserved. |
 | `SpecBind Implementation Notes` set | Optional free-form implementation knowledge useful to later AI runs. | Zero or more discovered artifacts are read and maintained when durable spec-specific knowledge is discovered. | Preserved. |
 | `tasks.yaml` | Structured executable plan and progress for the current milestone's change. | Contains only current tasks and machine-validated execution state. | Removed. |
-| `log.md` | Per-spec OKF update log of released changes. | Preserved; not pre-edited during ordinary release orchestration. | The CLI inserts one AI-authored concise summary under the applicable newest-first date heading. |
+| `log.md` | Per-spec OKF update log of released changes and adopted baselines. | Preserved; not pre-edited during ordinary release or reverse orchestration. | The CLI inserts one concise Release or Baseline summary under the applicable newest-first date heading. |
 | `spec.yaml` | Current lifecycle, active-change metadata, and gate evidence. | Represents an active change. | Represents released state with no active change. |
 | `roadmap.md` | Intent, scope, and dependencies for the active milestone. | Exists under `steering/` and is maintained. | Moved to `releases/<version>-roadmap.md`. |
 | `state/contract-review.md` | Current accepted milestone-wide contract review inputs and free-form AI judgment. | Exists only after review passes for a milestone containing Spec-backed items. | Moved to `releases/<version>-contract-review.md`; absent for Direct-only releases. |
+| `baselines/<version>-roadmap.md` and `baselines/<version>-contract-review.md` | Non-release reverse-establishment history. | Absent during ordinary delivery. | Receive the reverse Roadmap and accepted review while Specs retain establishment provenance. |
 
 Absence of `SpecBind Brief`, `SpecBind Research`, and `tasks.yaml` is the normal idle state of a released Spec. Placeholder working documents should not be required. Decision 0057 discovers Spec-local Markdown by OKF type; familiar Markdown filenames remain template defaults rather than lifecycle identity.
 
@@ -42,6 +43,7 @@ The milestone's stable identity does not depend on knowing the final release ver
 
 - `milestone_id`: CLI-generated canonical UUID v7 accepted by Decision 0043
 - `baseline_revision`: full Git commit object ID captured from clean `HEAD` immediately before milestone creation under Decision 0054
+- `baseline_version`: existing product version required only by a Decision 0181 reverse milestone
 - `target_release`: concrete Decision 0073 portable release label, initially unset when necessary
 
 Under [Decision 0045](./decisions/0045-okf-markdown-artifacts.md), the roadmap is an OKF concept document and this mapping is authoritative YAML frontmatter:

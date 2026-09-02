@@ -49,6 +49,7 @@ An active milestone exposes one derived stage for concise status. The stage is t
 | `requirements` | At least one participating Spec has not reached current Requirements approval. A Direct-only milestone skips this and the following Spec-only stages. |
 | `design` | Every participating Spec has current Requirements approval, but at least one has not reached current Design approval subject to its Design dependencies. |
 | `cross_spec_review` | Every participating Spec has current Design approval, but the required global review is absent or stale. |
+| `adoption_ready` | A reverse milestone has current Design approval and a fresh Contract Review; non-release adoption finalization is actionable. |
 | `tasks` | The review is fresh, but at least one participating Spec lacks current Tasks approval. |
 | `implementation` | Every participating Spec has current Tasks approval, but at least one Roadmap item is not implementation-complete. |
 | `validation` | Every Roadmap item is implementation-complete, but at least one participating Spec lacks fresh completion evidence at the current clean project revision. Direct-only milestones skip this stage. |
@@ -57,7 +58,7 @@ An active milestone exposes one derived stage for concise status. The stage is t
 
 `release_pending` is a derived explanation, not a writable `release_blocked` state. Its status output lists the exact release guards that remain unsatisfied.
 
-A Direct-only milestone derives `implementation` until every Direct item is complete, then `release_pending` or `release_ready` from the remaining release guards.
+A reverse milestone derives only `requirements`, `design`, `cross_spec_review`, and `adoption_ready`; it never enters Tasks or release readiness. A Direct-only milestone derives `implementation` until every Direct item is complete, then `release_pending` or `release_ready` from the remaining release guards.
 
 ## Item predicates
 

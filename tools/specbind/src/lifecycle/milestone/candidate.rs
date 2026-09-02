@@ -13,7 +13,9 @@ use super::{MilestoneIssues, one_issue};
 pub(super) struct ValidatedScope {
     pub(super) new_specs: Vec<SpecItem>,
     pub(super) spec_updates: Vec<SpecItem>,
+    pub(super) reverse_specs: Vec<SpecItem>,
     pub(super) direct_changes: Vec<DirectItem>,
+    pub(super) baseline_version: Option<String>,
     pub(super) body: Option<String>,
 }
 
@@ -34,6 +36,7 @@ pub(super) fn parse(json: &str, code: &'static str) -> Result<ValidatedScope, Mi
     Ok(ValidatedScope {
         new_specs: spec_items(document.work_items.new_specs),
         spec_updates: spec_items(document.work_items.spec_updates),
+        reverse_specs: spec_items(document.work_items.reverse_specs),
         direct_changes: document
             .work_items
             .direct_changes
@@ -46,6 +49,7 @@ pub(super) fn parse(json: &str, code: &'static str) -> Result<ValidatedScope, Mi
                 status: None,
             })
             .collect(),
+        baseline_version: document.baseline_version,
         body: document.body,
     })
 }

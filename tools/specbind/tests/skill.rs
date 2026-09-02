@@ -139,7 +139,7 @@ fn installs_each_skill_to_the_accepted_target() {
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 6),
-        ("sb-discovery", 4),
+        ("sb-discovery", 5),
         ("sb-implement", 2),
         ("sb-plan", 3),
         ("sb-release", 1),
@@ -241,24 +241,23 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
 }
 
 #[test]
-fn discovery_adoption_route_keeps_evidence_separate_from_intent_and_phase_ownership() {
+fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finalization() {
     let body = skill_package_text("sb-discovery");
     for required in [
         "references/adopt-start.md",
         "references/adopt-resume.md",
+        "references/reverse.md",
         "specbind adoption preflight",
-        "those reads duplicate the\npreflight",
-        "ordinary Discovery",
-        "On the ordinary Discovery route:",
-        "non-negotiable fresh-reader boundary",
-        "at\nleast two fresh readers",
-        "sequential fresh readers are valid",
-        "does not replace either line with its own repository\ninspection",
+        "one complete proposal",
+        "baseline_version",
+        "reverseSpecs",
         "source_revision",
         "Existing code and tests are **evidence**",
-        "stop immediately",
-        "Do not author `requirements.md` here.",
-        "sb-plan <spec> requirements",
+        "blocking semantic unknown",
+        "suspected defect",
+        "`adoption_ready`",
+        "No Tasks, implementation change, or product release",
+        "specbind milestone reverse finalize --log-entries",
     ] {
         assert!(
             body.contains(required),

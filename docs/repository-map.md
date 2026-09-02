@@ -328,3 +328,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0178](./design/decisions/0178-github-milestone-discovery-source-provider.md) | Accepted | GitHub Milestone Discovery source provider |
 | [0179](./design/decisions/0179-spec-local-one-off-design-supplements.md) | Accepted | Evidence-backed Spec-local one-off Design supplements |
 | [0180](./design/decisions/0180-delegate-binary-updates-to-installation-clients.md) | Accepted | Binary updates delegated to installation clients and separated from project-asset refresh |
+| [0181](./design/decisions/0181-reverse-spec-establishment.md) | Accepted | Reverse Specs established from a fixed implementation revision as a non-release baseline |

@@ -120,6 +120,12 @@ Once scope is explicit, present before doing anything:
 - that every delegated acceptance records `sb-plan` in its durable
   gate evidence, visible afterwards through `specbind spec status`.
 
+Exception: when `sb-discovery` dispatches a confirmed reverse milestone, its
+visible reverse proposal already authorized Requirements and Design under
+workflow `sb-discovery`. Verify `baselineVersion`, `reverseSpecs`, and that
+`targetRelease` is absent from milestone scope. Do not ask again, do not claim
+Tasks authority, and record `sb-discovery` in those two gates.
+
 Take **one confirmation** for the run. The request to run this skill is **not**
 that confirmation unless it explicitly authorizes those named gates for the
 presented scope. Otherwise stop and wait before dispatching any phase or
@@ -239,6 +245,10 @@ After the review is accepted:
 6. [Tasks phase](references/tasks.md) — `tasks.yaml` and its gate, for every in-scope item now
    actionable; parallel in all scope
 
+For a reverse milestone, stop this sequence after the accepted Contract Review.
+Design approval reports `adoption_ready`; Tasks are forbidden. Return control
+to `sb-discovery`, which owns `milestone reverse finalize`.
+
 Gap analysis is not on this path. Run `sb-gap-analysis` first when
 brownfield uncertainty requires it; this Skill does not decide that for you.
 
@@ -303,8 +313,9 @@ In the project's language, report:
 
 ## Boundaries
 
-- **Stop after Tasks approval.** Never implement, validate completion, or touch
-  release.
+- **Stop after Tasks approval for ordinary milestones, or after Contract Review
+  for reverse milestones.** Never implement, validate completion, or touch a
+  product release.
 - Author nothing yourself and never finish work owned by a phase receiver.
 - No scope changes: no Roadmap items, new Specs, removals, or silent expansion.
 - Same rules, protocols, and criteria under delegated or explicit approval.
