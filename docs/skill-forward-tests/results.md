@@ -14,6 +14,9 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `efba29e` | A2 — pass | [Reverse establishment proposal confirmation](./runs/2026-09-02-codex-efba29e-reverse-discovery.md) |
+| 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `d76af34` | A2 — product failure | [Reverse conflict classification](./runs/2026-09-02-codex-d76af34-reverse-discovery.md) |
+| 2026-09-02 | Codex | `gpt-5.6-terra` / `medium` | `61d0d47` | A2 — product failure | [Reverse independent evidence dispatch](./runs/2026-09-02-codex-61d0d47-reverse-discovery.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `0886c8d` | DS9 — pass | [One-off Design materialization](./runs/2026-09-01-codex-0886c8d-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `f516d32` | DS9 — product failure | [Focused one-off Design assessment](./runs/2026-09-01-codex-f516d32-ds9.md) |
 | 2026-09-01 | Codex | `gpt-5.6-terra` / `medium` | `58e6155` | DS9 — pass | [One-off Design supplement confirmation](./runs/2026-09-01-codex-58e6155-ds9.md) |
