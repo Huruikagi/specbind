@@ -257,14 +257,17 @@ Execute any applicable After-finalize guidance, and report its result
 separately. **A failure here is not a failed release** — the milestone is
 already closed. Never re-run finalization because of it.
 
-### Recommend steering work when this milestone earned it
+### Recommend a post-release configuration review when this milestone earned it
 
 Finalization is the moment a steering edit becomes free again. Before it, a
 steering change is an ordinary project change that stales every accepted
 completion and forces the whole handshake to be re-run. So this belongs here,
 after finalization succeeded, and nowhere earlier.
 
-Say one sentence recommending `sb-steering` when any of these holds:
+Say one sentence recommending a post-release review through `sb-configure` when
+any of these holds. `sb-configure` will determine whether the review should
+update Steering, Rules, Templates, Adapters, or another supported surface, and
+will route the actual change to the owning Skill:
 
 - the milestone's scope included a **new Spec** — the project took on a durable
   responsibility it did not have before

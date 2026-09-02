@@ -106,8 +106,9 @@ Verifyまで通ったら、参加する各Specの成果（要求ではなく、�
   別のローカルコミットになります
 
 このMilestoneで新規Specを追加した、Contractが動いた、あるいはまだSteeringが1つも
-ない状態でリリースした場合は、`sb-steering`を一度回しておくとよいです。
-確定処理の後はSteeringの編集がふたたび自由になります。
+ない状態でリリースした場合は、`sb-configure`からリリース後の設定レビューを始めると
+よいです。Steering、Rules、Templates、Adaptersなど、更新が必要な対象をそこで判断して
+担当Skillへ振り分けます。確定処理の後はSteeringの編集がふたたび自由になります。
 
 ## 現在の状態を確認する
 

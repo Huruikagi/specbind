@@ -93,8 +93,10 @@ and does not duplicate history.
   from the published product revision.
 
 If the Milestone added a Spec, changed a Contract, or released before any
-Steering existed, run `sb-steering` once. Steering is freely editable
-again after finalization.
+Steering existed, start a post-release configuration review through
+`sb-configure`. It will determine whether Steering, Rules, Templates, Adapters,
+or another supported surface needs updating. Steering is freely editable again
+after finalization.
 
 ## Inspect readiness directly
 

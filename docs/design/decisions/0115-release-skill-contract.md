@@ -175,12 +175,15 @@ Decision 0010 has After-finalize guidance run only after core finalization
 succeeds, and its failure reported separately. The skill does not treat such a
 failure as a failed release, and never re-runs finalization because of it.
 
-### Steering is recommended after finalization
+### Post-release configuration review is recommended after finalization
 
 [Decision 0117](./0117-steering-authoring-contract.md) adds one conditional
 recommendation to the closing summary, because finalization is the point where a
-steering edit stops costing a completion revalidation cycle. It is advisory: the
-release neither waits on it nor fails because of it.
+Steering edit stops costing a completion revalidation cycle. The recommendation
+opens a post-release configuration review through `sb-configure`, which decides
+whether Steering, Rules, Templates, Adapters, or another supported surface is
+the appropriate target and routes the change to its owning Skill. It is
+advisory: the release neither waits on it nor fails because of it.
 
 ### Boundary
 

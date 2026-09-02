@@ -1359,6 +1359,8 @@ fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
         "Checkpoint only the finalized lifecycle metadata",
         "Publication approval does not authorize pushing this commit",
         "move the published tag to include this later metadata commit",
+        "post-release review through `sb-configure`",
+        "update Steering, Rules, Templates, Adapters",
     ] {
         assert!(
             body.contains(required),
