@@ -128,4 +128,4 @@ $sb-drive --target-release 1.2.0
 
 ---
 
-[基本概念](./concepts.md) | [1件ずつ計画・実装する](./implement-step-by-step.md) | [リリースする](./release.md)
+[ユーザーガイド](../index.md) | [1件ずつ計画・実装する](./implement-step-by-step.md) | [リリースする](./release.md)

@@ -50,3 +50,7 @@ specbind feedback
 GitHubではblank Issueも利用できます。ただし、再現可能な不具合にはバグ報告、
 製品やワークフローの変更案には改善提案フォームを使うと、確認に必要な情報を
 揃えやすくなります。
+
+---
+
+[ユーザーガイド](../index.md) | [ルートを選ぶ](./getting-started.md)

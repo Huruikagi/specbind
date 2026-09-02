@@ -4,8 +4,13 @@ This route installs SpecBind before implementation begins, divides the first
 release scope into durable responsibilities, and proceeds from scope review
 through implementation validation.
 
-See [Getting Started](./getting-started.md) for supported environments and
+See [Choose a route](./getting-started.md) for supported environments and
 coding agents.
+
+!!! info "Terminology"
+    Terms used below, including Spec, Steering, Milestone, and Gate, are
+    explained in [Core concepts](./concepts.md). Read that page first or refer
+    to it as the terms appear.
 
 ## Before you begin
 
@@ -36,74 +41,32 @@ git commit -m "Initialize project"
 Review `git status --short` before staging and follow the project's commit
 policy.
 
-## 2. Install the CLI
+## 2. Install SpecBind
 
-From the project root, install SpecBind with [mise](https://mise.jdx.dev/):
+Installing the CLI and installing SpecBind into the project are shared by both
+routes and are described in [Install SpecBind](./install.md).
 
 ```sh
 mise use github:Huruikagi/specbind
 mise lock
-specbind --version
-```
-
-`mise use` records SpecBind in `mise.toml`; `mise lock` records the selected
-version and distribution checksum in `mise.lock`. Review and commit both files
-so the team uses the same version. See the repository
-[README](https://github.com/Huruikagi/specbind#install-the-cli) for other
-installation methods.
-
-## 3. Install SpecBind into the project
-
-This guide uses Codex and English artifacts:
-
-```sh
 specbind install --agent codex --language en --project-instructions
 ```
 
-| Coding agent | `--agent` value |
-| --- | --- |
-| Codex | `codex` |
-| Claude Code | `claude-code` |
-| Another Agent supporting Agent Skills and `AGENTS.md` | `generic` |
+That page covers agent selection, previewing the plan with `--dry-run`, the
+installed surfaces, and reopening the agent session. Commit the installation
+separately from the baseline in step 1.
 
-Repeat `--agent` to select more than one. `generic` installs shared
-`.agents/skills/` Skills and the managed `AGENTS.md` block, but no subagent role
-definitions. `--language en` selects English managed artifacts.
-`--project-instructions` adds a marked SpecBind block to `AGENTS.md` or
-`CLAUDE.md` without changing text outside the marker.
+Return here once the installation is committed. The examples below use Codex
+`$skill` syntax; Claude Code uses `/skill`.
 
-Preview the exact `create`, `replace`, `keep`, and retired-product-asset
-`remove` actions first when desired:
-
-```sh
-specbind install --dry-run --agent codex --language en --project-instructions
-```
-
-The main installed surfaces are:
-
-```text
-.specbind.json
-.specbind/settings/
-.agents/skills/specbind-*/       # shared by Codex and generic
-.codex/agents/specbind-*.toml    # Codex role configuration
-.claude/skills/specbind-*/       # Claude Code
-.claude/agents/specbind-*.md     # Claude Code role configuration
-AGENTS.md / CLAUDE.md            # when project instructions are enabled
-```
-
-Review and commit the installation separately from the initial baseline. The
-installer does not commit. Then reopen the coding-agent session so it discovers
-the new Skills. The examples below use Codex `$skill` syntax; use `/skill` in
-Claude Code and the equivalent invocation mechanism in a generic host.
-
-## 4. Keep the defaults for the first cycle
+## 3. Keep the defaults for the first cycle
 
 The installer suggests a configuration review with `sb-configure`.
 For a new project, first complete one cycle with the defaults. After you have
 real artifacts to evaluate, use [Customize SpecBind](./customization.md) to
 change only the surfaces that do not fit.
 
-## 5. Prepare the first release scope
+## 4. Prepare the first release scope
 
 The first scope may contain several capabilities that should ship together.
 Collect the tracked text files that describe the intended product into a
@@ -117,19 +80,23 @@ docs/product-definition/
 
 Discovery inventories the whole collection, assigns every source item to a
 durable Spec responsibility or records why it is not used, and determines
-dependencies between the resulting work items.
+dependencies between the resulting work items. Source items must be tracked in
+Git, so commit this material together with the step 1 baseline.
+
+### If you already have durable guidance
 
 If you already have stable product, technology, structure, security, or testing
-guidance that should apply beyond this Milestone, establish it separately with:
+guidance that should apply beyond this Milestone, establish it separately
+before Discovery:
 
 ```text
 $sb-steering
 ```
 
-Do not use Steering for temporary release scope or unstable implementation
-notes.
+Empty Steering is a valid state, so do not invent guidance just to start. Do
+not use Steering for temporary release scope or unstable implementation notes.
 
-## 6. Confirm scope with Discovery
+## 5. Confirm scope with Discovery
 
 Give Discovery the collection and the delivery intent in an ordinary request:
 
@@ -138,26 +105,37 @@ $sb-discovery Use docs/product-definition/ as the source collection for
 the first release, including task management and reminders.
 ```
 
-Discovery classifies work as an existing-Spec update, a new Spec, or Direct.
-For a new project, durable capabilities normally become new Specs. Review:
+Discovery reads current Spec, Steering, and Milestone state and classifies the
+input. A new project has no existing Specs, so this scope becomes either
+**Direct** (a small change that alters no specification) or **new Specs** (one
+durable responsibility each).
+
+!!! info "Term: Spec"
+    A Spec is one durable capability boundary the project keeps, identified by
+    a short kebab-case ID (see [Core concepts](./concepts.md)). If this scope
+    separates task management from reminders, each becomes its own new Spec.
+
+Review the proposal, which covers:
 
 - **Work items** — everything included in this Milestone;
 - **New Specs** — proposed durable responsibility boundaries;
 - **Gate invalidations** — existing approvals that would be invalidated;
-- **Dependencies** — ordering between work items; and
+- **Dependencies** — ordering between work items (for example, reminders →
+  task management); and
 - **Source coverage** — every supplied source and its destination or exclusion
   reason.
 
-Approve only after the coverage, boundaries, and dependencies are correct. The
-CLI then creates the Milestone and Spec state. The Roadmap records collection
-coverage, while each Brief points only to the source items relevant to that
-Spec. Requirements and Design later promote accepted content into authoritative
+Approve only after the coverage, boundaries, and dependencies are correct; that
+conclusion becomes the premise for the rest of the workflow. The CLI then
+creates the Milestone and Spec state. The Roadmap records collection coverage,
+while each Brief points only to the source items relevant to that Spec.
+Requirements and Design later promote accepted content into authoritative
 artifacts; source material is not authoritative by itself.
 
 Use `$sb-status` at any time for a read-only explanation of state and next
-actions.
+actions. It never approves anything or rewrites artifacts.
 
-## 7. Choose how to plan and implement
+## 6. Choose how to plan and implement
 
 The first release scope contains several Specs, so the normal route is:
 
@@ -177,7 +155,7 @@ To inspect every artifact and Gate separately, instead follow
 routes use the same owning Skills, reviews, and CLI evidence; the difference is
 how explicitly you choose each boundary.
 
-## 8. Inspect the artifacts
+## 7. Inspect the artifacts
 
 By default, artifacts live below `.specbind/specs/<spec>/`:
 
@@ -214,7 +192,11 @@ The two status commands also provide `--json` for tools and scripts.
 - [Core concepts](./concepts.md)
 - [Plan and implement one item at a time](./implement-step-by-step.md)
 - [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
-- [Release a milestone](./release.md)
-- [Customize SpecBind](./customization.md)
+- [Release a milestone](./release.md) — when you actually close the Milestone
+- [Customize SpecBind](./customization.md) — after one cycle shows what to adjust
 - [Current generated skill index](../reference/current-skill-index.md)
 - [Current generated artifact index](../reference/current-artifact-index.md)
+
+---
+
+[User guide](../index.md) | [Install SpecBind](./install.md) | [Start with an existing project](./start-existing-project.md)

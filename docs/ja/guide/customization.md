@@ -1,4 +1,4 @@
-# プロジェクトに合わせてカスタマイズする
+# カスタマイズ
 
 SpecBindのライフサイクルと検証はそのままに、成果物の書き方、プロジェクト固有の
 判断基準、運用手順、役割ごとに使うモデルを、プロジェクトに合わせて調整できます。
@@ -362,8 +362,8 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 `specDir`は初回のインストールで決まり、v1では導入後に変更できません。言語と、選んだ
 エージェントは`.specbind.json`に保存されます。あとからエージェントを追加することは
 できます。1つのエージェントを外すときは`specbind remove-agent`、連携全体を外すときは
-`specbind uninstall`を使います。詳しくは[エージェントの削除とプロジェクトの
-アンインストール](./uninstall.md)を参照してください。
+`specbind uninstall`を使います。詳しくは[エージェントの削除とアンインストール](./uninstall.md)を
+参照してください。
 
 `.agents/skills/`と`AGENTS.md`の共通形式だけを導入する場合は`--agent generic`を
 指定します。`generic`には役割定義がないため、`agentRoles`の対象にはできません。
@@ -434,4 +434,4 @@ Steeringの執筆は`sb-steering`、成果物の意味変更は各成果物の�
 
 ---
 
-[ガイドの入口](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
+[ユーザーガイド](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）

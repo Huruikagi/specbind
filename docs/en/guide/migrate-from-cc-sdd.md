@@ -292,4 +292,4 @@ that Git cannot recover.
 
 ---
 
-[Documentation home](../index.md)
+[User guide](../index.md) | [Start with an existing project](./start-existing-project.md)

@@ -77,3 +77,7 @@ path, commit or move anything you need to retain, and rerun the same plan.
 
 Apply is retry-safe. Already removed exact targets are recognized as absent,
 and `.specbind.json` is updated or removed last as the completion marker.
+
+---
+
+[User guide](../index.md) | [Customize SpecBind](./customization.md) | [Report bugs and suggest improvements](./feedback.md)

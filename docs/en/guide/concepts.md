@@ -173,8 +173,12 @@ Skill contract.
 
 ## Next
 
-- [Getting Started](./getting-started.md)
+- [Choose a route](./getting-started.md)
 - [Plan and implement one item at a time](./implement-step-by-step.md)
 - [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
 - [Customize SpecBind](./customization.md)
 - [Release a milestone](./release.md)
+
+---
+
+[User guide](../index.md) | [Plan and implement one item at a time](./implement-step-by-step.md) | [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)

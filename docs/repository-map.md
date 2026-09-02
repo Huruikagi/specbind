@@ -82,10 +82,13 @@ in [Implementation architecture](./architecture.md).
 | --- | --- |
 | [English user guide](./en/index.md) | Default public documentation entry at the site root |
 | [Documentation authoring policy](./documentation-authoring.md) | Japanese-first source policy, final bilingual path mapping, and contributor verification |
-| [English Getting Started](./en/guide/getting-started.md) | Route selection for new and existing projects |
+| [English route selection](./en/guide/getting-started.md) | Route selection for new and existing projects |
+| [English installation guide](./en/guide/install.md) | Shared CLI installation and project installation step for both routes |
 | [English new-project guide](./en/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [English existing-project guide](./en/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
 | [English update guide](./en/guide/update.md) | Binary update through the installation client followed by guarded project-asset refresh |
+| [English step-by-step implementation guide](./en/guide/implement-step-by-step.md) | Advancing one Spec-backed item through each artifact and Gate explicitly |
+| [English Plan and Drive guide](./en/guide/implement-with-plan-and-drive.md) | Planning a whole Milestone and driving every safely reachable action |
 | [English existing-implementation adoption guide](./en/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
 | [English release guide](./en/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
 | [English core concepts](./en/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |
@@ -94,10 +97,13 @@ in [Implementation architecture](./architecture.md).
 | [English removal and uninstall guide](./en/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [English cc-sdd migration guide](./en/guide/migrate-from-cc-sdd.md) | English user and agent playbook for a guarded cc-sdd cutover |
 | [Japanese user guide](./ja/index.md) | Japanese public documentation entry under `/ja/` |
-| [Japanese Getting Started](./ja/guide/getting-started.md) | Route selection for new and existing projects |
+| [Japanese route selection](./ja/guide/getting-started.md) | Route selection for new and existing projects |
+| [Japanese installation guide](./ja/guide/install.md) | Shared CLI installation and project installation step for both routes |
 | [Japanese new-project guide](./ja/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [Japanese existing-project guide](./ja/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
 | [Japanese update guide](./ja/guide/update.md) | Installation-client binary update and guarded project-asset refresh in Japanese |
+| [Japanese step-by-step implementation guide](./ja/guide/implement-step-by-step.md) | Advancing one Spec-backed item through each artifact and Gate explicitly |
+| [Japanese Plan and Drive guide](./ja/guide/implement-with-plan-and-drive.md) | Planning a whole Milestone and driving every safely reachable action |
 | [Japanese existing-implementation adoption guide](./ja/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
 | [Japanese release guide](./ja/guide/release.md) | Closing an active milestone: adapter policy, version binding, publish/verify, and finalize |
 | [Japanese basic concepts](./ja/guide/concepts.md) | User-facing explanation of Skills, CLI, Specs, Milestones, artifacts, and gates |

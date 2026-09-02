@@ -83,3 +83,7 @@ git diff
 [READMEのInstall the CLI](https://github.com/Huruikagi/specbind#install-the-cli)を
 参照してください。バイナリを更新したあとの`specbind install --dry-run`と
 `specbind install`は、miseの場合と同じです。
+
+---
+
+[ユーザーガイド](../index.md) | [SpecBindをインストールする](./install.md) | [エージェントの削除とアンインストール](./uninstall.md)

@@ -195,6 +195,14 @@ Requirements、Design、Tasksの1フェーズだけを扱う場合も、対象Sp
 どの設定に何を書くか、変更できない製品契約との境界、変更後の確認方法は
 [カスタマイズ](./customization.md)にまとめています。
 
+## 次に読む
+
+- [ルートを選ぶ](./getting-started.md)
+- [1件ずつ計画・実装する](./implement-step-by-step.md)
+- [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
+- [リリースする](./release.md)
+- [カスタマイズ](./customization.md)
+
 ---
 
-[ガイドの入口](../index.md) | [1件ずつ計画・実装する](./implement-step-by-step.md) | [PlanとDriveで進める](./implement-with-plan-and-drive.md)
+[ユーザーガイド](../index.md) | [1件ずつ計画・実装する](./implement-step-by-step.md) | [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)

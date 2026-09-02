@@ -15,15 +15,19 @@ deferred. The Japanese tree uses the same relative paths as the English tree:
 ```text
 docs/ja/index.md
 docs/ja/guide/getting-started.md
+docs/ja/guide/install.md
 docs/ja/guide/start-new-project.md
 docs/ja/guide/start-existing-project.md
-docs/ja/guide/update.md
-docs/ja/guide/adopt-existing.md
 docs/ja/guide/concepts.md
+docs/ja/guide/implement-step-by-step.md
+docs/ja/guide/implement-with-plan-and-drive.md
+docs/ja/guide/adopt-existing.md
+docs/ja/guide/release.md
 docs/ja/guide/customization.md
-docs/ja/guide/feedback.md
+docs/ja/guide/update.md
 docs/ja/guide/uninstall.md
 docs/ja/guide/migrate-from-cc-sdd.md
+docs/ja/guide/feedback.md
 ```
 
 The English tree mirrors the same user-guide paths under `docs/en/`. English

@@ -354,4 +354,4 @@ authorization boundaries.
 
 ---
 
-[Guide home](../index.md) | [Core concepts](./concepts.md) | [Current generated artifact index](../reference/current-artifact-index.md)
+[User guide](../index.md) | [Core concepts](./concepts.md) | [Current generated artifact index](../reference/current-artifact-index.md)

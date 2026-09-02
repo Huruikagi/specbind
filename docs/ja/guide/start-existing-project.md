@@ -5,192 +5,51 @@
 
 まだ実装を始めていない場合は、[新規プロジェクトで始める](./start-new-project.md)へ
 進んでください。必要な環境とエージェントについては、
-[はじめに](./getting-started.md)の「どちらのルートでも必要なもの」を
+[ルートを選ぶ](./getting-started.md)の「どちらのルートでも必要なもの」を
 確認しておいてください。
 
 !!! info "用語について"
     出てくる用語（Spec、Steering、Milestone、Gate など）は[基本概念](./concepts.md)
     にまとめています。先に目を通しても、出てきたときに参照してもかまいません。
 
-## 1. CLIをインストールする
+## 1. SpecBindをインストールする
 
-対象プロジェクトのルートへ移動します。未コミットの変更が残っている場合は、
-内容を確認し、いつもの手順でコミットしておいてください。
-
-このガイドでは、[mise](https://mise.jdx.dev/)を使ってSpecBindをインストールします。
+未コミットの変更が残っている場合は、内容を確認していつもの手順でコミットして
+おいてください。そのうえで、両ルート共通の
+[SpecBindをインストールする](./install.md)を実行します。
 
 ```sh
 mise use github:Huruikagi/specbind
 mise lock
-```
-
-`mise use`はSpecBindを`mise.toml`へ追加し、`mise lock`は選ばれたバージョンと
-配布物のチェックサムを`mise.lock`へ記録します。
-
-インストールできたか確認します。
-
-```sh
-specbind --version
-```
-
-追加または更新された`mise.toml`と`mise.lock`の内容を確認し、どちらもGitへ
-コミットしてください。これにより、チームで同じバージョンのSpecBindを使えます。
-
-miseを使わないインストール方法は、
-[README](https://github.com/Huruikagi/specbind#install-the-cli)を参照してください。
-
-## 2. SpecBindを導入する
-
-今インストールしたCLIの最初の仕事として、
-SpecBindがこれから使うエージェントスキルや設定ファイルをプロジェクトに配置します。
-
-このガイドではCodexを例に進めます。
-
-```sh
 specbind install --agent codex --language ja --project-instructions
 ```
 
-### `--agent`
+エージェントの選び方、`--dry-run`での事前確認、書き込まれるファイル、コミットと
+セッションの開き直しは、そのページを参照してください。
 
-使うコーディングエージェントに合わせて、`--agent`の値を選んでください。
+インストールが済んだら、このページへ戻ってきてください。以降のスキル呼び出しは
+Codexの表記（`$`）で示します。Claude Codeでは`/`に読み替えてください。
 
-| 使うエージェント | 指定する値 |
-| --- | --- |
-| Codex | `codex` |
-| Claude Code | `claude-code` |
-| Agent Skillsと`AGENTS.md`に対応するその他のエージェント | `generic` |
-
-複数のエージェントを使う場合は、`--agent codex --agent claude-code`のように
-`--agent`を繰り返します。
-
-`generic`が作るのは、`.agents/skills/`のAgent Skillsとルート`AGENTS.md`の
-案内ブロックだけです。サブエージェント定義は作りません。
-
-### `--language ja`
-
-SpecBindが管理する成果物、具体的には `requirements.md` や
-`design.md` の言語を日本語にします。
-
-### `--project-instructions`
-
-`AGENTS.md`または
-`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
-もともと書いてある既存の文章はそのまま残ります。
-普通はつけたほうがいいでしょう。
-
-### 書き込まれる内容を確認する
-
-同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
-`keep`と、廃止された製品管理対象に対する`remove`の計画を確認できます。
-
-```sh
-specbind install --dry-run --agent codex --language ja --project-instructions
-```
-
-主に、次のファイルが追加されます。
-
-```text
-.specbind.json
-.specbind/settings/
-.agents/skills/specbind-*/       # Codexとgenericで共有
-.codex/agents/specbind-*.toml    # Codexの役割別モデル設定
-.claude/skills/specbind-*/       # Claude Code
-.claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
-AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
-```
-
-CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定されます。
-変更する場合は、
-[カスタマイズガイド](./customization.md)の「プロジェクト設定と役割別モデル」を
-参照してください。
-
-生成された内容をレビューし、いつもの手順でコミットしてください。SpecBindの
-インストーラ自体はコミットを行いません。
-
-### セッションを開き直す
-
-導入したら、対象プロジェクトでコーディングエージェントのセッションを開き直してください。
-そうしないと、エージェントが新しいスキルを認識できないことがあります。
-
-以降のスキル呼び出しはCodexの表記で示します。Claude Codeでは、先頭の`$`を`/`に
-読み替えてください。スキル名と引数は同じです。`generic`を選んだ場合、
-`specbind-*`というスキル名は同じですが、呼び出し方はエージェントごとに異なります。
-利用するエージェントのスキル選択または自動Discoveryの方法に読み替えてください。
-
-## 3. 最初の進め方を選ぶ
+## 2. 最初の進め方を選ぶ
 
 既存プロジェクトには、目的の異なる2つの始め方があります。
 
 | 目的 | 次に使うワークフロー |
 | --- | --- |
 | これから行う変更をSpecBindで進める | このページの続きを進める |
-| すでに動いている実装から、現在の基準となるSpecを確立する | [フルサポート経路](#full-support-route) |
+| すでに動いている実装から、現在の基準となるSpecを確立する | [既存実装からSpecを確立する](./adopt-existing.md) |
 
 最初の小さな変更を進めるなら、既定値のまま通常のライフサイクルを一周する方法が
 分かりやすいでしょう。実際に合わないと分かった面だけ、あとから
-[プロジェクトに合わせてカスタマイズする](./customization.md)で調整できます。
-[最初の変更を選ぶ](#first-change)へ進んでください。
+[カスタマイズ](./customization.md)で調整できます。そのままこのページを続けて
+ください。
 
-## 既存実装を対象にフルサポートで進める経路 {#full-support-route}
+すでに相当量のコードがある一方で信頼できるSpecがまだなく、まず現在のプロダクトを
+Specとして固定したい場合は、[既存実装からSpecを確立する](./adopt-existing.md)へ
+進んでください。Steeringと共通設定を整えてから、Requirements、Design、Contract
+Reviewまでを確定し、非リリースの基準履歴として閉じる経路です。
 
-既に相当量のコードがある一方で、信頼できるSpecがまだないプロジェクトでは、
-Steeringと共通設定を整えてから、既存実装が表す現在のプロダクトをSpecとして確立する
-この経路を選べます。Requirements、Design、Contract Reviewまでを確定し、非リリースの
-基準履歴として閉じます。Tasks、実装変更、プロダクトリリースは作りません。
-
-1. **`sb-configure`でプロジェクトの形を整えます。** まず、初回レビューを依頼します。
-
-   ```text
-   $sb-configure 既存実装を採用するための初期設定を、このプロジェクトについて
-   見直してください。必要なSteeringの作成から始めてください。
-   ```
-
-   `sb-configure`は最初に機械的に確認できる設定の要約を読みます。継続的に使う方針が
-   必要なら、Steeringの初期作成または同期を`sb-steering`へ引き継ぎます。提案された
-   Steeringを確認してコミットしてから採用を始めてください。Discoveryはそのリビジョンを
-   調査の証拠として固定します。
-
-2. **共通の面が合うまで、対象を絞って設定レビューを繰り返します。** Steeringができたら、
-   もう一度`sb-configure`にSteeringとリポジトリの事実をRequirements・Designテンプレート、
-   共有Ruleと照らし合わせるよう依頼します。たとえば次のようにします。
-
-   ```text
-   $sb-configure 確定したSteeringとリポジトリの事実を使い、このプロジェクト向けに
-   Requirements・Designテンプレートと共有Ruleを見直してください。
-   ```
-
-   テンプレート、Rule、エージェント、運用アダプターなど、残る面はそれぞれ別の依頼で
-   見直します。`sb-configure`は関係する変更ごとに要約を読み直し、必要なaftercareまで
-   完了します。Designテンプレートを増やすのは、独立した責任を繰り返し扱う必要がある
-   場合だけです。技術名だけでは理由になりません。設定変更によって既存のSpecや
-   ライフサイクル成果物が暗黙に調整されることもありません。
-
-3. **既存実装を対象にDiscoveryを始めます。** Steeringをコミットし、作業ツリーを
-   クリーンにしてから、採用する範囲を明示して依頼します。たとえばリポジトリ全体なら
-   次のようになります。
-
-   ```text
-   $sb-discovery このリポジトリ全体の既存実装を、既存バージョンv2.4.0のSpecとして
-   確立してください。現在のコードとテストを証拠として調査し、何かを作る前に
-   Spec境界と維持する意図を私に確認してください。
-   ```
-
-   Discoveryは採用用の事前検査を行い、調査したリビジョンを固定します。そして、既存の
-   `baseline_version`、Spec境界、維持する意図、根拠、不明点、バグの疑い、依存関係、
-   対象外を1つのリバース提案として示します。既存コードは証拠であって、自動的に仕様に
-   なるものではありません。
-
-4. **Discoveryに基準確立まで完了させます。** 提案を確認すると、同じ実行がリバース
-   Milestoneを作成し、Requirements、Designの検証と承認、Milestone全体のContract
-   Reviewまで続行します。通常のフェーズ確認では止まらず、Tasksは作りません。Specの
-   意味が変わる問い、ソースの変更、ライフサイクル検査の失敗がある場合だけ停止します。
-
-   最後に、各Specのログへ`ベースライン v2.4.0`を記録し、RoadmapとContract Reviewを
-   `baselines/`へ履歴化します。確立したSpecは、元のリビジョンとバージョンの来歴を
-   保持したまま、以後は通常の既存Specとして扱われます。停止条件とファイナライズの
-   詳細は[既存実装からSpecを確立する](./adopt-existing.md)を参照してください。
-
-## 4. 最初の変更を選ぶ {#first-change}
+## 3. 最初の変更を選ぶ
 
 最初は、1つの振る舞いを追加するだけの小さな変更を選んでください。複数の機能や
 リリース作業をまとめて試すのは避けます。
@@ -206,7 +65,7 @@ Steeringと共通設定を整えてから、既存実装が表す現在のプロ
 扱いやすい題材です。実際に試すときは、自分のプロジェクトにある同じくらいの
 規模の変更に置き換えてください。
 
-## 5. Discoveryでスコープを確認する
+## 4. Discoveryでスコープを確認する
 
 変更内容を添えて、discoveryスキルをエージェントに依頼します。関連するissueやメモが
 あれば、その場所も伝えます。
@@ -228,12 +87,12 @@ Discoveryは、プロジェクトの現在の状態（Spec、Steering、Mileston
     Specは「プロジェクトが持ち続ける1つの能力の境界」で、責務を表す短い
     kebab-caseのIDが付きます（用語は[基本概念](./concepts.md)）。
 
-スキルは提案を次の4項目で示します。
+分類の結果は、次の項目にまとめて提案されるので、確認してください。
 
-- **Work items** — 今回行う作業の一覧
-- **New Specs** — 新しく作る責務の境界
-- **Gate invalidations** — やり直しになる既存の承認
-- **Dependencies** — 作業どうしの依存関係
+- **作業項目（Work items）** — 今回行う作業の一覧
+- **新規Spec（New Specs）** — 新しく作る責務の境界
+- **Gateの無効化（Gate invalidations）** — やり直しになる既存の承認
+- **依存関係（Dependencies）** — 作業どうしの依存関係
 
 ここでの結論が以降のワークフロー全体の前提になります。分類と境界を必ず読んでから
 承認してください。承認すると、CLIがMilestoneとSpecの状態を作り、エージェントが、
@@ -247,7 +106,7 @@ $sb-status
 
 このスキルは読み取り専用で、承認したり成果物を書き換えたりはしません。
 
-## 6. 計画と実装の進め方を選ぶ
+## 5. 計画と実装の進め方を選ぶ
 
 最初の`csv-export`を段階ごとに確認する場合は、`sb-plan`のフェーズを
 明示して順に進めます。
@@ -269,7 +128,7 @@ $sb-validate-implementation csv-export
 [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)を参照してください。
 どちらの経路もリリース前で停止します。
 
-## 7. 生成された成果物を見る
+## 6. 生成された成果物を見る
 
 Specの成果物は、既定では`.specbind/specs/<spec>/`にできます。
 
@@ -312,11 +171,12 @@ specbind spec status csv-export --json
 - [基本概念](./concepts.md)
 - [1件ずつ計画・実装する](./implement-step-by-step.md)
 - [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
+- [既存実装からSpecを確立する](./adopt-existing.md) — 現在のコードを基準Specにする
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
-- [プロジェクトに合わせてカスタマイズする](./customization.md) — 一周して調整したい点が見えてから
+- [カスタマイズ](./customization.md) — 一周して調整したい点が見えてから
 - [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
 - [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
 
 ---
 
-[はじめに](./getting-started.md) | [新規プロジェクトで始める](./start-new-project.md)
+[ユーザーガイド](../index.md) | [SpecBindをインストールする](./install.md) | [新規プロジェクトで始める](./start-new-project.md)
