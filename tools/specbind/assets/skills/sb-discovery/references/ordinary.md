@@ -366,6 +366,11 @@ specbind protocol read okf-authoring
 specbind milestone status
 ```
 
+Create or update the Brief at that exact path with the host's ordinary file
+editing capability. There is no CLI `artifact write` subcommand; do not probe
+for or invent one. The CLI owns lifecycle state and provides the template and
+reads, while Discovery owns this direct managed-artifact write.
+
 The final status read is the protocol's check immediately before the first Brief
 write. If any participating Spec is `release_ready`, stop at the protocol's
 confirmation boundary before authoring. An earlier status read does not replace

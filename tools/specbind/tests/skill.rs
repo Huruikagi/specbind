@@ -584,6 +584,8 @@ fn discovery_rechecks_completion_immediately_before_brief_authoring() {
         protocol < final_status && final_status < fill,
         "completion state must be checked after the protocol and before Brief authoring"
     );
+    assert!(body.contains("There is no CLI `artifact write` subcommand"));
+    assert!(body.contains("host's ordinary file\nediting capability"));
 }
 
 #[test]
