@@ -573,33 +573,10 @@ EOF
         git -c user.name=Fixture -c user.email=fixture@example.invalid \
             commit --quiet -m "Fix the reverse source baseline"
         baseline=$(git rev-parse HEAD)
-        mkdir -p .specbind/specs/cart .specbind/adoption
-        cat > .specbind/steering/roadmap.md <<EOF
----
-type: SpecBind Roadmap
-milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
-baseline_revision: $baseline
-baseline_version: v1.0.0
-target_release: null
-work_items:
-  reverse_specs:
-    - spec: cart
-      summary: Establish the existing cart responsibility
----
-# Roadmap
-EOF
-        cat > .specbind/specs/cart/spec.yaml <<EOF
-schema_version: 1
-establishment:
-  kind: reverse
-  source_revision: $baseline
-  baseline_version: v1.0.0
-  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
-active_change:
-  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62
-  state: requirements
-  requirement_ids: null
-EOF
+        mkdir -p .specbind/adoption
+        printf '%s' '{"schemaVersion":1,"baselineVersion":"v1.0.0","workItems":{"reverseSpecs":[{"spec":"cart","summary":"Establish the existing cart responsibility"},{"spec":"order","summary":"Establish the existing order responsibility","dependsOn":[{"spec":"cart"}]}]}}' \
+            | specbind milestone create --scope - >/dev/null \
+            || fail "could not create the a4 reverse milestone"
         cat > .specbind/specs/cart/requirements.md <<'EOF'
 ---
 type: SpecBind Requirements
@@ -609,11 +586,11 @@ heading_labels:
 ---
 # Requirements
 
-### Requirement 1: Report the current cart
+### Requirement 1: Accumulate an item quantity
 
 #### Acceptance Criteria
 
-1. Reading the cart returns the currently held SKU quantities.
+1. Adding a SKU initializes it at zero and increases it by the requested numeric quantity.
 EOF
         cat > .specbind/specs/cart/design.md <<'EOF'
 ---
@@ -625,13 +602,15 @@ requirement_ids: ['1.1']
 
 _Requirements: 1.1_
 
-The cart module returns a copy of its current item map.
+The cart module mutates the supplied item map through `setdefault` and numeric
+addition, then returns that same map.
 EOF
         cat > .specbind/specs/cart/contract.yaml <<'EOF'
 schema_version: 1
 owns:
   - { id: cart-contents, description: the SKU quantities currently held in the cart }
-exports: []
+exports:
+  - { id: cart-contents, description: the mutable SKU quantity map supplied to cart operations }
 consumes: []
 invariants: []
 file_ownership:
@@ -651,7 +630,66 @@ type: SpecBind Research
 ---
 # Research
 
-The fixed implementation and tests expose the cart read behavior.
+The fixed implementation and tests expose numeric quantity accumulation.
+EOF
+        mkdir -p .specbind/specs/order
+        cat > .specbind/specs/order/requirements.md <<'EOF'
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+# Requirements
+
+### Requirement 1: Place an order from a cart
+
+#### Acceptance Criteria
+
+1. Placing an order copies the cart lines and records the customer with status `placed`.
+EOF
+        cat > .specbind/specs/order/design.md <<'EOF'
+---
+type: SpecBind Design
+artifact_id: main
+requirement_ids: ['1.1']
+---
+# Design
+
+_Requirements: 1.1_
+
+The order module creates a new mapping containing the customer, a `dict` copy
+of the cart as lines, and the literal `placed` status.
+EOF
+        cat > .specbind/specs/order/contract.yaml <<'EOF'
+schema_version: 1
+owns:
+  - { id: placed-order, description: the customer order and copied line quantities }
+exports: []
+consumes:
+  - id: cart-contents
+    target: { spec: cart, section: exports, id: cart-contents }
+    description: copies the current cart contents into immutable order lines
+invariants:
+  - { id: placed-status, description: a newly placed order has status placed }
+file_ownership:
+  - { id: order-module, paths: [src/orders.py] }
+EOF
+        cat > .specbind/specs/order/brief.md <<'EOF'
+---
+type: SpecBind Brief
+---
+# Brief
+
+Establish the current order responsibility without changing implementation.
+EOF
+        cat > .specbind/specs/order/research.md <<'EOF'
+---
+type: SpecBind Research
+---
+# Research
+
+The fixed implementation and tests expose cart copying and placed-order state.
 EOF
         cat > .specbind/adoption/reverse-discovery.yaml <<EOF
 schema_version: 1
@@ -664,6 +702,12 @@ EOF
         specbind spec design approve cart --approval-mode delegated \
             --delegation-workflow sb-discovery >/dev/null \
             || fail "could not approve the a4 Design gate"
+        specbind spec requirements approve order --approval-mode delegated \
+            --delegation-workflow sb-discovery --requirement-ids 1.1 >/dev/null \
+            || fail "could not approve the a4 order Requirements gate"
+        specbind spec design approve order --approval-mode delegated \
+            --delegation-workflow sb-discovery >/dev/null \
+            || fail "could not approve the a4 order Design gate"
         git add -A
         git -c user.name=Fixture -c user.email=fixture@example.invalid \
             commit --quiet -m "Checkpoint reverse Design"
