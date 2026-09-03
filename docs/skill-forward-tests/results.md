@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `6b9feba` | D3 — pass; progressive ordinary route and direct Brief authoring confirmed | [Progressive Discovery confirmation](./runs/2026-09-03-codex-6b9feba-d3.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `bbd4d1e` | D3 — ordinary procedure selected; Brief write blocked by ENV-0004; FT-0045 opened | [Progressive Discovery routing](./runs/2026-09-03-codex-bbd4d1e-d3.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `1dc2442` | A4 — FT-0044 confirmed through Contract Review; finalization blocked by ENV-0004 | [Reverse review handoff confirmation](./runs/2026-09-03-codex-1dc2442-a4.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `711d787` | A4 — lifecycle finalized, but Contract Review assessment was not presented; FT-0044 extended | [Reverse review presentation](./runs/2026-09-03-codex-711d787-a4.md) |
