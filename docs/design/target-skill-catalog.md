@@ -229,11 +229,10 @@ the user resume each owning workflow manually.
 
 ## Post-v1 implementation tracking
 
-- Existing-implementation adoption from Issue #2 is implemented by the
-  conditional `adopt-start.md` and `adopt-resume.md` references of
-  `sb-discovery` under Decisions 0143 and 0175. It establishes confirmed
-  Brief and Research inputs, then returns to the ordinary phase skills rather
-  than adding reverse variants for each phase.
+- Existing-implementation establishment uses the single conditional
+  `reverse.md` reference of `sb-discovery` under Decisions 0181 and 0188. It
+  establishes a fixed-revision baseline through Requirements, Design, Contract
+  Review, and reverse finalization without creating Tasks or a product release.
 
 - The accepted `sb-drive` contract from Decision 0168 is implemented;
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains its design

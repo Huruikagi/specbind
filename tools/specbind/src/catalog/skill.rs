@@ -274,14 +274,6 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
 
 static DISCOVERY_RESOURCES: &[SkillResource] = &[
     SkillResource {
-        relative_path: "references/adopt-resume.md",
-        source: include_str!("../../assets/skills/sb-discovery/references/adopt-resume.md"),
-    },
-    SkillResource {
-        relative_path: "references/adopt-start.md",
-        source: include_str!("../../assets/skills/sb-discovery/references/adopt-start.md"),
-    },
-    SkillResource {
         relative_path: "references/github-milestone.md",
         source: include_str!("../../assets/skills/sb-discovery/references/github-milestone.md"),
     },
@@ -294,6 +286,9 @@ static DISCOVERY_RESOURCES: &[SkillResource] = &[
         source: include_str!("../../assets/skills/sb-discovery/references/reverse.md"),
     },
 ];
+
+static DISCOVERY_RETIRED_RESOURCES: &[&str] =
+    &["references/adopt-resume.md", "references/adopt-start.md"];
 
 static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     SkillResource {
@@ -435,6 +430,16 @@ impl Skill {
             "sb-implement" => IMPLEMENT_RESOURCES,
             "sb-plan" => PLAN_RESOURCES,
             "sb-release" => RELEASE_RESOURCES,
+            _ => &[],
+        }
+    }
+
+    /// Lists exact former product-managed resources removed from this active
+    /// Skill package on refresh.
+    #[must_use]
+    pub fn retired_resources(self) -> &'static [&'static str] {
+        match self.name {
+            "sb-discovery" => DISCOVERY_RETIRED_RESOURCES,
             _ => &[],
         }
     }

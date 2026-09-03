@@ -83,6 +83,30 @@ fn adoption_preflight_is_limited_to_projects_without_specs() {
         );
 }
 
+#[test]
+fn adoption_preflight_refuses_an_orphan_record_from_the_retired_route() {
+    let root = project_fixture();
+    write_steering(root.path());
+    write(
+        root.path(),
+        ".specbind/adoption/reverse-discovery.yaml",
+        "version: 1\nsource_revision: legacy\n",
+    );
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with("ERROR ADOPTION_RECORD_PRESENT:")
+                .and(predicate::str::contains("adoption/reverse-discovery.yaml")),
+        );
+}
+
 fn project_fixture() -> TempDir {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);

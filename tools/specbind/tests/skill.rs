@@ -210,7 +210,7 @@ fn installs_each_skill_to_the_accepted_target() {
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 7),
-        ("sb-discovery", 5),
+        ("sb-discovery", 3),
         ("sb-implement", 2),
         ("sb-plan", 3),
         ("sb-release", 1),
@@ -398,8 +398,6 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
 fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finalization() {
     let body = skill_package_text("sb-discovery");
     for required in [
-        "references/adopt-start.md",
-        "references/adopt-resume.md",
         "references/reverse.md",
         "specbind adoption preflight",
         "one complete proposal",
@@ -417,6 +415,12 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
         assert!(
             body.contains(required),
             "Discovery adoption package must contain {required}"
+        );
+    }
+    for retired in ["references/adopt-start.md", "references/adopt-resume.md"] {
+        assert!(
+            !body.contains(retired),
+            "Discovery package must not retain retired resource {retired}"
         );
     }
     assert!(

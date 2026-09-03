@@ -43,7 +43,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 107 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 103 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -64,7 +64,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 107 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 103 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -132,7 +132,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 66 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 64 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -181,10 +181,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 68 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 66 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 68 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 66 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -205,7 +205,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/ears-format.md",
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
-        ".agents/skills/sb-discovery/references/adopt-start.md",
+        ".agents/skills/sb-discovery/references/reverse.md",
         ".agents/skills/sb-configure/SKILL.md",
         ".agents/skills/sb-configure/references/aftercare.md",
         ".agents/skills/sb-configure/references/update.md",
@@ -290,8 +290,8 @@ fn installs_product_managed_skills_for_each_selected_agent() {
         ".agents/skills/sb-plan/references/tasks.md",
         ".claude/skills/sb-drive/SKILL.md",
         ".agents/skills/sb-drive/SKILL.md",
-        ".claude/skills/sb-discovery/references/adopt-start.md",
-        ".agents/skills/sb-discovery/references/adopt-start.md",
+        ".claude/skills/sb-discovery/references/reverse.md",
+        ".agents/skills/sb-discovery/references/reverse.md",
         ".claude/skills/sb-implement/references/spec-backed.md",
         ".agents/skills/sb-implement/references/spec-backed.md",
         ".claude/skills/sb-release/references/bootstrap-release-adapter.md",
@@ -385,10 +385,22 @@ fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
                 );
             }
         }
+        for file in ["references/adopt-start.md", "references/adopt-resume.md"] {
+            write(
+                root.path(),
+                &format!("{agent_root}/sb-discovery/{file}"),
+                "former product-managed skill resource\n",
+            );
+        }
     }
     write(
         root.path(),
         ".agents/skills/specbind-adopt-existing/notes.md",
+        "project-owned extra content\n",
+    );
+    write(
+        root.path(),
+        ".agents/skills/sb-discovery/references/notes.md",
         "project-owned extra content\n",
     );
     let mut dirty_retire = specbind_command();
@@ -411,6 +423,9 @@ fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
         ))
         .stdout(predicate::str::contains(
             "- remove .agents/skills/specbind-adopt-existing/references/start.md [skill]",
+        ))
+        .stdout(predicate::str::contains(
+            "- remove .agents/skills/sb-discovery/references/adopt-start.md [skill]",
         ));
     assert_retired_skill_files_are_absent(root.path());
     assert!(
@@ -423,6 +438,12 @@ fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
             .join(".agents/skills/specbind-adopt-existing/notes.md")
             .is_file(),
         "refresh must preserve extra project content"
+    );
+    assert!(
+        root.path()
+            .join(".agents/skills/sb-discovery/references/notes.md")
+            .is_file(),
+        "refresh must preserve extra content in an active Skill package"
     );
     assert!(
         !root
@@ -454,6 +475,16 @@ fn assert_retired_skill_files_are_absent(root: &std::path::Path) {
                     .join(file)
                     .exists(),
                 "retired adoption file {agent_root}/{file}"
+            );
+        }
+        for file in ["references/adopt-start.md", "references/adopt-resume.md"] {
+            assert!(
+                !root
+                    .join(agent_root)
+                    .join("sb-discovery")
+                    .join(file)
+                    .exists(),
+                "retired active-package resource {agent_root}/{file}"
             );
         }
     }
@@ -889,7 +920,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 67 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 65 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

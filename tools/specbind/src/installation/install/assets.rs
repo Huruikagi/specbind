@@ -438,7 +438,8 @@ pub(super) fn skill_entries(
     Ok(entries)
 }
 
-/// Plans removal of exact files from superseded product-managed Skill packages.
+/// Plans removal of exact files from superseded product-managed Skill packages
+/// and retired resources inside active packages.
 pub(super) fn retired_skill_entries(
     project_root: &Path,
     resolved: &ResolvedInputs,
@@ -456,42 +457,63 @@ pub(super) fn retired_skill_entries(
                 if !planned.insert(relative.clone()) {
                     continue;
                 }
-                let target = project_root.join(&relative);
-                match fs::symlink_metadata(&target) {
-                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-                    Ok(metadata)
-                        if metadata.is_file() && !crate::guarded_fs::is_link_like(&metadata) =>
-                    {
-                        entries.push(PlanEntry {
-                            action: PlanAction::Remove,
-                            path: relative,
-                            category: "skill",
-                            detail: Some(
-                                "retired exact product-managed Skill package file".to_owned(),
-                            ),
-                            content: None,
-                            expected_current: None,
-                        });
-                    }
-                    Ok(_) => {
-                        return Err(one_issue(
-                            "INSTALL_TARGET_UNREADABLE",
-                            Some(relative),
-                            "retired Skill target must be a regular non-symlink file",
-                        ));
-                    }
-                    Err(error) => {
-                        return Err(one_issue(
-                            "INSTALL_TARGET_UNREADABLE",
-                            Some(relative),
-                            error.to_string(),
-                        ));
-                    }
+                if let Some(entry) = retired_skill_file_entry(
+                    project_root,
+                    relative,
+                    "retired exact product-managed Skill package file",
+                )? {
+                    entries.push(entry);
+                }
+            }
+        }
+        for embedded in skill::all() {
+            for file in embedded.retired_resources() {
+                let relative = format!("{root}/{}/{file}", embedded.name);
+                if !planned.insert(relative.clone()) {
+                    continue;
+                }
+                if let Some(entry) = retired_skill_file_entry(
+                    project_root,
+                    relative,
+                    "retired exact product-managed Skill package resource",
+                )? {
+                    entries.push(entry);
                 }
             }
         }
     }
     Ok(entries)
+}
+
+fn retired_skill_file_entry(
+    project_root: &Path,
+    relative: String,
+    detail: &str,
+) -> Result<Option<PlanEntry>, InstallIssues> {
+    let target = project_root.join(&relative);
+    match fs::symlink_metadata(&target) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Ok(metadata) if metadata.is_file() && !crate::guarded_fs::is_link_like(&metadata) => {
+            Ok(Some(PlanEntry {
+                action: PlanAction::Remove,
+                path: relative,
+                category: "skill",
+                detail: Some(detail.to_owned()),
+                content: None,
+                expected_current: None,
+            }))
+        }
+        Ok(_) => Err(one_issue(
+            "INSTALL_TARGET_UNREADABLE",
+            Some(relative),
+            "retired Skill target must be a regular non-symlink file",
+        )),
+        Err(error) => Err(one_issue(
+            "INSTALL_TARGET_UNREADABLE",
+            Some(relative),
+            error.to_string(),
+        )),
+    }
 }
 
 /// Plans each selected host's execution adapter for the stable roles named by

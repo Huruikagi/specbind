@@ -1,6 +1,6 @@
 //! Project-wide Spec and milestone scope reads.
 
-use std::fmt::Write as _;
+use std::{fmt::Write as _, fs};
 
 use super::super::{
     CommandOutput, Path, SpecHealth, config, escape, milestone_scope as milestone_scope_model,
@@ -170,6 +170,27 @@ fn adoption_steering_count(specbind_root: &Path) -> Result<usize, CommandOutput>
 }
 
 fn ensure_initial_adoption_scope(specbind_root: &Path) -> Result<(), CommandOutput> {
+    let record = "adoption/reverse-discovery.yaml";
+    match fs::symlink_metadata(specbind_root.join(record)) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Ok(_) => {
+            return Err(CommandOutput::failure(
+                "ADOPTION_RECORD_PRESENT",
+                "Existing-project adoption cannot start from a pre-existing temporary record.",
+                vec![format!(
+                    "inspect and explicitly reconcile the unsupported record before retrying: {record}"
+                )],
+            ));
+        }
+        Err(error) => {
+            return Err(CommandOutput::failure(
+                "ADOPTION_RECORD_UNREADABLE",
+                "Cannot verify that no temporary adoption record exists.",
+                vec![format!("{record}: {error}")],
+            ));
+        }
+    }
+
     let specs = match spec_list_model::resolve(specbind_root) {
         Ok(specs) => specs,
         Err(error) => {

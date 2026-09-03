@@ -1,10 +1,10 @@
 # 0175: Make existing-implementation adoption references of Discovery
 
-Status: Accepted
+Status: Superseded by [Decision 0188](./0188-retire-legacy-staged-adoption.md)
 
-Partially superseded by [Decision 0181](./0181-reverse-spec-establishment.md),
-which replaces the stop-before-Requirements handoff with one confirmed reverse
-orchestration through Design and Contract Review.
+Decision 0181 replaced the stop-before-Requirements handoff with one confirmed
+reverse orchestration through Design and Contract Review. Decision 0188 removes
+the remaining compatibility procedures for this staged route.
 
 Supersedes: the independent `specbind-adopt-existing` Skill identity and
 cross-Skill routing accepted by [Decision 0143](./0143-existing-implementation-adoption.md).

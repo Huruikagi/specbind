@@ -39,36 +39,14 @@ path is `.specbind/adoption/reverse-discovery.yaml`, never
 durable Spec collection; the temporary record must remain outside Spec
 discovery and the Contract graph.
 
-For a temporary adoption record created by an older installed version, select
-exactly one legacy recovery route. The compatibility procedures are
-[Adoption start](references/adopt-start.md) and
-[Adoption resume](references/adopt-resume.md); do not load either for a new
-reverse run:
-
-- Explicit reverse establishment with no temporary adoption record: use the
-  reverse procedure above, not the legacy start/resume references.
-- A temporary adoption record whose confirmed candidate Specs and Briefs have
-  not yet been created: use the ordinary Discovery procedure below for exactly
-  that confirmed candidate set. The record is evidence for the proposal, not
-  lifecycle authority; still present and confirm Discovery's complete
-  four-field scope before mutation. Do not load the resume procedure yet.
-- A temporary adoption record whose exact candidate Specs are active and each
-  has a Brief: read [Adoption resume](references/adopt-resume.md) completely and
-  follow it.
-- Any partial or mismatched handoff: stop and report the discrepancy. Never
-  create a second record, silently change its candidates, or treat an ordinary
-  Research artifact as adoption state.
-
 Existing code and tests are **evidence**, never automatic authority for what
 the product ought to promise. Reverse establishment requires committed
 Steering, supports only an initial project with no persistent Specs, creates no
 Tasks, and never changes implementation, tests, dependencies, configuration,
 or Steering.
 
-The remaining numbered procedure is the ordinary Discovery route. Adoption
-Start and Resume follow only their selected reference. When the recorded
-candidates are handed to ordinary Discovery, use the numbered procedure and
-its independent confirmation.
+The remaining numbered procedure is the ordinary Discovery route. It never
+resumes or interprets a temporary adoption record from another run.
 
 Take a change request and answer one question: **which durable boundaries does
 this work belong to?** Everything else follows from that answer.

@@ -157,8 +157,9 @@ Spec's Design.
 
 ## Existing-implementation adoption scenarios
 
-Accepted by [Decision 0181](../design/decisions/0181-reverse-spec-establishment.md),
-building on the Steering-first evidence boundary from Decisions 0143 and 0175.
+Accepted by [Decision 0181](../design/decisions/0181-reverse-spec-establishment.md)
+with the single-route package boundary from
+[Decision 0188](../design/decisions/0188-retire-legacy-staged-adoption.md).
 
 ### A1 — Adoption stops at a missing Steering baseline
 
@@ -168,9 +169,11 @@ Prepare `a1`, then ask:
 
 - The agent discovers the installed Discovery adoption route and runs
   `specbind adoption preflight`.
+- The installed Discovery package contains `references/reverse.md` and no
+  legacy staged-adoption references.
 - It stops on `ADOPTION_STEERING_REQUIRED` and routes the maintainer to Steering
   bootstrap.
-- It does not scan the implementation deeply, create the adoption dossier,
+- It does not scan the implementation deeply, create a temporary adoption record,
   create a milestone, or create a Spec.
 - The worktree remains clean.
 
@@ -192,8 +195,8 @@ Prepare `a2` with dispatch instrumentation, then ask:
   Contract Review, and adoption finalization, with no Tasks, implementation
   change, or product release. It does not request a separate boundary and
   Roadmap-scope confirmation.
-- No dossier, milestone, Spec, Brief, or Research is written before the user
-  confirms the boundary set.
+- No temporary adoption record, milestone, Spec, Brief, or Research is written
+  before the user confirms the boundary set.
 - The worktree remains clean. With instrumentation, the agent log records the
   driver plus at least two fresh readers.
 

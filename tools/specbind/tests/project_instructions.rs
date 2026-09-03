@@ -92,8 +92,9 @@ fn creates_a_file_holding_only_the_block() {
         "An explicit request to establish Specs from an existing implementation is\n  not a change request for that routing check"
     ));
     assert!(applied.content.contains(
-        "run\n  `specbind adoption preflight` before any ordinary `specbind milestone status`\n  or `specbind spec list` read"
+        "reverse procedure run `specbind adoption preflight` before any\n  ordinary `specbind milestone status` or `specbind spec list` read"
     ));
+    assert!(!applied.content.contains("legacy-adoption"));
     assert!(
         applied
             .content

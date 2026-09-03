@@ -331,7 +331,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0172](./design/decisions/0172-requirements-preservation-preflight.md) | Accepted | Existing Requirements preservation proved before approval |
 | [0173](./design/decisions/0173-mechanical-requirement-retirement-guard.md) | Accepted | Established Requirement ID removal rejected mechanically |
 | [0174](./design/decisions/0174-plan-phase-procedures-as-references.md) | Accepted | Requirements, Design, and Tasks procedures packaged as references of the single Plan Skill |
-| [0175](./design/decisions/0175-existing-adoption-as-discovery-references.md) | Accepted | Existing-implementation adoption procedures packaged as references of Discovery |
+| [0175](./design/decisions/0175-existing-adoption-as-discovery-references.md) | Superseded by 0188 | Existing-implementation adoption procedures packaged as references of Discovery |
 | [0176](./design/decisions/0176-skill-namespace-separation.md) | Accepted | `sb-*` Skill namespace separated from the `specbind` CLI |
 | [0177](./design/decisions/0177-steering-scaffold-conformance-check.md) | Accepted | Mechanical verification of a materialized Steering scaffold |
 | [0178](./design/decisions/0178-github-milestone-discovery-source-provider.md) | Accepted | GitHub Milestone Discovery source provider |
@@ -344,3 +344,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0185](./design/decisions/0185-reverse-deferred-finding-checkpoint.md) | Accepted | Reverse deferred findings recorded after the clean milestone baseline exists |
 | [0186](./design/decisions/0186-reverse-design-contract-preflight.md) | Accepted | Phase-relative Contract preflight for dependency-ordered reverse Design |
 | [0187](./design/decisions/0187-forward-test-routing-and-read-projections.md) | Accepted | Forward-test routing, active Requirement scope, and Contract graph status projections |
+| [0188](./design/decisions/0188-retire-legacy-staged-adoption.md) | Accepted | Legacy staged adoption retired in favor of one reverse-establishment route |
