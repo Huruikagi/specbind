@@ -445,6 +445,8 @@ fn reverse_resume_preserves_contract_review_ownership_and_readiness() {
     let reverse = skill_resource_text("sb-discovery", "references/reverse.md");
     assert!(reverse.contains("dispatch the installed\n`sb-contract-review` workflow"));
     assert!(reverse.contains("dispatch the initial evidence readers again"));
+    assert!(reverse.contains("assessment and findings must still be presented before\nacceptance"));
+    assert!(reverse.contains("Do not pause for another confirmation"));
 
     let review = skill::find("sb-contract-review")
         .expect("contract review skill")

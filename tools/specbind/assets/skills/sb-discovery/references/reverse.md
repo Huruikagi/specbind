@@ -201,6 +201,9 @@ When the action is `contract_review`, dispatch the installed
 return here after its accepted checkpoint. `sb-discovery` remains the status
 handler because it owns the reverse continuation and subsequent finalization;
 it does not replace the phase owner's review procedure.
+The review's assessment and findings must still be presented before
+acceptance. Do not pause for another confirmation: the explicit reverse
+continuation authority permits acceptance after that presentation.
 
 ## Continue without routine pauses
 
