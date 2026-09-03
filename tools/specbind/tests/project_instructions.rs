@@ -108,10 +108,7 @@ fn creates_a_file_holding_only_the_block() {
             .contains("run `specbind milestone status` before choosing between")
     );
     assert!(applied.content.contains(
-        "An explicit request to establish Specs from an existing implementation is\n  not a change request for that routing check"
-    ));
-    assert!(applied.content.contains(
-        "reverse procedure run `specbind adoption preflight` before any\n  ordinary `specbind milestone status` or `specbind spec list` read"
+        "not a change request for that routing check. Select `sb-discovery` directly\n  The same Skill owns an explicit request to resume an active reverse\n  establishment. Let its reverse procedure run `specbind adoption preflight`"
     ));
     assert!(!applied.content.contains("legacy-adoption"));
     assert!(

@@ -20,8 +20,9 @@ means no additional project preference; any `ERROR` line stops the workflow.
 ## Select ordinary or existing-implementation Discovery
 
 Use reverse mode only when the maintainer explicitly asks to establish Specs
-from working code and tests. Read [Reverse establishment](references/reverse.md)
-completely and follow it. It owns the confirmed orchestration through
+from working code and tests or to resume an active reverse establishment. Read
+[Reverse establishment](references/reverse.md) completely and follow it. It
+owns the confirmed orchestration through
 Requirements, Design, Contract Review, and non-release finalization. An
 ordinary change to an existing repository never triggers an implementation
 scan merely because code exists.
@@ -46,7 +47,8 @@ Tasks, and never changes implementation, tests, dependencies, configuration,
 or Steering.
 
 The remaining numbered procedure is the ordinary Discovery route. It never
-resumes or interprets a temporary adoption record from another run.
+resumes or interprets a temporary adoption record from another run; only the
+reverse reference consumes an `ADOPTION_RESUME_READY` result.
 
 Take a change request and answer one question: **which durable boundaries does
 this work belong to?** Everything else follows from that answer.

@@ -2,12 +2,19 @@
 
 use std::{fmt::Write as _, fs};
 
+use serde::Deserialize;
+
 use super::super::{
     CommandOutput, Path, SpecHealth, config, escape, milestone_scope as milestone_scope_model,
     render_issue, render_milestone_diagnostic, spec_list as spec_list_model, spec_status, steering,
 };
 use super::present;
-use crate::{configuration, repository};
+use crate::{adoption_finalize, configuration, guarded_fs, milestone_status, repository};
+
+#[derive(Deserialize)]
+struct AdoptionResumeRecord {
+    source_revision: String,
+}
 
 /// Validates and summarizes every supported project configuration surface.
 #[must_use]
@@ -121,6 +128,10 @@ pub fn adoption_preflight(start: &Path) -> CommandOutput {
         Ok(count) => count,
         Err(output) => return output,
     };
+    match reverse_resume_preflight(&paths.project_root, &paths.specbind_root, steering_count) {
+        Ok(None) => {}
+        Ok(Some(output)) | Err(output) => return output,
+    }
     if let Err(output) = ensure_initial_adoption_scope(&paths.specbind_root) {
         return output;
     }
@@ -133,6 +144,183 @@ pub fn adoption_preflight(start: &Path) -> CommandOutput {
         format!(
             "OK ADOPTION_PREFLIGHT_READY: Existing-project adoption can begin.\n  source_revision: {}\n  steering_documents: {steering_count}\n",
             escape(&revision),
+        )
+        .into_bytes(),
+    )
+}
+
+fn reverse_resume_preflight(
+    project_root: &Path,
+    specbind_root: &Path,
+    steering_count: usize,
+) -> Result<Option<CommandOutput>, CommandOutput> {
+    let roadmap = milestone_status::read_roadmap(specbind_root).map_err(|error| {
+        CommandOutput::failure(
+            "ADOPTION_MILESTONE_INVALID",
+            "Cannot inspect the active milestone for reverse establishment.",
+            error
+                .diagnostics
+                .iter()
+                .map(render_milestone_diagnostic)
+                .collect(),
+        )
+    })?;
+    let Some(roadmap) = roadmap else {
+        return Ok(None);
+    };
+    if roadmap.reverse_specs.is_empty()
+        || roadmap.baseline_version.is_none()
+        || roadmap.target_release.is_some()
+    {
+        return Err(CommandOutput::failure(
+            "ADOPTION_MILESTONE_ACTIVE",
+            "Existing-project adoption cannot start while a delivery milestone is active.",
+            vec![],
+        ));
+    }
+
+    let record = read_adoption_resume_record(specbind_root)?;
+    if record.source_revision != roadmap.baseline_revision {
+        return Err(CommandOutput::failure(
+            "ADOPTION_RESUME_RECORD_MISMATCH",
+            "Temporary adoption evidence does not match the active reverse milestone.",
+            vec!["adoption/reverse-discovery.yaml: source_revision does not match roadmap baseline_revision".to_owned()],
+        ));
+    }
+    let status = resolve_reverse_resume_status(project_root, specbind_root)?;
+    Ok(Some(render_reverse_resume(&status, steering_count)))
+}
+
+fn read_adoption_resume_record(
+    specbind_root: &Path,
+) -> Result<AdoptionResumeRecord, CommandOutput> {
+    let record_path = "adoption/reverse-discovery.yaml";
+    let path = specbind_root.join(record_path);
+    let metadata = fs::symlink_metadata(&path).map_err(|error| {
+        CommandOutput::failure(
+            "ADOPTION_RESUME_RECORD_REQUIRED",
+            "Active reverse establishment requires its temporary adoption record.",
+            vec![format!("{record_path}: {error}")],
+        )
+    })?;
+    if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
+        return Err(CommandOutput::failure(
+            "ADOPTION_RESUME_RECORD_INVALID",
+            "Cannot trust the temporary adoption record for reverse resumption.",
+            vec![format!(
+                "{record_path}: expected a regular non-symlink file"
+            )],
+        ));
+    }
+    let source = fs::read_to_string(&path).map_err(|error| {
+        CommandOutput::failure(
+            "ADOPTION_RESUME_RECORD_INVALID",
+            "Cannot read the temporary adoption record for reverse resumption.",
+            vec![format!("{record_path}: {error}")],
+        )
+    })?;
+    let record: AdoptionResumeRecord = serde_saphyr::from_str(&source).map_err(|error| {
+        CommandOutput::failure(
+            "ADOPTION_RESUME_RECORD_INVALID",
+            "Cannot parse the temporary adoption record for reverse resumption.",
+            vec![format!("{record_path}: {error}")],
+        )
+    })?;
+    Ok(record)
+}
+
+fn resolve_reverse_resume_status(
+    project_root: &Path,
+    specbind_root: &Path,
+) -> Result<milestone_status::MilestoneStatusModel, CommandOutput> {
+    let _current_revision = adoption_revision(project_root)?;
+    let status = milestone_status::resolve(project_root, specbind_root)
+        .map_err(|error| {
+            CommandOutput::failure(
+                "ADOPTION_RESUME_STATE_INVALID",
+                "Cannot derive a safe reverse-establishment resume point.",
+                error
+                    .diagnostics
+                    .iter()
+                    .map(render_milestone_diagnostic)
+                    .collect(),
+            )
+        })?
+        .ok_or_else(|| {
+            CommandOutput::failure(
+                "ADOPTION_RESUME_STATE_INVALID",
+                "The active reverse milestone disappeared during preflight.",
+                vec![],
+            )
+        })?;
+    if status.health != milestone_status::MilestoneHealth::Consistent
+        || !status.current_blockers.is_empty()
+    {
+        let mut details = status
+            .diagnostics
+            .iter()
+            .map(render_milestone_diagnostic)
+            .collect::<Vec<_>>();
+        details.extend(status.current_blockers.iter().cloned());
+        return Err(CommandOutput::failure(
+            "ADOPTION_RESUME_STATE_INVALID",
+            "Active reverse establishment is not safe to resume.",
+            details,
+        ));
+    }
+    adoption_finalize::ensure_source_unchanged(
+        project_root,
+        specbind_root,
+        &status.baseline_revision,
+        &status
+            .items
+            .iter()
+            .map(|item| item.id.clone())
+            .collect::<Vec<_>>(),
+    )
+    .map_err(|error| {
+        CommandOutput::failure(
+            "ADOPTION_RESUME_SOURCE_STALE",
+            "Implementation evidence changed after reverse establishment began.",
+            error
+                .issues
+                .iter()
+                .map(|issue| {
+                    let path = issue
+                        .path
+                        .as_ref()
+                        .map_or_else(String::new, |path| format!(" {path}:"));
+                    format!("{}{path} {}", issue.code, issue.message)
+                })
+                .collect(),
+        )
+    })?;
+
+    Ok(status)
+}
+
+fn render_reverse_resume(
+    status: &milestone_status::MilestoneStatusModel,
+    steering_count: usize,
+) -> CommandOutput {
+    let actionable = if status.actionable.is_empty() {
+        "none".to_owned()
+    } else {
+        status
+            .actionable
+            .iter()
+            .map(|action| format!("{}:{}", action.action.name(), action.item))
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    CommandOutput::success(
+        format!(
+            "OK ADOPTION_RESUME_READY: Active reverse establishment can resume.\n  milestone_id: {}\n  source_revision: {}\n  baseline_version: {}\n  stage: {}\n  actionable: {}\n  steering_documents: {steering_count}\n",
+            escape(&status.milestone_id),
+            escape(&status.baseline_revision),
+            escape(status.baseline_version.as_deref().expect("reverse version checked")),
+            milestone_status::stage_name(status.stage),
+            escape(&actionable),
         )
         .into_bytes(),
     )

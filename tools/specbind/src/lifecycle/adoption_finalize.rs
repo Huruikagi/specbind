@@ -365,7 +365,7 @@ pub fn finalize(
     })
 }
 
-fn ensure_source_unchanged(
+pub(crate) fn ensure_source_unchanged(
     project_root: &Path,
     specbind_root: &Path,
     baseline: &str,

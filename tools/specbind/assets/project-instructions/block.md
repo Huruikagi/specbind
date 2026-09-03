@@ -71,8 +71,10 @@ the only supported writer of machine state.
   ordinary work: say in one line that it needs no Spec, and do it.
 - An explicit request to establish Specs from an existing implementation is
   not a change request for that routing check. Select `sb-discovery` directly
-  and let its reverse procedure run `specbind adoption preflight` before any
-  ordinary `specbind milestone status` or `specbind spec list` read.
+  The same Skill owns an explicit request to resume an active reverse
+  establishment. Let its reverse procedure run `specbind adoption preflight`
+  before any ordinary `specbind milestone status` or `specbind spec list` read;
+  that preflight distinguishes a new run from a verified continuation.
 - Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
   `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
   validated. The task plan itself is authored, by the skill that owns it.

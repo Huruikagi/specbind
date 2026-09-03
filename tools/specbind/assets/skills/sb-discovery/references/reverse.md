@@ -1,8 +1,9 @@
 # Establish Specs from a fixed existing implementation
 
 Read this procedure completely only when the maintainer explicitly asks to
-establish Specs from existing code and tests. This is reverse establishment,
-not ordinary change Discovery and not a product release.
+establish Specs from existing code and tests or to resume an active reverse
+establishment. This is reverse establishment, not ordinary change Discovery
+and not a product release.
 
 ## Fix the evidence and version
 
@@ -12,7 +13,14 @@ Run the read-only route preflight first:
 specbind adoption preflight
 ```
 
-It must report `ADOPTION_PREFLIGHT_READY`. Record its exact `source_revision`.
+It reports exactly one ready result:
+
+- `ADOPTION_PREFLIGHT_READY` starts a new reverse establishment. Record its
+  exact `source_revision` and continue with this section.
+- `ADOPTION_RESUME_READY` proves a clean, internally consistent active reverse
+  milestone, matching temporary record, and unchanged implementation source.
+  Go directly to [Resume an active reverse milestone](#resume-an-active-reverse-milestone).
+
 If it stops on missing Steering, report that `sb-steering` is a separate
 maintainer-gated workflow and stop this reverse run. Do not select or perform
 Steering repair inline.
@@ -159,13 +167,42 @@ adoption record, and the verified deferred destination when written as one
 Discovery unit according to the active Git Adapter. Admit no other dirty path.
 Never infer push authority.
 
+## Resume an active reverse milestone
+
+Enter here only after `ADOPTION_RESUME_READY` and only when the maintainer
+explicitly asked to resume this reverse establishment. A generic request to
+drive an active milestone does not grant the remaining Requirements or Design
+Gate authority; return `HUMAN_DECISION` to `sb-drive` until the maintainer names
+reverse continuation.
+
+Do not rerun repository discovery, synthesize another proposal, change the
+confirmed reverse scope, or create another temporary record. The active
+Roadmap, Specs, Briefs, Research, and record are the checkpointed continuation
+inputs. Run:
+
+```sh
+specbind milestone status --json
+```
+
+The result must report `milestoneKind=reverse`, and every actionable entry must
+name `handler.kind=skill`, `handler.target=sb-discovery`, and
+`handler.mode=reverse_resume`. Any other handler, inconsistent health, source
+drift, or dirty checkout stops the run without repair.
+
+An explicit maintainer request to resume authorizes the remaining reverse
+orchestration under delegated workflow `sb-discovery`; it does not authorize a
+scope change, implementation change, release, external write, or destructive
+recovery. Continue only the phase-relative actions the fresh status exposes.
+Already approved phases remain accepted and are not repeated.
+
 ## Continue without routine pauses
 
 The confirmation above authorizes this establishment orchestration, including
 Requirements and Design gate acceptance under delegated workflow `sb-discovery`.
-For every reverse Spec, follow the installed `sb-plan` Requirements and Design
-procedures and their full checks. Run Design validation, then the milestone
-Contract Review. Do not select or author the Tasks procedure. Design approval
+For every actionable reverse Spec, follow the installed `sb-plan` Requirements
+and Design procedures and their full checks. Run Design validation after each
+new Design draft, then the milestone Contract Review when status exposes that
+global action. Do not select or author the Tasks procedure. Design approval
 must report `adoption_ready`.
 
 Keep progressing every independent Spec when one is blocked. Stop the affected

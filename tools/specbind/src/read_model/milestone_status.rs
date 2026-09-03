@@ -47,7 +47,37 @@ pub struct MilestoneDiagnostic {
 pub struct MilestoneAction {
     pub item: String,
     pub command_operand: Option<String>,
-    pub action: &'static str,
+    pub action: MilestoneActionKind,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MilestoneActionKind {
+    Requirements,
+    Design,
+    ContractReview,
+    Tasks,
+    Implementation,
+    Validation,
+    AdoptionFinalize,
+    BindRelease,
+    ReleasePreflight,
+}
+
+impl MilestoneActionKind {
+    #[must_use]
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Requirements => "requirements",
+            Self::Design => "design",
+            Self::ContractReview => "contract_review",
+            Self::Tasks => "tasks",
+            Self::Implementation => "implementation",
+            Self::Validation => "validation",
+            Self::AdoptionFinalize => "adoption_finalize",
+            Self::BindRelease => "bind_release",
+            Self::ReleasePreflight => "release_preflight",
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -65,6 +95,7 @@ pub struct MilestoneStatusModel {
     pub baseline_revision: String,
     pub baseline_version: Option<String>,
     pub target_release: Option<String>,
+    pub reverse: bool,
     pub stage: DeliveryStage,
     pub health: MilestoneHealth,
     pub review_status: ReviewFreshnessStatus,
@@ -215,6 +246,7 @@ pub fn resolve(
         baseline_revision: roadmap.baseline_revision,
         baseline_version: roadmap.baseline_version,
         target_release: roadmap.target_release,
+        reverse,
         stage,
         health,
         review_status: review.status,
@@ -433,20 +465,20 @@ fn actionable_items(
     for item in facts {
         match &item.kind {
             ItemKind::Spec { model } if !model.as_deref().is_some_and(requirements_approved) => {
-                push_action(&mut actions, item, "requirements");
+                push_action(&mut actions, item, MilestoneActionKind::Requirements);
             }
             ItemKind::Spec { model }
                 if !model.as_deref().is_some_and(design_approved)
                     && design_dependencies_ready(item, facts) =>
             {
-                push_action(&mut actions, item, "design");
+                push_action(&mut actions, item, MilestoneActionKind::Design);
             }
             ItemKind::Spec { .. } if reverse => {}
             ItemKind::Spec { model }
                 if review == ReviewFreshnessStatus::Fresh
                     && !model.as_deref().is_some_and(tasks_approved) =>
             {
-                push_action(&mut actions, item, "tasks");
+                push_action(&mut actions, item, MilestoneActionKind::Tasks);
             }
             ItemKind::Spec { model }
                 if model.as_deref().is_some_and(tasks_approved)
@@ -454,17 +486,17 @@ fn actionable_items(
                     && !completion[&item.id]
                     && dependencies_ready(item, completion) =>
             {
-                push_action(&mut actions, item, "implementation");
+                push_action(&mut actions, item, MilestoneActionKind::Implementation);
             }
             ItemKind::Spec { model }
                 if all_implemented && clean && !model.as_deref().is_some_and(validated) =>
             {
-                push_action(&mut actions, item, "validation");
+                push_action(&mut actions, item, MilestoneActionKind::Validation);
             }
             ItemKind::Direct { completed }
                 if !completed && dependencies_ready(item, completion) =>
             {
-                push_action(&mut actions, item, "implementation");
+                push_action(&mut actions, item, MilestoneActionKind::Implementation);
             }
             _ => {}
         }
@@ -479,7 +511,7 @@ fn actionable_items(
         actions.push(MilestoneAction {
             item: "milestone".to_owned(),
             command_operand: None,
-            action: "contract_review",
+            action: MilestoneActionKind::ContractReview,
         });
     }
     if reverse
@@ -492,7 +524,7 @@ fn actionable_items(
         actions.push(MilestoneAction {
             item: "milestone".to_owned(),
             command_operand: None,
-            action: "adoption_finalize",
+            action: MilestoneActionKind::AdoptionFinalize,
         });
     }
     if !reverse
@@ -506,9 +538,9 @@ fn actionable_items(
             item: "milestone".to_owned(),
             command_operand: None,
             action: if release_bound {
-                "release_preflight"
+                MilestoneActionKind::ReleasePreflight
             } else {
-                "bind_release"
+                MilestoneActionKind::BindRelease
             },
         });
     }
@@ -538,7 +570,7 @@ fn worktree_blocks_progress(
     stage != current_stage || actions != current_actions
 }
 
-fn push_action(actions: &mut Vec<MilestoneAction>, item: &ItemFacts, action: &'static str) {
+fn push_action(actions: &mut Vec<MilestoneAction>, item: &ItemFacts, action: MilestoneActionKind) {
     actions.push(MilestoneAction {
         item: item.id.clone(),
         command_operand: Some(item.command_operand.clone()),

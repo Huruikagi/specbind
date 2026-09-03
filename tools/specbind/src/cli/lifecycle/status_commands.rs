@@ -95,6 +95,7 @@ struct StatusDiagnosticData<'a> {
 #[serde(rename_all = "camelCase")]
 struct MilestoneStatusData<'a> {
     milestone_id: &'a str,
+    milestone_kind: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     baseline_version: Option<&'a str>,
     target_release: Option<&'a str>,
@@ -136,6 +137,15 @@ struct MilestoneActionData<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     command_operand: Option<&'a str>,
     action: &'static str,
+    handler: MilestoneHandlerData,
+}
+
+#[derive(Serialize)]
+struct MilestoneHandlerData {
+    kind: &'static str,
+    target: &'static str,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mode: Option<&'static str>,
 }
 
 #[must_use]
@@ -216,6 +226,7 @@ fn render_milestone_status(model: &MilestoneStatusModel) -> CommandOutput {
         "OK MILESTONE_STATUS_REPORTED: Reported the active milestone.\n  Milestone: {}\n",
         escape(&model.milestone_id)
     );
+    push_field(&mut output, "Milestone kind", milestone_kind(model));
     push_field(
         &mut output,
         "Baseline version",
@@ -309,6 +320,7 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
     let release_readiness_evaluated = release_readiness_evaluated(model.stage);
     let data = MilestoneStatusData {
         milestone_id: &model.milestone_id,
+        milestone_kind: milestone_kind(model),
         baseline_version: model.baseline_version.as_deref(),
         target_release: model.target_release.as_deref(),
         stage: milestone_status::stage_name(model.stage),
@@ -341,7 +353,8 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
             .map(|action| MilestoneActionData {
                 item: &action.item,
                 command_operand: action.command_operand.as_deref(),
-                action: action.action,
+                action: action.action.name(),
+                handler: milestone_handler(model.reverse, action.action),
             })
             .collect(),
         current_blockers: &model.current_blockers,
@@ -403,24 +416,86 @@ fn render_milestone_actions(model: &MilestoneStatusModel, output: &mut String) {
     }
     output.push_str("  Actionable:\n");
     for action in &model.actionable {
+        let handler = milestone_handler(model.reverse, action.action);
+        let mode = handler
+            .mode
+            .map_or_else(String::new, |mode| format!(" mode={mode}"));
         if let Some(command_operand) = &action.command_operand {
             writeln!(
                 output,
-                "    - {} action={} command_operand={}",
+                "    - {} action={} command_operand={} handler={}:{}{}",
                 escape(&action.item),
-                action.action,
-                escape(command_operand)
+                action.action.name(),
+                escape(command_operand),
+                handler.kind,
+                handler.target,
+                mode,
             )
             .expect("writing to a String cannot fail");
         } else {
             writeln!(
                 output,
-                "    - {} action={}",
+                "    - {} action={} handler={}:{}{}",
                 escape(&action.item),
-                action.action
+                action.action.name(),
+                handler.kind,
+                handler.target,
+                mode,
             )
             .expect("writing to a String cannot fail");
         }
+    }
+}
+
+fn milestone_kind(model: &MilestoneStatusModel) -> &'static str {
+    if model.reverse { "reverse" } else { "delivery" }
+}
+
+fn milestone_handler(
+    reverse: bool,
+    action: milestone_status::MilestoneActionKind,
+) -> MilestoneHandlerData {
+    use milestone_status::MilestoneActionKind as Action;
+
+    if reverse {
+        return MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-discovery",
+            mode: Some("reverse_resume"),
+        };
+    }
+    match action {
+        Action::Requirements | Action::Design | Action::Tasks => MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-plan",
+            mode: Some("all_spec"),
+        },
+        Action::ContractReview => MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-contract-review",
+            mode: None,
+        },
+        Action::Implementation => MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-implement",
+            mode: Some("item"),
+        },
+        Action::Validation => MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-validate-implementation",
+            mode: Some("item"),
+        },
+        Action::BindRelease => MilestoneHandlerData {
+            kind: "guarded_cli",
+            target: "specbind milestone bind-release",
+            mode: None,
+        },
+        Action::ReleasePreflight => MilestoneHandlerData {
+            kind: "boundary",
+            target: "sb-release",
+            mode: None,
+        },
+        Action::AdoptionFinalize => unreachable!("reverse-only action handled above"),
     }
 }
 
@@ -693,6 +768,39 @@ fn render_status_diagnostics(model: &SpecStatusModel, output: &mut String) {
                 escape(&diagnostic.message)
             )
             .expect("writing to a String cannot fail");
+        }
+    }
+}
+
+#[cfg(test)]
+mod handler_tests {
+    use super::*;
+
+    #[test]
+    fn every_projected_skill_handler_names_an_embedded_skill() {
+        use milestone_status::MilestoneActionKind as Action;
+
+        let delivery_actions = [
+            Action::Requirements,
+            Action::Design,
+            Action::ContractReview,
+            Action::Tasks,
+            Action::Implementation,
+            Action::Validation,
+            Action::BindRelease,
+            Action::ReleasePreflight,
+        ];
+        let handlers = delivery_actions
+            .into_iter()
+            .map(|action| milestone_handler(false, action))
+            .chain([milestone_handler(true, Action::AdoptionFinalize)]);
+
+        for handler in handlers.filter(|handler| handler.kind == "skill") {
+            assert!(
+                crate::skill::find(handler.target).is_some(),
+                "handler target {} must be an embedded Skill",
+                handler.target
+            );
         }
     }
 }

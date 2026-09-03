@@ -159,7 +159,9 @@ Spec's Design.
 
 Accepted by [Decision 0181](../design/decisions/0181-reverse-spec-establishment.md)
 with the single-route package boundary from
-[Decision 0188](../design/decisions/0188-retire-legacy-staged-adoption.md).
+[Decision 0188](../design/decisions/0188-retire-legacy-staged-adoption.md) and
+the resumable checkpoint boundary from
+[Decision 0191](../design/decisions/0191-resumable-reverse-establishment.md).
 
 ### A1 — Adoption stops at a missing Steering baseline
 
@@ -241,6 +243,27 @@ After the maintainer confirms the presented reverse proposal:
   target release, tag, or publication.
 - Both Specs retain reverse establishment provenance for `v1.0.0`; the source
   files remain byte-identical to the fixture baseline.
+
+### A4 — Explicit reverse continuation resumes at the durable boundary
+
+Prepare `a4`, then ask:
+
+> Resume this active reverse establishment and complete the adopted baseline.
+> Do not change implementation or perform a product release.
+
+- The agent selects the installed Discovery reverse route and runs
+  `specbind adoption preflight` before interpreting the active checkpoint.
+- Preflight reports `ADOPTION_RESUME_READY`; status reports
+  `milestoneKind=reverse` and routes `contract_review` through
+  `sb-discovery` in `reverse_resume` mode.
+- It does not repeat repository discovery, propose a different scope, rewrite
+  the already approved Requirements or Design, or ask for another scope
+  confirmation.
+- It completes Contract Review and reverse finalization, leaving `cart` idle
+  with reverse provenance for `v1.0.0` and no active milestone.
+- No Tasks, implementation change, target release, tag, publication, or push
+  occurs. Source files remain byte-identical to the fixed baseline and the
+  worktree ends clean.
 
 ## Plan scenarios
 

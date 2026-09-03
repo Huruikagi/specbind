@@ -347,3 +347,5 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0188](./design/decisions/0188-retire-legacy-staged-adoption.md) | Accepted | Legacy staged adoption retired in favor of one reverse-establishment route |
 | [0189](./design/decisions/0189-active-adapter-consumption-projection.md) | Accepted | Active-only adapter consumption with raw configuration reads preserved |
 | [0190](./design/decisions/0190-file-ownership-path-projection.md) | Accepted | Concrete project paths resolved against Contract File Ownership declarations |
+| [0191](./design/decisions/0191-resumable-reverse-establishment.md) | Accepted | Reverse establishment resumed from verified durable state and explicit authority |
+| [0192](./design/decisions/0192-typed-milestone-action-handlers.md) | Accepted | Typed Milestone actions projected with Drive-consumable handlers |

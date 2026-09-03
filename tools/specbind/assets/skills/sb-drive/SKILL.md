@@ -34,8 +34,9 @@ specbind milestone status --json
 If there is no active milestone, route to `sb-discovery` and stop. If
 state health is inconsistent, report its diagnostics. Do not guess a repair.
 
-Use only the returned ordered `actionable` entries, their `action` and exact
-`commandOperand`, plus `waitingFor`, current blockers, and release blockers.
+Use only the returned ordered `actionable` entries, their typed `handler`,
+`action`, and exact `commandOperand`, plus `waitingFor`, current blockers, and
+release blockers.
 Never parse the Roadmap to compute waves. Keep a run-local set of action keys
 already attempted at unchanged state: `<action>:<commandOperand-or-milestone>`.
 
@@ -46,18 +47,24 @@ status as semantic approval of the Direct kind.
 
 ## 2. Dispatch one owning workflow at a time
 
-Choose the first safe actionable entry not parked at the current state. Dispatch
-a fresh subagent with the exact item, action, applicable authority, and the
-installed owning Skill. The dispatched workflow reads its own inputs.
+Choose the first safe actionable entry not parked at the current state. Never
+reconstruct an owner from `action` or maintain a local action-to-Skill table.
 
-| Status action | Owner |
-| --- | --- |
-| `requirements`, `design`, `tasks` | `sb-plan` with explicit all-Spec milestone scope |
-| `contract_review` | `sb-contract-review` |
-| `implementation` | `sb-implement <commandOperand>` |
-| `validation` | `sb-validate-implementation <commandOperand>` |
-| `bind_release` | guarded milestone binding, only with an explicitly supplied target release |
-| `release_preflight` | report the status-derived release boundary; do not invoke Release |
+- `handler.kind=skill` names the installed owning Skill in `handler.target`.
+  Dispatch a fresh subagent with the exact item, action, handler mode,
+  `commandOperand`, and applicable authority. The dispatched workflow reads its
+  own inputs.
+- `handler.kind=guarded_cli` names the accepted guarded command. Run it only
+  when this Skill's existing authority boundary permits that exact action.
+- `handler.kind=boundary` names the next explicit workflow. Report it and stop;
+  never invoke that workflow from Drive.
+- An unknown kind, target, or mode is an incompatible product surface. Stop
+  rather than guessing a route.
+
+`handler.target=sb-discovery` with `handler.mode=reverse_resume` does not turn a
+generic Drive request into reverse Gate authority. Unless the maintainer
+explicitly authorized reverse continuation, park it as `HUMAN_DECISION` and
+name `sb-discovery` as the continuation owner.
 
 Use one mutating dispatch at a time. Do not launch dependency-wave items in
 parallel and do not predict path conflicts.

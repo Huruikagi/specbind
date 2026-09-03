@@ -251,7 +251,7 @@ derived stage or unlock more work. It is then a current workflow blocker, not a
 repository-wide release blocker. Release preflight and finalization retain their
 own accepted Git guards.
 
-The public command is `specbind milestone status`. It returns `OK MILESTONE_STATUS_REPORTED` for an active projection and `NO_CHANGE NO_ACTIVE_MILESTONE` when the active Roadmap is absent. The read model must not imply that a later wave is globally blocked when an independent item is currently actionable.
+The public command is `specbind milestone status`. It returns `OK MILESTONE_STATUS_REPORTED` for an active projection and `NO_CHANGE NO_ACTIVE_MILESTONE` when the active Roadmap is absent. The CLI projection identifies the Milestone as `delivery` or `reverse` and attaches one typed handler to every actionable entry. A handler names an owning Skill, a guarded CLI operation, or a workflow boundary; it routes work but does not grant authority. The lifecycle read model remains independent of Skill identities. The read model must not imply that a later wave is globally blocked when an independent item is currently actionable.
 
 ## Consistency failures
 

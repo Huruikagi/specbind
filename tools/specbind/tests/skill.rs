@@ -27,6 +27,12 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
     let body = drive.body().expect("drive body");
     for required in [
         "specbind milestone status --json",
+        "typed `handler`",
+        "Never\nreconstruct an owner from `action`",
+        "handler.kind=skill",
+        "handler.kind=guarded_cli",
+        "handler.kind=boundary",
+        "handler.mode=reverse_resume",
         "CONTINUE_ELSEWHERE",
         "STOP_RUN",
         "HUMAN_DECISION",
@@ -37,6 +43,7 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
     ] {
         assert!(body.contains(required), "drive must contain {required}");
     }
+    assert!(!body.contains("| Status action | Owner |"));
 }
 
 #[test]
@@ -411,6 +418,9 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
         "`adoption_ready`",
         "No Tasks, implementation change, or product release",
         "specbind milestone reverse finalize --log-entries",
+        "ADOPTION_RESUME_READY",
+        "handler.mode=reverse_resume",
+        "explicitly asked to resume",
     ] {
         assert!(
             body.contains(required),

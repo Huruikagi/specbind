@@ -107,6 +107,129 @@ fn adoption_preflight_refuses_an_orphan_record_from_the_retired_route() {
         );
 }
 
+#[test]
+fn adoption_preflight_resumes_a_clean_reverse_milestone() {
+    let root = project_fixture();
+    write_steering(root.path());
+    write(root.path(), "src/product.txt", "fixed implementation\n");
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write_reverse_checkpoint(root.path(), &baseline);
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with("OK ADOPTION_RESUME_READY:")
+                .and(predicate::str::contains("milestone_id: 0198b2d1"))
+                .and(predicate::str::contains(format!(
+                    "source_revision: {baseline}"
+                )))
+                .and(predicate::str::contains("baseline_version: v2.4.0"))
+                .and(predicate::str::contains("stage: requirements"))
+                .and(predicate::str::contains("requirements:spec:checkout")),
+        )
+        .stderr("");
+
+    let output = Command::cargo_bin("specbind")
+        .expect("specbind binary should build")
+        .current_dir(root.path())
+        .args(["milestone", "status", "--json"])
+        .output()
+        .expect("milestone status runs");
+    assert!(output.status.success());
+    let status: serde_json::Value = serde_json::from_slice(&output.stdout).expect("status JSON");
+    assert_eq!(status["data"]["milestoneKind"], "reverse");
+    assert_eq!(status["data"]["actionable"][0]["action"], "requirements");
+    assert_eq!(
+        status["data"]["actionable"][0]["handler"],
+        serde_json::json!({
+            "kind": "skill",
+            "target": "sb-discovery",
+            "mode": "reverse_resume"
+        })
+    );
+}
+
+#[test]
+fn adoption_preflight_rejects_a_reverse_record_revision_mismatch() {
+    let root = project_fixture();
+    write_steering(root.path());
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write_reverse_checkpoint(root.path(), &baseline);
+    write(
+        root.path(),
+        ".specbind/adoption/reverse-discovery.yaml",
+        "schema_version: 1\nsource_revision: different\nsuspected_defects: []\n",
+    );
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR ADOPTION_RESUME_RECORD_MISMATCH:",
+        ));
+}
+
+#[test]
+fn adoption_preflight_requires_the_reverse_checkpoint_record() {
+    let root = project_fixture();
+    write_steering(root.path());
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write_reverse_checkpoint(root.path(), &baseline);
+    fs::remove_file(
+        root.path()
+            .join(".specbind/adoption/reverse-discovery.yaml"),
+    )
+    .expect("remove checkpoint record");
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR ADOPTION_RESUME_RECORD_REQUIRED:",
+        ));
+}
+
+#[test]
+fn adoption_preflight_rejects_source_drift_after_the_reverse_baseline() {
+    let root = project_fixture();
+    write_steering(root.path());
+    write(root.path(), "src/product.txt", "fixed implementation\n");
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write_reverse_checkpoint(root.path(), &baseline);
+    write(root.path(), "src/product.txt", "changed implementation\n");
+    commit_all(root.path());
+
+    let mut command = Command::cargo_bin("specbind").expect("specbind binary should build");
+    command
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR ADOPTION_RESUME_SOURCE_STALE:",
+        ));
+}
+
 fn project_fixture() -> TempDir {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
@@ -125,6 +248,43 @@ fn write_steering(root: &Path) {
         root,
         ".specbind/steering/project.md",
         "---\ntype: SpecBind Steering\nartifact_id: project\n---\n# Project guidance\n\nEstablished product, technology, and structure guidance.\n",
+    );
+}
+
+fn write_reverse_checkpoint(root: &Path, baseline: &str) {
+    write(
+        root,
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: {baseline}\nbaseline_version: v2.4.0\ntarget_release: null\nwork_items:\n  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n---\n# Roadmap\n"
+        ),
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It matches the fixed implementation.\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Design\n\n_Requirements: 1.1_\n",
+    );
+    write(
+        root,
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: {baseline}\n  baseline_version: v2.4.0\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: requirements\n  requirement_ids: null\n"
+        ),
+    );
+    write(
+        root,
+        ".specbind/adoption/reverse-discovery.yaml",
+        &format!("schema_version: 1\nsource_revision: {baseline}\nsuspected_defects: []\n"),
     );
 }
 

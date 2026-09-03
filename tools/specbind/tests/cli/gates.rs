@@ -375,7 +375,7 @@ fn reports_worktree_dirt_only_when_a_clean_revision_would_unlock_progress() {
         .stdout(
             predicate::str::contains("  Stage: validation\n")
                 .and(predicate::str::contains(
-                    "    - spec:checkout action=validation command_operand=checkout\n",
+                    "    - spec:checkout action=validation command_operand=checkout handler=skill:sb-validate-implementation mode=item\n",
                 ))
                 .and(predicate::str::contains("Current blockers:").not())
                 .and(predicate::str::contains("  Release blockers:")),

@@ -710,7 +710,7 @@ fn reports_unstarted_requirements_as_expected_work_without_weakening_traceabilit
         .stdout(
             predicate::str::contains("  State health: consistent\n")
                 .and(predicate::str::contains(
-                    "    - spec:checkout action=requirements command_operand=checkout\n",
+                    "    - spec:checkout action=requirements command_operand=checkout handler=skill:sb-plan mode=all_spec\n",
                 ))
                 .and(predicate::str::contains(
                     "  Release readiness: not evaluated until validation\n",

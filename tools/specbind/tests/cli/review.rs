@@ -86,6 +86,7 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
             "code": "MILESTONE_STATUS_REPORTED",
             "data": {
                 "milestoneId": "0198b2d1-7c4a-7e31-9f42-8e7c3a110d62",
+                "milestoneKind": "delivery",
                 "targetRelease": null,
                 "stage": "implementation",
                 "health": "consistent",
@@ -113,7 +114,12 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
                     {
                         "item": "direct:docs",
                         "commandOperand": "docs",
-                        "action": "implementation"
+                        "action": "implementation",
+                        "handler": {
+                            "kind": "skill",
+                            "target": "sb-implement",
+                            "mode": "item"
+                        }
                     }
                 ],
                 "currentBlockers": [],
