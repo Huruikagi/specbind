@@ -14,6 +14,10 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `489d306` | VC1 — pass; route precedence and active claim scope confirmed | [Completion claim confirmation](./runs/2026-09-03-codex-489d306-completion-claim-confirmation.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `3329405` | VC1 — one environment-blocked attempt; retry confirmed active scope but omitted the terminal verdict | [Claim active scope](./runs/2026-09-03-codex-3329405-claim-active-scope.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `7c3dcab` | VC1 — product failure; FT-0040 opened | [Completion route precedence](./runs/2026-09-03-codex-7c3dcab-completion-route-precedence.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `b0ecf8c` | VC1, VD1, X2, A1, DR1 — pass after one invalid VC1 harness attempt | [Routing and read projections](./runs/2026-09-03-codex-b0ecf8c-routing-and-read-projections.md) |
 | 2026-09-03 | Claude Code | `claude-opus-5` / Agent-tool subagent | `4635a0b` | VD2, VC2, Q0, DR1 — pass; VC1 — product failure; one environment-invalid Q0 attempt retained | [Claim verification and orchestration batch](./runs/2026-09-03-claude-code-4635a0b-verification-batch.md) |
 | 2026-09-03 | Claude Code | `claude-opus-5` / Agent-tool subagent | `9492a83` | A1, X2, VD1, VI4, RT2 — pass; FT-0030..FT-0035 opened | [Approval-free verdict batch](./runs/2026-09-03-claude-code-9492a83-verdict-batch.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `e257930` | A3 — pass; FT-0029 confirmed | [Reverse establishment completion](./runs/2026-09-03-codex-e257930-reverse-establishment.md) |
@@ -105,7 +109,7 @@ invalid runs, retries, and debrief dispositions, remains in
 ## Current finding state
 
 - Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 12
+- Fixed, behavioral confirmation pending: 5
 - Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in
