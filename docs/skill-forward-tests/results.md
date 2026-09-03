@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `d047229` | A1 — pass; installed Discovery exposes only the current reverse route | [Legacy adoption retirement](./runs/2026-09-03-codex-d047229-legacy-adoption-retirement.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `489d306` | VC1 — pass; route precedence and active claim scope confirmed | [Completion claim confirmation](./runs/2026-09-03-codex-489d306-completion-claim-confirmation.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `3329405` | VC1 — one environment-blocked attempt; retry confirmed active scope but omitted the terminal verdict | [Claim active scope](./runs/2026-09-03-codex-3329405-claim-active-scope.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `7c3dcab` | VC1 — product failure; FT-0040 opened | [Completion route precedence](./runs/2026-09-03-codex-7c3dcab-completion-route-precedence.md) |
