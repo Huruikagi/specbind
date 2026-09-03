@@ -349,3 +349,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0190](./design/decisions/0190-file-ownership-path-projection.md) | Accepted | Concrete project paths resolved against Contract File Ownership declarations |
 | [0191](./design/decisions/0191-resumable-reverse-establishment.md) | Accepted | Reverse establishment resumed from verified durable state and explicit authority |
 | [0192](./design/decisions/0192-typed-milestone-action-handlers.md) | Accepted | Typed Milestone actions projected with Drive-consumable handlers |
+| [0193](./design/decisions/0193-progressive-discovery-procedures.md) | Accepted | Progressive loading of ordinary, reverse, and provider-specific Discovery procedures |

@@ -61,9 +61,10 @@ happened to work.
 ## Classify with complete Issue coverage
 
 Treat each actual Issue as request context and apply the entry and ownership
-rules from the Discovery entrypoint. Several Issues may inform one work item;
-one Issue may inform several Specs. Do not create a Spec per Issue. A pull
-request or another non-Issue entry remains visible as excluded with its reason.
+rules from [ordinary change Discovery](ordinary.md). Several Issues may inform
+one work item; one Issue may inform several Specs. Do not create a Spec per
+Issue. A pull request or another non-Issue entry remains visible as excluded
+with its reason.
 
 The confirmation payload keeps the ordinary four fields and adds:
 

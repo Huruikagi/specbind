@@ -43,8 +43,8 @@ a failure, not a convenience to clean up.
 ## Classify with complete source coverage
 
 Treat each Source Item as request context and apply the entry and ownership rules
-from the Discovery entrypoint. Several files may describe one work item; one file
-may inform several Specs. Do not create a Spec per document.
+from [ordinary change Discovery](ordinary.md). Several files may describe one
+work item; one file may inform several Specs. Do not create a Spec per document.
 
 The confirmation payload keeps the ordinary four fields and adds:
 

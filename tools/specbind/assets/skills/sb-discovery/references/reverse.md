@@ -5,6 +5,10 @@ establish Specs from existing code and tests or to resume an active reverse
 establishment. This is reverse establishment, not ordinary change Discovery
 and not a product release.
 
+Existing code and tests are **evidence**, never automatic authority for what
+the product ought to promise. Reverse establishment creates no Tasks and never
+changes implementation, tests, dependencies, configuration, or Steering.
+
 ## Fix the evidence and version
 
 Run the read-only route preflight first:

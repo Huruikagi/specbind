@@ -217,7 +217,7 @@ fn installs_each_skill_to_the_accepted_target() {
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 7),
-        ("sb-discovery", 3),
+        ("sb-discovery", 4),
         ("sb-implement", 2),
         ("sb-plan", 3),
         ("sb-release", 1),
@@ -243,6 +243,32 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
             assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
         }
     }
+}
+
+#[test]
+fn discovery_entrypoint_routes_only_the_selected_procedure() {
+    let entry = skill::find("sb-discovery").expect("discovery skill");
+    let body = entry.body().expect("discovery body");
+
+    for reference in [
+        "references/ordinary.md",
+        "references/reverse.md",
+        "references/local-files.md",
+        "references/github-milestone.md",
+    ] {
+        assert!(
+            body.contains(reference),
+            "missing direct route to {reference}"
+        );
+    }
+    assert!(body.contains("Do not also read the ordinary procedure"));
+    assert!(body.contains("Do not load a provider procedure for an ordinary"));
+    assert!(!body.contains("specbind milestone status"));
+    assert!(!body.contains("specbind adoption preflight"));
+
+    let ordinary = skill_resource_text("sb-discovery", "references/ordinary.md");
+    assert!(ordinary.contains("The request to run this skill is **not** confirmation"));
+    assert!(ordinary.contains("specbind milestone create --scope -"));
 }
 
 #[test]
@@ -526,12 +552,7 @@ fn every_live_markdown_read_names_its_instruction_projection() {
 
 #[test]
 fn discovery_reads_the_scope_schema_before_first_creation() {
-    let body = skill::all()
-        .iter()
-        .find(|entry| entry.name == "sb-discovery")
-        .expect("discovery skill")
-        .body()
-        .expect("discovery body");
+    let body = skill_resource_text("sb-discovery", "references/ordinary.md");
     let schema = body
         .find("specbind schema read scope/v1")
         .expect("scope schema read");
@@ -549,10 +570,7 @@ fn discovery_reads_the_scope_schema_before_first_creation() {
 
 #[test]
 fn discovery_rechecks_completion_immediately_before_brief_authoring() {
-    let body = skill::find("sb-discovery")
-        .expect("discovery skill")
-        .body()
-        .expect("body");
+    let body = skill_resource_text("sb-discovery", "references/ordinary.md");
     let protocol = body
         .find("specbind protocol read okf-authoring")
         .expect("authoring protocol read");
@@ -570,10 +588,7 @@ fn discovery_rechecks_completion_immediately_before_brief_authoring() {
 
 #[test]
 fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
-    let body = skill::find("sb-discovery")
-        .expect("discovery skill")
-        .body()
-        .expect("discovery body");
+    let body = skill_resource_text("sb-discovery", "references/ordinary.md");
 
     assert!(
         body.contains("`not_reached` is not approved")
@@ -585,10 +600,7 @@ fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
 
 #[test]
 fn discovery_uses_the_contract_graph_for_explicit_path_ownership() {
-    let body = skill::find("sb-discovery")
-        .expect("discovery skill")
-        .body()
-        .expect("discovery body");
+    let body = skill_resource_text("sb-discovery", "references/ordinary.md");
     assert!(body.contains("specbind contract owners <path>"));
     assert!(body.contains("Any returned owner proves that path enters the workflow"));
     assert!(body.contains(
@@ -611,10 +623,7 @@ fn implementation_requires_a_matching_pending_roadmap_item() {
 
 #[test]
 fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
-    let body = skill::find("sb-discovery")
-        .expect("discovery skill")
-        .body()
-        .expect("discovery body");
+    let body = skill_resource_text("sb-discovery", "references/ordinary.md");
     let invocation = body
         .find("The request to run this skill is **not** confirmation")
         .expect("invocation is not confirmation rule");
