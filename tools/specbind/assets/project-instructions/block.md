@@ -31,6 +31,8 @@ the only supported writer of machine state.
   actionable phase.
 - Use `sb-verify-completion` when the user asks whether an explicit claim is
   true and the answer must change nothing, including a claim that names a Spec.
+  This route takes precedence whenever the request could also be read as
+  lifecycle validation but does not explicitly authorize recording completion.
   Use `sb-validate-implementation` only when every Task for a named Spec is
   complete and the user asks to validate it for lifecycle completion, recording
   completion evidence on `GO`. Words such as done, complete, or ready do not by

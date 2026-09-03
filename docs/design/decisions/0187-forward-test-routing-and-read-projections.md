@@ -39,8 +39,10 @@ An explicit request to check whether a claim is true without changing state
 uses `sb-verify-completion`, including a claim that names a Spec. A request to
 validate a named Spec for lifecycle completion uses
 `sb-validate-implementation` only when the user is asking to record completion
-on `GO`. Phrases such as “done”, “complete”, and “ready” do not by themselves
-grant mutation authority.
+on `GO`. When both readings remain possible, consequence-free verification
+takes precedence until the user explicitly authorizes recording completion.
+Phrases such as “done”, “complete”, and “ready” do not by themselves grant
+mutation authority.
 
 The block remains a routing surface rather than a workflow copy. Each route
 names the intent and owning Skill; the selected Skill retains all commands,
