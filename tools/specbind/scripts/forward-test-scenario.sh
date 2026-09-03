@@ -631,8 +631,7 @@ EOF
 schema_version: 1
 owns:
   - { id: cart-contents, description: the SKU quantities currently held in the cart }
-exports:
-  - { id: read-cart, description: report the currently held SKU quantities }
+exports: []
 consumes: []
 invariants: []
 file_ownership:

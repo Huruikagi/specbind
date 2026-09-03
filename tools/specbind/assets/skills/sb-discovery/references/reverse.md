@@ -222,8 +222,15 @@ clean revision.
 ## Finalize as an adopted baseline
 
 When every reverse Spec is `adoption_ready` and the Contract Review is fresh,
-prepare exact one-line `log_entries` summaries for every participating Spec and
-run:
+prepare one strict JSON document with exactly one entry per participating Spec:
+
+```json
+{"log_entries":[{"spec":"<spec-id>","summary":"<one-line summary>"}]}
+```
+
+`spec` is the exact participating Spec ID, `summary` is a non-empty single
+line, and extra or duplicate entries are invalid. Pass its external path, or
+pass `-` and write that JSON to stdin:
 
 ```sh
 specbind milestone reverse finalize --log-entries <path-or->

@@ -418,6 +418,7 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
         "`adoption_ready`",
         "No Tasks, implementation change, or product release",
         "specbind milestone reverse finalize --log-entries",
+        "{\"log_entries\":[{\"spec\":\"<spec-id>\",\"summary\":\"<one-line summary>\"}]}",
         "ADOPTION_RESUME_READY",
         "handler.mode=reverse_resume",
         "explicitly asked to resume",
