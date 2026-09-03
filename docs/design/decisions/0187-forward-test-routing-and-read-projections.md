@@ -44,6 +44,9 @@ takes precedence until the user explicitly authorizes recording completion.
 Phrases such as “done”, “complete”, and “ready” do not by themselves grant
 mutation authority.
 
+The same precedence appears in both Skill bodies, so selecting either package
+does not reintroduce a competing interpretation after platform routing.
+
 The block remains a routing surface rather than a workflow copy. Each route
 names the intent and owning Skill; the selected Skill retains all commands,
 guards, and result semantics.

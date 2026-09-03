@@ -27,6 +27,9 @@ This is not the Spec completion gate. When the user asks whether a named Spec's
 completed implementation is done and a `GO` should record completion evidence,
 use `sb-validate-implementation` instead. Use this skill when the subject
 is the claim itself and the result must remain consequence-free.
+If both readings appear possible, stay in this consequence-free workflow unless
+the user explicitly authorized recording completion on `GO`; completed Tasks do
+not supply that authority.
 
 ```sh
 specbind protocol read completion-verification

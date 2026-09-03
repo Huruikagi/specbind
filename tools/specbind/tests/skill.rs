@@ -1510,7 +1510,7 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
 }
 
 #[test]
-fn implementation_completion_questions_route_to_validation_not_status() {
+fn authorized_lifecycle_completion_routes_to_validation_not_status() {
     let validation = skill::find("sb-validate-implementation")
         .expect("implementation validation skill")
         .metadata()
@@ -1519,7 +1519,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
     assert!(
         validation
             .description
-            .contains("whether a named Spec with every Task complete is done")
+            .contains("explicitly asks for lifecycle validation")
     );
 
     let status = skill::find("sb-status")
@@ -1559,6 +1559,12 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .expect("claim verification body")
             .contains("exact `Active requirement set`")
     );
+    assert!(
+        claim_verification
+            .body()
+            .expect("claim verification body")
+            .contains("If both readings appear possible")
+    );
 
     let validation_body = skill::find("sb-validate-implementation")
         .expect("implementation validation skill")
@@ -1569,6 +1575,7 @@ fn implementation_completion_questions_route_to_validation_not_status() {
     assert!(validation_body.contains("do not report the Spec incomplete"));
     assert!(validation_body.contains("Fix that required\nset **before** running anything"));
     assert!(validation_body.contains("do not invoke its underlying test runner"));
+    assert!(validation_body.contains("Enter this workflow only with explicit authority"));
 }
 
 #[test]

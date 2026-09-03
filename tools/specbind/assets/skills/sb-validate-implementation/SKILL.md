@@ -1,6 +1,6 @@
 ---
 name: sb-validate-implementation
-description: Use when the user asks whether a named Spec with every Task complete is done. Validate its implementation against the active Requirement IDs, then record completion evidence when — and only when — the verdict is GO.
+description: Use only when every Task for a named Spec is complete and the user explicitly asks for lifecycle validation against the active Requirement IDs that records completion on GO. For a consequence-free claim check, use sb-verify-completion.
 argument-hint: "<spec>"
 ---
 
@@ -18,6 +18,11 @@ Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
 The gate between "every task is recorded complete" and "this Spec is done".
+
+Enter this workflow only with explicit authority to record completion on `GO`.
+When the request could instead be a consequence-free truth check, use
+`sb-verify-completion`; completed Tasks and words such as "done" do not resolve
+that ambiguity or authorize mutation.
 
 Your verdict writes durable evidence, so it has to be earned. **You validate;
 you never repair.**
