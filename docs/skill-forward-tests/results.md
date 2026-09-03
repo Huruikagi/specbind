@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `ff010dd` | D16 — owned-path Discovery entry confirmed; full Skill flow blocked by ENV-0005 | [Owned-path routing confirmation](./runs/2026-09-03-codex-ff010dd-file-ownership-routing.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `d59eae8` | D16 — product failure after one environment-invalid attempt; FT-0042 opened | [Owned-path routing](./runs/2026-09-03-codex-d59eae8-file-ownership-routing.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `7954083` | VI1 — pass after correcting one invalid legacy request | [Active adapter consumption](./runs/2026-09-03-codex-7954083-active-adapter-consumption.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `d047229` | A1 — pass; installed Discovery exposes only the current reverse route | [Legacy adoption retirement](./runs/2026-09-03-codex-d047229-legacy-adoption-retirement.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `489d306` | VC1 — pass; route precedence and active claim scope confirmed | [Completion claim confirmation](./runs/2026-09-03-codex-489d306-completion-claim-confirmation.md) |
@@ -111,7 +113,7 @@ invalid runs, retries, and debrief dispositions, remains in
 ## Current finding state
 
 - Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 5
+- Fixed, behavioral confirmation pending: 6
 - Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in

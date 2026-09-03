@@ -18,6 +18,19 @@ fn assert_completion_routes(content: &str) {
     assert!(content.contains("do not by\n  themselves authorize that mutation"));
 }
 
+fn assert_owned_path_route(content: &str) {
+    assert!(content.contains(
+        "run `specbind contract owners <path>`; any\n  returned owner establishes the owned-path condition"
+    ));
+    assert!(content.contains(
+        "select `sb-discovery` and stop at its scope\n  confirmation before editing source or lifecycle state"
+    ));
+    assert!(content.contains(
+        "Imperative wording or\n  an explicitly named file authorizes classification, not implementation"
+    ));
+    assert!(content.contains("`Owners: none`\n  does not waive the other entry conditions"));
+}
+
 #[test]
 fn writes_each_agent_its_own_instruction_file() {
     // A shared file would leave one agent without instructions, because each
@@ -61,20 +74,7 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("When\n  the classification is genuinely unclear, enter the flow")
     );
-    assert!(applied.content.contains(
-        "run `specbind contract owners <path>`; any\n  returned owner establishes the owned-path condition"
-    ));
-    assert!(
-        applied
-            .content
-            .contains("`Owners: none`\n  does not waive the other entry conditions")
-    );
-    assert!(applied.content.contains(
-        "select `sb-discovery` and stop at its scope\n  confirmation before editing source or lifecycle state"
-    ));
-    assert!(applied.content.contains(
-        "Imperative wording or\n  an explicitly named file authorizes classification, not implementation"
-    ));
+    assert_owned_path_route(&applied.content);
     assert_completion_routes(&applied.content);
     assert!(
         applied
