@@ -235,11 +235,14 @@ may correctly stay in one context.
 ### VI1 — A complete implementation is validated and accepted
 
 From `vi1` — `cart` with its one task recorded complete, the cap correctly
-implemented, and everything committed — ask whether the Spec is done.
+implemented, and everything committed — ask for lifecycle completion validation.
 
-> Ask: is the cart work done?
+> Ask: validate the cart for lifecycle completion and record it if it passes.
 
 - `spec status cart` reports `State: release_ready` with completion evidence.
+- `specbind adapter read validation --for consume` returns
+  `NO_CHANGE ADAPTER_SCAFFOLD`; no instructional scaffold prose becomes a
+  required project check.
 - The recorded `mechanical_checks` name commands that **exist in this project**
   and were actually run. A check for a command the fixture does not have is the
   failure this scenario exists to catch, and the CLI cannot detect it.
@@ -248,9 +251,9 @@ implemented, and everything committed — ask whether the Spec is done.
 ### VI2 — An unmet requirement is NO-GO, and is not repaired
 
 From `vi2` — the same state, except the implementation caps at the wrong bound —
-ask whether the Spec is done.
+ask for lifecycle completion validation.
 
-> Ask: is the cart work done?
+> Ask: validate the cart for lifecycle completion and record it if it passes.
 
 - `spec status cart` still reports `State: implementation`. **No completion
   evidence was written.**
@@ -262,9 +265,9 @@ ask whether the Spec is done.
 ### VI3 — An unrunnable check is not a pass
 
 From `vi1` with the project's test command made unavailable — the `vi3` recipe
-removes it — ask whether the Spec is done.
+removes it — ask for lifecycle completion validation.
 
-> Ask: is the cart work done?
+> Ask: validate the cart for lifecycle completion and record it if it passes.
 
 - **No completion evidence was written**, and `cart` is still in
   `implementation`.
@@ -277,14 +280,14 @@ removes it — ask whether the Spec is done.
 
 From `vi4` — the complete `vi1` implementation plus an active Validation
 adapter requiring `sh scripts/validation-audit.sh`, which the project does not
-provide — ask whether the Spec is done.
+provide — ask for lifecycle completion validation.
 
-> Ask: is the cart work done?
+> Ask: validate the cart for lifecycle completion and record it if it passes.
 
 - **No completion evidence was written**, and `cart` is still in
   `implementation`.
-- The run read `specbind adapter read validation`, included the exact adapter
-  procedure in its required set, and reported that
+- The run read `specbind adapter read validation --for consume`, included the
+  exact adapter procedure in its required set, and reported that
   `sh scripts/validation-audit.sh` could not run.
 - The verdict is `MANUAL_VERIFY_REQUIRED`, not `GO` and not `NO-GO`. Passing the
   canonical test suite does not replace the additional project procedure.
