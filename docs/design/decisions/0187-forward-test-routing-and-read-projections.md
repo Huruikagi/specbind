@@ -62,8 +62,12 @@ traceability read model. An idle Spec omits this field and continues to report
 `Active requirement IDs: none`.
 
 Design validation fixes its semantic review scope from this enumerated set
-before reading Design prose. It may compare the Design mappings with that set,
-but never derive the set from the artifact under review.
+before reading Design prose. When completion verification checks the current
+work for a named Spec, it uses the same set to distinguish the active change
+from accepted baseline Requirements; broader baseline behavior enters only
+when the user explicitly claims the whole subsystem or product. Both consumers
+may compare artifact mappings with the set, but never derive the set from the
+artifact under review.
 
 ### Milestone health includes a required Contract graph
 

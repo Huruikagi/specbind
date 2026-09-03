@@ -39,6 +39,13 @@ precisely in the narrowest form actually being made, because the most common
 false completion is not a lie — it is evidence for a part being accepted for the
 whole.
 
+When the claim is about the current work for a named Spec, run
+`specbind check traceability <spec>` and fix the claim's Requirement scope from
+its exact `Active requirement set`. Requirements outside that set describe the
+accepted baseline, not unfinished current work. Include them only when the user
+explicitly claims the whole subsystem or product behavior, and never infer the
+active set from Design prose or front matter.
+
 Then find what would prove *that* claim, and require evidence from the current
 state of the code.
 

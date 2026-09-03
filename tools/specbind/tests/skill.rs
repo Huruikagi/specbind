@@ -1553,6 +1553,12 @@ fn implementation_completion_questions_route_to_validation_not_status() {
             .expect("claim verification body")
             .contains("use `sb-validate-implementation` instead")
     );
+    assert!(
+        claim_verification
+            .body()
+            .expect("claim verification body")
+            .contains("exact `Active requirement set`")
+    );
 
     let validation_body = skill::find("sb-validate-implementation")
         .expect("implementation validation skill")
