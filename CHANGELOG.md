@@ -4,6 +4,20 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.3.1 - 2026-09-03
+
+- Fixed dependency-ordered reverse establishment so phase-relative Contract
+  checks no longer block valid downstream Specs before their Designs are
+  actionable.
+- Fixed reverse baseline finalization to preserve checkpointed deferred
+  findings without admitting managed lifecycle paths or treating the temporary
+  adoption record as a Spec.
+- Added an explicit, ownership-aware SpecBind update procedure to
+  `sb-configure`, including guarded binary selection, project-asset refresh,
+  and post-replacement Skill reload.
+- Updated the Rust toolchain and selected dependencies, and improved the public
+  onboarding and Japanese user guides.
+
 ## 1.3.0 - 2026-09-02
 
 - Added reverse Spec establishment from a fixed implementation revision,
