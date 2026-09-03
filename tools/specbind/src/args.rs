@@ -184,6 +184,8 @@ pub enum ContractCommand {
     Dependencies { spec: String },
     /// Report the direct consumer references targeting one Spec.
     Consumers { spec: String },
+    /// Report File Ownership declarations matching one concrete project path.
+    Owners { path: String },
 }
 
 #[derive(Debug, Subcommand)]

@@ -346,3 +346,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0187](./design/decisions/0187-forward-test-routing-and-read-projections.md) | Accepted | Forward-test routing, active Requirement scope, and Contract graph status projections |
 | [0188](./design/decisions/0188-retire-legacy-staged-adoption.md) | Accepted | Legacy staged adoption retired in favor of one reverse-establishment route |
 | [0189](./design/decisions/0189-active-adapter-consumption-projection.md) | Accepted | Active-only adapter consumption with raw configuration reads preserved |
+| [0190](./design/decisions/0190-file-ownership-path-projection.md) | Accepted | Concrete project paths resolved against Contract File Ownership declarations |

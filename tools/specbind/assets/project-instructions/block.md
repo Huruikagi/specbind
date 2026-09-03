@@ -60,9 +60,12 @@ the only supported writer of machine state.
   output also looks like durable project-wide guidance. Otherwise a request
   enters the flow when it changes a Spec's artifacts or observable behavior,
   including a validation rule, limit, or rejected case; modifies a path the Spec
-  owns; or adds a durable responsibility. When the classification is genuinely
-  unclear, enter the flow. Anything else is ordinary work: say in one line that
-  it needs no Spec, and do it.
+  owns; or adds a durable responsibility. For every concrete project-relative
+  path supplied by the request, run `specbind contract owners <path>`; any
+  returned owner establishes the owned-path condition, while `Owners: none`
+  does not waive the other entry conditions. When the classification is
+  genuinely unclear, enter the flow. Anything else is ordinary work: say in one
+  line that it needs no Spec, and do it.
 - An explicit request to establish Specs from an existing implementation is
   not a change request for that routing check. Select `sb-discovery` directly
   and let its reverse procedure run `specbind adoption preflight` before any

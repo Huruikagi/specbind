@@ -84,10 +84,13 @@ Under [Decisions 0011](./decisions/0011-cross-spec-contract.md), [0055](./decisi
 
 [Decision 0156](./decisions/0156-derived-contract-graph-reads.md) exposes that
 same derived read model through `contract graph`, `contract dependencies
-<spec>`, and `contract consumers <spec>`. These inspection commands report
-direct entry-level relationships and never persist a second graph. They do not
-claim semantic impact; compatibility and unmanaged-consumer judgment remain
-with the owning Agent workflow.
+<spec>`, and `contract consumers <spec>`.
+[Decision 0190](./decisions/0190-file-ownership-path-projection.md) adds
+`contract owners <path>` over the same graph. These inspection commands report
+direct entry-level relationships or matching File Ownership declarations and
+never persist a second graph. They do not claim semantic impact; compatibility,
+unowned-path meaning, and unmanaged-consumer judgment remain with the owning
+Agent workflow.
 
 The agent remains responsible for deciding whether the manifest describes the real seam, whether a change is semantically compatible, and which downstream specs require deeper review. A CLI graph is evidence and routing input, not a semantic compatibility verdict. The review starts from all current Contracts after every participating Design is approved and before current `tasks.yaml` authoring. When deeper Requirements or Design content materially supports the verdict, the agent declares its logical selector and the CLI resolves and fingerprints it. Task plans and Direct roadmap items are not review inputs.
 
@@ -125,6 +128,13 @@ non-persisted inspection projections over the same validated graph:
 specbind contract graph
 specbind contract dependencies <spec>
 specbind contract consumers <spec>
+```
+
+[Decision 0190](./decisions/0190-file-ownership-path-projection.md) adds the
+concrete-path ownership projection:
+
+```sh
+specbind contract owners <path>
 ```
 
 The two `check` commands take one canonical Spec identity and the complete

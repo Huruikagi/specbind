@@ -4,6 +4,9 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added `specbind contract owners <path>` to resolve a concrete project path
+  against persistent Contract File Ownership declarations for Discovery
+  routing.
 - Added `specbind adapter read <selector> --for consume` so product Skills
   receive only active project guidance and no longer interpret inactive
   scaffold markers themselves.

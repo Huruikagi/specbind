@@ -321,6 +321,54 @@ pub fn contract_consumers(start: &Path, canonical_spec: &str) -> CommandOutput {
     CommandOutput::success(output.into_bytes())
 }
 
+#[must_use]
+pub fn contract_owners(start: &Path, path: &str) -> CommandOutput {
+    let graph = match readable_contract_graph(start) {
+        Ok(graph) => graph,
+        Err(output) => return output,
+    };
+    let owners = match contract_graph::owners_for_path(&graph.report, path) {
+        Ok(owners) => owners,
+        Err(contract_graph::InvalidOwnershipQuery) => {
+            return CommandOutput::failure(
+                "CONTRACT_OWNERS_PATH_INVALID",
+                "File Ownership lookup requires one concrete project-relative portable path.",
+                vec![format!("Path: {}", escape(path))],
+            );
+        }
+    };
+    let owning_specs = owners
+        .iter()
+        .map(|owner| owner.owner.canonical_spec.as_str())
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut output = format!(
+        "OK CONTRACT_OWNERS_REPORTED: Reported {} File Ownership declaration(s) from {} Spec(s) for path {}.\n",
+        owners.len(),
+        owning_specs.len(),
+        escape(path)
+    );
+    if owners.is_empty() {
+        push_field(&mut output, "Owners", "none");
+    } else {
+        output.push_str("  Owners:\n");
+        for owner in &owners {
+            writeln!(
+                output,
+                "    - {} path={}",
+                render_contract_entry(&owner.owner),
+                escape(&owner.declared_path)
+            )
+            .expect("writing to a String cannot fail");
+        }
+    }
+    push_field(
+        &mut output,
+        "Ambiguous across Specs",
+        yes_no(owning_specs.len() > 1),
+    );
+    CommandOutput::success(output.into_bytes())
+}
+
 fn readable_contract_graph(
     start: &Path,
 ) -> Result<contract_graph::ContractGraphResolution, CommandOutput> {

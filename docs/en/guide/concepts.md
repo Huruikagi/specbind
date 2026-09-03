@@ -114,7 +114,12 @@ Read the resolved graph without changing source Contracts:
 specbind contract graph
 specbind contract dependencies <spec>
 specbind contract consumers <spec>
+specbind contract owners <project-relative-path>
 ```
+
+`owners` matches one concrete project-relative path against exact and subtree
+File Ownership declarations. A match identifies managed boundary candidates;
+no match does not decide that the requested behavior belongs to no Spec.
 
 ## Invalidation and rewind
 

@@ -249,3 +249,12 @@ fn valid_path(path: &str) -> bool {
         .all(|segment| !segment.is_empty() && segment != "." && segment != "..")
         && (!subtree || !base.ends_with('/'))
 }
+
+/// Returns whether a path can be queried against File Ownership declarations.
+///
+/// Contract declarations may use the terminal `/**` subtree form. A query is
+/// one concrete project-relative portable path, so it deliberately excludes
+/// that declaration-only syntax.
+pub(crate) fn valid_file_ownership_query(path: &str) -> bool {
+    valid_path(path) && !path.ends_with("/**")
+}

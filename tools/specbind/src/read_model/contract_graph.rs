@@ -54,6 +54,15 @@ pub struct OwnershipFinding {
     pub right_path: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct OwnershipMatch {
+    pub owner: ContractEntryRef,
+    pub declared_path: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct InvalidOwnershipQuery;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContractGraphReport {
     pub contracts: BTreeMap<String, ContractDocument>,
@@ -186,6 +195,53 @@ pub fn evaluate(
         ownership_findings,
         dependency_cycles,
         issues,
+    }
+}
+
+/// Resolves the File Ownership declarations that contain one concrete
+/// project-relative portable path.
+///
+/// # Errors
+///
+/// Returns [`InvalidOwnershipQuery`] when `path` is empty, absolute, contains
+/// native separators or traversal, or uses declaration-only wildcard syntax.
+pub fn owners_for_path(
+    report: &ContractGraphReport,
+    path: &str,
+) -> Result<Vec<OwnershipMatch>, InvalidOwnershipQuery> {
+    if !crate::contract::valid_file_ownership_query(path) {
+        return Err(InvalidOwnershipQuery);
+    }
+
+    let normalized = path.to_ascii_lowercase();
+    let mut matches = Vec::new();
+    for (canonical_spec, contract) in &report.contracts {
+        for entry in &contract.file_ownership {
+            for declared_path in &entry.paths {
+                if ownership_path_matches(declared_path, &normalized) {
+                    matches.push(OwnershipMatch {
+                        owner: ContractEntryRef {
+                            canonical_spec: canonical_spec.clone(),
+                            section: ContractSection::FileOwnership,
+                            entry_id: entry.id.clone(),
+                        },
+                        declared_path: declared_path.clone(),
+                    });
+                }
+            }
+        }
+    }
+    matches.sort();
+    matches.dedup();
+    Ok(matches)
+}
+
+fn ownership_path_matches(declared_path: &str, normalized_query: &str) -> bool {
+    let normalized_declaration = declared_path.to_ascii_lowercase();
+    if let Some(directory) = normalized_declaration.strip_suffix("/**") {
+        path_contains(directory, normalized_query)
+    } else {
+        normalized_declaration == normalized_query
     }
 }
 

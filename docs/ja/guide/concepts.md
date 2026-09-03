@@ -133,12 +133,17 @@ Contract同士の直接の依存関係は、元の`contract.yaml`を変更せず
 specbind contract graph
 specbind contract dependencies <spec>
 specbind contract consumers <spec>
+specbind contract owners <project-relative-path>
 ```
 
 `graph`はプロジェクト全体の解決済み参照、`dependencies`は指定したSpecが利用する
 提供側、`consumers`は指定したSpecを利用する管理対象の利用側を表示します。
 いずれも直接参照の機械的な投影です。到達可能なSpecが実際に変更の影響を受けるか、
 SpecBind管理外の利用側が存在するかは、Contractレビューで判断します。
+
+`owners`は、具体的なプロジェクト相対パスを、Contractの完全一致またはサブツリーの
+File Ownership宣言と照合します。一致結果は管理対象の境界候補ですが、一致しないこと
+だけでは、その依頼がどのSpecにも属さないとは判断できません。
 
 ## 無効化とやり直し
 

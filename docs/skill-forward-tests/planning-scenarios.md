@@ -214,6 +214,24 @@ whose dispositions are excluded, duplicate, and unresolved.
 - The run proves no GitHub mutation occurred. Later planning uses the approved
   Brief context and does not automatically re-query or synchronize GitHub.
 
+### D16 — An explicitly named owned path enters through the Contract projection
+
+From a fresh fixture, use the existing `cart` Contract, which declares
+`src/cart.py` under File Ownership.
+
+> Ask: in `src/cart.py`, make carts reject adding a quantity below one.
+
+- Before presenting scope, the agent runs `specbind contract owners src/cart.py`
+  without being taught that command in the prompt.
+- The result identifies `specs/cart#contract/file-ownership/cart-module`; the
+  agent proposes one Existing Spec update for `cart`, not Direct work or a new
+  Spec.
+- Before confirmation, no Milestone, Brief, source edit, or lifecycle mutation
+  exists. The proposal still uses Discovery's complete confirmation payload.
+- After approving Discovery only, the active scope contains one `cart` Spec
+  update and its Brief describes the requested lower-bound behavior.
+- Discovery does not edit `src/cart.py`, Requirements, Design, or Contract.
+
 ## Requirements scenarios
 
 Accepted by [Decision 0100](../design/decisions/0100-requirements-skill-contract.md).

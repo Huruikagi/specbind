@@ -51,10 +51,16 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("validation rule, limit, or rejected case")
     );
+    assert!(applied.content.contains(
+        "does not waive the other entry conditions. When the classification is\n  genuinely unclear, enter the flow"
+    ));
+    assert!(applied.content.contains(
+        "run `specbind contract owners <path>`; any\n  returned owner establishes the owned-path condition"
+    ));
     assert!(
         applied
             .content
-            .contains("When the classification is genuinely\n  unclear, enter the flow")
+            .contains("`Owners: none`\n  does not waive the other entry conditions")
     );
     assert_completion_routes(&applied.content);
     assert!(

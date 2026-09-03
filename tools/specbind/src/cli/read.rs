@@ -8,7 +8,7 @@ mod removal_commands;
 
 pub use artifact_commands::{
     artifact_list, artifact_read, check_contracts, check_traceability, contract_consumers,
-    contract_dependencies, contract_graph,
+    contract_dependencies, contract_graph, contract_owners,
 };
 pub use catalog_commands::{
     adapter_list, adapter_read, adapter_read_for_consume, protocol_list, protocol_read, rule_list,

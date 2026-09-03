@@ -228,6 +228,72 @@ fn reports_contract_graph_dependencies_and_reverse_consumers() {
 }
 
 #[test]
+fn reports_file_ownership_for_one_concrete_project_path() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/cart/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: cart-module, paths: [src/cart.py] }\n  - { id: cart-docs, paths: [docs/**, docs/cart.md] }\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/runtime/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership:\n  - { id: source-tree, paths: [src/**] }\n",
+    );
+
+    let mut matched = specbind_command();
+    matched
+        .current_dir(root.path())
+        .args(["contract", "owners", "SRC/cart.py"])
+        .assert()
+        .success()
+        .stdout(
+            "OK CONTRACT_OWNERS_REPORTED: Reported 2 File Ownership declaration(s) from 2 Spec(s) for path SRC/cart.py.\n  Owners:\n    - specs/cart#contract/file-ownership/cart-module path=src/cart.py\n    - specs/runtime#contract/file-ownership/source-tree path=src/**\n  Ambiguous across Specs: yes\n",
+        )
+        .stderr("");
+
+    let mut one_spec = specbind_command();
+    one_spec
+        .current_dir(root.path())
+        .args(["contract", "owners", "docs/cart.md"])
+        .assert()
+        .success()
+        .stdout(
+            "OK CONTRACT_OWNERS_REPORTED: Reported 2 File Ownership declaration(s) from 1 Spec(s) for path docs/cart.md.\n  Owners:\n    - specs/cart#contract/file-ownership/cart-docs path=docs/**\n    - specs/cart#contract/file-ownership/cart-docs path=docs/cart.md\n  Ambiguous across Specs: no\n",
+        )
+        .stderr("");
+
+    let mut unowned = specbind_command();
+    unowned
+        .current_dir(root.path())
+        .args(["contract", "owners", "README.md"])
+        .assert()
+        .success()
+        .stdout(
+            "OK CONTRACT_OWNERS_REPORTED: Reported 0 File Ownership declaration(s) from 0 Spec(s) for path README.md.\n  Owners: none\n  Ambiguous across Specs: no\n",
+        )
+        .stderr("");
+
+    for invalid in ["src/**", "src\\cart.py", "/src/cart.py", "src/../cart.py"] {
+        let mut command = specbind_command();
+        command
+            .current_dir(root.path())
+            .args(["contract", "owners", invalid])
+            .assert()
+            .failure()
+            .stdout("")
+            .stderr(predicate::str::starts_with(
+                "ERROR CONTRACT_OWNERS_PATH_INVALID:",
+            ));
+    }
+}
+
+#[test]
 fn contract_graph_reads_fail_closed_and_reject_unknown_specs() {
     let root = project_fixture();
     write(
@@ -256,6 +322,22 @@ fn contract_graph_reads_fail_closed_and_reject_unknown_specs() {
     invalid
         .current_dir(root.path())
         .args(["contract", "graph"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR CONTRACT_GRAPH_READ_FAILED: Cannot report an incomplete Contract graph.",
+            )
+            .and(predicate::str::contains(
+                "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
+            )),
+        );
+
+    let mut owners = specbind_command();
+    owners
+        .current_dir(root.path())
+        .args(["contract", "owners", "src/cart.py"])
         .assert()
         .failure()
         .stdout("")

@@ -557,6 +557,20 @@ fn discovery_does_not_invalidate_a_gate_that_was_never_approved() {
 }
 
 #[test]
+fn discovery_uses_the_contract_graph_for_explicit_path_ownership() {
+    let body = skill::find("sb-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("discovery body");
+    assert!(body.contains("specbind contract owners <path>"));
+    assert!(body.contains("Any returned owner proves that path enters the workflow"));
+    assert!(body.contains(
+        "`Owners: none` proves only that current Contracts declare no owner for\nthat path"
+    ));
+    assert!(body.contains("do not infer one merely to run this lookup"));
+}
+
+#[test]
 fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
     let body = skill::find("sb-discovery")
         .expect("discovery skill")

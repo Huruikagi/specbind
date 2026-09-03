@@ -132,8 +132,19 @@ will hold it.
 
 The File Ownership rule is the one to check rather than judge. It is the
 project's own declaration of which boundaries matter, so a one-line change to an
-owned path enters exactly as a large one does. Run `specbind spec list` and read
-the contracts of the Specs that could plausibly own what the request touches.
+owned path enters exactly as a large one does. For every concrete
+project-relative path the request supplies, run:
+
+```sh
+specbind contract owners <path>
+```
+
+Any returned owner proves that path enters the workflow. When owners from more
+than one Spec match, keep every returned Spec as a candidate and resolve the
+semantic boundary from Steering and the candidate Contracts; never select one
+silently. `Owners: none` proves only that current Contracts declare no owner for
+that path, so continue evaluating the other entry rules. When the request does
+not supply a concrete path, do not infer one merely to run this lookup.
 
 The last rule is about the **request**, not one item in it. When the user presents
 several pieces as one delivery, every piece enters, including the ones that would

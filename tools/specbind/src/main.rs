@@ -109,6 +109,7 @@ fn run_contract(start: &Path, command: ContractCommand) -> CommandOutput {
             specbind::cli::contract_dependencies(start, &spec)
         }
         ContractCommand::Consumers { spec } => specbind::cli::contract_consumers(start, &spec),
+        ContractCommand::Owners { path } => specbind::cli::contract_owners(start, &path),
     }
 }
 
