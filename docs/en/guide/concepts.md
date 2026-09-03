@@ -119,7 +119,9 @@ specbind contract owners <project-relative-path>
 
 `owners` matches one concrete project-relative path against exact and subtree
 File Ownership declarations. A match identifies managed boundary candidates;
-no match does not decide that the requested behavior belongs to no Spec.
+no match does not decide that the requested behavior belongs to no Spec. Unless
+an active Roadmap item already matches, even an imperative request naming that
+file enters Discovery and waits at scope confirmation before implementation.
 
 ## Invalidation and rewind
 

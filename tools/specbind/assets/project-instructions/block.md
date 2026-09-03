@@ -63,9 +63,12 @@ the only supported writer of machine state.
   owns; or adds a durable responsibility. For every concrete project-relative
   path supplied by the request, run `specbind contract owners <path>`; any
   returned owner establishes the owned-path condition, while `Owners: none`
-  does not waive the other entry conditions. When the classification is
-  genuinely unclear, enter the flow. Anything else is ordinary work: say in one
-  line that it needs no Spec, and do it.
+  does not waive the other entry conditions. If no pending Roadmap item matches
+  and any entry condition holds, select `sb-discovery` and stop at its scope
+  confirmation before editing source or lifecycle state. Imperative wording or
+  an explicitly named file authorizes classification, not implementation. When
+  the classification is genuinely unclear, enter the flow. Anything else is
+  ordinary work: say in one line that it needs no Spec, and do it.
 - An explicit request to establish Specs from an existing implementation is
   not a change request for that routing check. Select `sb-discovery` directly
   and let its reverse procedure run `specbind adoption preflight` before any

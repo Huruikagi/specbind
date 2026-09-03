@@ -64,6 +64,12 @@ is inside a managed boundary and the request enters the workflow. Cross-Spec
 ambiguity makes every returned Contract a candidate input and prevents silent
 single-owner selection.
 
+When no pending Roadmap item already matches the request, that entry result
+routes to Discovery and its scope-confirmation boundary before any source or
+lifecycle mutation. Imperative wording and an explicitly named file authorize
+the lookup and classification; they do not independently authorize
+implementation or create a Direct item.
+
 No match proves only that current Contracts declare no owner for that path. It
 does not prove that the request is ordinary work: Discovery still judges
 observable behavior, existing responsibility, new durable responsibility,
@@ -79,6 +85,8 @@ Requirements, Contract meaning, and maintainer confirmation.
 - Exact and subtree File Ownership matching has one product implementation.
 - Discovery receives precise candidate Specs without scanning every Contract
   or treating a partial graph as complete.
+- A named-file implementation request cannot bypass Discovery merely because
+  its requested edit is precise.
 - An unowned path remains visible without being misrepresented as permission to
   bypass Discovery.
 - Contract declarations remain the only persistent ownership source; the query

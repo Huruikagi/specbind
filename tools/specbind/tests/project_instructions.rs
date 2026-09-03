@@ -51,9 +51,16 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("validation rule, limit, or rejected case")
     );
-    assert!(applied.content.contains(
-        "does not waive the other entry conditions. When the classification is\n  genuinely unclear, enter the flow"
-    ));
+    assert!(
+        applied
+            .content
+            .contains("does not waive the other entry conditions")
+    );
+    assert!(
+        applied
+            .content
+            .contains("When\n  the classification is genuinely unclear, enter the flow")
+    );
     assert!(applied.content.contains(
         "run `specbind contract owners <path>`; any\n  returned owner establishes the owned-path condition"
     ));
@@ -62,6 +69,12 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("`Owners: none`\n  does not waive the other entry conditions")
     );
+    assert!(applied.content.contains(
+        "select `sb-discovery` and stop at its scope\n  confirmation before editing source or lifecycle state"
+    ));
+    assert!(applied.content.contains(
+        "Imperative wording or\n  an explicitly named file authorizes classification, not implementation"
+    ));
     assert_completion_routes(&applied.content);
     assert!(
         applied

@@ -20,6 +20,12 @@ means no additional project preference; any `ERROR` line stops the workflow.
 **One roadmap item per run.** Not the milestone. There is no orchestrator in v1;
 dependency waves are something you read, not something you execute.
 
+The user's request must match a pending Spec-backed or Direct item in the active
+Roadmap. A bare change request is not a Direct item, even when it names the exact
+source file and tells you to edit it. If no active Roadmap or matching pending
+item exists, stop before reading or changing implementation and route the
+request through `sb-discovery`.
+
 ## 1. Find out which kind of item this is
 
 ```sh

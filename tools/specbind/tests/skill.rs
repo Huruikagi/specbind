@@ -571,6 +571,18 @@ fn discovery_uses_the_contract_graph_for_explicit_path_ownership() {
 }
 
 #[test]
+fn implementation_requires_a_matching_pending_roadmap_item() {
+    let body = skill::find("sb-implement")
+        .expect("implementation skill")
+        .body()
+        .expect("implementation body");
+    assert!(body.contains("must match a pending Spec-backed or Direct item"));
+    assert!(body.contains("A bare change request is not a Direct item"));
+    assert!(body.contains("stop before reading or changing implementation"));
+    assert!(body.contains("route the\nrequest through `sb-discovery`"));
+}
+
+#[test]
 fn discovery_presents_an_approvable_scope_at_the_confirmation_boundary() {
     let body = skill::find("sb-discovery")
         .expect("discovery skill")
