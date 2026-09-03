@@ -222,9 +222,10 @@ clean-checkpoint rule. Before validation, require the dirty set to contain only
 the Design artifact paths and that Spec's Contract path reported by its author.
 When the author actually recorded a `DEFERRED` finding, the set may also contain
 the exact project-relative destination named by the active deferred adapter.
-Verify that destination through `adapter list` and `adapter read deferred`; do
-not infer it from a conventional filename or admit another adapter output. Pass
-the verified path to the validator and approval dispatch as a phase-owned path.
+Verify that destination through `specbind adapter read deferred --for consume`;
+do not infer it from a conventional filename or admit another adapter output.
+Pass the verified path to the validator and approval dispatch as a phase-owned
+path.
 
 The validator changes no Design, Contract, or lifecycle path. After its verdict,
 it may append a deferred finding only to that same verified destination and must

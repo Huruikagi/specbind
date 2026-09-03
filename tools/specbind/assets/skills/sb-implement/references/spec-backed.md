@@ -183,13 +183,12 @@ Only a task recorded `completed` is an eligible implementation checkpoint. Read
 the project policy now, before selecting another task:
 
 ```sh
-specbind adapter read git
+specbind adapter read git --for consume
 ```
 
-`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. An adapter
-carrying the exact `<!-- specbind:adapter-scaffold -->` marker is also inactive:
-say so in one line and commit nothing. Neither result turns into a request for
-new policy.
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means there is no
+adapter-directed commit: say so in one line and commit nothing. Neither result
+turns into a request for new policy.
 
 When the adapter has guidance, follow it for **this task now**. The request to
 perform this mutating phase authorizes that narrow local checkpoint as the

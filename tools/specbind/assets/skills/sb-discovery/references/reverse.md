@@ -75,15 +75,12 @@ Discover the Deferred Findings Adapter rather than deriving a selector from its
 type name:
 
 ```sh
-specbind adapter list
-specbind adapter read deferred
+specbind adapter read deferred --for consume
 ```
 
-The listing must report selector `deferred`, type `SpecBind Deferred Findings
-Adapter`, and `state=active` before you follow it. `state=absent` or
-`NO_CHANGE ADAPTER_ABSENT` means the project has no destination. Any mismatch
-or `ERROR` stops adapter use; do not guess `deferred-findings` or another
-selector.
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means the project has
+no destination. Any `ERROR` stops adapter use; do not guess `deferred-findings`
+or another selector. Otherwise follow the returned active guidance.
 
 When the active adapter accepts an exact local destination, prepare a suspected
 defect with source revision, locator, and claim, and inspect the destination only
@@ -151,7 +148,7 @@ uses that checkpointed field to distinguish the adapter output from source
 drift.
 
 Only after milestone creation and provenance verification, rerun
-`specbind adapter list` and `specbind adapter read deferred`. If the same exact
+`specbind adapter read deferred --for consume`. If the same exact
 local destination is still active, append each pending suspected defect that is
 not already present. If it is absent or changed, record nothing and report the
 adapter mismatch; never invent or recover a destination. This post-creation

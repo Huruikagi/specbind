@@ -101,12 +101,12 @@ workflow.
 Read the project-specific validation procedure before fixing the required set:
 
 ```sh
-specbind adapter read validation
+specbind adapter read validation --for consume
 ```
 
-`NO_CHANGE ADAPTER_ABSENT`, an adapter whose whole body is classified as a
-scaffold, or an intentionally empty body adds no project-specific work. An
-active adapter adds every applicable procedure to this run. It supplements the
+`NO_CHANGE ADAPTER_ABSENT`, `NO_CHANGE ADAPTER_SCAFFOLD`, or an intentionally
+empty body adds no project-specific work. Returned active guidance adds every
+applicable procedure to this run. It supplements the
 mandatory protocol and canonical project checks; it never replaces, waives,
 narrows, or declares them passed.
 
@@ -247,7 +247,7 @@ report that the metadata set is uncommitted, rather than leaving the milestone
 in a state only you understand.
 
 ```sh
-specbind adapter read git
+specbind adapter read git --for consume
 ```
 
 ## When evidence needs clearing

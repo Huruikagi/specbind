@@ -144,17 +144,15 @@ deferred — it is dropped, and the next review raises its successor as blocking
 to keep that from happening again.
 
 ```sh
-specbind adapter list
-specbind adapter read deferred
+specbind adapter read deferred --for consume
 ```
 
-The listing must report `state=active` for `deferred` before you follow it.
-`state=absent` or `NO_CHANGE ADAPTER_ABSENT` means the project has no
-destination. Say so in one line and record nothing. Do not invent a place to put
-it. Write only what an active adapter says to write. Read the destination only
-far enough to avoid recording the same finding twice; nothing in it is a source
-of work for you, and no entry there becomes work until a person puts it on the
-Roadmap.
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means the project has
+no destination. Say so in one line and record nothing. Do not invent a place to
+put it. Write only what the returned active guidance says to write. Read the
+destination only far enough to avoid recording the same finding twice; nothing
+in it is a source of work for you, and no entry there becomes work until a
+person puts it on the Roadmap.
 
 This is the one permitted repository mutation. It happens only after the
 before/after probe status matched and the verdict can no longer change. Report

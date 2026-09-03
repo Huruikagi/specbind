@@ -679,6 +679,70 @@ fn reads_one_adapter_as_raw_markdown_and_reports_absence() {
 }
 
 #[test]
+fn projects_only_active_adapter_guidance_for_consumers() {
+    let root = project_fixture();
+    let active = "---\ntype: SpecBind Git Adapter\n---\n# Git\n\nCommit after each gate.\n";
+    let scaffold = concat!(
+        "---\ntype: SpecBind Validation Adapter\n---\n# Validation\n\n",
+        "<!-- specbind:adapter-scaffold -->\n\nDescribe project checks.\n",
+    );
+    write(root.path(), ".specbind/settings/adapters/git.md", active);
+    write(
+        root.path(),
+        ".specbind/settings/adapters/validation.md",
+        scaffold,
+    );
+
+    let mut active_command = specbind_command();
+    active_command
+        .current_dir(root.path())
+        .args(["adapter", "read", "git", "--for", "consume"])
+        .assert()
+        .success()
+        .stdout(active)
+        .stderr("");
+
+    let mut scaffold_command = specbind_command();
+    scaffold_command
+        .current_dir(root.path())
+        .args(["adapter", "read", "validation", "--for", "consume"])
+        .assert()
+        .success()
+        .stdout(
+            "NO_CHANGE ADAPTER_SCAFFOLD: The project validation adapter is an inactive scaffold.\n",
+        )
+        .stderr("");
+
+    let mut absent_command = specbind_command();
+    absent_command
+        .current_dir(root.path())
+        .args(["adapter", "read", "release", "--for", "consume"])
+        .assert()
+        .success()
+        .stdout("NO_CHANGE ADAPTER_ABSENT: The project has no release adapter.\n")
+        .stderr("");
+
+    let mut raw_scaffold = specbind_command();
+    raw_scaffold
+        .current_dir(root.path())
+        .args(["adapter", "read", "validation"])
+        .assert()
+        .success()
+        .stdout(scaffold)
+        .stderr("");
+
+    let mut invalid_purpose = specbind_command();
+    invalid_purpose
+        .current_dir(root.path())
+        .args(["adapter", "read", "git", "--for", "maintain"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "invalid value 'maintain' for '--for <PURPOSE>'",
+        ));
+}
+
+#[test]
 fn refuses_a_selector_the_product_does_not_accept() {
     let root = project_fixture();
     // The directory is organization, not an extension loader: an unknown file

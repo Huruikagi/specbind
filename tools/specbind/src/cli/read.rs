@@ -11,10 +11,10 @@ pub use artifact_commands::{
     contract_dependencies, contract_graph,
 };
 pub use catalog_commands::{
-    adapter_list, adapter_read, protocol_list, protocol_read, rule_list, rule_read, schema_list,
-    schema_read, steering_check, steering_list, steering_read, template_list_milestone,
-    template_list_spec, template_list_steering, template_read_milestone, template_read_spec,
-    template_read_steering, template_resolve_spec,
+    adapter_list, adapter_read, adapter_read_for_consume, protocol_list, protocol_read, rule_list,
+    rule_read, schema_list, schema_read, steering_check, steering_list, steering_read,
+    template_list_milestone, template_list_spec, template_list_steering, template_read_milestone,
+    template_read_spec, template_read_steering, template_resolve_spec,
 };
 pub use install_commands::{install_apply, install_dry_run};
 pub use project_commands::{adoption_preflight, configuration_show, milestone_scope, spec_list};

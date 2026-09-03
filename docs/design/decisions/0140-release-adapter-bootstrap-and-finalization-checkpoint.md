@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0189](./0189-active-adapter-consumption-projection.md) preserves this
+bootstrap distinction while moving scaffold recognition into
+`adapter read release --for consume`.
+
 ## Context
 
 The installed Release adapter is intentionally a scaffold because SpecBind

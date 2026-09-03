@@ -54,10 +54,11 @@ read-only completion preflight and before it fixes the complete required check
 set, it reads:
 
 ```text
-specbind adapter read validation
+specbind adapter read validation --for consume
 ```
 
-Every applicable procedure in an active adapter joins the required set for that
+`ADAPTER_ABSENT` and `ADAPTER_SCAFFOLD` add no project procedure. Every
+applicable procedure in returned active guidance joins the required set for that
 run. Adapter guidance supplements the completion-verification protocol,
 Requirements, Design, and canonical project commands. It cannot replace, waive,
 narrow, or declare any of them passed. A material ambiguity about applicability,

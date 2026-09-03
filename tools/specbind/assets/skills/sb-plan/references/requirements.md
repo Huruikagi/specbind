@@ -265,13 +265,12 @@ An observation that is real but does not hold this gate is a **deferred**
 finding under the protocol, and it needs the destination this project names:
 
 ```sh
-specbind adapter list
-specbind adapter read deferred
+specbind adapter read deferred --for consume
 ```
 
-The listing must report `state=active` for `deferred` before you follow it.
-`state=absent` or `NO_CHANGE ADAPTER_ABSENT` means there is no destination: say
-so in one line and record nothing. Otherwise follow the adapter as written.
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means there is no
+destination: say so in one line and record nothing. Otherwise follow the
+returned active guidance as written.
 Nothing recorded there is a source of work for you; an entry re-enters this
 workflow only when a person puts it on the Roadmap.
 
@@ -336,17 +335,12 @@ have not yet approved is never committed, however often the project wants
 checkpoints. If you stopped short of approving, you also stop short of this.
 
 ```sh
-specbind adapter read git
+specbind adapter read git --for consume
 ```
 
-`NO_CHANGE ADAPTER_ABSENT` means there is no adapter-directed commit. Stop
-there — that is an answer, not a missing file to work around.
-
-An adapter carrying the exact `<!-- specbind:adapter-scaffold -->` marker is an
-inactive scaffold, not project policy. Treat it as no guidance, say so in one
-line, and commit nothing. The marker classifies the whole document: ignore every
-other body line even when it looks actionable. Do not stop to ask about a file
-nobody has filled in.
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means there is no
+adapter-directed commit. Stop there — that is an answer, not a missing file to
+work around.
 
 When the adapter has guidance, follow it. The request to perform this mutating
 phase authorizes the adapter's narrow local checkpoint as its ordinary final

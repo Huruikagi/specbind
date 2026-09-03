@@ -27,9 +27,8 @@ verifies that a publication happened** — you and the user judge that.
 
 ```sh
 specbind milestone status
-specbind adapter list
-specbind adapter read release
-specbind adapter read git
+specbind adapter read release --for consume
+specbind adapter read git --for consume
 ```
 
 The Release adapter owns project release work. The Git adapter owns the narrow
@@ -38,21 +37,19 @@ its current guidance.
 
 Classify the exact Release adapter read result before doing anything else:
 
-1. If the adapter exists, has the required Front Matter, has no scaffold marker,
-   and everything after Front Matter is whitespace, it is an **explicit empty
-   adapter**. Do not bootstrap it. Continue to core release under the empty-body
-   rule below.
-2. Only an absent adapter or one carrying the exact scaffold marker is
-   **unconfigured** and enters the bootstrap flow.
-3. Otherwise it is an active adapter and its body is project policy.
+1. `NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means the adapter
+   is **unconfigured** and enters the bootstrap flow.
+2. Returned content with the required Front Matter and only whitespace after it
+   is an **explicit empty adapter**. Do not bootstrap it. Continue to core
+   release under the empty-body rule below.
+3. Otherwise the returned active body is project policy.
 
-Never infer that an adapter is unconfigured merely because it contains no
-instructions. The marker, not the lack of a body, distinguishes an installed
-scaffold from the explicit empty state.
+Never infer that an adapter is unconfigured merely because its returned body
+contains no instructions. The consumer projection has already distinguished an
+inactive scaffold from the explicit empty state.
 
-An absent adapter or one carrying the exact
-`<!-- specbind:adapter-scaffold -->` marker is **unconfigured**. Do not interpret
-its remaining body, bind a version, run release work, or finalize. Read
+For an unconfigured result, do not bind a version, run release work, or
+finalize. Read
 [Bootstrap the Release adapter](references/bootstrap-release-adapter.md)
 completely and follow it. Investigate and present the complete replacement
 proposal before stopping for explicit approval; the absence of that approval is
@@ -230,12 +227,12 @@ transaction. They are post-publication metadata; the published tag or package
 may correctly point to the earlier verified implementation revision.
 
 ```sh
-specbind adapter read git
+specbind adapter read git --for consume
 ```
 
-`NO_CHANGE ADAPTER_ABSENT`, an empty Git adapter, or one carrying the exact
-`<!-- specbind:adapter-scaffold -->` marker means no adapter-directed commit.
-Leave the finalized metadata uncommitted and report it.
+`NO_CHANGE ADAPTER_ABSENT`, `NO_CHANGE ADAPTER_SCAFFOLD`, or an empty Git
+adapter means no adapter-directed commit. Leave the finalized metadata
+uncommitted and report it.
 
 With active guidance, follow it for one local checkpoint containing **only**
 the paths newly changed by finalization. Never include a path that was already

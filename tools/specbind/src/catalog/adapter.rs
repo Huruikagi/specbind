@@ -39,6 +39,13 @@ pub enum AdapterState {
     Active,
 }
 
+/// One project adapter resolved together with its mechanically classified state.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AdapterResolution {
+    pub state: AdapterState,
+    pub content: Option<String>,
+}
+
 impl AdapterState {
     #[must_use]
     pub fn name(self) -> &'static str {
@@ -182,14 +189,22 @@ impl Adapter {
     ///
     /// Returns the same target-inspection and UTF-8 diagnostics as [`Self::read`].
     pub fn state(self, specbind_root: &Path) -> Result<AdapterState, AdapterError> {
-        let Some(content) = self.read(specbind_root)? else {
-            return Ok(AdapterState::Absent);
+        self.resolve(specbind_root).map(|resolved| resolved.state)
+    }
+
+    /// Reads and classifies the project copy in one filesystem observation.
+    ///
+    /// # Errors
+    ///
+    /// Returns the same target-inspection and UTF-8 diagnostics as [`Self::read`].
+    pub fn resolve(self, specbind_root: &Path) -> Result<AdapterResolution, AdapterError> {
+        let content = self.read(specbind_root)?;
+        let state = match content.as_deref() {
+            None => AdapterState::Absent,
+            Some(content) if contains_scaffold_marker(content) => AdapterState::Scaffold,
+            Some(_) => AdapterState::Active,
         };
-        if contains_scaffold_marker(&content) {
-            Ok(AdapterState::Scaffold)
-        } else {
-            Ok(AdapterState::Active)
-        }
+        Ok(AdapterResolution { state, content })
     }
 }
 

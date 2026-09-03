@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0189](./0189-active-adapter-consumption-projection.md) makes the
+catalog classification directly consumable: product Skills receive
+`NO_CHANGE ADAPTER_SCAFFOLD` instead of parsing this marker themselves.
+
 [Decision 0140](./0140-release-adapter-bootstrap-and-finalization-checkpoint.md)
 changes the Release selector's marked or absent state from no project-specific
 action to the one-time bootstrap branch. Empty unmarked Release content remains

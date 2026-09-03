@@ -503,6 +503,46 @@ pub fn adapter_read(start: &Path, selector: &str) -> CommandOutput {
     }
 }
 
+/// Reads active adapter guidance while projecting inactive catalog state.
+///
+/// Raw reads remain available to configuration workflows. Consumers use this
+/// projection so they never need to parse the product-owned scaffold marker.
+#[must_use]
+pub fn adapter_read_for_consume(start: &Path, selector: &str) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let Some(entry) = adapter::find(selector) else {
+        return CommandOutput::failure(
+            "ADAPTER_READ_INVALID",
+            format!("unknown adapter selector: {selector}"),
+            vec![],
+        );
+    };
+    match entry.resolve(&paths.specbind_root) {
+        Ok(resolved) => match resolved.state {
+            adapter::AdapterState::Absent => CommandOutput::no_change(
+                "ADAPTER_ABSENT",
+                &format!("The project has no {selector} adapter."),
+            ),
+            adapter::AdapterState::Scaffold => CommandOutput::no_change(
+                "ADAPTER_SCAFFOLD",
+                &format!("The project {selector} adapter is an inactive scaffold."),
+            ),
+            adapter::AdapterState::Active => match resolved.content {
+                Some(content) => CommandOutput::success(content.into_bytes()),
+                None => CommandOutput::failure(
+                    "ADAPTER_READ_FAILED",
+                    "Cannot read active project adapter guidance.",
+                    vec![],
+                ),
+            },
+        },
+        Err(error) => CommandOutput::failure(error.code, error.message, vec![]),
+    }
+}
+
 /// Lists the fixed shared-rule set and whether each project copy is present.
 ///
 /// Unknown files below `settings/rules/` are not extensions and are never

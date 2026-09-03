@@ -166,7 +166,13 @@ fn run_schema(command: SchemaCommand) -> CommandOutput {
 fn run_adapter(start: &Path, command: AdapterCommand) -> CommandOutput {
     match command {
         AdapterCommand::List => specbind::cli::adapter_list(start),
-        AdapterCommand::Read { selector } => specbind::cli::adapter_read(start, &selector),
+        AdapterCommand::Read { selector, purpose } => {
+            if purpose.as_deref() == Some("consume") {
+                specbind::cli::adapter_read_for_consume(start, &selector)
+            } else {
+                specbind::cli::adapter_read(start, &selector)
+            }
+        }
     }
 }
 

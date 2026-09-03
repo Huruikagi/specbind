@@ -40,9 +40,10 @@ guessing or silently selecting another executable.
 Read the active Git adapter before changing mise state:
 
 ```sh
-specbind adapter read git
+specbind adapter read git --for consume
 ```
 
+Either `NO_CHANGE` result means there is no adapter-directed checkpoint.
 It controls each narrow local checkpoint below. It does not authorize push,
 branch changes, tags, release publication, deployment, destructive removal, or
 history rewriting.

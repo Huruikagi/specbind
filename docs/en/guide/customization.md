@@ -180,6 +180,7 @@ are guidance for the Agent, not automatically executed hooks.
 ```sh
 specbind adapter list
 specbind adapter read git
+specbind adapter read git --for consume
 ```
 
 Adapter state distinguishes `absent`, untouched `scaffold`, and `active`. A
@@ -188,6 +189,13 @@ present, its body is not operational policy. Remove the marker after supplying
 real guidance. The default deferred adapter records findings in
 `.specbind/deferred.md`; this is not a work queue until a person accepts an item
 into a Roadmap.
+
+The raw read without `--for` is for inspecting or editing the exact project
+Markdown. Product Skill consumers use `--for consume`: an active adapter returns
+that same Markdown, while absence and an inactive scaffold return explicit
+`NO_CHANGE ADAPTER_ABSENT` and `NO_CHANGE ADAPTER_SCAFFOLD` results. The CLI
+classifies only adapter state; the consuming Skill still interprets active
+free-form guidance and applies its selector-specific behavior.
 
 If release remains a scaffold, the Release Skill investigates the repository,
 proposes concrete guidance, and after approval saves and locally commits only

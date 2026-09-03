@@ -236,6 +236,7 @@ specbind rule read ears-format --for maintain
 ```sh
 specbind adapter list
 specbind adapter read git
+specbind adapter read git --for consume
 ```
 
 一覧の`state`は、ファイルがない`absent`、まだ書き換えられていない`scaffold`、実際に
@@ -247,6 +248,12 @@ specbind adapter read git
 `<!-- specbind:adapter-scaffold -->`が入っています。このマーカーがある間は本文全体が
 方針として扱われません。内容を具体化したらマーカーを削除します。テンプレート用の
 `specbind:instruction`はアダプターの状態には影響しません。
+
+`--for`を付けない読み取りは、プロジェクトのMarkdownをそのまま確認・編集するために
+使います。製品スキルが方針を利用するときは`--for consume`を使います。有効な
+アダプターは同じMarkdownを返し、ファイルがない場合は`NO_CHANGE ADAPTER_ABSENT`、
+未編集のひな形なら`NO_CHANGE ADAPTER_SCAFFOLD`を返します。CLIが判定するのは
+アダプターの状態までで、有効な自由記述の意味と用途別の扱いは利用するスキルが判断します。
 
 `release.md`が未設定のままリリースを始めると、Releaseスキルがリポジトリ内のワークフロー、
 バージョンマニフェスト、ビルドスクリプト、既存ドキュメントを調べて具体案を提示します。

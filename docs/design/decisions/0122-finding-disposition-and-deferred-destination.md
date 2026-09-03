@@ -71,8 +71,9 @@ A new project adapter under [Decision 0101](./0101-project-adapter-directory-and
 
 Owning consumers are `specbind-review-task`, `specbind-validate-design`,
 `specbind-design`, and `specbind-requirements`, each naming the selector and
-reading it through `specbind adapter read deferred`. Absence means the project
-has no destination, which is reported rather than worked around.
+reading it through `specbind adapter read deferred --for consume`. Absence or
+an inactive scaffold means the project has no destination, which is reported
+rather than worked around.
 
 The adapter is the destination's name, not the destination. A project routes
 findings to whatever it already uses, an issue tracker or a wiki or a file, and

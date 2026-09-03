@@ -231,8 +231,13 @@ pub enum TasksCommand {
 pub enum AdapterCommand {
     /// List every accepted adapter selector and whether the project has it.
     List,
-    /// Read one adapter selector as raw UTF-8 Markdown.
-    Read { selector: String },
+    /// Read one adapter selector, optionally omitting an inactive scaffold.
+    Read {
+        selector: String,
+        /// Return only active project guidance; omit for exact raw Markdown.
+        #[arg(long = "for", value_parser = ["consume"])]
+        purpose: Option<String>,
+    },
 }
 
 #[derive(Debug, Subcommand)]

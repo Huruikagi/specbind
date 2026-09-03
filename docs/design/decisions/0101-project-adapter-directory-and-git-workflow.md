@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision [0189](./0189-active-adapter-consumption-projection.md) adds
+`adapter read <selector> --for consume`. Raw reads remain the configuration
+surface; product consumers use the projection so inactive scaffold prose is
+never returned as policy.
+
 [Decision 0182](./0182-project-validation-adapter.md) extends the closed
 selector set with the optional `validation` adapter and assigns its consumption
 to final implementation validation.
@@ -176,6 +181,7 @@ Two read-only commands are accepted:
 ```text
 specbind adapter list
 specbind adapter read <selector>
+specbind adapter read <selector> --for consume
 ```
 
 They match the `artifact`, `template`, `protocol`, and `steering` pattern:
@@ -188,10 +194,11 @@ what keeps the read surface from becoming the extension loader this decision
 rejects: an unknown file below `settings/adapters/` is never listed, never
 readable, and never acquires meaning by existing.
 
-Absence is reported, not judged. `read` returns `NO_CHANGE` for an adapter the
-project does not have, and the consuming skill applies its own presence
-semantics — a missing release adapter is the Decision 0063 configuration error,
-a missing Git adapter is simply no guidance. The CLI states what is there.
+Absence is reported, not judged. Both read modes return `NO_CHANGE` for an
+adapter the project does not have. The consumer projection additionally returns
+`NO_CHANGE ADAPTER_SCAFFOLD` instead of scaffold Markdown, and the consuming
+skill applies its own selector-specific semantics. The CLI states what is
+there.
 
 Reading through the CLI rather than by path keeps
 [Decision 0098](./0098-steering-read-surface.md)'s rule general: no skill reads

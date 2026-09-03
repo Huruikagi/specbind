@@ -4,6 +4,10 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added `specbind adapter read <selector> --for consume` so product Skills
+  receive only active project guidance and no longer interpret inactive
+  scaffold markers themselves.
+
 ## 1.3.1 - 2026-09-03
 
 - Fixed dependency-ordered reverse establishment so phase-relative Contract

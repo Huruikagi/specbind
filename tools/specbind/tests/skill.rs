@@ -249,7 +249,7 @@ fn configure_aftercare_names_the_exact_git_adapter_read_command() {
         .content();
 
     assert!(
-        aftercare.contains("specbind adapter read git"),
+        aftercare.contains("specbind adapter read git --for consume"),
         "configure aftercare must name the exact Git adapter read command"
     );
 }
@@ -322,7 +322,7 @@ fn configuration_and_final_validation_share_the_validation_adapter_contract() {
         .body()
         .expect("implementation validation body");
     for required in [
-        "specbind adapter read validation",
+        "specbind adapter read validation --for consume",
         "Fix the complete required set before running anything.",
         "is `MANUAL_VERIFY_REQUIRED`",
         "it must not\nedit source or repair a finding it will judge",
@@ -432,11 +432,8 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
 #[test]
 fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation() {
     let body = skill_resource_text("sb-discovery", "references/reverse.md");
-    let list = body
-        .find("specbind adapter list")
-        .expect("adapter discovery");
     let read = body
-        .find("specbind adapter read deferred")
+        .find("specbind adapter read deferred --for consume")
         .expect("exact deferred selector");
     let create = body
         .find("specbind milestone create --scope")
@@ -444,7 +441,7 @@ fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation()
     let write = body
         .find("Only after milestone creation and provenance verification")
         .expect("post-creation finding write");
-    assert!(list < read && read < create && create < write);
+    assert!(read < create && create < write);
     assert!(body.contains("do not guess `deferred-findings`"));
     assert!(body.contains("pending adapter records"));
     assert!(body.contains("verified deferred destination when written as one\nDiscovery unit"));
@@ -1293,7 +1290,7 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
     }
 
     let checkpoint = body
-        .find("specbind adapter read git")
+        .find("specbind adapter read git --for consume")
         .expect("checkpoint command");
     let handshake = body
         .find("specbind milestone direct preflight <direct>")
@@ -1387,30 +1384,36 @@ fn implementation_dispatch_carries_project_local_operating_authority() {
 }
 
 #[test]
-fn adapter_consumers_use_the_dedicated_scaffold_marker() {
+fn adapter_consumers_use_the_active_guidance_projection() {
     for name in [
         "sb-discovery",
         "sb-plan",
         "sb-contract-review",
         "sb-implement",
         "sb-release",
+        "sb-review-task",
+        "sb-validate-design",
+        "sb-validate-implementation",
     ] {
         let body = skill_package_text(name);
+        for command in body
+            .lines()
+            .filter(|line| line.starts_with("specbind adapter read "))
+        {
+            assert!(
+                command.ends_with(" --for consume"),
+                "{name} consumer must not read raw adapter content: {command}"
+            );
+        }
         assert!(
-            body.contains("<!-- specbind:adapter-scaffold -->"),
-            "{name} must recognize the dedicated adapter scaffold marker"
-        );
-        assert!(
-            body.contains("marker classifies the whole\ndocument")
-                || body.contains("marker classifies the whole document")
-                || (name == "sb-release" && body.contains("Do not interpret\nits remaining body")),
-            "{name} must make the marker override the entire adapter body"
-        );
-        assert!(
-            !body.contains("A legacy adapter may still carry"),
-            "{name} must not preserve legacy adapter compatibility"
+            body.contains("ADAPTER_SCAFFOLD"),
+            "{name} must handle the projected inactive state"
         );
     }
+
+    let configure = skill_package_text("sb-configure");
+    assert!(configure.contains("specbind adapter read <selector>"));
+    assert!(configure.contains("specbind adapter read git --for consume"));
 }
 
 #[test]
@@ -1443,7 +1446,7 @@ fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
     }
 
     let first_git = body
-        .find("specbind adapter read git")
+        .find("specbind adapter read git --for consume")
         .expect("initial Git adapter read");
     let bind = body
         .find("specbind milestone bind-release <version>")
@@ -1457,7 +1460,7 @@ fn release_bootstraps_policy_and_checkpoints_binding_and_finalization() {
         .find("specbind release finalize --log-entries -")
         .expect("finalization command");
     let git = body[finalize..]
-        .find("specbind adapter read git")
+        .find("specbind adapter read git --for consume")
         .map(|offset| finalize + offset)
         .expect("post-finalization Git adapter read");
     let after_finalize = body
