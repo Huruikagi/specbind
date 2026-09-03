@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Claude Code | `claude-opus-5` / Agent-tool subagent | `4635a0b` | VD2, VC2, Q0, DR1 — pass; VC1 — product failure; one environment-invalid Q0 attempt retained | [Claim verification and orchestration batch](./runs/2026-09-03-claude-code-4635a0b-verification-batch.md) |
+| 2026-09-03 | Claude Code | `claude-opus-5` / Agent-tool subagent | `9492a83` | A1, X2, VD1, VI4, RT2 — pass; FT-0030..FT-0035 opened | [Approval-free verdict batch](./runs/2026-09-03-claude-code-9492a83-verdict-batch.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `e257930` | A3 — pass; FT-0029 confirmed | [Reverse establishment completion](./runs/2026-09-03-codex-e257930-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `fe35de1` | A3 — product failure at finalization; FT-0028 confirmed | [Reverse finalization drift](./runs/2026-09-03-codex-fe35de1-reverse-establishment.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `3407b96` | A3 — product failure; temporary adoption record became a phantom Spec | [Reverse record placement](./runs/2026-09-03-codex-3407b96-reverse-establishment.md) |
@@ -102,7 +104,7 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 0
+- Open reproduced product findings: 10
 - Fixed, behavioral confirmation pending: 5
 - Active environment limitations: 5
 

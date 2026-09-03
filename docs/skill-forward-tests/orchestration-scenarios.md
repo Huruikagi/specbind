@@ -247,8 +247,14 @@ as superseded for phase packaging by
 
 ### Q0 — A bare invocation asks for scope without starting work
 
-Request ordinary planning without naming a Spec or explicitly requesting all
-Specs.
+From `r1` — an active milestone with exactly one Spec-backed participant, plus a
+second Spec idle outside it — request ordinary planning without naming a Spec or
+explicitly requesting all Specs. The single participant is the trap: it is what
+an inferring run collapses to instead of asking.
+
+The starting state is load-bearing. A fixture with no active milestone stops on
+`NO_ACTIVE_MILESTONE` before the scope question exists, which measures the
+milestone guard rather than this scenario.
 
 > Ask: Plan the active work.
 
