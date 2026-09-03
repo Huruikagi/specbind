@@ -14,6 +14,9 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `22c6023` | A4 — reverse resume reached fresh Contract Review; finalization blocked by ENV-0004 | [Reverse continuation](./runs/2026-09-03-codex-22c6023-a4.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `23afac1` | A4 — scenario invalid; semantic mismatch correctly stopped review | [Reverse continuation fixture retry](./runs/2026-09-03-codex-23afac1-a4.md) |
+| 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `3a7b96a` | A4 — scenario invalid; log input ambiguity reproduced | [Initial reverse continuation](./runs/2026-09-03-codex-3a7b96a-a4.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `ff010dd` | D16 — owned-path Discovery entry confirmed; full Skill flow blocked by ENV-0005 | [Owned-path routing confirmation](./runs/2026-09-03-codex-ff010dd-file-ownership-routing.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `d59eae8` | D16 — product failure after one environment-invalid attempt; FT-0042 opened | [Owned-path routing](./runs/2026-09-03-codex-d59eae8-file-ownership-routing.md) |
 | 2026-09-03 | Codex | `gpt-5.6-terra` / `medium` | `7954083` | VI1 — pass after correcting one invalid legacy request | [Active adapter consumption](./runs/2026-09-03-codex-7954083-active-adapter-consumption.md) |

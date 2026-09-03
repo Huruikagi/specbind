@@ -16,8 +16,9 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-One review per milestone, between design approval and any task plan. The
-question is **not** "do the Specs in this milestone agree with each other." It is:
+One review per milestone, between design approval and any task plan, or between
+reverse Design approval and adoption finalization. The question is **not** "do
+the Specs in this milestone agree with each other." It is:
 
 > Does this milestone leave **every** persistent seam in the project coherent —
 > including seams owned by Specs it never touched?
@@ -39,9 +40,11 @@ Stop and report, rather than fixing, in these cases:
 
 - **`Status: not_applicable`** — a Direct-only milestone has no persistent seams
   to review. Say that the review is not required and stop.
-- **A participant is not ready** — acceptance needs every Spec-backed item to
-  hold a fresh design gate and sit in the `tasks` state. Route the unready Spec
-  to its phase. Never approve a gate to make this barrier passable.
+- **A participant is not ready** — use the reported `Milestone kind`. Delivery
+  acceptance needs every Spec-backed item to hold a fresh Design gate and sit
+  in `tasks`; reverse acceptance needs the same fresh gate and
+  `adoption_ready`, with no Tasks. Route any other state to its phase. Never
+  approve a gate to make this barrier passable.
 - **A task plan already exists** — acceptance refuses with
   `CONTRACT_REVIEW_TASKS_ALREADY_EXIST`. Report which Spec holds it and stop.
   **Do not delete it.** The ordering is already lost, and discarding authored

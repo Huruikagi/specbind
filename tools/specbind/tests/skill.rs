@@ -441,6 +441,20 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
 }
 
 #[test]
+fn reverse_resume_preserves_contract_review_ownership_and_readiness() {
+    let reverse = skill_resource_text("sb-discovery", "references/reverse.md");
+    assert!(reverse.contains("dispatch the installed\n`sb-contract-review` workflow"));
+    assert!(reverse.contains("dispatch the initial evidence readers again"));
+
+    let review = skill::find("sb-contract-review")
+        .expect("contract review skill")
+        .body()
+        .expect("contract review body");
+    assert!(review.contains("use the reported `Milestone kind`"));
+    assert!(review.contains("`adoption_ready`, with no Tasks"));
+}
+
+#[test]
 fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation() {
     let body = skill_resource_text("sb-discovery", "references/reverse.md");
     let read = body

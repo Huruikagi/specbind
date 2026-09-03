@@ -176,7 +176,8 @@ Gate authority; return `HUMAN_DECISION` to `sb-drive` until the maintainer names
 reverse continuation.
 
 Do not rerun repository discovery, synthesize another proposal, change the
-confirmed reverse scope, or create another temporary record. The active
+confirmed reverse scope, dispatch the initial evidence readers again, or create
+another temporary record. The active
 Roadmap, Specs, Briefs, Research, and record are the checkpointed continuation
 inputs. Run:
 
@@ -194,6 +195,12 @@ orchestration under delegated workflow `sb-discovery`; it does not authorize a
 scope change, implementation change, release, external write, or destructive
 recovery. Continue only the phase-relative actions the fresh status exposes.
 Already approved phases remain accepted and are not repeated.
+
+When the action is `contract_review`, dispatch the installed
+`sb-contract-review` workflow with this reverse continuation authority and
+return here after its accepted checkpoint. `sb-discovery` remains the status
+handler because it owns the reverse continuation and subsequent finalization;
+it does not replace the phase owner's review procedure.
 
 ## Continue without routine pauses
 

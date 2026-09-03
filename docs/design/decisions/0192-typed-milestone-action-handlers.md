@@ -36,7 +36,10 @@ preflight is the boundary before explicit `sb-release` execution.
 For reverse Milestones, every currently actionable phase uses `sb-discovery` in
 `reverse_resume` mode. That handler does not grant continuation authority:
 Decision 0191 still requires an explicit maintainer request before the reverse
-orchestrator can approve remaining Gates.
+orchestrator can approve remaining Gates. It identifies the continuation
+orchestrator rather than replacing a nested phase owner: at `contract_review`,
+Discovery dispatches `sb-contract-review` under the relayed reverse authority
+and resumes afterward.
 
 The lifecycle read model does not depend on the Skill catalog or CLI rendering.
 The CLI projection layer derives handlers exhaustively from the typed action and
