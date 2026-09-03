@@ -9,7 +9,18 @@ fixture.
 
 ## Open
 
-No reproduced product findings are open.
+Each row below was reproduced mechanically at `9492a83` against the surface
+named in its evidence. The owning decision has not yet been checked for any of
+them, so read the decision before editing a Skill, template, or CLI surface.
+
+| ID | First seen | Scenario | Finding | Impact | Next step |
+| --- | --- | --- | --- | --- | --- |
+| FT-0030 | `9492a83` | VD1 | The installed project-instruction routing block never names `sb-validate-design`, while naming `sb-plan` as the default entry point when the user asks to work on Design for one named Spec. A request to check a design therefore routes toward the one Skill that owns gate invalidation. | wrong-action-risk | Confirm whether the routing block's omission is intended, then either add the design-validation route or narrow the `sb-plan` sentence. |
+| FT-0031 | `9492a83` | X2 | Contract Review must present the exact Requirements, Design, Tasks, completion, and accepted review state that a rewind removes, but no command reports it: `specbind spec design invalidate <SPEC>` takes only the Spec and exposes no preview. The cost presented to the maintainer is assembled by inference. | wrong-action-risk | Decide whether the rewind cost is a CLI report or a Skill-derived projection, and make the required presentation readable from one surface. |
+| FT-0032 | `9492a83` | X2 | `spec status` and `milestone status` both report `State health: consistent` with `Diagnostics: none` while the Contract graph is unresolvable and `check contracts` fails. Nothing in the status surfaces points at the breakage. | wrong-action-risk | Confirm whether graph resolvability belongs in state health, then either surface it as a diagnostic or state why status deliberately excludes it. |
+| FT-0033 | `9492a83` | VI4 | `spec completion preflight` reports `READY` with `Diagnostics: none` although the active Validation adapter names a mandatory command the project does not contain. The check that decides the verdict is invisible to every preflight surface. | wrong-action-risk | Decide whether preflight may read adapter policy; if not, say so where the preflight result is consumed. |
+| FT-0034 | `9492a83` | A1 | Reverse establishment says missing Steering "stops and routes to `sb-steering`; do not repair it in this run" without stating that the routed-to Skill itself stops for maintainer decisions. The safe stop was reachable only by reading a second Skill body. | wrong-action-risk | State in the reverse procedure that the Steering route is itself a maintainer-gated run, not an action to perform inline. |
+| FT-0035 | `9492a83` | A1 | Reverse establishment requires the maintainer's selected area and `baseline_version` above the read-only `adoption preflight` that gates the whole run, so a literal reading asks for values before knowing the run can proceed. Same prose/command ordering shape as FT-0009. | extra-step | Order the read-only preflight before the maintainer-value requirement, or say the values are needed only once preflight is ready. |
 
 ## Fixed, behavioral confirmation pending
 
