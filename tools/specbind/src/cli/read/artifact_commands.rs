@@ -172,6 +172,7 @@ pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
                 "Active requirement IDs",
                 &active.len().to_string(),
             );
+            push_field(&mut output, "Active requirement set", &active.join(", "));
             push_field(
                 &mut output,
                 "Design coverage",

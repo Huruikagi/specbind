@@ -6,24 +6,33 @@ not ordinary change Discovery and not a product release.
 
 ## Fix the evidence and version
 
-The maintainer must name the selected area and the product version already
-represented by the code. If either is missing, ask only for the missing value
-before mutation. `baseline_version` names an existing version; never invent the
-next version or bind `target_release`.
-
-Run:
+Run the read-only route preflight first:
 
 ```sh
 specbind adoption preflight
+```
+
+It must report `ADOPTION_PREFLIGHT_READY`. Record its exact `source_revision`.
+If it stops on missing Steering, report that `sb-steering` is a separate
+maintainer-gated workflow and stop this reverse run. Do not select or perform
+Steering repair inline.
+
+Only after preflight is ready, require the maintainer to name the selected area
+and the product version already represented by the code. If either is missing,
+ask only for the missing value before mutation. `baseline_version` names an
+existing version; never invent the next version or bind `target_release`.
+
+Then run:
+
+```sh
 specbind steering list
 specbind steering read <every-selector> --for consume
 ```
 
-The preflight must report `ADOPTION_PREFLIGHT_READY`. Record its exact
-`source_revision`. Steering must establish product purpose, technology and
-verification constraints, and responsibility placement. Missing or internally
-contradictory Steering stops and routes to `sb-steering`; do not repair it in
-this run. A difference between valid Steering and observed implementation is
+Steering must establish product purpose, technology and verification constraints,
+and responsibility placement. Internally contradictory Steering stops and routes
+to the same separate maintainer-gated `sb-steering` workflow; do not repair it
+in this run. A difference between valid Steering and observed implementation is
 not itself a reason to bypass the proposal: classify it below as a suspected
 defect or an unknown.
 

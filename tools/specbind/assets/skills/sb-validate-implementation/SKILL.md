@@ -44,6 +44,10 @@ it returns one thing you need:
 Implementation revision: <full commit id>
 ```
 
+`READY` means only that this lifecycle and checkout state may now be validated.
+It does not inspect the project Validation adapter, identify required commands,
+or claim that any validation passed; those judgments begin in sections 2 and 3.
+
 That revision is what you validate against and what you will submit. If
 preflight fails, report the diagnostic and stop — it is naming a real
 precondition, not an obstacle to route around.

@@ -39,6 +39,11 @@ Use only the returned ordered `actionable` entries, their `action` and exact
 Never parse the Roadmap to compute waves. Keep a run-local set of action keys
 already attempted at unchanged state: `<action>:<commandOperand-or-milestone>`.
 
+A pending Direct item is mechanically actionable even when its summary later
+proves it was classified too narrowly. Dispatch its exact item and summary to
+`sb-implement`; do not pre-classify Roadmap prose in Drive or treat a clean
+status as semantic approval of the Direct kind.
+
 ## 2. Dispatch one owning workflow at a time
 
 Choose the first safe actionable entry not parked at the current state. Dispatch
@@ -61,6 +66,12 @@ Planning still owns its delegation confirmation. Invoking Drive does not grant
 gate approvals. Pass through only authority the user explicitly supplied. A
 missing confirmation is attention, not permission to approve or a reason to
 interrupt while unrelated implementation remains reachable.
+
+If `sb-implement` reports that a Direct summary requires canonical artifacts or
+an unsettled product or architecture decision, normalize the handoff as
+`REROUTABLE` plus `HUMAN_DECISION`. Park it for Discovery and continue every
+independent safe action; do not expect milestone status to infer that semantic
+classification from the summary.
 
 ## 3. Re-read after every handoff
 

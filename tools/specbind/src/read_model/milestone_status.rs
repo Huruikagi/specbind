@@ -8,6 +8,7 @@ use std::{
 
 use crate::{
     artifacts::{self, DiscoveryIssue},
+    contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus},
     freshness::{self, FreshnessStatus},
     repository,
@@ -136,6 +137,7 @@ pub fn resolve(
     facts.extend(direct_facts(&roadmap));
     let reverse = !roadmap.reverse_specs.is_empty();
     diagnose_unscoped_active_specs(specbind_root, &roadmap, &mut diagnostics);
+    diagnose_required_contract_graph(specbind_root, &facts, &mut diagnostics);
     if matches!(review.status, ReviewFreshnessStatus::Missing)
         && facts.iter().any(|item| match &item.kind {
             ItemKind::Spec { model, .. } => model
@@ -652,6 +654,37 @@ fn has_specs(facts: &[ItemFacts]) -> bool {
     facts
         .iter()
         .any(|item| matches!(item.kind, ItemKind::Spec { .. }))
+}
+
+fn diagnose_required_contract_graph(
+    specbind_root: &Path,
+    facts: &[ItemFacts],
+    diagnostics: &mut BTreeSet<MilestoneDiagnostic>,
+) {
+    if !has_specs(facts) || !spec_predicate(facts, design_approved) {
+        return;
+    }
+    let graph = contract_graph::resolve(specbind_root);
+    diagnostics.extend(graph.project_issues.iter().map(from_discovery));
+    diagnostics.extend(
+        graph
+            .inventories
+            .values()
+            .flat_map(|inventory| inventory.issues.iter())
+            .map(from_discovery),
+    );
+    diagnostics.extend(
+        graph
+            .report
+            .issues
+            .iter()
+            .filter(|issue| issue.severity == GraphIssueSeverity::Error)
+            .map(|issue| MilestoneDiagnostic {
+                code: issue.code,
+                path: issue.source.clone(),
+                message: issue.message.clone(),
+            }),
+    );
 }
 
 fn design_dependencies_ready(item: &ItemFacts, facts: &[ItemFacts]) -> bool {

@@ -343,3 +343,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0184](./design/decisions/0184-agent-executable-update-workflow.md) | Accepted | Explicit installation-client updates routed through `sb-configure` with post-refresh package reload |
 | [0185](./design/decisions/0185-reverse-deferred-finding-checkpoint.md) | Accepted | Reverse deferred findings recorded after the clean milestone baseline exists |
 | [0186](./design/decisions/0186-reverse-design-contract-preflight.md) | Accepted | Phase-relative Contract preflight for dependency-ordered reverse Design |
+| [0187](./design/decisions/0187-forward-test-routing-and-read-projections.md) | Accepted | Forward-test routing, active Requirement scope, and Contract graph status projections |

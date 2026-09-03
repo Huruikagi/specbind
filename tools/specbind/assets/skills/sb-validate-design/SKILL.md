@@ -53,14 +53,16 @@ unavailable Contract outside that exact waiting set, any other graph error, or
 an unproved status is a structural `NOT_READY`; the complete graph remains
 mandatory at milestone Contract Review.
 
-**Fix the review scope from the status output before reading prose.** The
-`Requirement coverage: design N/N` count is over the active Requirement IDs for
-this milestone. The Requirements document is a complete persistent contract and
+**Fix the review scope from CLI-owned lifecycle state before reading prose.**
+`specbind check traceability <spec>` reports the exact `Active requirement set`;
+that set, not any `requirement_ids` field in the Design being reviewed, is the
+scope for this judgment. The status `Requirement coverage: design N/N` count is
+over the same active Requirement IDs. The Requirements document is a complete persistent contract and
 may retain other IDs that this milestone does not deliver. Read those retained
 Requirements for context, but do not report the Design incomplete, expand its
 scope, or raise a finding merely because it does not realize an inactive ID.
-Validate only the active set represented by the Design traceability markers and
-the status coverage count.
+Validate only that CLI-reported active set. Compare Design traceability markers
+with it, but never derive the review scope from those markers.
 
 **They are not your review.** The CLI already verifies traceability markers,
 active requirement coverage, and contract structure — repeating them back is not

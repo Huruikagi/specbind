@@ -398,6 +398,38 @@ fn reports_an_absent_actionable_review_as_expected_work() {
 }
 
 #[test]
+fn reports_a_broken_required_contract_graph_in_milestone_health() {
+    let root = project_fixture();
+    write_review_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/outsider/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    write(
+        root.path(),
+        ".specbind/specs/outsider/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: absent, section: exports, id: value }, description: Missing. }\ninvariants: []\nfile_ownership: []\n",
+    );
+    commit_all(root.path());
+
+    let mut command = specbind_command();
+    command
+        .current_dir(root.path())
+        .args(["milestone", "status"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  Stage: contract_review\n")
+                .and(predicate::str::contains("  State health: inconsistent\n"))
+                .and(predicate::str::contains(
+                    "CONTRACT_GRAPH_TARGET_SPEC_MISSING",
+                )),
+        )
+        .stderr("");
+}
+
+#[test]
 fn accepts_a_stdin_review_candidate_and_reports_fresh_status() {
     let root = project_fixture();
     write_review_fixture(root.path());

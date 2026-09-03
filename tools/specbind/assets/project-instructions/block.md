@@ -13,7 +13,7 @@ the only supported writer of machine state.
   select `sb-configure` directly before ordinary change-request routing. Its
   update procedure proves installation ownership and preserves the separate
   binary-selection and project-asset checkpoints.
-- Work through those installed `specbind-*` Skills. Use `sb-discovery` to
+- Work through those installed `sb-*` Skills. Use `sb-discovery` to
   turn a request into scope or to establish new Specs from an explicitly
   selected existing implementation, and `sb-status` to see where work
   stands. Existing code and tests are evidence rather than intended
@@ -29,9 +29,18 @@ the only supported writer of machine state.
   request names neither one Spec nor all Specs, select `sb-plan` and let
   it ask for scope; do not infer a single-phase request from the currently
   actionable phase.
-- When every Task for a named Spec is complete and the user asks whether that
-  Spec is done, complete, or ready, use `sb-validate-implementation`.
-  Do not answer that question from status or consequence-free claim checking.
+- Use `sb-verify-completion` when the user asks whether an explicit claim is
+  true and the answer must change nothing, including a claim that names a Spec.
+  Use `sb-validate-implementation` only when every Task for a named Spec is
+  complete and the user asks to validate it for lifecycle completion, recording
+  completion evidence on `GO`. Words such as done, complete, or ready do not by
+  themselves authorize that mutation.
+- Use `sb-validate-design` for an independent, read-only judgment of a Spec's
+  Design. Use `sb-contract-review` for the milestone-wide Contract Review after
+  participating Designs are approved.
+- Use `sb-gap-analysis` when the user explicitly asks to compare planned work
+  with the existing repository. Use `sb-release` only for an explicit request
+  to release and finalize the active milestone.
 - When the user asks to review one implemented Task, use
   `sb-review-task`; the review must judge the actual diff without fixing
   it or recording Task state.

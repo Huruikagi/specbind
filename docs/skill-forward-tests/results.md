@@ -104,8 +104,8 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 10
-- Fixed, behavioral confirmation pending: 5
+- Open reproduced product findings: 0
+- Fixed, behavioral confirmation pending: 12
 - Active environment limitations: 5
 
 The authoritative rows and stable identifiers are in

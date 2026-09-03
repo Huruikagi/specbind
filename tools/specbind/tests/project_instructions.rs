@@ -9,6 +9,12 @@ fn assert_explicit_update_route(content: &str) {
     );
 }
 
+fn assert_completion_routes(content: &str) {
+    assert!(content.contains("Use `sb-verify-completion` when the user asks"));
+    assert!(content.contains("Use `sb-validate-implementation` only when every Task"));
+    assert!(content.contains("do not by\n  themselves authorize that mutation"));
+}
+
 #[test]
 fn writes_each_agent_its_own_instruction_file() {
     // A shared file would leave one agent without instructions, because each
@@ -47,12 +53,7 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("When the classification is genuinely\n  unclear, enter the flow")
     );
-    assert!(applied.content.contains("use `sb-validate-implementation`"));
-    assert!(
-        applied
-            .content
-            .contains("Do not answer that question from status")
-    );
+    assert_completion_routes(&applied.content);
     assert!(
         applied
             .content

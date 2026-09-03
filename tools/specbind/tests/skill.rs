@@ -1168,7 +1168,9 @@ fn design_validation_puts_its_read_only_stop_rule_before_commands() {
 
     assert!(body.contains("Existing code is architectural context, not implementation evidence"));
     assert!(body.contains("do not\njudge whether the code already does"));
-    assert!(body.contains("Fix the review scope from the status output before reading prose"));
+    assert!(
+        body.contains("Fix the review scope from CLI-owned lifecycle state before reading prose")
+    );
     assert!(body.contains("do not report the Design incomplete"));
     assert!(body.contains("inactive ID"));
 }
@@ -1561,6 +1563,61 @@ fn implementation_completion_questions_route_to_validation_not_status() {
     assert!(validation_body.contains("do not report the Spec incomplete"));
     assert!(validation_body.contains("Fix that required\nset **before** running anything"));
     assert!(validation_body.contains("do not invoke its underlying test runner"));
+}
+
+#[test]
+fn project_instructions_route_dedicated_intents_without_granting_completion() {
+    let body = specbind::project_instructions::BODY;
+    for route in [
+        "`sb-contract-review`",
+        "`sb-gap-analysis`",
+        "`sb-release`",
+        "`sb-validate-design`",
+        "`sb-verify-completion`",
+    ] {
+        assert!(
+            body.contains(route),
+            "project instructions must route {route}"
+        );
+    }
+    assert!(body.contains("answer must change nothing"));
+    assert!(body.contains("recording\n  completion evidence on `GO`"));
+    assert!(body.contains("do not by\n  themselves authorize that mutation"));
+    assert!(!body.contains("installed `specbind-*` Skills"));
+}
+
+#[test]
+fn forward_test_clarifications_preserve_read_and_semantic_boundaries() {
+    let design = skill::find("sb-validate-design")
+        .expect("design validation skill")
+        .body()
+        .expect("design validation body");
+    assert!(design.contains("exact `Active requirement set`"));
+    assert!(design.contains("never derive the review scope from those markers"));
+
+    let validation = skill::find("sb-validate-implementation")
+        .expect("implementation validation skill")
+        .body()
+        .expect("implementation validation body");
+    assert!(validation.contains("means only that this lifecycle and checkout state"));
+    assert!(validation.contains("does not inspect the project Validation adapter"));
+
+    let drive = skill::find("sb-drive")
+        .expect("drive skill")
+        .body()
+        .expect("drive body");
+    assert!(drive.contains("Dispatch its exact item and summary"));
+    assert!(drive.contains("normalize the handoff as\n`REROUTABLE` plus `HUMAN_DECISION`"));
+
+    let reverse = skill_resource_text("sb-discovery", "references/reverse.md");
+    let preflight = reverse
+        .find("specbind adoption preflight")
+        .expect("reverse preflight");
+    let selected_area = reverse
+        .find("require the maintainer to name the selected area")
+        .expect("selected area requirement");
+    assert!(preflight < selected_area);
+    assert!(reverse.contains("separate\nmaintainer-gated workflow"));
 }
 
 #[test]

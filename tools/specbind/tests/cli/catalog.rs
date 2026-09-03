@@ -52,7 +52,7 @@ fn verifies_traceability_and_fails_closed_on_missing_coverage() {
         .assert()
         .success()
         .stdout(
-            "OK TRACEABILITY_VERIFIED: Verified traceability for spec checkout.\n  Requirements: 1\n  Active requirement IDs: 1\n  Design coverage: 1/1\n  Task coverage: 1/1 (required)\n",
+            "OK TRACEABILITY_VERIFIED: Verified traceability for spec checkout.\n  Requirements: 1\n  Active requirement IDs: 1\n  Active requirement set: 1.1\n  Design coverage: 1/1\n  Task coverage: 1/1 (required)\n",
         )
         .stderr("");
 
