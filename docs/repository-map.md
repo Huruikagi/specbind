@@ -32,6 +32,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/cli/` — stable command-family facades for migration, reads, tasks, external input, and lifecycle operations
 - `tools/specbind/src/cli/read/` — artifact/check, installation, catalog, and project-scope read command execution/rendering
 - `tools/specbind/src/cli/read/embedded_catalog_commands.rs` — project-independent Protocol and schema catalog commands backed entirely by embedded binary assets
+- `tools/specbind/src/cli/read/template_commands.rs` — project-bound Spec, Milestone, and Steering template discovery, reads, and target resolution
 - `tools/specbind/src/cli/lifecycle/` — completion, gate, milestone mutation, release, contract-review, and status command execution/rendering
 - `tools/specbind/src/artifacts.rs` — stable public facade and result models for spec-local artifact reads
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
