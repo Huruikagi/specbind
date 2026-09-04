@@ -33,6 +33,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/cli/read/` — artifact/check, installation, catalog, and project-scope read command execution/rendering
 - `tools/specbind/src/cli/read/embedded_catalog_commands.rs` — project-independent Protocol and schema catalog commands backed entirely by embedded binary assets
 - `tools/specbind/src/cli/read/template_commands.rs` — project-bound Spec, Milestone, and Steering template discovery, reads, and target resolution
+- `tools/specbind/src/cli/read/adapter_commands.rs`, `rule_commands.rs`, and `steering_commands.rs` — project-bound catalog commands separated by the artifact family they expose
 - `tools/specbind/src/cli/lifecycle/` — completion, gate, milestone mutation, release, contract-review, and status command execution/rendering
 - `tools/specbind/src/artifacts.rs` — stable public facade and result models for spec-local artifact reads
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
