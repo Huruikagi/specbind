@@ -606,6 +606,9 @@ fixture's code, commit that, then ask to bring steering back in line.
   failure this scenario exists for.
 - Prose that was merely not how this run would have phrased it was left alone.
 - Drift the skill chose not to act on was reported rather than silently fixed.
+- The verified synchronization produced one narrow local checkpoint containing
+  only the changed Steering documents. The worktree is clean, the current branch
+  is unchanged, and no push was attempted.
 
 ### S4 — A broken document is repaired, not worked around
 

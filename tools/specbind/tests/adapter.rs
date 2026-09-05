@@ -193,6 +193,10 @@ fn states_that_the_git_adapter_grants_no_authority() {
             "configuration changes must be named as eligible checkpoints: {scaffold}"
         );
         assert!(
+            scaffold.contains("sb-steering"),
+            "steering changes must be named as eligible checkpoints: {scaffold}"
+        );
+        assert!(
             (scaffold.contains("binary-selection") || scaffold.contains("バイナリ選択"))
                 && (scaffold.contains("two separate checkpoints")
                     || scaffold.contains("別々のcheckpoint")),

@@ -1327,6 +1327,36 @@ fn steering_add_stops_before_inventing_missing_project_policy() {
 }
 
 #[test]
+fn steering_checkpoints_only_its_verified_document_changes() {
+    let body = skill::find("sb-steering")
+        .expect("steering skill")
+        .body()
+        .expect("body");
+
+    let verification = body
+        .find("## 5. Verify what you wrote")
+        .expect("verification section");
+    let checkpoint = body.find("## 6. Checkpoint").expect("checkpoint section");
+    let report = body.find("## 7. Report").expect("report section");
+    assert!(verification < checkpoint && checkpoint < report);
+    for required in [
+        "specbind adapter read git --for consume",
+        "NO_CHANGE ADAPTER_ABSENT",
+        "NO_CHANGE ADAPTER_SCAFFOLD",
+        "git status --short",
+        "Stage only those verified Steering paths.",
+        "if an unrelated change overlaps a touched path, stop",
+        "Do not amend, rebase, push",
+        "whether the checkpoint\nwas committed, intentionally absent or scaffolded, or failed",
+    ] {
+        assert!(
+            body.contains(required),
+            "steering checkpoint contract must contain {required}"
+        );
+    }
+}
+
+#[test]
 fn implementation_workflow_carries_notes_and_all_failure_routes() {
     let body = skill_package_text("sb-implement");
 

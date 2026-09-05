@@ -215,11 +215,39 @@ It verifies complete durable instruction blocks, leaked `create` guidance,
 unresolved named outputs, and scaffold placeholders. Any `ERROR` stops the
 workflow; do not recreate this comparison with a project script.
 
-## 6. Report
+## 6. Checkpoint
+
+After every touched Steering document passes the applicable verification above,
+read the active Git adapter:
+
+```sh
+specbind adapter read git --for consume
+```
+
+`NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means there is no
+adapter-directed checkpoint. Continue to the report with the Steering changes
+left uncommitted; do not invent a project Git policy.
+
+When the adapter has guidance, follow it. The request to perform this mutating
+workflow authorizes its narrow local checkpoint as the ordinary final step:
+
+- Inspect `git status --short` and the exact diff for every Steering path this
+  run changed.
+- Stage only those verified Steering paths. Never include pre-existing or
+  unrelated changes; if an unrelated change overlaps a touched path, stop
+  before the Git operation and report the conflict.
+- Stay on the current branch. Do not amend, rebase, push, create or switch
+  branches, tag, publish, or rewrite history unless separately authorized.
+- If the checkpoint fails, leave the verified Steering changes in place and
+  report the failed operation. Do not stash, reset, or broaden the commit to
+  manufacture a clean result.
+
+## 7. Report
 
 In the project's language: what you created or revised, what drift you found and
-did not act on, and anything you deliberately left out. Keep it short — the
-documents are the deliverable.
+did not act on, anything you deliberately left out, and whether the checkpoint
+was committed, intentionally absent or scaffolded, or failed. Keep it short —
+the documents are the deliverable.
 
 ## Boundaries
 

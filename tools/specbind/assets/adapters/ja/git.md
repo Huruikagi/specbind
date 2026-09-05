@@ -22,9 +22,10 @@ type: SpecBind Git Adapter
 Requirements・Design・Tasksの各Gate、受理されたContract review、完了した実装Taskが
 それぞれ1単位です。承認された初回のRelease adapter設定と、成功したリリース確定も
 それぞれ1単位です。completionとリリース確定の状態メタデータは、各ワークフローが
-要求するときは別のチェックポイントにします。`sb-configure`で完了した変更と、
-そのrequiredまたは承認済みのアフターケアは1つの設定checkpointにします。見送った
-optionalなアフターケアは含めません。明示的なSpecBind update手順だけは例外です。
+要求するときは別のチェックポイントにします。完了した`sb-steering`の変更は1つの
+Steering checkpointにします。`sb-configure`で完了した変更と、そのrequiredまたは
+承認済みのアフターケアは1つの設定checkpointにします。見送ったoptionalな
+アフターケアは含めません。明示的なSpecBind update手順だけは例外です。
 バイナリ選択の変更と製品資産のrefreshを別々のcheckpointにし、installerが要求する
 clean worktreeからrefreshを開始します。
 
