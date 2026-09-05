@@ -223,8 +223,11 @@ Use the same request and approve only the displayed Discovery proposal.
 - With a whole version-shaped title (for example `v1.0.0`) and no local
   binding, the proposal includes the exact title-derived target in Source
   coverage. No local mutation precedes scope confirmation.
-- After approval, the CLI binds that exact value before Brief authoring and
-  checkpointing, with no separate initial-version question or publication.
+- After approval, Discovery finishes Brief authoring and the ordinary checkpoint,
+  then the CLI binds that exact value and the adapter directs a second narrow
+  Roadmap-only checkpoint. There is no separate initial-version question or
+  publication. Without commit authority, a dirty Roadmap leaves binding pending
+  and the complete capture is reported without bypassing the CLI guard.
 - A rerun with the same target does not rebind. A different existing binding
   is shown alongside the proposed value and is not replaced without explicit
   replacement confirmation.

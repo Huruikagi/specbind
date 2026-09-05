@@ -61,8 +61,15 @@ a different non-null value still requires Decision 0072's explicit agreement
 after showing both values; ordinary scope approval alone is insufficient.
 
 After successful scope creation or update (including unchanged scope), Discovery
-runs `milestone bind-release` before Brief authoring and checkpointing, with
-`--rebind` only for an explicitly confirmed replacement. It never authors the
+finishes all Briefs and the ordinary Git-adapter checkpoint before running
+`milestone bind-release`: binding requires a clean Roadmap. The complete capture
+is eligible for that checkpoint while binding is pending. A successful binding
+gets a second narrow Roadmap-only checkpoint under the same adapter; an
+identical binding needs none. Stopping after Discovery includes both checkpoints.
+Without adapter authority to commit, a dirty Roadmap leaves binding pending;
+report the captured scope and required project checkpoint without bypassing the
+guard. A clean Roadmap may be bound, with any uncommitted result reported.
+Use `--rebind` only for an explicitly confirmed replacement. Never author the
 field directly or adds it to the scope input. A binding error stops the workflow
 and is reported without undoing the successful scope change or substituting a
 different label. Read-back verifies the bound value before reporting completion.

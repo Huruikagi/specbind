@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `e8db9fd` | D15 initial release-title binding — product failure; FT-0047 | [Release title ordering](./runs/2026-09-06-codex-e8db9fd-d15-release-title.md) |
 | 2026-09-05 | Codex | `gpt-5.6-terra` / `medium` | `a3f2f7b` | Q3 — pass; per-Spec new-finding remediation confirmed | [Design remediation budget](./runs/2026-09-05-codex-a3f2f7b-q3-design-remediation.md) |
 | 2026-09-05 | Codex | `gpt-5.6-terra` / `medium` | `edcb7a8` | S3 — pass; Steering synchronization checkpoint confirmed | [Steering checkpoint confirmation](./runs/2026-09-05-codex-edcb7a8-s3-steering-checkpoint.md) |
 | 2026-09-05 | Codex | `gpt-5.6-terra` / `medium` | `b80d643` | S3 — environment invalid; installed Skill was not loaded | [Steering checkpoint invalid attempt](./runs/2026-09-05-codex-b80d643-s3-steering-checkpoint.md) |

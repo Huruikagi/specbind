@@ -354,9 +354,6 @@ fragment silently discards the rest of the roadmap prose.
 The scope document is transient input. Pipe it on standard input rather than
 leaving a file behind in the repository.
 
-For GitHub Milestone input, now apply the provider procedure's confirmed release
-binding before proceeding to Brief authoring and checkpointing.
-
 ## 7. Write the briefs, then report
 
 Every Spec-backed work item gets an active brief at `<specDir>/<spec>/brief.md`,
@@ -448,8 +445,9 @@ specbind adapter read git --for consume
 ```
 
 `NO_CHANGE ADAPTER_ABSENT` or `NO_CHANGE ADAPTER_SCAFFOLD` means there is no
-adapter-directed commit. Stop there — that is an answer, not a missing file to
-work around.
+adapter-directed commit. Do not work around that policy. For GitHub input,
+still follow the provider's pending-binding and clean-target rules below;
+otherwise proceed to reporting.
 
 When the adapter has guidance, follow it. The request to perform this mutating
 phase authorizes the adapter's narrow local checkpoint as its ordinary final
@@ -466,6 +464,10 @@ step. It does not authorize anything broader:
 
 A failed checkpoint changes nothing that already succeeded. The milestone and
 the briefs remain valid; report them as uncommitted and continue.
+
+For GitHub Milestone input with a confirmed release label, now follow the
+provider's binding procedure, including its clean-Roadmap guard and narrow
+binding checkpoint, before reporting Discovery complete.
 
 ## 9. Report
 

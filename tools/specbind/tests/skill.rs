@@ -715,7 +715,9 @@ fn github_milestone_source_collection_is_complete_read_only_and_preserved() {
         "specbind milestone bind-release <version>",
         "scope approval alone does not\nauthorize that replacement",
         "do not trim it, extract a version from prose",
-        "before Brief authoring or checkpointing",
+        "ordinary step 8 checkpoint **before binding**",
+        "second\nnarrow checkpoint containing only the Roadmap's binding change",
+        "do not\ninvent checkpoint authority",
         "Stop on a binding\nerror",
     ] {
         assert!(

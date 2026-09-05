@@ -103,9 +103,13 @@ If a different non-null binding exists, show both values and obtain explicit
 agreement to replace it before using `--rebind`; scope approval alone does not
 authorize that replacement. Never silently overwrite a conflicting binding.
 
-After the confirmed `milestone create` or `milestone update-scope` succeeds
-(including an unchanged scope), and before Brief authoring or checkpointing,
-apply the confirmed label through the CLI:
+After the confirmed scope succeeds (including unchanged scope), finish all
+Briefs and the ordinary step 8 checkpoint **before binding**. The CLI refuses
+to bind a dirty, staged, or untracked Roadmap. The complete scope and Brief
+capture is eligible for that checkpoint even while this confirmed binding is
+pending. Do not commit a partial capture merely to unblock binding.
+
+Then apply the confirmed label through the CLI:
 
 ```sh
 specbind milestone bind-release <version>
@@ -116,6 +120,17 @@ Use `--rebind` only for the explicitly confirmed replacement above. Never write
 error, preserve the successful scope mutation, and report the outstanding
 binding; do not invent another label or claim Discovery is complete. Read
 `specbind milestone status` back to verify and report the exact bound value.
+After a successful bind or rebind, follow the same Git adapter for a second
+narrow checkpoint containing only the Roadmap's binding change. An identical
+binding needs no extra checkpoint. "Stop after Discovery" includes both
+checkpoints when the adapter directs them; no additional permission is needed.
+
+If the adapter is absent, empty, scaffold-only, or forbids commits, do not
+invent checkpoint authority. If the Roadmap is dirty, report the completed
+capture and pending binding that needs a project checkpoint, then stop. If the
+Roadmap is already clean, binding may proceed; report any resulting uncommitted
+binding without claiming a checkpoint. Never commit unrelated changes or bypass
+the CLI's clean-target guard.
 This binds local release metadata only; it does not publish or mutate GitHub.
 
 ## Preserve the capture
