@@ -70,7 +70,7 @@ Without adapter authority to commit, a dirty Roadmap leaves binding pending;
 report the captured scope and required project checkpoint without bypassing the
 guard. A clean Roadmap may be bound, with any uncommitted result reported.
 Use `--rebind` only for an explicitly confirmed replacement. Never author the
-field directly or adds it to the scope input. A binding error stops the workflow
+field directly or add it to the scope input. A binding error stops the workflow
 and is reported without undoing the successful scope change or substituting a
 different label. Read-back verifies the bound value before reporting completion.
 This changes only local release metadata and does not authorize publication.
