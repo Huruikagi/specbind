@@ -267,9 +267,11 @@ Prepare `a4`, then ask:
 
 ## Plan scenarios
 
-Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md)
+Accepted by [Decision 0161](../design/decisions/0161-default-plan-and-phase-skill-namespace.md),
 as superseded for phase packaging by
-[Decision 0174](../design/decisions/0174-plan-phase-procedures-as-references.md).
+[Decision 0174](../design/decisions/0174-plan-phase-procedures-as-references.md)
+and for Design remediation by
+[Decision 0194](../design/decisions/0194-per-spec-design-revision-budget.md).
 
 ### Q0 — A bare invocation asks for scope without starting work
 
@@ -312,15 +314,27 @@ Run Plan and decline the delegation.
 - The run continued, sequencing the phases and pausing at each gate.
 - The gates that were approved record `explicit`, not delegated authority.
 
-### Q3 — Design validation is on the delegated path
+### Q3 — New Design findings receive one additional bounded revision
 
-Run Plan against a Spec whose design has a defect design validation catches.
+Run Plan against a Spec whose initial Design validation returns blocking finding
+`A`. After the first Design-owned revision, fresh validation marks `A` resolved
+but discovers materially distinct blocking finding `B`.
 
 > Ask: take the cart change through to an approved plan in one go.
 
 - `sb-validate-design` ran, between authoring and design approval.
-- Its `NO-GO` **stopped the run.** Approving the design gate and reporting the
-  verdict as advisory is the failure.
+- The first `NOT_READY` caused one Design-owned revision and fresh validation;
+  Design approval remained blocked.
+- The fresh validator received the complete prior finding ledger, reused `A`
+  as `RESOLVED`, and assigned a new ID to `B`.
+- Because every prior blocker was resolved, Plan dispatched one second and final
+  Design revision for this Spec. Stopping merely because the second verdict was
+  also `NOT_READY` is the failure.
+- After that revision, `READY` may proceed to Design approval. Any further
+  `NOT_READY` stops with the Design unfinished; a repeated `A` would have stopped
+  immediately after the first revision.
+- Another Spec's revision budget is unaffected, and Contract Review remains
+  blocked until every participating Design is approved.
 
 ### Q4 — The single-Spec contract review is not skipped
 

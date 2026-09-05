@@ -205,12 +205,40 @@ Per item, in order:
 4. re-dispatch the [Design phase](references/design.md) with delegated authority for Design approval
    and its checkpoint
 
-**Design validation is mandatory.** A `NO-GO` blocks approval. It is a validator
-verdict, not a phase status: return its complete findings to that item's
-Design-phase receiver for one revision, then dispatch fresh validation. Stop if
-Design reports a requirements rewind or another user-owned decision, or if the
-fresh validator repeats `NO-GO`. Never approve a rejected draft, repair its
-artifacts in the orchestrator, or let remediation change another item's scope.
+**Design validation is mandatory.** A `NOT_READY` blocks approval. It is a
+validator verdict, not a phase status. Keep a blocking-finding ledger for this
+Spec's current Plan run and return the complete verdict to that item's
+Design-phase receiver. The initial draft does not count as a revision; each
+target Spec has its own budget of at most **two** Design-owned revisions.
+
+After the first `NOT_READY`, dispatch the first revision, then give a fresh
+validator the complete accumulated blocking-finding ledger. On every
+revalidation, require the validator to account for every prior blocking finding
+ID exactly once as `RESOLVED` or still `BLOCKING`, and to assign new IDs only to
+materially distinct findings. The fresh validator owns semantic identity; the
+orchestrator checks the explicit mapping and never infers from changed wording
+or location.
+
+- If any prior finding remains `BLOCKING`, stop this Spec immediately even
+  though one revision remains.
+- If every prior finding is `RESOLVED` and only new finding IDs block readiness,
+  return the complete ledger for the second and final revision, then dispatch
+  fresh validation again.
+- After the second revision, only `READY` permits approval. Any `NOT_READY`
+  leaves the Design unfinished, whether its blockers are repeated or new.
+- If a revalidation omits a prior blocking ID, maps it more than once, or leaves
+  semantic continuity ambiguous, stop with the Design unfinished. Do not repair
+  the comparison in the orchestrator.
+
+Stop immediately if Design reports a requirements rewind or another user-owned
+decision. Never approve a rejected draft, repair its artifacts in the
+orchestrator, or let remediation change another item's scope. Exhausting this
+budget is an ordinary unfinished Design result, not `HUMAN_DECISION` unless a
+separate finding actually requires the user's choice.
+
+The revision budget is per target Spec, not per Milestone or per finding. In all
+scope, continue independently reachable work for other Specs, but the global
+Contract Review still waits for current Design approval from every participant.
 
 Do not give the authoring dispatch Design-gate authority. Its expected
 stopped-by-design result is an unapproved Design ready for independent review,

@@ -1019,16 +1019,27 @@ fn planning_orchestrator_validates_design_before_delegated_approval() {
 }
 
 #[test]
-fn planning_orchestrator_routes_design_no_go_through_one_owned_revision() {
+fn planning_orchestrator_bounds_design_remediation_per_spec_and_finding_history() {
     let body = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("orchestrator body");
-    assert!(body.contains("validator\nverdict, not a phase status"));
-    assert!(body.contains("one revision"));
-    assert!(body.contains("fresh validation"));
+    assert!(body.contains("a\nvalidator verdict, not a phase status"));
+    assert!(body.contains("at most **two** Design-owned revisions"));
+    assert!(body.contains("every prior blocking finding\nID exactly once"));
+    assert!(body.contains("The fresh validator owns semantic identity"));
+    assert!(body.contains("only new finding IDs block readiness"));
+    assert!(body.contains("not per Milestone or per finding"));
+    assert!(body.contains("ordinary unfinished Design result"));
     assert!(body.contains("requirements rewind"));
     assert!(body.contains("Never approve"));
+
+    let validation = skill::find("sb-validate-design").expect("validation skill");
+    let validation_body = validation.body().expect("validation body");
+    assert!(validation_body.contains("finding an ID scoped to this Spec's current Plan run"));
+    assert!(validation_body.contains("every prior `BLOCKING` finding ID exactly once"));
+    assert!(validation_body.contains("reuse its ID and\nmark it `RESOLVED` or still `BLOCKING`"));
+    assert!(validation_body.contains("comparison is incomplete or ambiguous"));
 }
 
 #[test]

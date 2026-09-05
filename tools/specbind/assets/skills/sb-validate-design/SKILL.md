@@ -136,11 +136,16 @@ it must do.
 
 ## 4. Return the verdict
 
+Give every finding an ID scoped to this Spec's current Plan run. IDs make a
+fresh revalidation auditable; they do not make the finding identity mechanical.
+Identity follows the endangered Requirement or boundary and the missing or
+conflicting obligation, not incidental rewording or a moved location.
+
 ```text
 ## Design validation
 - VERDICT: READY | NOT_READY
 - FINDINGS:
-  - [BLOCKING|DEFERRED|RESOLVED] <requirement or boundary at risk> — <where in the design> — <consequence>
+  - [BLOCKING|DEFERRED|RESOLVED] <finding-id> — <requirement or boundary at risk> — <where in the design> — <consequence>
 ```
 
 Every finding carries a disposition. A finding with none is one nobody carries
@@ -163,6 +168,21 @@ determine which component owns retry, so tasks cannot be bounded" can.
 
 Rank by what would change the verdict, and say what the design does well when it
 is true.
+
+When the dispatch includes prior Design-validation findings, treat this as a
+revalidation. Read the complete current Design independently, then account for
+every prior `BLOCKING` finding ID exactly once in `FINDINGS`: reuse its ID and
+mark it `RESOLVED` or still `BLOCKING`. Assign a new ID only to a materially
+distinct finding. A changed description or document location does not create a
+new finding when the same Requirement or boundary remains endangered by the
+same missing or conflicting obligation.
+
+Do not accept the Design author's claim that its repair succeeded as evidence.
+If the supplied history is incomplete, an ID cannot be mapped confidently, or
+one prior ID would need contradictory dispositions, return `NOT_READY`, state
+that the comparison is incomplete or ambiguous, and do not manufacture a clean
+mapping. The Plan orchestrator owns the revision limit; report the evidence and
+do not recommend bypassing it.
 
 ## 5. Record deferred findings
 
