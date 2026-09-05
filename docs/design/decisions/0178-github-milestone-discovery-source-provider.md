@@ -33,7 +33,42 @@ observed update time. Entries with `pull_request` metadata are visible
 non-Issue items, not requirements. Issue bodies may inform classification.
 Comments and timeline events are excluded: Discovery neither reads nor treats
 them as source material. Labels, state, author, assignee, and Milestone metadata
-are routing evidence only.
+are routing evidence only, except for the confirmed title-derived release
+binding described below.
+
+### Title-derived release binding
+
+After complete acquisition, a whole Milestone title matching both Decision
+0073's portable label grammar and the following conservative version shape is
+the default `target_release`:
+
+```regex
+^v?[0-9]+(?:\.[0-9]+)*(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?(?:\+[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?$
+```
+
+This recognizes labels such as `v1`, `1.4`, `v1.4.0`, `1.4.0-rc.1`,
+`1.4.0+build.7`, and `2026-09-06` without parsing SemVer meaning. The exact
+title is retained; no trimming, substring extraction, or normalization occurs.
+Nonmatching titles such as `Release v1.4.0`, `Backlog`, and `release_42` do
+not cause a version question or change an existing binding. An explicit
+maintainer-supplied release label overrides this default and remains subject
+only to the ordinary portable grammar.
+
+Discovery includes the exact proposed value and provenance in `Source coverage`.
+The normal scope confirmation authorizes initial binding without a separate
+version confirmation. A matching existing binding needs no mutation. Replacing
+a different non-null value still requires Decision 0072's explicit agreement
+after showing both values; ordinary scope approval alone is insufficient.
+
+After successful scope creation or update (including unchanged scope), Discovery
+runs `milestone bind-release` before Brief authoring and checkpointing, with
+`--rebind` only for an explicitly confirmed replacement. It never authors the
+field directly or adds it to the scope input. A binding error stops the workflow
+and is reported without undoing the successful scope change or substituting a
+different label. Read-back verifies the bound value before reporting completion.
+This changes only local release metadata and does not authorize publication.
+
+### Capture and promotion boundaries
 
 An inaccessible repository or Issue, ambiguous or missing identity, unsupported
 entry, failed page, or incomplete pagination is a partial acquisition. Discovery

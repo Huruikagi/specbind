@@ -711,12 +711,64 @@ fn github_milestone_source_collection_is_complete_read_only_and_preserved() {
         "Do not read comments or timeline events",
         "partial acquisition stops before classification",
         "they do not\nsilently re-query GitHub",
+        "Bind a version-shaped Milestone title",
+        "specbind milestone bind-release <version>",
+        "scope approval alone does not\nauthorize that replacement",
+        "do not trim it, extract a version from prose",
+        "before Brief authoring or checkpointing",
+        "Stop on a binding\nerror",
     ] {
         assert!(
             provider.contains(required),
             "GitHub provider missing {required}"
         );
     }
+}
+
+#[test]
+fn github_milestone_title_recognition_preserves_portable_version_labels() {
+    let provider = skill_resource_text("sb-discovery", "references/github-milestone.md");
+    let pattern = provider
+        .split_once("```regex\n")
+        .expect("version recognition grammar")
+        .1
+        .split_once("\n```")
+        .expect("grammar fence")
+        .0;
+    let schema = serde_json::json!({
+        "type": "string",
+        "maxLength": 64,
+        "allOf": [
+            { "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$" },
+            { "pattern": pattern }
+        ]
+    });
+    let validator = jsonschema::validator_for(&schema).expect("valid title grammar");
+    for title in [
+        "v1",
+        "1.4",
+        "v1.4.0",
+        "1.4.0-rc.1",
+        "1.4.0+build.7",
+        "2026-09-06",
+    ] {
+        assert!(validator.is_valid(&serde_json::json!(title)), "{title}");
+    }
+    for title in [
+        "",
+        "Backlog",
+        "release_42",
+        "Release v1.4.0",
+        " v1.4.0",
+        "v1.4.0 ",
+        "v1/4/0",
+        "v１.４.０",
+        "v1..4",
+        "v1.4.0\n",
+    ] {
+        assert!(!validator.is_valid(&serde_json::json!(title)), "{title:?}");
+    }
+    assert!(!validator.is_valid(&serde_json::json!("1".repeat(65))));
 }
 
 #[test]

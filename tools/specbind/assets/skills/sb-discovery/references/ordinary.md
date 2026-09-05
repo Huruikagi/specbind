@@ -354,6 +354,9 @@ fragment silently discards the rest of the roadmap prose.
 The scope document is transient input. Pipe it on standard input rather than
 leaving a file behind in the repository.
 
+For GitHub Milestone input, now apply the provider procedure's confirmed release
+binding before proceeding to Brief authoring and checkpointing.
+
 ## 7. Write the briefs, then report
 
 Every Spec-backed work item gets an active brief at `<specDir>/<spec>/brief.md`,

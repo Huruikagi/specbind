@@ -65,9 +65,10 @@ stale even when its current bytes were reverted.
 
 ### Keep release authority and release guards unchanged
 
-Initial binding still requires a user-supplied opaque release label. Replacing
-a non-null label still requires the explicit `--rebind` operation and the
-existing user confirmation in an agent-assisted workflow. Archive collision,
+Initial binding requires a user-supplied opaque release label or the exact
+GitHub Milestone title included in the confirmed Discovery proposal under
+Decision 0178. Replacing a non-null label still requires the explicit `--rebind`
+operation and the existing user confirmation in an agent-assisted workflow. Archive collision,
 active-milestone, target-path, clean-worktree, publication, verification, and
 finalization guards are unchanged.
 

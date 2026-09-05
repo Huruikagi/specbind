@@ -77,6 +77,47 @@ unresolved disposition; relevant work items; and one-line reason>
 An unresolved item means the proposal is not approvable. Ask the maintainer to
 settle it before changing state.
 
+## Bind a version-shaped Milestone title
+
+Use the acquired title as the default release label when the **whole title**
+matches both the portable label grammar (1–64 ASCII characters,
+`^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$`) and this conservative version shape:
+
+```regex
+^v?[0-9]+(?:\.[0-9]+)*(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?(?:\+[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?$
+```
+
+Examples include `v1`, `1.4`, `v1.4.0`, `1.4.0-rc.1`, `1.4.0+build.7`,
+and `2026-09-06`. This is title recognition, not SemVer validation or ordering.
+Preserve the exact title: do not trim it, extract a version from prose, remove
+or add `v`, or change case. `Release v1.4.0`, `Backlog`, and `release_42`
+do not select a default; continue Discovery without asking for a version or
+changing the existing binding. A maintainer-supplied release label takes
+precedence over the title default and uses the ordinary portable label grammar.
+
+Include the proposed exact `target_release` and its title provenance in
+`Source coverage`, alongside the current binding when one exists. Initial
+binding needs no separate version question: the ordinary scope confirmation
+also confirms this visible default. An identical existing binding is a no-op.
+If a different non-null binding exists, show both values and obtain explicit
+agreement to replace it before using `--rebind`; scope approval alone does not
+authorize that replacement. Never silently overwrite a conflicting binding.
+
+After the confirmed `milestone create` or `milestone update-scope` succeeds
+(including an unchanged scope), and before Brief authoring or checkpointing,
+apply the confirmed label through the CLI:
+
+```sh
+specbind milestone bind-release <version>
+```
+
+Use `--rebind` only for the explicitly confirmed replacement above. Never write
+`target_release` directly or put it in the scope candidate. Stop on a binding
+error, preserve the successful scope mutation, and report the outstanding
+binding; do not invent another label or claim Discovery is complete. Read
+`specbind milestone status` back to verify and report the exact bound value.
+This binds local release metadata only; it does not publish or mutate GitHub.
+
 ## Preserve the capture
 
 When creating the Roadmap, fill the selected body with complete GitHub

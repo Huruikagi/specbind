@@ -214,6 +214,27 @@ whose dispositions are excluded, duplicate, and unresolved.
 - The run proves no GitHub mutation occurred. Later planning uses the approved
   Brief context and does not automatically re-query or synchronize GitHub.
 
+#### D15 release-title subset
+
+A complete accessible Milestone with at least one actionable Issue is enough to
+measure title binding separately from the multi-Spec coverage combinations above.
+Use the same request and approve only the displayed Discovery proposal.
+
+- With a whole version-shaped title (for example `v1.0.0`) and no local
+  binding, the proposal includes the exact title-derived target in Source
+  coverage. No local mutation precedes scope confirmation.
+- After approval, the CLI binds that exact value before Brief authoring and
+  checkpointing, with no separate initial-version question or publication.
+- A rerun with the same target does not rebind. A different existing binding
+  is shown alongside the proposed value and is not replaced without explicit
+  replacement confirmation.
+- A nonmatching title (for example `Release v1.0.0` or `Backlog`) causes no
+  extraction, version question, or binding change. An explicit user-supplied
+  release label takes precedence.
+
+Record which title/binding variants were actually available and measured; a
+single live Milestone does not prove all variants or full D15 coverage.
+
 ### D16 — An explicitly named owned path enters through the Contract projection
 
 From a fresh fixture, use the existing `cart` Contract, which declares

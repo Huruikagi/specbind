@@ -66,6 +66,14 @@ Milestone number separately, or use the exact canonical URL
 Open and closed Issues are included, while comments and timeline events are not
 source material.
 
+When the whole Milestone title has a version shape such as `v1`, `v1.4.0`,
+`1.4.0-rc.1`, or `2026-09-06`, Discovery binds that exact title as the target
+release. The proposed value is included in the ordinary scope confirmation;
+initial binding needs no separate version question. Discovery does not extract
+a version from prose such as `Release v1.4.0` or normalize the title. An
+explicitly supplied release label takes precedence. Replacing a different
+existing binding requires confirmation after showing both values.
+
 Source material is input, not authoritative specification. Requirements and
 Design read the Brief-declared sources and promote accepted behavior and
 technical conclusions into their own artifacts. Remote source context is
