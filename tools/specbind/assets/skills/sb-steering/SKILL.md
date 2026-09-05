@@ -217,6 +217,11 @@ workflow; do not recreate this comparison with a project script.
 
 ## 6. Checkpoint
 
+This section is part of completing Steering. A request to stop after Steering or
+after synchronization still proceeds through this section; it does not mean
+stop with verified files left dirty. Only an explicit instruction that forbids
+commits skips an otherwise active adapter-directed checkpoint.
+
 After every touched Steering document passes the applicable verification above,
 read the active Git adapter:
 

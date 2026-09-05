@@ -1340,6 +1340,8 @@ fn steering_checkpoints_only_its_verified_document_changes() {
     let report = body.find("## 7. Report").expect("report section");
     assert!(verification < checkpoint && checkpoint < report);
     for required in [
+        "A request to stop after Steering or\nafter synchronization still proceeds through this section",
+        "Only an explicit instruction that forbids\ncommits skips",
         "specbind adapter read git --for consume",
         "NO_CHANGE ADAPTER_ABSENT",
         "NO_CHANGE ADAPTER_SCAFFOLD",
