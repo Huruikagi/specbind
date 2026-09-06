@@ -1,7 +1,8 @@
 use clap::CommandFactory as _;
 use specbind::{agent_role, args::Cli, install::Agent, protocol, rule, skill};
 
-const ACCEPTED_SKILLS: [&str; 15] = [
+const ACCEPTED_SKILLS: [&str; 16] = [
+    "sb-adopt",
     "sb-contract-review",
     "sb-configure",
     "sb-debug",
@@ -90,6 +91,12 @@ fn embeds_the_accepted_skill_set_with_valid_metadata() {
         .map(|entry| entry.name)
         .collect::<Vec<_>>();
     assert_eq!(names, ACCEPTED_SKILLS);
+    let durable = skill::installed(false)
+        .map(|entry| entry.name)
+        .collect::<Vec<_>>();
+    assert_eq!(durable.len(), 15);
+    assert!(!durable.contains(&"sb-adopt"));
+    assert_eq!(skill::installed(true).count(), ACCEPTED_SKILLS.len());
 
     for entry in skill::all() {
         let metadata = entry.metadata().expect("parseable Front Matter");
@@ -254,7 +261,7 @@ fn installs_each_skill_to_the_accepted_target() {
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 7),
-        ("sb-discovery", 4),
+        ("sb-discovery", 3),
         ("sb-implement", 2),
         ("sb-plan", 3),
         ("sb-release", 1),
@@ -283,13 +290,12 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
 }
 
 #[test]
-fn discovery_entrypoint_routes_only_the_selected_procedure() {
+fn discovery_entrypoint_has_no_reverse_adoption_route() {
     let entry = skill::find("sb-discovery").expect("discovery skill");
     let body = entry.body().expect("discovery body");
 
     for reference in [
         "references/ordinary.md",
-        "references/reverse.md",
         "references/local-files.md",
         "references/github-milestone.md",
     ] {
@@ -298,8 +304,9 @@ fn discovery_entrypoint_routes_only_the_selected_procedure() {
             "missing direct route to {reference}"
         );
     }
-    assert!(body.contains("Do not also read the ordinary procedure"));
     assert!(body.contains("Do not load a provider procedure for an ordinary"));
+    assert!(!body.contains("reverse"));
+    assert!(!body.contains("adoption"));
     assert!(!body.contains("specbind milestone status"));
     assert!(!body.contains("specbind adoption preflight"));
 
@@ -465,10 +472,9 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
 }
 
 #[test]
-fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finalization() {
-    let body = skill_package_text("sb-discovery");
+fn adoption_skill_keeps_evidence_separate_and_owns_non_release_finalization() {
+    let body = skill_package_text("sb-adopt");
     for required in [
-        "references/reverse.md",
         "specbind adoption preflight",
         "one complete proposal",
         "temporary adoption record",
@@ -488,24 +494,27 @@ fn discovery_reverse_route_keeps_evidence_separate_and_owns_non_release_finaliza
     ] {
         assert!(
             body.contains(required),
-            "Discovery adoption package must contain {required}"
+            "Adoption package must contain {required}"
         );
     }
     for retired in ["references/adopt-start.md", "references/adopt-resume.md"] {
         assert!(
             !body.contains(retired),
-            "Discovery package must not retain retired resource {retired}"
+            "Adoption package must not retain retired resource {retired}"
         );
     }
     assert!(
         !body.to_ascii_lowercase().contains("dossier"),
-        "Discovery adoption package must describe the temporary record without treating dossier as a product term"
+        "Adoption package must describe the temporary record without treating dossier as a product term"
     );
 }
 
 #[test]
 fn reverse_resume_preserves_contract_review_ownership_and_readiness() {
-    let reverse = skill_resource_text("sb-discovery", "references/reverse.md");
+    let reverse = skill::find("sb-adopt")
+        .expect("adoption skill")
+        .body()
+        .expect("body");
     assert!(reverse.contains("dispatch the installed\n`sb-contract-review` workflow"));
     assert!(reverse.contains("dispatch the initial evidence readers again"));
     assert!(reverse.contains("assessment and findings must still be presented before\nacceptance"));
@@ -521,7 +530,10 @@ fn reverse_resume_preserves_contract_review_ownership_and_readiness() {
 
 #[test]
 fn reverse_discovery_resolves_and_checkpoints_deferred_findings_after_creation() {
-    let body = skill_resource_text("sb-discovery", "references/reverse.md");
+    let body = skill::find("sb-adopt")
+        .expect("adoption skill")
+        .body()
+        .expect("body");
     let read = body
         .find("specbind adapter read deferred --for consume")
         .expect("exact deferred selector");
@@ -1838,7 +1850,10 @@ fn forward_test_clarifications_preserve_read_and_semantic_boundaries() {
     assert!(drive.contains("Dispatch its exact item and summary"));
     assert!(drive.contains("normalize the handoff as\n`REROUTABLE` plus `HUMAN_DECISION`"));
 
-    let reverse = skill_resource_text("sb-discovery", "references/reverse.md");
+    let reverse = skill::find("sb-adopt")
+        .expect("adoption skill")
+        .body()
+        .expect("body");
     let preflight = reverse
         .find("specbind adoption preflight")
         .expect("reverse preflight");

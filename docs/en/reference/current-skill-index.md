@@ -11,7 +11,7 @@ history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0176](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0176-skill-namespace-separation.md).
 
-Every supported Agent profile receives the same 15 skills:
+Every supported Agent profile receives the same 15 durable skills by default:
 
 - Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/sb-*`
 - Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$sb-*`
@@ -20,6 +20,10 @@ Every supported Agent profile receives the same 15 skills:
 
 Selecting both Codex and generic installs each shared `.agents/skills/` target
 once.
+
+`specbind install --with-adoption` additionally installs the temporary
+`sb-adopt` Skill. Its enabled state is persisted during an active reverse run,
+and successful reverse finalization retires it for every configured Agent.
 
 Codex installations also receive
 `.agents/skills/<skill>/agents/openai.yaml`. It presents branded names such as
@@ -32,7 +36,7 @@ declare tool dependencies. See
 | Skill | Current role |
 | --- | --- |
 | `sb-configure` | Review and change supported SpecBind project configuration, or execute an explicitly requested installation-client binary update and guarded project-asset refresh; verify the result and complete authorized aftercare. |
-| `sb-discovery` | Confirm milestone scope from a request, explicit local Source Collection, or selected existing implementation; classify durable boundaries, delegate state changes to the CLI, and author provenance-bearing Roadmaps, Briefs, and adoption Research handoffs. |
+| `sb-discovery` | Confirm milestone scope from a change request or explicit Source Collection; classify durable boundaries, delegate state changes to the CLI, and author provenance-bearing Roadmaps and Briefs. |
 | `sb-plan` | The only planning entry point: take one named Spec or every Spec-backed milestone item through Tasks approval, or run one explicitly requested Requirements, Design, or Tasks phase for one named Spec. |
 | `sb-drive` | Drive the active milestone through safe reachable planning, implementation, and validation work, park branch-local attention, and stop before release execution. |
 | `sb-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |
@@ -47,11 +51,17 @@ declare tool dependencies. See
 | `sb-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
 | `sb-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
 
+Optional temporary Skill:
+
+| Skill | Current role |
+| --- | --- |
+| `sb-adopt` | Establish durable Specs from a fixed existing implementation through Requirements, Design, Contract Review, and non-release finalization; then retire itself through CLI-owned asset cleanup. |
+
 There are no compatibility aliases for earlier `kiro-*`, any former
 `specbind-*` product Skill, removed phase-specific `specbind-plan-*`, or
-`specbind-adopt-existing` Skill names. Milestone and Spec initialization and
-existing-implementation adoption are routed through `sb-discovery`, not
-separate skills.
+`specbind-adopt-existing` Skill names. Milestone and Spec initialization are
+routed through `sb-discovery`; existing-implementation adoption uses the
+distinct opt-in `sb-adopt` Skill.
 
 ## Sources of truth
 

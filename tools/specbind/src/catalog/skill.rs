@@ -75,6 +75,13 @@ impl std::error::Error for SkillError {}
 /// The complete embedded skill set.
 static SKILLS: &[Skill] = &[
     Skill {
+        name: "sb-adopt",
+        display_name: "SpecBind Adoption",
+        short_description: "Establish Specs from an existing implementation.",
+        default_prompt: "Use $sb-adopt to establish Specs from this existing implementation.",
+        source: include_str!("../../assets/skills/sb-adopt/SKILL.md"),
+    },
+    Skill {
         name: "sb-contract-review",
         display_name: "SpecBind Contract Review",
         short_description: "Review the milestone contract graph.",
@@ -286,14 +293,13 @@ static DISCOVERY_RESOURCES: &[SkillResource] = &[
         relative_path: "references/ordinary.md",
         source: include_str!("../../assets/skills/sb-discovery/references/ordinary.md"),
     },
-    SkillResource {
-        relative_path: "references/reverse.md",
-        source: include_str!("../../assets/skills/sb-discovery/references/reverse.md"),
-    },
 ];
 
-static DISCOVERY_RETIRED_RESOURCES: &[&str] =
-    &["references/adopt-resume.md", "references/adopt-start.md"];
+static DISCOVERY_RETIRED_RESOURCES: &[&str] = &[
+    "references/adopt-resume.md",
+    "references/adopt-start.md",
+    "references/reverse.md",
+];
 
 static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     SkillResource {
@@ -330,6 +336,13 @@ static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
 #[must_use]
 pub fn all() -> &'static [Skill] {
     SKILLS
+}
+
+/// Lists the Skills installed for the selected project capabilities.
+pub fn installed(adoption: bool) -> impl Iterator<Item = &'static Skill> {
+    SKILLS
+        .iter()
+        .filter(move |skill| adoption || skill.name != "sb-adopt")
 }
 
 /// Lists exact former product-managed Skill identities removed on refresh.
@@ -504,6 +517,12 @@ impl Skill {
             .strip_suffix("/SKILL.md")
             .expect("skill entrypoint always ends in /SKILL.md");
         format!("{package_root}/{relative_path}")
+    }
+
+    /// Returns one project-relative target inside this package.
+    #[must_use]
+    pub fn resource_target_for(self, agent: Agent, relative_path: &str) -> String {
+        self.resource_target(agent, relative_path)
     }
 
     fn render_openai_yaml(self) -> String {

@@ -460,7 +460,7 @@ fn milestone_handler(
     if reverse {
         return MilestoneHandlerData {
             kind: "skill",
-            target: "sb-discovery",
+            target: "sb-adopt",
             mode: Some("reverse_resume"),
         };
     }

@@ -43,6 +43,12 @@ pub enum Command {
         /// Maintain the marked `SpecBind` block in root agent instructions.
         #[arg(long)]
         project_instructions: bool,
+        /// Install the temporary existing-project adoption Skill.
+        #[arg(long, conflicts_with = "without_adoption")]
+        with_adoption: bool,
+        /// Remove the temporary existing-project adoption Skill.
+        #[arg(long, conflicts_with = "with_adoption")]
+        without_adoption: bool,
     },
     /// Plan or apply removal of one selected agent integration.
     RemoveAgent {

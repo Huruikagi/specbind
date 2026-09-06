@@ -120,11 +120,11 @@ Once scope is explicit, present before doing anything:
 - that every delegated acceptance records `sb-plan` in its durable
   gate evidence, visible afterwards through `specbind spec status`.
 
-Exception: when `sb-discovery` dispatches a confirmed reverse milestone, its
+Exception: when `sb-adopt` dispatches a confirmed reverse milestone, its
 visible reverse proposal already authorized Requirements and Design under
-workflow `sb-discovery`. Verify `baselineVersion`, `reverseSpecs`, and that
+workflow `sb-adopt`. Verify `baselineVersion`, `reverseSpecs`, and that
 `targetRelease` is absent from milestone scope. Do not ask again, do not claim
-Tasks authority, and record `sb-discovery` in those two gates.
+Tasks authority, and record `sb-adopt` in those two gates.
 
 Take **one confirmation** for the run. The request to run this skill is **not**
 that confirmation unless it explicitly authorizes those named gates for the
@@ -276,7 +276,7 @@ After the review is accepted:
 
 For a reverse milestone, stop this sequence after the accepted Contract Review.
 Design approval reports `adoption_ready`; Tasks are forbidden. Return control
-to `sb-discovery`, which owns `milestone reverse finalize`.
+to `sb-adopt`, which owns `milestone reverse finalize`.
 
 Gap analysis is not on this path. Run `sb-gap-analysis` first when
 brownfield uncertainty requires it; this Skill does not decide that for you.

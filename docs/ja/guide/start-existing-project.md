@@ -46,8 +46,9 @@ Codexの表記（`$`）で示します。Claude Codeでは`/`に読み替えて�
 
 すでに相当量のコードがある一方で信頼できるSpecがまだなく、まず現在のプロダクトを
 Specとして固定したい場合は、[既存実装からSpecを確立する](./adopt-existing.md)へ
-進んでください。Steeringと共通設定を整えてから、Requirements、Design、Contract
-Reviewまでを確定し、非リリースの基準履歴として閉じる経路です。
+進んでください。一時的な`sb-adopt`スキルを追加し、Steeringと共通設定を整えてから、
+Requirements、Design、Contract Reviewまでを確定し、非リリースの基準履歴として
+閉じる経路です。完了処理に成功すると、この一時スキルは削除されます。
 
 ## 3. 最初の変更を選ぶ
 

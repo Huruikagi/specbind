@@ -63,7 +63,7 @@ are not shipped.
 | Current skill | Target working name | Change | Status | Current responsibility |
 | --- | --- | --- | --- | --- |
 | `kiro-debug` | `sb-debug` | Change | Implemented | Perform read-only fresh-context root-cause analysis and return a bounded next action. |
-| `kiro-discovery` | `sb-discovery` | Change | Implemented | Analyze requests, explicit local Source Collections, or selected existing implementations; confirm durable boundaries and invoke guarded milestone initialization or update. |
+| `kiro-discovery` | `sb-discovery` | Change | Implemented | Analyze change requests and explicit local Source Collections; confirm durable boundaries and invoke guarded milestone initialization or update. |
 | `kiro-impl` | `sb-implement` | Change | Implemented | Implement one Spec-backed or Direct Roadmap item. |
 | `kiro-review` | `sb-review-task` | Rename | Implemented | Review one task implementation using the actual diff and approved inputs. |
 | `kiro-spec-design` | `sb-plan` Design reference | Merge | Implemented | Maintain current design, active-requirement traceability, and the cross-spec contract. |
@@ -81,6 +81,7 @@ are not shipped.
 | None | `sb-release` | New | Implemented | Complete a release and close its active milestone. |
 | None | `sb-configure` | New | Implemented | Complete supported project configuration changes, delegate semantic authoring when needed, verify the result, and guide aftercare. |
 | None | `sb-drive` | New | Implemented | Drive the active milestone through safe reachable work, park branch-local attention, and stop at release readiness or when no safe action remains. |
+| None | `sb-adopt` | New | Implemented | Temporarily establish Specs from a fixed existing implementation, then retire the opt-in Skill after non-release finalization. |
 
 This classification now records the implemented v1 migration from the inherited
 set. Future rows should use `Rename` only when responsibility is unchanged;
@@ -229,10 +230,10 @@ the user resume each owning workflow manually.
 
 ## Post-v1 implementation tracking
 
-- Existing-implementation establishment uses the single conditional
-  `reverse.md` reference of `sb-discovery` under Decisions 0181 and 0188. It
-  establishes a fixed-revision baseline through Requirements, Design, Contract
-  Review, and reverse finalization without creating Tasks or a product release.
+- Existing-implementation establishment uses the optional temporary `sb-adopt`
+  Skill under Decision 0196. It establishes a fixed-revision baseline through
+  Requirements, Design, Contract Review, and reverse finalization without
+  creating Tasks or a product release, then the CLI retires the Skill.
 
 - The accepted `sb-drive` contract from Decision 0168 is implemented;
   [Issue #9](https://github.com/Huruikagi/specbind/issues/9) retains its design

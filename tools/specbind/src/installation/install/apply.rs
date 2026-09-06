@@ -25,17 +25,23 @@ pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutco
             unchanged: true,
         });
     }
-    // Assets first, configuration last: a project only claims to be installed
-    // once the assets its skills read actually exist.
-    let ordered = plan
-        .entries
+    apply_entries(project_root, &plan.entries)?;
+    Ok(InstallOutcome {
+        plan,
+        unchanged: false,
+    })
+}
+
+pub(super) fn apply_entries(
+    project_root: &Path,
+    entries: &[PlanEntry],
+) -> Result<(), InstallIssues> {
+    // Assets first, configuration last: a project only claims the selected
+    // capability state once the matching assets exist or have been retired.
+    let ordered = entries
         .iter()
         .filter(|entry| entry.category != "config")
-        .chain(
-            plan.entries
-                .iter()
-                .filter(|entry| entry.category == "config"),
-        );
+        .chain(entries.iter().filter(|entry| entry.category == "config"));
     for entry in ordered {
         if entry.action == PlanAction::Keep {
             continue;
@@ -86,10 +92,7 @@ pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutco
             )
         })?;
     }
-    Ok(InstallOutcome {
-        plan,
-        unchanged: false,
-    })
+    Ok(())
 }
 
 /// Fails closed when the filesystem no longer matches the planned action.

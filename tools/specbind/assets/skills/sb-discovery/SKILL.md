@@ -1,7 +1,7 @@
 ---
 name: sb-discovery
-description: Turn a change request, Source Collection, or selected existing implementation into confirmed Spec and milestone boundaries. Owns ordinary scope discovery and the fixed-revision reverse-establishment orchestration.
-argument-hint: "<change, source path, GitHub Milestone, or existing area to adopt>"
+description: Turn a change request or Source Collection into confirmed Spec and milestone boundaries.
+argument-hint: "<change, source path, or GitHub Milestone>"
 ---
 
 # Decide what the work is
@@ -17,17 +17,9 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-## Select exactly one Discovery procedure
+## Select the Discovery procedure
 
-Use reverse mode only when the maintainer explicitly asks to establish Specs
-from working code and tests or to resume an active reverse establishment. Read
-[Reverse establishment](references/reverse.md) completely and follow it. It
-owns the confirmed orchestration through Requirements, Design, Contract
-Review, and non-release finalization. Do not also read the ordinary procedure.
-An ordinary change to an existing repository never triggers an implementation
-scan merely because code exists.
-
-Every other request uses [ordinary change Discovery](references/ordinary.md).
+Read [ordinary change Discovery](references/ordinary.md).
 Read that procedure completely before classifying or changing anything. It
 owns the shared entry, ownership, confirmation, mutation, Brief, checkpoint,
 and reporting contract.

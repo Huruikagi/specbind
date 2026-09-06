@@ -1,9 +1,9 @@
 # Establish Specs from an existing implementation
 
-The explicit reverse mode of `sb-discovery` establishes durable Specs for the
-product a fixed existing revision already represents. It is for a project with
-working code but no trusted specification, not migration from another SDD
-product and not delivery of a new change.
+The temporary `sb-adopt` Skill establishes durable Specs for the product a
+fixed existing revision already represents. It is for a project with working
+code but no trusted specification, not migration from another SDD product and
+not delivery of a new change.
 
 Implementation is evidence, not specification authority. An observed behavior
 may be maintained intent, a structural constraint, a historical accident, an
@@ -16,18 +16,27 @@ in [Start with an existing project](./start-existing-project.md) instead.
 
 ## Prerequisites
 
-- SpecBind is [installed](./install.md) in the project.
+- SpecBind is [installed](./install.md) with `--with-adoption` in the project.
 - No durable Specs exist and no Milestone is active.
 - Steering covers product purpose, technology constraints, and structure.
 - The repository, including Steering, is committed and clean.
 - You name the whole repository or a concrete area.
 - You provide the existing product version represented by that revision.
 
+If SpecBind was previously installed without the temporary Skill, enable it
+from a clean committed worktree, review the plan, commit the installed assets,
+and reopen the Agent session:
+
+```sh
+specbind install --dry-run --with-adoption
+specbind install --with-adoption
+```
+
 ## The whole route
 
 ```text
 Configure and commit Steering
-  -> sb-discovery with selected area and existing version
+  -> sb-adopt with selected area and existing version
   -> fix source_revision
   -> inspect code and tests
   -> confirm one complete reverse proposal
@@ -40,7 +49,7 @@ Configure and commit Steering
 
 You confirm once, at the reverse proposal. Configuration and reverse
 establishment are separate runs, so shape Steering and the shared surfaces
-first, then run Discovery once.
+first, then run Adoption once.
 
 ## 1. Shape Steering
 
@@ -54,7 +63,7 @@ existing implementation. Start with the Steering it needs.
 `sb-configure` first reads the mechanical configuration summary. When durable
 guidance is needed, it routes Steering bootstrap or synchronization to
 `sb-steering`. Review and commit the resulting Steering before adoption;
-Discovery pins that revision as its evidence.
+Adoption pins that revision as its evidence.
 
 ## 2. Run focused configuration reviews
 
@@ -75,25 +84,25 @@ reconciled by configuration.
 
 See [Customize SpecBind](./customization.md) for the surfaces themselves.
 
-## 3. Start reverse Discovery
+## 3. Start Adoption
 
 With committed Steering and a clean worktree, ask for a bounded adoption target
 and the existing product version, for example:
 
 ```text
-$sb-discovery Establish Specs from the existing implementation across this
+$sb-adopt Establish Specs from the existing implementation across this
 repository as existing version v2.4.0. Investigate the current code and
 tests as evidence, and ask me to confirm the boundaries and maintained
 behavior before creating anything.
 ```
 
-Discovery runs its adoption preflight, pins the inspected revision, and presents
+Adoption runs its preflight, pins the inspected revision, and presents
 one complete reverse proposal: the existing `baseline_version`, the candidate
 `reverseSpecs`, their maintained intent and evidence, dependencies, blocking and
 deferred unknowns, suspected defects, and excluded areas. Nothing is created
 before you confirm that complete proposal.
 
-## 4. Let Discovery finish the baseline
+## 4. Let Adoption finish the baseline
 
 After you confirm the proposal, the same invocation creates the reverse
 milestone and continues through Requirements, Design validation, Design
@@ -124,11 +133,11 @@ maintained behavior. Other independent Specs can continue, but Contract Review
 and finalization wait. A question may be deferred only when every later answer
 would leave current Spec meaning unchanged.
 
-Discovery uses `specbind adapter list` to locate the active Deferred Findings
+Adoption uses `specbind adapter list` to locate the active Deferred Findings
 Adapter and reads its reported selector instead of deriving a command from the
 type name. Behavior that looks defective may be proposed as a suspected defect
 with the source revision, evidence locator, and claim. To preserve the clean
-fixed baseline, Discovery records it at the verified local destination only
+fixed baseline, Adoption records it at the verified local destination only
 after the reverse milestone has been created. It is not automatically a bug or
 requirement, and reverse establishment does not fix it. Sending anything outside
 the project still needs separate authority.
@@ -156,7 +165,7 @@ Do not manually delete lifecycle state.
 
 ## Finalization and history
 
-When every Spec is `adoption_ready` and Contract Review is fresh, Discovery
+When every Spec is `adoption_ready` and Contract Review is fresh, Adoption
 runs:
 
 ```sh
@@ -168,6 +177,12 @@ provenance, removes temporary Brief and Research evidence, and writes a
 `Baseline <version>` entry to each Spec `log.md`. It archives the Roadmap and
 Contract Review under `baselines/` and closes the active milestone. These are
 adoption records, not product-release records.
+
+As the final managed step, the CLI removes `sb-adopt` for every configured
+Agent and records adoption as disabled in `.specbind.json`. If that cleanup is
+reported as pending, the baseline is still final: commit the finalization
+changes, then run `specbind install --without-adoption`. Do not rerun reverse
+finalization for cleanup.
 
 The established Specs then behave like ordinary existing Specs while retaining
 their source revision and version provenance. From the next change onward, they

@@ -178,7 +178,9 @@ Accepted by [Decision 0181](../design/decisions/0181-reverse-spec-establishment.
 with the single-route package boundary from
 [Decision 0188](../design/decisions/0188-retire-legacy-staged-adoption.md) and
 the resumable checkpoint boundary from
-[Decision 0191](../design/decisions/0191-resumable-reverse-establishment.md).
+[Decision 0191](../design/decisions/0191-resumable-reverse-establishment.md),
+and the temporary package boundary from
+[Decision 0196](../design/decisions/0196-optional-temporary-adoption-skill.md).
 
 ### A1 — Adoption stops at a missing Steering baseline
 
@@ -186,10 +188,10 @@ Prepare `a1`, then ask:
 
 > Adopt the existing cart and order implementation into SpecBind Specs.
 
-- The agent discovers the installed Discovery adoption route and runs
+- The agent discovers the installed temporary `sb-adopt` Skill and runs
   `specbind adoption preflight`.
-- The installed Discovery package contains `references/reverse.md` and no
-  legacy staged-adoption references.
+- The installed Discovery package contains no reverse procedure, while
+  `sb-adopt` contains the complete current procedure and no legacy staged route.
 - It stops on `ADOPTION_STEERING_REQUIRED` and routes the maintainer to Steering
   bootstrap.
 - It does not scan the implementation deeply, create a temporary adoption record,
@@ -258,6 +260,8 @@ After the maintainer confirms the presented reverse proposal:
 - After both Design waves, the milestone-wide Contract Review sees a complete
   graph. Reverse finalization completes without Tasks, implementation changes,
   target release, tag, or publication.
+- Finalization retires `sb-adopt` for every configured Agent and removes the
+  persisted adoption choice. The durable 15-Skill installation remains.
 - Both Specs retain reverse establishment provenance for `v1.0.0`; the source
   files remain byte-identical to the fixture baseline.
 
@@ -268,19 +272,23 @@ Prepare `a4`, then ask:
 > Resume this active reverse establishment and complete the adopted baseline.
 > Do not change implementation or perform a product release.
 
-- The agent selects the installed Discovery reverse route and runs
+- The agent selects the installed `sb-adopt` continuation and runs
   `specbind adoption preflight` before interpreting the active checkpoint.
 - Preflight reports `ADOPTION_RESUME_READY`; status reports
   `milestoneKind=reverse` and routes `contract_review` through
-  `sb-discovery` in `reverse_resume` mode.
+  `sb-adopt` in `reverse_resume` mode.
 - It does not repeat repository discovery, propose a different scope, rewrite
   the already approved Requirements or Design, or ask for another scope
   confirmation.
 - It completes Contract Review and reverse finalization, leaving `cart` idle
   with reverse provenance for `v1.0.0` and no active milestone.
+- The installed `sb-adopt` package is absent and `.specbind.json` no longer
+  enables adoption. The normal Discovery package remains installed without a
+  reverse procedure.
 - No Tasks, implementation change, target release, tag, publication, or push
-  occurs. Source files remain byte-identical to the fixed baseline and the
-  worktree ends clean.
+  occurs. Source files remain byte-identical to the fixed baseline. Without an
+  active Git adapter, only the finalization and managed-retirement changes are
+  left uncommitted.
 
 ## Plan scenarios
 

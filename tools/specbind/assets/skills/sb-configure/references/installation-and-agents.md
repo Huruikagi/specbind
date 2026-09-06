@@ -11,7 +11,8 @@ Treat these as the supported configuration fields:
 - `specDir`: fixed after initial installation in v1;
 - `language`: `en` or `ja`;
 - `agents`: `claude-code`, `codex`, or `generic`;
-- optional `projectInstructions: true`; and
+- optional `projectInstructions: true`;
+- optional `adoption: true` while the temporary `sb-adopt` capability is installed; and
 - optional `agentRoles` for Codex or Claude Code.
 
 `generic` has no product role definitions and cannot own `agentRoles`.
@@ -22,13 +23,16 @@ Agent selection through install is additive. Preview the exact current plan,
 then apply the same inputs:
 
 ```sh
-specbind install --dry-run [--agent <agent>] [--language <language>] [--project-instructions]
-specbind install [--agent <agent>] [--language <language>] [--project-instructions]
+specbind install --dry-run [--agent <agent>] [--language <language>] [--project-instructions] [--with-adoption|--without-adoption]
+specbind install [--agent <agent>] [--language <language>] [--project-instructions] [--with-adoption|--without-adoption]
 ```
 
 Do not omit a persisted true `projectInstructions` choice when constructing an
-explicit invocation. Never edit installed Skill files, generated role files,
-or managed root-instruction blocks directly.
+explicit invocation. Omit the adoption flags to preserve the persisted choice;
+use `--with-adoption` only for explicit initial reverse establishment and
+`--without-adoption` only for its guarded retirement or retry. Never edit
+installed Skill files, generated role files, or managed root-instruction blocks
+directly.
 
 For `agentRoles`, edit only `.specbind.json`, preserve unrelated fields, run the
 dry run, and reinstall. A configured model that the host cannot start is a

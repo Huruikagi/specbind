@@ -489,6 +489,8 @@ EOF
     ;;
 
 a1 | a2 | a3 | a4)
+    specbind install --with-adoption >/dev/null \
+        || fail "could not enable the temporary adoption Skill"
     rm -rf .specbind/specs
     if [ "$scenario" = a1 ]; then
         rm -rf .specbind/steering
@@ -698,16 +700,16 @@ source_revision: $baseline
 suspected_defects: []
 EOF
         specbind spec requirements approve cart --approval-mode delegated \
-            --delegation-workflow sb-discovery --requirement-ids 1.1 >/dev/null \
+            --delegation-workflow sb-adopt --requirement-ids 1.1 >/dev/null \
             || fail "could not approve the a4 Requirements gate"
         specbind spec design approve cart --approval-mode delegated \
-            --delegation-workflow sb-discovery >/dev/null \
+            --delegation-workflow sb-adopt >/dev/null \
             || fail "could not approve the a4 Design gate"
         specbind spec requirements approve order --approval-mode delegated \
-            --delegation-workflow sb-discovery --requirement-ids 1.1 >/dev/null \
+            --delegation-workflow sb-adopt --requirement-ids 1.1 >/dev/null \
             || fail "could not approve the a4 order Requirements gate"
         specbind spec design approve order --approval-mode delegated \
-            --delegation-workflow sb-discovery >/dev/null \
+            --delegation-workflow sb-adopt >/dev/null \
             || fail "could not approve the a4 order Design gate"
         git add -A
         git -c user.name=Fixture -c user.email=fixture@example.invalid \
@@ -717,7 +719,7 @@ EOF
         expect "a4 is not at Contract Review" \
             'specbind milestone status --json | grep -q '"'"'"action":"contract_review"'"'"''
         expect "a4 does not project the reverse continuation handler" \
-            'specbind milestone status --json | grep -q '"'"'"target":"sb-discovery","mode":"reverse_resume"'"'"''
+            'specbind milestone status --json | grep -q '"'"'"target":"sb-adopt","mode":"reverse_resume"'"'"''
     fi
     ;;
 

@@ -149,7 +149,7 @@ fn adoption_preflight_resumes_a_clean_reverse_milestone() {
         status["data"]["actionable"][0]["handler"],
         serde_json::json!({
             "kind": "skill",
-            "target": "sb-discovery",
+            "target": "sb-adopt",
             "mode": "reverse_resume"
         })
     );

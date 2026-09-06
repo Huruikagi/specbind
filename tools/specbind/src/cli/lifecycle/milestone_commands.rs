@@ -1,8 +1,10 @@
 //! Milestone mutation command execution and rendering.
 
+use std::fmt::Write as _;
+
 use super::super::{
     CommandOutput, ExternalInputError, LOG_ENTRIES_INPUT, MilestoneIssue, Path, SCOPE_INPUT,
-    adoption_finalize, config, escape, milestone, push_field, read_external_input,
+    adoption_finalize, config, escape, install, milestone, push_field, read_external_input,
 };
 
 #[must_use]
@@ -20,20 +22,69 @@ pub fn milestone_reverse_finalize(start: &Path, log_entries_source: Option<&str>
         }
         None => None,
     };
+    let retirement = match install::prepare_adoption_retirement(&paths.project_root) {
+        Ok(plan) => plan,
+        Err(error) => {
+            return CommandOutput::failure(
+                "ADOPTION_RETIREMENT_PLAN_FAILED",
+                "Cannot prepare temporary Adoption Skill retirement.",
+                error
+                    .issues
+                    .iter()
+                    .map(|issue| {
+                        let path = issue
+                            .path
+                            .as_ref()
+                            .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+                        format!("{}{path} {}", issue.code, escape(&issue.message))
+                    })
+                    .collect(),
+            );
+        }
+    };
     match adoption_finalize::finalize(
         &paths.project_root,
         &paths.specbind_root,
         paths.language,
         log_entries.as_deref(),
     ) {
-        Ok(outcome) => CommandOutput::success(
-            format!(
+        Ok(outcome) => {
+            let mut output = format!(
                 "OK ADOPTION_FINALIZED: Adopted baseline {} across {} specs; no product release was created.\n",
                 escape(&outcome.baseline_version),
                 outcome.specs,
-            )
-            .into_bytes(),
-        ),
+            );
+            if retirement.enabled() {
+                match install::apply_adoption_retirement(&paths.project_root, &retirement) {
+                    Ok(()) => {
+                        output.push_str("  Adoption Skill: retired for every configured agent\n");
+                    }
+                    Err(error) => {
+                        output.push_str(
+                            "  Adoption Skill: retirement pending; the adopted baseline remains final\n",
+                        );
+                        output.push_str(
+                            "  Retry: checkpoint the finalization changes, then run specbind install --without-adoption\n",
+                        );
+                        for issue in error.issues {
+                            let path = issue
+                                .path
+                                .as_ref()
+                                .map_or_else(String::new, |path| format!(" {}:", escape(path)));
+                            let _ = writeln!(
+                                output,
+                                "  Retirement issue: {}{path} {}",
+                                issue.code,
+                                escape(&issue.message)
+                            );
+                        }
+                    }
+                }
+            } else {
+                output.push_str("  Adoption Skill: already disabled\n");
+            }
+            CommandOutput::success(output.into_bytes())
+        }
         Err(error) => {
             let mut issues = error.issues.into_iter();
             let Some(first) = issues.next() else {

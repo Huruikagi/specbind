@@ -113,6 +113,11 @@ fn push_install_summary(output: &mut String, plan: &install::InstallPlan) {
             "disabled"
         },
     );
+    push_field(
+        output,
+        "Adoption Skill",
+        if plan.adoption { "enabled" } else { "disabled" },
+    );
     output.push_str("  Actions:\n");
     for entry in &plan.entries {
         let detail = entry

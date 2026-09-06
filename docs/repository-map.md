@@ -355,3 +355,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0193](./design/decisions/0193-progressive-discovery-procedures.md) | Accepted | Progressive loading of ordinary, reverse, and provider-specific Discovery procedures |
 | [0194](./design/decisions/0194-per-spec-design-revision-budget.md) | Accepted | Per-Spec Design remediation budget with validator-owned finding continuity |
 | [0195](./design/decisions/0195-review-scope-recovery.md) | Accepted | Bounded fresh re-review after a diagnosed Task review scope defect |
+| [0196](./design/decisions/0196-optional-temporary-adoption-skill.md) | Accepted | Optional temporary adoption Skill and guarded retirement after reverse finalization |

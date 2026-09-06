@@ -1,4 +1,21 @@
+---
+name: sb-adopt
+description: Establish Specs from an explicitly selected existing implementation, then retire this temporary adoption Skill after successful finalization.
+argument-hint: "<existing area and represented product version>"
+---
+
 # Establish Specs from a fixed existing implementation
+
+## Apply project language style
+
+Before authoring any artifact or user-facing prose, read:
+
+```sh
+specbind rule read language-style --for consume
+```
+
+Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
+means no additional project preference; any `ERROR` line stops the workflow.
 
 Read this procedure completely only when the maintainer explicitly asks to
 establish Specs from existing code and tests or to resume an active reverse
@@ -190,19 +207,19 @@ specbind milestone status --json
 ```
 
 The result must report `milestoneKind=reverse`, and every actionable entry must
-name `handler.kind=skill`, `handler.target=sb-discovery`, and
+name `handler.kind=skill`, `handler.target=sb-adopt`, and
 `handler.mode=reverse_resume`. Any other handler, inconsistent health, source
 drift, or dirty checkout stops the run without repair.
 
 An explicit maintainer request to resume authorizes the remaining reverse
-orchestration under delegated workflow `sb-discovery`; it does not authorize a
+orchestration under delegated workflow `sb-adopt`; it does not authorize a
 scope change, implementation change, release, external write, or destructive
 recovery. Continue only the phase-relative actions the fresh status exposes.
 Already approved phases remain accepted and are not repeated.
 
 When the action is `contract_review`, dispatch the installed
 `sb-contract-review` workflow with this reverse continuation authority and
-return here after its accepted checkpoint. `sb-discovery` remains the status
+return here after its accepted checkpoint. `sb-adopt` remains the status
 handler because it owns the reverse continuation and subsequent finalization;
 it does not replace the phase owner's review procedure.
 The review's assessment and findings must still be presented before
@@ -212,7 +229,7 @@ continuation authority permits acceptance after that presentation.
 ## Continue without routine pauses
 
 The confirmation above authorizes this establishment orchestration, including
-Requirements and Design gate acceptance under delegated workflow `sb-discovery`.
+Requirements and Design gate acceptance under delegated workflow `sb-adopt`.
 For every actionable reverse Spec, follow the installed `sb-plan` Requirements
 and Design procedures and their full checks. Run Design validation after each
 new Design draft, then the milestone Contract Review when status exposes that
@@ -253,5 +270,12 @@ specbind milestone reverse finalize --log-entries <path-or->
 Finalization writes Baseline entries to each `log.md`, retains establishment
 provenance, archives Roadmap and Contract Review under `baselines/`, removes the
 temporary Brief and Research artifacts and the adoption record, and closes the
-milestone. It must not run a Release Adapter, bind a target release, tag,
-publish, or claim that the product was released.
+milestone. It also retires this temporary Skill for every configured Agent and
+records adoption as disabled in `.specbind.json`. It must not run a Release
+Adapter, bind a target release, tag, publish, or claim that the product was
+released.
+
+If finalization reports that Skill retirement remains pending, the adopted
+baseline is still final. Checkpoint the finalization changes first, then run
+`specbind install --without-adoption` to retry only the managed retirement. Do
+not rerun finalization.

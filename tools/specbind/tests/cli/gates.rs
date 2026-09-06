@@ -136,7 +136,7 @@ fn reverse_design_approval_enters_adoption_ready_without_tasks() {
             "--approval-mode",
             "delegated",
             "--delegation-workflow",
-            "sb-discovery",
+            "sb-adopt",
         ])
         .assert()
         .success()
@@ -157,6 +157,13 @@ fn reverse_design_approval_enters_adoption_ready_without_tasks() {
 #[test]
 fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
     let root = project_fixture();
+    commit_all(root.path());
+    let mut install_adoption = specbind_command();
+    install_adoption
+        .current_dir(root.path())
+        .args(["install", "--with-adoption"])
+        .assert()
+        .success();
     write_gate_fixture(root.path());
     let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
     write(
@@ -216,9 +223,14 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
         )
         .assert()
         .success()
-        .stdout(predicate::str::contains(
-            "OK ADOPTION_FINALIZED: Adopted baseline v2.4.0 across 1 specs; no product release was created.",
-        ));
+        .stdout(
+            predicate::str::contains(
+                "OK ADOPTION_FINALIZED: Adopted baseline v2.4.0 across 1 specs; no product release was created.",
+            )
+            .and(predicate::str::contains(
+                "Adoption Skill: retired for every configured agent",
+            )),
+        );
 
     let spec = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
         .expect("final Spec");
@@ -239,6 +251,38 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
     );
     assert!(!root.path().join(".specbind/releases").exists());
     assert!(root.path().join(".specbind/deferred.md").is_file());
+    assert!(!root.path().join(".agents/skills/sb-adopt").exists());
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(!config.contains("adoption"), "{config}");
+}
+
+#[test]
+fn failed_reverse_finalize_retains_the_temporary_adoption_skill() {
+    let root = project_fixture();
+    commit_all(root.path());
+    let mut install_adoption = specbind_command();
+    install_adoption
+        .current_dir(root.path())
+        .args(["install", "--with-adoption"])
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let mut finalize = specbind_command();
+    finalize
+        .current_dir(root.path())
+        .args(["milestone", "reverse", "finalize"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("NO_ACTIVE_MILESTONE"));
+
+    assert!(
+        root.path()
+            .join(".agents/skills/sb-adopt/SKILL.md")
+            .is_file()
+    );
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains("\"adoption\": true"), "{config}");
 }
 
 #[test]

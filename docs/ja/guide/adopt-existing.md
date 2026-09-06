@@ -1,7 +1,7 @@
 # 既存実装からSpecを確立する
 
-`sb-discovery`の明示的なリバースモードは、固定した既存リビジョンがすでに表している
-プロダクトについて、永続的なSpecを確立します。動くコードはあるが信頼できる仕様がない
+一時的な`sb-adopt`スキルは、固定した既存リビジョンがすでに表しているプロダクトに
+ついて、永続的なSpecを確立します。動くコードはあるが信頼できる仕様がない
 プロジェクト向けであり、別のSDD製品からの移行でも、新しい変更の提供でもありません。
 
 実装は証拠であって、仕様を決める権威ではありません。観察した挙動は、維持する意図、
@@ -14,18 +14,27 @@ SpecBindを使いたいだけなら、[既存プロジェクトで始める](./s
 
 ## 前提条件
 
-- SpecBindを[インストール](./install.md)済みである
+- SpecBindを`--with-adoption`付きで[インストール](./install.md)済みである
 - 永続的なSpecがなく、アクティブなMilestoneもない
 - Steeringがプロダクトの目的、技術制約、構造を扱っている
 - Steeringを含むリポジトリがコミット済みで、作業ツリーがクリーンである
 - 対象をリポジトリ全体または具体的な領域として指定する
 - そのリビジョンが表す既存のプロダクトバージョンを指定する
 
+一時スキルを付けずにSpecBindを導入済みの場合は、コミット済みでクリーンな作業ツリー
+から次を実行します。計画を確認し、配置されたファイルをコミットしてから、エージェントの
+セッションを開き直してください。
+
+```sh
+specbind install --dry-run --with-adoption
+specbind install --with-adoption
+```
+
 ## 全体の流れ
 
 ```text
 Steeringを設定してコミット
-  -> 対象領域と既存バージョンを指定してsb-discovery
+  -> 対象領域と既存バージョンを指定してsb-adopt
   -> source_revisionを固定
   -> コードとテストを調査
   -> 完全なリバース提案を1回確認
@@ -37,7 +46,7 @@ Steeringを設定してコミット
 ```
 
 確認が必要なのは、原則としてリバース提案の1回だけです。設定とリバース確立は別の
-実行なので、まずSteeringと共通設定を整えてから、Discoveryを1回だけ回します。
+実行なので、まずSteeringと共通設定を整えてから、Adoptionを1回だけ回します。
 
 ## 1. Steeringを整える
 
@@ -50,7 +59,7 @@ $sb-configure 既存実装を採用するための初期設定を、このプロ
 
 `sb-configure`は最初に機械的に確認できる設定の要約を読みます。継続的に使う方針が
 必要なら、Steeringの初期作成または同期を`sb-steering`へ引き継ぎます。提案された
-Steeringを確認してコミットしてから採用を始めてください。Discoveryはそのリビジョンを
+Steeringを確認してコミットしてから採用を始めてください。Adoptionはそのリビジョンを
 調査の証拠として固定します。
 
 ## 2. 共通設定を対象を絞って見直す
@@ -71,19 +80,19 @@ Requirements・Designテンプレートと共有Ruleを見直してください�
 
 詳しくは[カスタマイズ](./customization.md)を参照してください。
 
-## 3. リバースDiscoveryを開始する
+## 3. Adoptionを開始する
 
 Steeringをコミットし、作業ツリーをクリーンにしてから、採用する範囲と既存の
 プロダクトバージョンを明示して依頼します。たとえばリポジトリ全体なら次のように
 なります。
 
 ```text
-$sb-discovery このリポジトリ全体の既存実装を、既存バージョンv2.4.0のSpecとして
+$sb-adopt このリポジトリ全体の既存実装を、既存バージョンv2.4.0のSpecとして
 確立してください。現在のコードとテストを証拠として調査し、何かを作る前に
 Spec境界と維持する意図を私に確認してください。
 ```
 
-Discoveryは採用用の事前検査を行い、調査したリビジョンを固定します。そのうえで、
+Adoptionは採用用の事前検査を行い、調査したリビジョンを固定します。そのうえで、
 `baseline_version`、`reverseSpecs`候補、維持する意図と根拠、依存関係、停止が必要な
 不明点と後回しにできる不明点、バグの疑い、対象外を、1つの完全なリバース提案として
 示します。この提案を確認するまで何も作りません。
@@ -116,7 +125,7 @@ establishment:
 独立した別のSpecは進められますが、Contract Reviewとファイナライズは待ちます。どの回答に
 なっても現在のSpecの意味が変わらない問いだけ、後回しにできます。
 
-Discoveryは`specbind adapter list`で有効なDeferred Findings Adapterを探し、種別名から
+Adoptionは`specbind adapter list`で有効なDeferred Findings Adapterを探し、種別名から
 コマンドを推測せず、一覧に示されたselectorを読みます。欠陥に見える挙動は、ソース
 リビジョン、証拠の位置、主張とともに「バグの疑い」として提案できます。クリーンな固定
 リビジョンを保つため、確認済みのローカル保存先へ記録するのは、リバースMilestoneを
@@ -143,7 +152,7 @@ Discoveryは`specbind adapter list`で有効なDeferred Findings Adapterを探�
 
 ## ファイナライズと履歴
 
-すべてのSpecが`adoption_ready`になり、Contract Reviewがfreshになると、Discoveryは
+すべてのSpecが`adoption_ready`になり、Contract Reviewがfreshになると、Adoptionは
 次を実行します。
 
 ```sh
@@ -154,6 +163,11 @@ specbind milestone reverse finalize --log-entries <path-or->
 削除し、各Specの`log.md`へ`ベースライン <version>`を記録します。RoadmapとContract
 Reviewは`baselines/`へ履歴化され、アクティブなMilestoneが閉じます。これらは採用の記録で
 あり、プロダクトリリースの記録ではありません。
+
+最後の製品管理処理として、CLIは設定済みの全エージェントから`sb-adopt`を削除し、
+`.specbind.json`のadoptionを無効にします。削除が保留と報告された場合でも、基準履歴は
+確定済みです。完了処理の変更をコミットしてから`specbind install --without-adoption`を
+実行してください。削除のためにリバースの完了処理をやり直してはいけません。
 
 確立したSpecは、元のリビジョンとバージョンの来歴を保持したまま、以後は通常の既存Specと
 して扱われます。次の変更からは、

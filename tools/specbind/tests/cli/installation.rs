@@ -23,10 +23,20 @@ fn assert_configure_aftercare_and_update_references(root: &Path) {
 
 fn assert_discovery_procedure_references(root: &Path) {
     for agent_root in [".claude/skills", ".agents/skills"] {
-        for procedure in ["ordinary.md", "reverse.md"] {
+        for procedure in ["ordinary.md", "local-files.md", "github-milestone.md"] {
             let relative = format!("{agent_root}/sb-discovery/references/{procedure}");
             assert!(root.join(&relative).is_file(), "missing {relative}");
         }
+        assert!(
+            !root
+                .join(format!("{agent_root}/sb-discovery/references/reverse.md"))
+                .exists()
+        );
+        assert!(
+            !root
+                .join(format!("{agent_root}/sb-adopt/SKILL.md"))
+                .exists()
+        );
     }
 }
 
@@ -52,7 +62,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 105 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 103 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -60,6 +70,7 @@ fn plans_an_initial_installation_without_writing() {
             .and(predicate::str::contains(
                 "\n  Project instructions: disabled\n",
             ))
+            .and(predicate::str::contains("\n  Adoption Skill: disabled\n"))
             .and(predicate::str::contains(
                 "- create .specbind.json [config]\n",
             ))
@@ -73,7 +84,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 105 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 103 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -141,7 +152,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 65 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 64 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -190,10 +201,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 67 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 66 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 67 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 66 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -215,7 +226,6 @@ fn applies_an_initial_installation_and_is_idempotent() {
         ".specbind/settings/rules/design-template-selection.md",
         ".specbind/settings/rules/steering-principles.md",
         ".agents/skills/sb-discovery/references/ordinary.md",
-        ".agents/skills/sb-discovery/references/reverse.md",
         ".agents/skills/sb-configure/SKILL.md",
         ".agents/skills/sb-configure/references/aftercare.md",
         ".agents/skills/sb-configure/references/update.md",
@@ -254,6 +264,76 @@ fn applies_an_initial_installation_and_is_idempotent() {
                 .and(predicate::str::contains("Next:").not()),
         )
         .stderr("");
+}
+
+#[test]
+fn installs_and_retires_the_optional_adoption_skill() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut apply = specbind_command();
+    apply
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "codex",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+            "--with-adoption",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("\n  Adoption Skill: enabled\n"));
+
+    for relative in [
+        ".agents/skills/sb-adopt/SKILL.md",
+        ".agents/skills/sb-adopt/agents/openai.yaml",
+        ".claude/skills/sb-adopt/SKILL.md",
+    ] {
+        assert!(root.path().join(relative).is_file(), "missing {relative}");
+    }
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(config.contains("\"adoption\": true"), "{config}");
+    write(
+        root.path(),
+        ".agents/skills/sb-adopt/maintainer-notes.md",
+        "preserve me\n",
+    );
+
+    commit_all(root.path());
+    let mut retire = specbind_command();
+    retire
+        .current_dir(root.path())
+        .args(["install", "--without-adoption"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("\n  Adoption Skill: disabled\n").and(
+                predicate::str::contains("- remove .agents/skills/sb-adopt/SKILL.md [skill]"),
+            ),
+        );
+    assert!(!root
+        .path()
+        .join(".agents/skills/sb-adopt/SKILL.md")
+        .exists());
+    assert!(!root
+        .path()
+        .join(".agents/skills/sb-adopt/agents/openai.yaml")
+        .exists());
+    assert_eq!(
+        fs::read_to_string(
+            root.path()
+                .join(".agents/skills/sb-adopt/maintainer-notes.md")
+        )
+        .expect("maintainer file"),
+        "preserve me\n"
+    );
+    assert!(!root.path().join(".claude/skills/sb-adopt").exists());
+    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
+    assert!(!config.contains("adoption"), "{config}");
 }
 
 #[test]
@@ -1006,7 +1086,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 66 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 65 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(
@@ -1040,9 +1120,11 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .args(["configuration", "show"])
         .assert()
         .success()
-        .stdout(predicate::str::contains(
-            "    language-style: current-default\n",
-        ));
+        .stdout(
+            predicate::str::contains("    Adoption Skill: disabled\n").and(
+                predicate::str::contains("    language-style: current-default\n"),
+            ),
+        );
 }
 
 #[test]

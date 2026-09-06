@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0196](./0196-optional-temporary-adoption-skill.md) removes reverse
+establishment from this package. The ordinary and Source Collection progressive
+loading contract below remains authoritative.
+
 ## Context
 
 `sb-discovery` is the common entry point before a request has a confirmed

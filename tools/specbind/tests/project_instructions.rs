@@ -93,16 +93,8 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("Use `sb-plan` as the default planning entry point")
     );
-    assert!(
-        applied
-            .content
-            .contains("establish new Specs from an explicitly\n  selected existing implementation")
-    );
-    assert!(
-        applied
-            .content
-            .contains("Existing code and tests are evidence rather than intended")
-    );
+    assert!(!applied.content.contains("existing implementation"));
+    assert!(!applied.content.contains("adoption"));
     assert!(!applied.content.contains("specbind-adopt-existing"));
     assert!(
         applied
@@ -119,9 +111,6 @@ fn creates_a_file_holding_only_the_block() {
             .content
             .contains("run `specbind milestone status` before choosing between")
     );
-    assert!(applied.content.contains(
-        "not a change request for that routing check. Select `sb-discovery` directly\n  The same Skill owns an explicit request to resume an active reverse\n  establishment. Let its reverse procedure run `specbind adoption preflight`"
-    ));
     assert!(!applied.content.contains("legacy-adoption"));
     assert!(
         applied

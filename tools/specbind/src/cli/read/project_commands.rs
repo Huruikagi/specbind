@@ -60,6 +60,15 @@ pub fn configuration_show(start: &Path) -> CommandOutput {
             "disabled"
         }
     );
+    let _ = writeln!(
+        output,
+        "    Adoption Skill: {}",
+        if report.adoption {
+            "enabled"
+        } else {
+            "disabled"
+        }
+    );
     output.push_str("  Agent roles:\n");
     if report.roles.is_empty() {
         output.push_str("    none\n");

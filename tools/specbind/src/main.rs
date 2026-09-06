@@ -47,28 +47,12 @@ fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
 fn run_install(
     start: &Path,
     dry_run: bool,
-    agents: &[String],
-    language: Option<&str>,
-    spec_dir: Option<String>,
-    project_instructions: bool,
+    inputs: &specbind::install::InstallInputs,
 ) -> CommandOutput {
-    let inputs = specbind::install::InstallInputs {
-        agents: agents
-            .iter()
-            .filter_map(|value| specbind::install::Agent::parse(value))
-            .collect(),
-        language: match language {
-            Some("en") => Some(specbind::config::ProjectLanguage::En),
-            Some("ja") => Some(specbind::config::ProjectLanguage::Ja),
-            _ => None,
-        },
-        spec_dir,
-        project_instructions: project_instructions.then_some(true),
-    };
     if dry_run {
-        specbind::cli::install_dry_run(start, &inputs)
+        specbind::cli::install_dry_run(start, inputs)
     } else {
-        specbind::cli::install_apply(start, &inputs)
+        specbind::cli::install_apply(start, inputs)
     }
 }
 
@@ -313,14 +297,31 @@ fn main() -> ExitCode {
             language,
             spec_dir,
             project_instructions,
-        } => run_install(
-            &start,
-            dry_run,
-            &agents,
-            language.as_deref(),
-            spec_dir,
-            project_instructions,
-        ),
+            with_adoption,
+            without_adoption,
+        } => {
+            let inputs = specbind::install::InstallInputs {
+                agents: agents
+                    .iter()
+                    .filter_map(|value| specbind::install::Agent::parse(value))
+                    .collect(),
+                language: match language.as_deref() {
+                    Some("en") => Some(specbind::config::ProjectLanguage::En),
+                    Some("ja") => Some(specbind::config::ProjectLanguage::Ja),
+                    _ => None,
+                },
+                spec_dir,
+                project_instructions: project_instructions.then_some(true),
+                adoption: if with_adoption {
+                    Some(true)
+                } else if without_adoption {
+                    Some(false)
+                } else {
+                    None
+                },
+            };
+            run_install(&start, dry_run, &inputs)
+        }
         Command::RemoveAgent { agent, apply } => run_remove_agent(&start, &agent, apply),
         Command::Uninstall { knowledge, apply } => run_uninstall(&start, &knowledge, apply),
         Command::Protocol { command } => match command {

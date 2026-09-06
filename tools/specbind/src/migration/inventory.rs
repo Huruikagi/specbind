@@ -249,6 +249,7 @@ pub(super) fn install_inputs(
         language: Some(language),
         spec_dir: Some(TARGET_ROOT.to_owned()),
         project_instructions: Some(false),
+        adoption: Some(false),
     })
 }
 

@@ -45,8 +45,10 @@ normal lifecycle. Adjust only demonstrated mismatches afterward using
 If the repository already has substantial code but no trusted Specs, and you
 want to fix the current product as a specification first, use
 [Establish Specs from an existing implementation](./adopt-existing.md). That
-route shapes Steering and the shared configuration surfaces, then ends with
-accepted Requirements, Design, and Contract Review as a non-release baseline.
+route adds the temporary `sb-adopt` Skill, shapes Steering and the shared
+configuration surfaces, then ends with accepted Requirements, Design, and
+Contract Review as a non-release baseline. Successful finalization removes the
+temporary Skill.
 
 ## 3. Choose the first change
 

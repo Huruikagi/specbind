@@ -36,6 +36,7 @@ pub fn read_installed_config(project_root: &Path) -> Result<InstalledConfig, Ins
             .map(|agent| agent.name().to_owned())
             .collect(),
         project_instructions: resolved.project_instructions,
+        adoption: resolved.adoption,
         agent_roles: resolved.agent_roles,
     })
 }
@@ -45,6 +46,7 @@ pub(super) struct ResolvedInputs {
     pub(super) language: ProjectLanguage,
     pub(super) agents: Vec<Agent>,
     pub(super) project_instructions: bool,
+    pub(super) adoption: bool,
     pub(super) agent_roles: AgentRoleOverrides,
 }
 
@@ -115,6 +117,10 @@ pub(super) fn resolve_inputs(
         .project_instructions
         .or_else(|| existing.map(|config| config.project_instructions))
         .unwrap_or(false);
+    let adoption = inputs
+        .adoption
+        .or_else(|| existing.map(|config| config.adoption))
+        .unwrap_or(false);
 
     let agent_roles = existing
         .map(|config| config.agent_roles.clone())
@@ -127,6 +133,7 @@ pub(super) fn resolve_inputs(
         language: language.unwrap_or(ProjectLanguage::En),
         agents,
         project_instructions,
+        adoption,
         agent_roles,
     })
 }

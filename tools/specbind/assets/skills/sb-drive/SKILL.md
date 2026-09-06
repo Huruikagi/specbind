@@ -72,10 +72,10 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
 - An unknown kind, target, or mode is an incompatible product surface. Stop
   rather than guessing a route.
 
-`handler.target=sb-discovery` with `handler.mode=reverse_resume` does not turn a
+`handler.target=sb-adopt` with `handler.mode=reverse_resume` does not turn a
 generic Drive request into reverse Gate authority. Unless the maintainer
 explicitly authorized reverse continuation, park it as `HUMAN_DECISION` and
-name `sb-discovery` as the continuation owner.
+name `sb-adopt` as the continuation owner.
 
 Use one mutating dispatch at a time. Do not launch dependency-wave items in
 parallel and do not predict path conflicts.

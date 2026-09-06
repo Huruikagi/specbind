@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0196](./0196-optional-temporary-adoption-skill.md) moves the current
+single reverse procedure out of `sb-discovery` and into optional `sb-adopt`.
+The legacy staged-route retirement below remains authoritative.
+
 Supersedes Decision 0175. Decision 0181's single confirmed reverse-establishment
 orchestration remains authoritative.
 

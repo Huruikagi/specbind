@@ -112,9 +112,10 @@ under [ルートを選ぶ](./docs/ja/guide/getting-started.md).
 
 Review and commit the installed files, then reopen the coding-agent session so
 it discovers the new Skills. Codex invokes them as `$sb-*`; Claude Code uses
-`/sb-*`. Follow the selected route into `sb-discovery`, then use `sb-plan` and
-`sb-drive` to advance the active milestone. Use `sb-configure` whenever the
-project defaults or integration need review.
+`/sb-*`. Ordinary change requests enter through `sb-discovery`, then use
+`sb-plan` and `sb-drive` to advance the active milestone. Existing-product
+baseline establishment uses the opt-in temporary `sb-adopt` Skill. Use
+`sb-configure` whenever the project defaults or integration need review.
 
 ## Learn more
 

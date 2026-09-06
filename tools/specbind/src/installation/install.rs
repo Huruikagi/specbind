@@ -10,7 +10,7 @@ mod assets;
 mod guard;
 mod input;
 
-use std::{fmt, path::Path};
+use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
@@ -20,8 +20,9 @@ pub use apply::apply;
 pub use input::read_installed_config;
 
 use assets::{
-    adapter_entries, agent_role_entries, config_entry, project_instruction_entries,
-    retired_skill_entries, rule_entries, skill_entries, template_entries,
+    adapter_entries, adoption_retirement_entries, agent_role_entries, config_entry,
+    project_instruction_entries, retired_skill_entries, rule_entries, skill_entries,
+    template_entries,
 };
 use guard::require_replaceable_repository;
 use input::{read_existing_config, resolve_inputs};
@@ -66,6 +67,7 @@ pub struct InstallInputs {
     pub language: Option<ProjectLanguage>,
     pub spec_dir: Option<String>,
     pub project_instructions: Option<bool>,
+    pub adoption: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -128,7 +130,20 @@ pub struct InstallPlan {
     pub language: ProjectLanguage,
     pub agents: Vec<Agent>,
     pub project_instructions: bool,
+    pub adoption: bool,
     pub entries: Vec<PlanEntry>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AdoptionRetirementPlan {
+    entries: Vec<PlanEntry>,
+}
+
+impl AdoptionRetirementPlan {
+    #[must_use]
+    pub fn enabled(&self) -> bool {
+        !self.entries.is_empty()
+    }
 }
 
 impl InstallPlan {
@@ -183,6 +198,8 @@ pub struct InstalledConfig {
     #[serde(default)]
     pub project_instructions: bool,
     #[serde(default)]
+    pub adoption: bool,
+    #[serde(default)]
     pub agent_roles: AgentRoleOverrides,
 }
 
@@ -215,8 +232,65 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
         language: resolved.language,
         agents: resolved.agents,
         project_instructions: resolved.project_instructions,
+        adoption: resolved.adoption,
         entries,
     })
+}
+
+/// Prepares the exact temporary-Skill retirement before reverse finalization mutates the tree.
+///
+/// # Errors
+///
+/// Returns configuration, target, or repository diagnostics when the exact
+/// retirement cannot be prepared from the clean committed state.
+pub fn prepare_adoption_retirement(
+    project_root: &Path,
+) -> Result<AdoptionRetirementPlan, InstallIssues> {
+    let existing = read_existing_config(project_root)?.ok_or_else(|| {
+        one_issue(
+            "INSTALL_CONFIG_REQUIRED",
+            Some(CONFIG_RELATIVE.to_owned()),
+            "SpecBind is not installed in this project",
+        )
+    })?;
+    if !existing.adoption {
+        return Ok(AdoptionRetirementPlan { entries: vec![] });
+    }
+    let resolved = resolve_inputs(
+        Some(&existing),
+        &InstallInputs {
+            adoption: Some(false),
+            ..InstallInputs::default()
+        },
+    )?;
+    let mut entries = adoption_retirement_entries(project_root, &resolved)?;
+    let mut config = config_entry(Some(&existing), &resolved);
+    config.expected_current = Some(
+        fs::read_to_string(project_root.join(CONFIG_RELATIVE)).map_err(|error| {
+            one_issue(
+                "INSTALL_CONFIG_READ_FAILED",
+                Some(CONFIG_RELATIVE.to_owned()),
+                error.to_string(),
+            )
+        })?,
+    );
+    entries.push(config);
+    require_replaceable_repository(project_root, &entries)?;
+    Ok(AdoptionRetirementPlan { entries })
+}
+
+/// Applies a previously prepared temporary-Skill retirement after core finalization succeeds.
+///
+/// # Errors
+///
+/// Returns a guarded-write or race diagnostic. Core finalization is already
+/// complete when this function is called, so the caller must report cleanup as
+/// pending rather than treating the adopted baseline as failed.
+pub fn apply_adoption_retirement(
+    project_root: &Path,
+    plan: &AdoptionRetirementPlan,
+) -> Result<(), InstallIssues> {
+    apply::apply_entries(project_root, &plan.entries)
 }
 
 pub(super) fn finish(mut issues: Vec<InstallIssue>) -> Result<(), InstallIssues> {

@@ -605,6 +605,7 @@ fn ensure_target_converged(
         language: Some(target.language),
         spec_dir: Some(".specbind".to_owned()),
         project_instructions: Some(false),
+        adoption: Some(false),
     };
     let plan = install::plan(project_root, &inputs).map_err(|error| MigrationIssues {
         issues: error

@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0196](./0196-optional-temporary-adoption-skill.md) changes the target
+of every `reverse_resume` handler from `sb-discovery` to `sb-adopt`; the typed
+handler shape remains authoritative.
+
 ## Context
 
 `milestone status` already derives the authoritative ordered actionable set and

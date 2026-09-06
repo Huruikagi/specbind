@@ -49,6 +49,12 @@ definitions.
 SpecBind block to `AGENTS.md` or `CLAUDE.md` without changing text outside the
 marker.
 
+The default installation contains the 15 Skills used for recurring delivery
+work. If this existing project has no trusted Specs and you want to establish a
+baseline from its current implementation, also pass `--with-adoption`. That
+option temporarily installs `sb-adopt`; successful reverse finalization removes
+it again. See [Establish Specs from an existing implementation](./adopt-existing.md).
+
 ## 3. Preview what will be written
 
 Add `--dry-run` to the same command to see the `create`, `replace`, `keep`, and
@@ -69,6 +75,10 @@ The main installed surfaces are:
 .claude/agents/specbind-*.md     # Claude Code role configuration
 AGENTS.md / CLAUDE.md            # when project instructions are enabled
 ```
+
+An installation with `--with-adoption` additionally contains
+`.agents/skills/sb-adopt/` or `.claude/skills/sb-adopt/`, according to the
+selected Agents.
 
 Codex and Claude Code also receive default per-role models. To change them, see
 "Project configuration and per-role models" in

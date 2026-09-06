@@ -37,6 +37,7 @@ pub(super) fn config_entry(
         .collect::<Vec<_>>();
     let unchanged = config.language == resolved.language
         && config.project_instructions == resolved.project_instructions
+        && config.adoption == resolved.adoption
         && config.agent_roles == resolved.agent_roles
         && installed_agents == resolved.agents;
     PlanEntry {
@@ -71,9 +72,14 @@ fn render_config(resolved: &ResolvedInputs) -> String {
     } else {
         ""
     };
+    let adoption = if resolved.adoption {
+        ",\n  \"adoption\": true"
+    } else {
+        ""
+    };
     let agent_roles = render_agent_role_overrides(&resolved.agent_roles);
     let output = format!(
-        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}{agent_roles}\n}}\n",
+        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}{adoption}{agent_roles}\n}}\n",
         resolved.spec_dir
     );
     output
@@ -402,7 +408,7 @@ pub(super) fn skill_entries(
     let mut entries = Vec::new();
     let mut planned = std::collections::BTreeSet::new();
     for agent in &resolved.agents {
-        for skill in skill::all() {
+        for skill in skill::installed(resolved.adoption) {
             let rendered_files = skill.render_files(*agent).map_err(|error| {
                 one_issue(
                     "INSTALL_ASSET_UNAVAILABLE",
@@ -460,6 +466,21 @@ pub(super) fn retired_skill_entries(
             Agent::ClaudeCode => ".claude/skills",
             Agent::Codex | Agent::Generic => ".agents/skills",
         };
+        if !resolved.adoption {
+            let adoption = skill::find("sb-adopt").expect("embedded adoption Skill");
+            for relative in adoption.targets(*agent).into_iter().rev() {
+                if !planned.insert(relative.clone()) {
+                    continue;
+                }
+                if let Some(entry) = retired_skill_file_entry(
+                    project_root,
+                    relative,
+                    "disabled temporary adoption Skill package file",
+                )? {
+                    entries.push(entry);
+                }
+            }
+        }
         for name in skill::retired_names() {
             for file in skill::retired_files(name) {
                 let relative = format!("{root}/{name}/{file}");
@@ -494,6 +515,37 @@ pub(super) fn retired_skill_entries(
     Ok(entries)
 }
 
+/// Plans only the files retired when the temporary adoption capability ends.
+pub(super) fn adoption_retirement_entries(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<Vec<PlanEntry>, InstallIssues> {
+    let mut entries = Vec::new();
+    let mut planned = std::collections::BTreeSet::new();
+    let adoption = skill::find("sb-adopt").expect("embedded adoption Skill");
+    let discovery = skill::find("sb-discovery").expect("embedded Discovery Skill");
+    for agent in &resolved.agents {
+        for relative in adoption.targets(*agent).into_iter().rev().chain(
+            discovery
+                .retired_resources()
+                .iter()
+                .map(|file| discovery.resource_target_for(*agent, file)),
+        ) {
+            if !planned.insert(relative.clone()) {
+                continue;
+            }
+            if let Some(entry) = retired_skill_file_entry(
+                project_root,
+                relative,
+                "retired temporary adoption capability file",
+            )? {
+                entries.push(entry);
+            }
+        }
+    }
+    Ok(entries)
+}
+
 fn retired_skill_file_entry(
     project_root: &Path,
     relative: String,
@@ -503,13 +555,20 @@ fn retired_skill_file_entry(
     match fs::symlink_metadata(&target) {
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
         Ok(metadata) if metadata.is_file() && !crate::guarded_fs::is_link_like(&metadata) => {
+            let current = fs::read_to_string(&target).map_err(|error| {
+                one_issue(
+                    "INSTALL_TARGET_UNREADABLE",
+                    Some(relative.clone()),
+                    error.to_string(),
+                )
+            })?;
             Ok(Some(PlanEntry {
                 action: PlanAction::Remove,
                 path: relative,
                 category: "skill",
                 detail: Some(detail.to_owned()),
                 content: None,
-                expected_current: None,
+                expected_current: Some(current),
                 resume_content: None,
             }))
         }

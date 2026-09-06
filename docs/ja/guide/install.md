@@ -71,6 +71,12 @@ SpecBindが管理する成果物、具体的には`requirements.md`や`design.md
 追加します。もともと書いてある既存の文章はそのまま残ります。普通はつけたほうが
 いいでしょう。
 
+通常のインストールでは、繰り返し使う15個のスキルだけを配置します。信頼できるSpecが
+まだない既存プロジェクトで、現在の実装から基準となるSpecを確立する場合は、さらに
+`--with-adoption`を指定してください。一時的な`sb-adopt`が追加され、リバースの
+完了処理に成功すると自動的に削除されます。詳しくは
+[既存実装からSpecを確立する](./adopt-existing.md)を参照してください。
+
 ## 3. 書き込まれる内容を確認する
 
 同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、
@@ -91,6 +97,9 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 .claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
 AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
 ```
+
+`--with-adoption`を指定した場合は、選択したエージェントに応じて
+`.agents/skills/sb-adopt/`または`.claude/skills/sb-adopt/`も追加されます。
 
 CodexとClaude Codeには、役割ごとに使うモデルの既定値も設定されます。変更する
 場合は、[カスタマイズ](./customization.md)の「プロジェクト設定と役割別モデル」を

@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0196](./0196-optional-temporary-adoption-skill.md) replaces
+`sb-discovery` with optional temporary Skill `sb-adopt` as the continuation
+entrypoint; the resume guards below remain authoritative.
+
 ## Context
 
 Decision 0181 defines reverse establishment as one confirmed orchestration from

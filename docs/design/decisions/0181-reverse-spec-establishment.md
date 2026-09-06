@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0196](./0196-optional-temporary-adoption-skill.md) moves the reverse
+procedure from `sb-discovery` to optional temporary Skill `sb-adopt`; the
+lifecycle semantics below remain authoritative.
+
 Supersedes Decision 0175 where it stops adoption before Requirements. The
 Steering-first evidence rules and `sb-discovery` integration from Decisions
 0143 and 0175 remain authoritative.
