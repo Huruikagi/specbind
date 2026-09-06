@@ -4,12 +4,26 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.3.2 - 2026-09-06
+
+- Fixed workflow routing and completion claims to respect active Requirements,
+  explicit verification requests, and untracked changes owned by existing Specs.
+- Fixed reverse-establishment continuation, Contract Review presentation,
+  Steering checkpoints, and per-Spec Design remediation limits.
+- Fixed Discovery to bind version-shaped GitHub Milestone titles only after
+  checkpointing the confirmed captured scope, and load its procedures on demand.
 - Added `specbind contract owners <path>` to resolve a concrete project path
   against persistent Contract File Ownership declarations for Discovery
   routing.
 - Added `specbind adapter read <selector> --for consume` so product Skills
   receive only active project guidance and no longer interpret inactive
   scaffold markers themselves.
+- Improved Milestone status with typed action handlers for Drive and expanded
+  Contract graph and active-Requirement read projections.
+- Retired the legacy staged adoption Skill references under Decision 0188.
+  Projects with an orphan temporary record from that retired route must inspect
+  and explicitly reconcile it before starting current reverse establishment;
+  preflight preserves the record and stops instead of overwriting it.
 
 ## 1.3.1 - 2026-09-03
 
