@@ -289,7 +289,7 @@ pub(crate) fn read_roadmap_source(
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
         Err(error) => return Err(failure("MILESTONE_ROADMAP_READ_FAILED", error.to_string())),
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(failure(
             "MILESTONE_ROADMAP_NOT_REGULAR",
             "steering/roadmap.md must be a regular non-symlink file",

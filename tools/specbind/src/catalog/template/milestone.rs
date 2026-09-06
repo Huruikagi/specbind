@@ -23,7 +23,7 @@ pub fn discover_milestone_templates(
                 error.to_string(),
             )],
         },
-        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => {
+        Ok(metadata) if !crate::guarded_fs::is_regular_file(&metadata) => {
             MilestoneTemplateInventory {
                 templates: vec![],
                 issues: vec![issue(
@@ -92,7 +92,7 @@ pub fn read_milestone_template(
         TemplateSource::Project => {
             let path = specbind_root.join(template.template_path.as_std_path());
             if !fs::symlink_metadata(&path)
-                .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+                .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
             {
                 return Err(with_milestone_issue(
                     inventory,

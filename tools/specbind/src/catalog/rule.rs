@@ -68,7 +68,7 @@ impl DefaultRule {
                 });
             }
         };
-        if metadata.file_type().is_symlink() || !metadata.is_file() {
+        if !crate::guarded_fs::is_regular_file(&metadata) {
             return Err(RuleError {
                 code: "RULE_READ_TARGET_INVALID",
                 message: format!("{relative} must be a regular non-symlink file"),

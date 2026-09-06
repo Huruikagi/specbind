@@ -38,7 +38,9 @@ pub(super) fn validate_spec_directory(
     }
 
     let specs_root = specbind_root.join("specs");
-    if fs::symlink_metadata(&specs_root).is_ok_and(|metadata| metadata.file_type().is_symlink()) {
+    if fs::symlink_metadata(&specs_root)
+        .is_ok_and(|metadata| crate::guarded_fs::is_link_like(&metadata))
+    {
         issues.push(issue(
             "ARTIFACT_SPECS_DIR_SYMLINK",
             relative_utf8(specbind_root, &specs_root).ok(),
@@ -48,7 +50,7 @@ pub(super) fn validate_spec_directory(
     }
     let active_spec_dir = specs_root.join(canonical_spec);
     match fs::symlink_metadata(&active_spec_dir) {
-        Ok(metadata) if metadata.file_type().is_symlink() => {
+        Ok(metadata) if crate::guarded_fs::is_link_like(&metadata) => {
             issues.push(issue(
                 "ARTIFACT_SPEC_DIR_SYMLINK",
                 relative_utf8(specbind_root, &active_spec_dir).ok(),
@@ -549,7 +551,7 @@ fn inspect_contract_yaml(
             return None;
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "ARTIFACT_CONTRACT_NOT_REGULAR",
             Some(path.clone()),

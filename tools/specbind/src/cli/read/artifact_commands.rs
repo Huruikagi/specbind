@@ -73,7 +73,7 @@ pub fn artifact_read(
     }
     let path = paths.specbind_root.join(artifact.path.as_std_path());
     if !fs::symlink_metadata(&path)
-        .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+        .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
     {
         return CommandOutput::failure(
             "ARTIFACT_READ_TARGET_INVALID",

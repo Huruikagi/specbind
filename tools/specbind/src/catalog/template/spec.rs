@@ -414,7 +414,7 @@ pub fn read_spec_template(
         TemplateSource::Project => {
             let path = specbind_root.join(template.template_path.as_std_path());
             if !fs::symlink_metadata(&path)
-                .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+                .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
             {
                 let template_path = template.template_path.clone();
                 return Err(with_issue(

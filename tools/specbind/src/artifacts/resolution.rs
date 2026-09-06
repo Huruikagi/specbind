@@ -90,7 +90,7 @@ pub fn resolve_spec(specbind_root: &Path, canonical_spec: &str) -> SpecResolutio
             };
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "ARTIFACT_SPEC_NOT_REGULAR",
             Some(relative),
@@ -424,7 +424,7 @@ fn read_traceability_concept(
             return None;
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "ARTIFACT_CHANGED_DURING_TRACEABILITY",
             Some(artifact.path.clone()),
@@ -506,7 +506,7 @@ fn resolve_active_traceability_scope(
             return Err(());
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "TRACEABILITY_SPEC_UNAVAILABLE",
             Some(relative),
@@ -596,7 +596,7 @@ fn fingerprint_artifact(
             return None;
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "ARTIFACT_CHANGED_DURING_RESOLUTION",
             Some(artifact.path.clone()),
@@ -655,7 +655,7 @@ fn load_tasks_artifact(
             return Err(());
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         issues.push(issue(
             "ARTIFACT_TASKS_NOT_REGULAR",
             Some(relative),

@@ -136,7 +136,7 @@ pub(super) fn read_accepted_review(
             )],
         )));
     }
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(Box::new(freshness_report(
             ReviewFreshnessStatus::Invalid,
             None,
@@ -319,7 +319,7 @@ pub(super) fn persist_review(
 ) -> Result<(), ReviewIssues> {
     let state = specbind_root.join("state");
     match fs::symlink_metadata(&state) {
-        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_dir() => {
+        Ok(metadata) if !crate::guarded_fs::is_regular_dir(&metadata) => {
             return Err(one_review_issue(
                 "CONTRACT_REVIEW_STATE_DIR_INVALID",
                 Some("state".to_owned()),

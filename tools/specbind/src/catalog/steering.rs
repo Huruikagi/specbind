@@ -61,7 +61,7 @@ pub fn discover(specbind_root: &Path) -> Result<SteeringInventory, String> {
             });
         }
         Err(error) => return Err(error.to_string()),
-        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_dir() => {
+        Ok(metadata) if !crate::guarded_fs::is_regular_dir(&metadata) => {
             return Err(format!(
                 "{STEERING_ROOT} must be a regular non-symlink directory"
             ));
@@ -197,7 +197,7 @@ pub fn read(specbind_root: &Path, selector: &str) -> Result<String, SteeringRead
 
     let path = specbind_root.join(document.path.as_str());
     match fs::symlink_metadata(&path) {
-        Ok(metadata) if !metadata.file_type().is_symlink() && metadata.is_file() => {}
+        Ok(metadata) if crate::guarded_fs::is_regular_file(&metadata) => {}
         Ok(_) => {
             return Err(SteeringReadFailure {
                 code: "STEERING_READ_TARGET_INVALID",

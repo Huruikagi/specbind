@@ -10,7 +10,7 @@ pub(super) fn validate_template_root(root: &Path, label: &str) -> Result<(), Vec
             path,
             format!("cannot read the template root: {error}"),
         )]),
-        Ok(metadata) if metadata.file_type().is_symlink() => Err(vec![issue(
+        Ok(metadata) if crate::guarded_fs::is_link_like(&metadata) => Err(vec![issue(
             "TEMPLATE_ROOT_SYMLINK",
             path,
             "template root must not be a symbolic link",

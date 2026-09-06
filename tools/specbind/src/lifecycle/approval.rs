@@ -430,7 +430,7 @@ fn resolve_context(
             error.to_string(),
         )
     })?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(one_issue(
             "SPEC_GATE_ROADMAP_INVALID",
             Some(relative.to_owned()),
@@ -1165,7 +1165,7 @@ fn read_regular(
             error.to_string(),
         )
     })?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(one_issue(
             gate.target_invalid(),
             Some(relative),

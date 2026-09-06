@@ -111,7 +111,7 @@ fn read_regular(path: &Path, relative: &str) -> Result<String, CompletionIssues>
             error.to_string(),
         )
     })?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(one_issue(
             "COMPLETION_TARGET_INVALID",
             Some(relative.to_owned()),

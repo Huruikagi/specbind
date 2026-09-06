@@ -298,7 +298,7 @@ pub(super) fn read_regular(
     issues: &mut Vec<ReviewIssue>,
 ) -> Option<Vec<u8>> {
     match fs::symlink_metadata(path) {
-        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => {
+        Ok(metadata) if !crate::guarded_fs::is_regular_file(&metadata) => {
             issues.push(review_issue(
                 "CONTRACT_REVIEW_INPUT_NOT_REGULAR",
                 Some(source.to_owned()),

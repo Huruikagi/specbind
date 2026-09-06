@@ -99,7 +99,7 @@ pub(super) fn read_external_input(
     let requested = start.join(source);
     let metadata = fs::symlink_metadata(&requested)
         .map_err(|error| read_failed(format!("Cannot inspect {}: {error}", spec.subject)))?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(target_invalid(format!(
             "{} must be a regular non-symlink file.",
             spec.capitalized

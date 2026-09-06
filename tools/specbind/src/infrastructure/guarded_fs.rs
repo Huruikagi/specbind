@@ -88,3 +88,11 @@ pub(crate) fn is_link_like(metadata: &fs::Metadata) -> bool {
 pub(crate) fn is_link_like(metadata: &fs::Metadata) -> bool {
     metadata.file_type().is_symlink()
 }
+
+pub(crate) fn is_regular_file(metadata: &fs::Metadata) -> bool {
+    metadata.is_file() && !is_link_like(metadata)
+}
+
+pub(crate) fn is_regular_dir(metadata: &fs::Metadata) -> bool {
+    metadata.is_dir() && !is_link_like(metadata)
+}

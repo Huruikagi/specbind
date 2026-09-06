@@ -513,7 +513,7 @@ fn validate_current_spec(
         .join(canonical_spec)
         .join("spec.yaml");
     if !fs::symlink_metadata(&path)
-        .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+        .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
     {
         issues.push(freshness_issue(
             "FRESHNESS_COMPLETION_CURRENT_SPEC_INVALID",
@@ -641,7 +641,7 @@ fn validate_release_binding_transition_path(
     }
     let current_path = project_root.join(relative_path);
     if !fs::symlink_metadata(&current_path)
-        .is_ok_and(|metadata| metadata.is_file() && !metadata.file_type().is_symlink())
+        .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
     {
         return false;
     }

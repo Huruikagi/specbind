@@ -210,7 +210,7 @@ pub(super) fn read_existing_config(
             ));
         }
     };
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
+    if !crate::guarded_fs::is_regular_file(&metadata) {
         return Err(one_issue(
             "INSTALL_CONFIG_TARGET_INVALID",
             Some(CONFIG_RELATIVE.to_owned()),
