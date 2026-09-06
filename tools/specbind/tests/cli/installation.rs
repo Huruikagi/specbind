@@ -315,14 +315,18 @@ fn installs_and_retires_the_optional_adoption_skill() {
                 predicate::str::contains("- remove .agents/skills/sb-adopt/SKILL.md [skill]"),
             ),
         );
-    assert!(!root
-        .path()
-        .join(".agents/skills/sb-adopt/SKILL.md")
-        .exists());
-    assert!(!root
-        .path()
-        .join(".agents/skills/sb-adopt/agents/openai.yaml")
-        .exists());
+    assert!(
+        !root
+            .path()
+            .join(".agents/skills/sb-adopt/SKILL.md")
+            .exists()
+    );
+    assert!(
+        !root
+            .path()
+            .join(".agents/skills/sb-adopt/agents/openai.yaml")
+            .exists()
+    );
     assert_eq!(
         fs::read_to_string(
             root.path()
