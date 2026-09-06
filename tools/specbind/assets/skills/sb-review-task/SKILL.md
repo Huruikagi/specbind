@@ -105,6 +105,11 @@ specbind protocol read task-review
 
 ## 3. Scope yourself to this task
 
+Another Task, Spec, or later lifecycle boundary is not part of this review
+unless an approved input of the current Task makes it part of the subject. An
+unimplemented downstream connection does not block the current Task merely
+because this diff exposes the seam it will later consume.
+
 If the working tree holds changes this task does not own, do **not** guess which
 hunks belong to it and do not review the rest silently.
 

@@ -43,6 +43,11 @@ the only supported writer of machine state.
 - Use `sb-gap-analysis` when the user explicitly asks to compare planned work
   with the existing repository. Use `sb-release` only for an explicit request
   to release and finalize the active milestone.
+- When the user asks to continue or recover a pending implementation and
+  supplies a returned review or diagnosis, use `sb-implement`. It remains the
+  owner through fresh review, Task progress, and the checkpoint. This
+  continuation route takes precedence over the direct review and diagnosis
+  routes below; a diagnosis-only request still does not start implementation.
 - When the user asks to review one implemented Task, use
   `sb-review-task`; the review must judge the actual diff without fixing
   it or recording Task state.

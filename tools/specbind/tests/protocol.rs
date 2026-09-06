@@ -123,15 +123,19 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
     let review = protocol::read("task-review")
         .expect("task review protocol")
         .content();
+    assert!(review.contains("different Task, Spec, or later lifecycle boundary"));
+    assert!(review.contains("unimplemented downstream connection"));
     assert!(review.contains("- VERDICT: APPROVED | REJECTED | CANNOT_REVIEW"));
     assert!(review.contains("[BLOCKING|DEFERRED|RESOLVED]"));
     assert!(review.contains("Read the Spec's Contract and every current Steering document"));
     assert!(review.contains("partial or unreadable Steering set"));
 
     let debug = protocol::read("debug").expect("debug protocol").content();
-    assert!(
-        debug.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
-    );
+    assert!(debug.contains(
+        "- CATEGORY: IMPLEMENTATION | REVIEW | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED"
+    ));
+    assert!(debug.contains("Review scope defect"));
+    assert!(debug.contains("not an implementation or artifact change"));
     assert!(debug.contains("A\ncategory mentioned only in prose"));
     assert!(debug.contains("is not a\nparseable diagnosis"));
     assert!(debug.contains("the Spec's Contract, current Steering"));

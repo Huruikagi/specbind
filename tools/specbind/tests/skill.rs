@@ -32,6 +32,13 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
         "handler.kind=skill",
         "handler.kind=guarded_cli",
         "handler.kind=boundary",
+        "project working directory",
+        "project-local executable and PATH facts",
+        "exact applicable project\n  instruction paths",
+        "before it delegates any internal role",
+        "complete owning workflow package",
+        "never dispatch `specbind-implementer`",
+        "An internal\n  `READY_FOR_REVIEW` result is not an owning-workflow result",
         "handler.mode=reverse_resume",
         "CONTINUE_ELSEWHERE",
         "STOP_RUN",
@@ -44,6 +51,36 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
         assert!(body.contains(required), "drive must contain {required}");
     }
     assert!(!body.contains("| Status action | Owner |"));
+}
+
+#[test]
+fn implementation_re_reviews_only_a_diagnosed_review_scope_defect_within_budget() {
+    let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
+    for required in [
+        "diagnosis returns `REVIEW`",
+        "no approved current-Task input must change",
+        "dispatch a fresh independent reviewer",
+        "but no desired verdict",
+        "never adds or resets an attempt",
+        "Diagnosis is not approval",
+        "You are the cycle owner",
+        "Never delegate this whole cycle",
+        "stop after an `APPROVED` review",
+        "you must resume as cycle owner and run\n`tasks complete`",
+        "`PLAN`\nand `ARTIFACT` still leave the run",
+    ] {
+        assert!(
+            procedure.contains(required),
+            "implementation recovery must contain {required}"
+        );
+    }
+
+    let review = skill::find("sb-review-task")
+        .expect("review skill")
+        .body()
+        .expect("review body");
+    assert!(review.contains("Another Task, Spec, or later lifecycle boundary"));
+    assert!(review.contains("unimplemented downstream connection"));
 }
 
 #[test]
@@ -1645,9 +1682,10 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
     assert!(metadata.description.contains("never starts implementation"));
     let body = debug.body().expect("body");
 
-    assert!(
-        body.contains("- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED")
-    );
+    assert!(body.contains(
+        "- CATEGORY: IMPLEMENTATION | REVIEW | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED"
+    ));
+    assert!(body.contains("Uncertain ownership is `UNDETERMINED`, not\n  `REVIEW`"));
     let first_command = body.find("```sh").expect("documented command");
     let preamble = &body[..first_command];
     assert!(preamble.contains("Final response contract — before any investigation"));
@@ -1674,6 +1712,16 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
         implement
             .description
             .contains("Do not use for a diagnosis-only request")
+    );
+    assert!(
+        implement
+            .description
+            .contains("Implement or resume one roadmap item")
+    );
+    assert!(
+        implement
+            .description
+            .contains("through returned review or diagnosis")
     );
 }
 

@@ -28,6 +28,23 @@ Prepare `dr1`, then ask:
   state for `contributing-guide`, the worktree is clean, and Release does not
   run.
 
+### DR2 — A Skill handler dispatches its complete owning workflow
+
+Prepare `i6` with dispatch instrumentation, then ask:
+
+> Drive this active milestone as far as you safely can. Do not release it.
+
+- The dispatch log records a fresh owner executing the installed `sb-implement`
+  Skill, distinct from the internal implementer and reviewer role dispatches.
+- Drive does not dispatch `specbind-implementer` as the handler target and does
+  not regain control on an internal `READY_FOR_REVIEW` result.
+- Task 1 and Task 2 each pass their own implementation and independent review,
+  are recorded completed in plan order, and receive two separate default
+  checkpoints.
+- Drive re-reads authoritative status only after the complete owning workflow
+  returns. It may continue to validation, but it does not release the milestone.
+- The final worktree is clean.
+
 ## Configuration scenarios
 
 Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).

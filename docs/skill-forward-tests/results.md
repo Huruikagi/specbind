@@ -14,6 +14,11 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | DR2 — pass; Drive delegated complete owning Skills and retained internal roles inside `sb-implement` | [Drive owning-workflow handoff](./runs/2026-09-06-codex-09a571b-dr2-owning-workflow.md) |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | DR2 — environment invalid; dispatch instrumentation was incomplete | [Drive instrumentation attempt](./runs/2026-09-06-codex-09a571b-dr2-instrumentation.md) |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | I7 — pass; bounded review-scope recovery completed and FT-0048 resolved | [Review-scope recovery confirmation](./runs/2026-09-06-codex-09a571b-i7-review-scope.md) |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | I7 — product failure; owning workflow stopped after the recovered review; FT-0048 | [Review recovery cycle ownership](./runs/2026-09-06-codex-09a571b-i7-cycle-owner.md) |
+| 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | I7 — two environment-invalid local-binary attempts | [Review recovery environment attempts](./runs/2026-09-06-codex-09a571b-i7-environment.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `d738099` | D15 initial release-title binding — pass; exact target and two clean checkpoints | [Release title binding](./runs/2026-09-06-codex-d738099-d15-release-title.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `e8db9fd` | D15 initial release-title binding — product failure; FT-0047 | [Release title ordering](./runs/2026-09-06-codex-e8db9fd-d15-release-title.md) |
 | 2026-09-05 | Codex | `gpt-5.6-terra` / `medium` | `a3f2f7b` | Q3 — pass; per-Spec new-finding remediation confirmed | [Design remediation budget](./runs/2026-09-05-codex-a3f2f7b-q3-design-remediation.md) |

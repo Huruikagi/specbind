@@ -31,6 +31,18 @@ fn assert_owned_path_route(content: &str) {
     assert!(content.contains("`Owners: none`\n  does not waive the other entry conditions"));
 }
 
+fn assert_review_recovery_routes(content: &str) {
+    assert!(content.contains(
+        "continue or recover a pending implementation and\n  supplies a returned review or diagnosis"
+    ));
+    assert!(
+        content
+            .contains("continuation route takes precedence over the direct review and diagnosis")
+    );
+    assert!(content.contains("diagnosis-only request does not start\n  implementation"));
+    assert!(content.contains("preserve the exact diagnosis\n  block"));
+}
+
 #[test]
 fn writes_each_agent_its_own_instruction_file() {
     // A shared file would leave one agent without instructions, because each
@@ -121,22 +133,13 @@ fn creates_a_file_holding_only_the_block() {
         "that match takes precedence even when the requested\n  output also looks like durable"
     ));
     assert!(applied.content.contains("use\n  `sb-review-task`"));
+    assert_review_recovery_routes(&applied.content);
     assert!(
         applied
             .content
             .contains("judge the actual diff without fixing")
     );
     assert!(applied.content.contains("use\n  `sb-debug` directly"));
-    assert!(
-        applied
-            .content
-            .contains("diagnosis-only request does not start\n  implementation")
-    );
-    assert!(
-        applied
-            .content
-            .contains("preserve the exact diagnosis\n  block")
-    );
 }
 
 #[test]

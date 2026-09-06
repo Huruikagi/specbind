@@ -51,6 +51,13 @@ action-to-owner table. It dispatches `skill`, applies the existing authority
 boundary to `guarded_cli`, stops on `boundary`, and fails closed on an unknown
 kind, target, or mode.
 
+A `skill` handler identifies the complete owning Skill workflow, never one of
+that workflow's internal registered roles. The fresh dispatch names the exact
+Skill plus the project working directory, project-local executable and PATH
+facts, and applicable project instruction paths. The owner loads those inputs
+before it delegates any internal role and retains its own progress, review, and
+checkpoint boundary through the terminal handoff.
+
 The JSON fields are additive under Decision 0158. Consumers continue to ignore
 unknown fields within the executable major.
 

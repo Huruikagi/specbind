@@ -43,8 +43,11 @@ The question is whether **this task**, as specified, is now done correctly.
   change was free to ignore?
 - Is it complete, or does it leave a path unhandled that the requirement covers?
 
-Work that belongs to a different task is out of scope. Noting it is useful;
-rejecting this task for it is not.
+Work that belongs to a different Task, Spec, or later lifecycle boundary is out
+of scope unless an approved input of the current Task makes it part of this
+subject. Noting it is useful; rejecting this task for it is not. Do not turn an
+unimplemented downstream connection into a current blocking finding merely
+because the current change exposes the seam that connection will consume.
 
 ## Correctness before style
 

@@ -55,6 +55,7 @@
 #   i3     a Direct item still pending, for the run under test to implement
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
 #   i6     cart in implementation with two sequential Tasks to checkpoint apart
+#   i7     t4 plus a correct uncommitted implementation awaiting bounded re-review
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
@@ -1166,7 +1167,7 @@ ds4 | t1 | t2 | x1 | vd1)
     fi
     ;;
 
-d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1405,6 +1406,24 @@ d7 | t4 | i4 | i6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | 
             expect "the unrelated edit did not apply" \
                 'test -n "$(git status --porcelain src/orders.py)"'
         fi
+    fi
+    if [ "$scenario" = i7 ]; then
+        # A correct pending diff whose only prior rejection assigned a later
+        # integration boundary to this Task. The driven run owns re-review and
+        # completion; the recipe owns only the reproducible starting state.
+        leave_dirty=yes
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up the i7 scenario"
+        runner=$(python_runner)
+        cart_tests "$runner"
+        cart_cap_implemented
+        expect "the i7 implementation does not satisfy the approved Task" \
+            'sh scripts/test.sh'
+        expect "the i7 implementation diff is absent" \
+            'test -n "$(git status --porcelain src/cart.py tests/test_cart.py tests/__init__.py)"'
+        expect "the later checkout boundary is already implemented" \
+            '! git status --porcelain src/orders.py | grep -q .'
     fi
     if [ "$scenario" = i4 ]; then
         # An unrelated uncommitted edit. The run must leave it exactly as it is;

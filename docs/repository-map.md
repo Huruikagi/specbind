@@ -354,3 +354,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0192](./design/decisions/0192-typed-milestone-action-handlers.md) | Accepted | Typed Milestone actions projected with Drive-consumable handlers |
 | [0193](./design/decisions/0193-progressive-discovery-procedures.md) | Accepted | Progressive loading of ordinary, reverse, and provider-specific Discovery procedures |
 | [0194](./design/decisions/0194-per-spec-design-revision-budget.md) | Accepted | Per-Spec Design remediation budget with validator-owned finding continuity |
+| [0195](./design/decisions/0195-review-scope-recovery.md) | Accepted | Bounded fresh re-review after a diagnosed Task review scope defect |

@@ -52,8 +52,19 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
 
 - `handler.kind=skill` names the installed owning Skill in `handler.target`.
   Dispatch a fresh subagent with the exact item, action, handler mode,
-  `commandOperand`, and applicable authority. The dispatched workflow reads its
-  own inputs.
+  `commandOperand`, applicable authority, project working directory,
+  project-local executable and PATH facts, and exact applicable project
+  instruction paths. Require that owner to read those instructions and load the
+  exact `handler.target` Skill before it delegates any internal role. The
+  dispatched workflow then reads its own domain inputs.
+- A Skill target is the complete owning workflow package, not a similarly named
+  registered internal agent role. Tell the fresh subagent to execute the exact
+  `handler.target` Skill through its terminal handoff. For
+  `handler.target=sb-implement`, never dispatch `specbind-implementer` or
+  `specbind-reviewer` directly: those roles are internal to `sb-implement`,
+  which owns review, Task progress, and the checkpoint. An internal
+  `READY_FOR_REVIEW` result is not an owning-workflow result and must not return
+  control to Drive.
 - `handler.kind=guarded_cli` names the accepted guarded command. Run it only
   when this Skill's existing authority boundary permits that exact action.
 - `handler.kind=boundary` names the next explicit workflow. Report it and stop;

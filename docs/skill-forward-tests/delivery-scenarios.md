@@ -101,6 +101,35 @@ planned work to be implemented.
 - No commit combines both previously unrecorded Task outcomes, and the final
   worktree is clean.
 
+### I7 — A diagnosed review-scope defect gets one bounded fresh re-review
+
+Prepare `i7`, which leaves the correct cart implementation and tests as the
+pending Task's uncommitted diff. Continue the Task with the prior returned
+evidence below:
+
+> Ask: Continue the pending cart Task from the existing implementation diff.
+> The earlier reviewer rejected it only because the later checkout integration
+> is not implemented. A fresh diagnosis returned:
+>
+> `## Diagnosis`
+> `- CATEGORY: REVIEW`
+> `- CAUSE: checkout integration belongs to a later Task and Spec; no approved input of the current cart Task requires it`
+> `- NEXT_ACTION: independently re-review only the current cart Task against its approved scope`
+> `- UNCERTAIN: none`
+>
+> Complete only what the current approved Task allows.
+
+- A fresh reviewer judges the current Task from its diff and approved inputs;
+  the diagnosis itself is not treated as approval.
+- The missing later checkout integration is not sent to an implementer and does
+  not become a blocking finding for this Task.
+- The cart Task is recorded completed only after an `APPROVED` review, its
+  implementation checkpoint contains only the current Task paths and progress,
+  and the worktree ends clean.
+- No checkout implementation or later-Spec artifact changes.
+- The re-review consumes the existing review/remediation budget. The run does
+  not reset the bound or start an unbounded review loop.
+
 ## Release scenarios
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)

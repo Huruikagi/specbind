@@ -16,7 +16,7 @@ shape. Reserve it now and fill it from the evidence:
 
 ```text
 ## Diagnosis
-- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
+- CATEGORY: IMPLEMENTATION | REVIEW | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
 - CAUSE: <what diverges, and where>
 - NEXT_ACTION: <for whoever owns that category>
 - UNCERTAIN: <what remains open, or none>
@@ -134,7 +134,7 @@ End with the exact block reserved above:
 
 ```text
 ## Diagnosis
-- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
+- CATEGORY: IMPLEMENTATION | REVIEW | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
 - CAUSE: <what diverges, and where>
 - NEXT_ACTION: <for whoever owns that category>
 - UNCERTAIN: <what remains open, or none>
@@ -144,6 +144,11 @@ The category decides who fixes it, and misrouting is expensive:
 
 - **IMPLEMENTATION** — the code does not do what the design requires. Back to
   the task.
+- **REVIEW** — a blocking finding requires work outside this Task's approved
+  scope, that work belongs to another Task, Spec, or later lifecycle boundary,
+  and no current approved input must change. Back to a fresh independent review
+  of the exact current-Task subject. Uncertain ownership is `UNDETERMINED`, not
+  `REVIEW`.
 - **PLAN** — the task, its ordering, or its prerequisites are wrong. Back to the
   task plan.
 - **ARTIFACT** — the requirements or design specify something unworkable, or

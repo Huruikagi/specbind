@@ -48,6 +48,13 @@ shared worktree at once.
 running three tasks and recording three completions at the end records judgments
 you never separately made.
 
+You are the cycle owner. Keep ownership while implementer, reviewer, or debugger
+subagents run: dispatch one role, wait for its structured return, parse it here,
+and continue the remaining cycle yourself. Never delegate this whole cycle to
+one of its internal roles, return an internal status block as your own result,
+or stop after an `APPROVED` review before recording progress and applying the
+checkpoint decision.
+
 ### Dispatch a fresh implementer
 
 Use the registered `specbind-implementer` role when the host provides it;
@@ -131,6 +138,22 @@ the task is blocked, with the outstanding findings as the reason.
 
 `CANNOT_REVIEW` is not a rejection to retry blindly. It enters diagnosis with
 the reason the subject could not be judged.
+
+When diagnosis returns `REVIEW`, first verify that its evidence says a blocking
+finding assigned another Task, Spec, or later lifecycle boundary to this Task
+and that no approved current-Task input must change. If either condition is
+missing, treat the diagnosis as `UNDETERMINED`; do not manufacture a retry.
+
+With a valid `REVIEW` diagnosis and an unspent review/remediation round,
+dispatch a fresh independent reviewer. Give it the exact current Task scope,
+the rejected findings, and the diagnosis evidence, but no desired verdict. The
+reviewer applies the ordinary `task-review` protocol again from the diff and
+approved artifacts. This re-review consumes the existing at-most-two-round
+budget; it never adds or resets an attempt. Diagnosis is not approval. After
+the fresh review returns `APPROVED`, you must resume as cycle owner and run
+`tasks complete` before the checkpoint decision. With no
+round left, block the Task with the outstanding finding and diagnosis. `PLAN`
+and `ARTIFACT` still leave the run and never enter this re-review path.
 
 ### Record
 

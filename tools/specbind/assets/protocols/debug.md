@@ -71,6 +71,10 @@ Say which of these the failure is, because each has a different owner:
   fix belongs to the task.
 - **Plan defect.** The task, its ordering, or its prerequisites are wrong. The
   fix belongs to the task plan.
+- **Review scope defect.** A blocking finding assigns another Task, Spec, or
+  later lifecycle boundary to the current Task even though no approved input
+  makes it part of the review subject. The fix is a new independent review over
+  the correct subject, not an implementation or artifact change.
 - **Design or requirements defect.** The approved artifacts specify something
   that cannot work, or contradict each other. The fix belongs to that phase, and
   no amount of implementation effort substitutes.
@@ -107,7 +111,7 @@ Always end with this block. The caller parses the category, never the prose:
 
 ```text
 ## Diagnosis
-- CATEGORY: IMPLEMENTATION | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
+- CATEGORY: IMPLEMENTATION | REVIEW | PLAN | ARTIFACT | ENVIRONMENT | UNDETERMINED
 - CAUSE: <what diverges, and where>
 - NEXT_ACTION: <for whoever owns that category>
 - UNCERTAIN: <what remains open, or none>
