@@ -27,6 +27,7 @@ pub(super) fn config_entry(
             detail: None,
             content: Some(rendered),
             expected_current: None,
+            resume_content: None,
         };
     };
     let installed_agents = config
@@ -49,6 +50,7 @@ pub(super) fn config_entry(
         detail: unchanged.then(|| "already matches the requested inputs".to_owned()),
         content: (!unchanged).then_some(rendered),
         expected_current: None,
+        resume_content: None,
     }
 }
 
@@ -191,6 +193,7 @@ pub(super) fn template_entries(
                 .then(|| "project-owned settings are never overwritten".to_owned()),
             content,
             expected_current: None,
+            resume_content: None,
         });
     }
     let roadmap_relative = format!(
@@ -229,6 +232,7 @@ pub(super) fn template_entries(
             .then(|| "project-owned settings are never overwritten".to_owned()),
         content: roadmap_content,
         expected_current: None,
+        resume_content: None,
     });
     Ok(entries)
 }
@@ -266,6 +270,7 @@ pub(super) fn adapter_entries(
             content: (action == PlanAction::Create)
                 .then(|| entry.scaffold(resolved.language).to_owned()),
             expected_current: None,
+            resume_content: None,
         });
     }
     Ok(entries)
@@ -307,6 +312,7 @@ pub(super) fn rule_entries(
                 .then(|| "project-owned settings are never overwritten".to_owned()),
             content: (action == PlanAction::Create).then(|| default.content().to_owned()),
             expected_current: None,
+            resume_content: None,
         });
     }
     Ok(entries)
@@ -378,6 +384,7 @@ pub(super) fn project_instruction_entries(
             detail,
             content: (action != PlanAction::Keep).then_some(applied.content),
             expected_current: current,
+            resume_content: None,
         });
     }
     Ok(entries)
@@ -423,6 +430,7 @@ pub(super) fn skill_entries(
                         ));
                     }
                 };
+                let resume_content = (action == PlanAction::Keep).then(|| rendered.content.clone());
                 entries.push(PlanEntry {
                     action,
                     path: relative,
@@ -431,6 +439,7 @@ pub(super) fn skill_entries(
                         .then(|| "already matches the current product asset".to_owned()),
                     content: (action != PlanAction::Keep).then_some(rendered.content),
                     expected_current: None,
+                    resume_content,
                 });
             }
         }
@@ -501,6 +510,7 @@ fn retired_skill_file_entry(
                 detail: Some(detail.to_owned()),
                 content: None,
                 expected_current: None,
+                resume_content: None,
             }))
         }
         Ok(_) => Err(one_issue(
@@ -558,6 +568,7 @@ pub(super) fn agent_role_entries(
                 ));
             }
         };
+        let resume_content = (action == PlanAction::Keep).then(|| rendered.clone());
         entries.push(PlanEntry {
             action,
             path: relative,
@@ -566,6 +577,7 @@ pub(super) fn agent_role_entries(
                 .then(|| "already matches the configured capability".to_owned()),
             content: (action != PlanAction::Keep).then_some(rendered),
             expected_current: None,
+            resume_content,
         });
     }
     Ok(entries)

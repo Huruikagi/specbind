@@ -107,6 +107,10 @@ pub struct PlanEntry {
     /// place rather than creating whole, so those categories carry what they
     /// read and the apply compares against it.
     expected_current: Option<String>,
+    /// Exact current bytes that prove a dirty kept path is an already-applied
+    /// product-managed output from this binary. Project-owned kept content
+    /// never receives this recovery evidence.
+    resume_content: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -203,7 +207,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
         .iter()
         .any(|entry| matches!(entry.action, PlanAction::Replace | PlanAction::Remove))
     {
-        require_replaceable_repository(project_root)?;
+        require_replaceable_repository(project_root, &entries)?;
     }
     Ok(InstallPlan {
         initial: existing.is_none(),

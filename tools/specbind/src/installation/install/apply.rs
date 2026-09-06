@@ -11,8 +11,8 @@ use super::{InstallInputs, InstallIssues, InstallOutcome, PlanAction, PlanEntry,
 /// # Errors
 ///
 /// Returns planning, race, or guarded-write diagnostics. A failure may leave
-/// earlier assets written; a later run converges because missing defaults are
-/// created and existing project files are kept.
+/// earlier product-managed assets written; a later run recognizes their exact
+/// current-binary output and continues the remaining plan.
 pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutcome, InstallIssues> {
     let plan = plan(project_root, inputs)?;
     let unchanged = plan
@@ -37,6 +37,9 @@ pub fn apply(project_root: &Path, inputs: &InstallInputs) -> Result<InstallOutco
                 .filter(|entry| entry.category == "config"),
         );
     for entry in ordered {
+        if entry.action == PlanAction::Keep {
+            continue;
+        }
         let target = project_root.join(&entry.path);
         if entry.action == PlanAction::Remove {
             verify_expected_state(&target, entry)?;

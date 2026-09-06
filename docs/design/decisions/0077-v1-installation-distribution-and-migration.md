@@ -57,7 +57,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
   Decision 0094 protocols remain binary-owned and are never installed as
   project files.
 - When project instructions are enabled, the installer maintains only a marked SpecBind block in the selected agents' root `AGENTS.md` or `CLAUDE.md`. Existing surrounding content is preserved, malformed or duplicate markers stop the operation, and the selection persists through `.specbind.json`.
-- Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and a clean repository first. The installer never commits project changes.
+- Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and a clean repository first, except that a retry may continue past dirty kept paths whose bytes exactly match product-managed output from the running binary. The installer never commits project changes.
 
 ### Explicit cc-sdd migration
 
@@ -70,9 +70,9 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 ## Implementation status
 
-`specbind install --dry-run` is implemented as a read-only planner. It resolves the effective configuration from any existing `.specbind.json` merged with additive agent selection, requires an explicit language and at least one agent for an initial installation, refuses an unsupported `specDir` change, and reports each target as create, replace, or keep. Project-owned settings are reported as keep and never replaced. A plan containing any replacement enforces the accepted repository guard: at least one commit and a clean worktree.
+`specbind install --dry-run` is implemented as a read-only planner. It resolves the effective configuration from any existing `.specbind.json` merged with additive agent selection, requires an explicit language and at least one agent for an initial installation, refuses an unsupported `specDir` change, and reports each target as create, replace, or keep. Project-owned settings are reported as keep and never replaced. A plan containing any replacement enforces the accepted repository guard: at least one commit and either a clean worktree or only exact already-applied product-managed outputs from the same binary.
 
-`specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist, and an interrupted run converges on the next invocation because missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits.
+`specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist. An interrupted product-asset refresh converges on the next invocation: the repository guard admits dirty kept paths only when their current bytes exactly match product-managed output from the running binary, while any unrelated or project-owned dirty path still blocks replacement. Missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits.
 
 Both paths cover `.specbind.json`, the Decision 0091 installed template set, the
 Decision 0093 shared-rule set, the Decision 0101 release, Git, and deferred

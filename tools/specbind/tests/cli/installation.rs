@@ -365,6 +365,83 @@ fn installs_product_managed_skills_for_each_selected_agent() {
 }
 
 #[test]
+fn resumes_an_exact_partial_product_asset_refresh_but_rejects_unrelated_changes() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    let mut install = specbind_command();
+    install
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "codex",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .success();
+    commit_all(root.path());
+    let first = ".agents/skills/sb-status/SKILL.md";
+    let second = ".claude/skills/sb-status/SKILL.md";
+    let first_current = fs::read_to_string(root.path().join(first)).expect("current first asset");
+    let second_current =
+        fs::read_to_string(root.path().join(second)).expect("current second asset");
+    write(root.path(), first, "former first product asset\n");
+    write(root.path(), second, "former second product asset\n");
+    commit_all(root.path());
+
+    // Model a failed refresh after the first write: the first dirty path is
+    // already the exact output of this binary, while the second still needs
+    // replacement.
+    write(root.path(), first, &first_current);
+    git(root.path(), &["add", "--", first]);
+    let mut staged = specbind_command();
+    staged
+        .current_dir(root.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
+    git(root.path(), &["restore", "--staged", "--", first]);
+
+    write(root.path(), "unrelated.txt", "user work\n");
+    let mut blocked = specbind_command();
+    blocked
+        .current_dir(root.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
+
+    fs::remove_file(root.path().join("unrelated.txt")).expect("remove test-only unrelated file");
+    let mut resumed = specbind_command();
+    resumed
+        .current_dir(root.path())
+        .args(["install"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains(format!("- keep {first} [skill]")).and(
+                predicate::str::contains(format!("- replace {second} [skill]")),
+            ),
+        )
+        .stderr("");
+
+    assert_eq!(
+        fs::read_to_string(root.path().join(first)).expect("resumed first asset"),
+        first_current
+    );
+    assert_eq!(
+        fs::read_to_string(root.path().join(second)).expect("resumed second asset"),
+        second_current
+    );
+}
+
+#[test]
 fn refresh_removes_retired_skill_packages_under_the_repository_guard() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
