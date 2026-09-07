@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `e1cd8a4` + final working tree | T6, T7 — pass; stronger Design verification preserved and FT-0049 resolved | [Final verification-input audit](./runs/2026-09-07-codex-e1cd8a4-verification-inputs-final.md) |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `e1cd8a4` + initial working tree | T6 — product failure, FT-0049; T7 — pass | [Initial verification-input audit](./runs/2026-09-07-codex-e1cd8a4-verification-inputs-initial.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `a332f07` | A1 — pass after one environment-invalid instrumentation attempt; A4 — pass with automatic `sb-adopt` retirement | [Temporary adoption Skill lifecycle](./runs/2026-09-06-codex-a332f07-adoption-skill-lifecycle.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | DR2 — pass; Drive delegated complete owning Skills and retained internal roles inside `sb-implement` | [Drive owning-workflow handoff](./runs/2026-09-06-codex-09a571b-dr2-owning-workflow.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `09a571b` + working tree | DR2 — environment invalid; dispatch instrumentation was incomplete | [Drive instrumentation attempt](./runs/2026-09-06-codex-09a571b-dr2-instrumentation.md) |

@@ -178,6 +178,34 @@ absent, do not approve a plan that implements behavior first and creates that
 command later. Combine the behavior and its tests, or place genuine test
 scaffolding first, then rerun both CLI checks.
 
+For each completion check, also establish what it proves, the input or state it
+needs, how that will be supplied, and whether it is available when the task
+finishes. Inspect relevant existing checks or fixtures rather than assuming a
+named command can produce the required state. No separate inventory is needed.
+
+Compare these checks with the approved Design's verification obligations before
+presenting the plan as ready. Do not silently omit a stronger Design condition
+or replace required real-connection proof with boundary tests. Report that
+mismatch even when the draft passes the CLI checks; correcting it belongs to
+Design before this plan can be approved.
+
+Only when another Spec supplies a prerequisite, read its relevant Contract and
+Design and compare availability with `specbind milestone scope`. Read that
+Spec's Tasks only if they exist and their detail is needed. This targeted read
+does not authorize editing that Spec or require an audit of every Spec's Tasks.
+The Roadmap read checks execution order; it does not reopen product Steering.
+
+Distinguish boundary input that proves this task's responsibility from a later
+integration check of the real connection. Prefer an existing input path or a
+small test helper when sufficient; do not require a new public API, injection
+layer, or permanent abstraction solely to make Specs independently finishable.
+Correct the completion condition, verification placement, or work order within
+the approved scope, then rerun both CLI checks. Do not defer proof of this task's
+own responsibility or silently assign work to another Spec. If the correction
+requires changing Design, Contract, Roadmap, or another Spec's plan, report the
+concrete prerequisite and ordering mismatch, route to its owner, and stop this
+plan's approval. Existing approval and invalidation rules still apply.
+
 ## 5. Revising a plan that has recorded progress
 
 If the Spec is in `implementation`, tasks may already be completed or blocked,

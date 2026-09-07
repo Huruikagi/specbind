@@ -48,6 +48,8 @@
 #   t2     t1 without the accepted contract review
 #   t3     an approved three-task plan with the first two already completed
 #   t4     d7's state: the tasks gate approved and cart in implementation
+#   t6     cart verification requires a real connection owned by later cart-input
+#   t7     t6 with boundary verification and later integration correctly separated
 #   x1     t2's state: one participant ready for review, contract unchanged
 #   x2     ds5 with cart's approved design removing the export checkout consumes
 #   x3     cart in tasks state with a plan already written and no review
@@ -167,6 +169,7 @@ cart_cap_approved() {
 cart_design_approved() {
     mechanism=${1:-"cap, and leaves the cart unchanged when either bound is violated."}
     contract_mode=${2:-updated}
+    verification=${3:-}
     if [ "$contract_mode" = updated ] && \
         ! grep -q 'id: max-per-sku' .specbind/specs/cart/contract.yaml; then
         awk '{ print }
@@ -192,6 +195,10 @@ cart_design_approved() {
         echo
         echo "add_item reads the current held quantity, applies the floor and the"
         echo "$mechanism"
+        if [ -n "$verification" ]; then
+            echo
+            echo "$verification"
+        fi
         echo
         echo "_Requirements: 1.1, 1.2, 1.3, 1.4_"
     } > .specbind/specs/cart/design.md
@@ -1167,6 +1174,102 @@ ds4 | t1 | t2 | x1 | vd1)
         expect "no accepted contract review was written" \
             'test -e .specbind/state/contract-review.md'
     fi
+    ;;
+
+t6 | t7)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}],"newSpecs":[{"spec":"cart-input","summary":"Connect incoming JSON requests to cart additions.","dependsOn":[{"spec":"cart"}]}]}}'
+    brief cart "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
+    brief cart-input "Incoming JSON requests are not connected to cart additions." \
+        "Connect the JSON input path after the cart cap is implemented."
+    cart_cap_approved
+    if [ "$scenario" = t6 ]; then
+        verification="Cart completion requires running scripts/test.sh through the real JSON request connection owned by cart-input and observing that the cart retains its previous quantity after an over-cap request. Direct calls to add_item alone do not satisfy this completion condition. The JSON connection is implemented by cart-input after cart completes."
+    else
+        verification="Cart completion is verified by scripts/test.sh using direct add_item calls with dictionaries, SKU strings, and quantities, including an existing quantity of 98 and an addition of 2. JSON request connection verification belongs to cart-input after the cart cap is implemented. No new public test input interface is required."
+    fi
+    cart_design_approved "cap, and leaves the cart unchanged when either bound is violated." updated "$verification"
+    cat > .specbind/specs/cart-input/requirements.md <<'EOF'
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+
+# Requirements
+
+## Context
+
+Connect incoming JSON requests to the established cart boundary.
+
+## Requirements
+
+### Requirement 1: Connect a cart addition
+
+**Objective:** Callers can submit a JSON request to add an item.
+
+#### Acceptance Criteria
+
+1. A request containing a SKU and integer quantity is passed to the cart addition boundary and returns its result or rejection without changing its semantics.
+EOF
+    cat > .specbind/specs/cart-input/design.md <<'EOF'
+---
+type: SpecBind Design
+artifact_id: main
+requirement_ids: ["1.1"]
+---
+
+# Design
+
+Implement handle_request(cart, payload) in src/cart_input.py. Decode the JSON
+payload with Python's json module and pass sku and quantity to add_item.
+The cart Spec owns quantity validation and preservation of existing state.
+After cart completes, scripts/test.sh exercises real JSON requests, including
+a rejected addition of 2 to a held quantity of 98, and checks unchanged state.
+
+_Requirements: 1.1_
+EOF
+    cat > .specbind/specs/cart-input/contract.yaml <<'EOF'
+schema_version: 1
+consumes:
+  - id: cart-add
+    target: { spec: cart, section: exports, id: add-item }
+    description: Submit decoded SKU and quantity to the existing cart boundary.
+owns:
+  - { id: json-input, description: Decode incoming JSON requests and connect them to cart additions. }
+exports: []
+invariants: []
+file_ownership:
+  - { id: json-module, paths: [src/cart_input.py] }
+EOF
+    specbind spec requirements approve cart-input --approval-mode explicit --requirement-ids 1.1 >/dev/null \
+        || fail "could not approve cart-input requirements"
+    specbind spec design approve cart-input --approval-mode explicit >/dev/null \
+        || fail "could not approve cart-input design"
+    printf '%s' '{"schemaVersion":1,"assessment":"Cart owns capped quantities; cart-input consumes add-item and owns the later JSON connection. Ownership and contract dependency are consistent.","deepInputs":[]}' \
+        | specbind milestone review accept --candidate - >/dev/null \
+        || fail "could not accept the two-Spec contract review"
+    mkdir -p scripts tests
+    printf '%s\n' '#!/usr/bin/env sh' "$(python_runner) -m unittest discover -s tests" > scripts/test.sh
+    cat > tests/test_cart.py <<'EOF'
+import unittest
+from src.cart import add_item
+
+class CartTest(unittest.TestCase):
+    def test_existing_addition(self):
+        self.assertEqual(add_item({"book": 1}, "book", 2), {"book": 3})
+EOF
+    expect "the existing test command does not run" 'sh scripts/test.sh'
+    expect "the real JSON input path already exists" '! test -e src/cart_input.py'
+    expect "cart design is not fresh" 'specbind spec status cart | grep -q "design=fresh"'
+    expect "the review is not fresh" 'specbind milestone review status | grep -q "Status: fresh"'
+    expect "the later Spec does not consume cart" \
+        'specbind contract consumers cart | grep -q "specs/cart-input#contract/consumes/cart-add -> specs/cart#contract/exports/add-item"'
+    expect "the Roadmap does not order cart-input after cart" \
+        'specbind milestone scope | grep -A 1 "dependsOn" | grep -q cart'
+    expect "a task plan already exists" \
+        '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
     ;;
 
 d7 | t4 | i4 | i6 | i7 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)

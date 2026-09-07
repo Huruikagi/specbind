@@ -76,6 +76,15 @@ Tasks turn Requirements and Design into an executable order. Review each Task's
 scope, completion condition, verification, and Requirement coverage before
 approving the Tasks Gate.
 
+For each check, establish what it proves and how its required input or state
+will be available when the Task finishes. When another Spec provides a needed
+capability, compare its responsibility with the Roadmap execution order. If test
+input through an existing boundary proves the Task's own responsibility, place
+verification of the real connection after integration. There is no need to add
+public APIs or abstractions solely to finish each Spec independently. Revisit
+completion conditions, verification placement, or work order, and return to the
+owning phase if an approved artifact such as Design needs to change.
+
 Tasks approval completes planning. It does not begin implementation.
 
 ## 6. Implement one Roadmap item

@@ -75,6 +75,30 @@ correctly" is not a criterion; the observable condition that demonstrates it is.
 When the task statement already makes completion unambiguous, adding criteria is
 noise.
 
+For each completion check, establish what it proves, the input or state it
+needs, how that will be supplied, and whether it is available when the task
+finishes. A test command's existence alone does not prove this. Use existing
+checks and fixtures as evidence; no separate inventory is required.
+
+Start from the verification obligations in the approved Design as well as the
+draft plan. Do not make a check appear executable by omitting a stronger Design
+condition or replacing required real-connection proof with boundary tests. That
+mismatch must be reported and corrected by the owning phase before approval.
+
+When another Spec supplies a prerequisite, check its relevant responsibility
+and the Roadmap execution order. Boundary input can prove the current task's
+responsibility while a later integration check proves the real connection. That
+later check is legitimate only when the earlier task already proves its own
+responsibility; it cannot substitute for that proof.
+
+Use an existing input path or a small test helper when sufficient. Do not require
+a new public API, injection layer, or permanent abstraction solely to make Specs
+independently finishable. Revise the completion condition, verification
+placement, or work order within approved scope instead. A change to an upstream
+artifact or another Spec's plan belongs to its owner and follows the existing
+approval and invalidation rules; never weaken a Requirement or silently transfer
+an obligation to make the plan executable.
+
 ## Order carries the dependencies
 
 Execution order is the primary dependency mechanism: a task may rely on

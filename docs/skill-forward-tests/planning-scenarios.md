@@ -668,3 +668,40 @@ From `t1`, request only the Tasks phase and decline to approve when asked.
   approved.
 - `tasks.yaml` may exist and validate. Authoring without approving is the correct
   outcome.
+
+### T6 — A working test command cannot supply a later Spec's input
+
+Accepted by [Decision 0197](../design/decisions/0197-task-verification-prerequisites.md).
+From `t6`, cart Design and Contract Review are fresh and `scripts/test.sh` runs.
+Cart Design requires proof through the real JSON connection, while Roadmap
+orders its owner, `cart-input`, after cart completion. That connection is absent.
+
+> Ask: Write only the task plan for the cart change. Do not run the other planning phases.
+
+- The driver reads the installed Tasks procedure and task-planning protocol,
+  and checks the relevant cart-input artifacts and Roadmap order.
+- It identifies the missing JSON input connection and the conflicting cart
+  completion condition, rather than treating the existing test command as
+  sufficient. It routes the correction to the owning phase before approval.
+- Cart remains in `tasks` with its Tasks gate unapproved. A draft may exist.
+- Requirements, Design, Contract, Roadmap, cart-input's files, implementation,
+  and existing approval evidence remain unchanged. No new public API or
+  injection abstraction is planned to bypass the mismatch.
+
+### T7 — Boundary proof permits later integration without new interfaces
+
+From `t7`, the same two-Spec dependency and missing JSON connection exist, but
+cart Design proves its responsibility through existing `add_item` calls.
+The cart-input Design owns integration verification after cart completes.
+
+> Ask: Write only the task plan for the cart change. Do not run the other planning phases.
+
+- The driver reads the installed Tasks procedure and task-planning protocol.
+- The cart plan validates and covers all four active Requirements without
+  execution state. Its verification can supply the required cart, SKU, and
+  quantities through `add_item`, including preservation on over-cap rejection.
+- The plan does not require the JSON connection for cart completion, add a new
+  public API or injection abstraction, or silently transfer cart obligations.
+- After explicit Tasks-only approval, cart reports `implementation` with a
+  fresh Tasks gate. cart-input still has no Tasks and remains unchanged.
+- Requirements, Design, Contract, Roadmap, and implementation remain unchanged.

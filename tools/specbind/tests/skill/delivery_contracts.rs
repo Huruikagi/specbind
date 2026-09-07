@@ -35,6 +35,14 @@ fn tasks_skill_audits_verification_readiness_before_approval() {
     assert!(body.contains("execution-readiness audit"));
     assert!(body.contains("canonical test command that is currently\nabsent"));
     assert!(body.contains("do not approve a plan that implements behavior first"));
+    assert!(body.contains("the input or state it\nneeds, how that will be supplied"));
+    assert!(body.contains("before\npresenting the plan as ready"));
+    assert!(body.contains("replace required real-connection proof with boundary tests"));
+    assert!(body.contains("Only when another Spec supplies a prerequisite"));
+    assert!(body.contains("compare availability with `specbind milestone scope`"));
+    assert!(body.contains("does not authorize editing that Spec"));
+    assert!(body.contains("do not require a new public API, injection"));
+    assert!(body.contains("route to its owner, and stop this\nplan's approval"));
 }
 
 #[test]

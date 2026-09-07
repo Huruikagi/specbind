@@ -356,3 +356,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0194](./design/decisions/0194-per-spec-design-revision-budget.md) | Accepted | Per-Spec Design remediation budget with validator-owned finding continuity |
 | [0195](./design/decisions/0195-review-scope-recovery.md) | Accepted | Bounded fresh re-review after a diagnosed Task review scope defect |
 | [0196](./design/decisions/0196-optional-temporary-adoption-skill.md) | Accepted | Optional temporary adoption Skill and guarded retirement after reverse finalization |
+| [0197](./design/decisions/0197-task-verification-prerequisites.md) | Accepted | Task verification inputs and state available at completion, with targeted cross-Spec checks |
