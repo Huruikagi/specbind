@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0198 adds explicit inline retirement markers and active retirement
+coverage. Its rules supersede the live-only selection and unsupported-retirement
+restrictions below where applicable; ordinary ID deletion remains prohibited.
+
+
 Decision 0164 adds the Source Items declared by the Spec's Brief as conditional
 request-context reads and requires accepted obligations to be restated in
 Requirements rather than left as links.

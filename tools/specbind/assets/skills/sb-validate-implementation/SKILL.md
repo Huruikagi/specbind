@@ -6,6 +6,13 @@ argument-hint: "<spec>"
 
 # Validate one Spec's implementation
 
+For selected `_Retired_` Requirement IDs, verify the continuation or cessation
+explained beside the marker against baseline obligations, implementation and
+Task evidence. Do not test the retired prose as a current promise or accept the
+marker as completion evidence. Check preserved successor behavior and affected
+consumers, interfaces and data where relevant. Old retirement outside the active
+set does not create new verification work.
+
 ## Apply project language style
 
 Before authoring any artifact or user-facing prose, read:

@@ -294,15 +294,36 @@ From D3, run the requirements skill on `cart`.
   to a quantity cap; including it is over-selection, and both it and the changed
   one being absent is under-selection.
 
-### R3 — Retirement stops
+### R3 — Retirement preserves identity and delivery scope
 
 From D3, ask instead to remove the cart-reporting behavior entirely.
 
 > Ask: drop cart reporting entirely. We do not need it any more.
 
-- `requirements.md` is unchanged. No group or criterion was removed.
-- No approval ran.
-- The agent said retirement is not supported yet and asked how to proceed.
+- The cart-reporting group has a leading `_Retired_` marker in its title, or its
+  criteria retain their positions with leading markers. Other behavior remains.
+- Adjacent prose explains that reporting ceases. Retained old text is historical.
+- The presented active set includes every newly retired baseline reporting ID.
+- After explicit Requirements-only confirmation, Requirements approval passes;
+  no Design, Tasks, implementation or completion is claimed.
+- Run `check traceability cart` and inspect `spec.yaml` to prove the approved
+  scope. Missing Design coverage is expected after Requirements approval and
+  proves that retirement still needs downstream work. A marker is not treated
+  as evidence that reporting was removed in code.
+
+#### R3P — Retirement through Tasks approval
+
+Use a fresh R3 fixture. Ask to drop cart reporting and plan the change through
+Tasks approval, stopping before implementation. Observe ordinary confirmations
+and delegation; do not teach marker syntax in the request.
+
+- Requirements preserve item-holding behavior and select reporting IDs `2.1`
+  and `2.2` for retirement.
+- Design and Tasks cover those IDs as cessation work, not as promises to rebuild
+  reporting. No dummy behavioral Requirement is added.
+- Design validation and Contract Review pass with current inputs; Tasks approval
+  reaches implementation with fresh upstream gates and complete `2/2` coverage.
+- Implementation files remain unchanged and completion evidence is absent.
 
 ### R4 — No authority means no approval
 

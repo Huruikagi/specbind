@@ -194,6 +194,13 @@ pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
         }
         None => push_field(&mut output, "Active requirement IDs", "none"),
     }
+    if !report.retired_requirement_ids.is_empty() {
+        push_field(
+            &mut output,
+            "Retired requirement IDs",
+            &report.retired_requirement_ids.join(", "),
+        );
+    }
     CommandOutput::success(output.into_bytes())
 }
 

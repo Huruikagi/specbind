@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0198 adds explicit inline retirement markers and active retirement
+coverage. Its rules supersede the live-only selection and unsupported-retirement
+restrictions below where applicable; ordinary ID deletion remains prohibited.
+
+
 ## Context
 
 Decisions 0100 and 0172 make Requirements a complete current behavioral

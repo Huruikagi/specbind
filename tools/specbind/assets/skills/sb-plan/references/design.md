@@ -384,6 +384,12 @@ the check and the contract review judge it.
 
 ## 5. Check before you present
 
+For selected `_Retired_` Requirement IDs, cover the continuation or cessation
+explained beside the marker, not the old behavioral promise. Inspect the baseline
+when a retired group omits its former criteria. Record the resulting design and
+affected Contract consumers. Historical references may remain as retirement
+explanations after release; they do not restore live obligations or future scope.
+
 ```sh
 specbind check traceability <spec>
 specbind check contracts

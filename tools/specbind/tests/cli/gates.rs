@@ -1,6 +1,124 @@
 use super::*;
 
 #[test]
+#[allow(clippy::too_many_lines)] // Keep the transition matrix beside its shared Git fixture assertions.
+fn requirement_retirement_is_guarded_and_can_be_the_only_active_work() {
+    let live = "### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. Keep accepting orders.\n2. Report orders.\n\n### Requirement 2: Export\n\n#### Acceptance Criteria\n\n1. Export orders.\n";
+    let retired = live.replace(
+        "2. Report orders.",
+        "2. _Retired_ Report orders.\n   - Reporting ceases.",
+    );
+    let compact = "### Requirement 1: _Retired_ Checkout\n\n### Requirement 2: Export\n\n#### Acceptance Criteria\n\n1. Export orders.\n";
+    let cases = [
+        (live, retired.as_str(), "1.2", None),
+        (
+            live,
+            retired.as_str(),
+            "1.1",
+            Some("SPEC_REQUIREMENTS_RETIREMENT_SELECTION_MISSING"),
+        ),
+        (
+            retired.as_str(),
+            live,
+            "1.1",
+            Some("SPEC_REQUIREMENTS_RETIRED_ID_REUSED"),
+        ),
+        (
+            retired.as_str(),
+            retired.as_str(),
+            "1.2",
+            Some("SPEC_REQUIREMENTS_RETIREMENT_SELECTION_INVALID"),
+        ),
+        (live, compact, "1.1,1.2", None),
+        (
+            live,
+            compact,
+            "1.1",
+            Some("SPEC_REQUIREMENTS_RETIREMENT_SELECTION_MISSING"),
+        ),
+        (
+            compact,
+            live,
+            "1.1",
+            Some("SPEC_REQUIREMENTS_RETIRED_ID_REUSED"),
+        ),
+        (
+            live,
+            "### Requirement 1: _Retired_\n\n### Requirement 2: _Retired_\n",
+            "1.1,1.2,2.1",
+            Some("SPEC_REQUIREMENTS_SPEC_RETIREMENT_UNSUPPORTED"),
+        ),
+    ];
+    for (before, after, selection, diagnostic) in cases {
+        let root = project_fixture();
+        let artifact = |body: &str| {
+            format!(
+                "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n{body}"
+            )
+        };
+        write(
+            root.path(),
+            ".specbind/specs/checkout/requirements.md",
+            &artifact(before),
+        );
+        write(
+            root.path(),
+            ".specbind/specs/checkout/spec.yaml",
+            "schema_version: 1\nactive_change: null\n",
+        );
+        commit_all(root.path());
+        let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+        write(
+            root.path(),
+            ".specbind/steering/roadmap.md",
+            &format!(
+                "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  spec_updates:\n    - spec: checkout\n      summary: Retire obligations\n---\n# Roadmap\n"
+            ),
+        );
+        let state = format!(
+            "schema_version: 1\nactive_change:\n  milestone_id: {REVIEW_MILESTONE}\n  state: requirements\n  requirement_ids: null\n"
+        );
+        write(root.path(), ".specbind/specs/checkout/spec.yaml", &state);
+        write(
+            root.path(),
+            ".specbind/specs/checkout/requirements.md",
+            &artifact(after),
+        );
+        let mut command = specbind_command();
+        let assertion = command
+            .current_dir(root.path())
+            .args([
+                "spec",
+                "requirements",
+                "approve",
+                "checkout",
+                "--approval-mode",
+                "explicit",
+                "--requirement-ids",
+                selection,
+            ])
+            .assert();
+        if let Some(diagnostic) = diagnostic {
+            assertion
+                .failure()
+                .stderr(predicate::str::contains(diagnostic));
+            assert_eq!(
+                fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml")).unwrap(),
+                state
+            );
+        } else {
+            assertion.success();
+            let scope =
+                fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml")).unwrap();
+            assert!(scope.contains("state: design"));
+            for id in selection.split(',') {
+                assert!(scope.contains(id));
+            }
+        }
+    }
+}
+
+#[test]
 fn walks_every_gate_from_requirements_to_implementation() {
     let root = project_fixture();
     write_gate_fixture(root.path());

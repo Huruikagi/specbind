@@ -67,17 +67,17 @@ fn rejects_unknown_selectors() {
 }
 
 #[test]
-fn requirements_review_does_not_authorize_unsupported_retirement() {
+fn requirements_review_requires_guarded_inline_retirement() {
     let content = protocol::read("requirements-review")
         .expect("requirements review protocol")
         .content();
 
     assert!(
-        content.contains("does not yet support retiring"),
+        content.contains("Never delete or reuse retired identities"),
         "the protocol must name the current retirement boundary"
     );
     assert!(
-        !content.contains("removing it is correct"),
+        content.contains("a marker alone is not completion"),
         "the protocol must not contradict the requirements skill's retirement stop"
     );
 }

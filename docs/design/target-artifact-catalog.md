@@ -119,7 +119,9 @@ Status: Accepted and implemented for the v1 artifact set
 
 ## Tracked follow-up questions
 
-- Superseded or removed product capabilities and durable retired identity are
+- Requirement-level retirement uses inline identity reservations under
+  [Decision 0198](./decisions/0198-inline-requirement-retirement.md).
+  Complete Spec retirement and retired Spec identity are
   tracked by [Issue #7](https://github.com/Huruikagi/specbind/issues/7).
 - An optional audit artifact for abandoned, unreleased milestones remains an
   open design choice within

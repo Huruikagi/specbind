@@ -9,6 +9,7 @@ use pulldown_cmark::{Event, HeadingLevel, Parser, Tag, TagEnd};
 pub struct AcceptanceCriterion {
     pub id: String,
     pub line: usize,
+    pub retired: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -17,6 +18,7 @@ pub struct RequirementGroup {
     pub title: String,
     pub line: usize,
     pub criteria: Vec<AcceptanceCriterion>,
+    pub retired: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -25,6 +27,36 @@ pub struct RequirementsDocument {
 }
 
 impl RequirementsDocument {
+    /// Whether an identity is reserved by an explicit retirement marker.
+    #[must_use]
+    pub fn is_retired(&self, id: &str) -> bool {
+        self.groups.iter().any(|group| {
+            (group.retired
+                && id
+                    .strip_prefix(&format!("{}.", group.number))
+                    .is_some_and(|part| {
+                        !part.is_empty()
+                            && !part.starts_with('0')
+                            && part.bytes().all(|byte| byte.is_ascii_digit())
+                    }))
+                || group
+                    .criteria
+                    .iter()
+                    .any(|criterion| criterion.id == id && criterion.retired)
+        })
+    }
+
+    #[must_use]
+    pub fn live_requirement_ids(&self) -> Vec<&str> {
+        self.groups
+            .iter()
+            .filter(|group| !group.retired)
+            .flat_map(|group| &group.criteria)
+            .filter(|criterion| !criterion.retired)
+            .map(|criterion| criterion.id.as_str())
+            .collect()
+    }
+
     #[must_use]
     pub fn requirement_ids(&self) -> Vec<&str> {
         self.groups
@@ -64,6 +96,7 @@ struct Heading {
     level: HeadingLevel,
     text: String,
     range: Range<usize>,
+    retired: bool,
 }
 
 #[derive(Debug)]
@@ -84,7 +117,7 @@ pub fn parse(
     requirement_label: &str,
     acceptance_criteria_label: &str,
 ) -> Result<RequirementsDocument, RequirementsIssues> {
-    let (headings, lists) = blocks(body);
+    let (headings, lists) = blocks(body, requirement_label);
     let mut issues = Vec::new();
     let mut groups = Vec::new();
 
@@ -153,6 +186,7 @@ fn build_group(
 ) -> RequirementGroup {
     let (number, title) = identity;
     let heading = &headings[index];
+    let retired = heading.retired;
     let group_end = headings[index + 1..]
         .iter()
         .find(|candidate| candidate.level <= HeadingLevel::H3)
@@ -169,7 +203,9 @@ fn build_group(
             candidate.level == HeadingLevel::H4 && candidate.text == acceptance_label
         })
         .collect::<Vec<_>>();
-    let criteria = if acceptance_headings.len() == 1 {
+    let criteria = if retired && acceptance_headings.is_empty() {
+        Vec::new()
+    } else if acceptance_headings.len() == 1 {
         criteria_for(
             body,
             lists,
@@ -199,6 +235,7 @@ fn build_group(
         title,
         line: line_at(body, heading.range.start),
         criteria,
+        retired,
     }
 }
 
@@ -258,6 +295,14 @@ fn criteria_for(
         .map(|(index, offset)| AcceptanceCriterion {
             id: format!("{number}.{}", index + 1),
             line: line_at(body, *offset),
+            retired: criterion_retired(
+                &body[*offset
+                    ..list
+                        .item_offsets
+                        .get(index + 1)
+                        .copied()
+                        .unwrap_or(list.range.end)],
+            ),
         })
         .collect()
 }
@@ -303,7 +348,7 @@ fn parse_requirement_heading(text: &str, label: &str) -> HeadingMatch {
     }
 }
 
-fn blocks(body: &str) -> (Vec<Heading>, Vec<OrderedList>) {
+fn blocks(body: &str, requirement_label: &str) -> (Vec<Heading>, Vec<OrderedList>) {
     let mut headings = Vec::new();
     let mut lists = Vec::new();
     let mut current_heading: Option<Heading> = None;
@@ -317,6 +362,7 @@ fn blocks(body: &str) -> (Vec<Heading>, Vec<OrderedList>) {
                 current_heading = Some(Heading {
                     level,
                     text: String::new(),
+                    retired: false,
                     range,
                 });
             }
@@ -324,6 +370,21 @@ fn blocks(body: &str) -> (Vec<Heading>, Vec<OrderedList>) {
                 if let Some(mut heading) = current_heading.take() {
                     heading.range.end = range.end;
                     headings.push(heading);
+                }
+            }
+            Event::Start(Tag::Emphasis) => {
+                if let Some(heading) = &mut current_heading {
+                    let number = heading
+                        .text
+                        .strip_prefix(requirement_label)
+                        .and_then(|rest| rest.strip_prefix(' '))
+                        .and_then(|rest| rest.strip_suffix(": "));
+                    if number.is_some_and(|number| {
+                        !number.is_empty() && number.bytes().all(|byte| byte.is_ascii_digit())
+                    }) && retirement_prefix(&body[range.start..])
+                    {
+                        heading.retired = true;
+                    }
                 }
             }
             Event::Text(text) | Event::Code(text) => {
@@ -371,6 +432,27 @@ fn blocks(body: &str) -> (Vec<Heading>, Vec<OrderedList>) {
         }
     }
     (headings, lists)
+}
+
+fn criterion_retired(source: &str) -> bool {
+    let mut events = Parser::new(source).into_offset_iter();
+    if !matches!(events.next(), Some((Event::Start(Tag::List(Some(_))), _)))
+        || !matches!(events.next(), Some((Event::Start(Tag::Item), _)))
+    {
+        return false;
+    }
+    let mut first = events.next();
+    if matches!(first, Some((Event::Start(Tag::Paragraph), _))) {
+        first = events.next();
+    }
+    match first {
+        Some((Event::Start(Tag::Emphasis), range)) => retirement_prefix(&source[range.start..]),
+        _ => false,
+    }
+}
+fn retirement_prefix(text: &str) -> bool {
+    text.strip_prefix("_Retired_")
+        .is_some_and(|rest| rest.is_empty() || rest.starts_with(char::is_whitespace))
 }
 
 fn line_at(body: &str, offset: usize) -> usize {

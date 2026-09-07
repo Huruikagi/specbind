@@ -29,6 +29,11 @@ Add a short objective when the criteria alone do not explain the intent. Write
 criteria as observable outcomes, using event, condition, or state-qualified EARS
 phrasing when useful. Do not prescribe implementation unless it is itself a
 requirement.
+Retire a criterion by prefixing `_Retired_` while retaining its list position.
+Retire a group by prefixing its heading title with `_Retired_`; every child then
+retires. Prefer keeping the old prose, with continuation or cessation explained
+in adjacent prose or nested lists. Marker-only placeholders are valid. Never
+remove or reuse retired positions or groups. A marker is not completion evidence.
 -->
 
 ## Context

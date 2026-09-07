@@ -1,5 +1,10 @@
 # Design validation protocol
 
+For active `_Retired_` Requirement IDs, realization means the documented
+continuation or cessation, not the old promise. Require concrete coverage of
+successor obligations and affected boundaries. Retained retirement references
+outside active scope are historical explanations, not current promises.
+
 This protocol is the shared semantic baseline for judging whether a Design is
 ready to be built on. It applies to every supported agent and cannot be waived
 by a project template or shared rule.

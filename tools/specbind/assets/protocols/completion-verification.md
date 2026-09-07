@@ -1,5 +1,11 @@
 # Completion verification protocol
 
+For a claim covering `_Retired_` Requirement IDs, the claim is that their
+documented continuation or cessation was delivered. Verify the baseline
+obligations, successor behavior and affected consumers as applicable. Neither
+the marker nor deleting the old test proves the claim. Historical prose is not
+a current promise, and retirement outside the claimed scope adds no new work.
+
 This protocol is the shared baseline for allowing a completion claim. It applies
 to every supported agent and cannot be waived by a project template or shared
 rule.

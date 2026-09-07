@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0198 adds explicit inline retirement markers and active retirement
+coverage. Its rules supersede the live-only selection and unsupported-retirement
+restrictions below where applicable; ordinary ID deletion remains prohibited.
+
+
 ## Context
 
 The singleton `SpecBind Requirements` artifact represents the complete currently valid requirement set. Decision 0057 discovers it by OKF type; `requirements.md` is only the default path. Decision 0060 derives canonical Requirement IDs from an explicit mapped Requirement heading number and Acceptance Criteria list position. A milestone may change or revalidate only a subset of those requirements, so downstream design, tasks, and completion verification need an explicit active requirement set.

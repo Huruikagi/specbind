@@ -627,13 +627,17 @@ fn build_requirements(
             "requirements approval requires a valid Requirements artifact",
         ));
     };
-    let resolution = artifacts::resolve_traceability(specbind_root, canonical_spec);
-    let Some(report) = resolution.report else {
-        return Err(discovery_failure(resolution.inventory.issues));
+    let Some(document) = artifacts::resolve_requirements(specbind_root, canonical_spec) else {
+        return Err(one_issue(
+            "SPEC_REQUIREMENTS_ARTIFACT_MISSING",
+            None,
+            "cannot resolve Requirements",
+        ));
     };
+    let current_ids = document.requirement_ids();
     let mut issues = Vec::new();
     for id in &request.requirement_ids {
-        if !report.requirement_ids.contains(id) {
+        if !current_ids.contains(&id.as_str()) && !document.is_retired(id) {
             issues.push(issue(
                 "SPEC_REQUIREMENTS_SELECTION_UNKNOWN",
                 Some(format!("specs/{canonical_spec}/requirements.md")),
@@ -657,7 +661,8 @@ fn build_requirements(
         specbind_root,
         canonical_spec,
         context,
-        &report.requirement_ids,
+        &document,
+        &requirement_ids,
         &mut preservation_issues,
     );
     finish_issues(preservation_issues)?;
@@ -702,7 +707,8 @@ fn validate_requirements_preservation(
     specbind_root: &Path,
     canonical_spec: &str,
     context: &Context,
-    current_ids: &[String],
+    current: &crate::requirements::RequirementsDocument,
+    selected: &[String],
     issues: &mut Vec<ApprovalIssue>,
 ) {
     if !context
@@ -711,6 +717,17 @@ fn validate_requirements_preservation(
         .iter()
         .any(|item| item.spec == canonical_spec)
     {
+        if current
+            .groups
+            .iter()
+            .any(|group| group.retired || group.criteria.iter().any(|criterion| criterion.retired))
+        {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIREMENT_WITHOUT_BASELINE",
+                None,
+                "new Specs cannot declare retired identities",
+            ));
+        }
         return;
     }
     let Ok(specbind_relative) = specbind_root.strip_prefix(project_root) else {
@@ -739,7 +756,7 @@ fn validate_requirements_preservation(
             return;
         }
     };
-    let Some(baseline_ids) = artifacts::requirements_ids_from_content(&baseline) else {
+    let Some(baseline) = artifacts::requirements_from_content(&baseline) else {
         issues.push(issue(
             "SPEC_REQUIREMENTS_BASELINE_READ_FAILED",
             Some(format!("specs/{canonical_spec}/requirements.md")),
@@ -747,14 +764,22 @@ fn validate_requirements_preservation(
         ));
         return;
     };
-    let current = current_ids
-        .iter()
-        .map(String::as_str)
-        .collect::<std::collections::BTreeSet<_>>();
+    validate_retirement_transition(canonical_spec, &baseline, current, selected, issues);
+}
+
+fn validate_retirement_transition(
+    canonical_spec: &str,
+    baseline: &crate::requirements::RequirementsDocument,
+    current: &crate::requirements::RequirementsDocument,
+    selected: &[String],
+    issues: &mut Vec<ApprovalIssue>,
+) {
+    let current_ids = current.requirement_ids();
+    let baseline_ids = baseline.requirement_ids();
     let missing = baseline_ids
         .iter()
-        .filter(|id| !current.contains(id.as_str()))
-        .cloned()
+        .filter(|id| !current_ids.contains(id) && !current.is_retired(id))
+        .copied()
         .collect::<Vec<_>>();
     if !missing.is_empty() {
         issues.push(issue(
@@ -765,6 +790,75 @@ fn validate_requirements_preservation(
                 missing.join(", ")
             ),
         ));
+    }
+    if current.live_requirement_ids().is_empty() {
+        issues.push(issue(
+            "SPEC_REQUIREMENTS_SPEC_RETIREMENT_UNSUPPORTED",
+            None,
+            "retiring all Spec obligations requires Spec retirement",
+        ));
+    }
+    for group in &baseline.groups {
+        if group.retired
+            && !current
+                .groups
+                .iter()
+                .any(|candidate| candidate.number == group.number && candidate.retired)
+        {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIRED_ID_REUSED",
+                None,
+                format!("retired group {} must remain retired", group.number),
+            ));
+        }
+    }
+    for id in &baseline_ids {
+        if baseline.is_retired(id) && !current.is_retired(id) {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIRED_ID_REUSED",
+                None,
+                format!("retired ID {id} must remain retired"),
+            ));
+        }
+        if !baseline.is_retired(id)
+            && current.is_retired(id)
+            && !selected.iter().any(|selected| selected == id)
+        {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIREMENT_SELECTION_MISSING",
+                None,
+                format!("newly retired ID {id} must be selected for delivery and verification"),
+            ));
+        }
+    }
+    for id in selected {
+        if current.is_retired(id)
+            && (baseline.is_retired(id) || !baseline_ids.contains(&id.as_str()))
+        {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIREMENT_SELECTION_INVALID",
+                None,
+                format!("retirement selection {id} must identify a live baseline obligation"),
+            ));
+        }
+    }
+    for id in &current_ids {
+        if current.is_retired(id) && !baseline.is_retired(id) && !baseline_ids.contains(id) {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIREMENT_WITHOUT_BASELINE",
+                None,
+                format!("retired ID {id} has no baseline obligation"),
+            ));
+        }
+    }
+    for group in &current.groups {
+        if group.retired && !baseline.groups.iter().any(|old| old.number == group.number) {
+            issues.push(issue(
+                "SPEC_REQUIREMENTS_RETIREMENT_WITHOUT_BASELINE",
+                None,
+                format!("retired group {} has no baseline", group.number),
+            ));
+        }
     }
 }
 

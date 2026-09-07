@@ -228,41 +228,33 @@ pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> Trace
         .as_ref()
         .map(task_requirement_sets);
     let requirements_unavailable = requirement_ids.is_none();
-    let report = requirement_ids
-        .zip(active.ok())
-        .map(|(requirements, active)| {
-            let report = traceability::evaluate(
-                &requirements,
-                designs,
-                active.requirement_ids,
-                tasks,
-                active.tasks_required,
-            );
-            let spec_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
-            let tasks_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
-            for traceability_issue in &report.issues {
-                let path = traceability_issue
-                    .source
-                    .as_ref()
-                    .and_then(|source| design_paths.get(source))
-                    .cloned()
-                    .or_else(|| {
-                        (traceability_issue.code.starts_with("TRACEABILITY_TASK")
-                            || traceability_issue
-                                .source
-                                .as_deref()
-                                .is_some_and(|source| source.starts_with("tasks/")))
-                        .then(|| tasks_path.clone())
-                    })
-                    .or_else(|| Some(spec_path.clone()));
-                inventory.issues.push(issue(
-                    traceability_issue.code,
-                    path,
-                    traceability_issue.message.clone(),
-                ));
-            }
-            report
-        });
+    let report = requirement_ids.zip(active.ok()).map(|(document, active)| {
+        let report = evaluate_requirements_traceability(&document, designs, active, tasks);
+        let spec_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/spec.yaml"));
+        let tasks_path = Utf8PathBuf::from(format!("specs/{canonical_spec}/tasks.yaml"));
+        for traceability_issue in &report.issues {
+            let path = traceability_issue
+                .source
+                .as_ref()
+                .and_then(|source| design_paths.get(source))
+                .cloned()
+                .or_else(|| {
+                    (traceability_issue.code.starts_with("TRACEABILITY_TASK")
+                        || traceability_issue
+                            .source
+                            .as_deref()
+                            .is_some_and(|source| source.starts_with("tasks/")))
+                    .then(|| tasks_path.clone())
+                })
+                .or_else(|| Some(spec_path.clone()));
+            inventory.issues.push(issue(
+                traceability_issue.code,
+                path,
+                traceability_issue.message.clone(),
+            ));
+        }
+        report
+    });
     if requirements_unavailable {
         inventory.issues.push(issue(
             "TRACEABILITY_REQUIREMENTS_UNAVAILABLE",
@@ -275,11 +267,56 @@ pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> Trace
     TraceabilityResolution { inventory, report }
 }
 
+fn evaluate_requirements_traceability(
+    document: &requirements::RequirementsDocument,
+    designs: Vec<DesignRequirementSet>,
+    active: ActiveTraceabilityScope,
+    tasks: Option<Vec<TaskRequirementSet>>,
+) -> crate::traceability::TraceabilityReport {
+    let mut requirements = document
+        .requirement_ids()
+        .into_iter()
+        .map(str::to_owned)
+        .collect::<Vec<_>>();
+    // Compact retired groups reserve every child identity, including references
+    // whose old prose has deliberately been removed.
+    for id in designs
+        .iter()
+        .flat_map(|design| &design.requirement_ids)
+        .chain(active.requirement_ids.iter().flatten())
+        .chain(
+            tasks
+                .iter()
+                .flatten()
+                .flat_map(|task| &task.requirement_ids),
+        )
+    {
+        if document.is_retired(id) && !requirements.contains(id) {
+            requirements.push(id.clone());
+        }
+    }
+    let mut report = traceability::evaluate(
+        &requirements,
+        designs,
+        active.requirement_ids,
+        tasks,
+        active.tasks_required,
+    );
+    report.retired_requirement_ids = report
+        .requirement_ids
+        .iter()
+        .filter(|id| document.is_retired(id))
+        .cloned()
+        .collect();
+    report.requirement_ids.retain(|id| !document.is_retired(id));
+    report
+}
+
 fn resolve_requirements_projection(
     specbind_root: &Path,
     artifact: &Artifact,
     issues: &mut Vec<DiscoveryIssue>,
-) -> Option<Vec<String>> {
+) -> Option<requirements::RequirementsDocument> {
     let (mapping, body) = read_traceability_concept(specbind_root, artifact, issues)?;
     let labels = mapping.get("heading_labels")?.as_object()?;
     let expected = BTreeSet::from(["acceptance_criteria", "requirement"]);
@@ -293,23 +330,17 @@ fn resolve_requirements_projection(
     if !valid_label(requirement_label) || !valid_label(acceptance_label) {
         return None;
     }
-    match requirements::parse(
+    requirements::parse(
         &instruction::mask(&body),
         requirement_label,
         acceptance_label,
-    ) {
-        Ok(document) => Some(
-            document
-                .requirement_ids()
-                .into_iter()
-                .map(str::to_owned)
-                .collect(),
-        ),
-        Err(_) => None,
-    }
+    )
+    .ok()
 }
 
-pub(crate) fn requirements_ids_from_content(content: &str) -> Option<Vec<String>> {
+pub(crate) fn requirements_from_content(
+    content: &str,
+) -> Option<requirements::RequirementsDocument> {
     let (frontmatter, body) = split_frontmatter(content).ok()?;
     let value = serde_saphyr::from_str::<Value>(frontmatter).ok()?;
     let mapping = value.as_object()?;
@@ -331,13 +362,18 @@ pub(crate) fn requirements_ids_from_content(content: &str) -> Option<Vec<String>
         acceptance_label,
     )
     .ok()
-    .map(|document| {
-        document
-            .requirement_ids()
-            .into_iter()
-            .map(str::to_owned)
-            .collect()
-    })
+}
+
+pub(crate) fn resolve_requirements(
+    specbind_root: &Path,
+    canonical_spec: &str,
+) -> Option<requirements::RequirementsDocument> {
+    let inventory = discover_spec(specbind_root, canonical_spec);
+    let artifact = inventory
+        .artifacts
+        .iter()
+        .find(|artifact| artifact.kind == ArtifactKind::Requirements)?;
+    resolve_requirements_projection(specbind_root, artifact, &mut Vec::new())
 }
 
 fn resolve_design_projection(

@@ -20,10 +20,10 @@ contract**, not the delta requested by the active milestone.
 - When a change alters behavior, revise the affected requirement in place rather
   than appending a contradicting one. Two requirements that disagree are a
   defect even if the newer one is correct.
-- Do not leave obsolete or contradictory behavior in the current contract. The
-  requirements skill currently defers Requirement retirement, so when the
-  intended result requires a Requirement group or Acceptance Criterion to
-  disappear, stop instead of deleting it or marking it obsolete in prose.
+- Mark obsolete obligations with the exact leading `_Retired_` token, keeping
+  their positions reserved. A group-title marker covers its complete group.
+  Retained prose is historical context. Explain continuation or cessation next
+  to the marker; a nested list is sufficient and creates no Requirement IDs.
 - Revising an obligation in place is ordinary requirements work when the Spec
   retains the responsibility and the same Requirement ID still names the
   changed obligation. Retirement is the removal of that obligation without a
@@ -45,11 +45,11 @@ all reference them.
   edit that shifts positions silently repoints every downstream reference.
 - Group numbers are presentation order only, and existing gaps are acceptable.
   Never close one by renumbering a later group.
-- SpecBind does not yet support retiring an established Requirement group or
-  Acceptance Criterion. When one genuinely no longer applies, stop before
-  deleting it and route the requested retirement through the requirements
-  skill. Revising a live obligation in place and adding new obligations remain
-  supported.
+- Never delete or reuse retired identities. Every newly retired baseline ID
+  must remain in this change's approved scope for Design, Tasks and completion
+  verification. Historical retired IDs are not selected again. Whole-Spec
+  retirement remains unsupported. Confirm every original obligation is preserved
+  at its successor or intentionally ended; a marker alone is not completion.
 
 ## Coverage
 

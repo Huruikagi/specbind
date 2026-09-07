@@ -247,3 +247,66 @@ fn keeps_task_scope_unjudged_without_an_active_set() {
 
     assert!(report.issues.is_empty(), "{:?}", report.issues);
 }
+
+#[test]
+fn retired_ids_keep_delivery_coverage_but_are_not_live_promises() {
+    let root = TempDir::new().unwrap();
+    write(
+        root.path(),
+        "specs/example/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n### Requirement 1: Current\n\n#### Acceptance Criteria\n\n1. Keep this.\n2. _Retired_ Old behavior.\n\n### Requirement 2: _Retired_ Old group\n",
+    );
+    write(
+        root.path(),
+        "specs/example/spec.yaml",
+        "schema_version: 1\nactive_change:\n  milestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\n  state: design\n  requirement_ids: ['1.2', '2.1']\n  gate_evidence:\n    requirements:\n      passed_at: 2026-09-07T00:00:00Z\n      approval_mode: explicit\n      approved_requirement_ids: ['1.2', '2.1']\n      input_revisions:\n        requirements: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    );
+    write(
+        root.path(),
+        "specs/example/main.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.2']\n---\n_Requirements: 1.2_\nRetirement treatment.\n",
+    );
+    write(
+        root.path(),
+        "specs/example/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Verify retirement\n      requirement_ids: ['1.2']\n",
+    );
+    let report = resolve_traceability(root.path(), "example").report.unwrap();
+    assert_eq!(report.requirement_ids, ["1.1"]);
+    assert_eq!(report.retired_requirement_ids, ["1.2", "2.1"]);
+    assert!(
+        report
+            .issues
+            .iter()
+            .any(|issue| issue.code == "TRACEABILITY_DESIGN_COVERAGE_MISSING"
+                && issue.requirement_id.as_deref() == Some("2.1"))
+    );
+    assert!(
+        !report
+            .issues
+            .iter()
+            .any(|issue| issue.code.ends_with("UNKNOWN"))
+    );
+
+    write(
+        root.path(),
+        "specs/example/main.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.2', '2.1']\n---\n_Requirements: 1.2, 2.1_\nRetirement treatment.\n",
+    );
+    write(
+        root.path(),
+        "specs/example/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Verify retirement\n      requirement_ids: ['1.2', '2.1']\n",
+    );
+    let report = resolve_traceability(root.path(), "example").report.unwrap();
+    assert!(report.issues.is_empty(), "{:?}", report.issues);
+    write(
+        root.path(),
+        "specs/example/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    let report = resolve_traceability(root.path(), "example").report.unwrap();
+    assert!(report.issues.is_empty());
+    assert_eq!(report.requirement_ids, ["1.1"]);
+    assert!(report.active_requirement_ids.is_none());
+}

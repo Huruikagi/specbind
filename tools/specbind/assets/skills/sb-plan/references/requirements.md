@@ -179,29 +179,36 @@ Do not renumber existing requirement groups to close gaps. Identity is
 positional, so renumbering silently reassigns IDs that `spec.yaml`, design
 traceability, and task coverage already reference. Gaps are fine and permanent.
 
-### Retirement is not supported yet
+### Retire obligations without removing identities
 
-Do not remove a requirement group or an acceptance criterion from an established
-Spec. There is no retired-ID registry and no way to prove downstream that an
-obligation ceased to exist, so a removal would leave design, tasks, and
-completion verification with nothing to cover.
+For an explicitly requested cessation or consolidation, prefix the affected
+criterion with the exact `_Retired_` marker. To retire a complete group, put it
+at the start of the heading title: `### Requirement 3: _Retired_ Old title`.
+Use the artifact's mapped heading label. A group marker covers every child.
+Prefer retaining the original prose after the marker; a marker-only criterion
+or heading is also valid. Never delete a reserved list position, renumber later
+criteria, or reuse a retired group. Add new criteria at the end.
 
-When the requested result needs part of the current contract to disappear, stop
-before editing and say that requirement retirement is not supported yet. Ask the
-user how they want to proceed. Retiring everything a Spec owns is Spec
-retirement, not an empty requirements document.
+Explain which obligations continue, their successor IDs when applicable, and
+which obligations cease in adjacent prose or nested lists. These explanations
+are part of Requirements approval, not a separate manifest or fixed DSL. A
+successor link alone does not prove preservation. Reconcile partial cessation
+against every baseline obligation and update Context and Scope accordingly.
+Marker text is historical context, not a live promise or proof of completion.
 
-This does not freeze behavior:
-
-- **Revising** a criterion in place is fine when the Spec keeps the
-  responsibility and the same ID still names the changed obligation.
-- **Adding** groups or criteria is fine.
-- Only removing an obligation without leaving a live identity is blocked.
+Read the Requirements at the Roadmap baseline when establishing which IDs are
+newly retired. Include every newly retired baseline criterion in the active
+set, including all live baseline children of a compact retired group. Already
+retired baseline IDs cannot be selected again. New Specs cannot invent retired
+identities. If all live obligations would retire, stop before editing: complete
+Spec retirement remains unsupported.
 
 ## 3. Choose the active set
 
-The active set is the requirement IDs this milestone must **deliver or
-re-verify**. Not the whole document, and not only the literal diff.
+The active set is the requirement IDs this milestone must **deliver,
+re-verify, or retire**. It may consist solely of newly retired IDs; do not add a
+dummy behavioral requirement to make retirement work traceable. Not the whole
+document, and not only the literal diff.
 
 - Requirements whose behavior this work changes or adds are always in.
 - Requirements whose correctness depends on that work are in even when their
@@ -235,13 +242,14 @@ approval. Compare the authored file with the current Requirements you read at
 the start (and inspect `git diff -- <requirements-path>` when Git is available).
 Reconcile the authored file against the private preservation ledger. Account for
 every pre-existing requirement group and acceptance criterion by its original
-ID: it must still be present as that live identity, with only the
-in-place revision this milestone actually needs. Context, Scope, and Objective
+ID: it must remain live with only the requested revision, or be explicitly
+retired with its obligations accounted for by continuation or cessation.
+Context, Scope, and Objective
 must also continue to describe unaffected owned behavior. A rewritten document
 that silently narrows the Spec is not ready even when its new criteria are
 well-formed. If any existing obligation disappeared, stop before approval;
 restore an accidental omission in the same draft unless the requested result
-truly needs retirement, in which case use the unsupported-retirement stop above.
+truly needs retirement, in which case use the marker and explanation above.
 Before presenting or approving, state to yourself that every ledger entry is
 accounted for and zero obligations were lost. Never use the approve command as
 the operation that reveals this loss.

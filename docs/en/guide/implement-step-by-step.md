@@ -36,6 +36,30 @@ Criteria.
 Review the result and approve the Requirements Gate. Resolve open product
 decisions here instead of hiding them in ambiguous wording to move forward.
 
+### Retire an obligation
+
+Keep its numbered position and prefix the criterion with `_Retired_`:
+
+```markdown
+2. _Retired_ Limit the cart to ten items.
+   - Remove the quantity limit; stock validation continues under 3.4.
+```
+
+To retire a whole group, prefix its title:
+`### Requirement 3: _Retired_ Cart reporting`. Its children are all retired.
+Keep the original text when useful; a marker-only item or heading is also valid.
+Never delete or reuse retired positions or group numbers. Explain continuation
+or cessation beside the marker, using normal prose or nested lists.
+
+Approval includes every newly retired baseline ID in the active set. Design and
+Tasks cover that retirement, and final validation checks the result; the marker
+alone does not prove completion. Earlier retirements are not selected again.
+Retiring every obligation of a Spec remains unsupported.
+
+Existing Requirements need no ID migration. Refresh installed Skills and any
+customized template instructions before using retirement. Older binaries cannot
+interpret these markers correctly, so do not downgrade afterward.
+
 ## 3. Author and validate Design and Contract
 
 ```text

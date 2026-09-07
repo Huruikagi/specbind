@@ -55,7 +55,9 @@ Requirements recorded so far:
 - A release closes a milestone, not the specs involved in that milestone.
 - Improvements to the existing-spec update route will be specified incrementally.
 
-Capability retirement remains explicitly outside v1 and is tracked as
+Requirement-level cessation and consolidation use inline markers and ordinary
+delivery coverage under [Decision 0198](./decisions/0198-inline-requirement-retirement.md).
+Complete Spec retirement remains outside the implemented lifecycle and is tracked as
 [Issue #7](https://github.com/Huruikagi/specbind/issues/7). Other routing and
 invalidation rules are defined by the per-Spec state machine and the accepted
 skill boundary.

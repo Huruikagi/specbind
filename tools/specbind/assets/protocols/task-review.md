@@ -1,5 +1,10 @@
 # Task review protocol
 
+When the Task covers an active `_Retired_` Requirement ID, review the explained
+continuation or cessation. Do not demand reimplementation of the historical
+promise. Require evidence of preservation, removal and consumer handling as
+applicable; a retirement marker alone proves none of these.
+
 This protocol is the shared semantic baseline for reviewing one implemented
 task. It applies to every supported agent and cannot be waived by a project
 template or shared rule.

@@ -1,5 +1,11 @@
 # Tasks phase
 
+Selected `_Retired_` Requirement IDs are retirement work, not promises to
+reimplement. Use the existing `requirement_ids` fields to cover their explained
+continuation or cessation. Define evidence for preserved obligations, removed
+behavior and affected consumers as applicable. Prose-only consolidation needs
+preservation and reference checks, not invented product code changes.
+
 ## Apply project language style
 
 Before authoring any artifact or user-facing prose, read this once unless this

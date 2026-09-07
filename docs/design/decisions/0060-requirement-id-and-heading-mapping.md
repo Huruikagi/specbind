@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+Decision 0198 adds explicit inline retirement markers and active retirement
+coverage. Its rules supersede the live-only selection and unsupported-retirement
+restrictions below where applicable; ordinary ID deletion remains prohibited.
+
+
 ## Context
 
 SpecBind needs deterministic Requirement IDs for active-scope storage, design traceability, task coverage, and CLI diagnostics. The inherited cc-sdd convention derives IDs such as `3.2` from an explicitly numbered Requirement heading and an Acceptance Criteria list position. That convention has been usable in practice and avoids adding hidden stable IDs to every criterion.

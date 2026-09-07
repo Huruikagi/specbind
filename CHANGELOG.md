@@ -4,6 +4,13 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Added `_Retired_` markers for individual acceptance criteria and complete
+  Requirement groups. Retired identities stay reserved, while continuation or
+  cessation explanations remain beside the original text in Requirements.
+- Requirements approval now requires coverage of every newly retired baseline
+  ID through Design, Tasks and completion, and rejects identity reuse. Complete
+  Spec retirement remains unsupported. Existing numeric IDs need no migration.
+
 ## 1.3.2 - 2026-09-06
 
 - Fixed workflow routing and completion claims to respect active Requirements,

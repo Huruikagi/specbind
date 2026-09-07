@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `228570a` + retirement tree | R3P — pass; retirement-only scope through Tasks approval, final-binary read smoke also passed | [Retirement planning](./runs/2026-09-07-codex-228570a-retirement-plan.md) |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `228570a` + initial retirement tree | R3 — pass; explicit reporting retirement retained identity and downstream coverage | [Initial retirement](./runs/2026-09-07-codex-228570a-retirement-initial.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `e1cd8a4` + final working tree | T6, T7 — pass; stronger Design verification preserved and FT-0049 resolved | [Final verification-input audit](./runs/2026-09-07-codex-e1cd8a4-verification-inputs-final.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `e1cd8a4` + initial working tree | T6 — product failure, FT-0049; T7 — pass | [Initial verification-input audit](./runs/2026-09-07-codex-e1cd8a4-verification-inputs-initial.md) |
 | 2026-09-06 | Codex | `gpt-5.6-terra` / `medium` | `a332f07` | A1 — pass after one environment-invalid instrumentation attempt; A4 — pass with automatic `sb-adopt` retirement | [Temporary adoption Skill lifecycle](./runs/2026-09-06-codex-a332f07-adoption-skill-lifecycle.md) |

@@ -25,6 +25,7 @@ pub struct TraceabilityIssue {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TraceabilityReport {
     pub requirement_ids: Vec<String>,
+    pub retired_requirement_ids: Vec<String>,
     pub active_requirement_ids: Option<Vec<String>>,
     pub design_requirement_ids: Vec<String>,
     pub designs: BTreeMap<String, Vec<String>>,
@@ -122,6 +123,7 @@ pub fn evaluate(
     issues.dedup();
     TraceabilityReport {
         requirement_ids: numeric_ids(requirements),
+        retired_requirement_ids: Vec::new(),
         active_requirement_ids,
         design_requirement_ids: numeric_ids(design_union),
         designs: design_map,
