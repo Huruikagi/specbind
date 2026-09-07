@@ -83,7 +83,12 @@ inherits the reasoning that just failed reproduces it.
 
 - **implementation defect** → fresh implementer with the fix plan
 - **plan, design, or requirements defect** → **leave the run.** Report it to the
-  user. No amount of implementation effort repairs an artifact that specifies
+  invoking owner, or the user when standalone. Under Drive replan authority,
+  return a `REROUTABLE` finding with affected artifacts, exact partial-change
+  paths and diff, and recorded Task progress. This ends this implementation
+  dispatch, not Drive: the planning owner repairs Design/Contract/Tasks and
+  Drive resumes implementation. Requirements changes still need the user.
+  No amount of implementation effort repairs an artifact that specifies
   something unworkable.
 - **environment or dependency** → usually outside the change; report it
 - **undetermined** → gather the named evidence when it is safely available;

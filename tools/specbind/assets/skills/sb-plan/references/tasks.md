@@ -227,7 +227,10 @@ So:
 - Rewrite the `execution.tasks` keys in the **same edit** that renumbers the
   plan. Never leave the two disagreeing.
 - **State the before-and-after mapping** for every renumbered task that has a
-  persisted entry, and get confirmation before writing.
+  persisted entry, and get confirmation before writing unless explicit Drive
+  replan authority covers it. In that recovery, report the mapping and proceed.
+  Preserve a completed record only when its obligation and evidence still
+  apply; changed work must return to implementation for fresh proof.
 - Prefer a revision that leaves completed tasks where they are — appending, or
   splitting a task that has not started — over one that renumbers finished work,
   when both express the same intent.
@@ -318,6 +321,10 @@ approved; report the work as uncommitted and continue.
 
 ## When the gate is already approved
 
+Exception: explicit Drive replan authority from [the recovery procedure](replan.md)
+covers this Tasks rewind and reapproval, including progress remapping. Report
+the cost and mapping, then continue without another confirmation.
+
 If `spec status` shows the tasks gate approved, do not edit. Editing underneath
 an approved gate leaves evidence describing a plan that no longer exists, and the
 CLI then refuses later work citing freshness rather than the edit that caused it.
@@ -337,8 +344,9 @@ recorded progress is affected, per the mapping rule above.
 specbind spec tasks invalidate <spec>
 ```
 
-Confirmation cannot be inferred, and delegated authority does not cover this.
-Delegation authorizes accepting gates, not discarding accepted work.
+Outside that explicit Drive recovery, confirmation cannot be inferred, and
+ordinary delegated authority does not cover this. Ordinary delegation
+authorizes accepting gates, not discarding accepted work.
 
 ## Boundaries
 

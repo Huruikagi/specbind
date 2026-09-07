@@ -19,6 +19,10 @@
 #   u2     controlled moving-selector SpecBind update with an old installed package marker
 #   u3     controlled exact-pin SpecBind update that requires an explicit target
 #   dr1    two independent Direct items; one requires a Spec reroute
+#   dr3    approved Design conflicts with Requirements; delegated recovery
+#   dr4    same Design defect without delegated recovery
+#   dr5    approved cart plan for the Requirements authority boundary
+#   dr6    blocked Task needs a verification prerequisite owned by a later Task
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
 #   a3     a2 plus one suspected defect and local reverse checkpoint policy
@@ -1272,13 +1276,13 @@ EOF
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
     ;;
 
-d7 | t4 | i4 | i6 | i7 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
         "A cart rejects an addition that would raise one SKU above 99."
     cart_cap_approved
-    if [ "$scenario" = db1 ]; then
+    if [ "$scenario" = db1 ] || [ "$scenario" = dr3 ] || [ "$scenario" = dr4 ]; then
         cart_design_approved "cap, silently trimming the addition to the cap instead of rejecting it."
     else
         cart_design_approved
@@ -1300,6 +1304,24 @@ d7 | t4 | i4 | i6 | i7 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | r
             echo "      title: Enforce and verify the upper quantity bound"
             echo "      requirement_ids: ['1.4']"
         } > .specbind/specs/cart/tasks.yaml
+    elif [ "$scenario" = dr6 ]; then
+        cat > .specbind/specs/cart/tasks.yaml <<'EOF'
+schema_version: 1
+plan:
+  items:
+    - id: '1'
+      kind: task
+      title: Enforce the quantity bounds
+      details:
+        - Change src/cart.py and pass sh scripts/test.sh before completing this Task; creating the runner or tests belongs to Task 2.
+      requirement_ids: ['1.1', '1.2', '1.3', '1.4']
+    - id: '2'
+      kind: task
+      title: Establish the canonical test runner and cart coverage
+      details:
+        - Create scripts/test.sh and tests for all approved cart behavior.
+      requirement_ids: ['1.1', '1.2', '1.3', '1.4']
+EOF
     else
         {
             echo "schema_version: 1"
@@ -1315,6 +1337,24 @@ d7 | t4 | i4 | i6 | i7 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | r
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    if [ "$scenario" = dr6 ]; then
+        specbind tasks block cart 1 --reason "Task 1 requires scripts/test.sh, which only Task 2 creates." >/dev/null \
+            || fail "could not establish the blocked Task"
+        expect "the missing verification prerequisite exists" \
+            '! test -e scripts/test.sh'
+        expect "the prerequisite block was not recorded" \
+            'specbind tasks list cart | grep -q "1 blocked"'
+    fi
+    case "$scenario" in
+    dr3 | dr4 | dr5)
+        expect "the recovery fixture already has completed work" \
+            'specbind tasks list cart | grep -q "0 completed, 1 pending, 0 blocked"'
+        if [ "$scenario" != dr5 ]; then
+            expect "the Design defect was not established" \
+                'grep -q "silently trimming" .specbind/specs/cart/design.md'
+        fi
+        ;;
+    esac
     if [ "$scenario" = i6 ]; then
         expect "the two-task checkpoint fixture does not have two pending Tasks" \
             'specbind tasks list cart | grep -q "0 completed, 2 pending, 0 blocked"'

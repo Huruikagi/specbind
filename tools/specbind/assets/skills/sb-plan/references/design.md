@@ -559,6 +559,11 @@ approved; report the work as uncommitted and continue.
 
 ## When the gate is already approved
 
+Exception: explicit Drive replan authority from [the recovery procedure](replan.md)
+covers this Design rewind and reapproval. Report the full cost below, then
+continue without another confirmation; keep Requirements and Milestone scope
+fixed. Independent Design validation still precedes delegated reapproval.
+
 If `spec status` shows the design gate approved, do not edit. Editing underneath
 an approved gate leaves evidence describing a revision that no longer exists, and
 the CLI then refuses later gates citing freshness rather than the edit that
@@ -578,8 +583,9 @@ ask.
 specbind spec design invalidate <spec>
 ```
 
-Confirmation cannot be inferred, and delegated authority does not cover this.
-Delegation authorizes accepting gates, not discarding accepted work.
+Outside that explicit Drive recovery, confirmation cannot be inferred, and
+ordinary delegated authority does not cover this. Ordinary delegation
+authorizes accepting gates, not discarding accepted work.
 
 ## Boundaries
 

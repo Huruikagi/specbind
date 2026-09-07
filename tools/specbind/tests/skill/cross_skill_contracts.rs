@@ -63,6 +63,57 @@ fn implementation_re_reviews_only_a_diagnosed_review_scope_defect_within_budget(
 }
 
 #[test]
+fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let rendered = skill::find("sb-drive")
+            .expect("drive")
+            .render(agent)
+            .expect("render");
+        assert!(rendered.contains("--replan"));
+    }
+    let drive = skill::find("sb-drive")
+        .expect("drive")
+        .body()
+        .expect("body");
+    for text in [
+        "do not ask for a second delegation confirmation",
+        "original approved Requirements",
+        "same unresolved defect after recovery is parked",
+        "resume\nimplementation and validation in this same Drive run",
+        "references/replan.md",
+    ] {
+        assert!(
+            drive.contains(text),
+            "missing Drive recovery boundary: {text}"
+        );
+    }
+    let replan = skill_resource_text("sb-plan", "references/replan.md");
+    for text in [
+        "workflow\n`sb-drive`",
+        "Requirements and\nscope/dependencies remain fixed",
+        "recoverable Git revision",
+        "every participant",
+        "fresh independent `sb-validate-design`",
+        "Removed or changed work must not inherit a\ncompleted record",
+        "Return to the invoking Drive",
+        "finding\nhistory survive all recovery dispatches",
+    ] {
+        assert!(
+            replan.contains(text),
+            "missing Plan recovery boundary: {text}"
+        );
+    }
+    for phase in ["design", "tasks"] {
+        let procedure = skill_resource_text("sb-plan", &format!("references/{phase}.md"));
+        assert!(procedure.contains("explicit Drive replan authority"));
+        assert!(procedure.contains("ordinary delegated authority does not cover this"));
+    }
+    let implementation = skill_resource_text("sb-implement", "references/spec-backed.md");
+    assert!(implementation.contains("specbind tasks reopen <spec> <task-id>"));
+    assert!(implementation.contains("Reopening grants no completion evidence"));
+}
+
+#[test]
 fn embeds_the_accepted_skill_set_with_valid_metadata() {
     let names = skill::all()
         .iter()
@@ -241,7 +292,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
         ("sb-configure", 7),
         ("sb-discovery", 3),
         ("sb-implement", 2),
-        ("sb-plan", 3),
+        ("sb-plan", 4),
         ("sb-release", 1),
     ] {
         let entry = skill::find(name).expect("progressive skill package");

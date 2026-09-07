@@ -6,6 +6,13 @@ argument-hint: "[<spec> | --all] [requirements|design|tasks]"
 
 # Plan active Spec work
 
+For a Drive recovery dispatch carrying explicit `--replan` authority and named
+affected Specs, read [Replan during Drive](references/replan.md) first. That
+procedure owns the recovery scope and overrides the ordinary no-rewind
+delegation rule only for Design and Tasks. Do not repeat the scope or delegation
+question already settled by that dispatch. Ordinary Plan requests use the
+following entry rules unchanged.
+
 ## First action: fail closed on an unspecified scope
 
 Classify the maintainer's request **before reading phase procedures, Spec
@@ -135,8 +142,8 @@ Declining delegation is legitimate and does not end orchestration. Sequence the
 same phases and pause at each gate for explicit approval. Explain that all scope
 can require many approval pauses.
 
-Delegation never covers invalidating an approved gate. If the run discovers a
-rewind is needed, stop and ask. It also does not accept the Contract Review:
+Ordinary Plan delegation never covers invalidating an approved gate. If the run
+discovers a rewind is needed, stop and ask. It also does not accept the Contract Review:
 that review requires no approval authority.
 
 ## 4. Follow the CLI's phase-relative scheduling

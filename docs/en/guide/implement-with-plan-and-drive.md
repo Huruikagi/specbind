@@ -38,7 +38,7 @@ it does not skip reviews or CLI checks.
 
 Separating planning lets you review Milestone behavior, Design boundaries, and
 execution order before implementation. Drive may also enter while planning is
-incomplete, but invoking Drive grants no Gate approval. Without applicable
+incomplete, but invoking ordinary Drive grants no Gate approval. Without applicable
 authority, it parks that item and looks for another reachable action.
 
 ## 3. Drive reachable work
@@ -63,6 +63,34 @@ Typical ownership is:
 
 After every handoff, Drive rereads Git worktree state and Milestone status. The
 initial implementation runs only one mutating workflow at a time.
+
+### Delegate replanning discovered during implementation
+
+```text
+$sb-drive --replan
+```
+
+This option delegates Design, Contract, and Tasks corrections within the
+approved Requirements and existing Milestone scope. The option itself grants
+that authority; Drive does not ask for another delegation confirmation. You
+can also explicitly ask it to delegate replanning in natural language.
+
+Drive returns findings to the planning owner, which invalidates the necessary
+gates, revises artifacts, runs independent validation and Contract Review, and
+reapproves the plan. Drive then resumes implementation and validation in the
+same run. It reports changes without stopping merely because the plan changed.
+
+Design changes can require renewed Contract Review and Tasks approval across
+the Milestone. Previously completed work may need implementation and proof
+again; unchanged work keeps its progress only when its evidence still applies.
+Attributable partial implementation can remain through this recovery, with
+planning leaving it untouched until implementation resumes. Unrelated or
+conflicting changes still stop the run.
+
+Requirements, Milestone scope or dependency changes, out-of-scope Spec changes,
+and unsettled external compatibility or migration obligations still need your
+decision. Reviews and their retry limits remain in force, and Release remains
+separate. Omit `--replan` to keep the ordinary rewind confirmations.
 
 ## 4. Understand attention versus stopping
 
@@ -92,7 +120,9 @@ completion but not independent implementation.
 
 An unsafe worktree is different. Partial, rejected, unrelated, or unattributed
 changes make switching ownership unsafe, so Drive stops without resetting or
-stashing them.
+stashing them. The exception is the attributable implementation carried through
+the same authorized replan described above; it cannot be used to switch to
+independent work.
 
 ## 5. Review the Drive handoff
 

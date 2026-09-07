@@ -314,6 +314,10 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
 
 static PLAN_RESOURCES: &[SkillResource] = &[
     SkillResource {
+        relative_path: "references/replan.md",
+        source: include_str!("../../assets/skills/sb-plan/references/replan.md"),
+    },
+    SkillResource {
         relative_path: "references/design.md",
         source: include_str!("../../assets/skills/sb-plan/references/design.md"),
     },

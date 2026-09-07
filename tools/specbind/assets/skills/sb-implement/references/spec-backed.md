@@ -14,6 +14,15 @@ finding about the plan or the design — that is a real outcome, not an obstacle
 
 ## Select the work
 
+When resuming from an authorized Drive replan, read the planning owner's exact
+Task identity mapping and resolved blocker evidence. Before selecting work,
+use `specbind tasks reopen <spec> <task-id>` for each mapped blocked Task whose
+cause the revised approved plan resolved. Reopen also any retained completed
+record whose evidence the recovery identified as invalid. Verify the current
+Task identity before each command; never reopen unrelated work or infer that
+a changed plan resolved every blocker. Reread the Task list, then execute the
+ordinary implementation/review cycle. Reopening grants no completion evidence.
+
 ```sh
 specbind tasks list <spec>
 specbind tasks show <spec> <task-id>

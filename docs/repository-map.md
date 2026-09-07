@@ -358,3 +358,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0196](./design/decisions/0196-optional-temporary-adoption-skill.md) | Accepted | Optional temporary adoption Skill and guarded retirement after reverse finalization |
 | [0197](./design/decisions/0197-task-verification-prerequisites.md) | Accepted | Task verification inputs and state available at completion, with targeted cross-Spec checks |
 | [0198](./design/decisions/0198-inline-requirement-retirement.md) | Accepted | Inline Requirement retirement with reserved identities and ordinary delivery coverage |
+| [0199](./design/decisions/0199-drive-replan-authority.md) | Accepted | Optional Drive delegation of in-scope Design, Contract, and Tasks recovery |

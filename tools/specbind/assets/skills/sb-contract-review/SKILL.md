@@ -184,6 +184,16 @@ Task plans are never inputs, and the CLI rejects them.
 
 ## 4. Remediate, at most twice
 
+When dispatched with explicit Drive replan authority, report in-scope
+Design/Contract findings to the `sb-plan` recovery owner with the affected
+Specs and exact rewind cost. That owner handles the existing Tasks barrier,
+Design validation, and return to this review without another user confirmation.
+Do not delete plans or invalidate gates in the review dispatch. Carry the
+finding history and remaining two-round budget back; recovery never resets it.
+Requirements or Milestone scope changes and unsettled external consequences
+remain user decisions. The explicit-confirmation instructions below apply
+outside that delegated recovery.
+
 If the review does not pass, you may remediate and rerun **at most two rounds**.
 After that, the affected Specs stay in design, no artifact is written, and you
 report what is unresolved.

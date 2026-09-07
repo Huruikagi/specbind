@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `c7d8c27` + final replan tree | DR4 — default authority boundary preserved (reporting expectation corrected); DR6 — autonomous Tasks recovery and completion passed after a shell-environment retry | [Final Drive recovery](./runs/2026-09-07-codex-c7d8c27-replan-final.md) |
+| 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `c7d8c27` + initial replan tree | DR3 — recovery reached validation; completion environment-blocked, explicit completion continuation passed. DR4 — capacity blocked. | [Initial Drive recovery](./runs/2026-09-07-codex-c7d8c27-replan-initial.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `228570a` + retirement tree | R3P — pass; retirement-only scope through Tasks approval, final-binary read smoke also passed | [Retirement planning](./runs/2026-09-07-codex-228570a-retirement-plan.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `228570a` + initial retirement tree | R3 — pass; explicit reporting retirement retained identity and downstream coverage | [Initial retirement](./runs/2026-09-07-codex-228570a-retirement-initial.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `e1cd8a4` + final working tree | T6, T7 — pass; stronger Design verification preserved and FT-0049 resolved | [Final verification-input audit](./runs/2026-09-07-codex-e1cd8a4-verification-inputs-final.md) |

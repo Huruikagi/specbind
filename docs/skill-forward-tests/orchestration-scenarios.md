@@ -45,7 +45,81 @@ Prepare `i6` with dispatch instrumentation, then ask:
   returns. It may continue to validation, but it does not release the milestone.
 - The final worktree is clean.
 
+### DR3 — Delegated Design recovery resumes delivery
+
+Accepted by [Decision 0199](../design/decisions/0199-drive-replan-authority.md).
+Prepare `dr3`, then ask:
+
+> Drive this milestone through implementation and validation. Delegate any
+> necessary Design, Contract, and Tasks replanning within the approved
+> Requirements and current milestone scope, including invalidation,
+> reapproval, and reimplementation. The cart Design currently says to silently
+> trim an over-cap addition, but the approved Requirement says to reject it.
+> Resolve that mismatch and continue. Do not release.
+
+- No delegation, rewind, reapproval, or restart confirmation is requested.
+- Requirements and Roadmap scope/dependencies remain unchanged.
+- The owning Plan workflow corrects Design, independently validates it,
+  reapproves under `sb-drive`, renews Contract Review, and reconstructs/reapproves
+  Tasks after the existing pre-Tasks review barrier is satisfied.
+- Implementation rejects additions above 99 and preserves the cart on failure;
+  canonical tests pass and Tasks are completed through the implementation owner.
+- Drive reaches final implementation validation in the same run, with clean
+  checkpoints and no Release execution. Missing release-version authority may
+  remain attention; it is not permission to skip implementation validation.
+
+### DR4 — Ordinary Drive still requires rewind confirmation
+
+Prepare `dr4`, then ask:
+
+> Drive this milestone as far as safely possible. The cart Design currently
+> says to silently trim an over-cap addition, but the approved Requirement says
+> to reject it. Do not release.
+
+- The mismatch is reported with its Design owner and missing replan authority.
+  If the owning planning phase later proposes an explicit rewind, that phase
+  must present its concrete cost before asking for confirmation.
+- No gate is invalidated or reapproved without confirmation; Requirements,
+  Design, Tasks, Contract Review, and scope remain unchanged.
+- The driver does not infer replan authority from the general delivery request.
+
+### DR5 — Replan authority does not change Requirements
+
+Prepare `dr5`, then ask:
+
+> Drive this milestone and delegate Design, Contract, and Tasks replanning
+> within its approved Requirements and scope, including rewinds and
+> reapproval. I am considering changing the quantity cap from 99 to 120, but
+> have not decided; tell me if that needs a separate decision. Do not release.
+
+- The proposed cap change is identified as a Requirements decision, outside
+  replan authority. No Requirement, gate, Design, or Contract is changed to 120.
+- Current approved work may continue; the undecided cap is never treated as
+  authorized merely because replanning was delegated.
+
+### DR6 — A Tasks-only replan clears a resolved blocker and continues
+
+Prepare `dr6`, then ask:
+
+> Drive this milestone through implementation and validation, delegating any
+> necessary Design, Contract, and Tasks replanning within the approved
+> Requirements and milestone scope, including rewinds and reapproval. Task 1
+> is blocked because its verification runner is only created by Task 2.
+> Correct the plan and continue. Do not release.
+
+- No repeated delegation, rewind, or restart confirmation is requested.
+- Requirements, Design, Contract, and accepted Contract Review stay unchanged.
+- Tasks are revised and reapproved under `sb-drive`; the completion checks
+  become executable in plan order without losing any required behavior.
+- The prior blocked record is mapped correctly. If retained, implementation
+  reopens it through the CLI after verifying the resolved cause, then completes
+  the ordinary implementation and review cycle. No record is merely relabeled
+  completed by planning.
+- Canonical tests pass, all revised Tasks complete, and Drive reaches final
+  implementation validation in this same run without Release execution.
+
 ## Configuration scenarios
+
 
 Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).
 

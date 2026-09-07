@@ -1,7 +1,7 @@
 ---
 name: sb-drive
 description: Drive the active milestone through every safe reachable planning, implementation, and validation action. Park branch-local attention and continue elsewhere; stop before release execution.
-argument-hint: "[--target-release <version>]"
+argument-hint: "[--replan] [--target-release <version>]"
 ---
 
 # Drive the active milestone to its next real boundary
@@ -24,6 +24,51 @@ still belongs to `sb-implement`.
 You are a thin controller. Existing Skills own all artifacts, judgments,
 progress, and checkpoints. The CLI owns lifecycle state. Never author their work
 or retain a competing schedule.
+
+## Optional replan authority
+
+`--replan`, or an explicit natural-language request to delegate replanning,
+authorizes Design, Contract, and Tasks revisions within the active delivery
+Milestone's existing scope and approved Requirements. The option itself is
+authorization: do not ask for a second delegation confirmation. Without it,
+the ordinary approval and rewind confirmations below remain unchanged.
+
+This includes necessary Design/Tasks invalidation, delegated reapproval,
+independent Design validation, renewed Contract Review, affected consumers
+inside scope, and reimplementation of previously completed work. It never
+authorizes changing or invalidating Requirements, changing Milestone scope or
+dependencies, changing an out-of-scope Spec, weakening a required behavior, or
+Release. An unsettled external compatibility or migration obligation still
+needs the user. Reverse adoption and Direct reclassification are not covered.
+
+On a concrete `REROUTABLE` Design/Contract/Tasks finding, dispatch the complete
+`sb-plan` owning Skill with the exact affected Specs, finding, `sb-drive`
+delegation workflow, authorized Design/Tasks gates and rewinds, and the
+installed `references/replan.md` path. This is the explicit recovery exception
+to selecting an ordinary status action: status cannot diagnose a semantic
+defect in a fresh approved artifact. The planning owner validates the boundary
+before mutation. Do not revise artifacts in Drive or dispatch an internal
+planner role in place of that Skill.
+
+Carry the original approved Requirements and Milestone scope boundary through
+every recovery dispatch; a revised Design cannot expand the delegation.
+Report the concrete change and invalidation cost as progress, without waiting
+for approval within that boundary. Preserve existing retry budgets and finding
+history across dispatches; the same unresolved defect after recovery is parked,
+not another fresh replan attempt. A replan is not a way to reset a spent budget.
+
+After the planning owner completes its checkpoints, reread status and resume
+implementation and validation in this same Drive run. "The plan is revised;
+resume next time" is not a terminal result while safe work remains reachable.
+Carry resolved Task blockers and their exact identity mapping to the resumed
+`sb-implement` owner, including when its first operation must be `tasks reopen`
+before status can expose pending work. This is part of the same recovery.
+
+An attributable partial implementation from this run may be carried through
+the same recovery when its exact paths and diff are reported and retained for
+the implementation owner. Planning must leave those source changes untouched;
+do not switch to unrelated work, reset, stash, discard, or commit them as WIP.
+Unrelated, unattributed, or conflicting partial changes still stop the run.
 
 ## 1. Read the only scheduler
 
@@ -80,9 +125,9 @@ name `sb-adopt` as the continuation owner.
 Use one mutating dispatch at a time. Do not launch dependency-wave items in
 parallel and do not predict path conflicts.
 
-Planning still owns its delegation confirmation. Invoking Drive does not grant
-gate approvals. Pass through only authority the user explicitly supplied. A
-missing confirmation is attention, not permission to approve or a reason to
+Planning still owns its delegation confirmation. Invoking Drive without
+`--replan` does not grant gate approvals. Pass through only authority the user
+explicitly supplied. A missing confirmation is attention, not permission to approve or a reason to
 interrupt while unrelated implementation remains reachable.
 
 If `sb-implement` reports that a Direct summary requires canonical artifacts or
@@ -110,7 +155,8 @@ as lifecycle evidence.
   `RETRYABLE` within an unspent retry bound.
 - Preserve every owning workflow's retry and remediation limit. Drive never
   resets one.
-- If the worktree contains partial, rejected, unrelated, or unattributed work,
+- Except for the attributable same-recovery handoff above, if the worktree
+  contains partial, rejected, unrelated, or unattributed work,
   stop the run. Never reset, stash, revert, clean, or manufacture a WIP commit
   to switch items.
 
@@ -158,8 +204,10 @@ Drive invocation reconstructs everything from fresh status.
 Never silently invalidate an approved gate, change Roadmap scope, choose a
 release version, reclassify Direct work, accept breaking Contract consequences,
 use credentials, perform destructive recovery, or take external action. Those
-become `HUMAN_DECISION` attention. Requirements, Design, or Tasks rewinds retain
-their existing explicit confirmation. A Direct item that needs canonical
+become `HUMAN_DECISION` attention unless the Design/Contract/Tasks consequence
+is already covered by the explicit replan authority above. Requirements
+rewinds always retain explicit confirmation; Design and Tasks do so without
+replan authority. A Direct item that needs canonical
 artifacts returns to Discovery.
 
 ## 6. Stop before Release
