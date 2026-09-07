@@ -203,10 +203,14 @@ draft before seeking approval. Decision 0094 gives the protocol both consumers
 for this reason: the criteria are identical, and a Design that would fail
 independent validation is not ready to be submitted.
 
-`specbind-validate-design` is a separate, independently invoked skill and is not
-a precondition of this gate. Requiring it would put an optional second opinion
-in front of every approval; making the self-review optional would leave approval
-resting on structural checks the CLI already performs.
+`sb-validate-design` is a separate Skill that this phase does not invoke, and it
+is not a mechanical precondition of the CLI gate. In standalone single-phase
+use it remains an optional second opinion. Decision
+[0194](./0194-per-spec-design-revision-budget.md) later requires the complete
+Plan orchestrator to send an unapproved Design through fresh independent
+validation before it re-dispatches this phase with approval authority. Making
+self-review optional would still leave approval resting on structural checks
+the CLI already performs.
 
 `specbind check traceability <spec>` is run before approving. The approval
 enforces it regardless, but running it first turns a refused approval into a

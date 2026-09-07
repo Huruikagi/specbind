@@ -454,8 +454,13 @@ Report every finding with its protocol disposition:
 Do not leave a real observation unclassified. `RESOLVED` remains visible in the
 review summary; it is evidence of what changed, not an open gate condition.
 
-`sb-validate-design` is a separate skill the user invokes when they want a
-second opinion. It is not a step you run, and not a precondition of this gate.
+`sb-validate-design` is a separate skill. This Design-phase receiver never
+invokes it, and the CLI gate does not mechanically require it. In a complete
+Plan route or a Drive recovery route, return the unapproved draft to the
+orchestrator: that route requires fresh independent validation before it
+re-dispatches this phase with approval authority. In standalone single-phase
+mode, independent validation remains an optional second opinion unless the
+maintainer requested it.
 
 Present the design, what it decided and why, and what changed in the contract.
 Revise on feedback rather than approving something you know to be weak.

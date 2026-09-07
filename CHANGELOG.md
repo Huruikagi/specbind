@@ -6,7 +6,8 @@ All notable changes to SpecBind will be documented in this file.
 
 - Split complete Plan orchestration and optional Drive replan routing into
   on-demand Skill references, keeping ordinary and single-phase entrypoints
-  focused without changing their authority or lifecycle behavior.
+  focused while clarifying that route-owned Design validation remains mandatory
+  before delegated approval without becoming a mechanical gate prerequisite.
 
 ## 1.4.0 - 2026-09-07
 

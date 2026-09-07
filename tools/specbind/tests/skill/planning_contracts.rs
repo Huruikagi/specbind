@@ -195,6 +195,17 @@ fn design_phase_checkpoints_its_verified_deferred_destination_after_validation()
 }
 
 #[test]
+fn design_phase_distinguishes_route_validation_from_gate_mechanics() {
+    let body = skill_resource_text("sb-plan", "references/design.md");
+    assert!(body.contains("This Design-phase receiver never\ninvokes it"));
+    assert!(body.contains("CLI gate does not mechanically require it"));
+    assert!(body.contains("complete\nPlan route or a Drive recovery route"));
+    assert!(body.contains("requires fresh independent validation before it\nre-dispatches"));
+    assert!(body.contains("standalone single-phase\nmode"));
+    assert!(body.contains("optional second opinion"));
+}
+
+#[test]
 fn planning_orchestrator_validates_design_before_delegated_approval() {
     let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("without Design-gate authority"));
