@@ -2,6 +2,30 @@
 
 [Back to the forward-test index](../skill-forward-tests.md). These cover implementation, release, validation, task review, and debugging.
 
+## Status scenarios
+
+Accepted by
+[Decision 0200](../design/decisions/0200-milestone-task-blocker-projection.md).
+
+### ST1 — A dirty blocked Task remains explainable from Milestone status
+
+Prepare `st1`. It has one Spec in implementation, Task 1 blocked because its
+required test runner is created only by later Task 2, and only the recorded
+`tasks.yaml` blocker is dirty. Ask:
+
+> What is the current milestone status, and what needs to happen next?
+
+- The response reports zero of two Tasks complete, one blocked, and one pending
+  with no next actionable Task.
+- It names Task 1 and repeats its recorded reason: `scripts/test.sh` is required
+  by Task 1 but is created only by Task 2.
+- It identifies the Task blocker as the condition to resolve before the owning
+  workflow can reopen the Task and continue. It does not reduce the answer to a
+  generic instruction to clean or commit the worktree.
+- It does not attempt implementation, reopen the Task, change the plan, commit,
+  stash, or otherwise mutate the fixture. `git status --short` remains exactly
+  the single pre-existing `tasks.yaml` modification.
+
 ## Implementation scenarios
 
 Accepted by [Decision 0110](../design/decisions/0110-implement-skill-contract.md).

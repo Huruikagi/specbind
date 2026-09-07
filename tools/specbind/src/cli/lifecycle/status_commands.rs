@@ -128,6 +128,20 @@ struct MilestoneItemData<'a> {
     summary: &'a str,
     status: &'a str,
     waiting_for: &'a [String],
+    #[serde(skip_serializing_if = "Option::is_none")]
+    task_progress: Option<MilestoneTaskProgressData<'a>>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    task_blockers: Vec<TaskBlockerData<'a>>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MilestoneTaskProgressData<'a> {
+    total: usize,
+    completed: usize,
+    pending: usize,
+    blocked: usize,
+    next_tasks: &'a [String],
 }
 
 #[derive(Serialize)]
@@ -345,6 +359,23 @@ fn render_milestone_status_json(model: &MilestoneStatusModel) -> CommandOutput {
                 summary: &item.summary,
                 status: &item.status,
                 waiting_for: &item.waiting_for,
+                task_progress: item.task_progress.as_ref().map(|progress| {
+                    MilestoneTaskProgressData {
+                        total: progress.total,
+                        completed: progress.completed,
+                        pending: progress.pending,
+                        blocked: progress.blocked,
+                        next_tasks: &progress.next_tasks,
+                    }
+                }),
+                task_blockers: item
+                    .task_blockers
+                    .iter()
+                    .map(|blocker| TaskBlockerData {
+                        task_id: &blocker.task_id,
+                        reason: &blocker.reason,
+                    })
+                    .collect(),
             })
             .collect(),
         actionable: model
@@ -406,6 +437,30 @@ fn render_milestone_items(model: &MilestoneStatusModel, output: &mut String) {
             escape(&item.summary)
         )
         .expect("writing to a String cannot fail");
+        if let Some(progress) = &item.task_progress {
+            writeln!(
+                output,
+                "      Tasks: {}/{} completed, {} pending, {} blocked",
+                progress.completed, progress.total, progress.pending, progress.blocked
+            )
+            .expect("writing to a String cannot fail");
+            let next_tasks = if progress.next_tasks.is_empty() {
+                "none".to_owned()
+            } else {
+                progress.next_tasks.join(", ")
+            };
+            writeln!(output, "      Next tasks: {}", escape(&next_tasks))
+                .expect("writing to a String cannot fail");
+        }
+        for blocker in &item.task_blockers {
+            writeln!(
+                output,
+                "      Blocked task {}: {}",
+                escape(&blocker.task_id),
+                escape(&blocker.reason)
+            )
+            .expect("writing to a String cannot fail");
+        }
     }
 }
 

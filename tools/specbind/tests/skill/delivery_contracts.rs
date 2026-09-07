@@ -264,6 +264,27 @@ fn status_names_machine_health_without_claiming_semantic_alignment() {
 }
 
 #[test]
+fn status_routes_named_and_milestone_reports_to_distinct_procedures() {
+    let entrypoint = skill::find("sb-status")
+        .expect("status skill")
+        .body()
+        .expect("body");
+    let milestone = skill_resource_text("sb-status", "references/milestone.md");
+    let spec = skill_resource_text("sb-status", "references/spec.md");
+
+    assert!(entrypoint.contains("references/milestone.md"));
+    assert!(entrypoint.contains("references/spec.md"));
+    assert!(milestone.contains("specbind milestone status"));
+    assert!(milestone.contains("completed, pending, and blocked Task counts"));
+    assert!(milestone.contains("each blocked Task ID and its recorded reason"));
+    assert!(milestone.contains("`TASKS_BLOCKED`"));
+    assert!(milestone.contains("Do not replace it with a generic\ndirty-worktree explanation"));
+    assert!(spec.contains("specbind spec status <spec>"));
+    assert!(spec.contains("specbind tasks show <spec> <task-id>"));
+    assert!(spec.contains("A blocked Task with no next Task is\na stop condition"));
+}
+
+#[test]
 fn authoring_skills_produce_each_template_output_once_for_all_references() {
     for name in [
         "sb-discovery",

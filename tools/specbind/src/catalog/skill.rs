@@ -345,6 +345,17 @@ static RELEASE_RESOURCES: &[SkillResource] = &[SkillResource {
     source: include_str!("../../assets/skills/sb-release/references/bootstrap-release-adapter.md"),
 }];
 
+static STATUS_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/milestone.md",
+        source: include_str!("../../assets/skills/sb-status/references/milestone.md"),
+    },
+    SkillResource {
+        relative_path: "references/spec.md",
+        source: include_str!("../../assets/skills/sb-status/references/spec.md"),
+    },
+];
+
 /// Lists every embedded skill.
 #[must_use]
 pub fn all() -> &'static [Skill] {
@@ -462,6 +473,7 @@ impl Skill {
             "sb-implement" => IMPLEMENT_RESOURCES,
             "sb-plan" => PLAN_RESOURCES,
             "sb-release" => RELEASE_RESOURCES,
+            "sb-status" => STATUS_RESOURCES,
             _ => &[],
         }
     }

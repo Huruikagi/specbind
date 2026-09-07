@@ -23,6 +23,7 @@
 #   dr4    same Design defect without delegated recovery
 #   dr5    approved cart plan for the Requirements authority boundary
 #   dr6    blocked Task needs a verification prerequisite owned by a later Task
+#   st1    dirty blocked Task for a whole-milestone status report
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
 #   a3     a2 plus one suspected defect and local reverse checkpoint policy
@@ -1276,7 +1277,7 @@ EOF
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
     ;;
 
-d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1304,7 +1305,7 @@ d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | rt1 | rt2 | db1 | vi1 | vi2 | v
             echo "      title: Enforce and verify the upper quantity bound"
             echo "      requirement_ids: ['1.4']"
         } > .specbind/specs/cart/tasks.yaml
-    elif [ "$scenario" = dr6 ]; then
+    elif [ "$scenario" = dr6 ] || [ "$scenario" = st1 ]; then
         cat > .specbind/specs/cart/tasks.yaml <<'EOF'
 schema_version: 1
 plan:
@@ -1337,13 +1338,23 @@ EOF
         || fail "could not approve the tasks gate"
     expect "cart did not reach implementation with every gate fresh" \
         'specbind spec status cart | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
-    if [ "$scenario" = dr6 ]; then
+    if [ "$scenario" = dr6 ] || [ "$scenario" = st1 ]; then
+        if [ "$scenario" = st1 ]; then
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Set up the st1 milestone"
+        fi
         specbind tasks block cart 1 --reason "Task 1 requires scripts/test.sh, which only Task 2 creates." >/dev/null \
             || fail "could not establish the blocked Task"
         expect "the missing verification prerequisite exists" \
             '! test -e scripts/test.sh'
         expect "the prerequisite block was not recorded" \
             'specbind tasks list cart | grep -q "1 blocked"'
+        if [ "$scenario" = st1 ]; then
+            leave_dirty=yes
+            expect "the blocked Task did not leave only tasks.yaml dirty" \
+                'test "$(git status --porcelain | wc -l | tr -d " ")" = 1 && git status --porcelain | grep -q ".specbind/specs/cart/tasks.yaml"'
+        fi
     fi
     case "$scenario" in
     dr3 | dr4 | dr5)

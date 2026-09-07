@@ -35,36 +35,17 @@ on `GO`.
 When the request is ambiguous, report the milestone first: it names the
 participating Specs, so the user can narrow from there.
 
-## Gather
+## Follow the selected procedure
 
-For the active milestone:
-
-```sh
-specbind milestone status
-```
-
-For one Spec:
-
-```sh
-specbind spec status <spec>
-```
-
-Add these only when the answer needs them:
-
-- `specbind tasks list <spec>` when the Spec is implementing and the user needs
-  to see individual tasks, their progress, or which are blocked.
-- `specbind milestone review status` when the milestone report shows a
-  contract review that is absent, stale, or invalid, and the user needs to
-  know what to do about it.
-- `specbind check traceability <spec>` or `specbind check contracts` when a
-  reported inconsistency needs to be attributed to a specific artifact.
+- For the active milestone, read [references/milestone.md](references/milestone.md)
+  and follow it completely. Do not also load the Spec procedure unless the user
+  narrows the request to one Spec.
+- For one named Spec, read [references/spec.md](references/spec.md) and follow it
+  completely. Do not start from the milestone procedure.
 
 A read that fails is part of the answer. Report the diagnostic rather than
 retrying it or working around it, because a command that cannot produce a
 trustworthy read is telling the user their project state needs repair.
-
-`NO_CHANGE NO_ACTIVE_MILESTONE` is not a failure. It means no milestone is
-active, which is the correct answer to "what is happening right now".
 
 ## Report
 
@@ -88,7 +69,8 @@ prose agree. Never use state health to rule out an artifact contradiction in a
 review or diagnosis.
 
 Keep it proportionate. A healthy Spec needs a few lines. A milestone with
-several blocked items needs the detail that explains the blockage.
+blocked items must retain the recorded progress, Task identity, reason, and the
+condition that must be resolved before its owning workflow can resume.
 
 ## Boundaries
 

@@ -86,6 +86,23 @@ pub struct MilestoneItemView {
     pub summary: String,
     pub status: String,
     pub waiting_for: Vec<String>,
+    pub task_progress: Option<MilestoneTaskProgress>,
+    pub task_blockers: Vec<MilestoneTaskBlocker>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MilestoneTaskProgress {
+    pub total: usize,
+    pub completed: usize,
+    pub pending: usize,
+    pub blocked: usize,
+    pub next_tasks: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MilestoneTaskBlocker {
+    pub task_id: String,
+    pub reason: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -124,8 +141,13 @@ struct ItemFacts {
 }
 
 enum ItemKind {
-    Spec { model: Option<Box<SpecStatusModel>> },
-    Direct { completed: bool },
+    Spec {
+        model: Option<Box<SpecStatusModel>>,
+        tasks_checkpointed: bool,
+    },
+    Direct {
+        completed: bool,
+    },
 }
 
 struct GitState {
@@ -190,7 +212,7 @@ pub fn resolve(
                 .issues
                 .is_empty()
         });
-    let implementation_complete = implementation_completion(&facts, validation_checkout_ready);
+    let implementation_complete = implementation_completion(&facts, git.clean);
     let all_items_implemented = implementation_complete.values().all(|complete| *complete);
     let all_specs_validated = spec_predicate(&facts, validated);
     let stage = derive_stage(&facts, review.status, &implementation_complete, reverse);
@@ -208,7 +230,16 @@ pub fn resolve(
         roadmap.target_release.is_some(),
         reverse,
     );
-    let current_blockers = if !validation_checkout_ready
+    let mut current_blockers = Vec::new();
+    if facts.iter().any(|item| match &item.kind {
+        ItemKind::Spec { model, .. } => model
+            .as_deref()
+            .is_some_and(|model| !model.blockers.is_empty()),
+        ItemKind::Direct { .. } => false,
+    }) {
+        current_blockers.push("TASKS_BLOCKED".to_owned());
+    }
+    if !validation_checkout_ready
         && git.diagnostic.is_none()
         && worktree_blocks_progress(
             &facts,
@@ -217,11 +248,10 @@ pub fn resolve(
             &actionable,
             roadmap.target_release.is_some(),
             reverse,
-        ) {
-        vec!["WORKTREE_NOT_CLEAN".to_owned()]
-    } else {
-        Vec::new()
-    };
+        )
+    {
+        current_blockers.push("WORKTREE_NOT_CLEAN".to_owned());
+    }
     let items = item_views(&facts, &implementation_complete);
     let release_blockers = if reverse {
         Vec::new()
@@ -253,7 +283,7 @@ pub fn resolve(
         spec_state_counts,
         direct_completed,
         direct_total,
-        current_revision: validation_checkout_ready.then_some(git.revision).flatten(),
+        current_revision: git.revision,
         items,
         actionable,
         current_blockers,
@@ -351,6 +381,10 @@ fn spec_facts(
                     None
                 }
             };
+            let tasks_checkpointed = model.as_ref().is_some_and(|model| {
+                model.task_model.is_some()
+                    && task_state_checkpointed(project_root, specbind_root, &item.spec, diagnostics)
+            });
             ItemFacts {
                 id,
                 command_operand: item.spec.clone(),
@@ -358,6 +392,7 @@ fn spec_facts(
                 dependencies: item.depends_on.iter().map(dependency_key).collect(),
                 kind: ItemKind::Spec {
                     model: model.map(Box::new),
+                    tasks_checkpointed,
                 },
             }
         })
@@ -409,12 +444,21 @@ fn validated(model: &SpecStatusModel) -> bool {
         && model.freshness.completion.status == FreshnessStatus::Fresh
 }
 
-fn implementation_completion(facts: &[ItemFacts], clean: bool) -> BTreeMap<String, bool> {
+fn implementation_completion(
+    facts: &[ItemFacts],
+    assume_clean_checkout: bool,
+) -> BTreeMap<String, bool> {
     facts
         .iter()
         .map(|item| {
             let complete = match &item.kind {
-                ItemKind::Spec { model } => model.as_deref().is_some_and(tasks_complete) && clean,
+                ItemKind::Spec {
+                    model,
+                    tasks_checkpointed,
+                } => {
+                    model.as_deref().is_some_and(tasks_complete)
+                        && (assume_clean_checkout || *tasks_checkpointed)
+                }
                 ItemKind::Direct { completed } => *completed,
             };
             (item.id.clone(), complete)
@@ -464,31 +508,39 @@ fn actionable_items(
     let mut actions = Vec::new();
     for item in facts {
         match &item.kind {
-            ItemKind::Spec { model } if !model.as_deref().is_some_and(requirements_approved) => {
+            ItemKind::Spec { model, .. }
+                if !model.as_deref().is_some_and(requirements_approved) =>
+            {
                 push_action(&mut actions, item, MilestoneActionKind::Requirements);
             }
-            ItemKind::Spec { model }
+            ItemKind::Spec { model, .. }
                 if !model.as_deref().is_some_and(design_approved)
                     && design_dependencies_ready(item, facts) =>
             {
                 push_action(&mut actions, item, MilestoneActionKind::Design);
             }
             ItemKind::Spec { .. } if reverse => {}
-            ItemKind::Spec { model }
+            ItemKind::Spec { model, .. }
                 if review == ReviewFreshnessStatus::Fresh
                     && !model.as_deref().is_some_and(tasks_approved) =>
             {
                 push_action(&mut actions, item, MilestoneActionKind::Tasks);
             }
-            ItemKind::Spec { model }
+            ItemKind::Spec { model, .. }
                 if model.as_deref().is_some_and(tasks_approved)
                     && !model.as_deref().is_some_and(tasks_complete)
+                    && model.as_deref().is_some_and(|model| {
+                        model
+                            .task_model
+                            .as_ref()
+                            .is_some_and(|tasks| !tasks.actionable_ids.is_empty())
+                    })
                     && !completion[&item.id]
                     && dependencies_ready(item, completion) =>
             {
                 push_action(&mut actions, item, MilestoneActionKind::Implementation);
             }
-            ItemKind::Spec { model }
+            ItemKind::Spec { model, .. }
                 if all_implemented && clean && !model.as_deref().is_some_and(validated) =>
             {
                 push_action(&mut actions, item, MilestoneActionKind::Validation);
@@ -503,7 +555,7 @@ fn actionable_items(
     }
     if has_specs(facts)
         && facts.iter().all(|item| match &item.kind {
-            ItemKind::Spec { model } => model.as_deref().is_some_and(design_approved),
+            ItemKind::Spec { model, .. } => model.as_deref().is_some_and(design_approved),
             ItemKind::Direct { .. } => true,
         })
         && review != ReviewFreshnessStatus::Fresh
@@ -517,7 +569,7 @@ fn actionable_items(
     if reverse
         && review == ReviewFreshnessStatus::Fresh
         && facts.iter().all(|item| match &item.kind {
-            ItemKind::Spec { model } => model.as_deref().is_some_and(design_approved),
+            ItemKind::Spec { model, .. } => model.as_deref().is_some_and(design_approved),
             ItemKind::Direct { .. } => true,
         })
     {
@@ -530,7 +582,7 @@ fn actionable_items(
     if !reverse
         && all_implemented
         && facts.iter().all(|item| match &item.kind {
-            ItemKind::Spec { model } => model.as_deref().is_some_and(validated),
+            ItemKind::Spec { model, .. } => model.as_deref().is_some_and(validated),
             ItemKind::Direct { completed } => *completed,
         })
     {
@@ -583,10 +635,10 @@ fn item_views(facts: &[ItemFacts], completion: &BTreeMap<String, bool>) -> Vec<M
         .iter()
         .map(|item| {
             let status = match &item.kind {
-                ItemKind::Spec { model } if model.as_deref().is_some_and(validated) => {
+                ItemKind::Spec { model, .. } if model.as_deref().is_some_and(validated) => {
                     "validated".to_owned()
                 }
-                ItemKind::Spec { model } => model.as_deref().map_or_else(
+                ItemKind::Spec { model, .. } => model.as_deref().map_or_else(
                     || "unavailable".to_owned(),
                     |model| spec_status::state_name(model.declared_state).to_owned(),
                 ),
@@ -599,14 +651,73 @@ fn item_views(facts: &[ItemFacts], completion: &BTreeMap<String, bool>) -> Vec<M
                 .filter(|dependency| !completion.get(*dependency).copied().unwrap_or(false))
                 .cloned()
                 .collect();
+            let (task_progress, task_blockers) = match &item.kind {
+                ItemKind::Spec { model, .. } => model.as_deref().map_or_else(
+                    || (None, Vec::new()),
+                    |model| {
+                        let progress =
+                            model
+                                .task_model
+                                .as_ref()
+                                .map(|tasks| MilestoneTaskProgress {
+                                    total: tasks.total(),
+                                    completed: tasks.completed,
+                                    pending: tasks.pending,
+                                    blocked: tasks.blocked,
+                                    next_tasks: tasks.actionable_ids.clone(),
+                                });
+                        let blockers = model
+                            .blockers
+                            .iter()
+                            .map(|blocker| MilestoneTaskBlocker {
+                                task_id: blocker.task_id.clone(),
+                                reason: blocker.reason.clone(),
+                            })
+                            .collect();
+                        (progress, blockers)
+                    },
+                ),
+                ItemKind::Direct { .. } => (None, Vec::new()),
+            };
             MilestoneItemView {
                 id: item.id.clone(),
                 summary: item.summary.clone(),
                 status,
                 waiting_for,
+                task_progress,
+                task_blockers,
             }
         })
         .collect()
+}
+
+fn task_state_checkpointed(
+    project_root: &Path,
+    specbind_root: &Path,
+    canonical_spec: &str,
+    diagnostics: &mut BTreeSet<MilestoneDiagnostic>,
+) -> bool {
+    let path = specbind_root.join(format!("specs/{canonical_spec}/tasks.yaml"));
+    let Ok(relative) = path.strip_prefix(project_root) else {
+        diagnostics.insert(MilestoneDiagnostic {
+            code: "MILESTONE_TASK_CHECKPOINT_PATH_INVALID",
+            path: Some(format!("specs/{canonical_spec}/tasks.yaml")),
+            message: "task state path is outside the project root".to_owned(),
+        });
+        return false;
+    };
+    let relative = relative.to_string_lossy().replace('\\', "/");
+    match repository::path_status(project_root, &relative) {
+        Ok(status) => status.is_empty(),
+        Err(error) => {
+            diagnostics.insert(MilestoneDiagnostic {
+                code: "MILESTONE_TASK_CHECKPOINT_STATUS_FAILED",
+                path: Some(relative),
+                message: error.to_string(),
+            });
+            false
+        }
+    }
 }
 
 fn release_blockers(
@@ -665,7 +776,7 @@ fn derive_release_readiness(
 fn spec_state_counts(facts: &[ItemFacts]) -> BTreeMap<String, usize> {
     let mut counts = BTreeMap::new();
     for item in facts {
-        if let ItemKind::Spec { model } = &item.kind {
+        if let ItemKind::Spec { model, .. } = &item.kind {
             let state = model.as_deref().map_or("unavailable", |model| {
                 spec_status::state_name(model.declared_state)
             });
@@ -677,7 +788,7 @@ fn spec_state_counts(facts: &[ItemFacts]) -> BTreeMap<String, usize> {
 
 fn spec_predicate(facts: &[ItemFacts], predicate: impl Fn(&SpecStatusModel) -> bool) -> bool {
     facts.iter().all(|item| match &item.kind {
-        ItemKind::Spec { model } => model.as_deref().is_some_and(&predicate),
+        ItemKind::Spec { model, .. } => model.as_deref().is_some_and(&predicate),
         ItemKind::Direct { .. } => true,
     })
 }
@@ -728,7 +839,7 @@ fn design_dependencies_ready(item: &ItemFacts, facts: &[ItemFacts]) -> bool {
                 .iter()
                 .find(|item| &item.id == dependency)
                 .is_some_and(|item| {
-                    matches!(&item.kind, ItemKind::Spec { model } if model.as_deref().is_some_and(design_approved))
+                    matches!(&item.kind, ItemKind::Spec { model, .. } if model.as_deref().is_some_and(design_approved))
                 })
         })
 }
@@ -860,5 +971,104 @@ pub fn review_name(status: ReviewFreshnessStatus) -> &'static str {
         ReviewFreshnessStatus::Fresh => "fresh",
         ReviewFreshnessStatus::Stale => "stale",
         ReviewFreshnessStatus::Invalid => "invalid",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        freshness::{ArtifactFreshnessReport, GateFreshness},
+        spec_status::WorkflowAction,
+        task_read_model::TaskReadModel,
+    };
+
+    fn fresh_gate() -> GateFreshness {
+        GateFreshness {
+            status: FreshnessStatus::Fresh,
+            issues: Vec::new(),
+        }
+    }
+
+    fn implementation_model(
+        completed: usize,
+        pending: usize,
+        blocked: usize,
+        actionable_ids: Vec<String>,
+    ) -> Box<SpecStatusModel> {
+        Box::new(SpecStatusModel {
+            declared_state: Some(WorkflowState::Implementation),
+            milestone_id: Some("milestone".to_owned()),
+            health: ConsistencyHealth::Consistent,
+            freshness: ArtifactFreshnessReport {
+                requirements: fresh_gate(),
+                design: fresh_gate(),
+                tasks: fresh_gate(),
+                completion: GateFreshness {
+                    status: FreshnessStatus::NotReached,
+                    issues: Vec::new(),
+                },
+            },
+            contract_review: Some(ReviewFreshnessStatus::Fresh),
+            next_action: WorkflowAction::Implementation,
+            expected_requirements_work: false,
+            expected_design_work: None,
+            delegated_gates: Some(Vec::new()),
+            task_model: Some(TaskReadModel {
+                items: Vec::new(),
+                completed,
+                pending,
+                blocked,
+                actionable_ids,
+            }),
+            blockers: Vec::new(),
+            coverage: None,
+            diagnostics: Vec::new(),
+        })
+    }
+
+    #[test]
+    fn checkpointed_predecessor_stays_complete_while_a_later_item_is_dirty() {
+        let facts = vec![
+            ItemFacts {
+                id: "spec:upstream".to_owned(),
+                command_operand: "upstream".to_owned(),
+                summary: "Upstream".to_owned(),
+                dependencies: Vec::new(),
+                kind: ItemKind::Spec {
+                    model: Some(implementation_model(1, 0, 0, Vec::new())),
+                    tasks_checkpointed: true,
+                },
+            },
+            ItemFacts {
+                id: "spec:downstream".to_owned(),
+                command_operand: "downstream".to_owned(),
+                summary: "Downstream".to_owned(),
+                dependencies: vec!["spec:upstream".to_owned()],
+                kind: ItemKind::Spec {
+                    model: Some(implementation_model(0, 0, 1, Vec::new())),
+                    tasks_checkpointed: false,
+                },
+            },
+        ];
+
+        let completion = implementation_completion(&facts, false);
+
+        assert!(completion["spec:upstream"]);
+        assert!(!completion["spec:downstream"]);
+        assert!(dependencies_ready(&facts[1], &completion));
+        assert!(
+            actionable_items(
+                &facts,
+                ReviewFreshnessStatus::Fresh,
+                &completion,
+                false,
+                false,
+                false,
+                false,
+            )
+            .is_empty(),
+            "a blocked Spec with no actionable Task must not be redispatched"
+        );
     }
 }

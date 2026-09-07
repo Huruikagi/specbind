@@ -175,7 +175,10 @@ For each item, the read model reports:
 - `needs_validation` for an implemented Spec without fresh completion evidence
 - `validated`
 
-Blocked task details remain owned by the Spec task read model. The milestone view summarizes the affected Spec and does not copy blocked reasons.
+The Spec task read model remains the source of blocked Task details. Under
+[Decision 0200](./decisions/0200-milestone-task-blocker-projection.md), the
+milestone view projects each affected Task ID and recorded reason together with
+the Spec's Task progress. It does not infer how to resolve the reason.
 
 ### Release readiness
 

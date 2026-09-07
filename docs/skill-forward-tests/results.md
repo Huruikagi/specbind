@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `6701a9b` + Decision 0200 working tree | ST1 — pass; dirty blocked Task retained progress, reason, and next condition | [Milestone blocker status](./runs/2026-09-08-codex-6701a9b-st1-status.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `16c004c` | Q4 — independent validation preceded delegated Design approval; checkpoint environment-blocked; FT-0050 resolved for the affected branch | [Design validation ownership confirmation](./runs/2026-09-08-codex-16c004c-q4-validation-owner.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `a772878` | T1, DR5 — pass; Q4 — environment-blocked after surfacing FT-0050 | [Progressive Plan and Drive assets](./runs/2026-09-08-codex-a772878-progressive-assets.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `a772878` | T1, DR5 — environment-invalid Temp attempts; Q4 — scenario-invalid setup | [Progressive-assets environment attempts](./runs/2026-09-08-codex-a772878-environment.md) |
