@@ -11,7 +11,7 @@
 
 The repository source layout, design documents, and the complete decision record are indexed in [docs/repository-map.md](docs/repository-map.md). Read it before navigating unfamiliar parts of the tree or citing a decision. Read [docs/architecture.md](docs/architecture.md) before changing core Rust module boundaries or dependency direction.
 
-The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Current consumer-facing `.kiro/` files must be maintained under `tools/cc-sdd/templates/shared/settings/` until the Rust templates replace them. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
+The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Inherited `.kiro/` files under `tools/cc-sdd/templates/shared/settings/` are migration and comparison inputs, not current product sources. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 
 ## Development Workflow
 
@@ -45,12 +45,18 @@ cargo test --workspace --all-features
 cargo build --workspace --release
 ```
 
-Run inherited TypeScript verification from `tools/cc-sdd/`:
+The inherited TypeScript tree is a reference oracle and is excluded from routine
+unit-test and completion verification. Run its checks from `tools/cc-sdd/` only
+when a task changes that tree or explicitly needs executable evidence about the
+inherited behavior:
 
 ```sh
 npm test
 npm run build
 ```
+
+Passing these checks verifies the reference tree, not the current SpecBind
+product contract.
 
 - Add or update focused tests for behavior changes.
 - Before reporting completion, inspect the final diff and confirm generated or installed templates still match their intended consumer environment.

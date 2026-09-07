@@ -174,13 +174,18 @@ Embedded skills also have behavioral verification that cannot run in CI. Build i
 sh tools/specbind/scripts/forward-test-fixture.sh /tmp/specbind-fixture en
 ```
 
-The inherited TypeScript oracle retains its own verification commands:
+The inherited TypeScript oracle is excluded from routine unit-test and
+completion verification. Its checks remain available when changing
+`tools/cc-sdd/` or when executable evidence about inherited behavior is needed:
 
 ```sh
 cd tools/cc-sdd
 npm test
 npm run build
 ```
+
+Passing these checks verifies only the reference tree, not the current SpecBind
+product contract.
 
 ## Language support
 

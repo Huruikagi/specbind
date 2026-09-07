@@ -10,9 +10,9 @@ in [Implementation architecture](./architecture.md).
 ## Source layout
 
 - `tools/cc-sdd/src/` — inherited TypeScript CLI retained as a migration and comparison oracle
-- `tools/cc-sdd/test/` — inherited TypeScript automated tests
+- `tools/cc-sdd/test/` — inherited TypeScript reference tests, excluded from routine product verification
 - `tools/cc-sdd/schemas/` — inherited hand-authored schema snapshots retained as migration inputs
-- `tools/cc-sdd/templates/` — current files installed into consumer projects
+- `tools/cc-sdd/templates/` — inherited template snapshots retained as migration and comparison inputs
 - `tools/specbind/` — canonical Rust CLI workspace
 - `tools/specbind/src/` — Rust CLI implementation
 - `tools/specbind/src/catalog.rs` and `catalog/` — facade and implementations for adapters, protocols, rules, skills, templates, and steering
