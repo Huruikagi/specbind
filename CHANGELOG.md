@@ -4,6 +4,8 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.4.1 - 2026-09-08
+
 - Preserve checkpointed Milestone dependency progress when later Task state is
   dirty, expose blocked Task counts, IDs, and reasons in text and JSON status,
   and split `sb-status` into focused Spec and Milestone reporting procedures.
