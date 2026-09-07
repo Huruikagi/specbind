@@ -4,12 +4,25 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.4.0 - 2026-09-07
+
+- Added explicit in-scope replanning authority to Drive so Design, Contract,
+  and Tasks recovery can be delegated and delivery resumed without expanding
+  approved Requirements or Milestone scope.
+- Added an opt-in, temporary `sb-adopt` Skill for existing-project adoption,
+  with installer-managed activation and retirement instead of a permanently
+  installed reverse-establishment workflow.
 - Added `_Retired_` markers for individual acceptance criteria and complete
   Requirement groups. Retired identities stay reserved, while continuation or
   cessation explanations remain beside the original text in Requirements.
 - Requirements approval now requires coverage of every newly retired baseline
   ID through Design, Tasks and completion, and rejects identity reuse. Complete
   Spec retirement remains unsupported. Existing numeric IDs need no migration.
+- Improved recovery after task review and completion findings by preserving the
+  owning implementation workflow, auditing required verification inputs, and
+  retaining existing cross-Spec responsibility boundaries.
+- Hardened project asset refresh and guarded path handling so interrupted
+  installs can resume safely and Windows reparse-point paths fail closed.
 
 ## 1.3.2 - 2026-09-06
 
