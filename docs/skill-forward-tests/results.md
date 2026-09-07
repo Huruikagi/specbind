@@ -14,6 +14,9 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `16c004c` | Q4 — independent validation preceded delegated Design approval; checkpoint environment-blocked; FT-0050 resolved for the affected branch | [Design validation ownership confirmation](./runs/2026-09-08-codex-16c004c-q4-validation-owner.md) |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `a772878` | T1, DR5 — pass; Q4 — environment-blocked after surfacing FT-0050 | [Progressive Plan and Drive assets](./runs/2026-09-08-codex-a772878-progressive-assets.md) |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `a772878` | T1, DR5 — environment-invalid Temp attempts; Q4 — scenario-invalid setup | [Progressive-assets environment attempts](./runs/2026-09-08-codex-a772878-environment.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `c7d8c27` + final replan tree | DR4 — default authority boundary preserved (reporting expectation corrected); DR6 — autonomous Tasks recovery and completion passed after a shell-environment retry | [Final Drive recovery](./runs/2026-09-07-codex-c7d8c27-replan-final.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `c7d8c27` + initial replan tree | DR3 — recovery reached validation; completion environment-blocked, explicit completion continuation passed. DR4 — capacity blocked. | [Initial Drive recovery](./runs/2026-09-07-codex-c7d8c27-replan-initial.md) |
 | 2026-09-07 | Codex | `gpt-5.6-terra` / `medium` | `228570a` + retirement tree | R3P — pass; retirement-only scope through Tasks approval, final-binary read smoke also passed | [Retirement planning](./runs/2026-09-07-codex-228570a-retirement-plan.md) |
