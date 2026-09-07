@@ -4,6 +4,10 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Split complete Plan orchestration and optional Drive replan routing into
+  on-demand Skill references, keeping ordinary and single-phase entrypoints
+  focused without changing their authority or lifecycle behavior.
+
 ## 1.4.0 - 2026-09-07
 
 - Added explicit in-scope replanning authority to Drive so Design, Contract,

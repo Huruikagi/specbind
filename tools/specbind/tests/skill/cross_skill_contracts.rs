@@ -71,16 +71,19 @@ fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
             .expect("render");
         assert!(rendered.contains("--replan"));
     }
-    let drive = skill::find("sb-drive")
+    let drive_entrypoint = skill::find("sb-drive")
         .expect("drive")
         .body()
         .expect("body");
+    assert!(drive_entrypoint.contains("references/replan.md"));
+    assert!(drive_entrypoint.contains("do not ask for it again"));
+    let drive = skill_resource_text("sb-drive", "references/replan.md");
     for text in [
         "do not ask for a second delegation confirmation",
         "original approved Requirements",
         "same unresolved defect after recovery is parked",
         "resume\nimplementation and validation in this same Drive run",
-        "references/replan.md",
+        "installed `references/replan.md` path from that Skill",
     ] {
         assert!(
             drive.contains(text),
@@ -291,8 +294,9 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 7),
         ("sb-discovery", 3),
+        ("sb-drive", 1),
         ("sb-implement", 2),
-        ("sb-plan", 4),
+        ("sb-plan", 5),
         ("sb-release", 1),
     ] {
         let entry = skill::find(name).expect("progressive skill package");

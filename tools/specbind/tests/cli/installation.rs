@@ -40,6 +40,33 @@ fn assert_discovery_procedure_references(root: &Path) {
     }
 }
 
+fn assert_progressive_skill_resources(root: &Path) {
+    for relative in [
+        ".claude/skills/sb-plan/SKILL.md",
+        ".agents/skills/sb-plan/SKILL.md",
+        ".claude/skills/sb-plan/references/complete-route.md",
+        ".agents/skills/sb-plan/references/complete-route.md",
+        ".claude/skills/sb-plan/references/requirements.md",
+        ".agents/skills/sb-plan/references/requirements.md",
+        ".claude/skills/sb-plan/references/design.md",
+        ".agents/skills/sb-plan/references/design.md",
+        ".claude/skills/sb-plan/references/tasks.md",
+        ".agents/skills/sb-plan/references/tasks.md",
+        ".claude/skills/sb-plan/references/replan.md",
+        ".agents/skills/sb-plan/references/replan.md",
+        ".claude/skills/sb-drive/SKILL.md",
+        ".agents/skills/sb-drive/SKILL.md",
+        ".claude/skills/sb-drive/references/replan.md",
+        ".agents/skills/sb-drive/references/replan.md",
+        ".claude/skills/sb-implement/references/spec-backed.md",
+        ".agents/skills/sb-implement/references/spec-backed.md",
+        ".claude/skills/sb-release/references/bootstrap-release-adapter.md",
+        ".agents/skills/sb-release/references/bootstrap-release-adapter.md",
+    ] {
+        assert!(root.join(relative).is_file(), "missing {relative}");
+    }
+}
+
 #[test]
 fn plans_an_initial_installation_without_writing() {
     let root = tempfile::tempdir().expect("temporary project root");
@@ -62,7 +89,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 105 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 109 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -84,7 +111,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 105 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 109 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -152,7 +179,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 65 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 67 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -201,10 +228,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 67 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 69 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 67 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 69 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -373,26 +400,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
     let codex = fs::read_to_string(root.path().join(".agents/skills/sb-status/SKILL.md"))
         .expect("rendered Codex skill");
     assert_codex_status_metadata(root.path());
-    for relative in [
-        ".claude/skills/sb-plan/SKILL.md",
-        ".agents/skills/sb-plan/SKILL.md",
-        ".claude/skills/sb-plan/references/requirements.md",
-        ".agents/skills/sb-plan/references/requirements.md",
-        ".claude/skills/sb-plan/references/design.md",
-        ".agents/skills/sb-plan/references/design.md",
-        ".claude/skills/sb-plan/references/tasks.md",
-        ".agents/skills/sb-plan/references/tasks.md",
-        ".claude/skills/sb-plan/references/replan.md",
-        ".agents/skills/sb-plan/references/replan.md",
-        ".claude/skills/sb-drive/SKILL.md",
-        ".agents/skills/sb-drive/SKILL.md",
-        ".claude/skills/sb-implement/references/spec-backed.md",
-        ".agents/skills/sb-implement/references/spec-backed.md",
-        ".claude/skills/sb-release/references/bootstrap-release-adapter.md",
-        ".agents/skills/sb-release/references/bootstrap-release-adapter.md",
-    ] {
-        assert!(root.path().join(relative).is_file(), "missing {relative}");
-    }
+    assert_progressive_skill_resources(root.path());
     assert_discovery_procedure_references(root.path());
     assert_configure_aftercare_and_update_references(root.path());
     assert_retired_skill_files_are_absent(root.path());
@@ -1092,7 +1100,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 66 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 68 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

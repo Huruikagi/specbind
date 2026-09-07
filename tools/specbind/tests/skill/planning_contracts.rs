@@ -103,10 +103,7 @@ fn reverse_design_checks_tolerate_only_waiting_participant_contracts() {
         }
     }
 
-    let orchestrator = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let orchestrator = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(orchestrator.contains("Contract Review accepts no provisional graph"));
 }
 
@@ -136,10 +133,7 @@ fn design_queries_direct_contract_neighbors_before_reading_them() {
 
 #[test]
 fn planning_orchestrator_handoffs_its_delegation_identity() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("request to run this skill is **not**"));
     assert!(body.contains("workflow name `sb-plan`"));
     assert!(body.contains("authorized gate names"));
@@ -149,10 +143,7 @@ fn planning_orchestrator_handoffs_its_delegation_identity() {
 
 #[test]
 fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("adapter-directed checkpoint"));
     assert!(body.contains("git status --short"));
     assert!(body.contains("clean handoff"));
@@ -161,10 +152,7 @@ fn planning_orchestrator_requires_clean_checkpointed_phase_handoffs() {
 
 #[test]
 fn planning_dispatch_carries_project_local_execution_environment() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
 
     for required in [
         "exact project working directory",
@@ -179,10 +167,7 @@ fn planning_dispatch_carries_project_local_execution_environment() {
 
 #[test]
 fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("one deliberate exception"));
     assert!(body.contains("Design artifact paths"));
     assert!(body.contains("Contract path"));
@@ -211,10 +196,7 @@ fn design_phase_checkpoints_its_verified_deferred_destination_after_validation()
 
 #[test]
 fn planning_orchestrator_validates_design_before_delegated_approval() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("without Design-gate authority"));
     assert!(body.contains("Only"));
     assert!(body.contains("retroactively"));
@@ -222,10 +204,7 @@ fn planning_orchestrator_validates_design_before_delegated_approval() {
 
 #[test]
 fn planning_orchestrator_bounds_design_remediation_per_spec_and_finding_history() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("orchestrator body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("a\nvalidator verdict, not a phase status"));
     assert!(body.contains("at most **two** Design-owned revisions"));
     assert!(body.contains("every prior blocking finding\nID exactly once"));
@@ -380,7 +359,9 @@ fn planning_phase_procedures_are_directly_routed_references() {
     assert!(body.contains("single-phase mode"));
     assert!(body.contains("Never infer single-phase mode from lifecycle state"));
     assert!(body.contains("stop after\nits phase result"));
-    assert!(body.contains("exact\ninstalled path to the applicable reference"));
+    assert!(body.contains("references/complete-route.md"));
+    let complete = skill_resource_text("sb-plan", "references/complete-route.md");
+    assert!(complete.contains("exact\ninstalled path to the applicable reference"));
 }
 
 use super::*;

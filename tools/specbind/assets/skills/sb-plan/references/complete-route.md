@@ -1,0 +1,288 @@
+# Complete planning route
+
+Read this procedure completely for an ordinary complete Plan route. For a Drive
+recovery dispatch, read [Replan during Drive](replan.md) first and then this
+procedure; the recovery procedure owns the fixed scope and supplied authority
+where it overrides the ordinary scope, delegation, and rewind rules below.
+
+Orchestrate either one named Spec or every Spec-backed participant in the active
+milestone. **You orchestrate and stay light.** The phase receivers author
+everything, the CLI owns every state change, and dispatched runs do the artifact
+reading. Delegation changes approval pauses, not checks.
+
+## 1. Establish complete-route scope before doing work
+
+```sh
+specbind milestone status
+```
+
+There are exactly two scope modes:
+
+- **Named scope** — one named or targeted Spec-backed Roadmap item. Also run
+  `specbind spec status <spec>`.
+- **All scope** — every Spec-backed participant, selected only by `--all` or an
+  equally explicit request for every or all Specs.
+
+If the invocation supplies neither a named target nor explicit all-Spec intent,
+use the status only to present the available choices. Ask whether the user wants
+one named Spec or all Specs, then **stop for the answer before any phase dispatch,
+artifact authoring, or gate approval**. Do not infer all scope from the number
+of participants. A milestone containing one Spec still requires the user's
+scope choice.
+
+The stopping response itself must name the available Spec choices, name the
+all-Spec choice, and explicitly ask the user to select one. A report that merely
+says nothing changed or lists the commands run is not the required scope
+question and leaves the workflow without a resumable decision.
+
+Scope selection is not delegated-gate authorization. A single answer may do
+both only when it explicitly selects the scope and authorizes the gates described
+below.
+
+A Direct item has no Requirements, Design, or task plan. In named scope, say so
+and stop if the target is Direct. In all scope, exclude Direct items and report
+them at the end as remaining work. If no milestone is active, say so and stop;
+scope belongs to discovery.
+
+## 2. Get delegation authorized
+
+Once scope is explicit, present before doing anything:
+
+- the milestone and the exact item or items the run will touch;
+- the gates it will accept without another pause: requirements, design, tasks;
+- that every delegated acceptance records `sb-plan` in its durable
+  gate evidence, visible afterwards through `specbind spec status`.
+
+Exception: when `sb-adopt` dispatches a confirmed reverse milestone, its
+visible reverse proposal already authorized Requirements and Design under
+workflow `sb-adopt`. Verify `baselineVersion`, `reverseSpecs`, and that
+`targetRelease` is absent from milestone scope. Do not ask again, do not claim
+Tasks authority, and record `sb-adopt` in those two gates.
+
+Take **one confirmation** for the run. The request to run this skill is **not**
+that confirmation unless it explicitly authorizes those named gates for the
+presented scope. Otherwise stop and wait before dispatching any phase or
+approving any gate.
+
+Declining delegation is legitimate and does not end orchestration. Sequence the
+same phases and pause at each gate for explicit approval. Explain that all scope
+can require many approval pauses.
+
+Ordinary Plan delegation never covers invalidating an approved gate. If the run
+discovers a rewind is needed, stop and ask. It also does not accept the Contract Review:
+that review requires no approval authority.
+
+## 3. Follow the CLI's phase-relative scheduling
+
+The phases do not share one dependency shape:
+
+| Phase | Dependency behavior |
+| --- | --- |
+| Requirements | **Not gated.** Every in-scope item is immediately available |
+| Design | Waits on direct Spec-backed predecessors having current Design approval |
+| Contract Review | **One global barrier** across every participating Spec |
+| Tasks | **Parallel again.** Roadmap dependencies do not serialize Tasks |
+
+Do not build or persist dependency waves. `specbind milestone status` already
+reports `waiting_for` and the authoritative `Actionable` list. The loop is:
+read status → dispatch in-scope actionable work → collect → read status again.
+
+In all scope, dispatch every in-scope actionable item, in parallel where the host
+supports it. In named scope, dispatch only the selected item. Never expand named
+scope to a predecessor or another participant merely to clear a dependency or
+the global barrier. If outside-scope work must progress before the selected item
+can reach Tasks approval, report that blocker and stop. An explicit all-scope
+request or discovery owns scope expansion.
+
+## 4. Run the owned phases
+
+Before the first dispatch, establish the exact project working directory and
+confirm `specbind --version` from there. Record the executable resolution and
+any project-local `PATH` entry or equivalent environment fact required to
+reproduce that same resolution. Do not assume a fresh receiver inherits the
+orchestrator's current directory or process environment.
+
+Each phase is a fresh dispatch. Give it the Spec identity, phase, the exact
+installed path to the applicable reference in this package, and, when
+delegation was accepted, the workflow name `sb-plan` plus the
+authorized gate names. It reads its own artifact inputs; authorization omitted
+from the dispatch does not reach it. Also give every phase, Design validator,
+and Contract Review receiver the exact project working directory, the
+project-local instruction files that apply there, and the confirmed `specbind`
+executable, version, and required environment facts. The receiver must start in
+that directory and reproduce the same CLI resolution before artifact work.
+
+If the receiver cannot reproduce the confirmed executable and version, treat
+that as an environment failure. It must not fall back to another `specbind`,
+silently alter `PATH`, install a replacement, or reinterpret missing commands
+as a workflow or artifact defect. Correct the dispatch payload or environment
+before the bounded retry. These operating facts grant no additional scope,
+mutation, or approval authority.
+
+Use the registered `specbind-planner` role when the host provides it; otherwise
+use an ordinary fresh subagent. The role changes capability, never the owning
+skill, scope, or authority. Fallback is only for an absent role. A configured
+role whose model cannot start is an environment failure, not permission to
+change models.
+
+The receiver reads the named reference completely and follows it as the phase
+procedure. Do not assume that a fresh receiver can discover or invoke another
+Skill, and do not inline or summarize the reference in its brief.
+
+Per item, in order:
+
+1. [Requirements phase](requirements.md) — Requirements and its gate
+2. [Design phase](design.md) without Design-gate authority — Design set and Contract;
+   stop before approval and checkpoint
+3. `sb-validate-design` — an independent verdict
+4. re-dispatch the [Design phase](design.md) with delegated authority for Design approval
+   and its checkpoint
+
+**Design validation is mandatory.** A `NOT_READY` blocks approval. It is a
+validator verdict, not a phase status. Keep a blocking-finding ledger for this
+Spec's current Plan run and return the complete verdict to that item's
+Design-phase receiver. The initial draft does not count as a revision; each
+target Spec has its own budget of at most **two** Design-owned revisions.
+
+After the first `NOT_READY`, dispatch the first revision, then give a fresh
+validator the complete accumulated blocking-finding ledger. On every
+revalidation, require the validator to account for every prior blocking finding
+ID exactly once as `RESOLVED` or still `BLOCKING`, and to assign new IDs only to
+materially distinct findings. The fresh validator owns semantic identity; the
+orchestrator checks the explicit mapping and never infers from changed wording
+or location.
+
+- If any prior finding remains `BLOCKING`, stop this Spec immediately even
+  though one revision remains.
+- If every prior finding is `RESOLVED` and only new finding IDs block readiness,
+  return the complete ledger for the second and final revision, then dispatch
+  fresh validation again.
+- After the second revision, only `READY` permits approval. Any `NOT_READY`
+  leaves the Design unfinished, whether its blockers are repeated or new.
+- If a revalidation omits a prior blocking ID, maps it more than once, or leaves
+  semantic continuity ambiguous, stop with the Design unfinished. Do not repair
+  the comparison in the orchestrator.
+
+Stop immediately if Design reports a requirements rewind or another user-owned
+decision. Never approve a rejected draft, repair its artifacts in the
+orchestrator, or let remediation change another item's scope. Exhausting this
+budget is an ordinary unfinished Design result, not `HUMAN_DECISION` unless a
+separate finding actually requires the user's choice.
+
+The revision budget is per target Spec, not per Milestone or per finding. In all
+scope, continue independently reachable work for other Specs, but the global
+Contract Review still waits for current Design approval from every participant.
+
+Do not give the authoring dispatch Design-gate authority. Its expected
+stopped-by-design result is an unapproved Design ready for independent review,
+not failure. Only `READY` permits the approval dispatch. If Design was approved
+before validation, stop; a later verdict cannot retroactively restore the order.
+
+That unapproved Design handoff is the one deliberate exception to the general
+clean-checkpoint rule. Before validation, require the dirty set to contain only
+the Design artifact paths and that Spec's Contract path reported by its author.
+When the author actually recorded a `DEFERRED` finding, the set may also contain
+the exact project-relative destination named by the active deferred adapter.
+Verify that destination through `specbind adapter read deferred --for consume`;
+do not infer it from a conventional filename or admit another adapter output.
+Pass the verified path to the validator and approval dispatch as a phase-owned
+path.
+
+The validator changes no Design, Contract, or lifecycle path. After its verdict,
+it may append a deferred finding only to that same verified destination and must
+report the write. After `READY`, the approval dispatch owns the checkpoint for
+the Design set, Contract, gate state, and verified deferred destination when
+present. The normal clean handoff remains mandatory before Contract Review. No
+unreported path, `spec.yaml` before approval, unrelated item, generated output,
+or earlier-phase artifact may be dirty. Never mix several Specs' drafts in one
+dirty validation handoff.
+
+Once **every participating Spec**, not merely every item in named scope, holds
+current Design approval:
+
+5. `sb-contract-review` — once for the milestone
+
+After the review is accepted:
+
+6. [Tasks phase](tasks.md) — `tasks.yaml` and its gate, for every in-scope item now
+   actionable; parallel in all scope
+
+For a reverse milestone, stop this sequence after the accepted Contract Review.
+Design approval reports `adoption_ready`; Tasks are forbidden. Return control
+to `sb-adopt`, which owns `milestone reverse finalize`.
+
+Gap analysis is not on this path. Run `sb-gap-analysis` first when
+brownfield uncertainty requires it; this Skill does not decide that for you.
+
+## 5. Treat the global barrier as global
+
+Contract Review reads the complete participating Contract graph. Dispatch
+`sb-contract-review` once and honor its outcome. Do not accept it yourself,
+compress its findings, or proceed to Tasks without an accepted review.
+
+The phase-relative reverse Design allowance for a waiting participant's absent
+Contract ends here. Contract Review accepts no provisional graph: every
+participating Contract must exist and the complete structural check must pass.
+
+A single-Spec milestone still has this barrier. In a multi-Spec milestone, named
+scope does not narrow it: if another participant lacks current Design approval,
+report the outside-scope blocker instead of dispatching that participant or
+attempting a review that cannot pass.
+
+## 6. Read the returned status, not the prose
+
+Every dispatch returns a status. **The status decides what happens next.**
+
+Except for the bounded unapproved-Design handoff, success covers the owning
+phase's whole contract, including its adapter-directed checkpoint. Require the
+status to say whether that checkpoint was committed, intentionally
+absent/scaffolded, or failed. Before dependent work, independently run
+`git status --short` and require no completed-phase paths to remain dirty. A
+fresh gate with uncommitted Requirements, Design, Contract, `tasks.yaml`, or
+`spec.yaml` is not a clean handoff. Stop and report it; the orchestrator must not
+create a checkpoint owned by the dispatched phase.
+
+| Returned outcome | Handling |
+| --- | --- |
+| No usable status — missing, ambiguous, or narrative | Re-dispatch **once**, asking only for status |
+| **Stopped by design** — no authority, stale upstream gate, user-owned decision | **Do not retry.** Report it as the answer |
+| **Failed** — attempted and could not complete | Retry, bounded at **two rounds**, then record it unfinished |
+
+Never infer success because nothing said otherwise.
+
+## 7. Continue only within the selected scope
+
+In all scope, continue as far as reachable work permits:
+
+- unfinished Requirements blocks no other Requirements;
+- unfinished Design blocks its dependents;
+- any participant unfinished at the barrier prevents Contract Review for all.
+
+Finish reachable in-scope work, then report the blocker. Never drop an unfinished
+item from milestone scope to get past the barrier. Partial completion needs no
+extra bookkeeping; each Spec holds its current state.
+
+In named scope, stop when the selected item completes or reaches an in-scope or
+outside-scope blocker. Do not make progress on unselected items.
+
+## 8. Report
+
+In the project's language, report:
+
+- the selected scope mode and exact items;
+- per in-scope item, what was produced and its current state;
+- which gates were delegated under `sb-plan`;
+- Design validation and Contract Review outcomes;
+- unfinished and outside-scope blockers and the next available action;
+- in all scope, Direct items not touched;
+- that implementation has **not** started.
+
+## Boundaries
+
+- **Stop after Tasks approval for ordinary milestones, or after Contract Review
+  for reverse milestones.** Never implement, validate completion, or touch a
+  product release.
+- Author nothing yourself and never finish work owned by a phase receiver.
+- No scope changes: no Roadmap items, new Specs, removals, or silent expansion.
+- Same rules, protocols, and criteria under delegated or explicit approval.
+  There is no all-Spec variant of them.

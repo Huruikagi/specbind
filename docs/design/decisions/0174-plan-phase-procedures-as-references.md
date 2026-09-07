@@ -28,18 +28,24 @@ composition as four competing planning entry points.
 specbind-plan/
 |-- SKILL.md
 `-- references/
+    |-- complete-route.md
+    |-- replan.md
     |-- requirements.md
     |-- design.md
     `-- tasks.md
 ```
 
-The entrypoint selects one of two modes before artifact work:
+The entrypoint selects one of three modes before artifact work:
 
 - An ordinary request to plan, continue planning, finish planning, or reach an
-  approved task plan uses the complete named-Spec or explicit all-Spec route.
+  approved task plan reads `complete-route.md` and uses the complete named-Spec
+  or explicit all-Spec route.
 - A request that explicitly names one Spec and exactly one of Requirements,
   Design, or Tasks uses single-phase mode, reads only that reference, and stops
   after that phase.
+- A Drive recovery dispatch with explicit replan authority reads `replan.md`
+  first and then `complete-route.md`; the recovery procedure carries the fixed
+  scope and authority that override ordinary rewind and confirmation rules.
 
 Lifecycle state never implies single-phase intent. A phase-only request that
 omits the Spec or the phase stops for that selection. Selecting a phase does
@@ -52,7 +58,8 @@ result contracts. `specbind-validate-design` and
 `specbind-contract-review` remain independent Skills because their fresh
 judgment and milestone-wide acceptance are not authoring subprocedures.
 
-For the complete route, every phase remains a fresh dispatch. The dispatch
+For the complete route, the entrypoint progressively loads its orchestration
+reference and every phase remains a fresh dispatch. The dispatch
 brief carries the exact installed path of the applicable reference in the
 selected Plan package. The receiver reads that reference completely; the
 orchestrator does not depend on a host being able to invoke another Skill and
@@ -70,8 +77,8 @@ or stubs are retained.
   entry point.
 - Explicit single-phase work remains available without exposing internal phase
   procedures to automatic Skill selection.
-- Plan keeps a small routing and orchestration entrypoint while phase detail is
-  loaded progressively.
+- Plan keeps a small routing entrypoint while complete-route, recovery, and
+  phase detail are loaded progressively.
 - Phase behavioral tests apply to the three Plan references rather than to
   separately discoverable Skills.
 - Consumer instructions and examples name `specbind-plan` plus explicit phase
@@ -79,7 +86,7 @@ or stubs are retained.
 
 ## Verification
 
-Mechanical tests verify the 16-Skill catalog, all three packaged references,
+Mechanical tests verify the 16-Skill catalog, all five packaged references,
 per-Agent installation and removal targets, the Plan mode-selection contract,
 and the retained phase invariants. Focused forward tests cover both ordinary
 planning and one explicit single-phase request from a fresh installed fixture.

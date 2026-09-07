@@ -38,6 +38,11 @@ phases. Implementers never revise plans, and Drive never authors artifacts.
 After the recovery handoff Drive rereads state and continues implementation and
 validation without requiring another restart request.
 
+Drive loads its own replan-routing reference only when `--replan` or its
+explicit natural-language equivalent supplied that authority. The entrypoint
+retains the trigger and ordinary no-replan boundary; the reference retains the
+scope, delegation, continuity, and partial-worktree procedure.
+
 The existing CLI ordering remains intact. Design invalidation removes the
 milestone review; its renewed acceptance still requires every participant at
 the Design-approved pre-Tasks barrier. Plan accounts for all participant

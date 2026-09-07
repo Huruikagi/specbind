@@ -1,9 +1,11 @@
 #[test]
 fn planning_orchestrator_requires_explicit_scope_without_mutation() {
-    let body = skill::find("sb-plan")
+    let entrypoint = skill::find("sb-plan")
         .expect("planning orchestrator")
         .body()
         .expect("body");
+    let complete = skill_resource_text("sb-plan", "references/complete-route.md");
+    let body = format!("{entrypoint}\n{complete}");
     assert!(body.contains("neither a named target nor explicit all-Spec intent"));
     assert!(body.contains("stop for the answer before any phase dispatch"));
     assert!(body.contains("Do not infer all scope from the number\nof participants"));
@@ -19,10 +21,7 @@ fn planning_orchestrator_requires_explicit_scope_without_mutation() {
 
 #[test]
 fn planning_orchestrator_keeps_named_scope_inside_the_global_barrier() {
-    let body = skill::find("sb-plan")
-        .expect("planning orchestrator")
-        .body()
-        .expect("body");
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("Never expand named\nscope"));
     assert!(body.contains("outside-scope blocker"));
     assert!(body.contains("Once **every participating Spec**"));

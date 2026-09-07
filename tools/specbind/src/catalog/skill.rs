@@ -312,7 +312,16 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     },
 ];
 
+static DRIVE_RESOURCES: &[SkillResource] = &[SkillResource {
+    relative_path: "references/replan.md",
+    source: include_str!("../../assets/skills/sb-drive/references/replan.md"),
+}];
+
 static PLAN_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/complete-route.md",
+        source: include_str!("../../assets/skills/sb-plan/references/complete-route.md"),
+    },
     SkillResource {
         relative_path: "references/replan.md",
         source: include_str!("../../assets/skills/sb-plan/references/replan.md"),
@@ -449,6 +458,7 @@ impl Skill {
         match self.name {
             "sb-configure" => CONFIGURE_RESOURCES,
             "sb-discovery" => DISCOVERY_RESOURCES,
+            "sb-drive" => DRIVE_RESOURCES,
             "sb-implement" => IMPLEMENT_RESOURCES,
             "sb-plan" => PLAN_RESOURCES,
             "sb-release" => RELEASE_RESOURCES,
