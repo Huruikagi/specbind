@@ -55,3 +55,5 @@ Fixtures were created below `C:/Users/hurui/AppData/Local/Temp/` with prefixes
 `sb-dp1-0201`, `sb-dp2-0201`, and `sb-dp2-0201-b`; remove only these attributed
 measurement directories after recording evidence. DP1's two empty linked
 worktrees must be removed through Git before removing its fixture root.
+
+Cleanup completed: all attributed fixture directories were removed after evidence collection; the two empty DP1 linked worktrees were removed through Git first.
