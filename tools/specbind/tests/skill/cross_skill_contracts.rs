@@ -333,7 +333,7 @@ fn parallel_drive_is_opt_in_and_ships_the_same_fallback_to_every_host() {
             .expect("metadata")
             .argument_hint
             .expect("hint")
-            .contains("--parallel <limit>")
+            .contains("--parallel [<limit>]")
     );
     for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
         let files = entry.render_files(agent).expect("package");
@@ -364,5 +364,7 @@ fn parallel_drive_is_opt_in_and_ships_the_same_fallback_to_every_host() {
     let body = entry.body().expect("body");
     assert!(body.contains("Ordinary Drive is sequential"));
     assert!(body.contains("references/parallel.md"));
-    assert!(body.contains("Reject a missing, zero,"));
+    assert!(body.contains("Bare `--parallel` defaults to two"));
+    assert!(body.contains("`--replan --parallel` and `--parallel --replan` both use two"));
+    assert!(body.contains("Reject zero, negative or non-integer explicit limits"));
 }

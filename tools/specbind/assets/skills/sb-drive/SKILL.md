@@ -1,7 +1,7 @@
 ---
 name: sb-drive
 description: Drive the active milestone through every safe reachable planning, implementation, and validation action. Park branch-local attention and continue elsewhere; stop before release execution.
-argument-hint: "[--parallel <limit>] [--replan] [--target-release <version>]"
+argument-hint: "[--parallel [<limit>]] [--replan] [--target-release <version>]"
 ---
 
 # Drive the active milestone to its next real boundary
@@ -27,12 +27,15 @@ or retain a competing schedule.
 
 ## Optional parallel implementation
 
-Ordinary Drive is sequential. When `--parallel <limit>` is present, or the
+Ordinary Drive is sequential. When `--parallel [<limit>]` is present, or the
 maintainer explicitly requests parallel Spec implementation, read
 [Isolated Spec implementation](references/parallel.md) completely before
-scheduling work. The limit is a positive integer; a natural-language request
-without a limit uses two. One means sequential. Reject a missing, zero,
-negative or non-integer option value before dispatch; do not guess a limit.
+scheduling work. Bare `--parallel` defaults to two, as does a natural-language
+parallel request without a limit. An explicit limit must be a positive integer;
+one means sequential. A following recognized option starts another option:
+`--replan --parallel` and `--parallel --replan` both use two.
+Reject zero, negative or non-integer explicit limits before dispatch.
+The limit caps concurrent Spec owners, not the total number of internal agents.
 
 Parallelism is a run-scoped request, not a required host capability. Generic
 Skill hosts and any other host without verified isolated execution continue

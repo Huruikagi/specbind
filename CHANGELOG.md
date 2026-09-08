@@ -4,7 +4,7 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
-- Add optional `sb-drive --parallel <limit>` for independent Spec implementation
+- Add optional `sb-drive --parallel [<limit>]` for independent Spec implementation
   in verified isolated worktrees, retaining sequential Tasks, serial candidate
   acceptance, and ordinary sequential execution on generic or other hosts
   without the required execution capabilities.

@@ -14,10 +14,13 @@ Skill installation, however, makes no promise of worktree/session support.
 
 ### Optional execution strategy, compatible default
 
-`sb-drive --parallel <limit>` requests bounded parallel Spec implementation.
-The limit is a positive integer; one is sequential. An explicit natural-language
-parallel request without a limit uses two. Invalid option values are diagnosed
-before dispatch. These are Skill arguments, not new CLI command arguments.
+`sb-drive --parallel [<limit>]` requests bounded parallel Spec implementation.
+The numeric limit is optional: bare `--parallel` defaults to two, as does an
+explicit natural-language parallel request without a limit. An explicit limit
+must be a positive integer; one is sequential. Recognized following options
+remain separate, so both `--replan --parallel` and `--parallel --replan` use two.
+Invalid explicit limits are diagnosed before dispatch. The limit counts Spec
+owners, not their internal agents. These are Skill arguments, not new CLI command arguments.
 Ordinary Drive remains sequential; upgrades introduce no persistent setting.
 
 Select only already-actionable independent Spec-backed implementation entries

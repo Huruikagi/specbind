@@ -67,8 +67,21 @@ Ordinary execution runs only one mutating workflow at a time.
 ### Implement independent Specs in parallel
 
 ```text
-$sb-drive --parallel 2
+$sb-drive --parallel
 ```
+
+Omitting the number defaults to two. Use `--parallel 3` to allow up to three
+concurrent Specs when your environment has capacity. This limits Spec owners,
+not their internal implementation and review agents.
+
+For a larger Milestone where you also want to delegate bounded replanning, use:
+
+```text
+$sb-drive --replan --parallel
+```
+
+Replanning stays sequential; only independent Spec implementation runs in parallel.
+The replanning authority is described below.
 
 This requests up to two independent Spec implementation owners in separate
 worktrees. Tasks inside each Spec remain sequential, including review and
