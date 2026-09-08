@@ -106,3 +106,9 @@ Claude Code and generic, including sequential fallback and integration guards.
 Behavioral scenarios cover isolated batching and unsupported-host fallback;
 record the actual runtime and distinguish missing host capabilities from product
 failures. Passing a Codex fixture does not certify Claude Code execution.
+
+The opt-in capability remains installed, but public user-guide instructions and
+recommendations are deferred until end-to-end behavioral measurements establish
+isolated concurrent execution and candidate integration. Keep the outstanding
+verification limits in the forward-test records; do not present static Skill
+checks or partial sequential fallback evidence as that confirmation.

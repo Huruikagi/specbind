@@ -64,46 +64,6 @@ Typical ownership is:
 After every handoff, Drive rereads Git worktree state and Milestone status.
 Ordinary execution runs only one mutating workflow at a time.
 
-### Implement independent Specs in parallel
-
-```text
-$sb-drive --parallel
-```
-
-Omitting the number defaults to two. Use `--parallel 3` to allow up to three
-concurrent Specs when your environment has capacity. This limits Spec owners,
-not their internal implementation and review agents.
-
-For a larger Milestone where you also want to delegate bounded replanning, use:
-
-```text
-$sb-drive --replan --parallel
-```
-
-Replanning stays sequential; only independent Spec implementation runs in parallel.
-The replanning authority is described below.
-
-This requests up to two independent Spec implementation owners in separate
-worktrees. Tasks inside each Spec remain sequential, including review and
-per-Task commits. Drive verifies combined results separately and accepts them
-one at a time; dependent Specs start only after their prerequisites are accepted
-in the integration checkout. Final Spec validation uses the converged revision.
-
-Parallel execution requires verified host support for isolated workers, exact
-starting commits, result retrieval and retention, and coordinated Git integration.
-The `generic` profile installs Skills but does not promise those capabilities.
-When they are unavailable or unverified, Drive explains why once and continues
-sequentially with the same reviews and guards. Codex and Claude Code also fall
-back on unsupported runtime surfaces. Worktree support alone is insufficient.
-Omit the option for ordinary sequential execution, or use `--parallel 1`.
-
-Blocked workers keep their partial changes in their own worktrees while an
-independent successful result may be accepted. The report identifies retained
-results for safe resumption. Planning, Direct items and final validation remain
-sequential. With `--replan`, recovery waits until the batch stops mutating, then
-reassesses results affected by changed approvals. Parallelism grants no extra
-Gate or publication authority.
-
 ### Delegate replanning discovered during implementation
 
 ```text
