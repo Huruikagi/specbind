@@ -4,6 +4,17 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.4.3 - 2026-09-08
+
+- Fix replanning recovery so retained delivery Tasks and execution progress do
+  not block renewed Contract Review. Preserve them through review, then repair
+  affected Tasks under their owning workflow and explicit progress disposition.
+- Allow delivery participants with fresh Design approval to renew Contract
+  Review from later delivery stages while preserving unaffected Task gates and
+  progress. Reverse adoption continues to reject Task plans.
+- Pin mise in release verification and support independent smoke-test reruns
+  for published releases without replacing their assets.
+
 ## 1.4.2 - 2026-09-08
 
 - Allow `specbind install` and the explicit `sb-configure` update workflow to
