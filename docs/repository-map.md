@@ -363,3 +363,6 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0201](./design/decisions/0201-design-scoped-traceability-projection.md) | Accepted | Design-only traceability projection without reading retained downstream Tasks |
 | [0202](./design/decisions/0202-renew-contract-review-over-retained-delivery-tasks.md) | Accepted | Renewed delivery Contract Review without reading or deleting retained Tasks |
 | [0203](./design/decisions/0203-carry-cli-owned-design-rewind-through-validation.md) | Accepted | Proven CLI-owned Design rewind carried through validation and approval checkpoint |
+| [0204](./design/decisions/0204-close-or-transfer-lifecycle-mutations-before-clean-successors.md) | Accepted | Lifecycle mutations closed or transferred before clean-gated successors |
+| [0205](./design/decisions/0205-verification-dimensions-do-not-require-invented-commands.md) | Accepted | Verification dimensions satisfied without inventing one command per dimension |
+| [0206](./design/decisions/0206-retained-task-progress-must-reconcile-to-active-obligations.md) | Accepted | Retained Task progress explicitly reconciled to active obligations |

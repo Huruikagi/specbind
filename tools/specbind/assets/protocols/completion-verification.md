@@ -74,6 +74,16 @@ all of:
 someone thought to test; they do not show that the feature runs, that the
 requirements are covered, or that the pieces fit.
 
+These are evidence questions, not one-command-per-dimension slots. One canonical
+project command may support several dimensions only when its actual fresh output
+and inspected coverage genuinely prove each one. For a library-only artifact
+with no project-defined startup command, runtime liveness means loading the
+artifact and executing its public first usable operation; canonical tests may
+prove that when they actually exercise that boundary. Do not invent an ad-hoc
+shell, language, or smoke command solely to manufacture a separate runtime
+entry. If neither canonical evidence nor an applicable Validation adapter proves
+first usable state, the result is **Cannot verify**.
+
 ## Refuse rather than weaken
 
 There are two distinct ways a claim fails, and collapsing them loses

@@ -373,6 +373,30 @@ provide — ask for lifecycle completion validation.
   canonical test suite does not replace the additional project procedure.
 - No `mechanical_checks` entry claims the unavailable adapter command ran.
 
+### VI5 — Stale completion withdrawal is checkpointed before revalidation
+
+From `vi5` — `cart` at `release_ready`, with previously accepted completion
+made stale by a later committed cart source clarification — ask:
+
+> Ask: The accepted cart completion predates the latest committed cart source change. Revalidate lifecycle completion and record fresh evidence if it still passes. First present the exact invalidation cost; do not mutate until I confirm.
+
+After the driver presents the completion-only invalidation, continue the same
+session:
+
+> I confirm the exact completion invalidation you presented. Continue through fresh validation and record completion if it passes.
+
+- The invalidation removes only completion evidence and changes only
+  `.specbind/specs/cart/spec.yaml`; Requirements, Design, Tasks, Contract Review,
+  the completed Task, and source remain unchanged.
+- A dedicated commit closes that invalidation before the fresh completion
+  preflight. The preflight is not weakened to accept a dirty worktree.
+- The canonical project command passes at the new clean revision, fresh
+  completion is accepted, and a later separate commit contains only the new
+  completion metadata.
+- Final status is `release_ready` with fresh completion, the final worktree is
+  clean, and Git history contains distinct invalidation and acceptance
+  checkpoints.
+
 ## Claim verification scenarios
 
 Accepted by [Decision 0113](../design/decisions/0113-verify-completion-skill-contract.md).

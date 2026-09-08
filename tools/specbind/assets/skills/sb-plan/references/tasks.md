@@ -237,6 +237,24 @@ So:
   splitting a task that has not started — over one that renumbers finished work,
   when both express the same intent.
 
+Preservation through renewed Contract Review ends at this explicit mapping. Give
+every retained Task with execution state exactly one disposition:
+
+- keep its identity and state only when its active obligation and evidence still
+  apply;
+- revise it and reset it to pending when changed active work remains; or
+- remove it from the active plan and remove its keyed execution entry when it
+  serves no active Requirement.
+
+A historical-only Task that references no active Requirement cannot remain in
+the replacement plan; complete traceability will reject it. Its removal is not
+silent when the before/after mapping names the old identity, state, and reason
+and the user confirms that exact mapping. The retained plan remains visible in
+Git history and the renewed-review checkpoint; do not invent an archive. Never
+relabel an old completed entry as evidence for a new Requirement. An instruction
+to preserve the plan and progress through review means do not delete it before
+this mapping, not that every item must survive the approved replacement.
+
 Restructuring an approved plan is legitimate. Doing it in a way that mislabels
 completed work is not.
 

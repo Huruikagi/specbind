@@ -590,4 +590,52 @@ fn every_named_protocol_and_rule_selector_exists() {
     }
 }
 
+#[test]
+fn discovery_owns_rebaseline_and_closes_it_before_review() {
+    let entry = skill::find("sb-discovery")
+        .expect("discovery skill")
+        .body()
+        .expect("discovery body");
+    let ordinary = skill_resource_text("sb-discovery", "references/ordinary.md");
+
+    assert!(entry.contains("dedicated\nrebaseline route"));
+    for required in [
+        "specbind milestone rebaseline --revision <full-lowercase-ancestor-revision>",
+        "Never infer `HEAD`",
+        "only `baseline_revision`",
+        "specbind adapter read git --for consume",
+        "checkpoint exactly that\nverified CLI-owned rebaseline delta",
+        "stop before renewed review",
+        "hand off to `sb-contract-review`",
+    ] {
+        assert!(
+            ordinary.contains(required),
+            "rebaseline route missing {required}"
+        );
+    }
+}
+
+#[test]
+fn reverse_terminal_mutations_are_checkpointed_before_successors() {
+    let reverse = skill::find("sb-adopt")
+        .expect("adoption skill")
+        .body()
+        .expect("body");
+
+    for required in [
+        "After successful abandonment",
+        "checkpoint only that verified\nabandonment set",
+        "Do not begin urgent source work or ordinary Discovery",
+        "After every successful finalization",
+        "checkpoint only those changes",
+        "mandatory before reporting a\nclean handoff",
+        "the adopted baseline remains final",
+    ] {
+        assert!(
+            reverse.contains(required),
+            "reverse checkpoint missing {required}"
+        );
+    }
+}
+
 use super::*;

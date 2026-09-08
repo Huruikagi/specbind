@@ -370,9 +370,20 @@ approved; report the work as uncommitted and continue.
 
 ## When the gate is already approved
 
-Routed work arrives with the gate already rewound, because discovery performs
-confirmed invalidations before it changes scope. If you were invoked directly and
-`spec status` shows the requirements gate approved, do not edit.
+Routed work from Discovery arrives with the gate already rewound because
+Discovery performs confirmed invalidations before it changes scope. A Contract
+Review remediation handoff is different: Review must not mutate Requirements
+state on this phase's behalf. It supplies the exact finding, target Spec, command,
+rewind cost, and the user's operation-specific confirmation.
+
+When that complete Review handoff matches current status and cost exactly, the
+relayed confirmation authorizes this Requirements receiver to invoke that one
+`specbind spec requirements invalidate <spec>` operation, then continue through
+repair, approval, and this phase's ordinary coherent checkpoint. It is not
+general delegation and cannot be reused if the finding, state, or cost changed;
+stop and obtain fresh confirmation instead. Carry the Review finding ledger and
+remaining remediation budget back to the orchestrator. If you were invoked
+directly and `spec status` shows the requirements gate approved, do not edit.
 
 Editing underneath an approved gate leaves evidence describing a revision that no
 longer exists, and the CLI then refuses later gates citing freshness rather than
@@ -380,6 +391,12 @@ the edit that caused it.
 
 Tell the user what invalidation costs — it clears the design, tasks, and
 completion evidence downstream — and run it only after they confirm:
+
+Here, “evidence” means gate evidence in `spec.yaml` and the accepted Contract
+Review. The CLI does not delete retained Design, Contract, `tasks.yaml`, Task
+execution records, or source. Those documents remain visible repair input until
+their owning phases explicitly reconcile them; do not describe a gate rewind as
+silently deleting the saved plan or completed progress.
 
 ```sh
 specbind spec requirements invalidate <spec>

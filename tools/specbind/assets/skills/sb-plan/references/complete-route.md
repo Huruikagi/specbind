@@ -222,6 +222,15 @@ read those plans and does not require unaffected progress to be rewound:
 
 5. `sb-contract-review` — once for the milestone
 
+If that review returns a Requirements remediation handoff, dispatch the explicit
+Requirements phase with its exact finding, command, rewind cost, and relayed
+operation-specific confirmation. The Requirements receiver invokes the rewind;
+Review does not. If review returns a scope-remediation proposal, return to
+`sb-discovery`; Review must not invoke `milestone update-scope`. Discovery owns
+confirmation, scope mutation, Briefs, and checkpoint, after which this complete
+Plan route is separately authorized again. Preserve the review finding ledger
+and remaining two-round budget across either route.
+
 After the review is accepted:
 
 6. [Tasks phase](tasks.md) — revise or author `tasks.yaml` and approve its gate

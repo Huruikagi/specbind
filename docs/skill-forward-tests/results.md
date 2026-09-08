@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-09 | Codex | `gpt-5.6-terra` / `medium` | `ad88786` + Decisions 0204-0206 working tree | VI5-A/B — pass; RR1-D reached renewed review and correct Task mapping before ENV-0004; RR1-E freshly confirmed the final rewind-cost wording before ENV-0004 | [Lifecycle mutation closure](./runs/2026-09-09-codex-ad88786-lifecycle-closure.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `ba32ccc` + Decision 0203 working tree | X1R — recovery and one-checkpoint behavior reached renewed review in the initial run; corrected delegated-approval retries blocked by ENV-0004 | [Design-rewind delta recovery](./runs/2026-09-08-codex-ba32ccc-x1r-design-rewind.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `12d43bd` + final Decision 0202 working tree | RR1-B/C — retained plan and completed progress survived through renewed Contract Review; final mutation environment-blocked by ENV-0004 | [Final retained-Tasks recovery](./runs/2026-09-08-codex-12d43bd-rr1-final.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `12d43bd` + initial Decision 0202 working tree | RR1-A — scenario-invalid hard-coded Requirement ID; corrected without weakening the recovery expectations | [Initial retained-Tasks recovery](./runs/2026-09-08-codex-12d43bd-rr1-initial.md) |

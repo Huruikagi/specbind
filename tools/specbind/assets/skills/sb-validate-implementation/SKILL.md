@@ -175,6 +175,16 @@ is a configuration or environment failure, not permission to change models.
 - design alignment, end to end
 - anything left blocked
 
+These are independent questions, not a requirement to run one command per
+question. One canonical project command may support several answers only when
+its inspected coverage and fresh output genuinely prove each one. For a
+library-only artifact with no project-defined startup command, canonical tests
+may establish runtime liveness when they actually load the artifact and execute
+its public first usable operation. Do not invent an ad-hoc shell, language, or
+smoke command solely to fill the runtime slot. If project-owned commands and an
+applicable Validation adapter do not prove that boundary, return
+`MANUAL_VERIFY_REQUIRED`.
+
 **Synthesize the verdict here, never in a subagent.** The decision needs the
 whole picture and no dispatched part has it. For a small Spec whose checks are
 two commands, skip dispatch.
@@ -267,6 +277,23 @@ tasks stay approved — and run it after the user confirms:
 specbind spec completion invalidate <spec>
 ```
 
+After success, verify that the command changed only the target `spec.yaml`, that
+its state moved from `release_ready` to `implementation`, and that only
+completion evidence was removed. Read the Git adapter and checkpoint exactly
+that evidence-withdrawal delta before running a new preflight:
+
+```sh
+specbind adapter read git --for consume
+```
+
+This is an independent, narrow checkpoint. Do not include source work, amend an
+earlier commit, or carry the dirty invalidation into validation. If the adapter
+is absent or scaffolded, forbids the commit, is ambiguous, or the checkpoint
+fails, stop and report the valid invalidation plus its exact dirty path. The
+clean-repository completion preflight cannot resume until that checkpoint is
+closed. After it is closed, begin again at preflight; a later `GO` acceptance is
+checkpointed separately as fresh completion metadata.
+
 Never use it to clear a path to a new `GO`. A refused validation is information
 about the implementation.
 
@@ -277,8 +304,9 @@ about the implementation.
 - Repair nothing. No source changes, no weakened checks, no edits to
   requirements, design, the contract, or the plan.
 - Approve no gate and record no task progress.
-- Commit only the accepted completion metadata set, and only where the adapter
-  permits it.
+- Commit only the independently verified invalidation delta or the accepted
+  completion metadata set at their respective boundaries, and only where the
+  adapter permits it. Never combine the two checkpoints.
 - Report in the project's language: the verdict, the checks you ran and their
   results, what each assessment concluded, what must change on `NO-GO` or who
   must verify on `MANUAL_VERIFY_REQUIRED`, and what runs next.

@@ -255,6 +255,21 @@ fn renewed_contract_review_preserves_retained_delivery_tasks_until_owned_repair(
             .contains("Leave every retained\n   `tasks.yaml` and its execution records in place")
     );
     assert!(!recovery.contains("remove only those exact participant `tasks.yaml`"));
+
+    for required in [
+        "Give\nevery retained Task with execution state exactly one disposition",
+        "reset it to pending when changed active work remains",
+        "remove it from the active plan and remove its keyed execution entry",
+        "historical-only Task that references no active Requirement cannot remain",
+        "renewed-review checkpoint",
+        "Never\nrelabel an old completed entry as evidence for a new Requirement",
+        "do not delete it before\nthis mapping",
+    ] {
+        assert!(
+            tasks.contains(required),
+            "retained mapping missing {required}"
+        );
+    }
 }
 
 #[test]
@@ -319,6 +334,13 @@ fn requirements_audits_existing_obligations_before_approval() {
     assert!(body.contains("not a reason to invalidate a\ngate"));
     assert!(body.contains("retry approval once"));
     assert!(body.contains("`SPEC_REQUIREMENTS_BASELINE_READ_FAILED`"));
+    assert!(body.contains("“evidence” means gate evidence in `spec.yaml`"));
+    assert!(body.contains(
+        "does not delete retained Design, Contract, `tasks.yaml`, Task\nexecution records"
+    ));
+    assert!(body.contains(
+        "remain visible repair input until\ntheir owning phases explicitly reconcile them"
+    ));
 }
 
 #[test]
@@ -385,6 +407,10 @@ fn implementation_validation_preserves_exact_executed_command_text() {
     assert!(body.contains("Around each canonical project command"));
     assert!(body.contains("Do not clean between the command"));
     assert!(body.contains("command itself becomes repeatably clean"));
+    assert!(body.contains("not a requirement to run one command per\nquestion"));
+    assert!(body.contains("library-only artifact"));
+    assert!(body.contains("Do not invent an ad-hoc shell, language, or\nsmoke command"));
+    assert!(body.contains("return\n`MANUAL_VERIFY_REQUIRED`"));
 }
 
 #[test]
@@ -436,6 +462,54 @@ fn planning_phase_procedures_are_directly_routed_references() {
     assert!(body.contains("references/complete-route.md"));
     let complete = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(complete.contains("exact\ninstalled path to the applicable reference"));
+}
+
+#[test]
+fn completion_revalidation_checkpoints_evidence_withdrawal_before_fresh_preflight() {
+    let validation =
+        skill::find("sb-validate-implementation").expect("implementation validation skill");
+    let body = validation.body().expect("validation body");
+
+    for required in [
+        "specbind spec completion invalidate <spec>",
+        "only the target `spec.yaml`",
+        "only\ncompletion evidence was removed",
+        "specbind adapter read git --for consume",
+        "independent, narrow checkpoint",
+        "cannot resume until that checkpoint is\nclosed",
+        "checkpointed separately as fresh completion metadata",
+        "Never combine the two checkpoints",
+    ] {
+        assert!(
+            body.contains(required),
+            "completion revalidation missing {required}"
+        );
+    }
+}
+
+#[test]
+fn contract_review_transfers_requirements_and_scope_repairs_to_their_owners() {
+    let review = skill::find("sb-contract-review")
+        .expect("contract review skill")
+        .body()
+        .expect("contract review body");
+    let requirements = skill_resource_text("sb-plan", "references/requirements.md");
+    let route = skill_resource_text("sb-plan", "references/complete-route.md");
+
+    for required in [
+        "do not invoke**\n`specbind spec requirements invalidate <spec>`",
+        "operation-specific confirmation",
+        "The Requirements phase owns the invalidation, repair, approval",
+        "Do not invoke**\n`specbind milestone update-scope`",
+        "route it to `sb-discovery`",
+        "Never remove completed Direct\nitems, retained Tasks, or another Spec's progress",
+    ] {
+        assert!(review.contains(required), "review missing {required}");
+    }
+    assert!(requirements.contains("A Contract\nReview remediation handoff is different"));
+    assert!(requirements.contains("relayed confirmation authorizes this Requirements receiver"));
+    assert!(route.contains("The Requirements receiver invokes the rewind"));
+    assert!(route.contains("Review must not invoke `milestone update-scope`"));
 }
 
 use super::*;

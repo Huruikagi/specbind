@@ -35,6 +35,37 @@ an implementation approach is not discovery work; it belongs to gap analysis and
 design. Scope justified by an approach nobody has chosen yet is scope built on a
 guess.
 
+### Explicit milestone rebaseline route
+
+Use this route only when the maintainer explicitly asks to change the active
+milestone baseline. Read milestone status and scope, and require the maintainer
+to supply the exact full lowercase commit object ID. Never infer `HEAD`, expand
+an abbreviation, or choose a revision from a branch or tag.
+
+Present the current and proposed full revisions, explain that a successful
+rebaseline removes the accepted Contract Review and makes renewed review
+necessary, and obtain explicit confirmation for exactly:
+
+```sh
+specbind milestone rebaseline --revision <full-lowercase-ancestor-revision>
+```
+
+Require a completely clean repository, invoke the confirmed command, and then
+verify that the exact changed-path set contains only the active Roadmap and the
+accepted Contract Review removal when one existed. Verify that the Roadmap
+changed only `baseline_revision` to the confirmed value. Any other path or
+content change stops the route.
+
+Read `specbind adapter read git --for consume` and checkpoint exactly that
+verified CLI-owned rebaseline delta. This narrow checkpoint is part of the
+rebaseline operation; it authors no Brief and changes no Requirements or Design.
+If the adapter is absent or scaffolded, commit guidance is prohibited or unsafe,
+or the checkpoint fails, report the valid rebaseline and exact dirty paths and
+stop before renewed review. Do not stash, discard, amend, or carry the delta.
+Only after the checkpoint is clean hand off to `sb-contract-review` for the
+required fresh review, then report the outcome. This route ends here and does
+not continue into ordinary scope classification.
+
 ### When the request names local source material
 
 If the maintainer explicitly supplies a local file or directory as input, read

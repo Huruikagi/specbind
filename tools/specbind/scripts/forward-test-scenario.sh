@@ -72,6 +72,7 @@
 #   vi2    vi1 with the cap off by one, so the suite fails
 #   vi3    vi1 with the canonical test command removed
 #   vi4    vi1 plus an active Validation adapter requiring an unavailable check
+#   vi5    accepted completion made stale by a later committed cart source change
 #   vd1    an approved design that defers the bound to a research document
 #   vd3    a rewound Design with a retained Task plan for the previous active set
 #   rr1    an implemented plan ready for Requirements-to-Tasks recovery
@@ -1388,7 +1389,7 @@ EOF
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
     ;;
 
-d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1588,7 +1589,7 @@ EOF
                 'test -e RELEASING.md'
         fi
         ;;
-    vi1 | vi2 | vi3 | vi4)
+    vi1 | vi2 | vi3 | vi4 | vi5)
         runner=$(python_runner)
         cart_tests "$runner"
         if [ "$scenario" = vi2 ]; then
@@ -1609,7 +1610,7 @@ EOF
             rm -f scripts/test.sh
             expect "the canonical command is still runnable" \
                 '! test -e scripts/test.sh'
-        elif [ "$scenario" = vi1 ] || [ "$scenario" = vi4 ]; then
+        elif [ "$scenario" = vi1 ] || [ "$scenario" = vi4 ] || [ "$scenario" = vi5 ]; then
             expect "the canonical test command does not pass" \
                 'sh scripts/test.sh'
         else
@@ -1640,6 +1641,22 @@ EOF
                 'specbind adapter list | grep -q "selector=validation .*state=active"'
             expect "the required unavailable check accidentally exists" \
                 '! test -e scripts/validation-audit.sh'
+        elif [ "$scenario" = vi5 ]; then
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Implement the cap"
+            printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
+                | specbind spec completion accept cart --evidence - >/dev/null \
+                || fail "could not accept initial completion"
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Accept initial completion"
+            printf '\n# Equivalent source clarification after validation.\n' >> src/cart.py
+            git add src/cart.py
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Clarify the cart source"
+            expect "completion did not become stale" \
+                'specbind spec status cart | grep -q "State: release_ready" && specbind spec status cart | grep -q "completion=stale"'
         fi
         ;;
     esac

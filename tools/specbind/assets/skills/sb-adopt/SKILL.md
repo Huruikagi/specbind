@@ -248,7 +248,18 @@ first, then use a new ordinary milestone. For an emergency, show the active
 milestone ID and ask for explicit abandonment. Only after confirmation run
 `specbind milestone reverse abandon --milestone-id <id>`; never delete lifecycle
 state manually. After the urgent change, reverse starts again from the new
-clean revision.
+clean revision, but only after the abandonment checkpoint below closes.
+
+After successful abandonment, verify the exact CLI-owned deletion set reported
+by the command: the active reverse Roadmap, accepted Contract Review when
+present, temporary adoption record, and every participating reverse Spec
+directory. Reject any additional changed path. Read
+`specbind adapter read git --for consume` and checkpoint only that verified
+abandonment set. If the adapter is absent or scaffolded, prohibits a commit, is
+ambiguous, or the checkpoint fails, report the valid abandonment and exact
+dirty paths and stop. Do not begin urgent source work or ordinary Discovery,
+and do not stash, discard, or amend the deletion delta. Those clean-gated
+workflows resume only after this checkpoint closes.
 
 ## Finalize as an adopted baseline
 
@@ -274,6 +285,14 @@ milestone. It also retires this temporary Skill for every configured Agent and
 records adoption as disabled in `.specbind.json`. It must not run a Release
 Adapter, bind a target release, tag, publish, or claim that the product was
 released.
+
+After every successful finalization, verify the exact reported finalization
+write/removal set, then read `specbind adapter read git --for consume` and
+checkpoint only those changes. This checkpoint is mandatory before reporting a
+clean handoff or performing any follow-up configuration work. If the adapter is
+absent or scaffolded, prohibits a commit, is ambiguous, or the checkpoint fails,
+the adopted baseline remains final; report its exact dirty paths and stop. Do
+not stash, discard, amend, or combine unrelated work with finalization.
 
 If finalization reports that Skill retirement remains pending, the adopted
 baseline is still final. Checkpoint the finalization changes first, then run

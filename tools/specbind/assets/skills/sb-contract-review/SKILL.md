@@ -201,15 +201,15 @@ If the review does not pass, you may remediate and rerun **at most two rounds**.
 After that, the affected Specs stay in design, no artifact is written, and you
 report what is unresolved.
 
-**You change nothing by yourself.** Where a Spec needs owned work:
+**You do not author another phase's artifacts or mutate its state, except for
+the proven Design-rewind handoff below.** Where a Spec needs owned work:
 
 - present the affected Spec and what is wrong with the seam;
-- get confirmation when the milestone's scope changes materially;
 - before every gate invalidation, present the exact Requirements, Design,
   Tasks, completion, and accepted Contract Review state that the rewind removes,
   then obtain explicit user confirmation even when milestone scope is unchanged;
-- invoke the confirmed explicit operation — `specbind milestone update-scope`,
-  or a gate invalidation — rather than editing an artifact or a contract.
+- name the owning phase and transfer the complete finding and authority described
+  below rather than editing an artifact or lifecycle file.
 
 A Spec added to scope must be brought through design **before** acceptance. It
 cannot be left as follow-up behind a passing review: the accepted artifact has no
@@ -221,8 +221,8 @@ The Design phase owns both the Design set and `contract.yaml`; status has no
 separate Contract gate. If Requirements remain valid and the finding requires a
 Design or Contract change, present the complete rewind cost, obtain explicit
 confirmation, run `specbind spec design invalidate <spec>`, and hand the work to
-`sb-plan` in explicit Design-phase mode. If Requirements must change, rewind the Requirements gate
-instead. Never leave the maintainer to infer the owning phase from the gate list.
+`sb-plan` in explicit Design-phase mode. Never leave the maintainer to infer the
+owning phase from the gate list.
 
 For that Design invalidation handoff, record `git status --short` before the
 command and require the target `spec.yaml` and accepted-review path to be
@@ -237,6 +237,27 @@ phase as owner, enumerates the current state that invalidation removes, and give
 the exact `specbind spec design invalidate <spec>` operation before asking for
 confirmation. Include those facts in the reported outcome even when no file or
 state changed during the review.
+
+If Requirements must change, present the complete Requirements rewind cost and
+obtain explicit confirmation, but **do not invoke**
+`specbind spec requirements invalidate <spec>`. Dispatch `sb-plan` in explicit
+Requirements-phase mode with the exact finding, target Spec, exact command, and
+the user's operation-specific confirmation. That relayed confirmation authorizes
+the Requirements receiver to invoke that one command in the current state; it is
+not general delegation and expires if the finding, state, or rewind cost changes.
+The Requirements phase owns the invalidation, repair, approval, and one coherent
+checkpoint containing every path it produced. Carry this review's finding ledger
+and remaining remediation budget through the handoff, then resume review only
+after the normal Plan route returns all participants to current Design approval.
+
+If the finding changes milestone scope, produce a complete scope-remediation
+proposal and route it to `sb-discovery`. **Do not invoke**
+`specbind milestone update-scope` from Contract Review. Discovery owns its normal
+scope confirmation, the complete replacement, any lifecycle invalidations, every
+new or changed Brief, and its checkpoint. Plan is a later, separately authorized
+route for affected Specs. Resume Contract Review only after the updated complete
+participant set reaches current Design approval. Never remove completed Direct
+items, retained Tasks, or another Spec's progress to make the proposal fit.
 
 ## 5. Write the assessment and accept
 

@@ -89,7 +89,7 @@ Give the first request verbatim:
 
 After the driver presents the rewind cost, continue the same session:
 
-> I confirm the Requirements rewind you just presented. You may approve the replacement Requirements and Design gates for cart without asking again. Continue through the renewed Contract Review, preserve the existing plan and completion record, then present the exact retained-Task and progress mapping and stop for my confirmation. Do not implement anything.
+> I confirm the Requirements rewind you just presented. You may approve the replacement Requirements and Design gates for cart without asking again. Continue through the renewed Contract Review and preserve the existing plan and completion record byte-for-byte until that review checkpoint. This is not an instruction to keep inactive items in the replacement plan. Then present the exact retained-Task and progress mapping and stop for my confirmation. Do not implement anything.
 
 After the driver presents that exact mapping, continue the same session:
 

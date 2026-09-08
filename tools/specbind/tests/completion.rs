@@ -1,4 +1,9 @@
-use std::{fs, path::Path, process::Command};
+use std::{
+    fs,
+    io::Write as _,
+    path::Path,
+    process::{Command, Output, Stdio},
+};
 
 use specbind::{
     artifacts::resolve_gate_inputs,
@@ -348,6 +353,87 @@ fn accepts_invalidates_and_idempotently_reports_spec_completion() {
 }
 
 #[test]
+fn completion_cli_revalidation_requires_and_recovers_after_invalidation_checkpoint() {
+    let root = spec_fixture();
+    let first_revision = git(root.path(), &["rev-parse", "HEAD"]);
+    let accepted = run_cli(
+        root.path(),
+        &[
+            "spec",
+            "completion",
+            "accept",
+            "checkout",
+            "--evidence",
+            "-",
+        ],
+        Some(&candidate(&first_revision)),
+    );
+    assert!(
+        accepted.status.success(),
+        "{}",
+        String::from_utf8_lossy(&accepted.stderr)
+    );
+    commit_all(root.path(), "accept initial completion");
+
+    write(root.path(), "src.txt", "later implementation change\n");
+    commit_all(root.path(), "later implementation");
+
+    let invalidated = run_cli(
+        root.path(),
+        &["spec", "completion", "invalidate", "checkout"],
+        None,
+    );
+    assert!(
+        invalidated.status.success(),
+        "{}",
+        String::from_utf8_lossy(&invalidated.stderr)
+    );
+
+    let dirty_preflight = run_cli(
+        root.path(),
+        &["spec", "completion", "preflight", "checkout"],
+        None,
+    );
+    assert!(!dirty_preflight.status.success());
+    assert!(String::from_utf8_lossy(&dirty_preflight.stderr).contains("COMPLETION_WORKTREE_DIRTY"));
+
+    commit_all(root.path(), "withdraw stale completion evidence");
+    let fresh_revision = git(root.path(), &["rev-parse", "HEAD"]);
+    let clean_preflight = run_cli(
+        root.path(),
+        &["spec", "completion", "preflight", "checkout"],
+        None,
+    );
+    assert!(
+        clean_preflight.status.success(),
+        "{}",
+        String::from_utf8_lossy(&clean_preflight.stderr)
+    );
+    assert!(
+        String::from_utf8_lossy(&clean_preflight.stdout)
+            .contains("SPEC_COMPLETION_PREFLIGHT_READY")
+    );
+
+    let reaccepted = run_cli(
+        root.path(),
+        &[
+            "spec",
+            "completion",
+            "accept",
+            "checkout",
+            "--evidence",
+            "-",
+        ],
+        Some(&candidate(&fresh_revision)),
+    );
+    assert!(
+        reaccepted.status.success(),
+        "{}",
+        String::from_utf8_lossy(&reaccepted.stderr)
+    );
+}
+
+#[test]
 fn rejects_invalid_completion_candidates_without_mutation() {
     let root = spec_fixture();
     let specbind = root.path().join(".specbind");
@@ -595,4 +681,26 @@ fn git(root: &Path, arguments: &[&str]) -> String {
         .expect("UTF-8 Git output")
         .trim()
         .to_owned()
+}
+
+fn run_cli(root: &Path, arguments: &[&str], stdin: Option<&str>) -> Output {
+    let mut command = Command::new(env!("CARGO_BIN_EXE_specbind"));
+    command
+        .current_dir(root)
+        .args(arguments)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    if stdin.is_some() {
+        command.stdin(Stdio::piped());
+    }
+    let mut child = command.spawn().expect("start specbind CLI");
+    if let Some(input) = stdin {
+        child
+            .stdin
+            .as_mut()
+            .expect("piped stdin")
+            .write_all(input.as_bytes())
+            .expect("write CLI stdin");
+    }
+    child.wait_with_output().expect("read specbind CLI output")
 }

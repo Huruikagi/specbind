@@ -24,6 +24,11 @@ Read that procedure completely before classifying or changing anything. It
 owns the shared entry, ownership, confirmation, mutation, Brief, checkpoint,
 and reporting contract.
 
+An explicit request to rebaseline an active milestone selects the dedicated
+rebaseline route in that procedure. It is lifecycle maintenance, not a scope
+change: do not classify work items, author Briefs, or apply the ordinary scope
+proposal boundary.
+
 For an ordinary request, also read exactly one provider procedure when its
 explicit selector is present:
 
