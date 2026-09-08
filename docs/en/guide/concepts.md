@@ -171,8 +171,11 @@ you intend. An explicit request for one named Spec and one Requirements,
 Design, or Tasks phase uses that phase's procedure from the same Plan Skill.
 `sb-implement` handles exactly one Roadmap item at a time.
 `sb-drive` selects safely reachable owning workflows across the Milestone
-one at a time and rereads CLI state after every handoff. It parks branch-local
+one at a time by default and rereads CLI state after every handoff. It parks branch-local
 attention and continues independent work, but never executes Release.
+Optional `--parallel <limit>` runs independent Specs in verified isolated
+worktrees with serial integration; each Spec's Tasks stay sequential.
+Hosts without those capabilities continue with the ordinary sequential workflow.
 
 ## Project-owned configuration
 

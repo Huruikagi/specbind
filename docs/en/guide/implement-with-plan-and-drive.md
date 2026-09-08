@@ -48,7 +48,7 @@ $sb-drive
 ```
 
 Drive selects only actions exposed by `specbind milestone status --json` and
-delegates one at a time to the owning workflow. It does not author Requirements
+by default delegates one at a time to the owning workflow. It does not author Requirements
 or Design itself and does not batch-complete Tasks.
 
 Typical ownership is:
@@ -61,8 +61,35 @@ Typical ownership is:
 | Whole-Spec implementation validation | `sb-validate-implementation <spec-id>` |
 | Release boundary | Report status and stop |
 
-After every handoff, Drive rereads Git worktree state and Milestone status. The
-initial implementation runs only one mutating workflow at a time.
+After every handoff, Drive rereads Git worktree state and Milestone status.
+Ordinary execution runs only one mutating workflow at a time.
+
+### Implement independent Specs in parallel
+
+```text
+$sb-drive --parallel 2
+```
+
+This requests up to two independent Spec implementation owners in separate
+worktrees. Tasks inside each Spec remain sequential, including review and
+per-Task commits. Drive verifies combined results separately and accepts them
+one at a time; dependent Specs start only after their prerequisites are accepted
+in the integration checkout. Final Spec validation uses the converged revision.
+
+Parallel execution requires verified host support for isolated workers, exact
+starting commits, result retrieval and retention, and coordinated Git integration.
+The `generic` profile installs Skills but does not promise those capabilities.
+When they are unavailable or unverified, Drive explains why once and continues
+sequentially with the same reviews and guards. Codex and Claude Code also fall
+back on unsupported runtime surfaces. Worktree support alone is insufficient.
+Omit the option for ordinary sequential execution, or use `--parallel 1`.
+
+Blocked workers keep their partial changes in their own worktrees while an
+independent successful result may be accepted. The report identifies retained
+results for safe resumption. Planning, Direct items and final validation remain
+sequential. With `--replan`, recovery waits until the batch stops mutating, then
+reassesses results affected by changed approvals. Parallelism grants no extra
+Gate or publication authority.
 
 ### Delegate replanning discovered during implementation
 
@@ -118,7 +145,7 @@ unfinished Design prevents Contract review but not another Spec's reachable
 Design. An unfinished implementation prevents its descendants and Milestone
 completion but not independent implementation.
 
-An unsafe worktree is different. Partial, rejected, unrelated, or unattributed
+An unsafe integration or ordinary shared worktree is different. Partial, rejected, unrelated, or unattributed
 changes make switching ownership unsafe, so Drive stops without resetting or
 stashing them. The exception is the attributable implementation carried through
 the same authorized replan described above; it cannot be used to switch to

@@ -9,6 +9,41 @@ failure handling.
 Accepted by
 [Decision 0168](../design/decisions/0168-milestone-drive-orchestrator.md).
 
+### DP1 — Isolated independent Specs converge before dependent implementation
+
+Prepare `dp1` with dispatch instrumentation. Ask:
+
+> Drive this milestone with up to two independent Specs in parallel. Continue
+> through safe delivery, but do not release or choose a release version.
+
+- The run loads the installed optional parallel procedure and checks actual host
+  capabilities. Record the actual host surface; fallback does not pass DP1's
+  concurrency expectation and is `environment_blocked` when support is absent.
+- Subtotal and shipping start from the same clean integration commit in distinct
+  worktrees with overlapping execution intervals, evidenced by actual host
+  dispatch events and Git/cwd records. Each complete owning Skill retains review,
+  CLI Task progress and one default Task checkpoint.
+- Total does not start while either predecessor is only worker-local completed.
+  Candidate review/checks precede each serial integration update; the integration
+  checkout contains no partial candidate state.
+- Final implementation has the three modules and passing canonical tests. Final
+  Spec validation follows the existing common-revision barrier, and release is
+  not run. Retained workers are reported and not discarded before acceptance.
+
+### DP2 — Skill-only hosts keep ordinary sequential delivery
+
+Prepare `dp2`, which has DP1's state plus an explicit fixture host restriction
+on isolated session APIs. This is a controlled capability-fallback measurement,
+not certification of a third-party generic host. Ask the same request as DP1.
+
+- Missing isolated session capabilities are explained once, then delivery
+  continues sequentially without tool installation, permission changes or
+  fabricated host APIs. No worker or candidate worktrees are created.
+- Subtotal and shipping complete through their owning Task cycles; total starts
+  only after both. Per-Task checkpoints, review and CLI guards remain in force.
+- Verify three completed Task records, canonical tests and Git checkpoint units;
+  final validation remains the ordinary workflow, and Release is not invoked.
+
 ### DR1 — A parked Direct reroute does not stop independent delivery
 
 Prepare `dr1`, then ask:

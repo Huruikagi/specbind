@@ -360,3 +360,5 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0198](./design/decisions/0198-inline-requirement-retirement.md) | Accepted | Inline Requirement retirement with reserved identities and ordinary delivery coverage |
 | [0199](./design/decisions/0199-drive-replan-authority.md) | Accepted | Optional Drive delegation of in-scope Design, Contract, and Tasks recovery |
 | [0200](./design/decisions/0200-milestone-task-blocker-projection.md) | Accepted | Milestone Task progress and blocker projection without dirty-state regression |
+
+| [0201](./design/decisions/0201-isolated-parallel-spec-implementation.md) | Accepted | Optional parallel Spec implementation with isolated acceptance and sequential host fallback |

@@ -209,6 +209,17 @@ concern. Omit `create` instructions and copy `maintain` and `consume`
 instructions unchanged. If notes already exist and you revise them, read them
 with `--for maintain` and preserve their durable comments.
 
+### Review an integration candidate
+
+When Drive explicitly delegates a combined worktree candidate, verify the given
+base, target Spec and changed inputs. Review the actual combined diff through
+the existing fresh reviewer and run affected Task and project checks even if
+worker-local Tasks are already completed. If the integration finding means a
+completed Task's proof must be renewed, use the existing explicit reopen path
+and ordinary sequential cycle; preserve retry budgets. Return unresolved replay
+conflicts without editing execution state or bypassing guards. This delegation
+grants no upstream artifact or gate mutation and no integration-branch write.
+
 ### Checkpoint the completed task
 
 Only a task recorded `completed` is an eligible implementation checkpoint. Read

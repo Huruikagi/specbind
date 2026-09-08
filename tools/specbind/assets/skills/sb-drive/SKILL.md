@@ -1,7 +1,7 @@
 ---
 name: sb-drive
 description: Drive the active milestone through every safe reachable planning, implementation, and validation action. Park branch-local attention and continue elsewhere; stop before release execution.
-argument-hint: "[--replan] [--target-release <version>]"
+argument-hint: "[--parallel <limit>] [--replan] [--target-release <version>]"
 ---
 
 # Drive the active milestone to its next real boundary
@@ -24,6 +24,20 @@ still belongs to `sb-implement`.
 You are a thin controller. Existing Skills own all artifacts, judgments,
 progress, and checkpoints. The CLI owns lifecycle state. Never author their work
 or retain a competing schedule.
+
+## Optional parallel implementation
+
+Ordinary Drive is sequential. When `--parallel <limit>` is present, or the
+maintainer explicitly requests parallel Spec implementation, read
+[Isolated Spec implementation](references/parallel.md) completely before
+scheduling work. The limit is a positive integer; a natural-language request
+without a limit uses two. One means sequential. Reject a missing, zero,
+negative or non-integer option value before dispatch; do not guess a limit.
+
+Parallelism is a run-scoped request, not a required host capability. Generic
+Skill hosts and any other host without verified isolated execution continue
+sequentially under that procedure. Do not infer capabilities from the installed
+agent name or install new tools just to satisfy the request.
 
 ## Optional replan authority
 
@@ -53,7 +67,7 @@ proves it was classified too narrowly. Dispatch its exact item and summary to
 `sb-implement`; do not pre-classify Roadmap prose in Drive or treat a clean
 status as semantic approval of the Direct kind.
 
-## 2. Dispatch one owning workflow at a time
+## 2. Dispatch owning workflows
 
 Choose the first safe actionable entry not parked at the current state. Never
 reconstruct an owner from `action` or maintain a local action-to-Skill table.
@@ -85,8 +99,10 @@ generic Drive request into reverse Gate authority. Unless the maintainer
 explicitly authorized reverse continuation, park it as `HUMAN_DECISION` and
 name `sb-adopt` as the continuation owner.
 
-Use one mutating dispatch at a time. Do not launch dependency-wave items in
-parallel and do not predict path conflicts.
+Use one mutating dispatch at a time unless the loaded parallel procedure has
+verified a bounded batch of independent Spec implementation owners in separate
+worktrees. Planning, Direct work, replanning and final validation remain
+sequential in this mode. Do not predict independence from paths alone.
 
 Planning still owns its delegation confirmation. Invoking Drive without
 `--replan` does not grant gate approvals. Pass through only authority the user
@@ -118,6 +134,9 @@ as lifecycle evidence.
   `RETRYABLE` within an unspent retry bound.
 - Preserve every owning workflow's retry and remediation limit. Drive never
   resets one.
+- Under the parallel procedure, inspect and accept worker results there before
+  applying these rules to the integration checkout. Dirty isolated workers are
+  retained attention; their progress is not integration progress.
 - Except for the attributable same-recovery handoff defined by [Authorized
   replan routing](references/replan.md), if the worktree
   contains partial, rejected, unrelated, or unattributed work,
@@ -197,6 +216,6 @@ Report in the project's language:
 ## Boundaries
 
 - Orchestrate only; author no phase or implementation content.
-- One mutating owner at a time in the initial implementation.
+- One mutating owner at a time unless the verified parallel procedure applies.
 - Status is the schedule; retained context is not.
 - Do not turn Drive into release authority or a persistent workflow engine.

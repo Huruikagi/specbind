@@ -199,7 +199,7 @@ the user resume each owning workflow manually.
 ### Intended behavior
 
 - Read `specbind milestone status --json` as the authoritative scheduler input.
-- Delegate one action at a time to the existing owning Plan, Implementation,
+- By default, delegate one action at a time to the existing owning Plan, Implementation,
   validation, or guarded CLI workflow.
 - Re-read state after every delegation.
 - Park branch-local waits, blocks, external prerequisites, and human decisions
@@ -224,7 +224,11 @@ the user resume each owning workflow manually.
 - Does not execute release publication or finalization.
 - Does not silently invalidate accepted gates, change scope, reclassify Direct
   work, or grant itself external or destructive authority.
-- Does not dispatch concurrent mutating workflows in the first implementation.
+- Optional `--parallel <limit>` batches independent Spec implementation in
+  verified isolated worktrees, with serial candidate review and acceptance
+  under [Decision 0201](./decisions/0201-isolated-parallel-spec-implementation.md).
+  Missing capabilities, including on generic Skill hosts, retain sequential
+  execution; each Spec's Tasks always remain sequential.
 - Does not persist its attention set or treat retained context as workflow
   state.
 
