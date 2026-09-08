@@ -4,9 +4,17 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.4.2 - 2026-09-08
+
 - Allow `specbind install` and the explicit `sb-configure` update workflow to
   preserve unrelated unstaged or untracked work while still blocking dirty
   product-managed targets and reporting every preserved path.
+- Allow completed Specs to reach validation while independent Specs remain
+  blocked, and refine status handoffs to report material progress, blockers,
+  and next steps without healthy machine evidence.
+- Add Design-scoped traceability checks so retained downstream Tasks do not
+  block Design validation or approval; complete traceability checks retain
+  their existing Task coverage requirements.
 
 ## 1.4.1 - 2026-09-08
 
