@@ -453,7 +453,11 @@ fn resolve_context(
     })?;
 
     let source = read_regular(specbind_root, canonical_spec, gate)?;
-    let gate_inputs = artifacts::resolve_gate_inputs(specbind_root, canonical_spec);
+    let gate_inputs = if gate == Gate::Design {
+        artifacts::resolve_design_gate_inputs(specbind_root, canonical_spec)
+    } else {
+        artifacts::resolve_gate_inputs(specbind_root, canonical_spec)
+    };
     let resolution = artifacts::resolve_spec(specbind_root, canonical_spec);
     let Some(wire) = resolution.wire else {
         return Err(discovery_failure(resolution.issues));
@@ -990,15 +994,15 @@ fn validate_traceability(
     gate: Gate,
     issues: &mut Vec<ApprovalIssue>,
 ) -> Result<(), ApprovalIssues> {
-    let resolution = artifacts::resolve_traceability(specbind_root, canonical_spec);
+    let resolution = if gate == Gate::Design {
+        artifacts::resolve_design_traceability(specbind_root, canonical_spec)
+    } else {
+        artifacts::resolve_traceability(specbind_root, canonical_spec)
+    };
     let Some(report) = resolution.report else {
         return Err(discovery_failure(resolution.inventory.issues));
     };
     for value in &report.issues {
-        let task_scoped = value.code.starts_with("TRACEABILITY_TASK");
-        if gate == Gate::Design && task_scoped {
-            continue;
-        }
         issues.push(issue(
             value.code,
             value.source.clone(),

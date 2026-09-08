@@ -157,6 +157,24 @@ pub fn resolve_spec(specbind_root: &Path, canonical_spec: &str) -> SpecResolutio
 /// Re-discovers one spec and resolves the current gate-owned input projections.
 #[must_use]
 pub fn resolve_gate_inputs(specbind_root: &Path, canonical_spec: &str) -> GateInputResolution {
+    resolve_gate_inputs_with_task_plan(specbind_root, canonical_spec, true)
+}
+
+/// Resolves only the gate inputs owned by Design approval, without loading a
+/// retained downstream task plan.
+#[must_use]
+pub fn resolve_design_gate_inputs(
+    specbind_root: &Path,
+    canonical_spec: &str,
+) -> GateInputResolution {
+    resolve_gate_inputs_with_task_plan(specbind_root, canonical_spec, false)
+}
+
+fn resolve_gate_inputs_with_task_plan(
+    specbind_root: &Path,
+    canonical_spec: &str,
+    include_task_plan: bool,
+) -> GateInputResolution {
     let mut inventory = discover_spec(specbind_root, canonical_spec);
     let mut inputs = CurrentGateInputs::default();
     let mut design = BTreeMap::new();
@@ -174,13 +192,15 @@ pub fn resolve_gate_inputs(specbind_root: &Path, canonical_spec: &str) -> GateIn
         }
     }
     inputs.design = Some(design);
-    inputs.tasks = load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues)
-        .ok()
-        .flatten();
-    inputs.task_plan = inputs
-        .tasks
-        .as_ref()
-        .and_then(|tasks| resolve_task_plan(tasks, canonical_spec, &mut inventory.issues));
+    if include_task_plan {
+        inputs.tasks = load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues)
+            .ok()
+            .flatten();
+        inputs.task_plan = inputs
+            .tasks
+            .as_ref()
+            .and_then(|tasks| resolve_task_plan(tasks, canonical_spec, &mut inventory.issues));
+    }
     inventory.issues.sort();
     inventory.issues.dedup();
 
@@ -190,6 +210,24 @@ pub fn resolve_gate_inputs(specbind_root: &Path, canonical_spec: &str) -> GateIn
 /// Resolves and checks Requirements, Design mappings, and the current active scope.
 #[must_use]
 pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> TraceabilityResolution {
+    resolve_traceability_with_tasks(specbind_root, canonical_spec, true)
+}
+
+/// Resolves the Requirements and Design traceability owned by Design review,
+/// without reading a retained downstream task plan.
+#[must_use]
+pub fn resolve_design_traceability(
+    specbind_root: &Path,
+    canonical_spec: &str,
+) -> TraceabilityResolution {
+    resolve_traceability_with_tasks(specbind_root, canonical_spec, false)
+}
+
+fn resolve_traceability_with_tasks(
+    specbind_root: &Path,
+    canonical_spec: &str,
+    include_tasks: bool,
+) -> TraceabilityResolution {
     let mut inventory = discover_spec(specbind_root, canonical_spec);
     let artifacts = inventory.artifacts.clone();
     let mut requirement_ids = None;
@@ -221,9 +259,16 @@ pub fn resolve_traceability(specbind_root: &Path, canonical_spec: &str) -> Trace
     }
 
     let active =
-        resolve_active_traceability_scope(specbind_root, canonical_spec, &mut inventory.issues);
-    let tasks = load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues)
-        .ok()
+        resolve_active_traceability_scope(specbind_root, canonical_spec, &mut inventory.issues)
+            .map(|mut active| {
+                if !include_tasks {
+                    active.tasks_required = false;
+                }
+                active
+            });
+    let tasks = include_tasks
+        .then(|| load_tasks_artifact(specbind_root, canonical_spec, &mut inventory.issues))
+        .and_then(Result::ok)
         .flatten()
         .as_ref()
         .map(task_requirement_sets);

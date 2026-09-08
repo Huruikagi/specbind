@@ -195,6 +195,21 @@ fn design_phase_checkpoints_its_verified_deferred_destination_after_validation()
 }
 
 #[test]
+fn design_workflows_use_the_design_scoped_traceability_projection() {
+    let design = skill_resource_text("sb-plan", "references/design.md");
+    let validation = skill::find("sb-validate-design").expect("validation skill");
+    let validation_body = validation.body().expect("validation body");
+
+    for body in [design, validation_body] {
+        assert!(body.contains("specbind check traceability <spec> --for-design"));
+        assert!(body.contains("retained downstream"));
+        assert!(body.contains("Task coverage"));
+    }
+    assert!(design.contains("Tasks authoring and\napproval will run the strict complete check"));
+    assert!(validation_body.contains("not a claim that complete traceability passes"));
+}
+
+#[test]
 fn design_phase_distinguishes_route_validation_from_gate_mechanics() {
     let body = skill_resource_text("sb-plan", "references/design.md");
     assert!(body.contains("This Design-phase receiver never\ninvokes it"));

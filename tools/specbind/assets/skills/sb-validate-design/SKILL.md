@@ -35,11 +35,23 @@ design checked by something that did not write it.
 
 ```sh
 specbind spec status <spec>
-specbind check traceability <spec>
+specbind check traceability <spec> --for-design
 specbind check contracts
 ```
 
 These are cheap, and a structural failure makes semantic review premature.
+The Design-scoped traceability result verifies Requirements, the active
+Requirement set, and Design coverage without reading a retained downstream
+`tasks.yaml`. Its distinct result and `Task coverage: not evaluated (Design
+scope)` line are not a claim that complete traceability passes. Tasks authoring
+and approval own that later check.
+
+Treat `spec status` as lifecycle inventory, not as the Design structural gate.
+It may report `State health: inconsistent` and downstream Task diagnostics for
+a retained previous plan. When `check traceability --for-design` succeeds, do
+not stop or weaken the Design verdict because of those Task-only diagnostics;
+report them only as later Tasks repair state. Any status diagnostic involving
+Requirements or Design remains relevant and must agree with the scoped check.
 
 There is one phase-relative result during dependency-ordered reverse
 establishment. If `check contracts` fails, run `specbind milestone status` and
@@ -54,7 +66,7 @@ an unproved status is a structural `NOT_READY`; the complete graph remains
 mandatory at milestone Contract Review.
 
 **Fix the review scope from CLI-owned lifecycle state before reading prose.**
-`specbind check traceability <spec>` reports the exact `Active requirement set`;
+`specbind check traceability <spec> --for-design` reports the exact `Active requirement set`;
 that set, not any `requirement_ids` field in the Design being reviewed, is the
 scope for this judgment. The status `Requirement coverage: design N/N` count is
 over the same active Requirement IDs. The Requirements document is a complete persistent contract and
@@ -106,10 +118,13 @@ missing applicable Design is `NOT_READY`; do not create it.
 When judging whether the design fits the system it enters requires real
 investigation of the existing code, dispatch that as a fresh subagent with a
 self-contained brief and have it return findings rather than file dumps.
-Use the registered `specbind-researcher` role when available, with an ordinary
-fresh subagent as the fallback.
-Fallback is only for an absent role. A configured role whose model cannot start
-is a configuration or environment failure, not permission to change models.
+Use the registered `specbind-researcher` role only when the active agent runtime
+exposes named-role dispatch. A role configuration file in the project does not
+by itself make that dispatch available, and there is no SpecBind CLI probe for
+agent-role availability. When the runtime exposes only ordinary subagent
+dispatch, use an ordinary fresh subagent directly. A named role that the runtime
+does expose but whose configured model cannot start is a configuration or
+environment failure, not permission to change models.
 Everything else is a reading judgment — the criteria interlock, and splitting
 them loses the picture.
 

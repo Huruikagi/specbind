@@ -391,9 +391,15 @@ affected Contract consumers. Historical references may remain as retirement
 explanations after release; they do not restore live obligations or future scope.
 
 ```sh
-specbind check traceability <spec>
+specbind check traceability <spec> --for-design
 specbind check contracts
 ```
+
+The Design-scoped check does not read a retained downstream `tasks.yaml`; its
+output says that Task coverage was not evaluated. Do not replace it with the
+complete traceability check or edit Tasks during this phase. Tasks authoring and
+approval will run the strict complete check after Design approval and Contract
+Review.
 
 Approval independently enforces traceability and the presence of this Spec's
 Contract. Running the graph check first exposes cross-Spec diagnostics you can

@@ -100,7 +100,10 @@ pub struct SpecDiscovery {
 }
 
 pub use discovery::{canonical_id, discover_spec, discover_spec_ids};
-pub use resolution::{resolve_gate_inputs, resolve_spec, resolve_tasks, resolve_traceability};
+pub use resolution::{
+    resolve_design_gate_inputs, resolve_design_traceability, resolve_gate_inputs, resolve_spec,
+    resolve_tasks, resolve_traceability,
+};
 
 pub(crate) use discovery::{
     collection_id, is_kebab_id, recognized_kind, selector, split_frontmatter,

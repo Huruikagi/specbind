@@ -218,6 +218,131 @@ fn walks_every_gate_from_requirements_to_implementation() {
 }
 
 #[test]
+fn design_approval_does_not_read_a_retained_downstream_task_plan() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    let retained = "this is not a task plan\n";
+    write(root.path(), ".specbind/specs/checkout/tasks.yaml", retained);
+
+    let mut design = specbind_command();
+    design
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success();
+
+    assert_eq!(
+        fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml")).unwrap(),
+        retained
+    );
+    let mut complete = specbind_command();
+    complete
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "ARTIFACT_TASKS_STRUCTURAL_INVALID",
+        ));
+}
+
+#[test]
+fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    approve_design(root.path());
+
+    let mut review = specbind_command();
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        gate_task_fixture(),
+    );
+    let mut tasks = specbind_command();
+    tasks
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "tasks",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let mut invalidate = specbind_command();
+    invalidate
+        .current_dir(root.path())
+        .args(["spec", "requirements", "invalidate", "checkout"])
+        .assert()
+        .success();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/requirements.md",
+        "---\ntype: SpecBind Requirements\nheading_labels:\n  requirement: Requirement\n  acceptance_criteria: Acceptance Criteria\n---\n# Requirements\n\n### Requirement 1: Checkout\n\n#### Acceptance Criteria\n\n1. It works.\n\n### Requirement 2: Receipt\n\n#### Acceptance Criteria\n\n1. It records a receipt.\n",
+    );
+    let mut requirements = specbind_command();
+    requirements
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "requirements",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+            "--requirement-ids",
+            "2.1",
+        ])
+        .assert()
+        .success();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['2.1']\n---\n# Design\n\n_Requirements: 2.1_\n",
+    );
+
+    let mut complete = specbind_command();
+    complete
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("TRACEABILITY_TASK_SCOPE_INACTIVE"));
+    let mut design_check = specbind_command();
+    design_check
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout", "--for-design"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Design coverage: 1/1"));
+    approve_design(root.path());
+
+    assert_eq!(
+        fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml")).unwrap(),
+        gate_task_fixture()
+    );
+}
+
+#[test]
 fn reverse_design_approval_enters_adoption_ready_without_tasks() {
     let root = project_fixture();
     write_gate_fixture(root.path());

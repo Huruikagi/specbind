@@ -118,12 +118,26 @@ pub fn artifact_read(
 }
 
 #[must_use]
-pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
+pub fn check_traceability(start: &Path, canonical_spec: &str, for_design: bool) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    let resolution = artifacts::resolve_traceability(&paths.specbind_root, canonical_spec);
+    let resolution = if for_design {
+        artifacts::resolve_design_traceability(&paths.specbind_root, canonical_spec)
+    } else {
+        artifacts::resolve_traceability(&paths.specbind_root, canonical_spec)
+    };
+    let failure_code = if for_design {
+        "TRACEABILITY_DESIGN_FAILED"
+    } else {
+        "TRACEABILITY_FAILED"
+    };
+    let subject = if for_design {
+        "Design traceability"
+    } else {
+        "Traceability"
+    };
     let mut details = resolution
         .inventory
         .issues
@@ -132,23 +146,43 @@ pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
         .collect::<Vec<_>>();
     let Some(report) = resolution.report else {
         return CommandOutput::failure(
-            "TRACEABILITY_FAILED",
-            format!("Cannot verify traceability for spec {canonical_spec}."),
+            failure_code,
+            format!("Cannot verify {subject} for spec {canonical_spec}."),
             details,
         );
     };
     details.extend(report.issues.iter().map(render_traceability_issue));
     if !details.is_empty() {
         return CommandOutput::failure(
-            "TRACEABILITY_FAILED",
-            format!("Traceability for spec {canonical_spec} has diagnostics."),
+            failure_code,
+            format!("{subject} for spec {canonical_spec} has diagnostics."),
             details,
         );
     }
-    let mut output = format!(
-        "OK TRACEABILITY_VERIFIED: Verified traceability for spec {}.\n",
-        escape(canonical_spec)
-    );
+    CommandOutput::success(
+        render_traceability_success(canonical_spec, &report, for_design).into_bytes(),
+    )
+}
+
+fn render_traceability_success(
+    canonical_spec: &str,
+    report: &crate::traceability::TraceabilityReport,
+    for_design: bool,
+) -> String {
+    let mut output = if for_design {
+        format!(
+            "OK TRACEABILITY_DESIGN_VERIFIED: Verified Design traceability for spec {}.\n",
+            escape(canonical_spec)
+        )
+    } else {
+        format!(
+            "OK TRACEABILITY_VERIFIED: Verified traceability for spec {}.\n",
+            escape(canonical_spec)
+        )
+    };
+    if for_design {
+        push_field(&mut output, "Scope", "Requirements and Design");
+    }
     push_field(
         &mut output,
         "Requirements",
@@ -178,19 +212,23 @@ pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
                 "Design coverage",
                 &format!("{design}/{}", active.len()),
             );
-            push_field(
-                &mut output,
-                "Task coverage",
-                &format!(
-                    "{tasks}/{} ({})",
-                    active.len(),
-                    if report.tasks_required {
-                        "required"
-                    } else {
-                        "not required"
-                    }
-                ),
-            );
+            if for_design {
+                push_field(&mut output, "Task coverage", "not evaluated (Design scope)");
+            } else {
+                push_field(
+                    &mut output,
+                    "Task coverage",
+                    &format!(
+                        "{tasks}/{} ({})",
+                        active.len(),
+                        if report.tasks_required {
+                            "required"
+                        } else {
+                            "not required"
+                        }
+                    ),
+                );
+            }
         }
         None => push_field(&mut output, "Active requirement IDs", "none"),
     }
@@ -201,7 +239,7 @@ pub fn check_traceability(start: &Path, canonical_spec: &str) -> CommandOutput {
             &report.retired_requirement_ids.join(", "),
         );
     }
-    CommandOutput::success(output.into_bytes())
+    output
 }
 
 #[must_use]

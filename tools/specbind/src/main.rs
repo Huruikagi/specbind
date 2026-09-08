@@ -81,7 +81,9 @@ fn run_uninstall(start: &Path, knowledge: &str, apply: bool) -> CommandOutput {
 
 fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
     match command {
-        CheckCommand::Traceability { spec } => specbind::cli::check_traceability(start, &spec),
+        CheckCommand::Traceability { spec, for_design } => {
+            specbind::cli::check_traceability(start, &spec, for_design)
+        }
         CheckCommand::Contracts => specbind::cli::check_contracts(start),
     }
 }

@@ -177,7 +177,12 @@ pub enum SchemaCommand {
 #[derive(Debug, Subcommand)]
 pub enum CheckCommand {
     /// Verify Requirement existence and active Design and Task coverage.
-    Traceability { spec: String },
+    Traceability {
+        spec: String,
+        /// Check only the Requirements and Design projection; do not read Tasks.
+        #[arg(long)]
+        for_design: bool,
+    },
     /// Verify the project-wide Contract graph.
     Contracts,
 }

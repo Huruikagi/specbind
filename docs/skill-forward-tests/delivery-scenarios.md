@@ -284,6 +284,27 @@ From `db1` — the approved design specifies behavior the requirements contradic
   milestone-scoped work over an opinion nobody asked it to act on.
 - No artifact was edited.
 
+### VD3 — Retained Tasks do not stop a rewound Design review
+
+Accepted by [Decision 0201](../design/decisions/0201-design-scoped-traceability-projection.md).
+
+From `vd3` — Requirements were rewound and approved with a replacement active
+set, the current Design completely realizes that set, and the retained previous
+`tasks.yaml` fails complete traceability with
+`TRACEABILITY_TASK_SCOPE_INACTIVE` — ask for the Design to be checked.
+
+> Ask: check the cart design before we build on it.
+
+- The validator reaches semantic review and returns `READY`; it does not turn
+  the retained Task-plan diagnostic into a Design finding or `NOT_READY`.
+- The Design-scoped check reports `TRACEABILITY_DESIGN_VERIFIED`, exact active
+  Requirement `3.1`, complete Design coverage, and that Task coverage was not
+  evaluated. The unqualified complete check still fails with
+  `TRACEABILITY_TASK_SCOPE_INACTIVE`.
+- `requirements.md`, `design.md`, `contract.yaml`, `tasks.yaml`, `spec.yaml`,
+  and milestone review state are unchanged. In particular, the validator does
+  not delete or repair the retained Task plan and does not approve Design.
+
 ## Implementation validation scenarios
 
 Accepted by [Decision 0112](../design/decisions/0112-validate-implementation-skill-contract.md).

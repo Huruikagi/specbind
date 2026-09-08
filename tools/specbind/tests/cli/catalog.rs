@@ -81,6 +81,64 @@ fn verifies_traceability_and_fails_closed_on_missing_coverage() {
 }
 
 #[test]
+fn design_traceability_does_not_read_a_retained_downstream_task_plan() {
+    let root = project_fixture();
+    write_status_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "this is not a task plan\n",
+    );
+
+    let mut design = specbind_command();
+    design
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout", "--for-design"])
+        .assert()
+        .success()
+        .stdout(concat!(
+            "OK TRACEABILITY_DESIGN_VERIFIED: Verified Design traceability for spec checkout.\n",
+            "  Scope: Requirements and Design\n",
+            "  Requirements: 1\n",
+            "  Active requirement IDs: 1\n",
+            "  Active requirement set: 1.1\n",
+            "  Design coverage: 1/1\n",
+            "  Task coverage: not evaluated (Design scope)\n",
+        ))
+        .stderr("");
+
+    let mut complete = specbind_command();
+    complete
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "ARTIFACT_TASKS_STRUCTURAL_INVALID",
+        ));
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['9.9']\n---\n_Requirements: 9.9_\n",
+    );
+    let mut invalid_design = specbind_command();
+    invalid_design
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout", "--for-design"])
+        .assert()
+        .failure()
+        .stderr(
+            predicate::str::starts_with(
+                "ERROR TRACEABILITY_DESIGN_FAILED: Design traceability for spec checkout has diagnostics.",
+            )
+            .and(predicate::str::contains(
+                "TRACEABILITY_DESIGN_REQUIREMENT_UNKNOWN",
+            )),
+        );
+}
+
+#[test]
 fn reports_an_idle_spec_without_active_coverage_ratios() {
     let root = project_fixture();
     write(
