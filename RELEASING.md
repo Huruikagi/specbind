@@ -70,6 +70,14 @@ assets in an otherwise published release.
 Verify the checksum file and all three archive entries on the GitHub Release page.
 Then test explicit installation on the documented native environments.
 
+The release workflow uses a pinned mise version for its three-platform smoke
+test. If the test needs rerunning after an external setup failure, run the
+standalone verification without republishing or replacing release assets:
+
+```sh
+gh workflow run release-mise-smoke.yml -f version=1.4.2
+```
+
 Windows x64:
 
 ```powershell

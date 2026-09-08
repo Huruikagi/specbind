@@ -1,0 +1,64 @@
+name: Release mise smoke
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Published SpecBind version or tag
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published SpecBind version or tag to verify without publishing
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  mise-smoke:
+    name: Smoke-test mise (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-15
+
+    steps:
+      - name: Install mise
+        uses: jdx/mise-action@v4
+        with:
+          version: 2026.9.2
+          install: false
+          cache: false
+
+      - name: Install and run SpecBind through mise
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_MINIMUM_RELEASE_AGE: 0s
+          SPECBIND_VERSION: ${{ inputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = $env:SPECBIND_VERSION -replace '^v', ''
+          if ($version -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$') {
+            throw "Unsupported SpecBind version: $version"
+          }
+          $smoke = Join-Path $env:RUNNER_TEMP 'specbind-mise-smoke'
+          New-Item -ItemType Directory -Force -Path $smoke | Out-Null
+          Set-Location -LiteralPath $smoke
+
+          $tool = "github:$env:GITHUB_REPOSITORY@$version"
+          mise use $tool
+          if ($LASTEXITCODE -ne 0) { throw 'mise installation failed.' }
+          $actual = mise exec $tool --command "specbind --version"
+          if ($LASTEXITCODE -ne 0) { throw 'mise execution failed.' }
+          $expected = "specbind $version"
+          if ($actual -ne $expected) {
+            throw "mise-installed archive reports '$actual'; expected '$expected'."
+          }

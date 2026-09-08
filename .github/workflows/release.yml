@@ -244,42 +244,10 @@ jobs:
             "${options[@]}"
 
   mise-smoke:
-    name: Smoke-test mise (${{ matrix.os }})
     needs: publish
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - windows-latest
-          - ubuntu-latest
-          - macos-15
-
-    steps:
-      - name: Install mise
-        uses: jdx/mise-action@v4
-        with:
-          install: false
-          cache: false
-
-      - name: Install and run SpecBind through mise
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          MISE_MINIMUM_RELEASE_AGE: 0s
-        run: |
-          $smoke = Join-Path $env:RUNNER_TEMP 'specbind-mise-smoke'
-          New-Item -ItemType Directory -Force -Path $smoke | Out-Null
-          Set-Location -LiteralPath $smoke
-
-          $version = $env:RELEASE_TAG.Substring(1)
-          $tool = "github:$env:GITHUB_REPOSITORY@$version"
-          mise use $tool
-          $actual = mise exec $tool --command "specbind --version"
-          $expected = "specbind $version"
-          if ($actual -ne $expected) {
-            throw "mise-installed archive reports '$actual'; expected '$expected'."
-          }
+    uses: ./.github/workflows/release-mise-smoke.yml
+    with:
+      version: ${{ github.ref_name }}
 
   macos-installer-smoke:
     name: Smoke-test macOS shell installer
