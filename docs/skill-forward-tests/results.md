@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `c3eb8c2` | DP3 — pass; known retained result stopped duplicate work; reduced DP1 remains unmeasured | [Retained-result handoff boundary](./runs/2026-09-08-codex-c3eb8c2-retained-handoff.md) |
 | 2026-09-08 | Native Codex CLI | `gpt-5.6-terra` / `medium` | final fallback text in `53520b6` | DP1 — isolation unverified; partial sequential shipping checkpoint, incomplete instrumentation | [Native parallel capability attempt](./runs/2026-09-08-codex-53520b6-native-parallel.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | fallback clarification in `53520b6` | DP2 — environment-blocked by approval review; sequential owners observed | [Fallback confirmation attempt](./runs/2026-09-08-codex-53520b6-fallback-confirmation.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `618e22b` | DP1 — environment-blocked by harness capacity; DP2 — product failure, FT-0052 | [Initial parallel/fallback measurements](./runs/2026-09-08-codex-618e22b-parallel-initial.md) |
