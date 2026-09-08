@@ -34,9 +34,12 @@ configuration would also defeat the progressive package boundary.
   The Agent never selects a prerelease, downgrade, different selector, or
   weakened mise safety policy implicitly.
 - Binary selection and project-asset refresh are two distinct Git workflow
-  units. The active Git adapter controls each narrow local checkpoint. The
-  first must leave the worktree clean before a replacing or removing install
-  plan; the second contains only the reviewed refresh paths.
+  units. The active Git adapter controls each narrow local checkpoint. An
+  update stops on pre-existing staged state, renames, copies, dirty submodules,
+  or changes that overlap the binary-selection or refresh targets. Other
+  unstaged or untracked paths are recorded and preserved across both units.
+  The first checkpoint contains only the binary-selection paths; the second
+  contains only the reviewed refresh paths.
 - The explicit update request authorizes the applicable installation-client
   operation and the exact reviewed `specbind install` plan. It does not
   authorize push, branch or history changes, releases, deployment, destructive
@@ -47,6 +50,9 @@ configuration would also defeat the progressive package boundary.
   `references/aftercare.md` for its active Agent target before continuing. A
   missing or unreadable new package stops the run; cached pre-update
   instructions cannot supply aftercare.
+- The Agent never creates or offers to create a stash as update recovery. When
+  a target conflicts, it reports the exact path and asks the maintainer to
+  commit, stash, or otherwise resolve that path before retrying.
 
 ## Consequences
 

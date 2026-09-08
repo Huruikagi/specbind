@@ -41,7 +41,8 @@ asset set.
 The existing installation safety boundary remains authoritative:
 
 - replacement, movement, or removal of existing project files requires at
-  least one commit and a clean worktree;
+  least one commit and Git-clean mutation targets; unrelated dirty paths are
+  reported and preserved;
 - product-managed Skills and marked instruction blocks advance to the current
   embedded set, including planned removal of retired targets;
 - existing project-owned templates, Rules, and Adapters are retained, while
@@ -49,9 +50,13 @@ The existing installation safety boundary remains authoritative:
 - Specs, lifecycle state, and release history are not binary-update targets.
 
 Because mise may modify `mise.toml` or `mise.lock`, the public procedure commits
-that binary-selection change before applying a project refresh that needs the
-clean-worktree guard. Refreshed product assets are reviewed and committed as a
-separate project change.
+that binary-selection change before applying a project refresh. Pre-existing
+changes to those selection paths, staged state, renames, copies, dirty
+submodules, or changes that overlap refresh targets stop the update because the
+two checkpoints cannot be isolated safely. Other unstaged or untracked paths
+are reported, preserved, and do not block the target-scoped installer guard.
+Refreshed product assets are reviewed and committed as a separate project
+change. Neither the Agent nor the installer stashes unrelated work.
 
 ## Consequences
 

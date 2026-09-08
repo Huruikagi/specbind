@@ -47,7 +47,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 - [Decision 0129](./0129-agent-role-capability-adapters.md) later adds optional
   `agentRoles` capability overrides without changing the configuration schema
   version.
-- Product-managed agent skills are replaced with the current embedded versions when their target paths are Git-clean. Direct skill edits are not a supported customization API; Git remains recovery.
+- Product-managed agent skills are replaced with the current embedded versions when their target paths are Git-clean. Uncommitted changes outside the mutation targets are reported and preserved rather than blocking the refresh. Direct skill edits are not a supported customization API; Git remains recovery.
 - Existing project-owned settings are never overwritten. Missing embedded default settings are created automatically and left uncommitted for review; users may remove unwanted additions before committing.
 - Decisions 0093, 0152, and 0169 fix the seven accepted shared-Rule paths.
   Six defaults are language-neutral and `language-style` is offered by default
@@ -57,7 +57,7 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
   Decision 0094 protocols remain binary-owned and are never installed as
   project files.
 - When project instructions are enabled, the installer maintains only a marked SpecBind block in the selected agents' root `AGENTS.md` or `CLAUDE.md`. Existing surrounding content is preserved, malformed or duplicate markers stop the operation, and the selection persists through `.specbind.json`.
-- Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and a clean repository first, except that a retry may continue past dirty kept paths whose bytes exactly match product-managed output from the running binary. The installer never commits project changes.
+- Initial installation may create new files in a Git repository that has no commit. Any operation that replaces, moves, or deletes an existing file requires a commit and Git-clean mutation targets first. Dirty paths outside those targets are shown in the plan and preserved. A retry may also continue past dirty kept paths whose bytes exactly match product-managed output from the running binary. The installer never commits or stashes project changes.
 
 ### Explicit cc-sdd migration
 
@@ -70,9 +70,9 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 ## Implementation status
 
-`specbind install --dry-run` is implemented as a read-only planner. It resolves the effective configuration from any existing `.specbind.json` merged with additive agent selection, requires an explicit language and at least one agent for an initial installation, refuses an unsupported `specDir` change, and reports each target as create, replace, or keep. Project-owned settings are reported as keep and never replaced. A plan containing any replacement enforces the accepted repository guard: at least one commit and either a clean worktree or only exact already-applied product-managed outputs from the same binary.
+`specbind install --dry-run` is implemented as a read-only planner. It resolves the effective configuration from any existing `.specbind.json` merged with additive agent selection, requires an explicit language and at least one agent for an initial installation, refuses an unsupported `specDir` change, and reports each target as create, replace, or keep. Project-owned settings are reported as keep and never replaced. A plan containing any replacement enforces the accepted repository guard: at least one commit, Git-clean mutation targets, and path-specific diagnostics for conflicts. Unrelated dirty paths are reported as preserved, while exact already-applied product-managed outputs from the same binary remain eligible for recovery.
 
-`specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist. An interrupted product-asset refresh converges on the next invocation: the repository guard admits dirty kept paths only when their current bytes exactly match product-managed output from the running binary, while any unrelated or project-owned dirty path still blocks replacement. Missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits.
+`specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist. An interrupted product-asset refresh converges on the next invocation: the repository guard admits dirty kept paths only when their current bytes exactly match product-managed output from the running binary. A dirty mutation target blocks replacement, while unrelated dirty paths remain untouched. Missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits or stashes.
 
 Both paths cover `.specbind.json`, the Decision 0091 installed template set, the
 Decision 0093 shared-rule set, the Decision 0101 release, Git, and deferred
@@ -92,7 +92,7 @@ Decision 0130 adds installation through mise's GitHub backend.
 - V1 has a small installation contract that can be tested in the environments the project actually controls.
 - Git replaces bespoke backup directories and overwrite prompts.
 - Project customization survives product updates, while generated agent resources can reliably advance.
-- Migration remains explicit and reviewable; destructive final cutover relies on the clean committed Git recovery boundary defined by Decision 0127.
+- Migration remains explicit and reviewable; destructive final cutover retains the complete clean committed Git recovery boundary defined by Decision 0127. The narrower install-refresh guard does not alter that lifecycle boundary.
 
 ## Follow-up tracking
 

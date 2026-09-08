@@ -205,6 +205,21 @@ fn keeps_project_owned_settings_and_guards_replacements() {
         );
 
     write(root.path(), "dirty.txt", "dirty\n");
+    let mut unrelated = specbind_command();
+    unrelated
+        .current_dir(root.path())
+        .args(["install", "--dry-run", "--agent", "claude-code"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "  Unrelated changes: preserved\n    - dirty.txt\n",
+        ));
+
+    write(
+        root.path(),
+        ".specbind.json",
+        "{\n  \"schemaVersion\": 1,\n  \"specDir\": \".specbind\",\n  \"language\": \"en\",\n  \"agents\": [\"codex\"]\n}\n",
+    );
     let mut blocked = specbind_command();
     blocked
         .current_dir(root.path())
@@ -212,7 +227,11 @@ fn keeps_project_owned_settings_and_guards_replacements() {
         .assert()
         .failure()
         .stdout("")
-        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
+        .stderr(
+            predicate::str::contains("INSTALL_REPOSITORY_DIRTY .specbind.json:").and(
+                predicate::str::contains("mutating a product-managed target"),
+            ),
+        );
 }
 
 #[test]
@@ -459,7 +478,7 @@ fn installs_product_managed_skills_for_each_selected_agent() {
 }
 
 #[test]
-fn resumes_an_exact_partial_product_asset_refresh_but_rejects_unrelated_changes() {
+fn resumes_an_exact_partial_product_asset_refresh_and_preserves_unrelated_changes() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
     let mut install = specbind_command();
@@ -502,16 +521,6 @@ fn resumes_an_exact_partial_product_asset_refresh_but_rejects_unrelated_changes(
     git(root.path(), &["restore", "--staged", "--", first]);
 
     write(root.path(), "unrelated.txt", "user work\n");
-    let mut blocked = specbind_command();
-    blocked
-        .current_dir(root.path())
-        .args(["install", "--dry-run"])
-        .assert()
-        .failure()
-        .stdout("")
-        .stderr(predicate::str::contains("INSTALL_REPOSITORY_DIRTY"));
-
-    fs::remove_file(root.path().join("unrelated.txt")).expect("remove test-only unrelated file");
     let mut resumed = specbind_command();
     resumed
         .current_dir(root.path())
@@ -519,9 +528,12 @@ fn resumes_an_exact_partial_product_asset_refresh_but_rejects_unrelated_changes(
         .assert()
         .success()
         .stdout(
-            predicate::str::contains(format!("- keep {first} [skill]")).and(
-                predicate::str::contains(format!("- replace {second} [skill]")),
-            ),
+            predicate::str::contains("Unrelated changes: preserved")
+                .and(predicate::str::contains("- unrelated.txt"))
+                .and(predicate::str::contains(format!("- keep {first} [skill]")))
+                .and(predicate::str::contains(format!(
+                    "- replace {second} [skill]"
+                ))),
         )
         .stderr("");
 
@@ -533,6 +545,38 @@ fn resumes_an_exact_partial_product_asset_refresh_but_rejects_unrelated_changes(
         fs::read_to_string(root.path().join(second)).expect("resumed second asset"),
         second_current
     );
+    assert_eq!(
+        fs::read_to_string(root.path().join("unrelated.txt")).expect("preserved unrelated work"),
+        "user work\n"
+    );
+}
+
+#[test]
+fn rejects_a_git_deleted_installation_target_before_recreating_it() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    let mut install = specbind_command();
+    install
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let target = ".agents/skills/sb-status/SKILL.md";
+    fs::remove_file(root.path().join(target)).expect("delete tracked managed target");
+    let mut refresh = specbind_command();
+    refresh
+        .current_dir(root.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(
+            predicate::str::contains(format!("INSTALL_REPOSITORY_DIRTY {target}:")).and(
+                predicate::str::contains("mutating a product-managed target"),
+            ),
+        );
 }
 
 #[test]

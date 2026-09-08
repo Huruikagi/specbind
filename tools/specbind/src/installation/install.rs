@@ -24,7 +24,7 @@ use assets::{
     project_instruction_entries, retired_skill_entries, rule_entries, skill_entries,
     template_entries,
 };
-use guard::require_replaceable_repository;
+use guard::{inspect_install_repository, require_clean_replaceable_repository};
 use input::{read_existing_config, resolve_inputs};
 
 pub(super) const CONFIG_RELATIVE: &str = ".specbind.json";
@@ -131,6 +131,10 @@ pub struct InstallPlan {
     pub agents: Vec<Agent>,
     pub project_instructions: bool,
     pub adoption: bool,
+    /// Dirty Git paths outside every managed mutation target. Installation
+    /// preserves them and reports them so callers do not mistake the refresh
+    /// for a clean-worktree operation.
+    pub unrelated_changes: Vec<String>,
     pub entries: Vec<PlanEntry>,
 }
 
@@ -220,12 +224,15 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     entries.extend(retired_skill_entries(project_root, &resolved)?);
     entries.extend(agent_role_entries(project_root, &resolved)?);
     entries.extend(project_instruction_entries(project_root, &resolved)?);
-    if entries
+    let replaces_or_removes = entries
         .iter()
-        .any(|entry| matches!(entry.action, PlanAction::Replace | PlanAction::Remove))
-    {
-        require_replaceable_repository(project_root, &entries)?;
-    }
+        .any(|entry| matches!(entry.action, PlanAction::Replace | PlanAction::Remove));
+    let mutates = entries.iter().any(|entry| entry.action != PlanAction::Keep);
+    let unrelated_changes = if mutates {
+        inspect_install_repository(project_root, &entries, replaces_or_removes)?
+    } else {
+        Vec::new()
+    };
     Ok(InstallPlan {
         initial: existing.is_none(),
         spec_dir: resolved.spec_dir,
@@ -233,6 +240,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
         agents: resolved.agents,
         project_instructions: resolved.project_instructions,
         adoption: resolved.adoption,
+        unrelated_changes,
         entries,
     })
 }
@@ -275,7 +283,7 @@ pub fn prepare_adoption_retirement(
         })?,
     );
     entries.push(config);
-    require_replaceable_repository(project_root, &entries)?;
+    require_clean_replaceable_repository(project_root)?;
     Ok(AdoptionRetirementPlan { entries })
 }
 

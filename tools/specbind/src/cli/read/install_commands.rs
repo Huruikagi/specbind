@@ -118,6 +118,12 @@ fn push_install_summary(output: &mut String, plan: &install::InstallPlan) {
         "Adoption Skill",
         if plan.adoption { "enabled" } else { "disabled" },
     );
+    if !plan.unrelated_changes.is_empty() {
+        output.push_str("  Unrelated changes: preserved\n");
+        for path in &plan.unrelated_changes {
+            writeln!(output, "    - {}", escape(path)).expect("writing to a String cannot fail");
+        }
+    }
     output.push_str("  Actions:\n");
     for entry in &plan.entries {
         let detail = entry

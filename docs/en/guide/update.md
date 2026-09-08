@@ -34,11 +34,14 @@ See mise's [`upgrade`](https://mise.jdx.dev/cli/upgrade.html) and
 [`mise.lock`](https://mise.jdx.dev/dev-tools/mise-lock.html) documentation for
 the installation client's exact behavior.
 
-!!! warning "Commit before refreshing project assets"
+!!! warning "Commit the binary selection before refreshing project assets"
     When the next `specbind install` plan replaces, moves, or removes existing
-    files, SpecBind requires a repository with at least one commit and a clean
-    worktree. If mise changed `mise.toml` or `mise.lock`, commit that change
-    before continuing.
+    files, SpecBind requires a repository with at least one commit and
+    Git-clean mutation targets. If mise changed `mise.toml` or `mise.lock`,
+    commit that change before continuing. Unstaged or untracked work outside
+    the refresh targets may remain; SpecBind reports and preserves those paths.
+    Pre-existing staged changes, renames, copies, and dirty submodules still
+    stop the coordinated update because its two checkpoints cannot be isolated.
 
 ## 2. Refresh product-managed project files
 
@@ -51,7 +54,9 @@ specbind install --dry-run
 ```
 
 Review the reported `create`, `replace`, and `keep` actions, plus any `remove`
-actions for retired product-managed targets. Then apply the plan:
+actions for retired product-managed targets. If the plan reports `Unrelated
+changes: preserved`, confirm those are your existing changes and do not overlap
+an update target. Then apply the plan:
 
 ```sh
 specbind install
@@ -76,8 +81,10 @@ through Git and do not all need to rerun `specbind install`.
 
 Direct edits to product-managed Skills are not a supported customization
 surface. If a refresh finds dirty managed targets, SpecBind stops instead of
-guessing or overwriting them. Move the needed policy to a project-owned surface
-or restore the managed target through Git before planning again.
+guessing or overwriting them and reports the conflicting paths. Commit, stash,
+or otherwise resolve those paths before planning again. SpecBind never creates
+a stash for you. Move durable policy to a project-owned surface rather than
+keeping it in a managed Skill.
 
 ## If mise did not install the binary
 

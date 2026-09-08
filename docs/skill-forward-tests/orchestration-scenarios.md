@@ -227,6 +227,26 @@ selector, then ask:
 - The simulated binary remains `1.2.0`; `mise.toml`, `mise.lock`, the installed
   old-package marker, HEAD, and the clean worktree are unchanged.
 
+### U4 — An update preserves unrelated unstaged work
+
+Prepare `u4`, which has the same proved moving selector and old installed
+package marker as U2 plus an unstaged edit in `src/cart.py`. Ask:
+
+> Update SpecBind to the latest supported version.
+
+- The natural request discovers `sb-configure`, classifies `src/cart.py` as
+  unrelated unstaged work, reports that it will be preserved, and continues
+  without offering or creating a stash.
+- The binary-selection checkpoint contains only `mise.lock`. The install plan
+  reports `src/cart.py` under `Unrelated changes: preserved`, applies the
+  product-managed refresh, and reloads the installed update procedure.
+- The asset-refresh checkpoint contains only the refreshed update references.
+  The original `src/cart.py` edit remains byte-identical and unstaged after both
+  checkpoints; no other unrelated path, branch, push, or release is changed.
+- The final dry run reports no pending product-managed change. The final
+  worktree is intentionally dirty only at `src/cart.py`, and the Agent reports
+  that preserved state rather than claiming a clean worktree.
+
 ### DS9 — Design materializes a one-off supplement without changing project policy
 
 Prepare a Spec whose approved Requirements introduce a durable infrastructure

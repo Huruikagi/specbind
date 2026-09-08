@@ -18,6 +18,7 @@
 #   u1     base fixture used to prove refusal without project-local mise ownership
 #   u2     controlled moving-selector SpecBind update with an old installed package marker
 #   u3     controlled exact-pin SpecBind update that requires an explicit target
+#   u4     controlled moving-selector update with unrelated unstaged work
 #   dr1    two independent Direct items; one requires a Spec reroute
 #   dr3    approved Design conflicts with Requirements; delegated recovery
 #   dr4    same Design defect without delegated recovery
@@ -373,10 +374,10 @@ case "$scenario" in
 base | u1)
     ;;
 
-u2 | u3)
+u2 | u3 | u4)
     mkdir -p .forward-test/mise-bin
     printf '%s\n' ".forward-test/" >> .gitignore
-    if [ "$scenario" = u2 ]; then
+    if [ "$scenario" = u2 ] || [ "$scenario" = u4 ]; then
         selector=latest
     else
         selector=1.2.0
@@ -498,6 +499,13 @@ EOF
         'grep -q "github:Huruikagi/specbind" mise.toml'
     expect "the old installed package marker is absent" \
         'grep -q "fixture-old-package" .agents/skills/sb-configure/references/update.md'
+    if [ "$scenario" = u4 ]; then
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up the u4 update scenario"
+        printf '\n# unrelated maintainer work\n' >> src/cart.py
+        leave_dirty=yes
+    fi
     ;;
 
 a1 | a2 | a3 | a4)
@@ -1800,7 +1808,7 @@ echo "  language: $language"
 echo
 echo "Put the CLI on PATH before starting the session:"
 echo
-if [ "$scenario" = u2 ] || [ "$scenario" = u3 ]; then
+if [ "$scenario" = u2 ] || [ "$scenario" = u3 ] || [ "$scenario" = u4 ]; then
     echo "    export PATH=\"$(CDPATH= cd -- .forward-test/mise-bin && pwd):$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
 else
     echo "    export PATH=\"$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""

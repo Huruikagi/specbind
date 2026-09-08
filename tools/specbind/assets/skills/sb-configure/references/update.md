@@ -29,13 +29,23 @@ the `github:Huruikagi/specbind` backend. The executable name, its location on
 `PATH`, a globally installed copy, or an unrelated parent or sibling config is
 not ownership proof.
 
-Stop before mutation when the worktree already contains any change. Report the
-exact paths; never hide, stash, commit, or absorb unrelated work to manufacture
-a clean update boundary. Also stop when the active config is untrusted,
-ambiguous, outside the selected project's intended configuration, or does not
-use the required GitHub backend. Route the maintainer to the installation client
-that originally installed the binary and the public update guide instead of
-guessing or silently selecting another executable.
+Classify every pre-existing repository change before mutation. Stop on staged
+state, a rename or copy, a dirty submodule, or a change to the active mise
+configuration, `mise.toml`, or `mise.lock`; those states do not provide a
+trustworthy narrow binary-selection checkpoint. Report the exact paths and ask
+the maintainer to commit, stash, or otherwise resolve them. Never create or
+offer to create a stash, commit, or cleanup operation merely to manufacture an
+update boundary.
+
+Unstaged tracked edits and untracked files outside those selection paths may
+remain. Record their exact paths, tell the maintainer they will be preserved,
+and continue without touching or staging them. The later install preview is
+authoritative about whether any such path overlaps a refresh target. Also stop
+when the active config is untrusted, ambiguous, outside the selected project's
+intended configuration, or does not use the required GitHub backend. Route the
+maintainer to the installation client that originally installed the binary and
+the public update guide instead of guessing or silently selecting another
+executable.
 
 Read the active Git adapter before changing mise state:
 
@@ -81,10 +91,12 @@ configuration source are unchanged. Review only the applicable `mise.toml` and
 If the active Git adapter requires a local checkpoint, stage only the changed
 mise selection files and create the binary-selection checkpoint. If it does not
 authorize that checkpoint and those files changed, stop and report that the
-project's own Git workflow must restore the clean-worktree precondition. Never
-fold the later asset refresh into this checkpoint.
+project's own Git workflow must resolve those selection paths without touching
+the recorded unrelated work. Never fold the later asset refresh into this
+checkpoint.
 
-Confirm that the worktree is clean before continuing:
+Confirm that the binary-selection paths are clean and that the recorded
+unrelated paths remain unchanged before continuing:
 
 ```sh
 git status --short
@@ -98,14 +110,17 @@ Use the newly selected binary to preview the complete product-asset plan:
 specbind install --dry-run
 ```
 
-Present every reported `create`, `replace`, `keep`, and `remove` action. An
+Present every reported `create`, `replace`, `keep`, and `remove` action, plus
+every `Unrelated changes: preserved` path. An
 explicit request for this update workflow authorizes applying that exact
 guarded refresh plan, including its presented retired product-target removals,
 subject to the existing install guards. It does not authorize destructive
 removal outside that plan or overwriting project-owned templates, Rules,
 adapters, Steering, Specs, lifecycle state, or release history. Stop if the
-plan or repository guard reports a dirty managed target, unrelated state, or a
-boundary outside the presented plan.
+plan or repository guard reports a dirty managed target, an unclassified
+repository state, or a boundary outside the presented plan. Unrelated changes
+that the plan explicitly reports as preserved are not a stopping condition;
+confirm they match the preflight set and do not stage or modify them.
 
 Apply the reviewed plan:
 
@@ -155,6 +170,7 @@ asset-refresh checkpoint. Do not include a binary-selection file already
 recorded in the first checkpoint or any unrelated path.
 
 Report the old and new binary versions, the binary-selection and asset-refresh
-checkpoint outcomes separately, the retained project-owned settings, refresh
-verification, and any installation-client, Git, or external boundary where the
-run stopped. Updating never authorizes a push or any release action.
+checkpoint outcomes separately, the retained project-owned settings, the exact
+unrelated paths preserved throughout the run, refresh verification, and any
+installation-client, Git, or external boundary where the run stopped.
+Updating never authorizes a push or any release action.

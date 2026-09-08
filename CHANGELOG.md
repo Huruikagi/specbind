@@ -4,6 +4,10 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Allow `specbind install` and the explicit `sb-configure` update workflow to
+  preserve unrelated unstaged or untracked work while still blocking dirty
+  product-managed targets and reporting every preserved path.
+
 ## 1.4.1 - 2026-09-08
 
 - Preserve checkpointed Milestone dependency progress when later Task state is
