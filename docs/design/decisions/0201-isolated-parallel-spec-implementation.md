@@ -37,9 +37,18 @@ If support is missing or unverified, report why once and continue the existing
 sequential workflow. This applies to generic Skill-only hosts and equally to
 Codex or Claude Code surfaces lacking the required tools. Do not require a new
 plugin, alter permissions, or remove existing review/approval guards. A real
-worktree/environment blocker still follows its existing stop semantics.
+worktree/environment blocker still follows its existing stop semantics. Missing
+isolated worker APIs do not remove ordinary fresh-role dispatch or authorize
+inline review/self-validation when ordinary dispatch exists. Decision 0109's
+protocol-preserving main-context compatibility path remains available to hosts
+that genuinely have no subagent mechanism; disclose that no independent dispatch
+occurred. A registered role's model/start failure retains Decision 0129's
+existing environment-failure boundary.
 
 The same agent-neutral procedure is installed for all three Agent profiles.
+As a narrow qualification of Decision 0109's mechanism-neutral wording,
+conditional capability checks may name host features as evidence to verify;
+the owning workflow and protocol briefs remain common across hosts.
 Host checks belong to conditional execution guidance, not separate progress
 schemas, role identities, persistent configuration or a host-version allowlist.
 Internal roles stay in the owning worker checkout; fresh review does not inherit

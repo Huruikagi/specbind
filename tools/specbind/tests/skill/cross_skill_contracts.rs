@@ -348,6 +348,7 @@ fn parallel_drive_is_opt_in_and_ships_the_same_fallback_to_every_host() {
         for boundary in [
             "continue sequentially",
             "generic Skill-only hosts",
+            "does not disable ordinary fresh-role dispatch",
             "Worker-local `completed` never does so on its own",
             "separate candidate worktree",
             "Without exclusive write coordination, stop acceptance",

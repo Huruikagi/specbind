@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `618e22b` | DP1 — environment-blocked by harness capacity; DP2 — product failure, FT-0051 | [Initial parallel/fallback measurements](./runs/2026-09-08-codex-618e22b-parallel-initial.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `4577078` | U4 — pass; unrelated unstaged work survived both update checkpoints without a stash | [Dirty-worktree update](./runs/2026-09-08-codex-4577078-u4-update-dirty.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `6701a9b` + Decision 0200 working tree | ST1 — pass; dirty blocked Task retained progress, reason, and next condition | [Milestone blocker status](./runs/2026-09-08-codex-6701a9b-st1-status.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `16c004c` | Q4 — independent validation preceded delegated Design approval; checkpoint environment-blocked; FT-0050 resolved for the affected branch | [Design validation ownership confirmation](./runs/2026-09-08-codex-16c004c-q4-validation-owner.md) |

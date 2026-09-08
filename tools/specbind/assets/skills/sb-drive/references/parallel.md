@@ -31,6 +31,17 @@ and continue sequentially. This includes generic Skill-only hosts: understanding
 Skills or having a shell with `git worktree` is not proof of isolated agent
 execution. Do not fail the whole delivery request, install a host integration,
 change permission settings, or launch shared-worktree workers as a substitute.
+Lack of isolated worker APIs does not disable ordinary fresh-role dispatch.
+On fallback, execute each exact owning `handler.target` one at a time and keep
+its implementer/reviewer dispatches. Never reinterpret missing worktree support
+as permission for inline implementation review or self-validation while ordinary
+subagent dispatch is available. If the host genuinely has no subagent mechanism
+at all, retain the existing protocol-preserving main-context compatibility path:
+read the same role protocols, retain the brief and review steps, and disclose
+that no independent dispatch occurred. Do not infer this absence from missing
+worktree APIs. A registered role's model/start failure still follows its owner's
+environment-failure boundary, not a silent capability downgrade.
+
 Sequential fallback preserves all existing reviews, guards and approval rules;
 it does not bypass a real environment or worktree blocker. `--parallel 1` takes
 this same ordinary path without creating workers or candidates.
