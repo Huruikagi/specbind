@@ -31,6 +31,14 @@ This is not a gate — the design phase does not wait for you. It is available
 before approval as a second opinion, and after approval when someone wants the
 design checked by something that did not write it.
 
+In a confirmed recovery, Plan may pass the exact `spec.yaml` path, an
+accepted-review removal when present, and their captured diff as a proven
+Design-rewind delta. Verify that the current path set and diff still match the
+capture and that status reports state `design` with Design not reached and
+review absent. Treat it as read-only lifecycle context, not as a Design finding.
+Never edit it. A missing capture, mismatch, manually edited field, or additional
+metadata path stops validation as an unsafe handoff.
+
 ## 1. Clear the structural checks first
 
 ```sh

@@ -57,6 +57,7 @@
 #   t6     cart verification requires a real connection owned by later cart-input
 #   t7     t6 with boundary verification and later integration correctly separated
 #   x1     t2's state: one participant ready for review, contract unchanged
+#   x1r    x1 plus dispatch instrumentation for confirmed Design recovery
 #   x2     ds5 with cart's approved design removing the export checkout consumes
 #   x3     cart in tasks state with a plan already written and no review
 #   x4     d10's state: a Direct-only milestone that needs no review
@@ -1136,7 +1137,7 @@ ds7 | ds8 | ds9)
     fi
     ;;
 
-ds4 | t1 | t2 | x1 | vd1)
+ds4 | t1 | t2 | x1 | x1r | vd1)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1162,7 +1163,7 @@ ds4 | t1 | t2 | x1 | vd1)
         expect "the research artifact is not readable" \
             'specbind artifact read cart research | grep -q "Ninety-nine"'
         cart_design_approved "cap recorded in the research document, in the manner decided there."
-    elif [ "$scenario" = x1 ]; then
+    elif [ "$scenario" = x1 ] || [ "$scenario" = x1r ]; then
         # X1 deliberately keeps the Contract unchanged while the scoped behavior
         # adds a persistent quantity guarantee. The review must identify the
         # omission rather than treating an empty Contract diff as a pass.
@@ -1176,7 +1177,7 @@ ds4 | t1 | t2 | x1 | vd1)
         'specbind spec status cart | grep -q "design=fresh"'
     expect "a task plan already exists" \
         '! test -e .specbind/specs/cart/tasks.yaml'
-    if [ "$scenario" = t2 ] || [ "$scenario" = x1 ] || [ "$scenario" = vd1 ]; then
+    if [ "$scenario" = t2 ] || [ "$scenario" = x1 ] || [ "$scenario" = x1r ] || [ "$scenario" = vd1 ]; then
         # t2 measures what the tasks phase does when the review has not been
         # accepted. X1 measures a scoped guarantee omitted from the unchanged
         # Contract. Both deliberately leave the review absent for different

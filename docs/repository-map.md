@@ -362,3 +362,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0200](./design/decisions/0200-milestone-task-blocker-projection.md) | Accepted | Milestone Task progress and blocker projection without dirty-state regression |
 | [0201](./design/decisions/0201-design-scoped-traceability-projection.md) | Accepted | Design-only traceability projection without reading retained downstream Tasks |
 | [0202](./design/decisions/0202-renew-contract-review-over-retained-delivery-tasks.md) | Accepted | Renewed delivery Contract Review without reading or deleting retained Tasks |
+| [0203](./design/decisions/0203-carry-cli-owned-design-rewind-through-validation.md) | Accepted | Proven CLI-owned Design rewind carried through validation and approval checkpoint |

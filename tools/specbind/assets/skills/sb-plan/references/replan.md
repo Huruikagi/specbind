@@ -68,7 +68,10 @@ For a Design or Contract correction:
 2. Through the respective owning phases, invalidate Design only for changed
    Specs. Keep the Requirements gates where valid. Leave every retained
    `tasks.yaml` and its execution records in place; Contract Review does not
-   read them, and no owner removes them to cross the barrier.
+   read them, and no owner removes them to cross the barrier. For each Design
+   invalidation, capture the clean lifecycle targets, exact lifecycle
+   changed-path set, and diff as the Design-rewind delta; carry it through validation without a
+   separate checkpoint and reject any later mismatch or unrelated metadata path.
 3. Dispatch Design authors for the affected Specs in dependency order, then
    fresh independent `sb-validate-design`, then Design approval only on `READY`.
    Follow the normal Plan validation and finding-continuity rules. The normal

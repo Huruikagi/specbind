@@ -195,6 +195,32 @@ fn design_phase_checkpoints_its_verified_deferred_destination_after_validation()
 }
 
 #[test]
+fn design_recovery_carries_only_the_proven_cli_owned_rewind_delta() {
+    let orchestrator = skill_resource_text("sb-plan", "references/complete-route.md");
+    let design = skill_resource_text("sb-plan", "references/design.md");
+    let recovery = skill_resource_text("sb-plan", "references/replan.md");
+    let review = skill::find("sb-contract-review")
+        .expect("contract review skill")
+        .body()
+        .expect("contract review body");
+    let validator = skill::find("sb-validate-design")
+        .expect("validation skill")
+        .body()
+        .expect("validation body");
+
+    for body in [orchestrator, design, recovery, review, validator] {
+        assert!(body.contains("Design-rewind delta"));
+    }
+    assert!(orchestrator.contains("accepted Contract\nReview removal when one existed"));
+    assert!(orchestrator.contains("exact lifecycle changed-path set"));
+    assert!(orchestrator.contains("Missing provenance, a changed\npath set or diff"));
+    assert!(design.contains("Do not edit, discard,\nstash, or checkpoint the delta by itself"));
+    assert!(review.contains("Do not edit, discard, stash, or commit it separately"));
+    assert!(validator.contains("Treat it as read-only lifecycle context"));
+    assert!(design.contains("Do not create a\n  separate invalidation checkpoint"));
+}
+
+#[test]
 fn design_workflows_use_the_design_scoped_traceability_projection() {
     let design = skill_resource_text("sb-plan", "references/design.md");
     let validation = skill::find("sb-validate-design").expect("validation skill");

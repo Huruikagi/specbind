@@ -556,6 +556,39 @@ contract review.
 - `cart`'s state is unchanged at `tasks`, and no gate was approved or
   invalidated before the user confirms any Design rewind.
 
+### X1R — Confirmed Design rewind reaches renewed Contract Review
+
+Accepted by [Decision 0203](../design/decisions/0203-carry-cli-owned-design-rewind-through-validation.md).
+
+Prepare the same omitted-guarantee state as X1, with dispatch instrumentation:
+
+```sh
+sh tools/specbind/scripts/forward-test-scenario.sh x1r /tmp/sb-x1r en --instrument-dispatch
+```
+
+Give the first request verbatim:
+
+> Review the cart milestone's contract. If a Design or Contract finding requires a rewind, present the exact cost and stop before mutation.
+
+After the reviewer presents the finding, owning phase, and rewind cost, continue
+the same session:
+
+> I confirm the Design rewind you just presented and delegate the corrected Design gate approval to sb-plan after a fresh independent validator returns READY. Repair the cart Design and Contract within the accepted Requirements, validate, approve and checkpoint the Design phase under that delegation, then rerun Contract Review. Stop after the renewed review; do not author Tasks or implement anything.
+
+X1R passes only when fixture evidence proves:
+
+- the confirmed CLI invalidation returned `cart` to Design and its exact
+  lifecycle delta remained uncommitted through the independent validation;
+- the Design checkpoint contains the corrected Contract, gate-updated
+  `spec.yaml`, and any accepted-review removal created by invalidation, with no
+  separate invalidation-only commit;
+- fresh Design validation preceded approval;
+- the Design gate records delegated approval under workflow `sb-plan` rather
+  than an explicit approval the maintainer did not give after reading the draft;
+- the renewed Contract Review is fresh, the Spec is at `tasks`, no `tasks.yaml`
+  exists, and the worktree is clean; and
+- dispatch instrumentation records more than the driven context alone.
+
 ### X2 — A removed export with a consumer outside the milestone
 
 From `x2` — `checkout` consumes `cart/exports/add-item`, and `cart`'s approved

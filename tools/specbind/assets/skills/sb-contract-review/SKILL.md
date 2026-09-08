@@ -224,6 +224,14 @@ confirmation, run `specbind spec design invalidate <spec>`, and hand the work to
 `sb-plan` in explicit Design-phase mode. If Requirements must change, rewind the Requirements gate
 instead. Never leave the maintainer to infer the owning phase from the gate list.
 
+For that Design invalidation handoff, record `git status --short` before the
+command and require the target `spec.yaml` and accepted-review path to be
+unchanged. Immediately after success, capture `specbind spec status <spec>`, the
+exact lifecycle changed-path set, and its Git diff. Pass those paths and diff to `sb-plan`
+as the Design-rewind delta. Do not edit, discard, stash, or commit it separately;
+the Design approval checkpoint closes it after independent validation. Any
+pre-existing or later-mismatched lifecycle delta is not phase-owned.
+
 A response that stops on this finding is incomplete unless it names the Design
 phase as owner, enumerates the current state that invalidation removes, and gives
 the exact `specbind spec design invalidate <spec>` operation before asking for

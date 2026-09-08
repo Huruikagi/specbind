@@ -255,6 +255,75 @@ fn design_approval_does_not_read_a_retained_downstream_task_plan() {
 }
 
 #[test]
+fn design_reapproval_accepts_an_uncommitted_cli_owned_rewind_delta() {
+    let root = project_fixture();
+    write_gate_fixture(root.path());
+    approve_requirements(root.path());
+    approve_design(root.path());
+    let mut review = specbind_command();
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible before Design recovery."))
+        .assert()
+        .success();
+    commit_all(root.path());
+
+    let mut invalidate = specbind_command();
+    invalidate
+        .current_dir(root.path())
+        .args(["spec", "design", "invalidate", "checkout"])
+        .assert()
+        .success();
+
+    let rewind_status = git_stdout(root.path(), &["status", "--short"]);
+    assert!(rewind_status.contains(".specbind/specs/checkout/spec.yaml"));
+    assert!(rewind_status.contains(".specbind/state/contract-review.md"));
+    let rewind_diff = git_stdout(
+        root.path(),
+        &[
+            "diff",
+            "--",
+            ".specbind/specs/checkout/spec.yaml",
+            ".specbind/state/contract-review.md",
+        ],
+    );
+    assert!(rewind_diff.contains("-  state: tasks"));
+    assert!(rewind_diff.contains("+  state: design"));
+    assert!(rewind_diff.contains("deleted file mode"));
+
+    let design_path = ".specbind/specs/checkout/design.md";
+    let mut design = fs::read_to_string(root.path().join(design_path)).expect("Design");
+    design.push_str("\nRecovery keeps the CLI-owned rewind delta uncommitted.\n");
+    write(root.path(), design_path, &design);
+    let mut approve = specbind_command();
+    approve
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "design",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "delegated",
+            "--delegation-workflow",
+            "sb-plan",
+        ])
+        .assert()
+        .success();
+
+    let state = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("reapproved Spec");
+    assert!(state.contains("state: tasks"));
+    assert!(state.contains("approval_mode: delegated"));
+    assert!(state.contains("delegation_workflow: sb-plan"));
+    let final_status = git_stdout(root.path(), &["status", "--short"]);
+    assert!(final_status.contains(design_path));
+    assert!(final_status.contains(".specbind/specs/checkout/spec.yaml"));
+    assert!(final_status.contains(".specbind/state/contract-review.md"));
+}
+
+#[test]
 #[allow(clippy::too_many_lines)] // Keep the complete rewind-to-repair integration path in one assertion sequence.
 fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
     let root = project_fixture();

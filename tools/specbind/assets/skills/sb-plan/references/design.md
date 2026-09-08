@@ -554,6 +554,13 @@ step. It does not authorize anything broader:
   Include those reported paths with the gate-updated `spec.yaml`; fresh context
   does not make the earlier Design dispatch's outputs unrelated.
 
+- When this phase started with a proven Design-rewind delta, verify its current
+  lifecycle path set and diff still exactly match the captured post-invalidation
+  delta before approval. The approval command closes that delta by updating the
+  same `spec.yaml`; include the resulting gate-updated file and the proven
+  accepted-review removal when present in this checkpoint. Do not create a
+  separate invalidation checkpoint.
+
 - An explicit user or root instruction that forbids commits wins, and tool
   permissions still apply.
 - Delegated approval authorizes the gate, while the orchestrated phase request
@@ -593,6 +600,14 @@ ask.
 ```sh
 specbind spec design invalidate <spec>
 ```
+
+Before the command, record `git status --short` and require the target
+`spec.yaml` and accepted-review path to have no pre-existing change. Immediately
+after success, record `specbind spec status <spec>`, the exact lifecycle
+changed-path set, and its Git diff. Report those paths and diff as the
+Design-rewind delta so Plan
+can verify and carry it through independent validation. Do not edit, discard,
+stash, or checkpoint the delta by itself.
 
 Outside that explicit Drive recovery, confirmation cannot be inferred, and
 ordinary delegated authority does not cover this. Ordinary delegation
