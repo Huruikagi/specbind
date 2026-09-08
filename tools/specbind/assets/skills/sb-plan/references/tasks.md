@@ -35,23 +35,23 @@ specbind spec status <spec>
 specbind milestone review status
 ```
 
-**The contract review must be accepted before a plan exists.** Proceed only on
-`Status: fresh`.
+**The contract review must be accepted before a new or revised plan can receive
+Tasks approval.** Proceed with authorship only on `Status: fresh`.
 
 From the `tasks` state onward `spec status` also reports `Contract review:`, so
 use it as corroborating Spec-local context. `milestone review status` remains
 the authoritative focused check and is always required before first authoring.
 
 On `absent` or `stale`, author nothing and route the user to
-`sb-contract-review`. Say why, because the consequence is not visible from
-either report: `milestone review accept` refuses while a `tasks.yaml` is present
-(`CONTRACT_REVIEW_TASKS_ALREADY_EXIST`). Writing the plan now turns a missing
-prerequisite into a deadlock whose only exit is deleting the plan you just
-wrote.
+`sb-contract-review`. A retained `tasks.yaml` is not a review input and does not
+need deletion. Leave its plan and execution records unchanged until the review
+is fresh, then return here for the owned repair.
 
-This check is for **first authoring**. A plan that already exists and is being
-revised does not re-enter that path — `tasks invalidate` keeps the accepted
-review, because the review is still valid at the tasks state.
+This check covers both first authoring and revision after an upstream rewind. A
+plan that already exists after a Tasks-only invalidation keeps the accepted
+review. A plan retained after a Requirements or Design rewind waits unchanged
+while the milestone review is renewed, then re-enters this procedure as repair
+input.
 
 ### Then check the prerequisite gate
 
@@ -134,8 +134,10 @@ the protocol assumes:
 - `depends_on` names only tasks in this same file. A cross-spec dependency is a
   roadmap or contract edge, never a Task ID.
 
-Do not write `execution`. That state belongs to implementation, and a plan that
-arrives claiming completed work records a judgment nobody made.
+For a new plan, do not write `execution`. That state belongs to implementation,
+and a new plan that arrives claiming completed work records a judgment nobody
+made. When revising a retained plan, follow the explicit mapping rules below;
+they preserve only execution judgments that already existed and still apply.
 
 ### The YAML itself has traps
 
@@ -212,7 +214,7 @@ requires changing Design, Contract, Roadmap, or another Spec's plan, report the
 concrete prerequisite and ordering mismatch, route to its owner, and stop this
 plan's approval. Existing approval and invalidation rules still apply.
 
-## 5. Revising a plan that has recorded progress
+## 5. Revising a retained plan or a plan that has recorded progress
 
 If the Spec is in `implementation`, tasks may already be completed or blocked,
 and this is where a plan revision can destroy information silently.
@@ -356,10 +358,9 @@ authorizes accepting gates, not discarding accepted work.
 - Write no machine state. Never edit `spec.yaml`.
 - Never run `tasks complete`, `tasks block`, or `tasks reopen`. Those record an
   implementer's judgment.
-- Do not accept the contract review, and do not delete a plan to unblock one.
-  If a plan exists and the review was never accepted, the order is already lost —
-  report it and let the user decide, because discarding an authored plan is their
-  call.
+- Do not accept the contract review, and do not delete a retained plan to
+  unblock one. When review is absent or stale, route to `sb-contract-review` and
+  leave the plan and execution records unchanged.
 - Report in the project's language: the decomposition, the order and why, which
   requirements each task delivers, whether the work was
   committed, and what runs next.

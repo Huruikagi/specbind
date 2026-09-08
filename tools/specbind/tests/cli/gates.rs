@@ -255,6 +255,7 @@ fn design_approval_does_not_read_a_retained_downstream_task_plan() {
 }
 
 #[test]
+#[allow(clippy::too_many_lines)] // Keep the complete rewind-to-repair integration path in one assertion sequence.
 fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
     let root = project_fixture();
     write_gate_fixture(root.path());
@@ -268,11 +269,8 @@ fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
         .write_stdin(review_candidate("Compatible."))
         .assert()
         .success();
-    write(
-        root.path(),
-        ".specbind/specs/checkout/tasks.yaml",
-        gate_task_fixture(),
-    );
+    let retained = "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Build\n      requirement_ids: ['1.1']\nexecution:\n  tasks:\n    '1':\n      status: completed\n";
+    write(root.path(), ".specbind/specs/checkout/tasks.yaml", retained);
     let mut tasks = specbind_command();
     tasks
         .current_dir(root.path())
@@ -338,8 +336,46 @@ fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
 
     assert_eq!(
         fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml")).unwrap(),
-        gate_task_fixture()
+        retained
     );
+
+    let mut renewed_review = specbind_command();
+    renewed_review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible after Requirements recovery."))
+        .assert()
+        .success();
+    assert_eq!(
+        fs::read_to_string(root.path().join(".specbind/specs/checkout/tasks.yaml")).unwrap(),
+        retained,
+        "Contract Review must not read, rewrite, or discard the retained plan and progress"
+    );
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Record receipt\n      requirement_ids: ['2.1']\n",
+    );
+    let mut repaired_tasks = specbind_command();
+    repaired_tasks
+        .current_dir(root.path())
+        .args(["check", "traceability", "checkout"])
+        .assert()
+        .success();
+    let mut approve_repaired_tasks = specbind_command();
+    approve_repaired_tasks
+        .current_dir(root.path())
+        .args([
+            "spec",
+            "tasks",
+            "approve",
+            "checkout",
+            "--approval-mode",
+            "explicit",
+        ])
+        .assert()
+        .success();
 }
 
 #[test]
@@ -395,6 +431,22 @@ fn reverse_design_approval_enters_adoption_ready_without_tasks() {
             predicate::str::contains("\n  Next action: contract_review\n")
                 .and(predicate::str::contains("tasks.yaml").not()),
         );
+
+    write(
+        root.path(),
+        ".specbind/specs/checkout/tasks.yaml",
+        "invalid reverse task plan\n",
+    );
+    let mut review = specbind_command();
+    review
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Reverse contracts are coherent."))
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "CONTRACT_REVIEW_REVERSE_TASKS_FORBIDDEN",
+        ));
 }
 
 #[test]

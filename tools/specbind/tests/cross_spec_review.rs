@@ -241,19 +241,17 @@ fn atomically_accepts_and_replaces_a_guarded_review() {
 }
 
 #[test]
-fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
+fn accepts_delivery_review_without_reading_retained_tasks_but_rejects_stale_design() {
     let root = acceptance_fixture();
     let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;
-    write(root.path(), "specs/checkout/tasks.yaml", "invalid\n");
-    let tasks = cross_spec_review::accept(root.path(), root.path(), candidate)
-        .expect_err("tasks must not exist");
-    assert!(
-        tasks
-            .issues
-            .iter()
-            .any(|issue| issue.code == "CONTRACT_REVIEW_TASKS_ALREADY_EXIST")
+    let retained = "invalid retained task plan\n";
+    write(root.path(), "specs/checkout/tasks.yaml", retained);
+    cross_spec_review::accept(root.path(), root.path(), candidate)
+        .expect("retained delivery tasks are not review inputs");
+    assert_eq!(
+        fs::read_to_string(root.path().join("specs/checkout/tasks.yaml")).expect("retained tasks"),
+        retained
     );
-    fs::remove_file(root.path().join("specs/checkout/tasks.yaml")).expect("remove fixture task");
     write(
         root.path(),
         "specs/checkout/design.md",
@@ -266,6 +264,41 @@ fn rejects_acceptance_when_tasks_exist_or_design_is_stale() {
             .issues
             .iter()
             .any(|issue| issue.code == "CONTRACT_REVIEW_DESIGN_NOT_FRESH")
+    );
+}
+
+#[test]
+fn accepts_renewed_delivery_review_for_a_later_state_without_touching_progress() {
+    let root = acceptance_fixture();
+    let spec_path = root.path().join("specs/checkout/spec.yaml");
+    let tasks_evidence = "    tasks:\n      passed_at: 2026-08-16T12:00:00Z\n      approval_mode: explicit\n      input_revisions:\n        tasks.yaml#plan: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\n";
+    let spec = fs::read_to_string(&spec_path)
+        .expect("delivery spec")
+        .replace("  state: tasks\n", "  state: implementation\n");
+    write(
+        root.path(),
+        "specs/checkout/spec.yaml",
+        &format!("{spec}{tasks_evidence}"),
+    );
+    let retained = "retained progress is not a review input\n";
+    write(root.path(), "specs/checkout/tasks.yaml", retained);
+
+    cross_spec_review::accept(
+        root.path(),
+        root.path(),
+        r#"{"schemaVersion":1,"assessment":"Renewed.","deepInputs":[]}"#,
+    )
+    .expect("later delivery state remains eligible for renewed review");
+
+    assert_eq!(
+        fs::read_to_string(root.path().join("specs/checkout/tasks.yaml"))
+            .expect("retained progress"),
+        retained
+    );
+    assert!(
+        fs::read_to_string(spec_path)
+            .expect("preserved spec state")
+            .contains("  state: implementation\n")
     );
 }
 

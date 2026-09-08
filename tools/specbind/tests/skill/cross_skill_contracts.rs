@@ -95,7 +95,7 @@ fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
         "workflow\n`sb-drive`",
         "Requirements and\nscope/dependencies remain fixed",
         "recoverable Git revision",
-        "every participant",
+        "every Spec-backed participant",
         "fresh independent `sb-validate-design`",
         "Removed or changed work must not inherit a\ncompleted record",
         "Return to the invoking Drive",

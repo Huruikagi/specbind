@@ -2,17 +2,17 @@
 # Prepares and judges the deliberately expensive end-to-end forward-test journey.
 #
 # Usage:
-#   forward-test-journey.sh prepare hp1 <target-directory> [en|ja]
-#   forward-test-journey.sh judge   hp1 <target-directory>
+#   forward-test-journey.sh prepare <hp1|rr1> <target-directory> [en|ja]
+#   forward-test-journey.sh judge   <hp1|rr1> <target-directory>
 
 set -eu
 
-action=${1:?usage: forward-test-journey.sh <prepare|judge> hp1 <target-directory> [en|ja]}
-journey=${2:?usage: forward-test-journey.sh <prepare|judge> hp1 <target-directory> [en|ja]}
-target=${3:?usage: forward-test-journey.sh <prepare|judge> hp1 <target-directory> [en|ja]}
+action=${1:?usage: forward-test-journey.sh <prepare|judge> <hp1|rr1> <target-directory> [en|ja]}
+journey=${2:?usage: forward-test-journey.sh <prepare|judge> <hp1|rr1> <target-directory> [en|ja]}
+target=${3:?usage: forward-test-journey.sh <prepare|judge> <hp1|rr1> <target-directory> [en|ja]}
 language=${4:-en}
 
-if [ "$journey" != hp1 ]; then
+if [ "$journey" != hp1 ] && [ "$journey" != rr1 ]; then
     echo "forward-test-journey: unknown journey: $journey" >&2
     exit 1
 fi
@@ -22,6 +22,47 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 fail() {
     echo "forward-test-journey: $1" >&2
     exit 1
+}
+
+prepare_rr1() {
+    if [ "$language" != en ] && [ "$language" != ja ]; then
+        fail "language must be en or ja"
+    fi
+
+    sh "$script_dir/forward-test-scenario.sh" \
+        rr1 "$target" "$language" --instrument-dispatch >/dev/null
+    cd "$target"
+    PATH="$(CDPATH= cd -- .specbind/bin && pwd):$PATH"
+    export PATH
+
+    expect "previous active set is approved" \
+        'specbind check traceability cart | grep -q "Active requirement set: 1.1, 1.2, 1.3, 1.4"'
+    expect "previous work is completed" \
+        'specbind tasks list cart | grep -q "1 completed, 0 pending, 0 blocked"'
+    expect "previous review is fresh" \
+        'specbind milestone review status | grep -q "Status: fresh"'
+    expect "fixture starts clean" \
+        'test -z "$(git status --porcelain)"'
+
+    shell_target=$(pwd)
+    if native_target=$(pwd -W 2>/dev/null); then
+        :
+    else
+        native_target=$shell_target
+    fi
+
+    echo
+    echo "Journey rr1 ready"
+    echo "  native path: $native_target"
+    if [ "$shell_target" != "$native_target" ]; then
+        echo "  shell path: $shell_target"
+    fi
+    echo "Put the fixture CLI first on PATH:"
+    echo
+    echo "    export PATH=\"$(CDPATH= cd -- .specbind/bin && pwd):\$PATH\""
+    echo
+    echo "Drive the exact conversation in:"
+    echo "    docs/skill-forward-tests/journey-scenarios.md"
 }
 
 expect() {
@@ -204,12 +245,52 @@ judge_hp1() {
     echo "  dispatch contexts: $contexts"
 }
 
+judge_rr1() {
+    [ -d "$target/.git" ] || fail "$target is not a prepared Git fixture"
+    cd "$target"
+    PATH="$(CDPATH= cd -- .specbind/bin && pwd):$PATH"
+    export PATH
+
+    expect "replacement active set has exactly one new Requirement" \
+        'specbind check traceability cart --for-design | grep -q "Active requirement IDs: 1" && ! specbind check traceability cart --for-design | grep -Eq "Active requirement set:.*(1\\.1|1\\.2|1\\.3|1\\.4)"'
+    expect "replacement Design is fully covered" \
+        'specbind check traceability cart | grep -q "Design coverage: 1/1"'
+    expect "replacement Tasks are fully covered" \
+        'specbind check traceability cart | grep -q "Task coverage: 1/1 (required)"'
+    expect "renewed Contract Review is fresh" \
+        'specbind milestone review status | grep -q "Status: fresh"'
+    expect "replacement Tasks gate is fresh" \
+        'specbind spec status cart | grep -q "Gates: requirements=fresh, design=fresh, tasks=fresh"'
+    expect "changed prior work did not inherit completion" \
+        'specbind tasks list cart | grep -q "0 completed"'
+    expect "old inactive Task references are absent from the replacement" \
+        '! grep -q "1.1\|1.2\|1.3\|1.4" .specbind/specs/cart/tasks.yaml'
+
+    review_commit=$(git log -1 --format=%H -- .specbind/state/contract-review.md)
+    final_commit=$(git rev-parse HEAD)
+    expect "renewed review checkpoint exists before final Tasks repair" \
+        'test -n "$review_commit" && test "$review_commit" != "$final_commit" && git merge-base --is-ancestor "$review_commit" "$final_commit"'
+    expect "retained plan and completed record survived through review" \
+        'git show "$review_commit":.specbind/specs/cart/tasks.yaml | grep -q "1.1" && git show "$review_commit":.specbind/specs/cart/tasks.yaml | grep -q "status: completed"'
+    expect "final worktree is clean" \
+        'test -z "$(git status --porcelain)"'
+    expect "fresh-context dispatch occurred" \
+        'test -f .forward-test/agents.log && test "$(wc -l < .forward-test/agents.log)" -gt 1'
+
+    contexts=$(wc -l < .forward-test/agents.log | tr -d ' ')
+    echo
+    echo "PASS rr1"
+    echo "  final commit: $final_commit"
+    echo "  review commit: $review_commit"
+    echo "  dispatch contexts: $contexts"
+}
+
 case "$action" in
 prepare)
-    prepare_hp1
+    "prepare_$journey"
     ;;
 judge)
-    judge_hp1
+    "judge_$journey"
     ;;
 *)
     fail "unknown action: $action"

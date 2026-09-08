@@ -16,8 +16,8 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-One review per milestone, between design approval and any task plan, or between
-reverse Design approval and adoption finalization. The question is **not** "do
+One review per milestone, between design approval and any new or revised Tasks
+gate, or between reverse Design approval and adoption finalization. The question is **not** "do
 the Specs in this milestone agree with each other." It is:
 
 > Does this milestone leave **every** persistent seam in the project coherent —
@@ -41,14 +41,17 @@ Stop and report, rather than fixing, in these cases:
 - **`Status: not_applicable`** — a Direct-only milestone has no persistent seams
   to review. Say that the review is not required and stop.
 - **A participant is not ready** — use the reported `Milestone kind`. Delivery
-  acceptance needs every Spec-backed item to hold a fresh Design gate and sit
-  in `tasks`; reverse acceptance needs the same fresh gate and
+  acceptance needs every Spec-backed item to hold a fresh Design gate and be in
+  `tasks`, `implementation`, or `release_ready`; reverse acceptance needs the same fresh gate and
   `adoption_ready`, with no Tasks. Route any other state to its phase. Never
   approve a gate to make this barrier passable.
-- **A task plan already exists** — acceptance refuses with
-  `CONTRACT_REVIEW_TASKS_ALREADY_EXIST`. Report which Spec holds it and stop.
-  **Do not delete it.** The ordering is already lost, and discarding authored
-  work is the user's decision, not a step in a review.
+
+A delivery participant may retain `tasks.yaml`, including execution progress,
+from work approved against the previous review. That file is not a review input:
+do not read, validate, edit, move, or delete it. Its presence does not weaken or
+block this judgment. Affected Tasks are reviewed and repaired by their owner
+only after this Contract Review is accepted. Unaffected later-state participants
+keep their current Tasks gate and progress.
 
 `milestone scope` gives you the complete current scope. For every Spec-backed
 participant it names, also run:
@@ -186,7 +189,7 @@ Task plans are never inputs, and the CLI rejects them.
 
 When dispatched with explicit Drive replan authority, report in-scope
 Design/Contract findings to the `sb-plan` recovery owner with the affected
-Specs and exact rewind cost. That owner handles the existing Tasks barrier,
+Specs and exact rewind cost. That owner handles retained Tasks after this barrier,
 Design validation, and return to this review without another user confirmation.
 Do not delete plans or invalidate gates in the review dispatch. Carry the
 finding history and remaining two-round budget back; recovery never resets it.
@@ -308,8 +311,8 @@ and continue.
 - Author no Spec artifact. Requirements, design, and contracts belong to their
   phases; `tasks.yaml` belongs to the phase after this one.
 - Write no machine state. Never edit `spec.yaml` or the roadmap directly.
-- Never delete a task plan, and never approve or invalidate a gate to make this
-  barrier passable. Invalidation happens only as the explicitly user-confirmed
+- Never read, delete, or repair a delivery task plan, and never approve or
+  invalidate a gate to make this barrier passable. Invalidation happens only as the explicitly user-confirmed
   outcome of a finding after its complete rewind cost was presented.
 - Report in the project's language: what changed in the graph, who is affected,
   what you concluded, anything you brought to the user, whether the review was

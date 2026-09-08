@@ -198,14 +198,17 @@ or earlier-phase artifact may be dirty. Never mix several Specs' drafts in one
 dirty validation handoff.
 
 Once **every participating Spec**, not merely every item in named scope, holds
-current Design approval:
+current Design approval, dispatch the review even when delivery participants
+retain task plans or remain in later delivery states. Contract Review does not
+read those plans and does not require unaffected progress to be rewound:
 
 5. `sb-contract-review` — once for the milestone
 
 After the review is accepted:
 
-6. [Tasks phase](tasks.md) — `tasks.yaml` and its gate, for every in-scope item now
-   actionable; parallel in all scope
+6. [Tasks phase](tasks.md) — revise or author `tasks.yaml` and approve its gate
+   for every in-scope item the returned status now marks actionable; parallel in
+   all scope. Do not redispatch unaffected items whose Tasks gate remains fresh.
 
 For a reverse milestone, stop this sequence after the accepted Contract Review.
 Design approval reports `adoption_ready`; Tasks are forbidden. Return control

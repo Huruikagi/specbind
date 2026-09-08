@@ -62,15 +62,13 @@ selecting work; a valid new gate alone does not clear an old blocker.
 For a Design or Contract correction:
 
 1. Establish every Spec-backed participant from current Milestone scope. The
-   existing Contract Review acceptance requires fresh Design, state `tasks`,
-   and no `tasks.yaml` for every participant. Account for this global cost
-   before mutation, including otherwise unaffected completed participants.
-2. Through the respective owning phases, invalidate Design for changed Specs
-   and Tasks for other participants that have progressed past that barrier.
-   Keep the Requirements gates. After establishing recoverable plan revisions,
-   the Tasks owner may remove only those exact participant `tasks.yaml` files
-   for this authorized reconstruction. Never ask the reviewer to delete them.
-   Preserve their prior contents and progress via those Git revisions.
+   renewed Contract Review requires fresh Design but admits retained delivery
+   Tasks and later delivery states. Account for the global semantic review cost
+   without rewinding otherwise unaffected Tasks gates or progress.
+2. Through the respective owning phases, invalidate Design only for changed
+   Specs. Keep the Requirements gates where valid. Leave every retained
+   `tasks.yaml` and its execution records in place; Contract Review does not
+   read them, and no owner removes them to cross the barrier.
 3. Dispatch Design authors for the affected Specs in dependency order, then
    fresh independent `sb-validate-design`, then Design approval only on `READY`.
    Follow the normal Plan validation and finding-continuity rules. The normal
@@ -79,7 +77,7 @@ For a Design or Contract correction:
 4. Dispatch `sb-contract-review` for the whole Milestone. It reads all persistent
    seams, including outside-scope consumers, and accepts only a passing review.
    A finding routes back to its owner within the existing remediation budget.
-5. After acceptance, dispatch Tasks owners to restore or revise the saved plans,
+5. After acceptance, dispatch Tasks owners to revise the retained plans in place,
    recheck execution readiness against the new Design/Contract, and reapprove.
    Preserve unchanged proven work using an explicit identity mapping; clear
    records for changed obligations so implementation proves them again. A saved

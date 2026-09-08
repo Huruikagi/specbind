@@ -6,12 +6,12 @@ are expensive release-smoke tests, not members of the ordinary per-skill batch.
 
 ## When to run one
 
-Run HP1 only when a change can affect several lifecycle phases together, when a
-release candidate needs one realistic vertical proof, or when a focused
-scenario exposed a composition defect. Do not run it merely because one
+Run a journey only when a change can affect several lifecycle phases together,
+when a release candidate needs one realistic vertical proof, or when a focused
+scenario exposed a composition defect. Do not run one merely because one
 authoring skill changed. Focused scenarios remain the cheaper diagnostic tool.
 
-One HP1 measurement uses one fresh fixture and one continuous driver session.
+One journey measurement uses one fresh fixture and one continuous driver session.
 If the product is fixed during the run, the old fixture remains evidence about
 the old build. Prepare a new target for any rerun.
 
@@ -71,3 +71,54 @@ Record HP1 separately from focused scenarios. Include the driver profile, build,
 pass or failure, the failed judge expectation, the final commit, tagged commit,
 and dispatch-context count. A workflow pass with only one dispatch-log line is
 a fallback-path pass and leaves orchestration unmeasured.
+
+## RR1 — Requirements recovery reaches an approved replacement plan
+
+Accepted by [Decision 0202](../design/decisions/0202-renew-contract-review-over-retained-delivery-tasks.md).
+
+Prepare a cart whose previous active Requirement set, Design, Contract Review,
+Tasks gate, and one completed Task are all accepted:
+
+```sh
+sh tools/specbind/scripts/forward-test-journey.sh prepare rr1 /tmp/sb-rr1 en
+```
+
+Give the first request verbatim:
+
+> Ask: The cart milestone should make its return identity explicit, but the current active Requirements and completed plan still describe the previous behavior. Replace the active set with one new criterion: every accepted addition returns the same cart object after updating it. First inspect the current state and present the exact Requirements rewind cost. Do not mutate until I confirm.
+
+After the driver presents the rewind cost, continue the same session:
+
+> I confirm the Requirements rewind you just presented. You may approve the replacement Requirements and Design gates for cart without asking again. Continue through the renewed Contract Review, preserve the existing plan and completion record, then present the exact retained-Task and progress mapping and stop for my confirmation. Do not implement anything.
+
+After the driver presents that exact mapping, continue the same session:
+
+> I confirm the retained-Task and progress mapping you just presented. Apply it, approve the replacement Tasks gate, commit the planning checkpoint, and do not implement anything.
+
+The driver may present the new Requirements, Design validation verdict, and
+Contract Review assessment as progress. The second turn supplied the first two
+gate approvals but deliberately did not pre-approve an unseen progress mapping;
+the third turn authorizes that exact Tasks revision. It must not ask the reviewer
+to delete a plan or rewind an unaffected participant to make the global barrier
+passable.
+
+Judge the result mechanically:
+
+```sh
+sh tools/specbind/scripts/forward-test-journey.sh judge rr1 /tmp/sb-rr1
+```
+
+RR1 passes only when the judge reports every expectation as satisfied:
+
+- the replacement active set contains exactly one new ID and none of the old
+  `1.1`-`1.4` IDs, with complete Design and Tasks coverage and fresh
+  Requirements, Design, and Tasks gates;
+- renewed Contract Review is accepted before the replacement Tasks checkpoint;
+- Git proves the old plan and its completed execution record still existed at
+  the renewed-review checkpoint;
+- the replacement plan carries no inactive old Requirement reference and does
+  not inherit completion for the changed obligation;
+- implementation did not start, the final worktree is clean, and fresh-context
+  dispatch occurred.
+
+Record the final and renewed-review commits plus dispatch-context count.

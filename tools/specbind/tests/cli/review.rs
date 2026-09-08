@@ -335,7 +335,7 @@ fn reads_spec_completion_evidence_from_explicit_stdin() {
 }
 
 #[test]
-fn reports_tasks_authored_before_the_required_milestone_review() {
+fn reports_retained_delivery_tasks_as_non_blocking_review_state() {
     let root = project_fixture();
     write_status_fixture(root.path());
     write(
@@ -352,11 +352,13 @@ fn reports_tasks_authored_before_the_required_milestone_review() {
         .success()
         .stdout(
             predicate::str::contains("  Stage: contract_review\n")
-                .and(predicate::str::contains("  State health: inconsistent\n"))
                 .and(predicate::str::contains(
                     "  Spec states: implementation=1\n",
                 ))
-                .and(predicate::str::contains("MILESTONE_TASKS_BEFORE_REVIEW")),
+                .and(predicate::str::contains("MILESTONE_TASKS_BEFORE_REVIEW").not())
+                .and(predicate::str::contains(
+                    "milestone action=contract_review handler=skill:sb-contract-review",
+                )),
         );
 }
 
@@ -707,6 +709,11 @@ fn keeps_the_accepted_review_unchanged_when_a_guard_fails() {
         ".specbind/specs/checkout/tasks.yaml",
         task_fixture(),
     );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/design.md",
+        "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['1.1']\n---\n# Changed Design\n\n_Requirements: 1.1_\n",
+    );
     let mut blocked = specbind_command();
     blocked
         .current_dir(root.path())
@@ -719,9 +726,8 @@ fn keeps_the_accepted_review_unchanged_when_a_guard_fails() {
             predicate::str::starts_with(
                 "ERROR MILESTONE_REVIEW_ACCEPT_FAILED: Cannot accept the contract review.",
             )
-            .and(predicate::str::contains(
-                "CONTRACT_REVIEW_TASKS_ALREADY_EXIST",
-            )),
+            .and(predicate::str::contains("CONTRACT_REVIEW_DESIGN_NOT_FRESH"))
+            .and(predicate::str::contains("CONTRACT_REVIEW_TASKS_ALREADY_EXIST").not()),
         );
 
     assert_eq!(

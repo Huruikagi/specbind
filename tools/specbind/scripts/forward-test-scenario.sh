@@ -73,6 +73,7 @@
 #   vi4    vi1 plus an active Validation adapter requiring an unavailable check
 #   vd1    an approved design that defers the bound to a research document
 #   vd3    a rewound Design with a retained Task plan for the previous active set
+#   rr1    an implemented plan ready for Requirements-to-Tasks recovery
 #   rl1    cart released-ready but with no version bound yet
 #   rl2    rl3 plus a release adapter whose Verify step cannot succeed
 #   rl3    a milestone ready for release with an explicitly empty adapter body
@@ -213,9 +214,8 @@ cart_design_approved() {
         || fail "could not approve the design gate"
 }
 
-# Decision 0078 requires this before Tasks authoring, and the acceptance itself
-# refuses to run while a task plan exists. Every recipe that writes a plan
-# accepts the review first.
+# Decision 0078 requires this before initial Tasks authoring. Every recipe that
+# writes its first plan accepts the review first.
 contract_review_accepted() {
     printf '%s' '{"schemaVersion":1,"assessment":"One Spec participates and its contract is unchanged.","deepInputs":[]}' \
         | specbind milestone review accept --candidate - >/dev/null \
@@ -1257,6 +1257,38 @@ EOF
         'specbind spec status cart | grep -q "State: design"'
     expect "the retained task plan was removed" \
         'test -e .specbind/specs/cart/tasks.yaml'
+    ;;
+
+rr1)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Make the accepted-addition return identity explicit."}]}}'
+    brief cart \
+        "Callers rely on the updated cart but its return identity is not explicit." \
+        "Every accepted addition returns the same cart object after updating it."
+    cart_cap_approved
+    cart_design_approved
+    contract_review_accepted
+    {
+        echo "schema_version: 1"
+        echo "plan:"
+        echo "  items:"
+        echo "    - id: '1'"
+        echo "      kind: task"
+        echo "      title: Establish the previous cart behavior"
+        echo "      requirement_ids: ['1.1', '1.2', '1.3', '1.4']"
+    } > .specbind/specs/cart/tasks.yaml
+    specbind spec tasks approve cart --approval-mode explicit >/dev/null \
+        || fail "could not approve the previous task plan"
+    specbind tasks complete cart 1 >/dev/null \
+        || fail "could not record the previous task completion"
+    git add -A
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Checkpoint the previous completed plan"
+    expect "cart reached implementation" \
+        'specbind spec status cart | grep -q "State: implementation"'
+    expect "the previous task is completed" \
+        'specbind tasks list cart | grep -q "1 completed, 0 pending, 0 blocked"'
+    expect "the previous contract review is fresh" \
+        'specbind milestone review status | grep -q "Status: fresh"'
     ;;
 
 t6 | t7)

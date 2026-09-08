@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `12d43bd` + final Decision 0202 working tree | RR1-B/C — retained plan and completed progress survived through renewed Contract Review; final mutation environment-blocked by ENV-0004 | [Final retained-Tasks recovery](./runs/2026-09-08-codex-12d43bd-rr1-final.md) |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `12d43bd` + initial Decision 0202 working tree | RR1-A — scenario-invalid hard-coded Requirement ID; corrected without weakening the recovery expectations | [Initial retained-Tasks recovery](./runs/2026-09-08-codex-12d43bd-rr1-initial.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `a7b11b1` + Decision 0201 working tree | VD3 — pass; retained previous Tasks stayed strict in complete traceability while Design validation reached `READY` through the scoped projection | [Design-scoped traceability](./runs/2026-09-08-codex-a7b11b1-vd3-design-scope.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `07fc37c` + final status-filter tree | ST1 — pass; ordinary output retained only material progress, blocker condition, and next handoff; FT-0051 resolved after one environment-invalid attempt | [Final Status presentation filter](./runs/2026-09-08-codex-07fc37c-status-filter-final.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `07fc37c` + initial status-filter tree | ST1 — pass after an environment-invalid language attempt; post-judgment debrief surfaced FT-0051 | [Initial Status presentation filter](./runs/2026-09-08-codex-07fc37c-status-filter-initial.md) |

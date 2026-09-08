@@ -1,7 +1,7 @@
 use std::{fs, path::Path};
 
 use crate::{
-    artifacts::resolve_gate_inputs,
+    artifacts::resolve_design_gate_inputs,
     domain::spec::Spec,
     freshness::{self, FreshnessStatus},
     repository,
@@ -19,6 +19,7 @@ pub(super) fn validate_acceptance_guards(
     resolution: &ReviewInputResolution,
 ) -> Result<(), ReviewIssues> {
     let mut issues = Vec::new();
+    let reverse = !resolution.roadmap.reverse_specs.is_empty();
     validate_baseline(
         project_root,
         &resolution.roadmap.baseline_revision,
@@ -29,6 +30,7 @@ pub(super) fn validate_acceptance_guards(
             specbind_root,
             &spec,
             &resolution.roadmap.milestone_id,
+            reverse,
             &mut issues,
         );
     }
@@ -88,6 +90,7 @@ fn validate_participating_spec(
     specbind_root: &Path,
     canonical_spec: &str,
     milestone_id: &str,
+    reverse: bool,
     issues: &mut Vec<ReviewIssue>,
 ) {
     let source = format!("specs/{canonical_spec}/spec.yaml");
@@ -135,19 +138,27 @@ fn validate_participating_spec(
         ));
         return;
     };
-    if active.milestone_id.0 != milestone_id
-        || !matches!(
+    let state_ready = if reverse {
+        active.state == WorkflowState::AdoptionReady
+    } else {
+        matches!(
             active.state,
-            WorkflowState::Tasks | WorkflowState::AdoptionReady
+            WorkflowState::Tasks | WorkflowState::Implementation | WorkflowState::ReleaseReady
         )
-    {
+    };
+    if active.milestone_id.0 != milestone_id || !state_ready {
+        let message = if reverse {
+            "reverse participant must match the Roadmap milestone and be in adoption_ready"
+        } else {
+            "delivery participant must match the Roadmap milestone and have reached tasks or a later delivery state"
+        };
         issues.push(review_issue(
             "CONTRACT_REVIEW_SPEC_STATE_INVALID",
             Some(source.clone()),
-            "participating spec must match the Roadmap milestone and be ready for contract review",
+            message,
         ));
     }
-    let gate_inputs = resolve_gate_inputs(specbind_root, canonical_spec);
+    let gate_inputs = resolve_design_gate_inputs(specbind_root, canonical_spec);
     for value in gate_inputs.inventory.issues {
         issues.push(review_issue(
             value.code,
@@ -163,19 +174,21 @@ fn validate_participating_spec(
             "participating spec requires a fresh Design gate",
         ));
     }
-    let tasks = specbind_root.join(format!("specs/{canonical_spec}/tasks.yaml"));
-    match fs::symlink_metadata(tasks) {
-        Ok(_) => issues.push(review_issue(
-            "CONTRACT_REVIEW_TASKS_ALREADY_EXIST",
-            Some(format!("specs/{canonical_spec}/tasks.yaml")),
-            "tasks.yaml must not exist before contract review acceptance",
-        )),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Err(error) => issues.push(review_issue(
-            "CONTRACT_REVIEW_TASKS_INSPECT_FAILED",
-            Some(format!("specs/{canonical_spec}/tasks.yaml")),
-            error.to_string(),
-        )),
+    if reverse {
+        let tasks = specbind_root.join(format!("specs/{canonical_spec}/tasks.yaml"));
+        match fs::symlink_metadata(tasks) {
+            Ok(_) => issues.push(review_issue(
+                "CONTRACT_REVIEW_REVERSE_TASKS_FORBIDDEN",
+                Some(format!("specs/{canonical_spec}/tasks.yaml")),
+                "reverse contract review does not admit a task plan",
+            )),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => issues.push(review_issue(
+                "CONTRACT_REVIEW_TASKS_INSPECT_FAILED",
+                Some(format!("specs/{canonical_spec}/tasks.yaml")),
+                error.to_string(),
+            )),
+        }
     }
 }
 

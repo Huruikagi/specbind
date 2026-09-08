@@ -210,6 +210,28 @@ fn design_workflows_use_the_design_scoped_traceability_projection() {
 }
 
 #[test]
+fn renewed_contract_review_preserves_retained_delivery_tasks_until_owned_repair() {
+    let orchestrator = skill_resource_text("sb-plan", "references/complete-route.md");
+    let tasks = skill_resource_text("sb-plan", "references/tasks.md");
+    let recovery = skill_resource_text("sb-plan", "references/replan.md");
+    let review = skill::find("sb-contract-review").expect("contract review skill");
+    let review = review.body().expect("contract review body");
+
+    assert!(review.contains("That file is not a review input"));
+    assert!(review.contains("do not read, validate, edit, move, or delete it"));
+    assert!(review.contains("`tasks`, `implementation`, or `release_ready`"));
+    assert!(orchestrator.contains("does not require unaffected progress to be rewound"));
+    assert!(tasks.contains("retained `tasks.yaml` is not a review input"));
+    assert!(tasks.contains("plan and execution records unchanged"));
+    assert!(recovery.contains("without rewinding otherwise unaffected Tasks gates or progress"));
+    assert!(
+        recovery
+            .contains("Leave every retained\n   `tasks.yaml` and its execution records in place")
+    );
+    assert!(!recovery.contains("remove only those exact participant `tasks.yaml`"));
+}
+
+#[test]
 fn design_phase_distinguishes_route_validation_from_gate_mechanics() {
     let body = skill_resource_text("sb-plan", "references/design.md");
     assert!(body.contains("This Design-phase receiver never\ninvokes it"));

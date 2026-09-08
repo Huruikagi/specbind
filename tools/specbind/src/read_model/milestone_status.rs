@@ -191,7 +191,8 @@ pub fn resolve(
     let reverse = !roadmap.reverse_specs.is_empty();
     diagnose_unscoped_active_specs(specbind_root, &roadmap, &mut diagnostics);
     diagnose_required_contract_graph(specbind_root, &facts, &mut diagnostics);
-    if matches!(review.status, ReviewFreshnessStatus::Missing)
+    if reverse
+        && matches!(review.status, ReviewFreshnessStatus::Missing)
         && facts.iter().any(|item| match &item.kind {
             ItemKind::Spec { model, .. } => model
                 .as_ref()
@@ -200,10 +201,9 @@ pub fn resolve(
         })
     {
         diagnostics.insert(MilestoneDiagnostic {
-            code: "MILESTONE_TASKS_BEFORE_REVIEW",
+            code: "MILESTONE_REVERSE_TASKS_FORBIDDEN",
             path: None,
-            message: "current tasks.yaml exists before the required contract review is accepted"
-                .to_owned(),
+            message: "reverse milestone participants cannot carry tasks.yaml".to_owned(),
         });
     }
     let validation_checkout_ready = git.clean
