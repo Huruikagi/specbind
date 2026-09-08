@@ -541,7 +541,10 @@ fn actionable_items(
                 push_action(&mut actions, item, MilestoneActionKind::Implementation);
             }
             ItemKind::Spec { model, .. }
-                if all_implemented && clean && !model.as_deref().is_some_and(validated) =>
+                if completion[&item.id]
+                    && dependencies_ready(item, completion)
+                    && clean
+                    && !model.as_deref().is_some_and(validated) =>
             {
                 push_action(&mut actions, item, MilestoneActionKind::Validation);
             }
@@ -1070,5 +1073,46 @@ mod tests {
             .is_empty(),
             "a blocked Spec with no actionable Task must not be redispatched"
         );
+    }
+
+    #[test]
+    fn completed_spec_can_validate_while_an_independent_spec_is_blocked() {
+        let facts = vec![
+            ItemFacts {
+                id: "spec:completed".to_owned(),
+                command_operand: "completed".to_owned(),
+                summary: "Completed".to_owned(),
+                dependencies: Vec::new(),
+                kind: ItemKind::Spec {
+                    model: Some(implementation_model(1, 0, 0, Vec::new())),
+                    tasks_checkpointed: true,
+                },
+            },
+            ItemFacts {
+                id: "spec:blocked".to_owned(),
+                command_operand: "blocked".to_owned(),
+                summary: "Blocked".to_owned(),
+                dependencies: Vec::new(),
+                kind: ItemKind::Spec {
+                    model: Some(implementation_model(0, 0, 1, Vec::new())),
+                    tasks_checkpointed: false,
+                },
+            },
+        ];
+        let completion = implementation_completion(&facts, true);
+
+        let actions = actionable_items(
+            &facts,
+            ReviewFreshnessStatus::Fresh,
+            &completion,
+            false,
+            true,
+            false,
+            false,
+        );
+
+        assert_eq!(actions.len(), 1);
+        assert_eq!(actions[0].item, "spec:completed");
+        assert_eq!(actions[0].action, MilestoneActionKind::Validation);
     }
 }
