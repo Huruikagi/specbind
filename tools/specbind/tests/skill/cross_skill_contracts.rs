@@ -346,14 +346,14 @@ fn parallel_drive_is_opt_in_and_ships_the_same_fallback_to_every_host() {
             skill_resource_text("sb-drive", "references/parallel.md")
         );
         for boundary in [
-            "continue sequentially",
-            "generic Skill-only hosts",
+            "sequentially before dispatch",
+            "generic Skill support alone is insufficient",
             "does not disable ordinary fresh-role dispatch",
-            "Worker-local `completed` never does so on its own",
-            "separate candidate worktree",
-            "Without exclusive write coordination, stop acceptance",
-            "No planning, replanning, Direct work",
-            "do not replay or\nimplement it again",
+            "Do not merge, cherry-pick, rebase, create an integration candidate",
+            "Stop after this single batch",
+            "This route does not automatically recover interrupted batches",
+            "stop; do not switch their items",
+            "Do not copy worker Task state",
         ] {
             assert!(
                 procedure.content.contains(boundary),

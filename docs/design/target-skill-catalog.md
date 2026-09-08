@@ -225,7 +225,7 @@ the user resume each owning workflow manually.
 - Does not silently invalidate accepted gates, change scope, reclassify Direct
   work, or grant itself external or destructive authority.
 - Optional `--parallel [<limit>]` batches independent Spec implementation in
-  verified isolated worktrees, with serial candidate review and acceptance
+  verified isolated worktrees, then retains branches and stops for separate integration
   under [Decision 0201](./decisions/0201-isolated-parallel-spec-implementation.md).
   Missing capabilities, including on generic Skill hosts, retain sequential
   execution; each Spec's Tasks always remain sequential.

@@ -4,111 +4,77 @@ Status: Accepted
 
 ## Context
 
-Decision 0146 removed Task-level parallelism because shared-worktree ownership,
-review, remediation and checkpoints were interdependent. Decision 0168 chose a
-single mutating Drive owner initially. Isolated host execution can now support
-independent Specs without changing sequential Task-plan semantics. Generic
-Skill installation, however, makes no promise of worktree/session support.
+Decision 0146 keeps Tasks sequential; Decision 0168 initially permits one
+mutating Drive owner. Independent Specs can be implemented in isolated host
+worktrees without introducing Task-level parallelism.
+
+The initial design also specified candidate replay, serial integration and
+interrupted-run recovery in Skill prose. That required the agent to operate a
+merge queue without measured reliability. The accepted scope is reduced to one
+isolated implementation batch and a retained-branch handoff. Integration is a
+separate maintainer-directed operation.
 
 ## Decision
 
-### Optional execution strategy, compatible default
+### Explicit request and compatible fallback
 
-`sb-drive --parallel [<limit>]` requests bounded parallel Spec implementation.
-The numeric limit is optional: bare `--parallel` defaults to two, as does an
-explicit natural-language parallel request without a limit. An explicit limit
-must be a positive integer; one is sequential. Recognized following options
-remain separate, so both `--replan --parallel` and `--parallel --replan` use two.
-Invalid explicit limits are diagnosed before dispatch. The limit counts Spec
-owners, not their internal agents. These are Skill arguments, not new CLI command arguments.
-Ordinary Drive remains sequential; upgrades introduce no persistent setting.
+`sb-drive --parallel [<limit>]` requests parallel Spec implementation. Bare
+`--parallel` and natural-language parallel requests without a number use two.
+An explicit limit is a positive integer counting Spec owners, not internal
+agents; one uses ordinary sequential execution. Recognized following options
+remain separate: `--replan --parallel` and `--parallel --replan` both use two.
+Reject invalid explicit limits before dispatch. Ordinary Drive stays sequential.
 
-Select only already-actionable independent Spec-backed implementation entries
-from current integration-checkout status. Each worker executes the complete
-`sb-implement` workflow and keeps its Tasks sequential with per-Task review and
-checkpoints. Planning, Direct items, replanning, final validation and release
-binding do not run alongside a batch. Release remains outside Drive.
+Use current CLI actionable entries, approved inputs and verification prerequisites
+to choose independent Spec-backed implementation items. Verify the actual host
+can run complete owners in distinct worktrees at a clean explicit base, retrieve
+results and retain branches and partial work. Require compatible project Task
+checkpoint policy. If unavailable before dispatch, use ordinary sequential
+Drive; generic Skill installation or a host name does not prove isolation.
 
-### Capability-dependent fallback
+Missing isolation does not remove ordinary fresh-role dispatch. Decision 0109's
+disclosed compatibility path applies only to genuine no-subagent hosts;
+registered role failures retain Decision 0129's environment-failure boundary.
+The same procedure is installed for Codex, Claude Code and generic. Host support
+must be observed on the actual runtime, not inferred from another vendor surface.
 
-Before batching, verify actual isolated concurrent dispatch, explicit base/cwd,
-owning-workflow and fresh-review capability, environment setup, result retrieval,
-retention, compatible Git policy and coordinated serial integration. Neither
-an agent name nor a shell supporting `git worktree` proves those capabilities.
+### One batch, then handoff
 
-If support is missing or unverified, report why once and continue the existing
-sequential workflow. This applies to generic Skill-only hosts and equally to
-Codex or Claude Code surfaces lacking the required tools. Do not require a new
-plugin, alter permissions, or remove existing review/approval guards. A real
-worktree/environment blocker still follows its existing stop semantics. Missing
-isolated worker APIs do not remove ordinary fresh-role dispatch or authorize
-inline review/self-validation when ordinary dispatch exists. Decision 0109's
-protocol-preserving main-context compatibility path remains available to hosts
-that genuinely have no subagent mechanism; disclose that no independent dispatch
-occurred. A registered role's model/start failure retains Decision 0129's
-existing environment-failure boundary.
+Each worker executes the complete `sb-implement` workflow, with sequential Tasks,
+ordinary review, tests, CLI progress and Task checkpoints in its own retained
+branch. The original checkout receives no worker changes. No parallel planning,
+Direct work, whole-Spec validation, release binding or Release runs with a batch.
+`--replan` retains its ordinary authority before a batch; worker findings needing
+replanning are handed back for a subsequent operation after the batch stops.
 
-The same agent-neutral procedure is installed for all three Agent profiles.
-As a narrow qualification of Decision 0109's mechanism-neutral wording,
-conditional capability checks may name host features as evidence to verify;
-the owning workflow and protocol briefs remain common across hosts.
-Host checks belong to conditional execution guidance, not separate progress
-schemas, role identities, persistent configuration or a host-version allowlist.
-Internal roles stay in the owning worker checkout; fresh review does not inherit
-implementation conversation history. Unsupported host modes are not advertised
-as automatically supported based on another surface from the same vendor.
+After one batch, verify and report each branch, worktree, base/result commits,
+checks, Task progress and blockers, then stop even if all workers succeeded.
+Retain successful and blocked work, including dirty partial changes. Partial
+startup failure also returns a handoff; it never triggers duplicate sequential
+implementation of already-started items.
 
-### Integration is the acceptance boundary
+This route performs no merge, cherry-pick, rebase, candidate integration,
+worktree cleanup, second batch, downstream implementation or final validation.
+Worker Task completion is local to its branch, not Milestone completion.
+Integration and any conflict resolution require a separate maintainer-directed
+operation. A later ordinary Drive invocation uses the resulting fresh CLI state
+and the existing common-revision final validation rules.
 
-Pin full clean base revisions before worker mutation. Copied dirty changes,
-default-branch drift and detached/disposable results must be detected. Keep
-unaccepted work reachable and attributable across interruptions.
-
-Drive coordinates serial acceptance through existing owning workflows and Git
-policy. Verify a result's complete attributable commit range and current approved
-inputs. Replay whole Task checkpoint units in a separate candidate based on
-current integration HEAD. Freshly review interaction effects and run affected
-Task/project checks there before a coordinated, clean, expected-base fast-forward.
-If current HEAD changes or exclusive write coordination cannot be established,
-stop acceptance rather than overwriting another writer. Failed candidates never
-advance the integration checkout's authoritative Task progress.
-
-The implementation owner renews invalid Task proof through existing explicit
-reopen/implement/review/complete operations and preserves retry limits. Unresolved
-replay conflicts are retained attention; Drive does not author conflict fixes or
-bypass owning-workflow guards. Upstream defects return to their owners. Even when
-`--replan` is authorized, wait for the batch to quiesce and reassess retained
-results after changed approvals; workers never replan independently.
-
-Only accepted integration-checkout status can unlock descendants. Branch-local
-Task completion keeps its existing interpretation and does not count as final
-Spec validation. After all implementation converges, Decisions 0082/0086's common
-clean revision validation and acceptance handshake remain mandatory.
-
-### Interruption and scope
-
-Retain blocked workers with their partial changes and accepted Task checkpoints;
-never manufacture WIP commits or discard results to make scheduling easier.
-Another independent successful worker can be integrated. Reconstruct integrated
-progress from CLI state and identify retained results from real refs/diffs/host
-sessions before any duplicate dispatch, including on sequential fallback.
-Ambiguous retained work needs attribution, not a new persistent run ledger.
-
-Cleanup requires verified acceptance of all useful changes or explicit discard
-authority. No new Task state, integration ledger, gate, CLI mutation or schema is
-introduced. This Decision supersedes only Decision 0168's single-mutating-owner
-restriction for this opt-in mode; Decision 0146's Task ordering remains intact.
+Interrupted-batch recovery is not automated. Known retained results stop new
+work for those Specs, including fallback, until the maintainer identifies and
+handles them. No persistent queue, new progress schema or Git recovery algorithm
+is introduced. This narrows Decision 0168 only for isolated implementation;
+Decision 0146's Task ordering remains unchanged.
 
 ## Verification
 
-Skill tests check opt-in routing and identical installed procedures for Codex,
-Claude Code and generic, including sequential fallback and integration guards.
-Behavioral scenarios cover isolated batching and unsupported-host fallback;
-record the actual runtime and distinguish missing host capabilities from product
-failures. Passing a Codex fixture does not certify Claude Code execution.
+Static tests check shared installed routing and the branch-handoff boundary.
+Behavioral DP1 must observe overlapping worker execution, ordinary owner review
+and checkpoints, retained results, unchanged original checkout and no dependent
+work. DP2 measures unchanged sequential fallback; DP3 measures stopping for known
+retained results. Historical runs of the earlier integration design remain
+historical evidence, not passes for this revision.
 
-The opt-in capability remains installed, but public user-guide instructions and
-recommendations are deferred until end-to-end behavioral measurements establish
-isolated concurrent execution and candidate integration. Keep the outstanding
-verification limits in the forward-test records; do not present static Skill
-checks or partial sequential fallback evidence as that confirmation.
+Public user-guide instructions remain deferred until the reduced route is
+measured successfully. Missing runtime capabilities are recorded as environment
+limitations, not product passes; Codex evidence does not certify Claude Code.

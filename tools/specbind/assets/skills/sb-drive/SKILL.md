@@ -40,7 +40,9 @@ The limit caps concurrent Spec owners, not the total number of internal agents.
 Parallelism is a run-scoped request, not a required host capability. Generic
 Skill hosts and any other host without verified isolated execution continue
 sequentially under that procedure. Do not infer capabilities from the installed
-agent name or install new tools just to satisfy the request.
+agent name or install new tools just to satisfy the request. Once a parallel
+batch starts, this run ends at its retained-branch handoff; do not integrate
+results or resume the ordinary scheduler afterward.
 
 ## Optional replan authority
 
@@ -137,9 +139,9 @@ as lifecycle evidence.
   `RETRYABLE` within an unspent retry bound.
 - Preserve every owning workflow's retry and remediation limit. Drive never
   resets one.
-- Under the parallel procedure, inspect and accept worker results there before
-  applying these rules to the integration checkout. Dirty isolated workers are
-  retained attention; their progress is not integration progress.
+- A parallel batch returns through its own retained-branch handoff and stops.
+  Do not apply worker-local progress to the original checkout or use it to
+  dispatch downstream work.
 - Except for the attributable same-recovery handoff defined by [Authorized
   replan routing](references/replan.md), if the worktree
   contains partial, rejected, unrelated, or unattributed work,

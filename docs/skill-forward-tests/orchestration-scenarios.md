@@ -9,26 +9,27 @@ failure handling.
 Accepted by
 [Decision 0168](../design/decisions/0168-milestone-drive-orchestrator.md).
 
-### DP1 — Isolated independent Specs converge before dependent implementation
+### DP1 — One isolated batch ends at a retained-branch handoff
 
 Prepare `dp1` with dispatch instrumentation. Ask:
 
 > Drive this milestone with up to two independent Specs in parallel. Continue
 > through safe delivery, but do not release or choose a release version.
 
-- The run loads the installed optional parallel procedure and checks actual host
-  capabilities. Record the actual host surface; fallback does not pass DP1's
-  concurrency expectation and is `environment_blocked` when support is absent.
-- Subtotal and shipping start from the same clean integration commit in distinct
-  worktrees with overlapping execution intervals, evidenced by actual host
-  dispatch events and Git/cwd records. Each complete owning Skill retains review,
-  CLI Task progress and one default Task checkpoint.
-- Total does not start while either predecessor is only worker-local completed.
-  Candidate review/checks precede each serial integration update; the integration
-  checkout contains no partial candidate state.
-- Final implementation has the three modules and passing canonical tests. Final
-  Spec validation follows the existing common-revision barrier, and release is
-  not run. Retained workers are reported and not discarded before acceptance.
+- The installed optional route checks actual isolation capability. Missing or
+  unverified support is `environment_blocked`, not a concurrency pass.
+- Subtotal and shipping run at the same clean base in distinct retained branches
+  with overlapping execution intervals, proven by host events and Git/cwd facts.
+  Each complete owner performs ordinary review, Task progress and checkpoint.
+- The original checkout remains at its initial commit, clean, with all Tasks
+  pending. Total never starts. No integration candidate, merge or final Spec
+  validation occurs.
+- Both result branches and worktrees remain available, with passing focused
+  tests and completed local Tasks. The final report identifies each result and
+  stops for separate integration. No second batch or Release runs.
+- If a worker blocks, its partial work is retained and reported without merging
+  the successful sibling. A separate interruption attempt is required to claim
+  that branch; an all-success run proves only the normal handoff.
 
 ### DP2 — Skill-only hosts keep ordinary sequential delivery
 
@@ -43,6 +44,20 @@ not certification of a third-party generic host. Ask the same request as DP1.
   only after both. Per-Task checkpoints, review and CLI guards remain in force.
 - Verify three completed Task records, canonical tests and Git checkpoint units;
   final validation remains the ordinary workflow, and Release is not invoked.
+
+### DP3 — Known retained results stop duplicate dispatch
+
+Prepare `dp1`. In a separate retained branch/worktree, checkpoint one attributable
+subtotal implementation file; leave the original checkout and CLI Task state
+unchanged. Record both revisions before running. Ask to continue parallel work
+and name that existing subtotal result branch/worktree as prior interrupted work.
+
+- The owner reports the retained result and stops before new implementation,
+  including on a host that otherwise falls back to sequential execution.
+- Both checkouts, refs and Task states remain unchanged. No merge, cleanup,
+  automatic recovery or duplicate worker occurs.
+- A report identifying the separate operation needed is the expected boundary,
+  not a claim of Milestone completion.
 
 ### DR1 — A parked Direct reroute does not stop independent delivery
 
