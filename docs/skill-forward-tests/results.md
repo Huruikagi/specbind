@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `07fc37c` + final status-filter tree | ST1 — pass; ordinary output retained only material progress, blocker condition, and next handoff; FT-0051 resolved after one environment-invalid attempt | [Final Status presentation filter](./runs/2026-09-08-codex-07fc37c-status-filter-final.md) |
+| 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `07fc37c` + initial status-filter tree | ST1 — pass after an environment-invalid language attempt; post-judgment debrief surfaced FT-0051 | [Initial Status presentation filter](./runs/2026-09-08-codex-07fc37c-status-filter-initial.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `4577078` | U4 — pass; unrelated unstaged work survived both update checkpoints without a stash | [Dirty-worktree update](./runs/2026-09-08-codex-4577078-u4-update-dirty.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `6701a9b` + Decision 0200 working tree | ST1 — pass; dirty blocked Task retained progress, reason, and next condition | [Milestone blocker status](./runs/2026-09-08-codex-6701a9b-st1-status.md) |
 | 2026-09-08 | Codex | `gpt-5.6-terra` / `medium` | `16c004c` | Q4 — independent validation preceded delegated Design approval; checkpoint environment-blocked; FT-0050 resolved for the affected branch | [Design validation ownership confirmation](./runs/2026-09-08-codex-16c004c-q4-validation-owner.md) |
