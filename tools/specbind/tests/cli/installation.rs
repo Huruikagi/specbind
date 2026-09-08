@@ -58,6 +58,8 @@ fn assert_progressive_skill_resources(root: &Path) {
         ".agents/skills/sb-drive/SKILL.md",
         ".claude/skills/sb-drive/references/replan.md",
         ".agents/skills/sb-drive/references/replan.md",
+        ".claude/skills/sb-drive/references/parallel.md",
+        ".agents/skills/sb-drive/references/parallel.md",
         ".claude/skills/sb-implement/references/spec-backed.md",
         ".agents/skills/sb-implement/references/spec-backed.md",
         ".claude/skills/sb-release/references/bootstrap-release-adapter.md",
@@ -89,7 +91,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 113 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 115 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -111,7 +113,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 113 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 115 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -179,7 +181,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 69 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 70 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -247,10 +249,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 71 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 72 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 71 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 72 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -1144,7 +1146,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 70 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 71 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

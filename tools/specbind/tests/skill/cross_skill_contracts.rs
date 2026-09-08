@@ -294,7 +294,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 7),
         ("sb-discovery", 3),
-        ("sb-drive", 1),
+        ("sb-drive", 2),
         ("sb-implement", 2),
         ("sb-plan", 5),
         ("sb-release", 1),
@@ -323,3 +323,48 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
 }
 
 use super::*;
+
+#[test]
+fn parallel_drive_is_opt_in_and_ships_the_same_fallback_to_every_host() {
+    let entry = skill::find("sb-drive").expect("drive");
+    assert!(
+        entry
+            .metadata()
+            .expect("metadata")
+            .argument_hint
+            .expect("hint")
+            .contains("--parallel [<limit>]")
+    );
+    for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
+        let files = entry.render_files(agent).expect("package");
+        let procedure = files
+            .iter()
+            .find(|file| file.target.ends_with("/references/parallel.md"))
+            .expect("parallel procedure installed");
+        assert_eq!(
+            procedure.content,
+            skill_resource_text("sb-drive", "references/parallel.md")
+        );
+        for boundary in [
+            "sequentially before dispatch",
+            "generic Skill support alone is insufficient",
+            "does not disable ordinary fresh-role dispatch",
+            "Do not merge, cherry-pick, rebase, create an integration candidate",
+            "Stop after this single batch",
+            "This route does not automatically recover interrupted batches",
+            "stop; do not switch their items",
+            "Do not copy worker Task state",
+        ] {
+            assert!(
+                procedure.content.contains(boundary),
+                "{agent:?}: missing {boundary}"
+            );
+        }
+    }
+    let body = entry.body().expect("body");
+    assert!(body.contains("Ordinary Drive is sequential"));
+    assert!(body.contains("references/parallel.md"));
+    assert!(body.contains("Bare `--parallel` defaults to two"));
+    assert!(body.contains("`--replan --parallel` and `--parallel --replan` both use two"));
+    assert!(body.contains("Reject zero, negative or non-integer explicit limits"));
+}

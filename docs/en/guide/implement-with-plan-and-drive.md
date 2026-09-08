@@ -48,7 +48,7 @@ $sb-drive
 ```
 
 Drive selects only actions exposed by `specbind milestone status --json` and
-delegates one at a time to the owning workflow. It does not author Requirements
+by default delegates one at a time to the owning workflow. It does not author Requirements
 or Design itself and does not batch-complete Tasks.
 
 Typical ownership is:
@@ -61,8 +61,8 @@ Typical ownership is:
 | Whole-Spec implementation validation | `sb-validate-implementation <spec-id>` |
 | Release boundary | Report status and stop |
 
-After every handoff, Drive rereads Git worktree state and Milestone status. The
-initial implementation runs only one mutating workflow at a time.
+After every handoff, Drive rereads Git worktree state and Milestone status.
+Ordinary execution runs only one mutating workflow at a time.
 
 ### Delegate replanning discovered during implementation
 
@@ -118,7 +118,7 @@ unfinished Design prevents Contract review but not another Spec's reachable
 Design. An unfinished implementation prevents its descendants and Milestone
 completion but not independent implementation.
 
-An unsafe worktree is different. Partial, rejected, unrelated, or unattributed
+An unsafe integration or ordinary shared worktree is different. Partial, rejected, unrelated, or unattributed
 changes make switching ownership unsafe, so Drive stops without resetting or
 stashing them. The exception is the attributable implementation carried through
 the same authorized replan described above; it cannot be used to switch to

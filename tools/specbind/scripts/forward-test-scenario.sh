@@ -19,6 +19,8 @@
 #   u2     controlled moving-selector SpecBind update with an old installed package marker
 #   u3     controlled exact-pin SpecBind update that requires an explicit target
 #   u4     controlled moving-selector update with unrelated unstaged work
+#   dp1    two independent implementation Specs plus one dependent integration Spec
+#   dp2    dp1 with a Skill-only execution capability restriction
 #   dr1    two independent Direct items; one requires a Spec reroute
 #   dr3    approved Design conflicts with Requirements; delegated recovery
 #   dr4    same Design defect without delegated recovery
@@ -1683,6 +1685,126 @@ i3)
         'specbind adapter read git | grep -q "immediately before its completion handshake"'
     ;;
 
+dp1 | dp2)
+    milestone '{"schemaVersion":1,"workItems":{"newSpecs":[{"spec":"subtotal","summary":"Compute a line subtotal."},{"spec":"shipping","summary":"Compute shipping from a boundary subtotal."},{"spec":"total","summary":"Combine subtotal and shipping.","dependsOn":[{"spec":"subtotal"},{"spec":"shipping"}]}]}}'
+    mkdir -p scripts tests
+    runner=$(python_runner)
+    printf '#!/usr/bin/env sh\nset -eu\n%s -B -m unittest discover -s tests -p "test_*.py"\n' "$runner" > scripts/test.sh
+    for spec in subtotal shipping total; do
+        case "$spec" in
+        subtotal) behavior='subtotal(price, quantity) returns price multiplied by quantity for nonnegative integer inputs.'; mechanism='Implement src/subtotal.py with subtotal(price, quantity); test zero and positive integers in tests/test_subtotal.py.' ;;
+        shipping) behavior='shipping(amount) returns 0 when amount is at least 100, and 10 otherwise, for nonnegative integer amounts.'; mechanism='Implement src/shipping.py with shipping(amount); prove 0, 99, 100 and 101 using boundary values in tests/test_shipping.py. This Spec requires no subtotal implementation.' ;;
+        total) behavior='total(price, quantity) returns the subtotal plus shipping computed from that subtotal.'; mechanism='Implement src/total.py with total(price, quantity), consuming src.subtotal.subtotal and src.shipping.shipping; test both shipping branches through real imports in tests/test_total.py.' ;;
+        esac
+        brief "$spec" "The $spec capability is absent." "$behavior"
+        cat > ".specbind/specs/$spec/requirements.md" <<EOF
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+# Requirements
+
+## Requirements
+
+### Requirement 1: Compute $spec
+
+#### Acceptance Criteria
+
+1. $behavior
+EOF
+        specbind spec requirements approve "$spec" --approval-mode explicit --requirement-ids 1.1 >/dev/null || fail "$spec Requirements approval failed"
+        cat > ".specbind/specs/$spec/design.md" <<EOF
+---
+type: SpecBind Design
+artifact_id: main
+requirement_ids: ['1.1']
+---
+# Design
+
+## Mechanism and proof
+
+$mechanism
+Run sh scripts/test.sh after the focused tests. The runner already exists.
+Each Spec owns only its module and its test file. No dependency installation,
+shared service, generated output or runner change is needed.
+
+_Requirements: 1.1_
+EOF
+        cat > ".specbind/specs/$spec/contract.yaml" <<EOF
+schema_version: 1
+owns:
+  - { id: calculation, description: '$behavior' }
+exports:
+  - { id: calculate, description: '$behavior' }
+EOF
+        if [ "$spec" = total ]; then
+            cat >> ".specbind/specs/$spec/contract.yaml" <<'EOF'
+consumes:
+  - { id: subtotal, target: { spec: subtotal, section: exports, id: calculate }, description: computes line subtotal }
+  - { id: shipping, target: { spec: shipping, section: exports, id: calculate }, description: computes shipping from subtotal }
+EOF
+        else
+            echo 'consumes: []' >> ".specbind/specs/$spec/contract.yaml"
+        fi
+        cat >> ".specbind/specs/$spec/contract.yaml" <<EOF
+invariants: []
+file_ownership:
+  - { id: module, paths: [src/$spec.py, tests/test_$spec.py] }
+EOF
+        specbind spec design approve "$spec" --approval-mode explicit >/dev/null || fail "$spec Design approval failed"
+    done
+    printf '%s' '{"schemaVersion":1,"assessment":"Subtotal and shipping have independent boundary inputs and disjoint modules/tests. Total consumes both only after integration; the Roadmap orders both predecessors. No shared services or output mutation is needed.","deepInputs":[]}' | specbind milestone review accept --candidate - >/dev/null || fail "parallel fixture Contract Review failed"
+    for spec in subtotal shipping total; do
+        cat > ".specbind/specs/$spec/tasks.yaml" <<EOF
+schema_version: 1
+plan:
+  items:
+    - id: '1'
+      kind: task
+      title: Implement and verify $spec
+      details:
+        - Implement the approved module and focused tests; run sh scripts/test.sh.
+      requirement_ids: ['1.1']
+EOF
+        specbind spec tasks approve "$spec" --approval-mode explicit >/dev/null || fail "$spec Tasks approval failed"
+    done
+    cat >> AGENTS.md <<'EOF'
+
+## Local execution environment
+
+The canonical project check is `sh scripts/test.sh`. It already exists.
+Use the current Python interpreter; no package installation is required.
+The test runner and services are not shared mutable outputs.
+For this standalone fixture, local per-Task commits and verified local
+fast-forward integration preserving Task units are authorized. There is no
+remote and no push or release authorization. The integration checkout has one
+coordinating session; workers write only in their own checkouts.
+EOF
+    cp AGENTS.md CLAUDE.md
+    if [ "$scenario" = dp2 ]; then
+        cat >> AGENTS.md <<'EOF'
+
+## Host capability restriction for this measurement
+
+This run exposes Skill execution and ordinary local file/command access only.
+Isolated worker-session launch, retention and result-control APIs are unavailable.
+Do not simulate those missing host APIs with processes or another host surface.
+This restriction does not remove normal sequential role/review capability.
+EOF
+        cp AGENTS.md CLAUDE.md
+    fi
+    expect "parallel fixture gates are not fresh" \
+        'specbind spec status subtotal | grep -q "requirements=fresh, design=fresh, tasks=fresh"'
+    expect "shipping is not in implementation" \
+        'specbind spec status shipping | grep -q "State: implementation"'
+    expect "dependent total is unexpectedly actionable" \
+        'specbind milestone status --json | grep -q "waitingFor"'
+    expect "fixture implementation already exists" \
+        '! test -e src/subtotal.py && ! test -e src/shipping.py && ! test -e src/total.py'
+    ;;
+
 dr1)
     milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"cart-contract-change","summary":"Change cart observable behavior and update its canonical Requirements to cap quantities at 99."},{"id":"contributing-guide","summary":"Add a CONTRIBUTING guide."}]}}'
     {
@@ -1801,6 +1923,10 @@ else
     fi
     expect "the fixture did not end on a clean worktree" \
         'test -z "$(git status --porcelain)"'
+fi
+
+if [ "$scenario" = dp1 ] || [ "$scenario" = dp2 ]; then
+    specbind milestone status --json | "$runner" -c 'import json, sys; d=json.load(sys.stdin)["data"]; assert d["health"] == "consistent" and d["stage"] == "implementation"; assert [a["commandOperand"] for a in d["actionable"]] == ["subtotal", "shipping"]; assert next(i for i in d["items"] if i["id"] == "spec:total")["waitingFor"] == ["spec:subtotal", "spec:shipping"]' || fail "parallel fixture actionability or dependency precondition failed"
 fi
 
 echo "Scenario $scenario ready at $target"

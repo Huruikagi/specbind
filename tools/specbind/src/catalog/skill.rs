@@ -312,10 +312,16 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     },
 ];
 
-static DRIVE_RESOURCES: &[SkillResource] = &[SkillResource {
-    relative_path: "references/replan.md",
-    source: include_str!("../../assets/skills/sb-drive/references/replan.md"),
-}];
+static DRIVE_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/replan.md",
+        source: include_str!("../../assets/skills/sb-drive/references/replan.md"),
+    },
+    SkillResource {
+        relative_path: "references/parallel.md",
+        source: include_str!("../../assets/skills/sb-drive/references/parallel.md"),
+    },
+];
 
 static PLAN_RESOURCES: &[SkillResource] = &[
     SkillResource {
