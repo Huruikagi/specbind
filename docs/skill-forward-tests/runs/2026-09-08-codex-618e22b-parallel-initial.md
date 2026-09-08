@@ -13,7 +13,7 @@
 | Scenario | Verdict | Evidence | Finding |
 | --- | --- | --- | --- |
 | DP1 | environment_blocked | Base `59ee0ed`; subtotal and shipping worktrees both at that base, no implementation changes, all three Tasks pending, total waiting for both predecessors. Nested owner dispatch failed with `agent thread limit reached` while this harness also ran DP2. No concurrency or acceptance claim is established. | none |
-| DP2 | product_failure | Only one `.forward-test/agents.log` context; no fresh implementer/reviewer/validator dispatch. Selective commits `b35ca65`, `78a2acd`, `94077d5` each include only their Task/module/test; six tests pass. Completion commit `df1dfdb` accepted all three Specs against `94077d5`, but independent review was skipped despite ordinary dispatch remaining available. | FT-0051 |
+| DP2 | product_failure | Only one `.forward-test/agents.log` context; no fresh implementer/reviewer/validator dispatch. Selective commits `b35ca65`, `78a2acd`, `94077d5` each include only their Task/module/test; six tests pass. Completion commit `df1dfdb` accepted all three Specs against `94077d5`, but independent review was skipped despite ordinary dispatch remaining available. | FT-0052 |
 | Claude Code | environment_blocked | No `claude` executable on this session's PATH. No native Claude scenario ran. | none |
 
 DP2's controlled fixture disables isolated session APIs, explicitly retaining
@@ -44,7 +44,7 @@ after the read-only reflections.
 
 | Observation | Disposition |
 | --- | --- |
-| DP2 conflated isolated workers and ordinary role dispatch, then self-validated. | FT-0051; strengthen the fallback boundary and rerun on a fresh fixture. |
+| DP2 conflated isolated workers and ordinary role dispatch, then self-validated. | FT-0052; strengthen the fallback boundary and rerun on a fresh fixture. |
 | DP2 reported in Japanese and appended instrumentation after initial inspection. | Recorded measurement limitations; not separate product findings. |
 | DP2 wondered whether total was in scope. | Discarded: the explicit milestone-wide continuation and authoritative dependencies include total. |
 | DP1 first tried a host repository Skill path, then used the fixture-local package. | Recorded environment limitation; no implementation outcome measured. |

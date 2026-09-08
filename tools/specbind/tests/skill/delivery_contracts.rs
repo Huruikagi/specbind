@@ -252,7 +252,7 @@ fn direct_review_and_debug_resolve_omitted_subjects_without_guessing() {
 }
 
 #[test]
-fn status_names_machine_health_without_claiming_semantic_alignment() {
+fn status_interprets_machine_health_without_routinely_reporting_it() {
     let body = skill::find("sb-status")
         .expect("status skill")
         .body()
@@ -261,6 +261,16 @@ fn status_names_machine_health_without_claiming_semantic_alignment() {
     assert!(body.contains("`State health: consistent`"));
     assert!(body.contains("`Semantic alignment: not evaluated`"));
     assert!(body.contains("Never use state health to rule out an artifact contradiction"));
+    assert!(
+        body.contains("Treat the CLI projection as input to judgment, not as a report template")
+    );
+    assert!(
+        body.contains("These are interpretation boundaries, not routine\nuser-facing disclaimers")
+    );
+    assert!(body.contains("Always report inconsistent health"));
+    assert!(
+        body.contains("Filtering may compress facts but may not strengthen them into a remedy")
+    );
 }
 
 #[test]
@@ -279,9 +289,21 @@ fn status_routes_named_and_milestone_reports_to_distinct_procedures() {
     assert!(milestone.contains("each blocked Task ID and its recorded reason"));
     assert!(milestone.contains("`TASKS_BLOCKED`"));
     assert!(milestone.contains("Do not replace it with a generic\ndirty-worktree explanation"));
+    assert!(
+        milestone
+            .contains("Do not append healthy State-health, fresh-review, or semantic-alignment")
+    );
+    assert!(
+        milestone
+            .contains("do not prescribe Task reordering, plan repair, or an implementation change")
+    );
     assert!(spec.contains("specbind spec status <spec>"));
     assert!(spec.contains("specbind tasks show <spec> <task-id>"));
     assert!(spec.contains("A blocked Task with no next Task is\na stop condition"));
+    assert!(spec.contains("Do not append healthy State-health, fresh-Gate, or"));
+    assert!(spec.contains(
+        "strengthen the reason into plan repair, Task reordering, or an\nimplementation change"
+    ));
 }
 
 #[test]

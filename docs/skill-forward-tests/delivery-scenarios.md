@@ -22,6 +22,12 @@ required test runner is created only by later Task 2, and only the recorded
 - It identifies the Task blocker as the condition to resolve before the owning
   workflow can reopen the Task and continue. It does not reduce the answer to a
   generic instruction to clean or commit the worktree.
+- It does not choose Task reordering, plan repair, or an implementation change
+  as the remedy; the recorded reason establishes the condition but does not
+  select among ways to satisfy it.
+- It does not routinely repeat healthy State-health, fresh Contract Review, or
+  a semantic-alignment disclaimer; those facts remain available as judgment
+  inputs but do not change this handoff.
 - It does not attempt implementation, reopen the Task, change the plan, commit,
   stash, or otherwise mutate the fixture. `git status --short` remains exactly
   the single pre-existing `tasks.yaml` modification.

@@ -42,6 +42,12 @@ A blocked Task is not actionable merely because its Spec remains in
 a next Task or the blocker has been resolved and reopened by the owning
 workflow.
 
+Use the recorded blocker as the limit of the next-step claim. For example, if a
+Task needs a file that another Task is expected to create, report that condition;
+do not prescribe Task reordering, plan repair, or an implementation change
+unless the recorded reason names it. Several remedies may satisfy the same
+condition, and Status does not select among them.
+
 `TASKS_BLOCKED` names the real Task-level stop. Do not replace it with a generic
 dirty-worktree explanation. Report `WORKTREE_NOT_CLEAN` only when the CLI lists
 it as an additional current blocker. Its presence grants no authority to
@@ -49,3 +55,5 @@ commit, stash, discard, or otherwise reconcile changes.
 
 End with one compact handoff: what is complete, what is blocked and why, what
 independent work remains actionable, and which condition must change next.
+Do not append healthy State-health, fresh-review, or semantic-alignment
+boilerplate unless the request or conclusion makes that distinction material.

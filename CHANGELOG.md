@@ -17,7 +17,8 @@ All notable changes to SpecBind will be documented in this file.
 
 - Preserve checkpointed Milestone dependency progress when later Task state is
   dirty, expose blocked Task counts, IDs, and reasons in text and JSON status,
-  and split `sb-status` into focused Spec and Milestone reporting procedures.
+  split `sb-status` into focused Spec and Milestone reporting procedures, and
+  filter healthy machine evidence from ordinary user-facing status handoffs.
 - Split complete Plan orchestration and optional Drive replan routing into
   on-demand Skill references, keeping ordinary and single-phase entrypoints
   focused while clarifying that route-owned Design validation remains mandatory

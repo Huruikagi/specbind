@@ -12,7 +12,7 @@ DP1: **environment_blocked**. Isolated retained worker dispatch was not verified
 
 The subtotal owner resolved an incompatible executable and returned blocked before mutation. Drive reread the authoritative integration state, parked that item and continued independent shipping. Commit `080428e` contains only shipping Task state, `src/shipping.py` and `tests/test_shipping.py`. Independent inspection and `sh scripts/test.sh` passed one shipping boundary test. The checkout is clean; shipping is 1/1 complete, subtotal is 0/1 pending, and total waits on subtotal. No final Spec validation, release invocation or version binding occurred.
 
-Instrumentation contains shipping implementer and independent reviewer entries but omits the outer owners. This incomplete measurement cannot establish a full DP2 pass or close FT-0051. The successful shipping checkpoint is partial evidence only.
+Instrumentation contains shipping implementer and independent reviewer entries but omits the outer owners. This incomplete measurement cannot establish a full DP2 pass or close FT-0052. The successful shipping checkpoint is partial evidence only.
 
 ## Read-only debrief dispositions
 

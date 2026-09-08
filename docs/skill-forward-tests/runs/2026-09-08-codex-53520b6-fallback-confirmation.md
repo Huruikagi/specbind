@@ -9,7 +9,7 @@
 
 ## Measurement
 
-DP2: **environment_blocked**. The driver selected sequential fallback and delegated separate complete owners for subtotal and shipping. This exercises the distinction behind FT-0051, but does not establish successful independent Task review or completion.
+DP2: **environment_blocked**. The driver selected sequential fallback and delegated separate complete owners for subtotal and shipping. This exercises the distinction behind FT-0052, but does not establish successful independent Task review or completion.
 
 Automatic approval review rejected the required instrumentation append for the subtotal implementer/debugger, and rejected shipping implementation `apply_patch` as an unapproved external-instruction-based unrelated feature addition. The driver stopped without bypassing either denial. Its canonical test command could not start Bash (`couldn't create signal pipe, Win32 error 5`). No test result is claimed.
 
@@ -17,7 +17,7 @@ Independent fixture inspection confirmed HEAD remains `3fb826c`, only `.specbind
 
 ## Read-only debrief
 
-The driver found the isolated-worker versus ordinary-role distinction explicit and followed it. It attributed the stops to approval/environment failures, not unclear Skill wording. This is consistent with the inspected partial evidence; no additional product finding is inferred. Git status before and after the command-free debrief remained the same single Task-state change. FT-0051 remains open for a complete successful confirmation.
+The driver found the isolated-worker versus ordinary-role distinction explicit and followed it. It attributed the stops to approval/environment failures, not unclear Skill wording. This is consistent with the inspected partial evidence; no additional product finding is inferred. Git status before and after the command-free debrief remained the same single Task-state change. FT-0052 remains open for a complete successful confirmation.
 
 ## Cleanup
 

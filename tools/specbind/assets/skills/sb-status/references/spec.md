@@ -34,4 +34,8 @@ a stop condition, not implementation work to retry.
 
 State the condition that must be resolved before the owning workflow can reopen
 the Task and continue. Do not infer an unrecorded solution from repository
-files, and do not run `tasks reopen` yourself; this Skill is read-only.
+files or strengthen the reason into plan repair, Task reordering, or an
+implementation change. Do not run `tasks reopen` yourself; this Skill is
+read-only. Do not append healthy State-health, fresh-Gate, or
+semantic-alignment boilerplate unless the request or conclusion makes that
+distinction material.

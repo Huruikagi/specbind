@@ -52,6 +52,27 @@ trustworthy read is telling the user their project state needs repair.
 Lead with the answer, then the evidence. A user asking for status wants to know
 where the work stands, not to read a transcript of commands.
 
+Treat the CLI projection as input to judgment, not as a report template. First
+interpret the complete projection and decide what changes the user's
+understanding or next action. Then apply a user-facing filter:
+
+- report the current stage or state, material progress, actual blockers or
+  inconsistencies, and the next condition or action;
+- summarize completed or healthy portions compactly when they help locate the
+  remaining work;
+- omit normal evidence that does not change the handoff, including fresh Gates
+  or reviews, zero-valued blocker categories, and healthy items listed only to
+  mirror the CLI; and
+- include stable diagnostic codes or raw lifecycle identifiers only when the
+  user asks for machine detail or the identifier materially helps remediation.
+
+Filtering may compress facts but may not strengthen them into a remedy. For a
+blocked Task, state the recorded condition that must change. Do not choose
+among supplying an input, changing implementation, reordering or rewriting the
+plan, or changing scope unless the CLI projection or recorded blocker names
+that action. If more than one resolution could satisfy the condition, leave the
+choice with the owning workflow or user.
+
 Cover, in the project's language:
 
 - **Where the work is.** The milestone stage or the Spec's lifecycle state, in
@@ -66,7 +87,12 @@ lifecycle, freshness, declared-coverage, or other machine-checkable diagnostic.
 `Semantic alignment: not evaluated` is equally authoritative: status does not
 judge whether Requirements, Design, Contract, Steering, and implementation
 prose agree. Never use state health to rule out an artifact contradiction in a
-review or diagnosis.
+review or diagnosis. These are interpretation boundaries, not routine
+user-facing disclaimers. Mention consistent state health or the semantic limit
+only when the user asks about consistency or correctness, when status is being
+used as evidence for such a claim, or when omitting the distinction would make
+the answer misleading. Always report inconsistent health and its material
+diagnostics.
 
 Keep it proportionate. A healthy Spec needs a few lines. A milestone with
 blocked items must retain the recorded progress, Task identity, reason, and the
