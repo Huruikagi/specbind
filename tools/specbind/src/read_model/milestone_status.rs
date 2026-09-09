@@ -541,7 +541,8 @@ fn actionable_items(
                 push_action(&mut actions, item, MilestoneActionKind::Implementation);
             }
             ItemKind::Spec { model, .. }
-                if completion[&item.id]
+                if all_implemented
+                    && completion[&item.id]
                     && dependencies_ready(item, completion)
                     && clean
                     && !model.as_deref().is_some_and(validated) =>
@@ -1076,7 +1077,7 @@ mod tests {
     }
 
     #[test]
-    fn completed_spec_can_validate_while_an_independent_spec_is_blocked() {
+    fn completed_spec_waits_for_milestone_convergence_before_validation() {
         let facts = vec![
             ItemFacts {
                 id: "spec:completed".to_owned(),
@@ -1111,8 +1112,9 @@ mod tests {
             false,
         );
 
-        assert_eq!(actions.len(), 1);
-        assert_eq!(actions[0].item, "spec:completed");
-        assert_eq!(actions[0].action, MilestoneActionKind::Validation);
+        assert!(
+            actions.is_empty(),
+            "validation must wait until every milestone item is implementation-complete"
+        );
     }
 }
