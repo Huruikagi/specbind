@@ -40,7 +40,7 @@ old readable Task plan is still present with completed execution for the
 previous active Requirement set, so complete traceability reports
 `TRACEABILITY_TASK_SCOPE_INACTIVE`. Ask:
 
-> Is the cart state broken, and what should happen to its existing Task plan?
+> What is the current cart status, and what needs to happen next to its existing Task plan?
 
 - The response reports the inconsistent State health and the Task-only
   diagnostic rather than calling the Spec healthy.
