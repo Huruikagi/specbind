@@ -63,7 +63,10 @@ its reconciliation.
 or an unapproved draft, that the Tasks owner must reconcile it in the Tasks
 phase, and that unrelated diagnostics still require their own interpretation.
 Status remains read-only and does not choose retain, revise-and-reset, or
-remove under Decision 0206.
+remove under Decision 0206. Tasks is the future reconciliation owner, not an
+override of the derived immediate `Next action`: Status preserves lifecycle
+order and reports intervening Design and Contract Review work before the plan
+can be reconciled.
 
 Milestone status is unchanged. Its aggregate health continues to reflect the
 participating Spec's inconsistent status; callers use named Spec status for the
@@ -86,5 +89,5 @@ completed plan for the previous active set. Text and JSON retain inconsistent
 health and the Task-only diagnostic while reporting the non-current authority
 and Tasks-phase reconciliation route. After replacement Tasks approval, the
 authority projection disappears. A fresh Status forward test verifies that an
-agent explains the supported recovery route without deleting, repairing, or
-otherwise mutating the fixture.
+agent explains the supported recovery route in lifecycle order, without
+deleting, repairing, or otherwise mutating the fixture.

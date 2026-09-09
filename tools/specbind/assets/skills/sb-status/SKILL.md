@@ -100,6 +100,10 @@ authority. It may be preserved recovery input or an unapproved draft; the CLI
 does not claim which. Name the Tasks phase as the owner of reconciliation, but
 do not choose retain, revise-and-reset, or remove. The authority projection does
 not cancel `inconsistent` health or explain away any unrelated diagnostic.
+It also names a future owner, not the immediate next action. Preserve the CLI's
+`Next action` and the lifecycle order: complete the intervening Design and
+Contract Review work before the Tasks owner reconciles the plan. Never direct
+the user straight to Tasks merely because Tasks owns that later decision.
 
 Keep it proportionate. A healthy Spec needs a few lines. A milestone with
 blocked items must retain the recorded progress, Task identity, reason, and the

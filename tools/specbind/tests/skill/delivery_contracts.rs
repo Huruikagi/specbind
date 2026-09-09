@@ -270,6 +270,9 @@ fn status_interprets_machine_health_without_routinely_reporting_it() {
     assert!(body.contains("Always report inconsistent health"));
     assert!(body.contains("`Task plan authority: not current; reconcile in\nTasks phase`"));
     assert!(body.contains("do not choose retain, revise-and-reset, or remove"));
+    assert!(body.contains("a future owner, not the immediate next action"));
+    assert!(body.contains("complete the intervening Design and\nContract Review work"));
+    assert!(body.contains("Never direct\nthe user straight to Tasks"));
     assert!(
         body.contains("Filtering may compress facts but may not strengthen them into a remedy")
     );
