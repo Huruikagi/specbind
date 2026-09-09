@@ -1212,6 +1212,10 @@ st2 | vd3)
     } > .specbind/specs/cart/tasks.yaml
     specbind spec tasks approve cart --approval-mode explicit >/dev/null \
         || fail "could not approve the previous task plan"
+    if [ "$scenario" = st2 ]; then
+        specbind tasks complete cart 1 >/dev/null \
+            || fail "could not complete the previous task plan"
+    fi
     git add -A
     git -c user.name=Fixture -c user.email=fixture@example.invalid \
         commit --quiet -m "Checkpoint the previous approved plan"
@@ -1260,6 +1264,10 @@ EOF
         'specbind spec status cart | grep -q "State: design"'
     expect "the retained task plan was removed" \
         'test -e .specbind/specs/cart/tasks.yaml'
+    if [ "$scenario" = st2 ]; then
+        expect "the retained completion record is missing" \
+            'specbind tasks list cart | grep -q "1 completed, 0 pending, 0 blocked"'
+    fi
     ;;
 
 rr1)
