@@ -4,6 +4,17 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.4.4 - 2026-09-09
+
+- Carry verified CLI-owned Design rewind changes through validation and the
+  approval checkpoint so recovery can reach renewed Contract Review.
+- Close or explicitly transfer lifecycle mutations before handing off to
+  workflows that require a clean checkout.
+- Reconcile retained Task progress with current obligations and evidence
+  before accepting completion after replanning.
+- Assess verification dimensions using applicable evidence without inventing
+  a separate command for every dimension.
+
 ## 1.4.3 - 2026-09-08
 
 - Fix replanning recovery so retained delivery Tasks and execution progress do
