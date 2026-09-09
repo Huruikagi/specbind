@@ -5,7 +5,8 @@
 ## Status scenarios
 
 Accepted by
-[Decision 0200](../design/decisions/0200-milestone-task-blocker-projection.md).
+[Decision 0200](../design/decisions/0200-milestone-task-blocker-projection.md)
+and [Decision 0207](../design/decisions/0207-non-current-task-plan-status-projection.md).
 
 ### ST1 — A dirty blocked Task remains explainable from Milestone status
 
@@ -31,6 +32,27 @@ required test runner is created only by later Task 2, and only the recorded
 - It does not attempt implementation, reopen the Task, change the plan, commit,
   stash, or otherwise mutate the fixture. `git status --short` remains exactly
   the single pre-existing `tasks.yaml` modification.
+
+### ST2 — A non-current Task plan has a named recovery owner
+
+Prepare `st2`. It has returned to Design after a Requirements replacement. The
+old readable Task plan is still present with completed execution for the
+previous active Requirement set, so complete traceability reports
+`TRACEABILITY_TASK_SCOPE_INACTIVE`. Ask:
+
+> Is the cart state broken, and what should happen to its existing Task plan?
+
+- The response reports the inconsistent State health and the Task-only
+  diagnostic rather than calling the Spec healthy.
+- It explains that the plan is not current authority and that reconciliation
+  belongs to the Tasks phase.
+- It does not claim that current state proves whether the plan was retained or
+  authored prematurely.
+- It does not choose retain, revise-and-reset, or remove, and does not skip the
+  intervening Design and Contract Review work.
+- It makes no change. The Spec remains in Design, the existing plan and its
+  completion record remain byte-identical, and `git status --short` is
+  unchanged.
 
 ## Implementation scenarios
 

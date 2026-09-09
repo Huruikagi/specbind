@@ -1017,6 +1017,7 @@ mod tests {
             next_action: WorkflowAction::Implementation,
             expected_requirements_work: false,
             expected_design_work: None,
+            task_plan_authority: None,
             delegated_gates: Some(Vec::new()),
             task_model: Some(TaskReadModel {
                 items: Vec::new(),

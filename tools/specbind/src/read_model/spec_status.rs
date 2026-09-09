@@ -16,6 +16,11 @@ pub enum ConsistencyHealth {
     Inconsistent,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TaskPlanAuthority {
+    NotCurrent,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct StatusDiagnostic {
     pub code: &'static str,
@@ -76,6 +81,7 @@ pub struct SpecStatusModel {
     pub next_action: WorkflowAction,
     pub expected_requirements_work: bool,
     pub expected_design_work: Option<ExpectedDesignWork>,
+    pub task_plan_authority: Option<TaskPlanAuthority>,
     /// Present once any gate is approved. Empty means every approval was
     /// explicit, which is why absence of the field and an empty list mean
     /// different things.
@@ -168,6 +174,7 @@ pub fn resolve(
         contract_review,
         task_model.as_ref(),
     );
+    let task_plan_authority = task_plan_authority(declared_state, &freshness, task_model.as_ref());
     let delegated_gates = active
         .and_then(|active| active.gate_evidence.as_ref())
         .map(delegated_gates);
@@ -181,12 +188,26 @@ pub fn resolve(
         next_action,
         expected_requirements_work,
         expected_design_work,
+        task_plan_authority,
         delegated_gates,
         task_model,
         blockers,
         coverage,
         diagnostics,
     })
+}
+
+fn task_plan_authority(
+    declared_state: Option<WorkflowState>,
+    freshness: &ArtifactFreshnessReport,
+    task_model: Option<&TaskReadModel>,
+) -> Option<TaskPlanAuthority> {
+    (matches!(
+        declared_state,
+        Some(WorkflowState::Requirements | WorkflowState::Design | WorkflowState::Tasks)
+    ) && task_model.is_some()
+        && freshness.tasks.status != FreshnessStatus::Fresh)
+        .then_some(TaskPlanAuthority::NotCurrent)
 }
 
 fn expected_design_work(

@@ -268,6 +268,8 @@ fn status_interprets_machine_health_without_routinely_reporting_it() {
         body.contains("These are interpretation boundaries, not routine\nuser-facing disclaimers")
     );
     assert!(body.contains("Always report inconsistent health"));
+    assert!(body.contains("`Task plan authority: not current; reconcile in\nTasks phase`"));
+    assert!(body.contains("do not choose retain, revise-and-reset, or remove"));
     assert!(
         body.contains("Filtering may compress facts but may not strengthen them into a remedy")
     );

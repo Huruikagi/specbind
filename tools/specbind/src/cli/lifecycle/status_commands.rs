@@ -30,6 +30,8 @@ struct SpecStatusData<'a> {
     next_action: &'static str,
     expected_requirements_work: bool,
     expected_design_work: Option<ExpectedDesignWorkData>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    task_plan_authority: Option<TaskPlanAuthorityData>,
     contract_review: Option<&'static str>,
     delegated_gates: Option<Vec<DelegatedGateData<'a>>>,
     tasks: Option<TaskStatusData<'a>>,
@@ -49,6 +51,13 @@ struct GateStatusData {
 #[serde(rename_all = "camelCase")]
 struct ExpectedDesignWorkData {
     missing_coverage: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct TaskPlanAuthorityData {
+    status: &'static str,
+    next_action: &'static str,
 }
 
 #[derive(Serialize)]
@@ -618,6 +627,13 @@ fn render_spec_status(canonical_spec: &str, model: &SpecStatusModel) -> CommandO
             ),
         );
     }
+    if model.task_plan_authority.is_some() {
+        push_field(
+            &mut output,
+            "Task plan authority",
+            "not current; reconcile in Tasks phase",
+        );
+    }
     if let Some(review) = model.contract_review {
         push_field(
             &mut output,
@@ -669,6 +685,10 @@ fn render_spec_status_json(canonical_spec: &str, model: &SpecStatusModel) -> Com
             .map(|work| ExpectedDesignWorkData {
                 missing_coverage: work.missing_coverage,
             }),
+        task_plan_authority: model.task_plan_authority.map(|_| TaskPlanAuthorityData {
+            status: "not_current",
+            next_action: "reconcile_in_tasks_phase",
+        }),
         contract_review: model.contract_review.map(milestone_status::review_name),
         delegated_gates: model.delegated_gates.as_ref().map(|gates| {
             gates

@@ -25,6 +25,7 @@
 #   dr5    approved cart plan for the Requirements authority boundary
 #   dr6    blocked Task needs a verification prerequisite owned by a later Task
 #   st1    dirty blocked Task for a whole-milestone status report
+#   st2    rewound Design with a non-current completed Task plan
 #   a1     an initial-adoption project with no Specs and no Steering
 #   a2     an initial-adoption project with no Specs and complete Steering
 #   a3     a2 plus one suspected defect and local reverse checkpoint policy
@@ -1192,7 +1193,7 @@ ds4 | t1 | t2 | x1 | x1r | vd1)
     fi
     ;;
 
-vd3)
+st2 | vd3)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Make the accepted-addition return identity explicit."}]}}'
     brief cart \
         "Callers rely on the updated cart but its return identity is not explicit." \

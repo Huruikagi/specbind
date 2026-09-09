@@ -387,6 +387,37 @@ fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
         "---\ntype: SpecBind Design\nartifact_id: main\nrequirement_ids: ['2.1']\n---\n# Design\n\n_Requirements: 2.1_\n",
     );
 
+    let mut recovery_status = specbind_command();
+    recovery_status
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("  State health: inconsistent\n")
+                .and(predicate::str::contains(
+                    "  Task plan authority: not current; reconcile in Tasks phase\n",
+                ))
+                .and(predicate::str::contains("TRACEABILITY_TASK_SCOPE_INACTIVE")),
+        );
+    let recovery_json = specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout", "--json"])
+        .output()
+        .expect("recovery status runs");
+    assert!(recovery_json.status.success());
+    assert!(recovery_json.stderr.is_empty());
+    let recovery_json: serde_json::Value =
+        serde_json::from_slice(&recovery_json.stdout).expect("status is one JSON document");
+    assert_eq!(recovery_json["data"]["health"], "inconsistent");
+    assert_eq!(
+        recovery_json["data"]["taskPlanAuthority"],
+        serde_json::json!({
+            "status": "not_current",
+            "nextAction": "reconcile_in_tasks_phase"
+        })
+    );
+
     let mut complete = specbind_command();
     complete
         .current_dir(root.path())
@@ -445,6 +476,14 @@ fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
         ])
         .assert()
         .success();
+    let repaired_status = specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "status", "checkout", "--json"])
+        .output()
+        .expect("repaired status runs");
+    let repaired_status: serde_json::Value =
+        serde_json::from_slice(&repaired_status.stdout).expect("status is one JSON document");
+    assert!(repaired_status["data"].get("taskPlanAuthority").is_none());
 }
 
 #[test]
