@@ -4,6 +4,9 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Add native Linux ARM64 GNU release builds, archive runtime checks, checksums,
+  shell installer selection, and post-publication installer and mise tests.
+
 ## 1.4.4 - 2026-09-09
 
 - Carry verified CLI-owned Design rewind changes through validation and the

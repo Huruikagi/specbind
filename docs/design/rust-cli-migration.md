@@ -170,7 +170,7 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 
 - Complete: the Rust workspace is canonical at `tools/specbind/`, while
   `tools/cc-sdd/` remains the temporary migration oracle.
-- Produce Windows x64, Linux x64, and macOS ARM64 GitHub Release binaries plus
+- Produce Windows x64, Linux x64/ARM64, and macOS ARM64 GitHub Release binaries plus
   `SHA256SUMS`.
 - Publish PowerShell and shell installers that select the latest stable version by default, accept explicit prerelease versions, verify checksums, and never edit PATH.
 - Verify `%LOCALAPPDATA%\SpecBind\bin` and `$HOME/.local/bin` defaults plus `--install-dir`.
@@ -182,8 +182,10 @@ stabilization activity recorded in [Skill forward tests](../skill-forward-tests.
 
 V1 officially supports Windows x64 and Linux x64 as tested through WSL2, plus
 macOS ARM64 as tested on a hosted Apple Silicon runner under
-[Decision 0163](./decisions/0163-macos-arm64-release-target.md). Native macOS
-Intel and Linux ARM64 remain deferred and are tracked by
+[Decision 0163](./decisions/0163-macos-arm64-release-target.md). Linux ARM64
+GNU joins the next release with native Ubuntu ARM64 verification under
+[Decision 0208](./decisions/0208-linux-arm64-release-target.md). macOS Intel
+remains deferred and is tracked by
 [Issue #12](https://github.com/Huruikagi/specbind/issues/12). GitHub Releases,
 the two installer scripts, and the Decision 0130 mise GitHub backend are the
 current distribution channels. Homebrew, WinGet, Scoop, Cargo installation,

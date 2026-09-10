@@ -35,7 +35,8 @@ installation, choose between:
 - A target Git repository. A new repository needs an initial baseline commit;
   an existing repository needs at least one commit.
 - A coding agent.
-- Windows x64, Linux x64 on WSL2, or macOS ARM64.
+- Windows x64, Linux x64 on WSL2, or macOS ARM64. Linux ARM64 GNU is available
+  starting with the next release after v1.4.4.
 
 ### Supported coding agents
 

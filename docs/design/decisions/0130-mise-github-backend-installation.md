@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The Linux ARM64 deferral below is superseded by [Decision
+0208](./0208-linux-arm64-release-target.md), which adds native GNU builds,
+installation, and runtime verification starting with the next release.
+
 Decision [0163](./0163-macos-arm64-release-target.md) extends this installation
 and smoke-test boundary to the native macOS ARM64 archive. macOS Intel and
 Linux ARM64 remain unsupported.

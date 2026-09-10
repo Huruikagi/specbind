@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The Linux ARM64 deferral below is superseded by [Decision
+0208](./0208-linux-arm64-release-target.md), which adds native GNU builds,
+installation, and runtime verification starting with the next release.
+
 The reservation of `specbind update` for a future binary self-update command
 and its Issue 13 follow-up are superseded by [Decision
 0180](./0180-delegate-binary-updates-to-installation-clients.md). The

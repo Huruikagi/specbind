@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+The Linux ARM64 deferral below is superseded by [Decision
+0208](./0208-linux-arm64-release-target.md), which adds native GNU builds,
+installation, and runtime verification starting with the next release.
+
 ## Context
 
 Decisions 0077 and 0124 limited binary distribution to Windows x64 and Linux

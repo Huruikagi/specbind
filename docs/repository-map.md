@@ -367,3 +367,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0205](./design/decisions/0205-verification-dimensions-do-not-require-invented-commands.md) | Accepted | Verification dimensions satisfied without inventing one command per dimension |
 | [0206](./design/decisions/0206-retained-task-progress-must-reconcile-to-active-obligations.md) | Accepted | Retained Task progress explicitly reconciled to active obligations |
 | [0207](./design/decisions/0207-non-current-task-plan-status-projection.md) | Accepted | Non-current Task plan authority and Tasks-phase recovery projected separately from health |
+| [0208](./design/decisions/0208-linux-arm64-release-target.md) | Accepted | Native Linux ARM64 release archives, installation, and runtime verification |

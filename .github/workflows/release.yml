@@ -33,6 +33,8 @@ jobs:
             target: x86_64-pc-windows-msvc
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
           - os: macos-15
             target: aarch64-apple-darwin
 
@@ -80,6 +82,11 @@ jobs:
       - name: Run tests
         run: cargo test --workspace --all-features
 
+      - name: Test shell installer selection and checksum rejection
+        if: runner.os == 'Linux'
+        shell: bash
+        run: bash ../../scripts/test_install_sh.sh
+
       - name: Build release binary
         run: cargo build --workspace --release --target ${{ matrix.target }}
 
@@ -110,7 +117,7 @@ jobs:
         run: |
           set -euo pipefail
           stage="$RUNNER_TEMP/specbind-package"
-          archive="specbind-${RELEASE_TAG}-x86_64-unknown-linux-gnu.tar.gz"
+          archive="specbind-${RELEASE_TAG}-${RUST_TARGET}.tar.gz"
           mkdir -p "$stage" dist
           install -m 755 "target/$RUST_TARGET/release/specbind" "$stage/specbind"
           install -m 644 ../../README.md ../../LICENSE "$stage/"
@@ -122,7 +129,16 @@ jobs:
           actual=$("$smoke/specbind" --version)
           expected="specbind ${RELEASE_TAG#v}"
           test "$actual" = "$expected"
-          printf 'Linux x64: %s %s\n' "$ImageOS" "$ImageVersion" \
+          "$smoke/specbind" schema read spec/v1 > "$smoke/spec-v1.schema.json"
+          test -s "$smoke/spec-v1.schema.json"
+          project="$RUNNER_TEMP/specbind-project-smoke"
+          mkdir -p "$project"
+          git -C "$project" init
+          (
+            cd "$project"
+            "$smoke/specbind" install --dry-run --agent codex --language en
+          )
+          printf 'Linux %s: %s %s\n' "$(uname -m)" "$ImageOS" "$ImageVersion" \
             > "dist/environment-$RUST_TARGET.txt"
 
       - name: Package macOS archive
@@ -184,10 +200,17 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           archives=(dist/specbind-*.zip dist/specbind-*.tar.gz)
-          if [[ ${#archives[@]} -ne 3 ]]; then
-            echo "Expected three release archives, found ${#archives[@]}." >&2
+          if [[ ${#archives[@]} -ne 4 ]]; then
+            echo "Expected four release archives, found ${#archives[@]}." >&2
             exit 1
           fi
+          for asset in \
+            "specbind-${RELEASE_TAG}-x86_64-pc-windows-msvc.zip" \
+            "specbind-${RELEASE_TAG}-x86_64-unknown-linux-gnu.tar.gz" \
+            "specbind-${RELEASE_TAG}-aarch64-unknown-linux-gnu.tar.gz" \
+            "specbind-${RELEASE_TAG}-aarch64-apple-darwin.tar.gz"; do
+            test -s "dist/$asset"
+          done
           (
             cd dist
             LC_ALL=C sha256sum specbind-* > SHA256SUMS
@@ -249,11 +272,17 @@ jobs:
     with:
       version: ${{ github.ref_name }}
 
-  macos-installer-smoke:
-    name: Smoke-test macOS shell installer
+  shell-installer-smoke:
+    name: Smoke-test shell installer (${{ matrix.os }})
     if: github.event_name == 'push'
     needs: publish
-    runs-on: macos-15
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15
+          - ubuntu-24.04-arm
 
     steps:
       - name: Install and run SpecBind through install.sh
