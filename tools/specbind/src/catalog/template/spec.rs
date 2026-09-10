@@ -336,6 +336,16 @@ fn validate_template_profile(
     template_path: &Utf8PathBuf,
 ) -> Vec<DiscoveryIssue> {
     let mut issues = Vec::new();
+    if matches!(kind, ArtifactKind::Requirements | ArtifactKind::Design)
+        && crate::description::Description::from_mapping(mapping)
+            == crate::description::Description::Invalid
+    {
+        issues.push(issue(
+            "TEMPLATE_DESCRIPTION_INVALID",
+            Some(template_path.clone()),
+            crate::description::INVALID_MESSAGE,
+        ));
+    }
     match kind {
         ArtifactKind::Brief | ArtifactKind::Research | ArtifactKind::Requirements => {
             if mapping.contains_key("artifact_id") {

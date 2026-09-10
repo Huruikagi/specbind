@@ -1,5 +1,6 @@
 ---
 type: SpecBind Design
+description: Defines component responsibilities, interactions, data boundaries, and implementation decisions.
 artifact_id: main
 ---
 
@@ -128,4 +129,8 @@ one safe replacement step needs no migration decision.
 <!-- specbind:instruction maintain
 Record concrete residual risks and why viable alternatives were not selected.
 Delete this section when no risk or alternative materially affects the decision.
+-->
+
+<!-- specbind:instruction create
+Carry the literal Front Matter description into the live artifact. It names the lasting responsibility of this document. Update it with the body only when that boundary changes.
 -->

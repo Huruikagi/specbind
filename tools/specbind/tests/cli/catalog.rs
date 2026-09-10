@@ -571,7 +571,7 @@ fn checks_a_materialized_steering_document_against_its_selected_scaffold() {
         root.path(),
         ".specbind/settings/templates/steering/product.md",
         concat!(
-            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "---\ntype: SpecBind Steering\nartifact_id: product\ndescription: Defines product boundaries.\n---\n",
             "<!-- specbind:instruction create Draft the first version. -->\n",
             "<!-- specbind:instruction maintain Preserve this exact guidance. -->\n",
             "### <project-fact>\n",
@@ -581,7 +581,7 @@ fn checks_a_materialized_steering_document_against_its_selected_scaffold() {
         root.path(),
         ".specbind/steering/product.md",
         concat!(
-            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "---\ntype: SpecBind Steering\nartifact_id: product\ndescription: Defines product boundaries.\n---\n",
             "<!-- specbind:instruction maintain Preserve this exact guidance. -->\n",
             "### Actual project fact\n",
         ),
@@ -600,7 +600,7 @@ fn checks_a_materialized_steering_document_against_its_selected_scaffold() {
         root.path(),
         ".specbind/steering/product.md",
         concat!(
-            "---\ntype: SpecBind Steering\nartifact_id: product\n---\n",
+            "---\ntype: SpecBind Steering\nartifact_id: product\ndescription: Defines product boundaries.\n---\n",
             "<!-- specbind:instruction maintain Changed guidance. -->\n",
             "<!-- specbind:instruction create Leaked. -->\n",
             "### <project-fact>\n",

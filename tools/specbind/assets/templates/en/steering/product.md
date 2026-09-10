@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: Defines project purpose, intended users, and product boundaries.
 artifact_id: product
 ---
 
@@ -44,4 +45,8 @@ fulfill its purpose. Do not inventory screens, commands, or individual features.
 Record responsibilities that could plausibly be mistaken as in scope but that
 the project deliberately does not own. Delete this section when there is no
 non-goal that serves as an actual boundary.
+-->
+
+<!-- specbind:instruction create
+Carry the literal Front Matter description into the live artifact. It names the lasting responsibility of this document. Update it with the body only when that boundary changes.
 -->

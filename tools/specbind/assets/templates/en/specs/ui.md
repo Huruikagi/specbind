@@ -1,5 +1,6 @@
 ---
 type: SpecBind Design
+description: Defines user interactions, screen structure, and presentation behavior.
 artifact_id: ui
 ---
 
@@ -158,4 +159,8 @@ decision.
 State which layers verify the primary flows, states, input feedback, responsive
 behavior, and accessibility. Describe observable outcomes that detect UI
 failure rather than listing implementation techniques.
+-->
+
+<!-- specbind:instruction create
+Carry the literal Front Matter description into the live artifact. It names the lasting responsibility of this document. Update it with the body only when that boundary changes.
 -->

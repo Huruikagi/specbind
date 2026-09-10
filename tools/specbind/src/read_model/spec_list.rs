@@ -34,6 +34,8 @@ pub struct SpecListEntry {
     pub has_contract: bool,
     /// Whether a canonical Requirements artifact is present.
     pub has_requirements: bool,
+    /// Current Requirements metadata, independent of lifecycle approval.
+    pub description: crate::description::Description,
 }
 
 impl SpecListEntry {
@@ -99,6 +101,21 @@ fn entry(specbind_root: &Path, canonical_spec: String) -> SpecListEntry {
         milestone_id,
         has_contract: has(ArtifactKind::Contract),
         has_requirements: has(ArtifactKind::Requirements),
+        description: inventory
+            .artifacts
+            .iter()
+            .find(|artifact| artifact.kind == ArtifactKind::Requirements)
+            .map_or(crate::description::Description::Unavailable, |artifact| {
+                if inventory
+                    .issues
+                    .iter()
+                    .any(|issue| issue.path.as_ref() == Some(&artifact.path))
+                {
+                    crate::description::Description::Invalid
+                } else {
+                    artifact.description.clone()
+                }
+            }),
     }
 }
 

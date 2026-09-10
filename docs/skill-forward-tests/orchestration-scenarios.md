@@ -176,6 +176,47 @@ Use the base fixture and ask:
   candidate set, selection Rule, existing artifacts, and lifecycle state remain
   unchanged; only the project-owned main Design template changes.
 
+### MG1 — Recommended description reconciliation preserves durable authority
+
+Use the base fixture with its established cart Requirements and Steering missing
+descriptions. Record the original Requirements, Contract, and `spec.yaml` bytes.
+Use the development catalog target `1.5.0` explicitly (the fixture binary remains
+the current unreleased build). Ask:
+
+> We have finished refreshing the project assets. The recorded update interval
+> is 1.4.4 to 1.5.0. Please review the recommended document metadata work and
+> show me the proposed changes before editing existing documents. Do not update
+> the binary again or begin a delivery milestone.
+
+- The agent finds the installed configuration workflow and current migration
+  procedures, and evaluates the recorded interval with the CLI.
+- It presents per-document responsibility descriptions and separately seeks
+  reconciliation confirmation before writing.
+- Confirm only the presented description edits, not lifecycle approval or new work.
+- The Requirements body, Requirement IDs, Contract, and CLI-owned state remain
+  unchanged. Added descriptions describe persistent responsibilities.
+- Re-evaluating the original interval reports no remaining missing-description
+  targets in the confirmed scope. A second run writes nothing.
+- Metadata completion is reported independently of lifecycle approval/freshness.
+
+### MG2 — An assessed one-off records its own description
+
+Prepare `ds9`. This case measures Issue #55's already-assessed one-off authoring
+path, independently of DS9's generic decomposition decision. Ask:
+
+> We have agreed that infrastructure's operational runtime responsibility should
+> be a Spec-local `runtime-operations` Design supplement. Keep main for overall
+> integration. Author the complete Design from the approved Requirements using
+> that split, without adding project templates. Stop at the Design approval
+> boundary; do not begin Tasks or implementation.
+
+- `design/main` retains its selected template's literal description.
+- `design/runtime-operations` records the assessed lasting operational
+  responsibility in a valid single-line description rather than copying main's.
+- Both documents are discoverable and have valid Requirement traceability.
+- Project templates and `design-template-selection` remain byte-identical.
+- Requirements, lifecycle state, and approval evidence remain unchanged.
+
 ### U1 — Update refuses unproved mise ownership
 
 Use the base fixture and ask:
@@ -265,6 +306,8 @@ Spec's Design.
 - The supplement is a valid `SpecBind Design` included in traceability, while
   the project template inventory and `design-template-selection` Rule remain
   byte-identical.
+- The supplement records its assessed responsibility as a valid `description`;
+  template-based Designs carry their template descriptions into the live files.
 
 ## Existing-implementation adoption scenarios
 

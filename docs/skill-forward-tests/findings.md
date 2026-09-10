@@ -9,9 +9,9 @@ fixture.
 
 ## Open
 
-No reproduced product findings are open. FT-0031 and FT-0033 remain in their
-run records as investigated non-defects: Decision 0187 retains the existing
-gate-invalidation and Validation-preflight ownership boundaries.
+| ID | First seen | Scenario | Finding | Reopening condition |
+| --- | --- | --- | --- | --- |
+| FT-0053 | `144adf8` + descriptions tree | DS9 | Generic infrastructure Design authoring repeatedly omits the expected one-off supplement. The phase assessment, Splitting section, and Decision 0179 do not produce a stable distinction between one cohesive Spec responsibility and a separately reviewable concern. Condition-only and explicit-inventory trials did not resolve it and were withdrawn. | Reconcile the decomposition decision/scenario boundary, then verify fresh generic Design authoring. Description authoring for an explicitly assessed one-off is measured separately by MG2. |
 
 ## Fixed, behavioral confirmation pending
 

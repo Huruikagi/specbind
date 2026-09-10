@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: 技術選択、制約、共通の開発方針を定義する。
 artifact_id: tech
 ---
 
@@ -49,4 +50,8 @@ artifact_id: tech
 <!-- specbind:instruction maintain
 プロジェクト全体が継続して用いる検証層、標準コマンド、必要な環境を記載する。特定のSpecだけの
 検証はそのDesignに置く。プロジェクト横断の標準がまだない場合はこの節を削除する。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionをそのまま作成先の文書へ引き継ぐ。文書が継続して所有する責務を表し、その境界が変わる場合のみ本文とあわせて更新する。
 -->

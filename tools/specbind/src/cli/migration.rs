@@ -1,6 +1,109 @@
-//! CLI execution and rendering for cc-sdd migration.
+//! CLI execution and rendering for historical migration and version-range plans.
 
 use super::*;
+
+#[must_use]
+pub fn project_migration_plan(
+    start: &Path,
+    from: &str,
+    to: Option<&str>,
+    json: bool,
+) -> CommandOutput {
+    let root = match config::project_root_from(start) {
+        Ok(root) => root,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let plan = match crate::migration::project::plan(&root, from, to) {
+        Ok(plan) => plan,
+        Err(message) => return CommandOutput::failure("MIGRATION_PLAN_INVALID", message, vec![]),
+    };
+    let blocked = plan
+        .entries
+        .iter()
+        .any(|entry| matches!(entry.status, crate::migration::project::Status::Blocked));
+    let mut output = if json {
+        match serde_json::to_string_pretty(&plan) {
+            Ok(output) => output,
+            Err(error) => {
+                return CommandOutput::failure(
+                    "MIGRATION_PLAN_SERIALIZATION_FAILED",
+                    error.to_string(),
+                    vec![],
+                );
+            }
+        }
+    } else {
+        let mut text = format!(
+            "OK MIGRATION_PLANNED: {} -> {}\n  Required remaining: {}\n",
+            escape(&plan.from),
+            escape(&plan.to),
+            plan.required_remaining
+        );
+        for entry in &plan.entries {
+            use crate::migration::project::{Classification, Handler, Status};
+            let _ = writeln!(
+                text,
+                "  {}: boundary={} classification={} handler={} status={}",
+                entry.id,
+                entry.boundary,
+                match entry.classification {
+                    Classification::Required => "required",
+                    Classification::Recommended => "recommended",
+                    Classification::Optional => "optional",
+                },
+                match entry.handler {
+                    Handler::DeterministicCli => "deterministic_cli",
+                    Handler::AgentProcedure => "agent_procedure",
+                    Handler::ManualStop => "manual_stop",
+                },
+                match entry.status {
+                    Status::Pending => "pending",
+                    Status::Complete => "complete",
+                    Status::NotApplicable => "not_applicable",
+                    Status::Blocked => "blocked",
+                }
+            );
+            for (label, value) in [
+                ("procedure", entry.procedure),
+                ("source", entry.source),
+                ("preview", entry.preview),
+                ("verification", entry.verification),
+                ("idempotency", entry.idempotency),
+            ] {
+                let _ = writeln!(text, "    {label}: {}", escape(value));
+            }
+            for path in &entry.targets {
+                let _ = writeln!(text, "    pending: {}", escape(path));
+            }
+            for diagnostic in &entry.diagnostics {
+                let _ = writeln!(text, "    diagnostic: {}", escape(diagnostic));
+            }
+        }
+        text
+    };
+    if !output.ends_with('\n') {
+        output.push('\n');
+    }
+    if blocked {
+        let mut result = CommandOutput::failure(
+            "MIGRATION_PROBE_BLOCKED",
+            "Migration applicability cannot be verified; inspect plan diagnostics.",
+            vec![],
+        );
+        if json {
+            result.stdout = output.into_bytes();
+        } else {
+            result.stderr.extend_from_slice(
+                output
+                    .replace("OK MIGRATION_PLANNED:", "Migration plan:")
+                    .as_bytes(),
+            );
+        }
+        result
+    } else {
+        CommandOutput::success(output.into_bytes())
+    }
+}
 
 #[must_use]
 pub fn migrate_cc_sdd(start: &Path, apply: bool, accept_resolution: Option<&str>) -> CommandOutput {

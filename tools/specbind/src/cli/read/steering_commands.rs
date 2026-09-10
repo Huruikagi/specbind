@@ -224,10 +224,11 @@ fn check_scaffold(
 
 fn render_steering(document: &steering::SteeringDocument, spec_root: &str) -> String {
     format!(
-        "selector={} type=\"{}\" path={} project_path={}",
+        "selector={} type=\"{}\" path={} project_path={}{}",
         escape(&document.selector),
         escape(&document.artifact_type),
         escape(document.path.as_str()),
-        escape(&format!("{spec_root}/{}", document.path))
+        escape(&format!("{spec_root}/{}", document.path)),
+        super::super::render_description(&document.description)
     )
 }

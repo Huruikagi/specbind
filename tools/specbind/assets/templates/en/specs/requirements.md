@@ -1,5 +1,6 @@
 ---
 type: SpecBind Requirements
+description: Defines the complete current behavior and responsibility boundary of this Spec.
 heading_labels:
   requirement: Requirement
   acceptance_criteria: Acceptance Criteria
@@ -81,4 +82,8 @@ Make each Requirement group one cohesive responsibility and its acceptance
 criteria the observable contract for that responsibility. Do not duplicate the
 same behavior in Context or Scope. If no current Requirement remains, do not
 save an empty document; revisit the Spec's responsibility and lifecycle.
+-->
+
+<!-- specbind:instruction create
+Replace the generic Front Matter description with one non-empty single-line sentence naming this Spec's complete current responsibility, not the current Milestone change. Maintain it with the body only when that responsibility changes.
 -->

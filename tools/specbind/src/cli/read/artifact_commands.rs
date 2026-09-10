@@ -2,6 +2,105 @@
 
 use super::super::*;
 
+/// Checks creation obligations against an explicitly selected scaffold.
+#[must_use]
+pub fn artifact_check(
+    start: &Path,
+    canonical_spec: &str,
+    selector: &str,
+    template_selector: &str,
+) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let inventory = artifacts::discover_spec(&paths.specbind_root, canonical_spec);
+    let Some(artifact) = inventory
+        .artifacts
+        .iter()
+        .find(|artifact| artifact.selector == selector)
+    else {
+        return CommandOutput::failure(
+            "ARTIFACT_SELECTOR_NOT_FOUND",
+            "Artifact selector does not resolve.",
+            inventory.issues.iter().map(render_issue).collect(),
+        );
+    };
+    let mut details: Vec<_> = inventory
+        .issues
+        .iter()
+        .filter(|issue| issue.path.as_ref() == Some(&artifact.path))
+        .map(render_issue)
+        .collect();
+    let (scaffold, templates) =
+        match template::read_spec_template(&paths.specbind_root, paths.language, template_selector)
+        {
+            Ok(result) => result,
+            Err(inventory) => {
+                return CommandOutput::failure(
+                    "ARTIFACT_CHECK_FAILED",
+                    "Cannot resolve selected template.",
+                    inventory.issues.iter().map(render_issue).collect(),
+                );
+            }
+        };
+    let selected = templates
+        .templates
+        .iter()
+        .find(|template| template.selector == template_selector);
+    if !selected.is_some_and(|template| {
+        template.kind == artifact.kind
+            && artifact.kind != artifacts::ArtifactKind::Contract
+            && (template.artifact_id == artifact.artifact_id
+                || (artifact.kind == artifacts::ArtifactKind::Design
+                    && template.artifact_id.as_deref() == Some("main")))
+    }) {
+        return CommandOutput::failure(
+            "ARTIFACT_CHECK_FAILED",
+            "Template and live artifact must have the same Markdown profile.",
+            vec![],
+        );
+    }
+    details.extend(templates.issues.iter().map(render_issue));
+    let native_path = paths.specbind_root.join(artifact.path.as_std_path());
+    if !fs::symlink_metadata(&native_path)
+        .is_ok_and(|metadata| crate::guarded_fs::is_regular_file(&metadata))
+    {
+        return CommandOutput::failure(
+            "ARTIFACT_CHECK_FAILED",
+            "Artifact must remain a regular non-link file.",
+            details,
+        );
+    }
+    let live = match fs::read_to_string(native_path) {
+        Ok(live) => live,
+        Err(error) => {
+            return CommandOutput::failure("ARTIFACT_CHECK_FAILED", error.to_string(), details);
+        }
+    };
+    details.extend(
+        instruction::verify_materialization(&scaffold, &live)
+            .iter()
+            .map(|issue| format!("{}: {}", issue.code, issue.message)),
+    );
+    if !details.is_empty() {
+        return CommandOutput::failure(
+            "ARTIFACT_CHECK_FAILED",
+            "Artifact does not conform to the selected scaffold.",
+            details,
+        );
+    }
+    CommandOutput::success(
+        format!(
+            "OK ARTIFACT_CHECKED: {}/{} conforms to scaffold {}.\n",
+            escape(canonical_spec),
+            escape(selector),
+            escape(template_selector)
+        )
+        .into_bytes(),
+    )
+}
+
 #[must_use]
 pub fn artifact_list(start: &Path, canonical_spec: &str) -> CommandOutput {
     let paths = match config::resolve_from(start) {

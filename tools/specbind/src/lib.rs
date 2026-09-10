@@ -15,7 +15,7 @@ pub use migration::resolution as migration_resolution;
 pub mod schema;
 
 pub use catalog::{adapter, protocol, rule, skill, steering, template};
-pub use documents::{design, instruction, requirements, roadmap, traceability};
+pub use documents::{description, design, instruction, requirements, roadmap, traceability};
 pub use domain::contract;
 pub use foundation::{config, fingerprint, yaml};
 pub(crate) use infrastructure::{guarded_fs, repository};

@@ -42,6 +42,8 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/installation/removal.rs` — exact agent-removal and project-uninstall planning, Git/filesystem guards, and config-last apply
 - `tools/specbind/src/installation/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex and Claude Code rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
+- `tools/specbind/src/migration/project.rs` — cumulative version-range project migration catalog and guarded raw description probes
+- `tools/specbind/src/documents/description.rs` — optional responsibility metadata validation for Requirements, Design, and Steering
 - `tools/specbind/src/migration/inventory.rs` — read-only historical cc-sdd inventory and conversion planning
 - `tools/specbind/src/migration/apply.rs` — Git-guarded deterministic apply and final source retirement
 - `tools/specbind/src/migration/resolution.rs` — guarded agent-resolution acceptance and source/target freshness checks
@@ -369,3 +371,5 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0207](./design/decisions/0207-non-current-task-plan-status-projection.md) | Accepted | Non-current Task plan authority and Tasks-phase recovery projected separately from health |
 | [0208](./design/decisions/0208-linux-arm64-release-target.md) | Accepted | Native Linux ARM64 release archives, installation, and runtime verification |
 | [0209](./design/decisions/0209-project-shared-contract.md) | Accepted | Project shared resources without dedicated Specs and reviewed Direct changes |
+| [0210](./design/decisions/0210-durable-artifact-descriptions.md) | Accepted | Durable Requirements, Design, and Steering descriptions in inventories |
+| [0211](./design/decisions/0211-version-range-project-migration-plans.md) | Accepted | Read-only version-range migration plans and project-specific reconciliation |

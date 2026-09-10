@@ -19,6 +19,11 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Plan project work across executable versions without changing files.
+    Migration {
+        #[command(subcommand)]
+        command: MigrationCommand,
+    },
     /// Show where and how to report bugs or suggest improvements.
     Feedback,
     /// List or read discovered `SpecBind` artifacts.
@@ -145,9 +150,29 @@ pub enum Command {
 }
 
 #[derive(Debug, Subcommand)]
+pub enum MigrationCommand {
+    /// Re-evaluate applicable migration procedures and remaining project work.
+    Plan {
+        #[arg(long)]
+        from: String,
+        #[arg(long)]
+        to: Option<String>,
+        #[arg(long)]
+        json: bool,
+    },
+}
+
+#[derive(Debug, Subcommand)]
 pub enum ArtifactCommand {
     /// List recognized artifacts for one canonical Spec ID.
     List { spec: String },
+    /// Verify a newly materialized Markdown artifact against its selected template.
+    Check {
+        spec: String,
+        selector: String,
+        #[arg(long)]
+        template: String,
+    },
     /// Read one logical artifact selector, optionally projected for one audience.
     Read {
         spec: String,

@@ -103,13 +103,15 @@ pub fn validate_live(body: &str) -> Vec<InstructionIssue> {
 /// Verifies the instruction and placeholder obligations of one materialized
 /// artifact against the exact scaffold that created it.
 ///
-/// This deliberately compares only durable instruction comments and authored
-/// placeholders. Ordinary prose belongs to the live artifact after creation.
+/// Compares durable instruction comments, authored placeholders, and the
+/// responsibility-description creation contract. Ordinary body prose belongs
+/// to the live artifact after creation.
 #[must_use]
 pub fn verify_materialization(template: &str, live: &str) -> Vec<InstructionIssue> {
     let (template_instructions, _) = inspect(template);
     let (live_instructions, mut issues) = inspect(live);
     issues.extend(validate_live(live));
+    issues.extend(verify_description(template, live));
 
     let template_durable = durable_comments(template, &template_instructions);
     let live_durable = durable_comments(live, &live_instructions);
@@ -138,6 +140,64 @@ pub fn verify_materialization(template: &str, live: &str) -> Vec<InstructionIssu
     });
     issues.dedup();
     issues
+}
+
+fn verify_description(template: &str, live: &str) -> Vec<InstructionIssue> {
+    let mapping = |content: &str| -> Option<serde_json::Map<String, serde_json::Value>> {
+        let (frontmatter, _) = crate::artifacts::split_frontmatter(content).ok()?;
+        serde_saphyr::from_str::<serde_json::Value>(frontmatter)
+            .ok()?
+            .as_object()
+            .cloned()
+    };
+    let Some(source) = mapping(template) else {
+        return vec![];
+    };
+    let kind = source.get("type").and_then(serde_json::Value::as_str);
+    if !matches!(
+        kind,
+        Some("SpecBind Requirements" | "SpecBind Design" | "SpecBind Steering")
+    ) {
+        return vec![];
+    }
+    let live_mapping = mapping(live);
+    let target = live_mapping
+        .as_ref()
+        .map(crate::description::Description::from_mapping);
+    let valid = matches!(target, Some(crate::description::Description::Present(_)));
+    if !valid {
+        return vec![InstructionIssue {
+            code: "ARTIFACT_DESCRIPTION_REQUIRED",
+            message: "new materialization requires a valid responsibility description".to_owned(),
+        }];
+    }
+    if matches!(kind, Some("SpecBind Design" | "SpecBind Steering"))
+        && source.contains_key("artifact_id")
+        && !(kind == Some("SpecBind Design")
+            && live_mapping.as_ref().is_some_and(|mapping| {
+                mapping
+                    .get("artifact_id")
+                    .and_then(serde_json::Value::as_str)
+                    .is_some_and(|identity| {
+                        Some(identity)
+                            != source
+                                .get("artifact_id")
+                                .and_then(serde_json::Value::as_str)
+                    })
+            }))
+        && matches!(
+            crate::description::Description::from_mapping(&source),
+            crate::description::Description::Present(_)
+        )
+        && target != Some(crate::description::Description::from_mapping(&source))
+    {
+        return vec![InstructionIssue {
+            code: "ARTIFACT_DESCRIPTION_MISMATCH",
+            message: "materialization must carry the fixed template's literal description"
+                .to_owned(),
+        }];
+    }
+    vec![]
 }
 
 /// Removes scoped instruction comments not addressed to `scope`.

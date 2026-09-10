@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: プロジェクトの目的、利用者、製品としての責務の境界を定義する。
 artifact_id: product
 ---
 
@@ -42,4 +43,8 @@ artifact_id: product
 <!-- specbind:instruction maintain
 対象と誤解されやすいが、プロジェクトが意図的に担わない責任を記載する。実際に境界として使える
 非目標がない場合はこの節を削除する。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionをそのまま作成先の文書へ引き継ぐ。文書が継続して所有する責務を表し、その境界が変わる場合のみ本文とあわせて更新する。
 -->

@@ -292,7 +292,7 @@ fn installs_each_skill_to_the_accepted_target() {
 #[test]
 fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
-        ("sb-configure", 7),
+        ("sb-configure", 8),
         ("sb-discovery", 3),
         ("sb-drive", 1),
         ("sb-implement", 2),

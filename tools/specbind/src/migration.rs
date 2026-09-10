@@ -1,7 +1,8 @@
-//! cc-sdd migration inventory, planning, and deterministic application.
+//! Historical cc-sdd migration and read-only version-range project plans.
 
 mod apply;
 mod inventory;
+pub mod project;
 pub mod resolution;
 
 use std::{fmt, fs, path::Path};

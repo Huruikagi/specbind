@@ -9,6 +9,9 @@ self-update command that replaces its own executable.
 
 ## 1. Update the binary with mise
 
+Run `specbind --version` before updating and retain the original version. Use
+that same value as the migration starting point after an interrupted update.
+
 From the project root, upgrade to the newest version allowed by the configured
 version selector:
 
@@ -45,6 +48,17 @@ the installation client's exact behavior.
 
 ## 2. Refresh product-managed project files
 
+Use the new CLI to inspect project migration work from the original version:
+
+```sh
+specbind migration plan --from <previous-version> --json
+```
+
+The target defaults to the running binary version. An explicit `--to` is also
+accepted within catalog coverage; future unknown targets and downgrades fail.
+Planning changes no files. Repeating the same command re-evaluates remaining
+work against the current files.
+
 The new binary embeds the Skills and other product-managed assets for that
 version. Inspect the project refresh plan first:
 
@@ -70,6 +84,32 @@ the binary pinned by the lockfile. They receive the refreshed project files
 through Git and do not all need to rerun `specbind install`.
 
 ## What changes and what is retained
+
+For an agent-driven update, reload the newly installed `sb-configure` package
+after asset refresh before reading the plan's procedures. Pending `required`
+entries prevent reporting migration work complete. You may decline presented
+`recommended` or `optional` work. A `blocked` probe requires resolution of its
+reported input fault.
+
+The first entries introduce recommended `description` reconciliation at the
+1.5.0 boundary for Requirements, Design, Steering, and their owned templates.
+Each sentence names the document's lasting responsibility. Existing major-one
+documents remain valid without the field. The agent previews each target and
+edits only separately confirmed reconciliation scope. Template changes do not
+rewrite live artifacts, and metadata completion is not approval or freshness
+evidence.
+
+`spec list` shows Requirements descriptions, `artifact list <spec>` shows Design
+descriptions, and `steering list` shows Steering descriptions. `missing` means
+the field is absent; `invalid` means invalid metadata or Requirements validation
+errors; `unavailable` means Requirements could not be resolved unambiguously.
+Descriptions reflect current authored documents independently of approval state.
+
+When creating a Design, `artifact check <spec> <selector> --template <template>`
+checks the chosen scaffold's creation obligations, including literal description
+inheritance. An assessed Spec-local one-off uses `--template design/main` and
+provides its own responsibility sentence. This check does not establish the
+provenance of an existing artifact or change its approval state.
 
 | Target | Owner | Update behavior |
 | --- | --- | --- |

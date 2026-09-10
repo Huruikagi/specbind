@@ -236,6 +236,15 @@ fn resolve_steering_template(
         .into_iter()
         .map(|fault| issue(fault.code, Some(template_path.clone()), fault.message))
         .collect::<Vec<_>>();
+    if crate::description::Description::from_mapping(mapping)
+        == crate::description::Description::Invalid
+    {
+        issues.push(issue(
+            "TEMPLATE_DESCRIPTION_INVALID",
+            Some(template_path.clone()),
+            crate::description::INVALID_MESSAGE,
+        ));
+    }
     issues.extend(
         instruction::validate_template(body)
             .into_iter()

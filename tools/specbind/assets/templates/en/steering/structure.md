@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: Defines repository layout, module boundaries, and placement rules.
 artifact_id: structure
 ---
 
@@ -47,4 +48,8 @@ changes rather than a current directory inventory.
 Give one representative placement or naming example when the principle alone is
 easy to misapply. Delete this section when a newcomer can place new work without
 an example.
+-->
+
+<!-- specbind:instruction create
+Carry the literal Front Matter description into the live artifact. It names the lasting responsibility of this document. Update it with the body only when that boundary changes.
 -->

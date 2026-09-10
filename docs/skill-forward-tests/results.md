@@ -14,6 +14,11 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + final description checks | MG2 — pass; assessed one-off has own description, main inherits literal, lifecycle preserved | [Assessed one-off descriptions](./runs/2026-09-10-codex-144adf8-description-one-off.md) |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + inventory trial | DS9 — product failure; one-off omitted and main description replaced; decomposition trials withdrawn | [Design inventory retry](./runs/2026-09-10-codex-144adf8-description-design-3.md) |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + assessment repair | DS9 — product failure; condition-only repair still omitted one-off materialization | [Design descriptions retry](./runs/2026-09-10-codex-144adf8-description-design-2.md) |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + descriptions tree | DS9 — product failure; template description retained but required one-off supplement omitted | [Initial Design descriptions](./runs/2026-09-10-codex-144adf8-description-design.md) |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + description migration tree | MG1 — pass; confirmed three metadata-only additions, repeated plan complete, lifecycle preserved | [Description migration](./runs/2026-09-10-codex-144adf8-descriptions-migration.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `fd2b28f` + reverse shared working tree | SH3 — pass; reverse baseline finalized with shared agreement and archived fingerprint retained | [Shared reverse adoption](./runs/2026-09-10-codex-fd2b28f-shared-reverse.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `fd2b28f` + shared working tree | SH1, SH2 — pass for artifact/lifecycle behavior; language narration excluded | [Shared planning and Direct maintenance](./runs/2026-09-10-codex-fd2b28f-shared.md) |
 | 2026-09-09 | Codex | `gpt-5.6-terra` / `medium` | `f384b05` | ST2 — pass; current plan provenance remained unknown and Design then Contract Review preceded Tasks reconciliation; FT-0052 resolved | [Final non-current Task authority](./runs/2026-09-09-codex-f384b05-st2-task-authority.md) |

@@ -509,6 +509,7 @@ pub fn spec_list(start: &Path) -> CommandOutput {
                 output.push_str(present(entry.has_contract));
             }
         }
+        output.push_str(&super::super::render_description(&entry.description));
         output.push('\n');
     }
     CommandOutput::success(output.into_bytes())

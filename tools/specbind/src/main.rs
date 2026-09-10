@@ -36,6 +36,11 @@ fn run_gate(start: &Path, gate: specbind::approval::Gate, command: GateCommand) 
 fn run_artifact(start: &Path, command: ArtifactCommand) -> CommandOutput {
     match command {
         ArtifactCommand::List { spec } => specbind::cli::artifact_list(start, &spec),
+        ArtifactCommand::Check {
+            spec,
+            selector,
+            template,
+        } => specbind::cli::artifact_check(start, &spec, &selector, &template),
         ArtifactCommand::Read {
             spec,
             selector,
@@ -301,6 +306,11 @@ fn main() -> ExitCode {
     let output = match cli.command {
         Command::Feedback => specbind::cli::feedback(),
         Command::Artifact { command } => run_artifact(&start, command),
+        Command::Migration { command } => match command {
+            specbind::args::MigrationCommand::Plan { from, to, json } => {
+                specbind::cli::project_migration_plan(&start, &from, to.as_deref(), json)
+            }
+        },
         Command::Install {
             dry_run,
             agents,

@@ -294,6 +294,18 @@ fn inspect_concept(
         .count()
         + 1;
     let mut profile_issues = validate_profile(kind, mapping, body, body_start_line, path);
+    let description = if matches!(kind, ArtifactKind::Requirements | ArtifactKind::Design) {
+        crate::description::Description::from_mapping(mapping)
+    } else {
+        crate::description::Description::Missing
+    };
+    if description == crate::description::Description::Invalid {
+        profile_issues.push(issue(
+            "ARTIFACT_DESCRIPTION_INVALID",
+            Some(path.clone()),
+            crate::description::INVALID_MESSAGE,
+        ));
+    }
     profile_issues.extend(
         instruction::validate_live(body)
             .into_iter()
@@ -314,6 +326,7 @@ fn inspect_concept(
             path: path.clone(),
             artifact_id,
             kind,
+            description,
         }),
         profile_issues,
     ))
@@ -605,6 +618,7 @@ fn inspect_contract_yaml(
         path,
         artifact_id: None,
         kind: ArtifactKind::Contract,
+        description: crate::description::Description::Missing,
     })
 }
 

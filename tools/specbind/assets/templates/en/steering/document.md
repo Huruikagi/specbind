@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: Defines a distinct recurring area of project-wide guidance.
 ---
 
 # Title
@@ -60,4 +61,8 @@ example heading in a live artifact.
 Give one representative positive or boundary example when the rule alone is
 easy to misapply. Do not build an exhaustive catalog. Delete this section when
 the decisions can be applied without an example.
+-->
+
+<!-- specbind:instruction create
+Replace the generic Front Matter description with a non-empty single-line sentence naming the assessed recurring project-wide responsibility. Check that it does not overlap existing Steering.
 -->

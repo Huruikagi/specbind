@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: Defines technology choices, constraints, and shared engineering policy.
 artifact_id: tech
 ---
 
@@ -57,4 +58,8 @@ section when every such constraint is already clear beside its decision.
 Record project-wide verification layers, standard commands, and required
 environments. Keep verification specific to one Spec in its Design. Delete this
 section when the project has no settled shared standard yet.
+-->
+
+<!-- specbind:instruction create
+Carry the literal Front Matter description into the live artifact. It names the lasting responsibility of this document. Update it with the body only when that boundary changes.
 -->

@@ -1,5 +1,6 @@
 ---
 type: SpecBind Requirements
+description: このSpecが現在引き受ける振る舞いと責務の境界を定義する。
 heading_labels:
   requirement: 要件
   acceptance_criteria: 受け入れ基準
@@ -71,4 +72,8 @@ live artifact を書く前に、この空の節を少なくとも1つの実際�
 各要件グループは1つのまとまった責任を表し、受け入れ基準はその責任を観測可能にする。
 同じ振る舞いを背景やスコープへ重複させない。現在有効な要件が1つもない場合は文書を空で
 保存せず、Specの責任とライフサイクルを見直す。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionを、このSpecが現在引き受ける責務全体を表す、空でない一行の文に置き換える。今回のMilestoneの差分は書かない。責務の境界が変わる場合のみ、本文とあわせて更新する。
 -->

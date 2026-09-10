@@ -35,6 +35,7 @@ pub struct Artifact {
     pub path: Utf8PathBuf,
     pub artifact_id: Option<String>,
     pub kind: ArtifactKind,
+    pub description: crate::description::Description,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]

@@ -104,6 +104,18 @@ git status --short
 
 ## Preview and apply the project refresh
 
+Before refreshing assets, retain the original pre-update SemVer as `<from>` in
+the continuation handoff and obtain the new binary's project migration plan:
+
+```sh
+specbind migration plan --from <from> --json
+```
+
+Keep the original version across interruption and package reload. If resuming
+without it, obtain the recorded version from the maintainer; do not substitute
+the current binary version or guess from assets. A blocked probe needs its exact
+input fault resolved; it does not authorize a raw project-state rewrite.
+
 Use the newly selected binary to preview the complete product-asset plan:
 
 ```sh
@@ -168,6 +180,16 @@ Treat the project-asset refresh as a second workflow unit. When the active Git
 adapter requires it, stage only the exact refresh paths and create a separate
 asset-refresh checkpoint. Do not include a binary-selection file already
 recorded in the first checkpoint or any unrelated path.
+
+Re-evaluate the migration plan with the original `<from>`. Read each pending
+entry's stable procedure from this freshly loaded package, preview its exact
+targets, and follow its handler and authority boundary. For the description
+entries, load [description reconciliation](migrations/descriptions.md).
+Recommended and optional work may be declined after presentation; a general
+binary update request does not confirm project-owned artifact reconciliation.
+Execute authorized work only, then run the same plan again. Do not claim required
+migration work complete while a required entry is pending or blocked. Report
+declined recommendations and remaining targets separately from asset refresh.
 
 Report the old and new binary versions, the binary-selection and asset-refresh
 checkpoint outcomes separately, the retained project-owned settings, the exact

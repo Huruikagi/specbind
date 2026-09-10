@@ -21,3 +21,8 @@ edit approves nothing. Nevertheless, offer synchronization or revalidation of
 active work whose assumptions may now conflict with the changed durable
 guidance. Never mutate Requirements, Design, or lifecycle state merely to make
 them agree.
+
+Ensure new Steering and custom templates describe their recurring project-wide
+responsibility in a non-empty single-line `description`. When a live document's
+responsibility boundary changes, update this field with the body through the
+delegated Steering workflow. Ordinary detail edits do not need a new description.

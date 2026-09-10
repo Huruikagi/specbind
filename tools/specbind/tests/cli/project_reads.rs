@@ -93,8 +93,8 @@ fn lists_specs_in_identity_order_with_lifecycle_and_artifact_presence() {
         .args(["spec", "list"])
         .assert()
         .success()
-        .stdout(predicate::str::starts_with("OK SPEC_LISTED: Found 2 spec(s).\n  analytics: state=idle milestone=none requirements=no contract=no\n  checkout: state=implementation milestone=")
-            .and(predicate::str::contains(" requirements=yes contract=yes\n")))
+        .stdout(predicate::str::starts_with("OK SPEC_LISTED: Found 2 spec(s).\n  analytics: state=idle milestone=none requirements=no contract=no description=unavailable\n  checkout: state=implementation milestone=")
+            .and(predicate::str::contains(" requirements=yes contract=yes description=missing\n")))
         .stderr("");
 }
 
@@ -396,9 +396,9 @@ fn lists_steering_by_artifact_id_and_excludes_other_types() {
         .stdout(concat!(
             "OK STEERING_LISTED: Found 2 steering document(s).
 ",
-            "  selector=naming type=\"SpecBind Steering\" path=steering/nested/conventions.md project_path=.specbind/steering/nested/conventions.md
+            "  selector=naming type=\"SpecBind Steering\" path=steering/nested/conventions.md project_path=.specbind/steering/nested/conventions.md description=missing
 ",
-            "  selector=product type=\"SpecBind Steering\" path=steering/product.md project_path=.specbind/steering/product.md
+            "  selector=product type=\"SpecBind Steering\" path=steering/product.md project_path=.specbind/steering/product.md description=missing
 ",
         ))
         .stderr("");

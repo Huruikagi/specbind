@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: プロジェクト全体で継続して用いる独立した判断領域を定義する。
 ---
 
 # 表題
@@ -53,4 +54,8 @@ steering が担うのは、個々の変更より長く生き残る知識であ�
 <!-- specbind:instruction maintain
 規約だけでは適用を誤りやすい場合に、代表的な正例または境界例を1つ示す。網羅的なカタログに
 せず、例がなくても判断を適用できる場合はこの節を削除する。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionを、評価済みの継続的なプロジェクト横断の責務を表す、空でない一行の文に置き換える。既存のSteeringと責務が重複しないことを確認する。
 -->

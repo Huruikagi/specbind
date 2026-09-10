@@ -145,7 +145,24 @@ fn render_artifact(artifact: &Artifact) -> String {
         output.push_str(" artifact_id=");
         output.push_str(&escape(artifact_id));
     }
+    if artifact.kind == crate::artifacts::ArtifactKind::Design {
+        output.push_str(&render_description(&artifact.description));
+    }
     output
+}
+
+fn render_description(description: &crate::description::Description) -> String {
+    match description {
+        crate::description::Description::Unavailable => " description=unavailable".to_owned(),
+        crate::description::Description::Missing => " description=missing".to_owned(),
+        crate::description::Description::Invalid => " description=invalid".to_owned(),
+        crate::description::Description::Present(value) => {
+            format!(
+                " description=\"{}\"",
+                escape(value).replace('\\', "\\\\").replace('"', "\\\"")
+            )
+        }
+    }
 }
 
 fn render_issue(issue: &DiscoveryIssue) -> String {

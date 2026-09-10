@@ -30,6 +30,16 @@ language.
 
 ## Design template set
 
+New Design and Steering templates require a non-empty single-line literal
+Front Matter `description` describing their actual recurring independent
+responsibility. Technology labels alone do not establish that responsibility.
+Validate it with selector, output path, maintain/consume guidance, and (for
+Design) `design-template-selection` in the same configuration transaction.
+Existing major-one templates without descriptions remain readable. A template
+edit does not add descriptions to live artifacts; use the separately confirmed
+reconciliation procedure below. Requirements templates guide the author to
+replace their generic description with the current Spec's responsibility.
+
 Treat every discovered `design/<artifact_id>` template and
 `design-template-selection` as one configuration transaction. Classify every
 candidate exactly once as `required`, `conditional`, or `disabled`; give every

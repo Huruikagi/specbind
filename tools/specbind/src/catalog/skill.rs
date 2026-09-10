@@ -278,6 +278,12 @@ static CONFIGURE_RESOURCES: &[SkillResource] = &[
         relative_path: "references/update.md",
         source: include_str!("../../assets/skills/sb-configure/references/update.md"),
     },
+    SkillResource {
+        relative_path: "references/migrations/descriptions.md",
+        source: include_str!(
+            "../../assets/skills/sb-configure/references/migrations/descriptions.md"
+        ),
+    },
 ];
 
 static DISCOVERY_RESOURCES: &[SkillResource] = &[

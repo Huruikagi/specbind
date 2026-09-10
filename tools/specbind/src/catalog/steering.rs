@@ -27,6 +27,7 @@ pub struct SteeringDocument {
     pub selector: String,
     pub artifact_type: String,
     pub path: Utf8PathBuf,
+    pub description: crate::description::Description,
 }
 
 /// The compact inventory, with any per-document faults reported beside it.
@@ -300,15 +301,24 @@ fn classify(
                 "steering frontmatter requires a lowercase kebab-case artifact_id",
             )
         })?;
-    let issues = instruction::validate_live(body)
+    let mut issues = instruction::validate_live(body)
         .into_iter()
         .map(|fault| issue(fault.code, Some(relative.clone()), fault.message))
-        .collect();
+        .collect::<Vec<_>>();
+    let description = crate::description::Description::from_mapping(mapping);
+    if description == crate::description::Description::Invalid {
+        issues.push(issue(
+            "STEERING_DESCRIPTION_INVALID",
+            Some(relative.clone()),
+            crate::description::INVALID_MESSAGE,
+        ));
+    }
     Ok((
         Some(SteeringDocument {
             selector: artifact_id.to_owned(),
             artifact_type: artifact_type.to_owned(),
             path: relative.clone(),
+            description,
         }),
         issues,
     ))

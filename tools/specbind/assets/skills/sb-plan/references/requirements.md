@@ -415,3 +415,13 @@ Delegation authorizes accepting gates, not discarding accepted work.
 - Report in the project's language: what the contract now says, what changed,
   which IDs are active and why, whether the work was committed, and what runs
   next.
+
+## Durable responsibility description
+
+For new Requirements, replace the template's generic Front Matter `description`
+with one non-empty, single-line sentence naming the Spec's complete current
+responsibility. It is not a Milestone change summary. Maintain it with the body
+when that responsibility changes; do not duplicate it in an index or `spec.yaml`.
+Existing major-one Requirements without it remain readable. Adding it to an
+existing artifact is an authoring edit with ordinary freshness and approval
+consequences, not permission to approve or rewrite lifecycle evidence.

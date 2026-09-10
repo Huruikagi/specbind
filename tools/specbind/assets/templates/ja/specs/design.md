@@ -1,5 +1,6 @@
 ---
 type: SpecBind Design
+description: 構成要素の責務、相互作用、データの境界、実装上の判断を定義する。
 artifact_id: main
 ---
 
@@ -117,4 +118,8 @@ artifact_id: main
 <!-- specbind:instruction maintain
 採用案に残る具体的なリスクと、検討した実行可能な代替案を採用しなかった理由を記載する。
 判断に影響するリスクや代替案がない場合はこの節を削除する。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionをそのまま作成先の文書へ引き継ぐ。文書が継続して所有する責務を表し、その境界が変わる場合のみ本文とあわせて更新する。
 -->

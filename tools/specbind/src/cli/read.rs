@@ -15,8 +15,8 @@ mod template_commands;
 
 pub use adapter_commands::{adapter_list, adapter_read, adapter_read_for_consume};
 pub use artifact_commands::{
-    artifact_list, artifact_read, check_contracts, check_traceability, contract_consumers,
-    contract_dependencies, contract_graph, contract_owners, contract_shared,
+    artifact_check, artifact_list, artifact_read, check_contracts, check_traceability,
+    contract_consumers, contract_dependencies, contract_graph, contract_owners, contract_shared,
 };
 pub use embedded_catalog_commands::{protocol_list, protocol_read, schema_list, schema_read};
 pub use install_commands::{install_apply, install_dry_run};

@@ -1,5 +1,6 @@
 ---
 type: SpecBind Steering
+description: リポジトリ構成、モジュール境界、配置規則を定義する。
 artifact_id: structure
 ---
 
@@ -42,4 +43,8 @@ artifact_id: structure
 <!-- specbind:instruction maintain
 原則だけでは適用を誤りやすい場合に、代表的な配置または命名の例を1つ示す。例がなくても新しい
 作業の置き場所を判断できる場合はこの節を削除する。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionをそのまま作成先の文書へ引き継ぐ。文書が継続して所有する責務を表し、その境界が変わる場合のみ本文とあわせて更新する。
 -->

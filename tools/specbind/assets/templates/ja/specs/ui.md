@@ -1,5 +1,6 @@
 ---
 type: SpecBind Design
+description: ユーザー操作、画面構成、表示の振る舞いを定義する。
 artifact_id: ui
 ---
 
@@ -135,4 +136,8 @@ Steeringやプロジェクトの実装資産が定めるデザインシステム
 <!-- specbind:instruction maintain
 主要な操作フロー、状態、入力フィードバック、レスポンシブ動作、アクセシビリティをどの層で
 検証するかを記載する。実装手段の一覧ではなく、このUIの失敗を検出できる観測可能な結果を示す。
+-->
+
+<!-- specbind:instruction create
+Front Matterのdescriptionをそのまま作成先の文書へ引き継ぐ。文書が継続して所有する責務を表し、その境界が変わる場合のみ本文とあわせて更新する。
 -->

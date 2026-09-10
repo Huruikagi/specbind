@@ -204,6 +204,15 @@ document that does not appear was authored wrong** — bad Front Matter, wrong
 type, or a colliding identity. Fix it and list again. Do not report success on a
 document the CLI cannot see.
 
+Every new Steering document requires a non-empty single-line Front Matter
+`description` naming its lasting project-wide decision boundary. Carry a fixed
+template's literal description into the live document. For the generic `document`
+scaffold or an old template without this field, write the assessed recurring
+responsibility, checking overlap with existing Steering. Update the description
+with the body only when that boundary changes. Existing major-one documents
+without descriptions remain readable. Descriptions do not narrow Discovery's
+obligation to read all Steering.
+
 For every newly materialized document, run the mechanical scaffold check with
 the document identity and the template selector used to create it:
 

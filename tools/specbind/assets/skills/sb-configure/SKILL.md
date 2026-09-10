@@ -50,6 +50,8 @@ that part of the change. Do not load unrelated procedures.
 - Durable project knowledge: [Steering](references/steering.md)
 - Explicit SpecBind binary update, mise-selected version change, or
   update-coupled product-asset refresh: [update](references/update.md)
+- Pending or resumed description migration after an update:
+  [description reconciliation](references/migrations/descriptions.md)
 
 Read [aftercare](references/aftercare.md) after every mutation and before
 reporting completion.
