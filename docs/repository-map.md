@@ -67,7 +67,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/foundation/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/read_model/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
-- `tools/specbind/src/lifecycle/approval.rs` — guarded Requirements, Design, and Tasks gate approval and invalidation transitions
+- `tools/specbind/src/lifecycle/approval.rs` and `approval/` — stable guarded gate-transition facade with separate evidence construction and persistence safety
 - `tools/specbind/src/read_model/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
 - `tools/specbind/src/lifecycle/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
 - `tools/specbind/src/lifecycle/release_finalize.rs` — ordered, guarded, retry-safe whole-milestone finalization
