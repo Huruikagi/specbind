@@ -63,6 +63,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/documents/traceability.rs` — cross-artifact Requirement existence plus active Design and Task coverage, exposed by `check traceability`
 - `tools/specbind/src/schema/contract.rs` and `domain/contract.rs` — versioned Contract wire model and artifact-local semantic validation
 - `tools/specbind/src/read_model/contract_graph.rs` — project-wide Contract reference, ownership-overlap, and dependency-cycle read model
+- `tools/specbind/src/read_model/milestone_status.rs` and `milestone_status/` — stable Milestone status facade with separate action derivation, diagnostics, and release-readiness projections
 - `tools/specbind/src/documents/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/foundation/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
