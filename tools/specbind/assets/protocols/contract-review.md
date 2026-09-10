@@ -137,3 +137,17 @@ a caveat.
 The assessment is the durable explanation of why the milestone's seams are
 coherent. Write it so that a reader who did not participate can tell what was
 examined and why the conclusion holds.
+
+## Project shared agreements
+
+An optional shared Contract is part of the complete graph and review inputs.
+A Direct item may change this agreement when its Roadmap scope explicitly names
+the resources; Direct-only does not exempt that change from review. No Spec
+Requirements, Design, Tasks or gate is created for the shared resource itself.
+Judge the resource policy, invariants, actual baseline difference and scoped
+intent together. Shared proposal preparation precedes consumer Design; its
+implementation completion is not a prerequisite for review. An ordinary
+feature contribution within the agreement is checked during implementation.
+Only Spec-owned artifact changes require the Spec route; a shared agreement
+finding returns to shared Plan preparation. No unresolved shared finding can be
+accepted, and external/undeclared consumers still require semantic investigation.

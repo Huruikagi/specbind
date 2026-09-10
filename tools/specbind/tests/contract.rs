@@ -21,7 +21,7 @@ fn loads_the_strict_contract_profile() {
 
     assert_eq!(document.owns[0].id, "checkout-flow");
     assert_eq!(document.exports[0].description, "Public result.");
-    assert_eq!(document.consumes[0].target.canonical_spec, "catalog");
+    assert_eq!(document.consumes[0].target.owner.spec(), Some("catalog"));
     assert_eq!(
         document.consumes[0].target.section,
         ContractSection::Exports

@@ -2,6 +2,7 @@
 
 pub mod contract;
 mod diagnostics;
+pub mod shared_contract;
 pub mod spec;
 pub mod tasks;
 

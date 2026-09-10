@@ -50,13 +50,13 @@ Discoveryは、ワークフローに入ってきた作業を「誰が所有す�
 | --- | --- | --- |
 | 既存Specの更新 | 既存Specが所有する振る舞いや境界を変更する | 更新されたRequirements、Design、Contract、Tasks |
 | 新規Spec | プロジェクトに新しい責務を追加し、今後も持ち続ける | 新しいRequirements、Design、Contract、Tasks |
-| Direct | どのSpecにも属さず、Requirements、Design、Contractを変えない | Roadmap上の要約と完了状態 |
+| Direct | どのSpecにも属さず、SpecのRequirements、Design、Contractを変えない | Roadmap上の要約と完了状態 |
 
 分類を決めるのは作業量ではなく所有権です。大きな変更でも、既存の1つの責任の中に
 収まるなら既存Specの更新です。逆に小さな変更でも、新しい責務が生まれるなら
 新規Specになります。
 
-Directとして始めた作業が、実は仕様やContractの変更を必要とすると分かった場合は、
+Directとして始めた作業が、実はSpecの仕様やContractの変更を必要とすると分かった場合は、
 その場で成果物を足さずに、Discoveryへ戻して分類をやり直します。
 
 ## DiscoveryのSource Collection
@@ -153,6 +153,45 @@ File Ownership宣言と照合します。一致結果は管理対象の境界候
 だけでは、その依頼がどのSpecにも属さないとは判断できません。対応する進行中の
 Roadmap項目がなければ、ファイルを名指しした命令形の依頼でもDiscoveryへ入り、
 実装前にscope confirmationで停止します。
+
+## 共有Contract
+
+翻訳ファイルのように複数の機能が使う資源は、専用Specを作らずに共有Contractで管理できます。
+任意の`<specDir>/shared-contract.yaml`に、資源ID、対象パス、変更規則、不変条件を記録します。
+既定の`specDir`は`.specbind`です。共有Contractはリリース後も残り、独自のGateやTasksは持ちません。
+
+```yaml
+schema_version: 1
+resources:
+  - id: translations
+    description: 日英の翻訳カタログ
+    paths: [locales/ja.json, locales/en.json]
+    change_policy: 各機能は自身の名前空間を両言語で更新する。
+    invariants: [言語間でキーと補間変数が一致する。]
+```
+
+```sh
+specbind contract owners locales/ja.json
+specbind contract shared read
+specbind contract shared consumers translations
+specbind schema read shared-contract/v1
+```
+
+`owners`はSpecの宣言、共有資源の宣言、宣言なしを区別します。共有資源を継続して利用するSpecは
+`contract/v2`の`consumes`から`{shared: true, section: resources, id: translations}`を参照します。
+既存の`contract/v1`も引き続き読み取れます。JSONキー単位の所有権や書込み権限をCLIが検証する
+仕組みではなく、キー一致などの実際の検証にはプロジェクトの検証手段を使います。
+
+検索機能の文言追加は検索SpecのTaskで行い、既存規則内なら共有Contractの変更は不要です。
+共有の約束自体を変更する場合は、Discoveryで担当Directと対象資源を宣言し、`sb-plan --shared`で
+提案を準備してからContractレビューを受けます。Direct-onlyのMilestoneでも、このレビューは
+必要です。機能側の仕様変更が必要なら、影響するSpecも同じMilestoneに含めます。
+
+Scope入力ではDirectの`sharedContractChanges`配列に資源IDを指定します。永続Roadmapの
+`shared_contract_changes`はCLIが書きます。空の共有ファイルの作成・削除だけは`["*"]`を使い、
+資源を一括変更する権限には使いません。完了済み項目に新たな共有義務を追加せず、別のDirectで追跡します。
+共有規則をレビュー後に変更すると再レビューが必要ですが、規則内の通常の翻訳値追加では
+レビューは古くなりません。共有パスの誤字修正もDiscoveryで分類し、Specの保証を変えなければDirectにできます。
 
 ## 無効化とやり直し
 

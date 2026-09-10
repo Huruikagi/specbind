@@ -1,10 +1,10 @@
-# Project shared Contract
+# 0209: Project shared Contract without dedicated Specs
 
-Status: Draft — 提案。未採用・未実装。
+Status: Accepted
 
-この文書は、SpecBind導入プロジェクトで翻訳ファイルなどを管理するための設計案である。
-以下のパス、YAML、コマンド拡張は提案であり、現在のCLIには渡せない。
-既存のAccepted Decisionを上書きしない。採用時には関連Decisionを更新する。
+共有資源を専用Specなしで管理し、既存Contract graphとMilestone reviewに統合する。
+本Decisionは0155・0156・0190のSpec限定モデルと、0102・0108のDirect条件を以下の範囲で拡張する。
+既存v1成果物と共有機能未使用のworkflowは維持する。
 
 ## 解決する問題
 
@@ -16,7 +16,7 @@ Requirements、Design、Tasks、Gateを維持することになる。
 Steeringに共有ルールを書く方法は軽いが、`contract owners`から発見できず、意図した
 共有と宣言漏れが区別できない。解決したいのは、この機械的に見つかる管理境界の欠落である。
 
-## 推奨する分担
+## 採用する分担
 
 プロジェクトに任意の共有Contractを一つ持たせる。共有ContractはSpecではなく、共有資源の
 識別、パス、変更時の約束を保持する。独自のRequirements、Design、Tasks、完了状態は持たない。
@@ -37,11 +37,11 @@ Requirement IDの代用にしたり、共有資源のためだけにダミーReq
 
 ## 最小の成果物モデル
 
-候補パスは`<specDir>/shared-contract.yaml`。`.specbind`をハードコードしない。
+固定パスは`<specDir>/shared-contract.yaml`。`.specbind`をハードコードしない。
 ファイル不在は未利用として有効、存在する不正なファイルはエラーとする。
 インストール時に空ファイルを全プロジェクトへ作成しない。
 
-初期モデルは`shared-contract/v1`として、次の形を推奨する。
+初期モデルは`shared-contract/v1`として、次の形とする。
 
 ```yaml
 schema_version: 1
@@ -84,7 +84,7 @@ Schemaと参照はresource全体にかかるため、規則変更時はその利
 
 ## Specからの利用と所有権検査
 
-Spec Contractからの参照は既存`consumes`を拡張する。例として、新しい`contract/v2`では
+Spec Contractからの参照は既存`consumes`を拡張する。例として、`contract/v2`では
 既存のSpecターゲットに加え、次を許容する。
 
 ```yaml
@@ -113,7 +113,7 @@ consumes:
 場合は、すべてを返して警告する。具体的なパスを優先して広い宣言を黙って無視しない。
 初版では階層所有・上書き規則を追加せず、レビューで解消または許容理由を明示する。
 
-追加する読み取り面の候補は次のとおり。
+追加する読み取り面は次のとおり。
 
 ```text
 specbind contract shared read
@@ -152,12 +152,13 @@ Directかどうかは変更量ではなく、SpecのRequirements・Design・Cont
 現行DirectはContract変更を許さず、Direct-only MilestoneはContract Reviewを受け付けない。
 そのままでは共有Contractを維持するために結局ダミーSpecが必要になる。
 
-推奨案は、第三のwork item種別を追加せず、Directの条件を限定的に拡張することである。
+第三のwork item種別を追加せず、Directの条件を限定的に拡張する。
 SpecのRequirements・Design・Contractを変えない条件は維持し、共有Contractの変更だけを
 宣言したDirectを許容する。そのDirectはContract Reviewを免除されない。
 
-RoadmapのDirect項目に任意の`shared_contract_changes`資源ID配列を追加する案を採る。
-欠落・空配列は従来のDirectである。配列は新設・変更・削除する資源のIDを指すため、
+RoadmapのDirect項目に任意の`shared_contract_changes`資源ID配列を追加する。
+欠落・空配列は従来のDirectである。空manifestの作成・削除だけは`*`を使う。この値は資源の一括変更権限ではない。
+配列は新設・変更・削除する資源のIDを指すため、
 現行集合への参照だけでは検証しない。baselineとcurrentの和集合、および作成予定を考慮する。
 操作の内容と必要な検証はRoadmap本文に記載し、別のBriefやTasksは作らない。
 
@@ -165,6 +166,10 @@ RoadmapのDirect項目に任意の`shared_contract_changes`資源ID配列を追�
 あれば、宣言がなくてもレビュー必須とし、未スコープの変更として受入れを止める。
 Spec作業に付随する共有Contract変更にも、約束を準備する担当Directを一つ割り当てる。
 各Specの通常の文言追加にはこのDirectを要求しない。
+
+完了済みDirectの共有変更義務は後から置き換えない。同じ資源の追加変更は新しいDirectに
+記録できるため、資源IDの重複禁止は一つのDirect内に限定する。複数項目間の実施順序は
+必要に応じて既存の`depends_on`で表す。
 
 ### 準備・レビュー・実施の順序
 
@@ -258,12 +263,12 @@ v1のみのプロジェクトを強制変換しない。共有参照を追加す
 | 導入・更新・adoption・uninstall | 任意導入と永続成果物の保護 |
 | テンプレート・文書・検証 | 日英の説明と両エージェントの同一契約、fixtureとforward test |
 
-実装順はwire/read model、review/完了、Skill/導入を推奨するが、機能としての提供は一体で行う。
+wire/read model、review/完了、Skill/導入を一体で提供する。
 ownersだけが共有を認識し、Direct完了が無検査で通る中間状態を完成扱いしない。
 
-## 採用前に確認するトレードオフ
+## トレードオフ
 
-推奨は「単一共有Contract、資源単位、共有変更を宣言するDirect、既存reviewの再利用」である。
+「単一共有Contract、資源単位、共有変更を宣言するDirect、既存reviewの再利用」を採用する。
 専用Spec案より軽く、Steering単独案より機械的に発見できる。ただし共有の誤字修正も
 Discoveryを通すこと、Directの既存の意味を限定拡張することは明示的なプロダクト判断になる。
 
@@ -271,9 +276,10 @@ Discoveryを通すこと、Directの既存の意味を限定拡張すること�
 新しい分岐が必要になる。初版では採らない。共有変更を無条件のDirectにする案は、
 利用者への破壊的変更を受入れなしで通すため採らない。
 
-実装Decisionでは、上記の意味を固定したうえでRoadmap wireの正確な拡張、Driveのhandlerと
-再入時のstatus出力、新しいCLI診断コードを確定する。このDraftは実装完了仕様ではなく、
-それらを決めるための責任・ライフサイクル設計である。
+Scope入力は`sharedContractChanges`、永続Roadmapは`shared_contract_changes`を使う。
+Direct-onlyを含む共有準備は`sb-plan --shared`が所有し、Driveのtyped handlerもこのSkillへ渡す。
+共有reviewの入力selectorは`shared-contract`、共有変更のRoadmap本文は`roadmap#shared-body`とする。
+共有Contractの新設・削除もbaselineとの比較で検出する。
 
 ## 検証シナリオ
 
@@ -291,18 +297,17 @@ Discoveryを通すこと、Directの既存の意味を限定拡張すること�
 12. 初回導入、Specからの移管、参照を伴う削除、finalize、更新・uninstallが成果物を正しく扱う。
 
 CLIの構造検証・lifecycle fixtureに加え、Skillを実装する段階で翻訳例のfresh-agent forward testを
-行う。この文書のみの変更に製品のbehavioral test実施を要求しない。
+行う。実装と同じbuildのfixtureで測定する。
 
 ## 現行契約との対応
 
-- [Cross-spec contracts](./cross-spec-contracts.md): 疎なFile Ownership、Taskのwrite scope、Directの現行条件。
-- [Decision 0102](./decisions/0102-workflow-entry-condition.md): workflowの入口と通常作業・Directの区別。
-- [Decision 0155](./decisions/0155-versioned-yaml-contract-artifact.md): 厳密なContract wireと意味fingerprint。
-- [Decision 0156](./decisions/0156-derived-contract-graph-reads.md): 完全なgraph、参照単位のprojection、意味判断の境界。
-- [Decision 0190](./decisions/0190-file-ownership-path-projection.md): ownersの候補取得と宣言なしの意味。
-- [Decision 0144](./decisions/0144-major-version-compatibility-and-migration.md): 既存成果物のforward-upgrade互換。
+- [Cross-spec contracts](../cross-spec-contracts.md): 疎なFile Ownership、Taskのwrite scope、Directの現行条件。
+- [Decision 0102](./0102-workflow-entry-condition.md): workflowの入口と通常作業・Directの区別。
+- [Decision 0155](./0155-versioned-yaml-contract-artifact.md): 厳密なContract wireと意味fingerprint。
+- [Decision 0156](./0156-derived-contract-graph-reads.md): 完全なgraph、参照単位のprojection、意味判断の境界。
+- [Decision 0190](./0190-file-ownership-path-projection.md): ownersの候補取得と宣言なしの意味。
+- [Decision 0144](./0144-major-version-compatibility-and-migration.md): 既存成果物のforward-upgrade互換。
 
-現行実装では`cross_spec_review/resolution.rs`がDirect-onlyの受入れを拒否し、
-`cross_spec_review/accepted_state.rs`と`freshness.rs`も同じ前提を持つ。
-`completion/direct.rs`は現在この共有review条件を検査しない。したがって成果物とownersの
-追加だけでは本案は成立せず、これらの境界を同時に変更する必要がある。
+`cross_spec_review`のDirect-only受入れ制限、入力解決、freshnessと、
+`completion/direct.rs`の完了ガードを一体で変更する。共有変更ありのDirect-only releaseでは
+reviewをアーカイブし、通常のDirect-only releaseは従来の成果物集合を維持する。

@@ -85,6 +85,13 @@ For each candidate Spec collect precise project-relative locators for:
 - structural constraints relevant to Design; and
 - unknowns, contradictions, and suspected defects.
 
+Shared catalogs or assets with no independent behavior may become resources in
+the optional project shared Contract. Do not create a reverse Spec merely to
+hold such files. Read `specbind contract shared read` and
+`specbind schema read shared-contract/v1`; include any proposed resource paths,
+change policy, invariants, and consumer boundaries in the evidence-led proposal
+below. Unknown maintained guarantees remain blocking rather than invented.
+
 Code is evidence, never specification authority. Classify an observation as
 maintained requirement, Design constraint, historical constraint,
 implementation detail, suspected defect, blocking unknown, or deferred unknown.
@@ -136,6 +143,7 @@ Baseline version: <existing product version>
 Selected area: <area>
 Reverse Specs: <id, responsibility, maintained intent, evidence basis>
 Dependencies: <Spec edges or None>
+Shared resources: <resource IDs, paths, proposed guarantees, evidence, and consumers or None>
 Blocking unknowns: <questions that prevent meaningful Specs or None>
 Deferred unknowns: <recorded non-semantic choices or None>
 Suspected defects: <pending adapter records or None>
@@ -183,7 +191,15 @@ not already present. If it is absent or changed, record nothing and report the
 adapter mismatch; never invent or recover a destination. This post-creation
 write preserves the fixed clean baseline.
 
-Checkpoint the reverse Roadmap and Spec state, Briefs, Research, temporary
+If the confirmed proposal includes shared resources, author only those
+agreements in `<specDir>/shared-contract.yaml` before consumer Design. The
+reverse milestone's confirmation supplies this authority; do not add delivery
+Direct items or invoke delivery shared planning. Existing implementation stays
+unchanged. Use Contract v2 only for Specs that consume a shared resource. Include
+the shared proposal in the following checkpoint and in milestone Contract
+Review; preserve it through adoption finalization.
+
+Checkpoint the reverse Roadmap and Spec state, shared proposal when scoped, Briefs, Research, temporary
 adoption record, and the verified deferred destination when written as one
 Discovery unit according to the active Git Adapter. Admit no other dirty path.
 Never infer push authority.

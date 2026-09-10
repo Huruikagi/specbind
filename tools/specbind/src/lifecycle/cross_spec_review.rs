@@ -83,6 +83,7 @@ mod accepted_state;
 mod freshness;
 mod guard;
 mod resolution;
+mod shared;
 
 pub use accepted_state::remove_accepted;
 pub use freshness::{evaluate_freshness, require_for_boundary};
@@ -210,4 +211,33 @@ pub(super) fn review_issue(
         source,
         message: message.into(),
     }
+}
+
+/// Guards Direct execution/completion when shared guarantees require review.
+/// # Errors
+/// Returns unresolved shared-input or freshness diagnostics.
+pub fn require_shared_for_direct(project: &Path, root: &Path) -> Result<(), ReviewIssues> {
+    let source = std::fs::read_to_string(root.join("steering/roadmap.md")).map_err(|error| {
+        one_review_issue("SHARED_CONTRACT_ROADMAP_INVALID", None, error.to_string())
+    })?;
+    let roadmap = crate::roadmap::parse(&source).map_err(|error| {
+        one_review_issue("SHARED_CONTRACT_ROADMAP_INVALID", None, error.to_string())
+    })?;
+    let assessment = shared::assess(project, root, &roadmap)?;
+    if roadmap.has_shared_changes() || !assessment.changed.is_empty() {
+        require_for_boundary(project, root, ReviewBoundary::ReleasePreflight)?;
+    }
+    Ok(())
+}
+
+/// Determines whether planned or observed shared changes require preparation.
+/// # Errors
+/// Returns invalid current or baseline input diagnostics.
+pub fn has_shared_changes(
+    project: &Path,
+    root: &Path,
+    roadmap: &RoadmapDocument,
+) -> Result<bool, ReviewIssues> {
+    let assessment = shared::assess(project, root, roadmap)?;
+    Ok(roadmap.has_shared_changes() || !assessment.changed.is_empty())
 }

@@ -26,8 +26,32 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
         }
     };
     let milestone_id = roadmap.milestone_id.clone();
+    if let Err(message) = crate::read_model::shared_contract::read(specbind_root) {
+        return freshness_report(
+            ReviewFreshnessStatus::Invalid,
+            None,
+            None,
+            vec![review_issue(
+                "SHARED_CONTRACT_REVIEW_INPUT_INVALID",
+                Some("shared-contract.yaml".into()),
+                message,
+            )],
+        )
+        .with_milestone(milestone_id);
+    }
     let relative = "state/contract-review.md";
-    let accepted = match read_accepted_review(specbind_root, &roadmap, relative) {
+    let required = if !roadmap.spec_ids().is_empty() || roadmap.has_shared_changes() {
+        true
+    } else {
+        match super::shared::assess(project_root, specbind_root, &roadmap) {
+            Ok(value) => value.required,
+            Err(error) => {
+                return freshness_report(ReviewFreshnessStatus::Invalid, None, None, error.issues)
+                    .with_milestone(milestone_id);
+            }
+        }
+    };
+    let accepted = match read_accepted_review(specbind_root, &roadmap, relative, required) {
         Ok(accepted) => accepted,
         Err(report) => return (*report).with_milestone(milestone_id),
     };
@@ -55,6 +79,15 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
             .with_milestone(milestone_id);
         }
     };
+    if let Err(error) = super::shared::validate_scope(project_root, specbind_root, &roadmap) {
+        return freshness_report(
+            ReviewFreshnessStatus::Stale,
+            Some(accepted),
+            None,
+            error.issues,
+        )
+        .with_milestone(milestone_id);
+    }
     let current_revisions = current.input_revisions;
     let mut issues = Vec::new();
     validate_baseline(project_root, &roadmap.baseline_revision, &mut issues);

@@ -382,3 +382,8 @@ authorizes accepting gates, not discarding accepted work.
 - Report in the project's language: the decomposition, the order and why, which
   requirements each task delivers, whether the work was
   committed, and what runs next.
+
+For a shared resource contribution, trace the Task to its own feature
+Requirements. Put concrete shared paths and the intended contribution in its
+boundaries; reference the shared resource in contracts where useful. Do not
+invent a Requirement or a separate shared Task plan merely to name the file.

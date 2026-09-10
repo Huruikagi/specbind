@@ -62,8 +62,11 @@ pub(super) fn resolve_candidate_inputs(
     let graph = contract_graph::resolve(specbind_root);
     collect_graph_issues(&graph, &mut issues);
     let mut input_revisions = BTreeMap::new();
-    if let (Some(roadmap), Some(_bytes)) = (&roadmap, roadmap_bytes) {
-        if roadmap.spec_ids().is_empty() {
+    if let (Some(roadmap), Some(_bytes)) = (&roadmap, &roadmap_bytes) {
+        if roadmap.spec_ids().is_empty()
+            && !roadmap.has_shared_changes()
+            && graph.report.shared.is_none()
+        {
             issues.push(review_issue(
                 "CONTRACT_REVIEW_DIRECT_ONLY",
                 Some(ROADMAP_KEY.to_owned()),
@@ -92,25 +95,21 @@ pub(super) fn resolve_candidate_inputs(
     }
 
     collect_contract_revisions(&graph, &mut input_revisions, &mut issues);
+    collect_shared_revisions(
+        &graph,
+        roadmap.as_ref(),
+        roadmap_bytes.as_deref(),
+        &mut input_revisions,
+        &mut issues,
+    );
 
-    let mut deep_seen = BTreeSet::new();
-    for selector in &candidate.deep_inputs {
-        if !deep_seen.insert(selector) {
-            issues.push(review_issue(
-                "CONTRACT_REVIEW_DEEP_INPUT_DUPLICATE",
-                Some(selector.clone()),
-                "deepInputs must not contain duplicates",
-            ));
-            continue;
-        }
-        resolve_deep_input(
-            specbind_root,
-            selector,
-            &graph.inventories,
-            &mut input_revisions,
-            &mut issues,
-        );
-    }
+    collect_deep_revisions(
+        specbind_root,
+        &candidate.deep_inputs,
+        &graph.inventories,
+        &mut input_revisions,
+        &mut issues,
+    );
 
     if issues.is_empty()
         && let Some(roadmap) = roadmap
@@ -330,4 +329,71 @@ pub(super) fn read_regular(
 
 pub(super) fn valid_id(value: &str) -> bool {
     crate::artifacts::canonical_id(value)
+}
+
+fn collect_shared_revisions(
+    graph: &ContractGraphResolution,
+    roadmap: Option<&roadmap::RoadmapDocument>,
+    roadmap_bytes: Option<&[u8]>,
+    revisions: &mut BTreeMap<String, Fingerprint>,
+    issues: &mut Vec<ReviewIssue>,
+) {
+    if graph.report.shared.is_some()
+        || roadmap.is_some_and(roadmap::RoadmapDocument::has_shared_changes)
+    {
+        match Fingerprint::shared_contract(graph.report.shared.as_ref()) {
+            Ok(value) => {
+                revisions.insert("shared-contract".into(), value);
+            }
+            Err(error) => issues.push(review_issue(
+                "SHARED_CONTRACT_FINGERPRINT_FAILED",
+                None,
+                error.to_string(),
+            )),
+        }
+    }
+    if roadmap.is_some_and(roadmap::RoadmapDocument::has_shared_changes) {
+        if let Some(source) = roadmap_bytes.and_then(|bytes| std::str::from_utf8(bytes).ok()) {
+            match roadmap::split_frontmatter_parts(source) {
+                Ok((_, body)) => {
+                    revisions.insert(
+                        "roadmap#shared-body".into(),
+                        Fingerprint::markdown(body.as_bytes()),
+                    );
+                }
+                Err(message) => issues.push(review_issue(
+                    "SHARED_CONTRACT_ROADMAP_INVALID",
+                    None,
+                    message,
+                )),
+            }
+        } else {
+            issues.push(review_issue(
+                "SHARED_CONTRACT_ROADMAP_INVALID",
+                None,
+                "cannot reread shared change intent",
+            ));
+        }
+    }
+}
+
+fn collect_deep_revisions(
+    root: &Path,
+    selectors: &[String],
+    inventories: &BTreeMap<String, ArtifactInventory>,
+    revisions: &mut BTreeMap<String, Fingerprint>,
+    issues: &mut Vec<ReviewIssue>,
+) {
+    let mut deep_seen = BTreeSet::new();
+    for selector in selectors {
+        if !deep_seen.insert(selector) {
+            issues.push(review_issue(
+                "CONTRACT_REVIEW_DEEP_INPUT_DUPLICATE",
+                Some(selector.clone()),
+                "deepInputs must not contain duplicates",
+            ));
+            continue;
+        }
+        resolve_deep_input(root, selector, inventories, revisions, issues);
+    }
 }

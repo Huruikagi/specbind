@@ -322,6 +322,7 @@ fn completed_retry(
         &roadmap.milestone_id,
         &specs,
         &log_entries,
+        roadmap.has_shared_changes(),
     )?;
     Ok(Some(FinalizeOutcome::AlreadyFinalized {
         version,
@@ -336,6 +337,7 @@ fn verify_completed_retry(
     milestone_id: &str,
     specs: &[String],
     entries: &ValidatedLogEntries,
+    shared_changes: bool,
 ) -> Result<(), FinalizeIssues> {
     let archives = release::archive_targets(version).map_err(|error| FinalizeIssues {
         issues: error
@@ -344,7 +346,7 @@ fn verify_completed_retry(
             .map(|value| issue(value.code, value.path, value.message))
             .collect(),
     })?;
-    if !specs.is_empty() {
+    if !specs.is_empty() || shared_changes {
         let review = read_regular(
             specbind_root,
             &archives.cross_spec_review,
@@ -546,7 +548,15 @@ fn build_plan(
         });
     }
     Ok(FinalizationPlan {
-        review_archive: (!specs.is_empty()).then_some(archives.cross_spec_review),
+        review_archive: (!specs.is_empty()
+            || roadmap::parse(&read_regular(
+                specbind_root,
+                "steering/roadmap.md",
+                "RELEASE_ROADMAP_READ_FAILED",
+            )?)
+            .map_err(|error| one_issue("RELEASE_ROADMAP_INVALID", None, error.to_string()))?
+            .has_shared_changes())
+        .then_some(archives.cross_spec_review),
         roadmap_archive: archives.roadmap,
         readiness,
         specs,

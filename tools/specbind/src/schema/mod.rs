@@ -4,9 +4,13 @@ pub mod contract;
 pub mod generate;
 pub mod runtime;
 pub mod scope;
+pub mod shared_contract;
 pub mod spec;
 pub mod tasks;
 
+pub const CONTRACT_V2_SCHEMA_JSON: &str = include_str!("../../schemas/contract/v2.schema.json");
+pub const SHARED_CONTRACT_V1_SCHEMA_JSON: &str =
+    include_str!("../../schemas/shared-contract/v1.schema.json");
 pub const CONTRACT_V1_SCHEMA_JSON: &str = include_str!("../../schemas/contract/v1.schema.json");
 pub const SPEC_V1_SCHEMA_JSON: &str = include_str!("../../schemas/spec/v1.schema.json");
 pub const TASKS_V1_SCHEMA_JSON: &str = include_str!("../../schemas/tasks/v1.schema.json");
@@ -39,6 +43,18 @@ impl EmbeddedSchema {
 
 /// Every embedded schema. This is the whole accepted selector set.
 static SCHEMAS: &[EmbeddedSchema] = &[
+    EmbeddedSchema {
+        selector: "contract/v2",
+        artifact: "contract.yaml",
+        written_by: "the authoring agent",
+        content: CONTRACT_V2_SCHEMA_JSON,
+    },
+    EmbeddedSchema {
+        selector: "shared-contract/v1",
+        artifact: "shared-contract.yaml",
+        written_by: "the authoring agent",
+        content: SHARED_CONTRACT_V1_SCHEMA_JSON,
+    },
     EmbeddedSchema {
         selector: "contract/v1",
         artifact: "contract.yaml",

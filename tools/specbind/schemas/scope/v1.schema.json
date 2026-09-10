@@ -137,6 +137,12 @@
     "DirectItemDocument": {
       "type": "object",
       "properties": {
+        "sharedContractChanges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "id": {
           "description": "Canonical lowercase kebab-case Direct identity.",
           "type": "string"

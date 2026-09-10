@@ -19,6 +19,15 @@ pub(super) fn validate_acceptance_guards(
     resolution: &ReviewInputResolution,
 ) -> Result<(), ReviewIssues> {
     let mut issues = Vec::new();
+    let shared = super::shared::assess(project_root, specbind_root, &resolution.roadmap)?;
+    if !shared.required {
+        return Err(super::one_review_issue(
+            "CONTRACT_REVIEW_DIRECT_ONLY",
+            Some(ROADMAP_KEY.into()),
+            "Direct-only milestones without shared changes do not accept a contract review",
+        ));
+    }
+    super::shared::validate_scope(project_root, specbind_root, &resolution.roadmap)?;
     let reverse = !resolution.roadmap.reverse_specs.is_empty();
     validate_baseline(
         project_root,

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SharedContractDocument",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "format": "uint8",
+      "minimum": 0,
+      "maximum": 255,
+      "const": 1
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Resource"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "resources"
+  ],
+  "$defs": {
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntryId"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "change_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "paths",
+        "change_policy",
+        "invariants"
+      ]
+    },
+    "EntryId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    }
+  }
+}

@@ -89,7 +89,19 @@ fn spec_category(name: &str, items: &[SpecItem]) -> String {
 fn direct_category(items: &[DirectItem]) -> String {
     let rendered = items
         .iter()
-        .map(|item| item_object(&[("id", &item.id)], &item.summary, &item.depends_on))
+        .map(|item| {
+            let mut output = item_object(&[("id", &item.id)], &item.summary, &item.depends_on);
+            if !item.shared_contract_changes.is_empty() {
+                let value = serde_json::to_string(&item.shared_contract_changes)
+                    .expect("string list serializes");
+                let end = output.rfind("\n      }").expect("item closing brace");
+                output.insert_str(
+                    end,
+                    &format!(",\n        \"sharedContractChanges\": {value}"),
+                );
+            }
+            output
+        })
         .collect::<Vec<_>>()
         .join(",\n");
     format!("    \"directChanges\": [\n{rendered}\n    ]")

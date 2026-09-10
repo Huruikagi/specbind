@@ -34,10 +34,14 @@ fn reports_no_active_milestone_as_no_change() {
 #[test]
 fn reports_direct_milestone_dependencies_and_actionable_work() {
     let root = project_fixture();
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
     write(
         root.path(),
         ".specbind/steering/roadmap.md",
-        "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: publish\n      summary: Publish site\n      depends_on:\n        - direct: docs\n---\n# Roadmap\n",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: 0198b2d1-7c4a-7e31-9f42-8e7c3a110d62\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n    - id: publish\n      summary: Publish site\n      depends_on:\n        - direct: docs\n---\n# Roadmap\n"
+        ),
     );
     commit_all(root.path());
 
@@ -95,7 +99,7 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
                 "specStates": {},
                 "directProgress": {"completed": 0, "total": 2},
                 "revision": "<revision>",
-                "baseline": "0123456789abcdef0123456789abcdef01234567",
+                "baseline": baseline,
                 "items": [
                     {
                         "id": "direct:docs",
@@ -508,11 +512,13 @@ fn accepts_a_repository_external_candidate_file() {
 #[test]
 fn reports_not_applicable_and_absent_review_state_as_success() {
     let root = project_fixture();
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
     write(
         root.path(),
         ".specbind/steering/roadmap.md",
         &format!(
-            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n# Roadmap\n"
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n# Roadmap\n"
         ),
     );
 

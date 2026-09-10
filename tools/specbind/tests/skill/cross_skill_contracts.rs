@@ -296,7 +296,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
         ("sb-discovery", 3),
         ("sb-drive", 1),
         ("sb-implement", 2),
-        ("sb-plan", 5),
+        ("sb-plan", 6),
         ("sb-release", 1),
     ] {
         let entry = skill::find(name).expect("progressive skill package");

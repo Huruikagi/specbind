@@ -10,7 +10,7 @@ use crate::artifacts::{
     self, ArtifactInventory, ArtifactKind, DiscoveryIssue, SpecEntryFault, discover_spec,
     resolve_contract_projection,
 };
-use crate::contract::{ContractDocument, ContractSection};
+use crate::contract::{ContractDocument, ContractOwner, ContractSection};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GraphIssueSeverity {
@@ -28,7 +28,7 @@ pub struct ContractGraphIssue {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ContractEntryRef {
-    pub canonical_spec: String,
+    pub owner: ContractOwner,
     pub section: ContractSection,
     pub entry_id: String,
 }
@@ -66,6 +66,7 @@ pub struct InvalidOwnershipQuery;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContractGraphReport {
     pub contracts: BTreeMap<String, ContractDocument>,
+    pub shared: Option<crate::domain::shared_contract::SharedContract>,
     pub dependencies: Vec<ContractDependency>,
     pub ownership_findings: Vec<OwnershipFinding>,
     pub dependency_cycles: Vec<Vec<String>>,
@@ -119,7 +120,18 @@ pub fn resolve(specbind_root: &Path) -> ContractGraphResolution {
 
     project_issues.sort();
     project_issues.dedup();
-    let report = evaluate(&expected_specs, contracts);
+    let shared = match super::shared_contract::read(specbind_root) {
+        Ok(shared) => shared,
+        Err(message) => {
+            project_issues.push(discovery_issue(
+                "SHARED_CONTRACT_INVALID",
+                Some(Utf8PathBuf::from("shared-contract.yaml")),
+                message,
+            ));
+            None
+        }
+    };
+    let report = evaluate_with_shared(&expected_specs, contracts, shared);
     ContractGraphResolution {
         inventories,
         project_issues,
@@ -133,6 +145,15 @@ pub fn evaluate(
     expected_specs: &BTreeSet<String>,
     contracts: BTreeMap<String, ContractDocument>,
 ) -> ContractGraphReport {
+    evaluate_with_shared(expected_specs, contracts, None)
+}
+
+#[must_use]
+pub fn evaluate_with_shared(
+    expected_specs: &BTreeSet<String>,
+    contracts: BTreeMap<String, ContractDocument>,
+    shared: Option<crate::domain::shared_contract::SharedContract>,
+) -> ContractGraphReport {
     let mut issues = Vec::new();
     for canonical_spec in expected_specs {
         if !contracts.contains_key(canonical_spec) {
@@ -145,8 +166,9 @@ pub fn evaluate(
         }
     }
 
-    let dependencies = resolve_dependencies(expected_specs, &contracts, &mut issues);
-    let ownership_findings = ownership_findings(&contracts);
+    let dependencies =
+        resolve_dependencies(expected_specs, &contracts, shared.as_ref(), &mut issues);
+    let ownership_findings = ownership_findings(&contracts, shared.as_ref());
     for finding in &ownership_findings {
         let (code, relation) = match finding.kind {
             OwnershipFindingKind::Duplicate => ("CONTRACT_GRAPH_OWNERSHIP_DUPLICATE", "duplicates"),
@@ -191,6 +213,7 @@ pub fn evaluate(
     issues.dedup();
     ContractGraphReport {
         contracts,
+        shared,
         dependencies,
         ownership_findings,
         dependency_cycles,
@@ -221,9 +244,25 @@ pub fn owners_for_path(
                 if ownership_path_matches(declared_path, &normalized) {
                     matches.push(OwnershipMatch {
                         owner: ContractEntryRef {
-                            canonical_spec: canonical_spec.clone(),
+                            owner: ContractOwner::Spec(canonical_spec.clone()),
                             section: ContractSection::FileOwnership,
                             entry_id: entry.id.clone(),
+                        },
+                        declared_path: declared_path.clone(),
+                    });
+                }
+            }
+        }
+    }
+    if let Some(shared) = &report.shared {
+        for resource in &shared.as_wire().resources {
+            for declared_path in &resource.paths {
+                if ownership_path_matches(declared_path, &normalized) {
+                    matches.push(OwnershipMatch {
+                        owner: ContractEntryRef {
+                            owner: ContractOwner::Shared,
+                            section: ContractSection::Resources,
+                            entry_id: resource.id.0.clone(),
                         },
                         declared_path: declared_path.clone(),
                     });
@@ -263,7 +302,7 @@ fn unconsumed_exports(
         .iter()
         .flat_map(|(canonical_spec, contract)| {
             contract.exports.iter().map(move |export| ContractEntryRef {
-                canonical_spec: canonical_spec.clone(),
+                owner: ContractOwner::Spec(canonical_spec.clone()),
                 section: ContractSection::Exports,
                 entry_id: export.id.clone(),
             })
@@ -323,23 +362,43 @@ fn discover_spec_ids(specbind_root: &Path) -> (BTreeSet<String>, Vec<DiscoveryIs
 fn resolve_dependencies(
     expected_specs: &BTreeSet<String>,
     contracts: &BTreeMap<String, ContractDocument>,
+    shared: Option<&crate::domain::shared_contract::SharedContract>,
     issues: &mut Vec<ContractGraphIssue>,
 ) -> Vec<ContractDependency> {
     let mut dependencies = Vec::new();
     for (consumer_spec, contract) in contracts {
         for consume in &contract.consumes {
             let consumer = ContractEntryRef {
-                canonical_spec: consumer_spec.clone(),
+                owner: ContractOwner::Spec(consumer_spec.clone()),
                 section: ContractSection::Consumes,
                 entry_id: consume.id.clone(),
             };
             let provider = ContractEntryRef {
-                canonical_spec: consume.target.canonical_spec.clone(),
+                owner: consume.target.owner.clone(),
                 section: consume.target.section,
                 entry_id: consume.target.entry_id.clone(),
             };
             let source = Some(entry_selector(&consumer));
-            if consumer_spec == &provider.canonical_spec {
+            let Some(provider_spec) = provider.owner.spec() else {
+                if shared.is_some_and(|value| {
+                    value
+                        .as_wire()
+                        .resources
+                        .iter()
+                        .any(|resource| resource.id.0 == provider.entry_id)
+                }) {
+                    dependencies.push(ContractDependency { consumer, provider });
+                } else {
+                    issues.push(graph_issue(
+                        GraphIssueSeverity::Error,
+                        "CONTRACT_GRAPH_SHARED_RESOURCE_MISSING",
+                        source,
+                        format!("shared resource {} does not resolve", provider.entry_id),
+                    ));
+                }
+                continue;
+            };
+            if consumer_spec == provider_spec {
                 issues.push(graph_issue(
                     GraphIssueSeverity::Error,
                     "CONTRACT_GRAPH_SELF_CONSUME",
@@ -349,17 +408,14 @@ fn resolve_dependencies(
                         consume.id
                     ),
                 ));
-            } else if !expected_specs.contains(&provider.canonical_spec) {
+            } else if !expected_specs.contains(provider_spec) {
                 issues.push(graph_issue(
                     GraphIssueSeverity::Error,
                     "CONTRACT_GRAPH_TARGET_SPEC_MISSING",
                     source,
-                    format!(
-                        "Consumes target spec {} does not exist",
-                        provider.canonical_spec
-                    ),
+                    format!("Consumes target spec {provider_spec} does not exist"),
                 ));
-            } else if let Some(target_contract) = contracts.get(&provider.canonical_spec) {
+            } else if let Some(target_contract) = contracts.get(provider_spec) {
                 if entry_exists(target_contract, provider.section, &provider.entry_id) {
                     dependencies.push(ContractDependency { consumer, provider });
                 } else {
@@ -378,10 +434,7 @@ fn resolve_dependencies(
                     GraphIssueSeverity::Error,
                     "CONTRACT_GRAPH_TARGET_CONTRACT_UNAVAILABLE",
                     source,
-                    format!(
-                        "Consumes target spec {} has no valid Contract",
-                        provider.canonical_spec
-                    ),
+                    format!("Consumes target spec {provider_spec} has no valid Contract"),
                 ));
             }
         }
@@ -399,20 +452,39 @@ fn entry_exists(document: &ContractDocument, section: ContractSection, id: &str)
         ContractSection::FileOwnership => {
             document.file_ownership.iter().any(|entry| entry.id == id)
         }
-        ContractSection::Consumes => false,
+        ContractSection::Consumes | ContractSection::Resources => false,
     }
 }
 
-fn ownership_findings(contracts: &BTreeMap<String, ContractDocument>) -> Vec<OwnershipFinding> {
+fn ownership_findings(
+    contracts: &BTreeMap<String, ContractDocument>,
+    shared: Option<&crate::domain::shared_contract::SharedContract>,
+) -> Vec<OwnershipFinding> {
     let mut claims = Vec::new();
     for (canonical_spec, contract) in contracts {
         for entry in &contract.file_ownership {
             for path in &entry.paths {
                 claims.push(OwnershipClaim {
                     entry: ContractEntryRef {
-                        canonical_spec: canonical_spec.clone(),
+                        owner: ContractOwner::Spec(canonical_spec.clone()),
                         section: ContractSection::FileOwnership,
                         entry_id: entry.id.clone(),
+                    },
+                    path: path.clone(),
+                    normalized: path.to_ascii_lowercase(),
+                    subtree: path.ends_with("/**"),
+                });
+            }
+        }
+    }
+    if let Some(shared) = shared {
+        for resource in &shared.as_wire().resources {
+            for path in &resource.paths {
+                claims.push(OwnershipClaim {
+                    entry: ContractEntryRef {
+                        owner: ContractOwner::Shared,
+                        section: ContractSection::Resources,
+                        entry_id: resource.id.0.clone(),
                     },
                     path: path.clone(),
                     normalized: path.to_ascii_lowercase(),
@@ -428,7 +500,10 @@ fn ownership_findings(contracts: &BTreeMap<String, ContractDocument>) -> Vec<Own
     let mut findings = Vec::new();
     for (index, left) in claims.iter().enumerate() {
         for right in &claims[index + 1..] {
-            if left.entry.canonical_spec == right.entry.canonical_spec {
+            if left.entry.owner == right.entry.owner
+                && (left.entry.owner != ContractOwner::Shared
+                    || left.entry.entry_id == right.entry.entry_id)
+            {
                 continue;
             }
             let kind = if left.normalized == right.normalized {
@@ -488,8 +563,12 @@ fn dependency_cycles(
         adjacency.entry(canonical_spec).or_default();
     }
     for dependency in dependencies {
-        let consumer = dependency.consumer.canonical_spec.as_str();
-        let provider = dependency.provider.canonical_spec.as_str();
+        let (Some(consumer), Some(provider)) = (
+            dependency.consumer.owner.spec(),
+            dependency.provider.owner.spec(),
+        ) else {
+            continue;
+        };
         graph.add_edge(consumer, provider, ());
         adjacency.entry(consumer).or_default().insert(provider);
     }
@@ -544,13 +623,16 @@ fn find_cycle<'a>(
     None
 }
 
-fn entry_selector(entry: &ContractEntryRef) -> String {
-    format!(
-        "specs/{}#contract/{}/{}",
-        entry.canonical_spec,
-        entry.section.token(),
-        entry.entry_id
-    )
+#[must_use]
+pub fn entry_selector(entry: &ContractEntryRef) -> String {
+    match &entry.owner {
+        ContractOwner::Spec(spec) => format!(
+            "specs/{spec}#contract/{}/{}",
+            entry.section.token(),
+            entry.entry_id
+        ),
+        ContractOwner::Shared => format!("shared-contract#resources/{}", entry.entry_id),
+    }
 }
 
 fn graph_issue(

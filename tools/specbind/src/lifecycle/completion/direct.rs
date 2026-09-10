@@ -23,6 +23,7 @@ pub fn direct_preflight(
     specbind_root: &Path,
     canonical_direct: &str,
 ) -> Result<DirectPreflightOutcome, CompletionIssues> {
+    shared_review_guard(project_root, specbind_root)?;
     if direct_completed(specbind_root, canonical_direct)? {
         return Ok(DirectPreflightOutcome::AlreadyCompleted);
     }
@@ -44,6 +45,7 @@ pub fn direct_complete(
     canonical_direct: &str,
     implementation_revision: &str,
 ) -> Result<DirectCompleteOutcome, CompletionIssues> {
+    shared_review_guard(project_root, specbind_root)?;
     if direct_completed(specbind_root, canonical_direct)? {
         return Ok(DirectCompleteOutcome::AlreadyCompleted);
     }
@@ -124,6 +126,7 @@ fn direct_guard(
     validate_revision(implementation_revision)?;
     let current_revision = clean_head(project_root)?;
     let guard = read_roadmap(specbind_root)?;
+    shared_review_guard(project_root, specbind_root)?;
     let Some(item) = guard
         .roadmap
         .direct_changes
@@ -190,4 +193,16 @@ fn direct_guard(
     }
     finish_issues(issues)?;
     Ok(guard)
+}
+
+fn shared_review_guard(project: &Path, root: &Path) -> Result<(), CompletionIssues> {
+    crate::cross_spec_review::require_shared_for_direct(project, root).map_err(|error| {
+        CompletionIssues {
+            issues: error
+                .issues
+                .into_iter()
+                .map(|value| super::issue(value.code, value.source, value.message))
+                .collect(),
+        }
+    })
 }

@@ -36,6 +36,8 @@ pub struct SpecItem {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DirectItem {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub shared_contract_changes: Vec<String>,
     pub id: String,
     pub summary: String,
     #[serde(default)]
@@ -291,6 +293,18 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
             ));
         }
     }
+    for item in &direct_changes {
+        let mut shared_ids = BTreeSet::new();
+        for id in &item.shared_contract_changes {
+            if (id != "*" && !crate::artifacts::canonical_id(id)) || !shared_ids.insert(id) {
+                issues.push(issue(
+                    "ROADMAP_SHARED_CHANGE_INVALID",
+                    "/work_items/direct_changes",
+                    "shared resource IDs must be canonical and unique within each Direct item",
+                ));
+            }
+        }
+    }
     validate_items(
         &new_specs,
         &spec_updates,
@@ -317,6 +331,13 @@ pub fn parse(content: &str) -> Result<RoadmapDocument, RoadmapIssues> {
 }
 
 impl RoadmapDocument {
+    #[must_use]
+    pub fn has_shared_changes(&self) -> bool {
+        self.direct_changes
+            .iter()
+            .any(|item| !item.shared_contract_changes.is_empty())
+    }
+
     #[must_use]
     pub fn cross_spec_scope(&self) -> CrossSpecScope {
         CrossSpecScope {
@@ -615,7 +636,7 @@ fn split_frontmatter(content: &str) -> Result<&str, String> {
     split_frontmatter_parts(content).map(|(frontmatter, _)| frontmatter)
 }
 
-fn split_frontmatter_parts(content: &str) -> Result<(&str, &str), String> {
+pub(crate) fn split_frontmatter_parts(content: &str) -> Result<(&str, &str), String> {
     let normalized = content.strip_prefix('\u{feff}').unwrap_or(content);
     let rest = normalized
         .strip_prefix("---\n")

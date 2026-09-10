@@ -302,6 +302,13 @@ pub fn contract_graph(start: &Path) -> CommandOutput {
         graph.report.dependencies.len()
     );
     push_dependency_list(&mut output, "Dependencies", &graph.report.dependencies);
+    if let Some(shared) = &graph.report.shared {
+        push_field(
+            &mut output,
+            "Shared resources",
+            &shared.as_wire().resources.len().to_string(),
+        );
+    }
     push_field(
         &mut output,
         "Graph warnings",
@@ -329,7 +336,7 @@ pub fn contract_dependencies(start: &Path, canonical_spec: &str) -> CommandOutpu
         .report
         .dependencies
         .iter()
-        .filter(|dependency| dependency.consumer.canonical_spec == canonical_spec)
+        .filter(|dependency| dependency.consumer.owner.spec() == Some(canonical_spec))
         .cloned()
         .collect::<Vec<_>>();
     let mut output = format!(
@@ -354,7 +361,7 @@ pub fn contract_consumers(start: &Path, canonical_spec: &str) -> CommandOutput {
         .report
         .dependencies
         .iter()
-        .filter(|dependency| dependency.provider.canonical_spec == canonical_spec)
+        .filter(|dependency| dependency.provider.owner.spec() == Some(canonical_spec))
         .cloned()
         .collect::<Vec<_>>();
     let mut output = format!(
@@ -384,14 +391,25 @@ pub fn contract_owners(start: &Path, path: &str) -> CommandOutput {
     };
     let owning_specs = owners
         .iter()
-        .map(|owner| owner.owner.canonical_spec.as_str())
+        .filter_map(|owner| owner.owner.owner.spec())
         .collect::<std::collections::BTreeSet<_>>();
-    let mut output = format!(
-        "OK CONTRACT_OWNERS_REPORTED: Reported {} File Ownership declaration(s) from {} Spec(s) for path {}.\n",
-        owners.len(),
-        owning_specs.len(),
-        escape(path)
-    );
+    let has_shared = owners
+        .iter()
+        .any(|owner| owner.owner.owner == crate::contract::ContractOwner::Shared);
+    let mut output = if has_shared {
+        format!(
+            "OK CONTRACT_OWNERS_REPORTED: Reported {} Spec/shared management declaration(s) for path {}.\n",
+            owners.len(),
+            escape(path)
+        )
+    } else {
+        format!(
+            "OK CONTRACT_OWNERS_REPORTED: Reported {} File Ownership declaration(s) from {} Spec(s) for path {}.\n",
+            owners.len(),
+            owning_specs.len(),
+            escape(path)
+        )
+    };
     if owners.is_empty() {
         push_field(&mut output, "Owners", "none");
     } else {
@@ -411,6 +429,17 @@ pub fn contract_owners(start: &Path, path: &str) -> CommandOutput {
         "Ambiguous across Specs",
         yes_no(owning_specs.len() > 1),
     );
+    if has_shared {
+        let boundaries = owners
+            .iter()
+            .map(|value| &value.owner)
+            .collect::<std::collections::BTreeSet<_>>();
+        push_field(
+            &mut output,
+            "Ambiguous management boundaries",
+            yes_no(boundaries.len() > 1),
+        );
+    }
     CommandOutput::success(output.into_bytes())
 }
 
@@ -493,12 +522,7 @@ fn render_dependency(dependency: &contract_graph::ContractDependency) -> String 
 }
 
 fn render_contract_entry(entry: &contract_graph::ContractEntryRef) -> String {
-    format!(
-        "specs/{}#contract/{}/{}",
-        escape(&entry.canonical_spec),
-        entry.section.token(),
-        escape(&entry.entry_id)
-    )
+    escape(&contract_graph::entry_selector(entry))
 }
 
 fn render_traceability_issue(issue: &crate::traceability::TraceabilityIssue) -> String {
@@ -515,4 +539,66 @@ fn render_graph_issue(issue: &contract_graph::ContractGraphIssue) -> String {
         .as_ref()
         .map_or_else(String::new, |source| format!(" {}:", escape(source)));
     format!("{}{source} {}", issue.code, escape(&issue.message))
+}
+
+#[must_use]
+pub fn contract_shared(start: &Path, consumers: bool, resource_id: Option<&str>) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let shared = match crate::read_model::shared_contract::read(&paths.specbind_root) {
+        Ok(shared) => shared,
+        Err(message) => {
+            return CommandOutput::failure("SHARED_CONTRACT_READ_INVALID", message, vec![]);
+        }
+    };
+    if let Some(id) = resource_id
+        && !shared.as_ref().is_some_and(|value| {
+            value
+                .as_wire()
+                .resources
+                .iter()
+                .any(|resource| resource.id.0 == id)
+        })
+    {
+        return CommandOutput::failure(
+            "SHARED_CONTRACT_RESOURCE_NOT_FOUND",
+            "Unknown shared resource.",
+            vec![escape(id)],
+        );
+    }
+    let Some(shared) = shared else {
+        return CommandOutput::success(
+            b"OK SHARED_CONTRACT_ABSENT: Project shared Contract is not in use.\n".to_vec(),
+        );
+    };
+    if consumers {
+        let graph = match readable_contract_graph(start) {
+            Ok(value) => value,
+            Err(output) => return output,
+        };
+        let entries = graph
+            .report
+            .dependencies
+            .iter()
+            .filter(|dependency| {
+                dependency.provider.owner == crate::contract::ContractOwner::Shared
+                    && resource_id.is_none_or(|id| dependency.provider.entry_id == id)
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+        let mut output = String::from(
+            "OK SHARED_CONTRACT_CONSUMERS_REPORTED: Reported declared shared resource consumers.\n",
+        );
+        push_dependency_list(&mut output, "Consumers", &entries);
+        CommandOutput::success(output.into_bytes())
+    } else {
+        match serde_saphyr::to_string(shared.as_wire()) {
+            Ok(content) => CommandOutput::success(content.into_bytes()),
+            Err(error) => {
+                CommandOutput::failure("SHARED_CONTRACT_RENDER_FAILED", error.to_string(), vec![])
+            }
+        }
+    }
 }

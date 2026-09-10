@@ -1,5 +1,15 @@
 # Implement a Direct item
 
+Read `specbind milestone scope --include-body` and the current
+`specbind milestone review status` before implementation. If shared changes are
+planned, require a fresh review. If their review is missing/stale/invalid, route to
+`sb-plan --shared` and stop before changing implementation. A fresh review is
+required for shared-agreement changes even in a Direct-only milestone.
+Read `specbind contract shared read` when the item uses shared resources and
+verify their applicable invariants with the actual project checks. A normal
+content change within the agreement does not rewrite the shared Contract.
+Never author shared agreements during Direct implementation.
+
 There is no approved task plan to dispatch. Implement the Roadmap item's summary
 in this context, against the repository's existing conventions. Before writing,
 state the observable done condition and the applicable project checks. If the

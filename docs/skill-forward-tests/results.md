@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `fd2b28f` + reverse shared working tree | SH3 — pass; reverse baseline finalized with shared agreement and archived fingerprint retained | [Shared reverse adoption](./runs/2026-09-10-codex-fd2b28f-shared-reverse.md) |
+| 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `fd2b28f` + shared working tree | SH1, SH2 — pass for artifact/lifecycle behavior; language narration excluded | [Shared planning and Direct maintenance](./runs/2026-09-10-codex-fd2b28f-shared.md) |
 | 2026-09-09 | Codex | `gpt-5.6-terra` / `medium` | `f384b05` | ST2 — pass; current plan provenance remained unknown and Design then Contract Review preceded Tasks reconciliation; FT-0052 resolved | [Final non-current Task authority](./runs/2026-09-09-codex-f384b05-st2-task-authority.md) |
 | 2026-09-09 | Codex | `gpt-5.6-terra` / `medium` | `4c5c2b4` | ST2 — product failure; lifecycle order fixed, but current state was still labeled retained | [Non-current Task provenance](./runs/2026-09-09-codex-4c5c2b4-st2-task-authority.md) |
 | 2026-09-09 | Codex | `gpt-5.6-terra` / `medium` | `38a37f2` | ST2 — one ENV-0005 attempt; installed-Skill retry exposed FT-0052 by jumping straight to the future Tasks owner | [Non-current Task lifecycle order](./runs/2026-09-09-codex-38a37f2-st2-task-authority.md) |

@@ -534,6 +534,11 @@ fn milestone_handler(
             target: "sb-plan",
             mode: Some("all_spec"),
         },
+        Action::SharedContractPlan => MilestoneHandlerData {
+            kind: "skill",
+            target: "sb-plan",
+            mode: Some("shared"),
+        },
         Action::ContractReview => MilestoneHandlerData {
             kind: "skill",
             target: "sb-contract-review",

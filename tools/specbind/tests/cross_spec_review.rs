@@ -365,6 +365,12 @@ fn reconstructs_and_checks_persisted_deep_inputs() {
 #[test]
 fn distinguishes_not_required_missing_and_unexpected_review() {
     let root = fixture();
+    git(root.path(), &["init", "--quiet"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "Test"]);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "--quiet", "-m", "baseline"]);
+    let baseline = git(root.path(), &["rev-parse", "HEAD"]);
     let missing = cross_spec_review::evaluate_freshness(root.path(), root.path());
     assert_eq!(missing.status, ReviewFreshnessStatus::Missing);
 
@@ -372,7 +378,7 @@ fn distinguishes_not_required_missing_and_unexpected_review() {
         root.path(),
         "steering/roadmap.md",
         &format!(
-            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
         ),
     );
     let not_required = cross_spec_review::evaluate_freshness(root.path(), root.path());
@@ -494,11 +500,17 @@ fn enforces_fresh_review_for_spec_local_later_boundaries() {
 #[test]
 fn release_review_guard_accepts_direct_only_without_review() {
     let root = fixture();
+    git(root.path(), &["init", "--quiet"]);
+    git(root.path(), &["config", "user.email", "test@example.com"]);
+    git(root.path(), &["config", "user.name", "Test"]);
+    git(root.path(), &["add", "."]);
+    git(root.path(), &["commit", "--quiet", "-m", "baseline"]);
+    let baseline = git(root.path(), &["rev-parse", "HEAD"]);
     write(
         root.path(),
         "steering/roadmap.md",
         &format!(
-            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: 0123456789abcdef0123456789abcdef01234567\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {MILESTONE}\nbaseline_revision: {baseline}\ntarget_release: null\nwork_items:\n  direct_changes:\n    - id: docs\n      summary: Update docs\n---\n"
         ),
     );
 

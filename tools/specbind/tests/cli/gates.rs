@@ -561,13 +561,17 @@ fn reverse_design_approval_enters_adoption_ready_without_tasks() {
 fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
     let root = project_fixture();
     commit_all(root.path());
-    let mut install_adoption = specbind_command();
-    install_adoption
+    specbind_command()
         .current_dir(root.path())
         .args(["install", "--with-adoption"])
         .assert()
         .success();
     write_gate_fixture(root.path());
+    write(
+        root.path(),
+        ".specbind/shared-contract.yaml",
+        "schema_version: 1\nresources: []\n",
+    );
     let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
     write(
         root.path(),
@@ -590,8 +594,7 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
     );
     approve_requirements(root.path());
     approve_design(root.path());
-    let mut review = specbind_command();
-    review
+    specbind_command()
         .current_dir(root.path())
         .args(["milestone", "review", "accept", "--candidate", "-"])
         .write_stdin(review_candidate("Compatible."))
@@ -653,6 +656,7 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
             .is_file()
     );
     assert!(!root.path().join(".specbind/releases").exists());
+    assert!(root.path().join(".specbind/shared-contract.yaml").is_file());
     assert!(root.path().join(".specbind/deferred.md").is_file());
     assert!(!root.path().join(".agents/skills/sb-adopt").exists());
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");

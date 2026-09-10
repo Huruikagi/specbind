@@ -136,7 +136,12 @@ Mechanical findings may identify candidates and affected graph nodes; they do no
 
 ## Direct implementation candidates
 
-Direct work has no persisted Contract-impact field. Requiring no canonical Requirements, Design, or Contract change is the route precondition. If the agent cannot maintain that premise, discovery reclassifies the item as an existing-Spec update or new Spec before completion. Direct items are excluded from cross-spec-review scope.
+[Decision 0209](./decisions/0209-project-shared-contract.md) adds an optional
+project shared Contract. Direct still changes no Spec Requirements, Design or
+Contract; shared agreement changes are explicitly assigned through
+`shared_contract_changes` and require the milestone review, even in a
+Direct-only milestone. Ordinary shared-resource contributions need no agreement
+edit. Shared ownership and the work item performing a change are separate axes.
 
 ## Existing-spec bootstrap
 

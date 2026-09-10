@@ -43,6 +43,7 @@ pub(super) fn parse(json: &str, code: &'static str) -> Result<ValidatedScope, Mi
             .unwrap_or_default()
             .into_iter()
             .map(|item| DirectItem {
+                shared_contract_changes: item.shared_contract_changes,
                 id: item.id,
                 summary: item.summary,
                 depends_on: item.depends_on,

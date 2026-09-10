@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use crate::schema::contract::v1::{self as wire, TargetSection};
+use crate::schema::contract::v2::{self as wire, TargetSection};
 
 use super::diagnostics::{SemanticIssues, issue};
 
@@ -11,6 +11,7 @@ pub enum ContractSection {
     Consumes,
     Invariants,
     FileOwnership,
+    Resources,
 }
 
 impl ContractSection {
@@ -22,6 +23,7 @@ impl ContractSection {
             Self::Consumes => "consumes",
             Self::Invariants => "invariants",
             Self::FileOwnership => "file-ownership",
+            Self::Resources => "resources",
         }
     }
 }
@@ -32,9 +34,25 @@ pub struct DescribedEntry {
     pub description: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ContractOwner {
+    Spec(String),
+    Shared,
+}
+
+impl ContractOwner {
+    #[must_use]
+    pub fn spec(&self) -> Option<&str> {
+        match self {
+            Self::Spec(value) => Some(value),
+            Self::Shared => None,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ContractTarget {
-    pub canonical_spec: String,
+    pub owner: ContractOwner,
     pub section: ContractSection,
     pub entry_id: String,
 }
@@ -87,10 +105,17 @@ impl TryFrom<wire::ContractDocument> for Contract {
                 .iter()
                 .map(|entry| ConsumesEntry {
                     id: entry.id.0.clone(),
-                    target: ContractTarget {
-                        canonical_spec: entry.target.spec.clone(),
-                        section: section(entry.target.section),
-                        entry_id: entry.target.id.0.clone(),
+                    target: match &entry.target {
+                        wire::ContractTarget::Spec(target) => ContractTarget {
+                            owner: ContractOwner::Spec(target.spec.clone()),
+                            section: section(target.section),
+                            entry_id: target.id.0.clone(),
+                        },
+                        wire::ContractTarget::Shared(target) => ContractTarget {
+                            owner: ContractOwner::Shared,
+                            section: ContractSection::Resources,
+                            entry_id: target.id.0.clone(),
+                        },
                     },
                     description: entry.description.clone(),
                 })
@@ -231,7 +256,7 @@ fn validate_paths(document: &wire::ContractDocument, issues: &mut Vec<super::Sem
     }
 }
 
-fn valid_path(path: &str) -> bool {
+pub(crate) fn valid_path(path: &str) -> bool {
     if path.is_empty()
         || path.starts_with('/')
         || path.contains('\\')

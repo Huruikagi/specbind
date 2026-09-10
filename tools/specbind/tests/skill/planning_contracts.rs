@@ -426,7 +426,7 @@ fn planning_metadata_exposes_complete_and_single_phase_modes() {
     );
     assert_eq!(
         plan.argument_hint.as_deref(),
-        Some("[<spec> | --all] [requirements|design|tasks]")
+        Some("[<spec> | --all | --shared] [requirements|design|tasks]")
     );
     for removed in [
         "specbind-quick-plan",

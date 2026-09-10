@@ -51,8 +51,14 @@ fn resolves_typed_consumes_edges() {
 
     assert!(report.issues.is_empty(), "{:?}", report.issues);
     assert_eq!(report.dependencies.len(), 1);
-    assert_eq!(report.dependencies[0].consumer.canonical_spec, "checkout");
-    assert_eq!(report.dependencies[0].provider.canonical_spec, "catalog");
+    assert_eq!(
+        report.dependencies[0].consumer.owner.spec(),
+        Some("checkout")
+    );
+    assert_eq!(
+        report.dependencies[0].provider.owner.spec(),
+        Some("catalog")
+    );
     assert_eq!(report.dependencies[0].provider.entry_id, "stock-status");
 }
 

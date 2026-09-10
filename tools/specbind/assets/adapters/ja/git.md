@@ -29,6 +29,9 @@ Steering checkpointにします。`sb-configure`で完了した変更と、そ�
 バイナリ選択の変更と製品資産のrefreshを別々のcheckpointにし、installerが要求する
 clean worktreeからrefreshを開始します。
 
+スコープ内の共有Contract提案の準備完了も1単位とし、利用側のDesignやContract reviewへ
+進む前にチェックポイントを作成します。
+
 ## 何を含めるか
 
 その完了単位が作成したパスだけをstageします。worktreeにある無関係な作業はそのまま

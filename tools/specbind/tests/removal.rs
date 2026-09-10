@@ -332,6 +332,9 @@ fn uninstall_retain_keeps_the_complete_spec_dir_and_surrounding_instructions() {
     let durable = root.path().join(".specbind/specs/example/requirements.md");
     fs::create_dir_all(durable.parent().expect("requirements parent")).expect("spec directory");
     fs::write(&durable, "# Requirements\n").expect("durable requirement");
+    let shared = root.path().join(".specbind/shared-contract.yaml");
+    let shared_text = "schema_version: 1\nresources: []\n";
+    fs::write(&shared, shared_text).expect("durable shared agreement");
     git(root.path(), &["add", "."]);
     git(root.path(), &["commit", "-qm", "knowledge"]);
 
@@ -350,6 +353,7 @@ fn uninstall_retain_keeps_the_complete_spec_dir_and_surrounding_instructions() {
         .stdout(predicate::str::starts_with("OK PROJECT_UNINSTALL_APPLIED:"));
     assert!(!root.path().join(".specbind.json").exists());
     assert!(durable.is_file());
+    assert_eq!(fs::read_to_string(&shared).unwrap(), shared_text);
     assert!(
         !root
             .path()

@@ -29,6 +29,9 @@ The explicit SpecBind update procedure is the exception: its binary-selection
 change and product-asset refresh are two separate checkpoints so the refresh
 starts from the clean worktree required by the installer.
 
+A completed scoped shared Contract proposal preparation is also one eligible
+checkpoint, before consumer Design or Contract review.
+
 ## What to include
 
 Stage only the paths produced by that workflow unit. Leave unrelated work in the

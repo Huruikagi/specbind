@@ -150,3 +150,29 @@ fn parse_fixture(path: &Path) -> serde_json::Value {
         .unwrap_or_else(|error| panic!("failed to read {}: {error}", path.display()));
     yaml::parse(&yaml).unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
 }
+
+#[test]
+fn shared_and_v2_fixtures_conform() {
+    assert_fixture_set::<contract::v2::ContractDocument>(
+        "contract/v2",
+        specbind::schema::CONTRACT_V2_SCHEMA_JSON,
+    );
+    assert_fixture_set::<specbind::schema::shared_contract::v1::SharedContractDocument>(
+        "shared-contract/v1",
+        specbind::schema::SHARED_CONTRACT_V1_SCHEMA_JSON,
+    );
+    for (generated, embedded) in [
+        (
+            generate::contract_v2(),
+            specbind::schema::CONTRACT_V2_SCHEMA_JSON,
+        ),
+        (
+            generate::shared_contract_v1(),
+            specbind::schema::SHARED_CONTRACT_V1_SCHEMA_JSON,
+        ),
+    ] {
+        assert_eq!(generate::to_pretty_json(&generated).unwrap(), embedded);
+        let value: serde_json::Value = serde_json::from_str(embedded).unwrap();
+        jsonschema::draft202012::meta::validate(&value).unwrap();
+    }
+}

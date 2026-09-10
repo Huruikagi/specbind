@@ -48,7 +48,8 @@ release blockers.
 Never parse the Roadmap to compute waves. Keep a run-local set of action keys
 already attempted at unchanged state: `<action>:<commandOperand-or-milestone>`.
 
-A pending Direct item is mechanically actionable even when its summary later
+A pending Direct item is mechanically actionable once any required shared
+Contract Review is fresh, even when its summary later
 proves it was classified too narrowly. Dispatch its exact item and summary to
 `sb-implement`; do not pre-classify Roadmap prose in Drive or treat a clean
 status as semantic approval of the Direct kind.

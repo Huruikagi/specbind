@@ -35,7 +35,8 @@ specbind milestone status
 The kind decides the whole run:
 
 - **Spec-backed** — there is an approved task plan, and it is the work.
-- **Direct** — there is no plan, no requirements, no design, no contract. The
+- **Direct** — there is no plan, no requirements, no design, no Spec Contract. A declared shared Contract change uses the
+  prepared, reviewed project agreement. The
   item's summary and the repository are the work.
 
 Resolve review mode here, before loading the procedure. An explicit `--review`
@@ -43,8 +44,8 @@ value wins; otherwise the default is `required` for Spec-backed work and
 `inline` for Direct work. “Selected mode” in either procedure means this resolved
 value, not a setting to search for elsewhere.
 
-**Never create canonical artifacts for a Direct item.** If the work turns out to
-need requirements, design, or a contract, the premise that made it Direct has
+**Never create Spec canonical artifacts for a Direct item.** If the work turns out to
+need Spec requirements, design, or a Spec contract, the premise that made it Direct has
 failed. Stop and report that it needs rerouting through discovery.
 
 For either kind, `milestone status` must show this item's implementation-phase

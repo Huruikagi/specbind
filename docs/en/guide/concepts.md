@@ -47,10 +47,10 @@ Discovery classifies work by ownership, not size.
 | --- | --- | --- |
 | Existing-Spec update | Changes behavior or boundaries owned by an existing Spec | Updated Requirements, Design, Contract, and Tasks |
 | New Spec | Adds a durable project responsibility | New Requirements, Design, Contract, and Tasks |
-| Direct | Belongs to no Spec and changes no Requirements, Design, or Contract | Roadmap summary and completion state |
+| Direct | Belongs to no Spec and changes no Spec Requirements, Design, or Contract | Roadmap summary and completion state |
 
 A large change may remain one existing-Spec update; a small change may require a
-new Spec. If Direct implementation reveals a specification or Contract change,
+new Spec. If Direct implementation reveals a Spec specification or Contract change,
 stop and return to Discovery instead of adding artifacts ad hoc.
 
 ## Discovery source collections
@@ -130,6 +130,53 @@ File Ownership declarations. A match identifies managed boundary candidates;
 no match does not decide that the requested behavior belongs to no Spec. Unless
 an active Roadmap item already matches, even an imperative request naming that
 file enters Discovery and waits at scope confirmation before implementation.
+
+## Project shared Contract
+
+Resources used by several features, such as translation catalogs, can have a
+shared Contract without a dedicated Spec. The optional
+`<specDir>/shared-contract.yaml` declares resource IDs, paths, change policies,
+and invariants. The default `specDir` is `.specbind`. This artifact survives
+release and has no independent gates or Tasks.
+
+```yaml
+schema_version: 1
+resources:
+  - id: translations
+    description: Japanese and English translation catalogs
+    paths: [locales/ja.json, locales/en.json]
+    change_policy: Each feature updates its namespace in both languages.
+    invariants: [Keys and interpolation variables match across languages.]
+```
+
+```sh
+specbind contract owners locales/ja.json
+specbind contract shared read
+specbind contract shared consumers translations
+specbind schema read shared-contract/v1
+```
+
+`owners` distinguishes Spec declarations, shared resource declarations, and no
+declaration. A Spec that persistently uses a shared resource references
+`{shared: true, section: resources, id: translations}` through `consumes` in
+`contract/v2`. Existing `contract/v1` documents remain readable. The CLI does not
+enforce JSON-key ownership or write permissions; actual catalog validation uses
+the project's checks.
+
+Adding search text belongs to the search Spec's Task and needs no agreement
+edit when it follows the existing policy. To change the agreement itself,
+Discovery assigns the resource change to a Direct item. `sb-plan --shared`
+prepares the proposal before Contract review, including in a Direct-only
+milestone. If feature specifications must change, include those Specs in the
+same milestone.
+
+Scope candidates use the Direct item's `sharedContractChanges` array of resource
+IDs; the CLI writes `shared_contract_changes` in the Roadmap. Use `["*"]` only
+for creating/removing an empty manifest, never as wildcard resource authority.
+Track new shared obligations in another Direct item instead of extending a
+completed one. Editing shared rules after review requires renewed review;
+ordinary translation values within the rules do not stale it. Even a typo in a
+shared path enters Discovery and may be Direct when it changes no Spec guarantee.
 
 ## Invalidation and rewind
 

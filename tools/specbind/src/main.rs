@@ -90,6 +90,14 @@ fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
 
 fn run_contract(start: &Path, command: ContractCommand) -> CommandOutput {
     match command {
+        ContractCommand::Shared { command } => match command {
+            specbind::args::SharedContractCommand::Read => {
+                specbind::cli::contract_shared(start, false, None)
+            }
+            specbind::args::SharedContractCommand::Consumers { resource_id } => {
+                specbind::cli::contract_shared(start, true, resource_id.as_deref())
+            }
+        },
         ContractCommand::Graph => specbind::cli::contract_graph(start),
         ContractCommand::Dependencies { spec } => {
             specbind::cli::contract_dependencies(start, &spec)

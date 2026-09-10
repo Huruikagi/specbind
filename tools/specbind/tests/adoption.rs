@@ -182,6 +182,43 @@ fn adoption_preflight_rejects_a_reverse_record_revision_mismatch() {
 }
 
 #[test]
+fn reverse_shared_agreement_is_knowledge_and_preserves_the_adoption_handler() {
+    let root = project_fixture();
+    write_steering(root.path());
+    write(root.path(), "src/product.txt", "fixed implementation\n");
+    commit_all(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write_reverse_checkpoint(root.path(), &baseline);
+    write(
+        root.path(),
+        ".specbind/shared-contract.yaml",
+        "schema_version: 1\nresources: []\n",
+    );
+    commit_all(root.path());
+    Command::cargo_bin("specbind")
+        .unwrap()
+        .current_dir(root.path())
+        .args(["adoption", "preflight"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("ADOPTION_RESUME_READY"));
+    let output = Command::cargo_bin("specbind")
+        .unwrap()
+        .current_dir(root.path())
+        .args(["milestone", "status", "--json"])
+        .output()
+        .unwrap();
+    let status: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    let actions = status["data"]["actionable"].as_array().unwrap();
+    assert!(!actions.is_empty());
+    assert!(
+        actions
+            .iter()
+            .all(|action| action["handler"]["target"] == "sb-adopt")
+    );
+}
+
+#[test]
 fn adoption_preflight_requires_the_reverse_checkpoint_record() {
     let root = project_fixture();
     write_steering(root.path());

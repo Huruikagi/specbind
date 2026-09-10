@@ -78,8 +78,43 @@ impl Fingerprint {
     ///
     /// Returns an error if the typed projection cannot be serialized to JCS.
     pub fn roadmap_cross_spec_scope(document: &RoadmapDocument) -> Result<Self, serde_json::Error> {
-        serde_json_canonicalizer::to_vec(&document.cross_spec_scope())
-            .map(|bytes| Self::digest(&bytes))
+        let mut value = serde_json::to_value(document.cross_spec_scope())?;
+        if document.has_shared_changes() {
+            let mut direct = document
+                .direct_changes
+                .iter()
+                .filter(|item| !item.shared_contract_changes.is_empty())
+                .cloned()
+                .collect::<Vec<_>>();
+            for item in &mut direct {
+                item.status = None;
+                item.shared_contract_changes.sort();
+                item.depends_on
+                    .sort_by_key(|dependency| format!("{dependency:?}"));
+            }
+            direct.sort_by(|a, b| a.id.cmp(&b.id));
+            value["shared_contract_changes"] = serde_json::to_value(direct)?;
+        }
+        serde_json_canonicalizer::to_vec(&value).map(|bytes| Self::digest(&bytes))
+    }
+
+    /// Fingerprints optional shared resources, preserving absent versus empty.
+    /// # Errors
+    /// Returns serialization errors.
+    pub fn shared_contract(
+        document: Option<&crate::domain::shared_contract::SharedContract>,
+    ) -> Result<Self, serde_json::Error> {
+        let mut normalized = document.map(|value| value.as_wire().clone());
+        if let Some(value) = &mut normalized {
+            value
+                .resources
+                .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+            for resource in &mut value.resources {
+                sort_strings(&mut resource.paths);
+                sort_strings(&mut resource.invariants);
+            }
+        }
+        serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
     }
 
     #[must_use]

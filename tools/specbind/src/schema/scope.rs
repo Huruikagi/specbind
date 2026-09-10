@@ -58,6 +58,8 @@ pub mod v1 {
     #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
     #[serde(rename_all = "camelCase", deny_unknown_fields)]
     pub struct DirectItemDocument {
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub shared_contract_changes: Vec<String>,
         /// Canonical lowercase kebab-case Direct identity.
         pub id: String,
         pub summary: String,

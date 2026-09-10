@@ -78,3 +78,8 @@ silence never authorizes the reviewer to invent one.
 - Is this entry a promise, or just a description of the current implementation?
 - Does anything outside this repository depend on this seam?
 - If two Specs touch the same files, is that stated deliberately?
+
+A project shared resource can own the catalog or common file boundary while
+several Specs consume and contribute to it. Those uses are not duplicate
+ownership claims. Keep feature behavior in its Spec and resource change
+conditions in the shared Contract; do not add a dedicated Spec just for the file.

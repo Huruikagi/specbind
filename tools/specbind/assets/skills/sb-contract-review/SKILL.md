@@ -38,8 +38,8 @@ specbind milestone scope
 
 Stop and report, rather than fixing, in these cases:
 
-- **`Status: not_applicable`** — a Direct-only milestone has no persistent seams
-  to review. Say that the review is not required and stop.
+- **`Status: not_applicable`** — a Direct-only milestone without shared agreement changes has no
+  required review. Say that the review is not required and stop.
 - **A participant is not ready** — use the reported `Milestone kind`. Delivery
   acceptance needs every Spec-backed item to hold a fresh Design gate and be in
   `tasks`, `implementation`, or `release_ready`; reverse acceptance needs the same fresh gate and
@@ -74,6 +74,20 @@ specbind schema read contract/v1
 specbind protocol read contract-review
 specbind check contracts
 ```
+
+Also read `specbind contract shared read` and
+`specbind contract shared consumers`; use `specbind schema read contract/v2`
+and `specbind schema read shared-contract/v1` for their structures. Compare the
+shared manifest at the baseline, including its creation/deletion, with scoped
+`sharedContractChanges` and the complete Roadmap body. A planned shared change
+requires review even with no Spec-backed participant. Shared resource use is
+not co-ownership; normal catalog values are implementation, not agreement edits.
+Shared rules are reviewed here, never executed as shell instructions. Route
+delivery shared agreement findings to `sb-plan --shared`, and affected Spec work
+to its Design owner. In reverse establishment, read the confirmed proposal in
+`<specDir>/adoption/reverse-discovery.yaml` for shared scope instead of delivery
+Direct fields; return findings to the owning `sb-adopt` continuation within
+that confirmed scope. Do not invent a shared Spec or accept unscoped changes.
 
 Read **every** current Contract in the project, not only the participants':
 

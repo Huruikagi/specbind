@@ -282,6 +282,8 @@ struct SpecItemFrontmatter<'a> {
 
 #[derive(Serialize)]
 struct DirectItemFrontmatter<'a> {
+    #[serde(skip_serializing_if = "<[_]>::is_empty")]
+    shared_contract_changes: &'a [String],
     id: &'a str,
     summary: &'a str,
     #[serde(skip_serializing_if = "<[_]>::is_empty")]
@@ -319,6 +321,7 @@ fn render(
                 direct_changes
                     .iter()
                     .map(|item| DirectItemFrontmatter {
+                        shared_contract_changes: &item.shared_contract_changes,
                         id: &item.id,
                         summary: &item.summary,
                         depends_on: &item.depends_on,
@@ -442,6 +445,20 @@ fn validate_removals(
             .direct_changes
             .iter()
             .any(|candidate| candidate.id == item.id);
+        if item.status == Some(DirectStatus::Completed)
+            && next
+                .direct_changes
+                .iter()
+                .find(|candidate| candidate.id == item.id)
+                .is_some_and(|candidate| {
+                    candidate.shared_contract_changes != item.shared_contract_changes
+                        || (!item.shared_contract_changes.is_empty()
+                            && (candidate.summary != item.summary
+                                || candidate.depends_on != item.depends_on))
+                })
+        {
+            issues.push(issue("MILESTONE_COMPLETED_SHARED_CHANGE_LOCKED", Some(ROADMAP_RELATIVE.into()), "track further shared work as a new Direct item; completed shared obligations cannot be replaced"));
+        }
         if !retained && item.status == Some(DirectStatus::Completed) {
             issues.push(issue(
                 "MILESTONE_SCOPE_DIRECT_REMOVAL_BLOCKED",

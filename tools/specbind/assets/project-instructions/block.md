@@ -64,7 +64,9 @@ the only supported writer of machine state.
   including a validation rule, limit, or rejected case; modifies a path the Spec
   owns; or adds a durable responsibility. For every concrete project-relative
   path supplied by the request, run `specbind contract owners <path>`; any
-  returned owner establishes the owned-path condition, while `Owners: none`
+  returned owner establishes the owned-path condition, including shared resources.
+  Changes to `<specDir>/shared-contract.yaml` itself also enter Discovery. A
+  shared declaration is project-level management, not a dedicated Spec. `Owners: none`
   does not waive the other entry conditions. If no pending Roadmap item matches
   and any entry condition holds, select `sb-discovery` and stop at its scope
   confirmation before editing source or lifecycle state. Imperative wording or

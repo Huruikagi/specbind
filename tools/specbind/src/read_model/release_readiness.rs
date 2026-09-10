@@ -223,7 +223,7 @@ fn collect_scope_readiness(
             diagnostics,
         );
     }
-    if !specs.is_empty() {
+    if !specs.is_empty() || roadmap.has_shared_changes() {
         targets.insert(existing("state/contract-review.md"));
     }
     diagnose_unscoped_active_specs(specbind_root, roadmap, diagnostics);
@@ -367,7 +367,7 @@ fn add_archive_targets(
     targets: &mut BTreeSet<ReleaseMutationTarget>,
 ) {
     targets.insert(absent(&archive.roadmap));
-    if !roadmap.spec_ids().is_empty() {
+    if !roadmap.spec_ids().is_empty() || roadmap.has_shared_changes() {
         targets.insert(absent(&archive.cross_spec_review));
     }
 }

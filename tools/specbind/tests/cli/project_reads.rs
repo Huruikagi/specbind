@@ -1,6 +1,63 @@
 use super::*;
 
 #[test]
+fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct() {
+    let root = project_fixture();
+    fs::create_dir_all(root.path().join("knowledge")).unwrap();
+    write(
+        root.path(),
+        ".specbind.json",
+        r#"{"schemaVersion":1,"specDir":"knowledge","language":"en","agents":["codex"]}"#,
+    );
+    specbind_command()
+        .current_dir(root.path())
+        .args(["contract", "shared", "read"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("SHARED_CONTRACT_ABSENT"));
+    specbind_command()
+        .current_dir(root.path())
+        .args(["contract", "shared", "consumers", "translations"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "SHARED_CONTRACT_RESOURCE_NOT_FOUND",
+        ));
+    write(
+        root.path(),
+        "knowledge/shared-contract.yaml",
+        "schema_version: 1\nresources:\n  - id: translations\n    description: Catalogs\n    paths: [locales/**]\n    change_policy: Preserve keys.\n    invariants: []\n",
+    );
+    specbind_command()
+        .current_dir(root.path())
+        .args(["contract", "owners", "locales/en.json"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("shared-contract#resources/translations").and(
+                predicate::str::contains("Ambiguous management boundaries: no"),
+            ),
+        );
+    write(
+        root.path(),
+        "knowledge/specs/broken/contract.yaml",
+        "broken: [",
+    );
+    // Reading the agreement does not depend on unrelated graph health.
+    specbind_command()
+        .current_dir(root.path())
+        .args(["contract", "shared", "read"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("id: translations"));
+    specbind_command()
+        .current_dir(root.path())
+        .args(["check", "contracts"])
+        .assert()
+        .failure();
+}
+
+#[test]
 fn lists_no_specs_before_the_specs_directory_exists() {
     let root = project_fixture();
     fs::remove_dir_all(root.path().join(".specbind/specs"))
@@ -1014,7 +1071,9 @@ fn lists_and_reads_embedded_schemas_without_a_project() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK SCHEMA_LISTED: Found 4 embedded schema(s).\n",
+            "OK SCHEMA_LISTED: Found 6 embedded schema(s).\n",
+            "  selector=contract/v2 artifact=contract.yaml written_by=\"the authoring agent\"\n",
+            "  selector=shared-contract/v1 artifact=shared-contract.yaml written_by=\"the authoring agent\"\n",
             "  selector=contract/v1 artifact=contract.yaml written_by=\"the authoring agent\"\n",
             "  selector=spec/v1 artifact=spec.yaml written_by=\"guarded CLI operations only\"\n",
             "  selector=scope/v1 artifact=milestone scope candidate (transient) written_by=\"the authoring agent\"\n",

@@ -96,17 +96,18 @@ pub fn remove_accepted(specbind_root: &Path) -> Result<bool, ReviewIssues> {
 
 pub(super) fn read_accepted_review(
     specbind_root: &Path,
-    roadmap: &RoadmapDocument,
+    _roadmap: &RoadmapDocument,
     relative: &str,
+    required: bool,
 ) -> Result<AcceptedReviewRecord, Box<ReviewFreshnessReport>> {
     let path = specbind_root.join(relative);
     let metadata = match fs::symlink_metadata(&path) {
         Ok(metadata) => metadata,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-            let status = if roadmap.spec_ids().is_empty() {
-                ReviewFreshnessStatus::NotRequired
-            } else {
+            let status = if required {
                 ReviewFreshnessStatus::Missing
+            } else {
+                ReviewFreshnessStatus::NotRequired
             };
             let issues = (status == ReviewFreshnessStatus::Missing)
                 .then(|| {
@@ -124,7 +125,7 @@ pub(super) fn read_accepted_review(
             return Err(Box::new(invalid_read_report(relative, error.to_string())));
         }
     };
-    if roadmap.spec_ids().is_empty() {
+    if !required {
         return Err(Box::new(freshness_report(
             ReviewFreshnessStatus::Invalid,
             None,
@@ -218,6 +219,8 @@ fn parse_accepted_review(
     }
     for (key, value) in &raw.input_revisions {
         if key != ROADMAP_KEY
+            && key != "shared-contract"
+            && key != "roadmap#shared-body"
             && parse_contract_selector(key).is_none()
             && parse_deep_selector(key).is_none()
         {

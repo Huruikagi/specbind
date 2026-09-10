@@ -71,3 +71,73 @@ pub mod v1 {
         pub paths: Vec<String>,
     }
 }
+
+pub mod v2 {
+    pub use super::v1::{DescribedEntry, EntryId, FileOwnershipEntry, TargetSection};
+    use schemars::JsonSchema;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(deny_unknown_fields)]
+    pub struct ContractDocument {
+        #[schemars(extend("const" = 2))]
+        pub schema_version: u8,
+        pub owns: Vec<DescribedEntry>,
+        pub exports: Vec<DescribedEntry>,
+        pub consumes: Vec<ConsumesEntry>,
+        pub invariants: Vec<DescribedEntry>,
+        pub file_ownership: Vec<FileOwnershipEntry>,
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(deny_unknown_fields)]
+    pub struct ConsumesEntry {
+        pub id: EntryId,
+        pub target: ContractTarget,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub description: Option<String>,
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(untagged)]
+    pub enum ContractTarget {
+        Spec(super::v1::ContractTarget),
+        Shared(SharedTarget),
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    #[serde(deny_unknown_fields)]
+    pub struct SharedTarget {
+        #[schemars(extend("const" = true))]
+        pub shared: bool,
+        pub section: SharedSection,
+        pub id: EntryId,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+    pub enum SharedSection {
+        #[serde(rename = "resources")]
+        Resources,
+    }
+
+    impl From<super::v1::ContractDocument> for ContractDocument {
+        fn from(value: super::v1::ContractDocument) -> Self {
+            Self {
+                schema_version: value.schema_version.0,
+                owns: value.owns,
+                exports: value.exports,
+                consumes: value
+                    .consumes
+                    .into_iter()
+                    .map(|entry| ConsumesEntry {
+                        id: entry.id,
+                        target: ContractTarget::Spec(entry.target),
+                        description: entry.description,
+                    })
+                    .collect(),
+                invariants: value.invariants,
+                file_ownership: value.file_ownership,
+            }
+        }
+    }
+}

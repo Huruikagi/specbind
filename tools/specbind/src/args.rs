@@ -189,6 +189,11 @@ pub enum CheckCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ContractCommand {
+    /// Read project shared resources or their consumers.
+    Shared {
+        #[command(subcommand)]
+        command: SharedContractCommand,
+    },
     /// Report every resolved direct Contract dependency reference.
     Graph,
     /// Report the direct provider references consumed by one Spec.
@@ -474,4 +479,10 @@ pub enum MigrateCommand {
         #[arg(long, value_name = "PATH_OR_STDIN", conflicts_with = "apply")]
         accept_resolution: Option<String>,
     },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum SharedContractCommand {
+    Read,
+    Consumers { resource_id: Option<String> },
 }

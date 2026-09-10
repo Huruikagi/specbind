@@ -55,6 +55,7 @@ pub enum MilestoneActionKind {
     Requirements,
     Design,
     ContractReview,
+    SharedContractPlan,
     Tasks,
     Implementation,
     Validation,
@@ -70,6 +71,7 @@ impl MilestoneActionKind {
             Self::Requirements => "requirements",
             Self::Design => "design",
             Self::ContractReview => "contract_review",
+            Self::SharedContractPlan => "shared_contract_plan",
             Self::Tasks => "tasks",
             Self::Implementation => "implementation",
             Self::Validation => "validation",
@@ -221,7 +223,7 @@ pub fn resolve(
     } else {
         MilestoneHealth::Inconsistent
     };
-    let actionable = actionable_items(
+    let mut actionable = actionable_items(
         &facts,
         review.status,
         &implementation_complete,
@@ -230,6 +232,31 @@ pub fn resolve(
         roadmap.target_release.is_some(),
         reverse,
     );
+    if !reverse
+        && (roadmap.has_shared_changes()
+            || cross_spec_review::has_shared_changes(project_root, specbind_root, &roadmap)
+                .unwrap_or(false))
+        && review.status != ReviewFreshnessStatus::Fresh
+    {
+        actionable.retain(|action| {
+            matches!(
+                action.action,
+                MilestoneActionKind::Requirements | MilestoneActionKind::Design
+            )
+        });
+        let position = actionable
+            .iter()
+            .position(|action| action.action == MilestoneActionKind::Design)
+            .unwrap_or(actionable.len());
+        actionable.insert(
+            position,
+            MilestoneAction {
+                item: "milestone".into(),
+                command_operand: None,
+                action: MilestoneActionKind::SharedContractPlan,
+            },
+        );
+    }
     let mut current_blockers = Vec::new();
     if facts.iter().any(|item| match &item.kind {
         ItemKind::Spec { model, .. } => model
@@ -477,7 +504,10 @@ fn derive_stage(
         DeliveryStage::Requirements
     } else if has_specs && !spec_predicate(facts, design_approved) {
         DeliveryStage::Design
-    } else if has_specs && review != ReviewFreshnessStatus::Fresh {
+    } else if !matches!(
+        review,
+        ReviewFreshnessStatus::Fresh | ReviewFreshnessStatus::NotRequired
+    ) {
         DeliveryStage::CrossSpecReview
     } else if reverse {
         DeliveryStage::AdoptionReady
@@ -557,7 +587,7 @@ fn actionable_items(
             _ => {}
         }
     }
-    if has_specs(facts)
+    if review != ReviewFreshnessStatus::NotRequired
         && facts.iter().all(|item| match &item.kind {
             ItemKind::Spec { model, .. } => model.as_deref().is_some_and(design_approved),
             ItemKind::Direct { .. } => true,
@@ -584,6 +614,10 @@ fn actionable_items(
         });
     }
     if !reverse
+        && matches!(
+            review,
+            ReviewFreshnessStatus::Fresh | ReviewFreshnessStatus::NotRequired
+        )
         && all_implemented
         && facts.iter().all(|item| match &item.kind {
             ItemKind::Spec { model, .. } => model.as_deref().is_some_and(validated),
@@ -735,7 +769,10 @@ fn release_blockers(
     if roadmap.target_release.is_none() {
         blockers.push("TARGET_RELEASE_UNBOUND".to_owned());
     }
-    if has_specs(facts) && review != ReviewFreshnessStatus::Fresh {
+    if !matches!(
+        review,
+        ReviewFreshnessStatus::Fresh | ReviewFreshnessStatus::NotRequired
+    ) {
         blockers.push("CONTRACT_REVIEW_NOT_FRESH".to_owned());
     }
     if !all_specs_validated {

@@ -31,6 +31,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         check,
     )?;
 
+    write_or_check(
+        &root.join("schemas/contract/v2.schema.json"),
+        &generate::to_pretty_json(&generate::contract_v2())?,
+        check,
+    )?;
+    write_or_check(
+        &root.join("schemas/shared-contract/v1.schema.json"),
+        &generate::to_pretty_json(&generate::shared_contract_v1())?,
+        check,
+    )?;
     Ok(())
 }
 

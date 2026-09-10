@@ -107,6 +107,7 @@ A request **enters** when any of these holds, regardless of how small it is:
 - it changes behavior an existing Spec owns, even if the artifacts have not
   caught up
 - it modifies a path some Spec's contract declares under File Ownership
+- it modifies a declared shared resource or the project shared Contract itself
 - it adds a durable responsibility the project will own, rather than adjusting
   something that already exists
 - the user framed it as part of the active milestone, or as work the release
@@ -126,6 +127,16 @@ project-relative path the request supplies, run:
 ```sh
 specbind contract owners <path>
 ```
+
+A shared result identifies a project resource, not a Spec. Read
+`specbind contract shared read` and `specbind contract shared consumers` to
+understand its conditions. Feature changes may use it in that Spec's Tasks
+without claiming the file. Agreement changes are assigned to one Direct item
+with `sharedContractChanges: [resource-id]` in the scope candidate; creation or
+removal of an empty manifest uses `["*"]`. Record exact intent and verification
+in the Roadmap body. Read the scope schema in step 6 before authoring.
+Do not create a dedicated Spec merely to hold shared files. New independent
+behavior or changes to an existing Spec still require the appropriate Spec.
 
 Any returned owner proves that path enters the workflow. When owners from more
 than one Spec match, keep every returned Spec as a candidate and resolve the
@@ -226,7 +237,7 @@ For genuinely new work, each part is exactly one of:
 
 | Kind | It is this when |
 | --- | --- |
-| **Direct** | It belongs to no existing Spec and needs no requirements, design, or contract change. |
+| **Direct** | It belongs to no existing Spec and needs no Spec requirements, design, or Contract change. Shared agreement changes must be declared and reviewed. |
 | **Existing Spec update** | It changes behavior or a boundary an existing Spec already owns. |
 | **New Spec** | It needs a new durable responsibility and contract boundary. |
 

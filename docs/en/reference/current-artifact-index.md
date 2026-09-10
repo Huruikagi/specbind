@@ -135,3 +135,14 @@ Contract-review state keep their accepted fixed structured paths.
 - Artifact discovery and lifecycle I/O: `tools/specbind/src/artifacts.rs`
 - Structured wire models and generated schemas: `tools/specbind/src/schema/` and `tools/specbind/schemas/`
 - Guarded lifecycle mutations: `tools/specbind/src/lifecycle/approval.rs`, `tools/specbind/src/lifecycle/milestone/`, `tools/specbind/src/lifecycle/completion/`, and `tools/specbind/src/lifecycle/release_finalize.rs`
+
+## Project shared agreement
+
+`{{SPEC_DIR}}/shared-contract.yaml` is an optional project-owned
+`shared-contract/v1` resource manifest. It is not installed automatically and
+survives release finalization; uninstall includes it in the configured durable
+knowledge retain/remove policy. `contract/v2` adds typed shared-resource
+consumes targets while retaining v1 reads. `contract owners` and the complete
+graph include shared declarations. Shared agreement changes are planned by
+`sb-plan --shared`, assigned to Direct scope, and require the milestone review;
+Direct-only reviews are archived when those changes are delivered.

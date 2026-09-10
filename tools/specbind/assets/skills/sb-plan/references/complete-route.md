@@ -39,6 +39,11 @@ Scope selection is not delegated-gate authorization. A single answer may do
 both only when it explicitly selects the scope and authorizes the gates described
 below.
 
+When the selected all-Spec scope includes Direct `sharedContractChanges`,
+read [Shared Contract preparation](shared-contract.md) and prepare the agreement
+before consumer Design. This preparation remains within the confirmed shared
+scope; continue the ordinary Spec phases and the one global review afterward.
+
 A Direct item has no Requirements, Design, or task plan. In named scope, say so
 and stop if the target is Direct. In all scope, exclude Direct items and report
 them at the end as remaining work. If no milestone is active, say so and stop;

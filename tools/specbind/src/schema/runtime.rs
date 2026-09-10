@@ -72,10 +72,33 @@ pub fn load_tasks(input: &str) -> Result<tasks::v1::TasksDocument, LoadError> {
 /// # Errors
 ///
 /// Returns [`LoadError`] at the first invalid validation layer.
-pub fn load_contract(input: &str) -> Result<contract::v1::ContractDocument, LoadError> {
+pub fn load_contract(input: &str) -> Result<contract::v2::ContractDocument, LoadError> {
     let value = yaml::parse(input)?;
     match schema_version(&value)? {
-        1 => validate_and_deserialize(value, &CONTRACT_V1_VALIDATOR),
+        1 => validate_and_deserialize::<contract::v1::ContractDocument>(
+            value,
+            &CONTRACT_V1_VALIDATOR,
+        )
+        .map(Into::into),
+        2 => validate_and_deserialize(value, &CONTRACT_V2_VALIDATOR),
+        version => Err(LoadError::UnsupportedSchemaVersion { version }),
+    }
+}
+
+static CONTRACT_V2_VALIDATOR: LazyLock<Validator> =
+    LazyLock::new(|| compile_embedded_schema(super::CONTRACT_V2_SCHEMA_JSON));
+static SHARED_CONTRACT_VALIDATOR: LazyLock<Validator> =
+    LazyLock::new(|| compile_embedded_schema(super::SHARED_CONTRACT_V1_SCHEMA_JSON));
+
+/// Loads a shared Contract through restricted YAML, schema and wire validation.
+/// # Errors
+/// Returns the first invalid validation layer.
+pub fn load_shared_contract(
+    input: &str,
+) -> Result<super::shared_contract::v1::SharedContractDocument, LoadError> {
+    let value = yaml::parse(input)?;
+    match schema_version(&value)? {
+        1 => validate_and_deserialize(value, &SHARED_CONTRACT_VALIDATOR),
         version => Err(LoadError::UnsupportedSchemaVersion { version }),
     }
 }

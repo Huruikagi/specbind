@@ -1,0 +1,8 @@
+schema_version: 2
+owns: []
+exports: []
+consumes:
+  - id: catalog
+    target: {shared: true, section: resources, id: translations}
+invariants: []
+file_ownership: []

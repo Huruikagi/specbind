@@ -1,0 +1,8 @@
+schema_version: 1
+resources:
+  - id: translations
+    description: Translation catalogs
+    paths: [locales/ja.json, locales/en.json]
+    change_policy: Features update their namespace.
+    invariants: [Matching keys]
+unknown: true

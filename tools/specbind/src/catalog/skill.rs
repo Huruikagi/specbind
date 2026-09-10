@@ -319,6 +319,10 @@ static DRIVE_RESOURCES: &[SkillResource] = &[SkillResource {
 
 static PLAN_RESOURCES: &[SkillResource] = &[
     SkillResource {
+        relative_path: "references/shared-contract.md",
+        source: include_str!("../../assets/skills/sb-plan/references/shared-contract.md"),
+    },
+    SkillResource {
         relative_path: "references/complete-route.md",
         source: include_str!("../../assets/skills/sb-plan/references/complete-route.md"),
     },

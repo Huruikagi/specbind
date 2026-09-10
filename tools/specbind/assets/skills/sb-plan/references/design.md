@@ -625,3 +625,15 @@ authorizes accepting gates, not discarding accepted work.
 - Report in the project's language: what the design decides, how it realizes each
   active requirement, what changed in the contract, whether the work was
   committed, and what runs next.
+
+## Shared resources
+
+Use `specbind contract shared read` when Design touches project shared resources.
+Declare persistent use through `contract/v2` consumes targets
+`{shared: true, section: resources, id: <resource-id>}`. Read
+`specbind schema read contract/v2` before upgrading that Spec's Contract; retain
+v1 for Specs that do not need shared references. A Task may change its feature's
+keys in a shared catalog without duplicating file_ownership. Shared resources
+are not implementation-order dependencies. If the shared agreement itself must
+change, return its scoped preparation to `sb-plan --shared`; keep independent
+behavior in its owning Spec. Existing project templates remain project-owned.
