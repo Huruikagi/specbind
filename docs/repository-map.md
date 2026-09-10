@@ -40,7 +40,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
 - `tools/specbind/src/artifacts/resolution.rs` — typed Spec and Task loads, gate-input resolution, fingerprints, and traceability projections
 - `tools/specbind/src/installation/install.rs` — installation planning, guarded asset application, and repository guards
-- `tools/specbind/src/installation/removal.rs` — exact agent-removal and project-uninstall planning, Git/filesystem guards, and config-last apply
+- `tools/specbind/src/installation/removal.rs` and `removal/` — stable exact-removal facade with separate planning, config reads, Git/filesystem guards, and config-last apply
 - `tools/specbind/src/installation/agent_role.rs` — stable subagent roles, cost-aware defaults, project capability overrides, and Codex and Claude Code rendering
 - `tools/specbind/src/migration.rs` — public historical cc-sdd migration models and orchestration boundary
 - `tools/specbind/src/migration/project.rs` — cumulative version-range project migration catalog and guarded raw description probes
