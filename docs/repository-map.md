@@ -35,6 +35,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/cli/read/template_commands.rs` — project-bound Spec, Milestone, and Steering template discovery, reads, and target resolution
 - `tools/specbind/src/cli/read/adapter_commands.rs`, `rule_commands.rs`, and `steering_commands.rs` — project-bound catalog commands separated by the artifact family they expose
 - `tools/specbind/src/cli/lifecycle/` — completion, gate, milestone mutation, release, contract-review, and status command execution/rendering
+- `tools/specbind/src/cli/lifecycle/status_commands.rs` and `status_commands/` — stable status command facade with separate Spec, Milestone, and shared JSON renderers
 - `tools/specbind/src/artifacts.rs` — stable public facade and result models for spec-local artifact reads
 - `tools/specbind/src/artifacts/discovery.rs` — filesystem discovery, logical identity, metadata-profile validation, and partial inventory
 - `tools/specbind/src/artifacts/resolution.rs` — typed Spec and Task loads, gate-input resolution, fingerprints, and traceability projections
