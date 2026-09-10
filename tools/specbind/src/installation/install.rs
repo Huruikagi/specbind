@@ -20,8 +20,8 @@ pub use apply::apply;
 pub use input::read_installed_config;
 
 use assets::{
-    adapter_entries, adoption_retirement_entries, agent_role_entries, config_entry,
-    project_instruction_entries, retired_skill_entries, rule_entries, skill_entries,
+    adapter_entries, adoption_retirement_entries, agent_role_entries, bundle_index_entry,
+    config_entry, project_instruction_entries, retired_skill_entries, rule_entries, skill_entries,
     template_entries,
 };
 use guard::{inspect_install_repository, require_clean_replaceable_repository};
@@ -217,6 +217,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     let existing = read_existing_config(project_root)?;
     let resolved = resolve_inputs(existing.as_ref(), inputs)?;
     let mut entries = vec![config_entry(existing.as_ref(), &resolved)];
+    entries.push(bundle_index_entry(project_root, &resolved)?);
     entries.extend(template_entries(project_root, &resolved)?);
     entries.extend(rule_entries(project_root, &resolved)?);
     entries.extend(adapter_entries(project_root, &resolved)?);

@@ -55,6 +55,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/catalog/rule.rs` — embedded default shared-rule installation assets
 - `tools/specbind/src/catalog/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language
+- `tools/specbind/assets/bundle-index/` — localized product-managed block for the shared OKF bundle-root index
 - `tools/specbind/assets/protocols/` — immutable English product protocols exposed by `protocol read`
 - `tools/specbind/assets/skills/` — one agent-neutral source per product-managed skill
 - `tools/specbind/assets/rules/` — official default project-owned shared rules written by `install`
@@ -376,3 +377,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0209](./design/decisions/0209-project-shared-contract.md) | Accepted | Project shared resources without dedicated Specs and reviewed Direct changes |
 | [0210](./design/decisions/0210-durable-artifact-descriptions.md) | Accepted | Durable Requirements, Design, and Steering descriptions in inventories |
 | [0211](./design/decisions/0211-version-range-project-migration-plans.md) | Accepted | Read-only version-range migration plans and project-specific reconciliation |
+| [0212](./design/decisions/0212-shared-okf-bundle-index.md) | Accepted | Shared bundle-root OKF declaration and product-managed navigation block |

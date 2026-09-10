@@ -5,6 +5,7 @@ use std::{fs, path::Path};
 use crate::{
     adapter,
     agent_role::{self, AgentRoleOverrides},
+    bundle_index,
     config::ProjectLanguage,
     project_instructions, rule, skill, template,
 };
@@ -13,6 +14,62 @@ use super::input::ResolvedInputs;
 use super::{
     Agent, CONFIG_RELATIVE, InstallIssues, InstalledConfig, PlanAction, PlanEntry, one_issue,
 };
+
+/// Plans the shared OKF bundle-root index.
+///
+/// The version declaration and marked navigation block are product-managed;
+/// every byte outside the block remains project-owned.
+pub(super) fn bundle_index_entry(
+    project_root: &Path,
+    resolved: &ResolvedInputs,
+) -> Result<PlanEntry, InstallIssues> {
+    let relative = format!("{}/index.md", resolved.spec_dir);
+    let target = project_root.join(&relative);
+    let current = match fs::read(&target) {
+        Ok(bytes) => Some(String::from_utf8(bytes).map_err(|_| {
+            one_issue(
+                "INSTALL_TARGET_NOT_UTF8",
+                Some(relative.clone()),
+                "bundle index must be UTF-8",
+            )
+        })?),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+        Err(error) => {
+            return Err(one_issue(
+                "INSTALL_TARGET_UNREADABLE",
+                Some(relative),
+                error.to_string(),
+            ));
+        }
+    };
+    let applied = bundle_index::apply(current.as_deref(), resolved.language)
+        .map_err(|error| one_issue(error.code, Some(relative.clone()), error.message))?;
+    let action = if applied.had_block {
+        if current.as_deref() == Some(applied.content.as_str()) {
+            PlanAction::Keep
+        } else {
+            PlanAction::Replace
+        }
+    } else {
+        PlanAction::Create
+    };
+    let detail = match action {
+        PlanAction::Keep => Some("already matches the current product asset".to_owned()),
+        PlanAction::Create if current.is_some() => {
+            Some("added the OKF declaration and managed block to the existing index".to_owned())
+        }
+        _ => None,
+    };
+    Ok(PlanEntry {
+        action,
+        path: relative,
+        category: "bundle-index",
+        detail,
+        content: (action != PlanAction::Keep).then_some(applied.content),
+        expected_current: current,
+        resume_content: None,
+    })
+}
 
 pub(super) fn config_entry(
     existing: Option<&InstalledConfig>,

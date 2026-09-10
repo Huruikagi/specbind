@@ -63,7 +63,10 @@ specbind install --agent codex --language ja --project-instructions
 ### `--language ja`
 
 SpecBindが管理する成果物、具体的には`requirements.md`や`design.md`の言語を
-日本語にします。
+日本語にします。OKF一式のルートにある`index.md`も作成され、マーカーで囲まれた
+案内ブロックが日本語になります。SpecBindが管理するのは、このブロックと
+`okf_version: "0.2"`の宣言だけです。プロジェクト固有のリンクや説明は、マーカーの
+外側へ自由に追記できます。
 
 ### `--project-instructions`
 
@@ -90,6 +93,7 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 
 ```text
 .specbind.json
+.specbind/index.md               # OKF宣言と共有の入口
 .specbind/settings/
 .agents/skills/sb-*/             # Codexとgenericで共有
 .codex/agents/specbind-*.toml    # Codexの役割別モデル設定

@@ -86,7 +86,7 @@ fn inspect_status(
 
         if paths.len() == 1
             && (is_exact_partial_install(project_root, x, y, first, entries)
-                || is_safe_instruction_append(project_root, first, entries))
+                || is_safe_additive_shared_file_update(project_root, first, entries))
         {
             continue;
         }
@@ -157,11 +157,15 @@ fn is_exact_partial_install(
     )
 }
 
-fn is_safe_instruction_append(project_root: &Path, path: &[u8], entries: &[PlanEntry]) -> bool {
+fn is_safe_additive_shared_file_update(
+    project_root: &Path,
+    path: &[u8],
+    entries: &[PlanEntry],
+) -> bool {
     let Some(entry) = entries.iter().find(|entry| {
         entry.path.as_bytes() == path
             && entry.action == super::PlanAction::Create
-            && entry.category == "project-instructions"
+            && matches!(entry.category, "project-instructions" | "bundle-index")
     }) else {
         return false;
     };

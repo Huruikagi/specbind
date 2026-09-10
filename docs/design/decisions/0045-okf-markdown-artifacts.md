@@ -4,7 +4,9 @@ Status: Accepted
 
 Decision 0155 removes the Contract from the OKF Markdown artifact set and gives
 it the fixed structured `contract.yaml` representation. Other managed Markdown
-profiles continue to follow this decision.
+profiles continue to follow this decision. Decision 0212 supersedes the
+optional bundle-root-index portion: installation now maintains a shared
+`<specDir>/index.md` carrying the OKF v0.2 declaration and stable entry points.
 
 ## Context
 
@@ -19,7 +21,7 @@ The Open Knowledge Format (OKF) v0.2 already defines a minimal, vendor-neutral m
   - the file begins with parseable YAML frontmatter delimited by `---`
   - frontmatter contains a non-empty `type`
   - the remainder is free-form Markdown
-- OKF-reserved `index.md` and `log.md` retain their OKF meanings if SpecBind introduces them. Neither file is required in v1.
+- OKF-reserved `index.md` and `log.md` retain their OKF meanings if SpecBind introduces them. Decision 0212 requires the bundle-root `index.md`; directory-local indexes remain optional. A per-Spec `log.md` appears when release or baseline finalization first records history.
 - SpecBind defines an artifact-specific profile on top of OKF. A profile may require an exact `type` value and additional fields, types, or invariants needed by the CLI.
 - The active roadmap uses `type: SpecBind Roadmap`. Its authoritative `milestone_id`, Decision 0054 `baseline_revision`, `target_release`, and Decision 0046 work-item index live in YAML frontmatter; the body remains human- and agent-readable context and rationale.
 - The v1 roadmap profile has no `schema_version` field. Its accepted `type` and field contract are sufficient while only one representation exists; a version field is introduced only alongside a future incompatible representation and an explicit migration rule.

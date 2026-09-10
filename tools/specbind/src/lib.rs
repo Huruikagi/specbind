@@ -19,7 +19,7 @@ pub use documents::{description, design, instruction, requirements, roadmap, tra
 pub use domain::contract;
 pub use foundation::{config, fingerprint, yaml};
 pub(crate) use infrastructure::{guarded_fs, repository};
-pub use installation::{agent_role, install, project_instructions, removal};
+pub use installation::{agent_role, bundle_index, install, project_instructions, removal};
 pub use lifecycle::{
     adoption_finalize, approval, completion, cross_spec_review, milestone, release,
     release_finalize, release_log, task_progress,

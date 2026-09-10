@@ -89,7 +89,7 @@ fn plans_an_initial_installation_without_writing() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_PLANNED: Planned 117 action(s) for 2 agent(s).\n",
+                "OK INSTALL_PLANNED: Planned 118 action(s) for 2 agent(s).\n",
             )
             .and(predicate::str::contains("\n  Mode: initial\n"))
             .and(predicate::str::contains("\n  Language: ja\n"))
@@ -102,6 +102,9 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind.json [config]\n",
             ))
             .and(predicate::str::contains(
+                "- create .specbind/index.md [bundle-index]\n",
+            ))
+            .and(predicate::str::contains(
                 "- create .specbind/settings/templates/specs/requirements.md [template]\n",
             ))
             .and(predicate::str::contains(
@@ -111,7 +114,7 @@ fn plans_an_initial_installation_without_writing() {
                 "- create .specbind/settings/rules/language-style.md [rule]\n",
             ))
             .and(predicate::str::contains(
-                "\n  Summary: 117 create, 0 replace, 0 keep, 0 remove\n",
+                "\n  Summary: 118 create, 0 replace, 0 keep, 0 remove\n",
             ))
             .and(predicate::str::contains("Next:").not()),
         )
@@ -125,6 +128,91 @@ fn plans_an_initial_installation_without_writing() {
         !root.path().join(".specbind").exists(),
         "a dry run must not create the spec root"
     );
+}
+
+#[test]
+fn additively_adopts_an_existing_bundle_index_and_preserves_project_text() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    write(
+        root.path(),
+        ".specbind/index.md",
+        "# Project knowledge\n\n[Architecture](../docs/architecture.md)\n",
+    );
+
+    let mut apply = specbind_command();
+    apply
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "ja"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("- create .specbind/index.md [bundle-index]").and(
+                predicate::str::contains(
+                    "added the OKF declaration and managed block to the existing index",
+                ),
+            ),
+        );
+
+    let index = fs::read_to_string(root.path().join(".specbind/index.md")).expect("index");
+    assert!(index.starts_with("---\nokf_version: \"0.2\"\n---\n\n"));
+    assert!(index.contains("[Architecture](../docs/architecture.md)"));
+    assert!(index.contains("このディレクトリは"));
+    assert_eq!(index.matches("<!-- specbind:index -->").count(), 1);
+}
+
+#[test]
+fn refuses_to_retarget_an_existing_bundle_index() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    write(
+        root.path(),
+        ".specbind/index.md",
+        "---\nokf_version: \"0.3\"\n---\n# Project knowledge\n",
+    );
+
+    let mut preview = specbind_command();
+    preview
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains(
+            "BUNDLE_INDEX_VERSION_INCOMPATIBLE .specbind/index.md",
+        ));
+}
+
+#[test]
+fn places_the_bundle_index_under_the_configured_spec_root() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut preview = specbind_command();
+    preview
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+            "--spec-dir",
+            "knowledge",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- create knowledge/index.md [bundle-index]",
+        ));
 }
 #[test]
 fn requires_explicit_inputs_for_an_initial_installation() {
@@ -179,7 +267,7 @@ fn keeps_project_owned_settings_and_guards_replacements() {
                     "- keep .specbind/settings/templates/specs/design.md [template] (project-owned settings are never overwritten)\n",
                 ))
                 .and(predicate::str::contains(
-                    "\n  Summary: 71 create, 0 replace, 2 keep, 0 remove\n",
+                    "\n  Summary: 72 create, 0 replace, 2 keep, 0 remove\n",
                 )),
         );
 
@@ -247,10 +335,10 @@ fn applies_an_initial_installation_and_is_idempotent() {
         .success()
         .stdout(
             predicate::str::starts_with(
-                "OK INSTALL_APPLIED: Applied 73 action(s) for 1 agent(s).\n",
+                "OK INSTALL_APPLIED: Applied 74 action(s) for 1 agent(s).\n",
             )
             .and(predicate::str::contains(
-                "\n  Summary: 73 created, 0 replaced, 0 kept, 0 removed\n",
+                "\n  Summary: 74 created, 0 replaced, 0 kept, 0 removed\n",
             ))
             .and(predicate::str::contains(
                 "\n  Next: Ask your coding agent to use sb-configure to review and configure SpecBind for this project.\n",
@@ -1144,7 +1232,7 @@ fn never_overwrites_project_owned_settings_when_applying() {
         .assert()
         .success()
         .stdout(predicate::str::contains(
-            "\n  Summary: 72 created, 0 replaced, 2 kept, 0 removed\n",
+            "\n  Summary: 73 created, 0 replaced, 2 kept, 0 removed\n",
         ));
 
     assert_eq!(

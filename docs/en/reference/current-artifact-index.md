@@ -12,8 +12,9 @@ history and detailed lifecycle, see the
 ## Installation surface
 
 `specbind install` creates absent project-owned settings, refreshes
-product-managed skills, and optionally maintains a marked block in each selected
-agent's root instruction file. Existing project-owned settings are kept.
+product-managed skills, maintains the shared OKF bundle-root index, and
+optionally maintains a marked block in each selected agent's root instruction
+file. Existing project-owned settings are kept.
 
 `specbind remove-agent` plans by default and removes only one selected agent's
 exact product-managed Skills, role files, marked instruction block, and config
@@ -26,6 +27,7 @@ machine-level binary.
 | Target | Current behavior |
 | --- | --- |
 | `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, optional project-instruction integration, and optional agent-role capability overrides. |
+| `{{SPEC_DIR}}/index.md` | Shared OKF v0.2 bundle entry point. SpecBind refreshes only its localized marked navigation block and version declaration; project content outside the block is preserved. |
 | `{{SPEC_DIR}}/settings/templates/specs/requirements.md` | Project-owned Requirements structure and authoring scaffold. |
 | `{{SPEC_DIR}}/settings/templates/specs/design.md` | Project-owned Design structure and authoring scaffold. |
 | `{{SPEC_DIR}}/settings/templates/specs/ui.md` | Project-owned conditional screen-design scaffold; the selection Rule decides whether it applies to one Spec. |

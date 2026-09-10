@@ -45,9 +45,11 @@ Repeat `--agent` to select more than one. `generic` installs shared
 definitions.
 
 `--language en` selects the language of managed artifacts such as
-`requirements.md` and `design.md`. `--project-instructions` adds a marked
-SpecBind block to `AGENTS.md` or `CLAUDE.md` without changing text outside the
-marker.
+`requirements.md` and `design.md`. It also selects the language of the marked
+navigation block in the OKF bundle-root `index.md`. SpecBind maintains only that
+block and the `okf_version: "0.2"` declaration; add project links or notes
+outside its markers. `--project-instructions` adds a separate marked SpecBind
+block to `AGENTS.md` or `CLAUDE.md` without changing text outside the marker.
 
 The default installation contains the 15 Skills used for recurring delivery
 work. If this existing project has no trusted Specs and you want to establish a
@@ -68,6 +70,7 @@ The main installed surfaces are:
 
 ```text
 .specbind.json
+.specbind/index.md               # OKF declaration and shared bundle entry point
 .specbind/settings/
 .agents/skills/sb-*/             # shared by Codex and generic
 .codex/agents/specbind-*.toml    # Codex role configuration
