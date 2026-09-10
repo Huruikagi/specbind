@@ -4,8 +4,18 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.5.0 - 2026-09-10
+
 - Add native Linux ARM64 GNU release builds, archive runtime checks, checksums,
   shell installer selection, and post-publication installer and mise tests.
+- Add a project shared Contract for discoverable shared-resource boundaries,
+  including Contract graph, review, Direct-change, lifecycle, and migration
+  integration without requiring dedicated Specs.
+- Add durable Requirements, Design, and Steering descriptions to inventories,
+  together with read-only version-range project migration plans for adopting
+  new project conventions.
+- Install a shared OKF bundle-root index with a localized SpecBind-managed
+  navigation block while preserving project-owned content.
 
 ## 1.4.4 - 2026-09-09
 
