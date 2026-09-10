@@ -135,6 +135,7 @@ repository root to verify it locally.
 | [Milestone state machine](./design/milestone-state-machine.md) | Derived milestone stage, phase-relative dependency waves, and aggregate read model |
 | [CLI and agent boundary](./design/cli-agent-boundary.md) | Proposed boundary between bundled deterministic CLI operations and agent skills |
 | [Cross-spec contracts](./design/cross-spec-contracts.md) | Detailed draft for persistent cross-spec seam manifests and contract-first review |
+| [Project shared Contract](./design/shared-contract.md) | Draft for shared resources without dedicated Specs, ownership lookup, and reviewed Direct changes |
 | [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
 | [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
 | [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement dashboard, run archive, findings worklist, and scenario contracts for embedded skills |
