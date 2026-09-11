@@ -18,6 +18,32 @@ SpecBindでは、責任を次のように分けています。
 正しいか、Designが妥当かといった判断をしません。両方の層を必ず通すことで、
 形式だけ整った仕様や、内容はもっともらしいのに状態遷移を飛ばした作業を防ぎます。
 
+あなたが依頼する相手はスキルです。CLIを実行するのはスキルで、成果物の状態を
+記録するのはCLIだけです。たとえばRequirementsを作成するときは、次のように
+やりとりします。
+
+```mermaid
+sequenceDiagram
+    actor U as あなた
+    participant S as エージェントのスキル
+    participant C as specbind CLI
+    participant F as 成果物と状態<br/>(.specbind/)
+
+    U->>S: 依頼（例: $sb-plan csv-export）
+    S->>C: 現在の状態を読む
+    C-->>S: 状態と次に可能な操作
+    S->>S: Requirementsを作成・レビュー
+    S->>U: 内容の確認と承認を求める
+    U-->>S: 承認
+    S->>C: 検証と状態遷移を依頼
+    C->>F: 検証して記録
+    C-->>S: 結果（成功または診断コード）
+    S-->>U: 結果を説明
+```
+
+なお、`specbind milestone status`のような読み取り専用のコマンドは、状態を
+確認するために自分で直接実行してもかまいません。
+
 ## Spec
 
 Specは、プロジェクトが持ち続ける1つの能力、あるいは責任の境界です。

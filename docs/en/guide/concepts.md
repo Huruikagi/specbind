@@ -18,6 +18,31 @@ Requirement is correct or a Design is sound. Passing through both layers avoids
 formally valid but meaningless artifacts and plausible prose that bypasses the
 lifecycle.
 
+You make requests to Skills. Skills run the CLI, and only the CLI records
+artifact state. Authoring Requirements, for example, flows like this:
+
+```mermaid
+sequenceDiagram
+    actor U as You
+    participant S as Agent Skill
+    participant C as specbind CLI
+    participant F as Artifacts and state<br/>(.specbind/)
+
+    U->>S: Request (e.g. $sb-plan csv-export)
+    S->>C: Read current state
+    C-->>S: State and next available actions
+    S->>S: Author and review Requirements
+    S->>U: Ask for review and approval
+    U-->>S: Approve
+    S->>C: Request validation and transition
+    C->>F: Validate and record
+    C-->>S: Result (success or diagnostic code)
+    S-->>U: Explain the result
+```
+
+Read-only commands such as `specbind milestone status` are also safe to run
+yourself when you want to inspect state.
+
 ## Spec
 
 A Spec is one durable capability or responsibility boundary. It is not a
