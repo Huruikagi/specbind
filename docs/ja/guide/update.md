@@ -89,32 +89,6 @@ Gitアダプターがコミットを許可していない場合は、報告さ�
     ときは、`sb-configure`へ更新前のバージョンを伝えてください。現在のバージョンで
     代用したり、推測したりはしません。
 
-## バージョンごとの移行項目 {#migration-items}
-
-### 1.5.0: `description`の追加
-
-1.5.0境界のRequirements・Design・Steeringと関連テンプレートに、`description`を
-追加する推奨項目です。文書が継続して引き受ける責務を一文で記録します。既存1.x文書での
-欠落は有効なままです。テンプレート更新は既存文書を書き換えず、説明の追加も承認や
-鮮度の証拠にはなりません。
-
-`spec list`はRequirements、`artifact list <spec>`はDesign、`steering list`は
-Steeringのdescriptionを表示します。`missing`は項目の欠落、`invalid`は不正な
-説明またはRequirementsの検証エラー、`unavailable`はRequirementsを一意に
-取得できない状態です。一覧の説明は現在の文書内容であり、承認状態とは独立しています。
-
-Designの新規作成時には、`artifact check <spec> <selector> --template <template>`で
-選択したテンプレートの作成条件とdescriptionの完全な継承を確認できます。
-責務を評価済みのSpec固有one-off文書には`--template design/main`を指定し、
-その文書独自の責務を記します。この検査は既存文書の由来を証明せず、承認状態も変更しません。
-
-### 要件の退役を使う前に
-
-既存RequirementsのID移行は不要です。[要件の退役](./implement-step-by-step.md#retire-requirements)
-を使う前に、インストール済みのスキルと、変更している場合はテンプレートの指示を
-更新してください。旧バイナリは`_Retired_`マーカーを正しく解釈できないため、利用を
-始めたあとは旧バージョンに戻さないでください。
-
 ## 更新されるものと保持されるもの
 
 | 対象 | 所有者 | アップデート時の扱い |
@@ -179,8 +153,7 @@ Designの新規作成時には、`artifact check <spec> <selector> --template <t
     git diff
     ```
 
-6. 移行計画に残っている項目は、[バージョンごとの移行項目](#migration-items)を
-   参照して対応します。
+6. 移行計画に残っている項目は、計画に示された手順に従って対応します。
 
 ### mise以外でインストールした場合
 

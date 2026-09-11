@@ -19,8 +19,7 @@ cc-sdd, and their contributors for that foundation.
 
 SpecBind v1 release binaries target Windows x64, Linux x64, macOS ARM64, and
 Linux ARM64 GNU. Linux x64 is verified on WSL2, macOS ARM64 on Apple Silicon CI,
-and Linux ARM64 GNU on native Ubuntu ARM64 CI. Linux ARM64 archives are
-available from v1.5.0.
+and Linux ARM64 GNU on native Ubuntu ARM64 CI.
 
 ## Get started
 

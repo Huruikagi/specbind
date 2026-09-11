@@ -416,9 +416,7 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 ## 共有Contract {#shared-contract}
 
 翻訳ファイルのように複数の機能が使う資源の約束は、`.specbind/specs/shared-contract.yaml`
-に記録します（概要は[基本概念](./concepts.md)の「共有Contract」）。1.5.0で作成した
-プロジェクトの旧パス`.specbind/shared-contract.yaml`も引き続き読み取れますが、新しい
-作業では上記のパスを使い、両方のファイルを併存させないでください。
+に記録します（概要は[基本概念](./concepts.md)の「共有Contract」）。
 
 ```sh
 specbind contract owners locales/ja.json
@@ -429,8 +427,8 @@ specbind schema read shared-contract/v1
 
 `owners`は、Specの宣言、共有資源の宣言、宣言なしを区別して表示します。共有資源を
 継続して利用するSpecは、`contract/v2`の`consumes`から
-`{shared: true, section: resources, id: translations}`を参照します。既存の`contract/v1`
-も引き続き読み取れます。CLIはJSONキー単位の所有権や書き込み権限までは検証しません。
+`{shared: true, section: resources, id: translations}`を参照します。
+CLIはJSONキー単位の所有権や書き込み権限までは検証しません。
 キーの一致などは、プロジェクトの検証手段で確認します。
 
 ### 共有の約束を変更する

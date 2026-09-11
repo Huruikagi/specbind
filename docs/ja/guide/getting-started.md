@@ -36,7 +36,6 @@ SpecBindを始める手順は、プロジェクトに既存実装があるかど
   コミットが1つ以上ある状態にしておきます）
 - コーディングエージェント
 - Windows x64、WSL2上のLinux x64、macOS ARM64、またはLinux ARM64 GNU
-  （Linux ARM64 GNUはv1.5.0以降）
 
 ### 使えるエージェントについて
 

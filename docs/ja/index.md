@@ -17,8 +17,7 @@ SpecBindの大きな特徴は、エージェントのスキルと`specbind` CLI�
 
 SpecBind v1の配布バイナリは、Windows x64、Linux x64、macOS ARM64、Linux ARM64 GNUを
 対象としています。Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境、
-Linux ARM64 GNUはUbuntu ARM64のCI環境で検証しています。Linux ARM64用のアーカイブは
-v1.5.0以降に含まれます。
+Linux ARM64 GNUはUbuntu ARM64のCI環境で検証しています。
 
 ## はじめに
 

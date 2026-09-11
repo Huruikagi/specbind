@@ -338,9 +338,7 @@ regenerate `.codex/agents/` or `.claude/agents/` files.
 
 Record agreements for resources used by several features, such as translation
 catalogs, in `.specbind/specs/shared-contract.yaml` (see "Project shared
-Contract" in [Core concepts](./concepts.md) for the overview). Projects created
-with 1.5.0 remain readable at the former `.specbind/shared-contract.yaml` path;
-new work uses the path above, and both files must not coexist.
+Contract" in [Core concepts](./concepts.md) for the overview).
 
 ```sh
 specbind contract owners locales/ja.json
@@ -352,9 +350,8 @@ specbind schema read shared-contract/v1
 `owners` distinguishes Spec declarations, shared resource declarations, and no
 declaration. A Spec that persistently uses a shared resource references
 `{shared: true, section: resources, id: translations}` through `consumes` in
-`contract/v2`. Existing `contract/v1` documents remain readable. The CLI does not
-enforce JSON-key ownership or write permissions; actual catalog validation uses
-the project's checks.
+`contract/v2`. The CLI does not enforce JSON-key ownership or write
+permissions; actual catalog validation uses the project's checks.
 
 ### Change a shared agreement
 

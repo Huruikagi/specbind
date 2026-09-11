@@ -91,36 +91,6 @@ through Git and do not need to repeat the update.
     an interrupted session, tell `sb-configure` that original version. It does
     not substitute the current version or guess.
 
-## Version-specific migration entries {#migration-items}
-
-### 1.5.0: add `description` metadata
-
-This recommended entry adds `description` metadata at the 1.5.0 boundary for
-Requirements, Design, Steering, and their owned templates. Each sentence names
-the document's lasting responsibility. Existing major-one documents remain
-valid without the field. Template changes do not rewrite live artifacts, and
-metadata completion is not approval or freshness evidence.
-
-`spec list` shows Requirements descriptions, `artifact list <spec>` shows Design
-descriptions, and `steering list` shows Steering descriptions. `missing` means
-the field is absent; `invalid` means invalid metadata or Requirements validation
-errors; `unavailable` means Requirements could not be resolved unambiguously.
-Descriptions reflect current authored documents independently of approval state.
-
-When creating a Design, `artifact check <spec> <selector> --template <template>`
-checks the chosen scaffold's creation obligations, including literal description
-inheritance. An assessed Spec-local one-off uses `--template design/main` and
-provides its own responsibility sentence. This check does not establish the
-provenance of an existing artifact or change its approval state.
-
-### Before retiring Requirements
-
-Existing Requirements need no ID migration. Before using
-[Requirement retirement](./implement-step-by-step.md#retire-requirements),
-refresh installed Skills and any customized template instructions. Older
-binaries cannot interpret `_Retired_` markers correctly, so do not downgrade
-afterward.
-
 ## What changes and what is retained
 
 | Target | Owner | Update behavior |
@@ -187,8 +157,8 @@ Update manually instead of through `sb-configure` when:
     git diff
     ```
 
-6. Handle remaining migration-plan entries using
-   [Version-specific migration entries](#migration-items).
+6. Handle remaining migration-plan entries by following the procedures the
+   plan reports.
 
 ### If mise did not install the binary
 
