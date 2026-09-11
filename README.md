@@ -3,6 +3,11 @@
 SpecBind keeps durable software specifications bound to agent-assisted delivery,
 from intent through release.
 
+**[Read the user guide](https://huruikagi.github.io/specbind/)** ·
+[日本語のユーザーガイド](https://huruikagi.github.io/specbind/ja/) ·
+[Choose a route](https://huruikagi.github.io/specbind/guide/getting-started/) ·
+[Core concepts](https://huruikagi.github.io/specbind/guide/concepts/)
+
 AI coding agents can implement quickly, but the reasoning around a change is easy to lose: requirements become one-off prompts, design decisions drift away from the code, and a later agent has to reconstruct what the product is supposed to do. SpecBind gives that reasoning a maintained home and makes it part of the delivery lifecycle.
 
 ## What SpecBind does
