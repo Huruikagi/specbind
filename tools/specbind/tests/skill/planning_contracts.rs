@@ -175,7 +175,7 @@ fn planning_recovers_dispatch_capacity_without_collapsing_roles() {
         "same role and same phase run",
         "Never reuse an author as an independent validator",
         "If only nested dispatch is unavailable",
-        "Do not stop to ask the user to free or\n   manage host receiver slots",
+        "main-context compatibility fallback is available only when the affected\n   role has not begun",
         "Once an unapproved Design handoff exists,\n   mandatory independent validation cannot fall back to this context",
         "Preserve\nthe exact unapproved artifact path set and Git state",
         "every accumulated finding ID and disposition",

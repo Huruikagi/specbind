@@ -35,10 +35,9 @@ ordered recovery:
    self-contained brief, protocol, authority, and finding history. The child is
    not required to create its successor.
 4. When the affected role has not begun and doing the work here does not claim
-   independence from work already observed in this context, Plan performs the
-   Decision 0109 main-context fallback. It does not stop to ask the user to
-   manage host receiver slots. Mandatory independent Design validation never
-   uses this fallback after the Design handoff exists.
+   independence from work already observed in this context, Plan may use the
+   Decision 0109 main-context fallback. Mandatory independent Design validation
+   never uses this fallback after the Design handoff exists.
 
 If the required role still cannot start, Plan stops that branch without
 approving, committing, or rewriting its unapproved artifacts. Other independent
