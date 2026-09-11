@@ -50,8 +50,11 @@ prior bytes so apply stops if the shared file changes after preview.
 The root index is always installed; it is not controlled by the optional
 `projectInstructions` setting and is not removed with one Agent integration.
 Project uninstall retains or removes it with the configured complete knowledge
-bundle. A future generated `specs/index.md` remains a separate, optional current
-Spec browsing view and does not replace this static root entry point.
+bundle. `specs/index.md` is reserved as a separate, optional future current Spec
+browsing view and does not replace this static root entry point. Spec discovery
+excludes that exact path now, so adding the file later cannot create a false
+Spec identity. This decision does not yet define its generation, content, or
+ownership contract.
 
 ## Consequences
 
@@ -61,3 +64,5 @@ Spec browsing view and does not replace this static root entry point.
 - Installation gains one localized embedded asset and one planned target.
 - The index is navigation only: it is not lifecycle authority, gate evidence,
   a fingerprint input, or a promise that every linked directory already exists.
+- A project may contain `specs/index.md` without breaking Spec enumeration, but
+  SpecBind does not create, read, or maintain that file yet.

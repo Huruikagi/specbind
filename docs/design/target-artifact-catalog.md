@@ -107,6 +107,7 @@ Status: Accepted and implemented for the v1 artifact set
 
 | Target path | Lifecycle | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
+| `{{SPEC_DIR}}/specs/index.md` | Reserved for a future optional current Spec browsing view. | Not assigned until its generation and content contract are accepted. | Reserved | Exact path is excluded from Spec identity discovery under Decision 0212. SpecBind does not create, read, or maintain it yet. |
 | `{{SPEC_DIR}}/specs/<feature>/` | Persists across milestones and releases while the represented capability remains active. | Spec authoring and maintenance skills. | Accepted | A release must not delete a spec merely because its milestone completed. |
 | `SpecBind Brief` singleton (`brief.md` by default) | Exists only for one active milestone change. | `specbind-discovery`. | Accepted | Minimal free-form OKF input under Decision 0062. Its only known field is `type`; the CLI does not parse its body or fingerprint it for gate evidence. Same-milestone deltas merge into it, and successful release finalization removes it. |
 | `SpecBind Requirements` singleton (`requirements.md` by default) | Holds the complete currently valid requirements across releases. | Requirements workflow. | Accepted | Discovered by OKF type. Front Matter maps the two customizable structural heading labels, while Requirement IDs derive from explicit group number plus Acceptance Criteria list position under Decision 0060. The active requirement set is a separate milestone-scoped concept. |

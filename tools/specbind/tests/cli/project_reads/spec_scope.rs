@@ -87,6 +87,22 @@ fn lists_no_specs_before_the_specs_directory_exists() {
 }
 
 #[test]
+fn reserves_the_future_specs_index_without_treating_it_as_a_spec() {
+    let root = project_fixture();
+    fs::remove_dir_all(root.path().join(".specbind/specs/checkout"))
+        .expect("remove the empty Spec directory created by the fixture");
+    write(root.path(), ".specbind/specs/index.md", "# Current Specs\n");
+
+    specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "list"])
+        .assert()
+        .success()
+        .stdout("OK SPEC_LISTED: Found 0 spec(s).\n")
+        .stderr("");
+}
+
+#[test]
 fn lists_specs_in_identity_order_with_lifecycle_and_artifact_presence() {
     let root = project_fixture();
     write_status_fixture(root.path());

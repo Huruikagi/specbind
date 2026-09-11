@@ -123,10 +123,11 @@ pub fn discover_spec_ids(specbind_root: &Path) -> Result<SpecDiscovery, String> 
             faults.push((None, SpecEntryFault::NonUtf8Name));
             continue;
         };
-        // `specs/shared-contract.yaml` is the one reserved project-wide
-        // manifest beside the per-Spec directories. Its own reader validates
-        // the file; it is never a Spec discovery candidate.
-        if name == "shared-contract.yaml" {
+        // These exact files share the `specs/` namespace with per-Spec
+        // directories but never represent Spec identities. The shared
+        // Contract has its own reader; the future index is reserved before its
+        // generation and content contract are introduced.
+        if matches!(name, "index.md" | "shared-contract.yaml") {
             continue;
         }
         let relative = Utf8PathBuf::from(format!("specs/{name}"));
