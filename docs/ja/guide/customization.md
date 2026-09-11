@@ -480,8 +480,8 @@ Steeringの執筆は`sb-steering`、成果物の意味変更は各成果物の�
 ライフサイクル変更は別の確認境界です。
 
 インストールされるファイルの全体像は
-[現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）で確認できます。
+[成果物一覧](../reference/current-artifact-index.md)で確認できます。
 
 ---
 
-[ユーザーガイド](../index.md) | [基本概念](./concepts.md) | [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
+[ユーザーガイド](../index.md) | [基本概念](./concepts.md) | [成果物一覧](../reference/current-artifact-index.md)

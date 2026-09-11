@@ -30,9 +30,10 @@ docs/ja/guide/migrate-from-cc-sdd.md
 docs/ja/guide/feedback.md
 ```
 
-The English tree mirrors the same user-guide paths under `docs/en/`. English
-reference pages live under `docs/en/reference/`; they are public but are not
-part of the Japanese-first translation contract.
+The English tree mirrors the same user-guide paths under `docs/en/`. Reference
+pages under `docs/en/reference/` and `docs/ja/reference/` are also translation
+pairs. Keep command names, state names, file paths, and Skill names identical
+in both languages and translate only the explanatory text.
 
 Internal architecture, design, repository, and forward-test documents are not
 part of the translation tree. Keep them in their existing repository-owned

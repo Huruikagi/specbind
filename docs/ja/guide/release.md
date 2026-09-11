@@ -122,8 +122,8 @@ specbind release preflight         # 未紐付けや未受理の完了記録な�
 
 - [基本概念](./concepts.md)
 - [カスタマイズ](./customization.md) — リリース / Gitアダプターの書き方
-- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
-- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
+- [スキル一覧](../reference/current-skill-index.md)
+- [成果物一覧](../reference/current-artifact-index.md)
 
 ---
 

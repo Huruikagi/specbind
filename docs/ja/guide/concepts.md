@@ -226,7 +226,7 @@ resources:
 受けます。確認コマンドと変更の手順は、[カスタマイズ](./customization.md#shared-contract)の
 「共有Contract」を参照してください。
 
-## 無効化とやり直し
+## 無効化とやり直し {#invalidation-and-rewind}
 
 承認したあとで前提が変わったときは、影響を受ける中でいちばん手前のGateを、
 明示的に無効化します。

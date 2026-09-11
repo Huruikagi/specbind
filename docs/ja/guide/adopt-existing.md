@@ -232,7 +232,7 @@ specbind milestone reverse finalize --log-entries <path-or->
 - [基本概念](./concepts.md)
 - [既存プロジェクトで始める](./start-existing-project.md)
 - [カスタマイズ](./customization.md)
-- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
+- [スキル一覧](../reference/current-skill-index.md)
 
 ---
 

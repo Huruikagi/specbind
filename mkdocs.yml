@@ -93,6 +93,11 @@ plugins:
                 - エージェントの削除とアンインストール: guide/uninstall.md
                 - cc-sddから移行: guide/migrate-from-cc-sdd.md
                 - バグ報告と改善提案: guide/feedback.md
+            - リファレンス:
+                - スキル一覧: reference/current-skill-index.md
+                - 成果物一覧: reference/current-artifact-index.md
+                - 状態の一覧: reference/lifecycle-states.md
+                - CLIコマンド一覧: reference/cli-commands.md
           nav_translations:
             Home: ホーム
             Get started: はじめに

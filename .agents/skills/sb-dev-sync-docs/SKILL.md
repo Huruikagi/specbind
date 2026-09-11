@@ -1,6 +1,6 @@
 ---
 name: sb-dev-sync-docs
-description: Keep SpecBind's English and Japanese public documentation aligned and the Japanese copy natural and readable. Use for changes or language-quality reviews under docs/en or docs/ja, bilingual navigation, or public documentation URLs; exclude English-only generated reference pages and internal repository documentation.
+description: Keep SpecBind's English and Japanese public documentation aligned and the Japanese copy natural and readable. Use for changes or language-quality reviews under docs/en or docs/ja, including the paired reference pages, bilingual navigation, or public documentation URLs; exclude internal repository documentation.
 ---
 
 # Keep bilingual documentation aligned
@@ -19,8 +19,10 @@ behavior, commands, ownership boundaries, warnings, or navigation.
 
 ## Scope
 
-Apply this workflow to `index.md` and `guide/**/*.md` below both language roots.
-`docs/en/reference/` is intentionally English-only. Internal architecture,
+Apply this workflow to `index.md`, `guide/**/*.md`, and `reference/**/*.md`
+below both language roots. In reference pages, keep command names, state names,
+file paths, and Skill names identical in both languages and translate only the
+explanatory text. Internal architecture,
 Decision, repository, contributor, and forward-test documents outside the two
 language roots are not translation pairs.
 

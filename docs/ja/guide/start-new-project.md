@@ -233,8 +233,8 @@ specbind spec status <spec-id> --json
 - [PlanとDriveでMilestoneを進める](./implement-with-plan-and-drive.md)
 - [リリースする](./release.md) — Milestoneを実際に締めるとき
 - [カスタマイズ](./customization.md) — 一周して調整したい点が見えてから
-- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/)（英語）
-- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/)（英語）
+- [スキル一覧](../reference/current-skill-index.md)
+- [成果物一覧](../reference/current-artifact-index.md)
 
 ---
 

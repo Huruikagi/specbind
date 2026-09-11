@@ -48,10 +48,10 @@ Linux ARM64 GNUはUbuntu ARM64のCI環境で検証しています。
 
 ## リファレンス
 
-- [現在のスキル一覧](https://huruikagi.github.io/specbind/reference/current-skill-index/) — インストールされる全スキル（英語）
-- [現在の成果物一覧](https://huruikagi.github.io/specbind/reference/current-artifact-index/) — 作成・管理されるファイル（英語）
-- [状態の一覧](https://huruikagi.github.io/specbind/reference/lifecycle-states/) — SpecとMilestoneの状態名と次の操作（英語）
-- [CLIコマンド一覧](https://huruikagi.github.io/specbind/reference/cli-commands/) — 用途別のコマンド（英語）
+- [スキル一覧](./reference/current-skill-index.md) — インストールされる全スキル
+- [成果物一覧](./reference/current-artifact-index.md) — 作成・管理されるファイル
+- [状態の一覧](./reference/lifecycle-states.md) — SpecとMilestoneの状態名と次の操作
+- [CLIコマンド一覧](./reference/cli-commands.md) — 用途別のコマンド
 
 ---
 
