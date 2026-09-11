@@ -52,6 +52,8 @@ The everyday workflow after installation.
 
 - [Skill index](./reference/current-skill-index.md)
 - [Artifact index](./reference/current-artifact-index.md)
+- [Lifecycle states](./reference/lifecycle-states.md)
+- [CLI commands](./reference/cli-commands.md)
 
 ---
 

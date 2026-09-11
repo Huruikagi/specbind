@@ -122,6 +122,8 @@ in [Implementation architecture](./architecture.md).
 | [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
 | [Skill index](./en/reference/current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
+| [Lifecycle states](./en/reference/lifecycle-states.md) | User-facing Spec states and Milestone stages as reported by the CLI |
+| [CLI commands](./en/reference/cli-commands.md) | User-facing `specbind` command overview grouped by purpose |
 | [Artifact index](./en/reference/current-artifact-index.md) | Current installation and lifecycle artifact surface |
 
 The documentation site is configured by `mkdocs.yml`, built with the pinned
