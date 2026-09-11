@@ -148,10 +148,11 @@ this order:
    the next fresh receiver directly with the same self-contained brief,
    protocol, project environment, authority, finding ledger, and remaining
    revision budget. A phase receiver need not create its successor.
-4. Use the main-context compatibility fallback only before the affected role
-   begins and only when it does not claim independence from work this context
-   already observed. Once an unapproved Design handoff exists, mandatory
-   independent validation cannot fall back to this context.
+4. When the affected role has not begun and doing the work here does not claim
+   independence from work this context already observed, perform the
+   main-context compatibility fallback. Do not stop to ask the user to free or
+   manage host receiver slots. Once an unapproved Design handoff exists,
+   mandatory independent validation cannot fall back to this context.
 
 If the required role still cannot start, leave that branch unfinished. Preserve
 the exact unapproved artifact path set and Git state; do not approve, checkpoint,
