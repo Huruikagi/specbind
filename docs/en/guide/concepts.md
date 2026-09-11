@@ -137,7 +137,9 @@ Resources used by several features, such as translation catalogs, can have a
 shared Contract without a dedicated Spec. The optional
 `<specDir>/specs/shared-contract.yaml` declares resource IDs, paths, change policies,
 and invariants. The default `specDir` is `.specbind`. This artifact survives
-release and has no independent gates or Tasks.
+release and has no independent gates or Tasks. Projects created with 1.5.0
+remain readable at the former `<specDir>/shared-contract.yaml` path; new work
+uses the canonical path above, and both files must not coexist.
 
 ```yaml
 schema_version: 1

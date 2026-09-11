@@ -4,6 +4,18 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.5.1 - 2026-09-11
+
+- Preserve existing-implementation establishment provenance when adding a Spec
+  to delivery scope, and clarify the adoption journey.
+- Recover Plan orchestration safely and resumably when fresh-agent dispatch
+  capacity is temporarily exhausted, while keeping fallback optional.
+- Reconcile retained Task progress only through an explicit confirmed mapping
+  owned by the Tasks phase.
+- Move the shared Contract to the reserved `specs/` namespace while retaining
+  transparent read compatibility for the path published in 1.5.0, and reserve
+  `specs/index.md` for a future generated current-Spec view.
+
 ## 1.5.0 - 2026-09-10
 
 - Add native Linux ARM64 GNU release builds, archive runtime checks, checksums,

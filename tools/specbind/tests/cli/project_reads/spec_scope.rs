@@ -1,7 +1,7 @@
 use super::super::*;
 
 #[test]
-fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct() {
+fn shared_reads_follow_custom_spec_dir_and_accept_the_v1_5_0_path() {
     let root = project_fixture();
     fs::create_dir_all(root.path().join("knowledge")).unwrap();
     write(
@@ -19,7 +19,7 @@ fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct()
         .args(["contract", "shared", "read"])
         .assert()
         .success()
-        .stdout(predicate::str::contains("SHARED_CONTRACT_ABSENT"));
+        .stdout(predicate::str::contains("schema_version: 1"));
     specbind_command()
         .current_dir(root.path())
         .args(["contract", "shared", "consumers", "translations"])
@@ -28,6 +28,7 @@ fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct()
         .stderr(predicate::str::contains(
             "SHARED_CONTRACT_RESOURCE_NOT_FOUND",
         ));
+    fs::remove_file(root.path().join("knowledge/shared-contract.yaml")).unwrap();
     write(
         root.path(),
         "knowledge/specs/shared-contract.yaml",

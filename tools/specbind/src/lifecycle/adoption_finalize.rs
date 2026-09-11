@@ -389,6 +389,7 @@ pub(crate) fn ensure_source_unchanged(
         format!("{root}/steering/roadmap.md"),
         format!("{root}/state/contract-review.md"),
         format!("{root}/specs/shared-contract.yaml"),
+        format!("{root}/shared-contract.yaml"),
         format!("{root}/adoption/reverse-discovery.yaml"),
     ];
     allowed_exact.extend(deferred_finding_destinations(

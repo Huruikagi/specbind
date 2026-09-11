@@ -50,13 +50,19 @@ fn commit(root: &Path) -> String {
     git(root, &["rev-parse", "HEAD"])
 }
 fn fixture(with_shared: bool, declared: bool) -> TempDir {
+    fixture_at(
+        with_shared.then_some("specs/shared-contract.yaml"),
+        declared,
+    )
+}
+fn fixture_at(shared_path: Option<&str>, declared: bool) -> TempDir {
     let root = tempfile::tempdir().unwrap();
     git(root.path(), &["init", "--quiet"]);
     git(root.path(), &["config", "user.email", "test@example.com"]);
     git(root.path(), &["config", "user.name", "Test"]);
     write(root.path(), "baseline.txt", "baseline");
-    if with_shared {
-        write(root.path(), "specs/shared-contract.yaml", SHARED);
+    if let Some(shared_path) = shared_path {
+        write(root.path(), shared_path, SHARED);
     }
     let baseline = commit(root.path());
     let declaration = if declared {
@@ -72,6 +78,36 @@ fn fixture(with_shared: bool, declared: bool) -> TempDir {
         ),
     );
     root
+}
+
+#[test]
+fn reads_the_v1_5_0_path_and_treats_a_path_only_move_as_compatible() {
+    let root = fixture_at(Some("shared-contract.yaml"), false);
+    assert_eq!(
+        cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
+        ReviewFreshnessStatus::NotRequired
+    );
+    fs::create_dir_all(root.path().join("specs")).unwrap();
+    fs::rename(
+        root.path().join("shared-contract.yaml"),
+        root.path().join("specs/shared-contract.yaml"),
+    )
+    .unwrap();
+    assert_eq!(
+        cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
+        ReviewFreshnessStatus::NotRequired
+    );
+}
+
+#[test]
+fn rejects_ambiguous_shared_contract_paths() {
+    let root = tempfile::tempdir().unwrap();
+    write(root.path(), "shared-contract.yaml", SHARED);
+    write(root.path(), "specs/shared-contract.yaml", SHARED);
+    let graph = contract_graph::resolve(root.path());
+    assert!(graph.project_issues.iter().any(|issue| {
+        issue.code == "SHARED_CONTRACT_INVALID" && issue.message.contains("exists at both")
+    }));
 }
 
 #[test]

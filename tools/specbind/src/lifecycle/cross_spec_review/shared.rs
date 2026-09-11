@@ -18,21 +18,42 @@ pub(super) fn assess(
     roadmap: &RoadmapDocument,
 ) -> Result<SharedReview, ReviewIssues> {
     let current = crate::read_model::shared_contract::read(root).map_err(failure)?;
-    let relative = root
+    let root_relative = root
         .strip_prefix(project)
-        .map_err(|error| failure(error.to_string()))?
-        .join(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE)
-        .to_string_lossy()
-        .replace('\\', "/");
+        .map_err(|error| failure(error.to_string()))?;
+    let relatives = [
+        crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE,
+        crate::read_model::shared_contract::LEGACY_SHARED_CONTRACT_RELATIVE,
+    ]
+    .map(|relative| {
+        root_relative
+            .join(relative)
+            .to_string_lossy()
+            .replace('\\', "/")
+    });
     // ls-tree distinguishes absence from an unreadable or nonexistent baseline.
     let tree = repository::output(
         project,
-        &["ls-tree", "-z", &roadmap.baseline_revision, "--", &relative],
+        &[
+            "ls-tree",
+            "-z",
+            &roadmap.baseline_revision,
+            "--",
+            &relatives[0],
+            &relatives[1],
+        ],
     )
     .map_err(|error| failure(error.to_string()))?;
     let baseline = if tree.is_empty() {
         None
     } else {
+        let entries = tree.trim_end_matches('\0').split('\0').collect::<Vec<_>>();
+        if entries.len() != 1 {
+            return Err(failure(format!(
+                "baseline shared Contract exists at both {} and {}",
+                relatives[0], relatives[1]
+            )));
+        }
         let (metadata, path) = tree
             .trim_end_matches('\0')
             .split_once('\t')
@@ -41,7 +62,7 @@ pub(super) fn assess(
         if fields.len() != 3
             || !matches!(fields[0], "100644" | "100755")
             || fields[1] != "blob"
-            || path != relative
+            || !relatives.iter().any(|relative| path == relative)
         {
             return Err(failure("baseline shared Contract must be a regular file"));
         }

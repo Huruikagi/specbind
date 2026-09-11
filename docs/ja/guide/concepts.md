@@ -159,6 +159,8 @@ Roadmap項目がなければ、ファイルを名指しした命令形の依頼�
 翻訳ファイルのように複数の機能が使う資源は、専用Specを作らずに共有Contractで管理できます。
 任意の`<specDir>/specs/shared-contract.yaml`に、資源ID、対象パス、変更規則、不変条件を記録します。
 既定の`specDir`は`.specbind`です。共有Contractはリリース後も残り、独自のGateやTasksは持ちません。
+1.5.0で作成したプロジェクトの旧`<specDir>/shared-contract.yaml`も引き続き読み取れます。
+新規作業では上記の正規パスを使い、両方のファイルを併存させないでください。
 
 ```yaml
 schema_version: 1
