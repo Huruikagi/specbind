@@ -125,7 +125,9 @@ pub fn resolve(specbind_root: &Path) -> ContractGraphResolution {
         Err(message) => {
             project_issues.push(discovery_issue(
                 "SHARED_CONTRACT_INVALID",
-                Some(Utf8PathBuf::from("shared-contract.yaml")),
+                Some(Utf8PathBuf::from(
+                    super::shared_contract::SHARED_CONTRACT_RELATIVE,
+                )),
                 message,
             ));
             None

@@ -18,7 +18,7 @@ catalog changes.”
 
 Approve only the concrete Contract Review assessment once it is presented.
 Expect the installed Plan shared procedure and Contract Review owner to run,
-`shared-contract.yaml` to declare `translations` with both catalog paths and
+`<specDir>/specs/shared-contract.yaml` to declare `translations` with both catalog paths and
 the scoped rules, and `contract owners locales/en.json` to return the shared
 selector. No new Spec or Tasks may appear. Catalogs remain unchanged, the
 Direct remains pending, review is fresh, and the authorized planning/review

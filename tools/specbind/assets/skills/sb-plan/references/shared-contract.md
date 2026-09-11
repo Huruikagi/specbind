@@ -17,7 +17,8 @@ specbind adapter read git --for consume
 ```
 
 Resolve `specDir` from project configuration. The optional canonical output is
-`<specDir>/shared-contract.yaml`, outside `specs/`. Absence is valid; invalid
+`<specDir>/specs/shared-contract.yaml`, beside the per-Spec directories but not
+inside one. Absence is valid; invalid
 presence stops preparation for diagnosis. Never classify a read failure as an
 empty manifest. Read the corresponding baseline through Git, distinguishing
 an absent path from an unreadable baseline. The CLI owns the baseline.

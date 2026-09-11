@@ -14,7 +14,7 @@ cd "$target"
 PATH="$(CDPATH= cd -- .specbind/bin && pwd):$PATH"
 export PATH
 if [ "$scenario" = sh3 ]; then
-    cat > .specbind/shared-contract.yaml <<'EOF'
+    cat > .specbind/specs/shared-contract.yaml <<'EOF'
 schema_version: 1
 resources:
   - id: project-overview
@@ -30,7 +30,7 @@ shared_resources:
     evidence: README.md
     disposition: Confirmed shared project documentation agreement; no independent behavior or implementation change.
 EOF
-    git add .specbind/shared-contract.yaml .specbind/adoption/reverse-discovery.yaml
+    git add .specbind/specs/shared-contract.yaml .specbind/adoption/reverse-discovery.yaml
     git commit --quiet -m 'Record confirmed reverse shared agreement'
     specbind adoption preflight | grep -q 'ADOPTION_RESUME_READY'
     specbind milestone status --json | grep -q 'reverse_resume'
@@ -41,7 +41,7 @@ mkdir -p locales
 printf '%s\n' '{"common.title":"Bookshp"}' > locales/en.json
 printf '%s\n' '{"common.title":"Bookshop"}' > locales/ja.json
 if [ "$scenario" = sh2 ]; then
-    cat > .specbind/shared-contract.yaml <<'EOF'
+    cat > .specbind/specs/shared-contract.yaml <<'EOF'
 schema_version: 1
 resources:
   - id: translations
@@ -57,7 +57,7 @@ git add locales .specbind
 git commit --quiet -m 'Seed translation catalogs'
 if [ "$scenario" = sh1 ]; then
     printf '%s' '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"catalog-agreement","summary":"Register locales/en.json and locales/ja.json as shared resource translations. Features may update their own namespace; Direct maintenance may correct existing copy without changing keys or behavior. Preserve matching keys and interpolation variables across languages.","sharedContractChanges":["translations"]}]}}' | specbind milestone create --scope - >/dev/null
-    test ! -e .specbind/shared-contract.yaml
+    test ! -e .specbind/specs/shared-contract.yaml
     specbind milestone status --json | grep -q 'shared_contract_plan'
 else
     printf '%s' '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"catalog-typo","summary":"Correct common.title in locales/en.json from Bookshp to Bookshop. Preserve the translation keys, Japanese catalog, and shared agreement."}]}}' | specbind milestone create --scope - >/dev/null

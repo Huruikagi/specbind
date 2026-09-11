@@ -135,7 +135,7 @@ file enters Discovery and waits at scope confirmation before implementation.
 
 Resources used by several features, such as translation catalogs, can have a
 shared Contract without a dedicated Spec. The optional
-`<specDir>/shared-contract.yaml` declares resource IDs, paths, change policies,
+`<specDir>/specs/shared-contract.yaml` declares resource IDs, paths, change policies,
 and invariants. The default `specDir` is `.specbind`. This artifact survives
 release and has no independent gates or Tasks.
 

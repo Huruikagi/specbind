@@ -65,7 +65,7 @@ fn lists_and_reads_embedded_schemas_without_a_project() {
         .stdout(concat!(
             "OK SCHEMA_LISTED: Found 6 embedded schema(s).\n",
             "  selector=contract/v2 artifact=contract.yaml written_by=\"the authoring agent\"\n",
-            "  selector=shared-contract/v1 artifact=shared-contract.yaml written_by=\"the authoring agent\"\n",
+            "  selector=shared-contract/v1 artifact=specs/shared-contract.yaml written_by=\"the authoring agent\"\n",
             "  selector=contract/v1 artifact=contract.yaml written_by=\"the authoring agent\"\n",
             "  selector=spec/v1 artifact=spec.yaml written_by=\"guarded CLI operations only\"\n",
             "  selector=scope/v1 artifact=milestone scope candidate (transient) written_by=\"the authoring agent\"\n",

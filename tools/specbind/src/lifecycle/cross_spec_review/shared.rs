@@ -21,7 +21,7 @@ pub(super) fn assess(
     let relative = root
         .strip_prefix(project)
         .map_err(|error| failure(error.to_string()))?
-        .join("shared-contract.yaml")
+        .join(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE)
         .to_string_lossy()
         .replace('\\', "/");
     // ls-tree distinguishes absence from an unreadable or nonexistent baseline.
@@ -128,7 +128,7 @@ pub(super) fn validate_scope(
         {
             return Err(one_review_issue(
                 "SHARED_CONTRACT_PLANNED_RESOURCE_MISSING",
-                Some("shared-contract.yaml".into()),
+                Some(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE.into()),
                 format!("planned resource {id} has no baseline or proposed agreement"),
             ));
         }
@@ -143,7 +143,7 @@ pub(super) fn validate_scope(
     } else {
         Err(one_review_issue(
             "SHARED_CONTRACT_CHANGE_UNSCOPED",
-            Some("shared-contract.yaml".into()),
+            Some(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE.into()),
             format!(
                 "assign shared changes to a Direct item: {}",
                 unscoped.join(", ")
@@ -155,7 +155,7 @@ pub(super) fn validate_scope(
 fn failure(message: impl Into<String>) -> ReviewIssues {
     one_review_issue(
         "SHARED_CONTRACT_REVIEW_INPUT_INVALID",
-        Some("shared-contract.yaml".into()),
+        Some(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE.into()),
         message,
     )
 }

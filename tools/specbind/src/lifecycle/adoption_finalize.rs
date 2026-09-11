@@ -388,7 +388,7 @@ pub(crate) fn ensure_source_unchanged(
     let mut allowed_exact = vec![
         format!("{root}/steering/roadmap.md"),
         format!("{root}/state/contract-review.md"),
-        format!("{root}/shared-contract.yaml"),
+        format!("{root}/specs/shared-contract.yaml"),
         format!("{root}/adoption/reverse-discovery.yaml"),
     ];
     allowed_exact.extend(deferred_finding_destinations(

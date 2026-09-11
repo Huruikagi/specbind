@@ -37,9 +37,13 @@ Requirement IDの代用にしたり、共有資源のためだけにダミーReq
 
 ## 最小の成果物モデル
 
-固定パスは`<specDir>/shared-contract.yaml`。`.specbind`をハードコードしない。
+固定パスは`<specDir>/specs/shared-contract.yaml`。各Specのディレクトリと同じ`specs/`
+名前空間に置くが、共有Contract自体はSpecディレクトリではない。`.specbind`をハードコードしない。
+CLIのSpec discoveryは、この予約ファイルをSpec候補から除外する。
 ファイル不在は未利用として有効、存在する不正なファイルはエラーとする。
 インストール時に空ファイルを全プロジェクトへ作成しない。
+旧`<specDir>/shared-contract.yaml`は未公開・未利用の初期実装位置だったため、互換読取や
+移行処理を設けず管理外のファイルとして扱う。
 
 初期モデルは`shared-contract/v1`として、次の形とする。
 

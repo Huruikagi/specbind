@@ -140,7 +140,7 @@ Contract-review state keep their accepted fixed structured paths.
 
 ## Project shared agreement
 
-`{{SPEC_DIR}}/shared-contract.yaml` is an optional project-owned
+`{{SPEC_DIR}}/specs/shared-contract.yaml` is an optional project-owned
 `shared-contract/v1` resource manifest. It is not installed automatically and
 survives release finalization; uninstall includes it in the configured durable
 knowledge retain/remove policy. `contract/v2` adds typed shared-resource

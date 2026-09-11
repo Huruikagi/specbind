@@ -81,11 +81,7 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
         .assert()
         .success();
     write_gate_fixture(root.path());
-    write(
-        root.path(),
-        ".specbind/shared-contract.yaml",
-        "schema_version: 1\nresources: []\n",
-    );
+    write_empty_shared_contract(root.path());
     let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
     write(
         root.path(),
@@ -170,7 +166,11 @@ fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
             .is_file()
     );
     assert!(!root.path().join(".specbind/releases").exists());
-    assert!(root.path().join(".specbind/shared-contract.yaml").is_file());
+    assert!(
+        root.path()
+            .join(".specbind/specs/shared-contract.yaml")
+            .is_file()
+    );
     assert!(root.path().join(".specbind/deferred.md").is_file());
     assert!(!root.path().join(".agents/skills/sb-adopt").exists());
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
@@ -204,4 +204,12 @@ fn failed_reverse_finalize_retains_the_temporary_adoption_skill() {
     );
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
     assert!(config.contains("\"adoption\": true"), "{config}");
+}
+
+fn write_empty_shared_contract(root: &Path) {
+    write(
+        root,
+        ".specbind/specs/shared-contract.yaml",
+        "schema_version: 1\nresources: []\n",
+    );
 }

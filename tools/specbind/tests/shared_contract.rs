@@ -56,7 +56,7 @@ fn fixture(with_shared: bool, declared: bool) -> TempDir {
     git(root.path(), &["config", "user.name", "Test"]);
     write(root.path(), "baseline.txt", "baseline");
     if with_shared {
-        write(root.path(), "shared-contract.yaml", SHARED);
+        write(root.path(), "specs/shared-contract.yaml", SHARED);
     }
     let baseline = commit(root.path());
     let declaration = if declared {
@@ -163,7 +163,7 @@ fn missing_and_invalid_shared_contracts_are_not_partial_success() {
             .iter()
             .any(|issue| issue.code == "CONTRACT_GRAPH_SHARED_RESOURCE_MISSING")
     );
-    write(root.path(), "shared-contract.yaml", "broken");
+    write(root.path(), "specs/shared-contract.yaml", "broken");
     assert!(
         contract_graph::resolve(root.path())
             .project_issues
@@ -204,7 +204,7 @@ fn shared_fingerprint_normalizes_order_but_detects_rules_and_absence() {
 #[test]
 fn direct_only_shared_change_is_reviewed_before_completion_and_rechecked_after_completion() {
     let root = fixture(false, true);
-    write(root.path(), "shared-contract.yaml", SHARED);
+    write(root.path(), "specs/shared-contract.yaml", SHARED);
     commit(root.path());
     assert_eq!(
         cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
@@ -225,7 +225,7 @@ fn direct_only_shared_change_is_reviewed_before_completion_and_rechecked_after_c
     );
     write(
         root.path(),
-        "shared-contract.yaml",
+        "specs/shared-contract.yaml",
         &SHARED.replace("Matching keys", "New promise"),
     );
     commit(root.path());
@@ -249,9 +249,9 @@ fn unscoped_creation_and_deletion_require_review_and_scope_repair() {
     for original in [false, true] {
         let root = fixture(original, false);
         if original {
-            fs::remove_file(root.path().join("shared-contract.yaml")).unwrap();
+            fs::remove_file(root.path().join("specs/shared-contract.yaml")).unwrap();
         } else {
-            write(root.path(), "shared-contract.yaml", SHARED);
+            write(root.path(), "specs/shared-contract.yaml", SHARED);
         }
         assert_eq!(
             cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
@@ -269,7 +269,7 @@ fn unscoped_creation_and_deletion_require_review_and_scope_repair() {
 #[test]
 fn completed_shared_obligations_are_locked_but_followup_direct_work_is_allowed() {
     let root = fixture(false, true);
-    write(root.path(), "shared-contract.yaml", SHARED);
+    write(root.path(), "specs/shared-contract.yaml", SHARED);
     commit(root.path());
     cross_spec_review::accept(root.path(), root.path(), CANDIDATE).unwrap();
     let revision = commit(root.path());
@@ -314,7 +314,7 @@ fn completed_shared_obligations_are_locked_but_followup_direct_work_is_allowed()
 #[test]
 fn declared_deletion_is_reviewable_and_manifest_is_not_a_spec() {
     let root = fixture(true, true);
-    fs::remove_file(root.path().join("shared-contract.yaml")).unwrap();
+    fs::remove_file(root.path().join("specs/shared-contract.yaml")).unwrap();
     cross_spec_review::accept(root.path(), root.path(), CANDIDATE).unwrap();
     assert_eq!(
         cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
@@ -347,7 +347,11 @@ fn ordinary_direct_with_unchanged_shared_catalog_needs_no_review() {
 fn malformed_shared_presence_is_invalid_even_before_the_first_review() {
     for declared in [false, true] {
         let root = fixture(false, declared);
-        write(root.path(), "shared-contract.yaml", "resources: [broken");
+        write(
+            root.path(),
+            "specs/shared-contract.yaml",
+            "resources: [broken",
+        );
         assert_eq!(
             cross_spec_review::evaluate_freshness(root.path(), root.path()).status,
             ReviewFreshnessStatus::Invalid
@@ -381,7 +385,7 @@ fn shared_scope_roundtrip_and_scheduler_keep_preparation_before_direct_execution
 #[test]
 fn shared_direct_release_archives_review_and_retains_the_agreement() {
     let root = fixture(false, true);
-    write(root.path(), "shared-contract.yaml", SHARED);
+    write(root.path(), "specs/shared-contract.yaml", SHARED);
     commit(root.path());
     cross_spec_review::accept(root.path(), root.path(), CANDIDATE).unwrap();
     let revision = commit(root.path());
@@ -397,7 +401,7 @@ fn shared_direct_release_archives_review_and_retains_the_agreement() {
         None,
     )
     .unwrap();
-    assert!(root.path().join("shared-contract.yaml").is_file());
+    assert!(root.path().join("specs/shared-contract.yaml").is_file());
     assert!(!root.path().join("state/contract-review.md").exists());
     let archive = specbind::release::archive_targets("v1.0.0").unwrap();
     assert!(root.path().join(&archive.cross_spec_review).is_file());
@@ -431,7 +435,7 @@ fn review_rejects_an_unprepared_resource_and_empty_manifest_uses_explicit_scope(
     fs::write(roadmap_path, roadmap).unwrap();
     write(
         root.path(),
-        "shared-contract.yaml",
+        "specs/shared-contract.yaml",
         "schema_version: 1\nresources: []\n",
     );
     cross_spec_review::accept(root.path(), root.path(), CANDIDATE).unwrap();

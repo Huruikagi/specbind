@@ -192,7 +192,7 @@ adapter mismatch; never invent or recover a destination. This post-creation
 write preserves the fixed clean baseline.
 
 If the confirmed proposal includes shared resources, author only those
-agreements in `<specDir>/shared-contract.yaml` before consumer Design. The
+agreements in `<specDir>/specs/shared-contract.yaml` before consumer Design. The
 reverse milestone's confirmation supplies this authority; do not add delivery
 Direct items or invoke delivery shared planning. Existing implementation stays
 unchanged. Use Contract v2 only for Specs that consume a shared resource. Include

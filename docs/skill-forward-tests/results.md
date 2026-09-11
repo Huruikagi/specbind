@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `7d98a5d` + shared path working tree | SH1-path — pass; proposal created only at `<specDir>/specs/shared-contract.yaml` and remained outside Spec discovery | [Shared Contract placement](./runs/2026-09-11-codex-7d98a5d-shared-path.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `630a9c2` | Q6 — pass; saturated independent Design validation returned the complete restart handoff without approval or commit | [Final Plan capacity recovery](./runs/2026-09-11-codex-630a9c2-q6-capacity.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `febcb78` | Q6 — pass; actual unapproved-revision boundary preserved every restart field | [Plan capacity recovery](./runs/2026-09-11-codex-febcb78-q6-capacity.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `58025b0` | Q6 pre-role setup — product failure; unstable fallback expectation corrected to the Issue #59 boundary | [Capacity scenario boundary](./runs/2026-09-11-codex-58025b0-q6-capacity.md) |

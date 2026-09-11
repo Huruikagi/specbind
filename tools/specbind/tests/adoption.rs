@@ -191,7 +191,7 @@ fn reverse_shared_agreement_is_knowledge_and_preserves_the_adoption_handler() {
     write_reverse_checkpoint(root.path(), &baseline);
     write(
         root.path(),
-        ".specbind/shared-contract.yaml",
+        ".specbind/specs/shared-contract.yaml",
         "schema_version: 1\nresources: []\n",
     );
     commit_all(root.path());

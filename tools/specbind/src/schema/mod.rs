@@ -51,7 +51,7 @@ static SCHEMAS: &[EmbeddedSchema] = &[
     },
     EmbeddedSchema {
         selector: "shared-contract/v1",
-        artifact: "shared-contract.yaml",
+        artifact: "specs/shared-contract.yaml",
         written_by: "the authoring agent",
         content: SHARED_CONTRACT_V1_SCHEMA_JSON,
     },

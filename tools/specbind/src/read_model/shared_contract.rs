@@ -2,11 +2,13 @@
 use crate::{domain::shared_contract::SharedContract, schema::runtime};
 use std::{fs, path::Path};
 
+pub const SHARED_CONTRACT_RELATIVE: &str = "specs/shared-contract.yaml";
+
 /// Reads an optional regular shared Contract; malformed presence is never absence.
 /// # Errors
 /// Returns read, structure, or semantic diagnostics.
 pub fn read(root: &Path) -> Result<Option<SharedContract>, String> {
-    let path = root.join("shared-contract.yaml");
+    let path = root.join(SHARED_CONTRACT_RELATIVE);
     match fs::symlink_metadata(&path) {
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
         Err(error) => return Err(error.to_string()),

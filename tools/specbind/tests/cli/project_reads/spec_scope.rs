@@ -9,6 +9,11 @@ fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct()
         ".specbind.json",
         r#"{"schemaVersion":1,"specDir":"knowledge","language":"en","agents":["codex"]}"#,
     );
+    write(
+        root.path(),
+        "knowledge/shared-contract.yaml",
+        "schema_version: 1\nresources: []\n",
+    );
     specbind_command()
         .current_dir(root.path())
         .args(["contract", "shared", "read"])
@@ -25,9 +30,15 @@ fn shared_reads_and_ownership_follow_custom_spec_dir_and_keep_absence_distinct()
         ));
     write(
         root.path(),
-        "knowledge/shared-contract.yaml",
+        "knowledge/specs/shared-contract.yaml",
         "schema_version: 1\nresources:\n  - id: translations\n    description: Catalogs\n    paths: [locales/**]\n    change_policy: Preserve keys.\n    invariants: []\n",
     );
+    specbind_command()
+        .current_dir(root.path())
+        .args(["spec", "list"])
+        .assert()
+        .success()
+        .stdout("OK SPEC_LISTED: Found 0 spec(s).\n");
     specbind_command()
         .current_dir(root.path())
         .args(["contract", "owners", "locales/en.json"])

@@ -33,7 +33,7 @@ pub fn evaluate_freshness(project_root: &Path, specbind_root: &Path) -> ReviewFr
             None,
             vec![review_issue(
                 "SHARED_CONTRACT_REVIEW_INPUT_INVALID",
-                Some("shared-contract.yaml".into()),
+                Some(crate::read_model::shared_contract::SHARED_CONTRACT_RELATIVE.into()),
                 message,
             )],
         )
