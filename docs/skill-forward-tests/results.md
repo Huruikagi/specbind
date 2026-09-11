@@ -14,6 +14,10 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `4a06547` | DR8 — pass; Drive started the exact Plan owner first and preserved its saturated-validator restart capsule verbatim | [Drive nested capacity handoff](./runs/2026-09-11-codex-4a06547-dr8-capacity-handoff.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `88cce31` | DR8 — product failure; a helper consumed the owner slot before Plan could start | [Drive owner-first dispatch failure](./runs/2026-09-11-codex-88cce31-dr8-capacity-handoff.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `88cce31` | DR7 — pass; pre-owner capacity stop returned every required capsule field | [Drive pre-owner capacity recovery](./runs/2026-09-11-codex-88cce31-dr7-owner-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `1d39358` | DR7 — product failure; Drive stopped safely but omitted the structured capsule fields | [Initial Drive pre-owner capacity recovery](./runs/2026-09-11-codex-1d39358-dr7-owner-capacity.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `7d98a5d` + shared path working tree | SH1-path — pass; proposal created only at `<specDir>/specs/shared-contract.yaml` and remained outside Spec discovery | [Shared Contract placement](./runs/2026-09-11-codex-7d98a5d-shared-path.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `630a9c2` | Q6 — pass; saturated independent Design validation returned the complete restart handoff without approval or commit | [Final Plan capacity recovery](./runs/2026-09-11-codex-630a9c2-q6-capacity.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `febcb78` | Q6 — pass; actual unapproved-revision boundary preserved every restart field | [Plan capacity recovery](./runs/2026-09-11-codex-febcb78-q6-capacity.md) |
