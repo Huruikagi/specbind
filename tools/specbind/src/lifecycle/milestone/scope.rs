@@ -548,6 +548,9 @@ fn initialize_participants(
         }
         let relative = spec_relative(&spec);
         let path = specbind_root.join(&relative);
+        let existing_establishment = artifacts::resolve_spec(specbind_root, &spec)
+            .wire
+            .and_then(|wire| wire.establishment);
         let wire = SpecDocument {
             schema_version: SchemaVersion(1),
             establishment: document
@@ -564,7 +567,8 @@ fn initialize_participants(
                             .expect("validated reverse Roadmap has baseline_version"),
                     ),
                     milestone_id: MilestoneId(document.milestone_id.clone()),
-                }),
+                })
+                .or(existing_establishment),
             active_change: Nullable(Some(ActiveChange {
                 milestone_id: MilestoneId(document.milestone_id.clone()),
                 state: WorkflowState::Requirements,

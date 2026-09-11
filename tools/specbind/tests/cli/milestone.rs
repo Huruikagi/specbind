@@ -285,6 +285,50 @@ fn updates_scope_while_preserving_body_and_completed_direct_state() {
 }
 
 #[test]
+fn adding_an_established_spec_to_delivery_scope_preserves_reverse_provenance() {
+    let root = project_fixture();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: '0000000000000000000000000000000000000000'\n  baseline_version: v1.0.0\n  milestone_id: {REVIEW_MILESTONE}\nactive_change: null\n"
+        ),
+    );
+    write(
+        root.path(),
+        ".specbind/specs/checkout/contract.yaml",
+        "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
+    );
+    commit_all(root.path());
+    create_direct_milestone(root.path());
+    commit_all(root.path());
+
+    let mut update = specbind_command();
+    update
+        .current_dir(root.path())
+        .args(["milestone", "update-scope", "--scope", "-"])
+        .write_stdin(
+            r#"{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"checkout","summary":"Update checkout"}],"directChanges":[{"id":"docs","summary":"Update docs"}]}}"#,
+        )
+        .assert()
+        .success();
+
+    let spec = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("updated established Spec");
+    assert!(spec.contains("establishment:"), "{spec}");
+    assert!(
+        spec.contains("source_revision: \"0000000000000000000000000000000000000000\""),
+        "{spec}"
+    );
+    assert!(spec.contains("baseline_version: v1.0.0"), "{spec}");
+    assert!(
+        spec.contains(&format!("milestone_id: {REVIEW_MILESTONE}")),
+        "{spec}"
+    );
+    assert!(spec.contains("state: requirements"), "{spec}");
+}
+
+#[test]
 fn blocks_scope_removal_that_needs_reconciliation() {
     let root = project_fixture();
     commit_all(root.path());
