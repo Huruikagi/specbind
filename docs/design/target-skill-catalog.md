@@ -3,9 +3,9 @@
 This document records the design history and implementation status of the
 SpecBind skill system. Decision 0075's complete v1 set is now embedded and
 installed; the current concise interface is indexed in the
-[current generated skill index](../current-skill-index.md).
+[skill index](../en/reference/current-skill-index.md).
 
-The catalog is intentionally separate from the [current generated skill index](../current-skill-index.md):
+The catalog is intentionally separate from the [skill index](../en/reference/current-skill-index.md):
 
 - The current index records what the CLI generates today.
 - This catalog records the inherited mapping, accepted changes, and implementation progress.

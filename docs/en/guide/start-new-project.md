@@ -194,7 +194,7 @@ The two status commands also provide `--json` for tools and scripts.
 - [Plan and Drive a Milestone](./implement-with-plan-and-drive.md)
 - [Release a milestone](./release.md) — when you actually close the Milestone
 - [Customize SpecBind](./customization.md) — after one cycle shows what to adjust
-- [Current generated skill index](../reference/current-skill-index.md)
+- [Skill index](../reference/current-skill-index.md)
 - [Artifact index](../reference/current-artifact-index.md)
 
 ---

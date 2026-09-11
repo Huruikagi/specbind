@@ -1,80 +1,57 @@
-# Current generated skill index
+# Skill index
 
-This page indexes the product-managed skills embedded in the current SpecBind
-CLI. `specbind install` renders the same agent-neutral body for each selected
-agent while preserving the platform-specific front matter and invocation
-syntax.
+This page lists the product-managed Skills that `specbind install` places in a
+project. For the files they create and maintain, see the
+[artifact index](./current-artifact-index.md).
 
-For the files installed or maintained by these skills, see the
-[artifact index](./current-artifact-index.md). For the design
-history behind the set, see the
-[target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
-[Decision 0176](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0176-skill-namespace-separation.md).
+## Where Skills live and how to invoke them
 
-Every supported Agent profile receives the same 15 durable skills by default:
+| Agent | Location | Invocation |
+| --- | --- | --- |
+| Codex | `.agents/skills/sb-*/` | `$sb-*` |
+| Claude Code | `.claude/skills/sb-*/` | `/sb-*` |
+| Generic | `.agents/skills/sb-*/` | Defined by the host Agent |
 
-- Claude Code: `.claude/skills/<skill>/SKILL.md`; invoked as `/sb-*`
-- Codex: `.agents/skills/<skill>/SKILL.md`; invoked as `$sb-*`
-- Generic: `.agents/skills/<skill>/SKILL.md`; invocation is defined by the
-  compatible host rather than by SpecBind
+Every Agent receives the same 15 Skills. Codex and generic share
+`.agents/skills/`, so selecting both installs each Skill once.
 
-Selecting both Codex and generic installs each shared `.agents/skills/` target
-once.
+## Skills for the everyday workflow
 
-`specbind install --with-adoption` additionally installs the temporary
-`sb-adopt` Skill. Its enabled state is persisted during an active reverse run,
-and successful reverse finalization retires it for every configured Agent.
+Listed in lifecycle order. See [Core concepts](../guide/concepts.md) for how
+they fit together.
 
-Codex installations also receive
-`.agents/skills/<skill>/agents/openai.yaml`. It presents branded names such as
-`SpecBind Plan`, a compact UI description, and an example prompt that names the
-exact `$sb-*` identifier. This OpenAI-specific metadata is not installed for
-Claude Code or the generic profile. It does not change implicit invocation or
-declare tool dependencies. See
-[Decision 0183](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0183-codex-skill-interface-metadata.md).
-
-| Skill | Current role |
+| Skill | When to use it |
 | --- | --- |
-| `sb-configure` | Review and change supported SpecBind project configuration, or execute an explicitly requested installation-client binary update and guarded project-asset refresh; verify the result and complete authorized aftercare. |
-| `sb-discovery` | Confirm milestone scope from a change request or explicit Source Collection; classify durable boundaries, delegate state changes to the CLI, and author provenance-bearing Roadmaps and Briefs. |
-| `sb-plan` | The only planning entry point: take one named Spec or every Spec-backed milestone item through Tasks approval, run one explicitly requested Requirements, Design, or Tasks phase for one named Spec, or prepare scoped shared agreements with `--shared`. |
-| `sb-drive` | Drive safe reachable work and stop before Release; optional `--replan` delegates Design, Contract, and Tasks recovery within approved Requirements and Milestone scope, then resumes delivery. |
-| `sb-gap-analysis` | Compare intended work with the repository and preserve useful milestone-local Research without becoming a gate. |
-| `sb-validate-design` | Independently judge Design coverage, boundaries, buildability, self-containment, and architectural fit. |
-| `sb-contract-review` | Review the milestone's complete persistent Contract graph and accept the review required before Tasks authoring. |
-| `sb-implement` | Implement one Spec-backed or Direct Roadmap item using the required dispatched implementation and review cycle. |
-| `sb-review-task` | Judge one implemented Task from its actual diff and approved inputs without applying fixes. |
-| `sb-debug` | Establish and categorize the root cause of a stopped run and return a bounded next action without applying it. |
-| `sb-validate-implementation` | Judge one Spec's implementation against its active Requirement IDs and accept completion evidence only on `GO`. |
-| `sb-verify-completion` | Check an explicit completion claim against fresh evidence without changing lifecycle state. |
-| `sb-release` | Bind the release, execute project release guidance, verify the result, and finalize the complete milestone. |
-| `sb-status` | Explain current Spec, milestone, or task state and the next available action without judging completion. |
-| `sb-steering` | Bootstrap, synchronize, repair, or add durable project guidance. |
+| `sb-configure` | Review or change project configuration, or update SpecBind. |
+| `sb-steering` | Create or update durable project guidance (Steering). |
+| `sb-discovery` | Start a change: confirm scope and create the Milestone and Specs. |
+| `sb-plan` | Plan Requirements, Design, and Tasks for one Spec or the whole Milestone (`--all`), or prepare a shared Contract change (`--shared`). |
+| `sb-contract-review` | Review every Contract in the Milestone together before Tasks. |
+| `sb-implement` | Implement one Roadmap item, with review of each Task. |
+| `sb-validate-implementation` | Validate a completed Spec against its Requirements and record completion on `GO`. |
+| `sb-release` | Release the Milestone: bind the version, publish, verify, and finalize. |
+| `sb-drive` | Advance all safely reachable work in the Milestone and stop before release. `--replan` also delegates in-scope replanning. |
+| `sb-status` | Show the current state and the next available action. Read-only. |
 
-Optional temporary Skill:
+## Skills for specific situations
 
-| Skill | Current role |
+| Skill | When to use it |
 | --- | --- |
-| `sb-adopt` | Establish durable Specs from a fixed existing implementation through Requirements, Design, Contract Review, and non-release finalization; then retire itself through CLI-owned asset cleanup. |
+| `sb-gap-analysis` | Before planning, compare the intended change with the current code and keep the findings as Research. |
+| `sb-validate-design` | Independently check a Design. `sb-plan` runs it automatically after authoring a Design. |
+| `sb-review-task` | Review one implemented Task from its diff, without fixing anything. |
+| `sb-debug` | Find and classify the root cause when a run has stopped, without fixing anything. |
+| `sb-verify-completion` | Check a "done" claim against fresh evidence without changing lifecycle state. |
 
-There are no compatibility aliases for earlier `kiro-*`, any former
-`specbind-*` product Skill, removed phase-specific `specbind-plan-*`, or
-`specbind-adopt-existing` Skill names. Milestone and Spec initialization are
-routed through `sb-discovery`; existing-implementation adoption uses the
-distinct opt-in `sb-adopt` Skill.
+## Temporary Skill
 
-## Sources of truth
+| Skill | When to use it |
+| --- | --- |
+| `sb-adopt` | Establish Specs from an existing implementation. Installed only with `specbind install --with-adoption` and removed automatically when establishment completes. See [Establish Specs from an existing implementation](../guide/adopt-existing.md). |
 
-- Agent-neutral skill sources: `tools/specbind/assets/skills/`
-- Registry and per-agent rendering: `tools/specbind/src/catalog/skill.rs`
-- Installation planning and refresh: `tools/specbind/src/installation/install.rs`
-- Mechanical conformance tests: `tools/specbind/tests/skill.rs` and `tools/specbind/tests/cli.rs`
-- Behavioral verification index: `docs/skill-forward-tests.md`
-- Measurement dashboard: `docs/skill-forward-tests/results.md`
-- Historical run records: `docs/skill-forward-tests/runs/`
-- Findings worklist: `docs/skill-forward-tests/findings.md`
+## Codex metadata
 
-When a product skill changes, update its one embedded package and the applicable
-mechanical and forward tests. Each package has one `SKILL.md` entrypoint and may
-have directly linked `references/` files for conditional detail. Both agent
-renderings are derived from that package.
+Codex installations also receive `.agents/skills/<skill>/agents/openai.yaml`,
+which gives each Skill a display name such as `SpecBind Plan`, a short
+description, and an example prompt for the Codex UI. It does not change how
+Skills are invoked.

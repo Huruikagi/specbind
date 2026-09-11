@@ -245,7 +245,7 @@ The resulting history records Spec establishment, not a product release.
 - [Core concepts](./concepts.md)
 - [Start with an existing project](./start-existing-project.md)
 - [Customize SpecBind](./customization.md)
-- [Current generated skill index](../reference/current-skill-index.md)
+- [Skill index](../reference/current-skill-index.md)
 
 ---
 

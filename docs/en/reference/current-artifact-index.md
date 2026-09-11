@@ -2,7 +2,7 @@
 
 This page lists the files the current SpecBind CLI installs into a project and
 the artifacts its CLI and Skills maintain. For the workflows that own them, see
-the [current generated skill index](./current-skill-index.md).
+the [skill index](./current-skill-index.md).
 
 Paths below use the default Spec root, `.specbind/`. If your `.specbind.json`
 sets a different `specDir`, read `.specbind/` as that directory.

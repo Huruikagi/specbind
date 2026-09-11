@@ -111,7 +111,7 @@ specbind release preflight
 
 - [Core concepts](./concepts.md)
 - [Customize SpecBind](./customization.md)
-- [Current generated skill index](../reference/current-skill-index.md)
+- [Skill index](../reference/current-skill-index.md)
 - [Artifact index](../reference/current-artifact-index.md)
 
 ---

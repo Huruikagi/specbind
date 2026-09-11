@@ -157,7 +157,7 @@ The two status commands also support `--json` for integrations.
 - [Establish Specs from an existing implementation](./adopt-existing.md) — make current code the baseline
 - [Release a milestone](./release.md) — when you actually close the Milestone
 - [Customize SpecBind](./customization.md) — after one cycle shows what to adjust
-- [Current generated skill index](../reference/current-skill-index.md)
+- [Skill index](../reference/current-skill-index.md)
 - [Artifact index](../reference/current-artifact-index.md)
 
 ---
