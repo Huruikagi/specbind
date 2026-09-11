@@ -78,6 +78,12 @@ The inherited TypeScript installer exposes compatibility aliases, manifests, ove
 
 `specbind install` applies that plan. Assets are written before the configuration, so a project only claims to be installed once the files its skills read exist. An interrupted product-asset refresh converges on the next invocation: the repository guard admits dirty kept paths only when their current bytes exactly match product-managed output from the running binary. A dirty mutation target blocks replacement, while unrelated dirty paths remain untouched. Missing defaults are created and existing project files are kept. Each write revalidates the planned state and fails closed when the target changed after planning. An installation whose targets are all current returns `NO_CHANGE INSTALL_UP_TO_DATE`. The installer never commits or stashes.
 
+If a write fails after earlier actions succeeded, the failure reports every
+action already applied and every action still pending. It also states whether
+any `sb-configure` package content changed and gives the exact convergent
+recovery sequence: correct the filesystem problem, rerun `specbind install`,
+then confirm `specbind install --dry-run` and inspect the repository diff.
+
 Both paths cover `.specbind.json`, the Decision 0091 installed template set, the
 Decision 0093 shared-rule set, the Decision 0101 release, Git, and deferred
 finding adapter scaffolds, and the Decision 0096 agent skill assets rendered per
