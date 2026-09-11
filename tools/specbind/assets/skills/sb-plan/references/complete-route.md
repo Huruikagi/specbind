@@ -130,6 +130,38 @@ skill, scope, or authority. Fallback is only for an absent role. A configured
 role whose model cannot start is an environment failure, not permission to
 change models.
 
+### Recover a host dispatch-capacity failure
+
+When a receiver cannot start because the host's finite agent or thread limit is
+full, do not repeatedly retry creation or silently collapse roles. Recover in
+this order:
+
+1. Consume every completed receiver result. If the host exposes a safe release
+   operation, release only a completed receiver whose result was consumed and
+   which this Plan run will not continue. Never invent a release command or
+   assume that a completed receiver freed its slot.
+2. Continue an addressable receiver only for the same role and same phase run,
+   such as requesting its missing status or returning the finding ledger to the
+   same Design author. Never reuse an author as an independent validator, a
+   validator as an author, or a receiver from another Spec.
+3. If only nested dispatch is unavailable, keep orchestration here and sequence
+   the next fresh receiver directly with the same self-contained brief,
+   protocol, project environment, authority, finding ledger, and remaining
+   revision budget. A phase receiver need not create its successor.
+4. Use the main-context compatibility fallback only before the affected role
+   begins and only when it does not claim independence from work this context
+   already observed. Once an unapproved Design handoff exists, mandatory
+   independent validation cannot fall back to this context.
+
+If the required role still cannot start, leave that branch unfinished. Preserve
+the exact unapproved artifact path set and Git state; do not approve, checkpoint,
+rewrite, stash, or discard it. In all scope, continue only independent reachable
+branches. The terminal report must name the affected Spec and phase, the
+unapproved paths and Git state, every accumulated finding ID and disposition,
+Design revisions used and remaining, the gate delegation actually supplied,
+and the exact author or independent-validator role needed to resume. A resumed
+context receives those facts but gains no authority omitted from its request.
+
 The receiver reads the named reference completely and follows it as the phase
 procedure. Do not assume that a fresh receiver can discover or invoke another
 Skill, and do not inline or summarize the reference in its brief.
@@ -317,7 +349,8 @@ In the project's language, report:
 - **Stop after Tasks approval for ordinary milestones, or after Contract Review
   for reverse milestones.** Never implement, validate completion, or touch a
   product release.
-- Author nothing yourself and never finish work owned by a phase receiver.
+- Author nothing yourself and never finish work owned by a phase receiver,
+  except for the pre-role main-context compatibility fallback defined above.
 - No scope changes: no Roadmap items, new Specs, removals, or silent expansion.
 - Same rules, protocols, and criteria under delegated or explicit approval.
   There is no all-Spec variant of them.

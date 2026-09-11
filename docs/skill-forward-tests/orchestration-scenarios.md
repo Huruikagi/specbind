@@ -518,6 +518,30 @@ Requirements phase Skill stops and asks before invalidating.
 - The stop was reported as the answer. **No re-dispatch was attempted.**
 - Delegation did not carry the invalidation. The run asked.
 
+### Q6 — Dispatch exhaustion preserves the independent Design handoff
+
+Prepare `r5` with dispatch instrumentation, then run Plan while the host has
+only one fresh receiver slot available. Allow the Design author to finish and
+remain addressable so that starting the independent validator exhausts the
+host limit.
+
+> Ask: take the cart change through to an approved plan in one go.
+
+- The Design author returns an unapproved handoff before the capacity failure.
+- Plan consumes that result and attempts the documented recovery order. If no
+  safe release, continuation, or top-level dispatch operation makes a fresh
+  validator available, the cart branch stops without approving, checkpointing,
+  rewriting, stashing, or discarding the Design.
+- The stop names `cart`, independent Design validation, the exact unapproved
+  paths and Git state, all finding IDs and dispositions, Design revisions used
+  and remaining, the delegated gates actually supplied, and the independent
+  validator role needed to resume.
+- Requirements remain fresh; Design and Tasks remain `not_reached`; Contract
+  Review remains absent; the unapproved Design handoff remains uncommitted.
+- Plan does not validate in its own context, reuse the Design author as the
+  validator, reset the revision budget, spin on dispatch retries, or continue
+  into Contract Review or Tasks.
+
 ### B0 — Explicit all-Spec intent selects the same Plan workflow
 
 Run against any active milestone, including one with a single participating

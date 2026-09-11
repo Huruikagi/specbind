@@ -378,3 +378,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0210](./design/decisions/0210-durable-artifact-descriptions.md) | Accepted | Durable Requirements, Design, and Steering descriptions in inventories |
 | [0211](./design/decisions/0211-version-range-project-migration-plans.md) | Accepted | Read-only version-range migration plans and project-specific reconciliation |
 | [0212](./design/decisions/0212-shared-okf-bundle-index.md) | Accepted | Shared bundle-root OKF declaration and product-managed navigation block |
+| [0213](./design/decisions/0213-plan-dispatch-capacity-recovery.md) | Accepted | Plan dispatch-capacity recovery without collapsing author and validator roles |

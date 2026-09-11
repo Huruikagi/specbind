@@ -166,6 +166,29 @@ fn planning_dispatch_carries_project_local_execution_environment() {
 }
 
 #[test]
+fn planning_recovers_dispatch_capacity_without_collapsing_roles() {
+    let body = skill_resource_text("sb-plan", "references/complete-route.md");
+
+    for required in [
+        "Consume every completed receiver result",
+        "Never invent a release command",
+        "same role and same phase run",
+        "Never reuse an author as an independent validator",
+        "If only nested dispatch is unavailable",
+        "Once an unapproved Design handoff exists, mandatory\n   independent validation cannot fall back to this context",
+        "Preserve\nthe exact unapproved artifact path set and Git state",
+        "every accumulated finding ID and disposition",
+        "Design revisions used and remaining",
+        "gains no authority omitted from its request",
+    ] {
+        assert!(
+            body.contains(required),
+            "dispatch recovery missing {required}"
+        );
+    }
+}
+
+#[test]
 fn planning_orchestrator_bounds_the_unapproved_design_handoff() {
     let body = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(body.contains("one deliberate exception"));
