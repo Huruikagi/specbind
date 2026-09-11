@@ -34,6 +34,7 @@ sets a different `specDir`, read `.specbind/` as that directory.
 │  └─ <spec>/                                     Per-Spec artifacts (see below)
 ├─ state/                               CLI       Accepted Contract review
 ├─ releases/                            CLI       Release archives
+├─ baselines/                           CLI       Spec establishment archives
 ├─ deferred.md                          Skill     Deferred findings (optional)
 └─ adoption/                            Skill     Present only while establishing Specs
 .agents/skills/sb-*/                    Product   Skills for Codex and generic agents
@@ -99,6 +100,7 @@ you want to override it.
 | `state/cc-sdd-migration.yaml` | CLI | Present only during a cc-sdd migration. |
 | `releases/<version>-roadmap.md` | CLI | Archived Roadmap of a released Milestone. |
 | `releases/<version>-contract-review.md` | CLI | Archived Contract review of a released Milestone. |
+| `baselines/<version>-roadmap.md` / `baselines/<version>-contract-review.md` | CLI | Archived Roadmap and Contract review from establishing Specs with `sb-adopt`. Not a release record. |
 | `specs/shared-contract.yaml` | Skill | Optional shared Contract for resources used by several features. Survives release. See [Customize SpecBind](../guide/customization.md#shared-contract). |
 | `deferred.md` | Skill | Created by the default deferred adapter when the first non-blocking finding is recorded. Not a work queue. |
 | `adoption/reverse-discovery.yaml` | Skill | Temporary evidence ledger of `sb-adopt`, deleted when Spec establishment completes. |

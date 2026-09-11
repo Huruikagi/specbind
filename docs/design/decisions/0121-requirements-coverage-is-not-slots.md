@@ -6,7 +6,7 @@ Status: Accepted
 
 Projects adopting a specification-driven workflow report a failure mode where
 scope and cost grow faster than delivered product. The candidate responses are
-collected in [Restraint mechanisms](../restraint-mechanisms.md). Reviewing the
+collected in [Restraint mechanisms](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/restraint-mechanisms.md). Reviewing the
 accepted product protocols against that list shows the restraint baseline is
 already present in three of the four authoring layers:
 
@@ -82,7 +82,7 @@ no enablement field in v1.
 - Existing approved Requirements documents are unaffected. The section changes
   how the next authoring or review pass judges a document; it is not a
   retroactive defect definition, and it creates no invalidation.
-- The remaining candidates in [Restraint mechanisms](../restraint-mechanisms.md)
+- The remaining candidates in [Restraint mechanisms](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/restraint-mechanisms.md)
   are unchanged by this decision. Reverse traceability, orphan contract
   detection, review severity floors, and spec scale remain open.
 

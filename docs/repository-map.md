@@ -135,16 +135,9 @@ repository root to verify it locally.
 
 | Document | Role |
 | --- | --- |
-| [Target skill catalog](./design/target-skill-catalog.md) | Working catalog for proposed skill names and responsibilities |
-| [Target artifact catalog](./design/target-artifact-catalog.md) | Proposed artifact ownership and lifecycle |
-| [Target workflows](./design/target-workflows.md) | Proposed user journeys and responsibility boundaries |
-| [Active spec lifecycle](./design/active-spec-lifecycle.md) | Detailed draft for active specs and milestone finalization |
-| [Spec state machine](./design/spec-state-machine.md) | Draft per-spec states, events, invalidation rules, and transition diagram |
+| [Spec state machine](./design/spec-state-machine.md) | Per-spec states, events, invalidation rules, and transition diagram |
 | [Milestone state machine](./design/milestone-state-machine.md) | Derived milestone stage, phase-relative dependency waves, and aggregate read model |
-| [CLI and agent boundary](./design/cli-agent-boundary.md) | Proposed boundary between bundled deterministic CLI operations and agent skills |
 | [Cross-spec contracts](./design/cross-spec-contracts.md) | Detailed draft for persistent cross-spec seam manifests and contract-first review |
-| [Rust CLI migration](./design/rust-cli-migration.md) | Working migration plan from the TypeScript installer to the complete Rust CLI |
-| [Restraint mechanisms](./design/restraint-mechanisms.md) | Idea-stage options for suppressing over-engineering in adopting projects |
 | [Skill forward tests](./skill-forward-tests.md) | Index for the behavioral procedure, measurement dashboard, run archive, findings worklist, and scenario contracts for embedded skills |
 
 This repository's development Skills are:

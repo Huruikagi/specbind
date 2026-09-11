@@ -33,7 +33,7 @@ The migration is incremental and contract-driven:
 6. Publish checksummed Windows x64 and WSL2-tested Linux x64 binaries and installers.
 7. Remove the temporary TypeScript implementation after install, migration, lifecycle, and distribution verification succeeds.
 
-The detailed increments and remaining implementation choices live in [Rust CLI migration](../rust-cli-migration.md).
+The detailed increments and remaining implementation choices live in [Rust CLI migration](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/rust-cli-migration.md).
 
 ## Consequences
 

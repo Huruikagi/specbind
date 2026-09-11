@@ -19,7 +19,7 @@ The naming decision therefore needs an explicit migration policy, not only a dir
 
 Replace the `kiro-` prefix with `specbind-` across the generated skill set. Final suffix vocabulary remains subject to the individual skill design review.
 
-The [target skill catalog](../target-skill-catalog.md) uses `specbind-` for all working target names.
+The [target skill catalog](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/target-skill-catalog.md) uses `specbind-` for all working target names.
 
 ## Before and after pattern
 

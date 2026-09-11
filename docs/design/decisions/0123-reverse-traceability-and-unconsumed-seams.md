@@ -9,7 +9,7 @@ Status: Accepted
 authoring and review through protocol prose. Prose is the weakest carrier
 available: a skill can fail to read or follow it, and Decision 0094 says so
 directly. The candidates collected in
-[Restraint mechanisms](../restraint-mechanisms.md) reserve the strongest lever
+[Restraint mechanisms](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/restraint-mechanisms.md) reserve the strongest lever
 for the CLI, where an invariant is decided rather than requested.
 
 Every existing traceability check runs one direction, from requirement to

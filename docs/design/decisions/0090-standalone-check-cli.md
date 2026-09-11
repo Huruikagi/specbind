@@ -8,7 +8,7 @@ unchanged.
 
 ## Context
 
-[Decision 0011](./0011-cross-spec-contract.md) and the [CLI and agent boundary](../cli-agent-boundary.md) proposed a deterministic `specbind check` family as the first mechanical replacement for ad hoc grep and shell inspection. The Rust read models are complete: the traceability resolver checks Requirement existence plus active Design and Task coverage, and the Contract graph resolves the project-wide dependency set while separating structural errors from review warnings.
+[Decision 0011](./0011-cross-spec-contract.md) and the [CLI and agent boundary](https://github.com/Huruikagi/specbind/blob/e78eb8569e245bdbabb1f2e762393ad3f1107f87/docs/design/cli-agent-boundary.md) proposed a deterministic `specbind check` family as the first mechanical replacement for ad hoc grep and shell inspection. The Rust read models are complete: the traceability resolver checks Requirement existence plus active Design and Task coverage, and the Contract graph resolves the project-wide dependency set while separating structural errors from review warnings.
 
 [Decision 0087](./0087-milestone-review-cli.md) deliberately left that vocabulary unaccepted so the milestone review surface could land first. It is now the last read-only gap: both read models are reachable only indirectly through `spec status` and the guarded review operation, neither of which is a focused pass or fail gate.
 

@@ -125,16 +125,15 @@ baseline establishment uses the opt-in temporary `sb-adopt` Skill. Use
 
 ### Design and development references
 
-- [Target workflows](./docs/design/target-workflows.md) describes the intended user journeys and responsibility boundaries.
-- [Target artifact catalog](./docs/design/target-artifact-catalog.md) explains which records persist and who owns them.
-- [CLI and agent boundary](./docs/design/cli-agent-boundary.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
+- [Core concepts](./docs/en/guide/concepts.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
+- [Lifecycle states](./docs/en/reference/lifecycle-states.md) and [CLI commands](./docs/en/reference/cli-commands.md) describe the states the CLI reports and the commands it provides.
 - [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
 
 ## Repository layout
 
 - `tools/specbind/` — canonical Rust workspace for the `specbind` executable
 - `tools/cc-sdd/` — inherited TypeScript migration oracle
-- `docs/design/` — target workflows, lifecycle models, and accepted design decisions
+- `docs/design/` — lifecycle models, Contract design, and accepted design decisions
 
 ## Development
 

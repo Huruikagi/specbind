@@ -1,6 +1,7 @@
 # Milestone state machine
 
-Status: Draft
+Status: Implemented in v1. The CLI reports the `cross_spec_review` stage as
+`contract_review`.
 
 This document defines the derived project-level lifecycle for the one active milestone represented by `steering/roadmap.md`. It complements the persistent per-Spec states in [Spec state machine](./spec-state-machine.md) and applies the phase-relative dependency semantics accepted by [Decision 0082](./decisions/0082-derived-milestone-state-machine.md).
 
