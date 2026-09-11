@@ -86,6 +86,13 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
 When a `handler.kind=skill` receiver cannot start because the host's finite
 agent or thread capacity is full:
 
+The exact `handler.target` owning Skill is the first and only receiver you may
+attempt for this action. Before it starts, do not dispatch a capacity probe,
+approval or readiness reviewer, diagnosis helper, or any internal role. Keep
+Drive-owned mechanical preflight in this context; owner-domain inspection
+begins only inside the complete owner after it receives the required project
+cwd, executable, PATH, and instruction facts.
+
 1. Consume completed Drive-owned receiver results first. If the host exposes a
    safe release operation, release only a completed receiver whose result was
    consumed and which this Drive run will not continue. Never release an

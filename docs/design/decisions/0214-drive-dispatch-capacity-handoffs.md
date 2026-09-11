@@ -37,6 +37,13 @@ Drive:
 3. otherwise records `EXTERNAL_BLOCK`, rereads Git and milestone state once,
    and does not retry the unchanged dispatch in that run.
 
+The exact `handler.target` owning Skill is Drive's first and only receiver
+attempt for that action. Drive does not spend capacity on a probe, approval or
+readiness reviewer, diagnosis helper, or the owner's internal role before the
+owner starts. Any Drive-owned mechanical preflight remains in the controller
+context; all owner-domain inspection begins inside the complete owner with the
+project execution facts Drive supplied.
+
 The owner-start restart capsule names the exact handler target and mode, action
 and command operand, item or milestone, supplied authority, project working
 directory and executable/PATH facts, capacity evidence, Git state, and the

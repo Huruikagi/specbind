@@ -41,6 +41,9 @@ fn drive_preserves_nested_and_pre_owner_capacity_handoffs() {
 
     for required in [
         "Consume completed Drive-owned receiver results first",
+        "exact `handler.target` owning Skill is the first and only receiver",
+        "do not dispatch a capacity probe,\napproval or readiness reviewer, diagnosis helper, or any internal role",
+        "owner-domain inspection\nbegins only inside the complete owner",
         "Never release an\n   unrelated receiver",
         "same owning Skill, action, item, and\n   handler mode",
         "If the owner never started and capacity remains unavailable",
