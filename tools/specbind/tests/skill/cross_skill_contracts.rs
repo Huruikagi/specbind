@@ -33,6 +33,36 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
 }
 
 #[test]
+fn drive_preserves_nested_and_pre_owner_capacity_handoffs() {
+    let body = skill::find("sb-drive")
+        .expect("drive skill")
+        .body()
+        .expect("drive body");
+
+    for required in [
+        "Consume completed Drive-owned receiver results first",
+        "Never release an\n   unrelated receiver",
+        "same owning Skill, action, item, and\n   handler mode",
+        "If the owner never started and capacity remains unavailable",
+        "do not retry that\n   unchanged dispatch in this run",
+        "Do not execute owner work in the Drive\n   context",
+        "`Handler target and mode:`",
+        "`Project cwd, executable, and PATH facts:`",
+        "Invent no finding ledger or retry budget for work that did not start",
+        "preserve that\nhandoff **verbatim** as owner-owned continuation state",
+        "exact paths, finding IDs and dispositions, used or remaining budgets",
+        "shared worktree\nis unsafe: stop after the reread",
+        "cannot infer non-durable finding, budget, or authority facts from\nstatus",
+        "every owner-returned capacity restart handoff verbatim",
+    ] {
+        assert!(
+            body.contains(required),
+            "Drive capacity contract missing {required}"
+        );
+    }
+}
+
+#[test]
 fn implementation_re_reviews_only_a_diagnosed_review_scope_defect_within_budget() {
     let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
     for required in [

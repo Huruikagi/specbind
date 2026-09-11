@@ -118,6 +118,43 @@ Prepare `dr6`, then ask:
 - Canonical tests pass, all revised Tasks complete, and Drive reaches final
   implementation validation in this same run without Release execution.
 
+### DR7 — Capacity exhaustion before owner startup is resumable
+
+Prepare `i6` with dispatch instrumentation and run Drive while every fresh
+receiver slot is unavailable.
+
+> Ask: Drive this active milestone as far as you safely can. Do not release it.
+
+- The first `handler.kind=skill` owner is not replaced by an internal role or
+  executed in the Drive context.
+- Drive consumes or safely releases only its own completed receivers. If the
+  owner still cannot start, it records `EXTERNAL_BLOCK` and does not retry the
+  unchanged dispatch.
+- The terminal report preserves the handler target/mode, action/operand/item,
+  supplied authority, project cwd and executable/PATH facts, capacity evidence,
+  clean Git state, and exact fresh owner needed to resume. It invents no finding
+  ledger or retry budget and does not ask the user to manage slots.
+- No Task, implementation path, lifecycle state, or checkpoint changes.
+
+### DR8 — Drive preserves Plan's capacity restart handoff
+
+Prepare `q6` with dispatch instrumentation. Leave exactly one receiver slot for
+Drive to start the complete Plan owner; that owner then has no slot for the
+mandatory independent Design validator.
+
+> Ask: Drive this milestone as far as safely possible. Resume cart planning from the unapproved Design revision in the worktree. Finding D-1 was addressed by revision 1 of 2. Delegate Design and Tasks approval for this run. Do not release.
+
+- Plan returns the Q6 restart handoff without validation, approval, or commit.
+- Drive appends its authoritative Git/status reread but preserves verbatim the
+  affected Spec and phase, exact dirty paths, D-1 disposition, one used and one
+  remaining revision, supplied Design/Tasks authority, execution facts, and
+  fresh independent validator resume role.
+- The dirty shared worktree stops Drive. It does not switch items, summarize
+  away owner fields, retry Plan, perform validation itself, or ask for slot
+  management.
+- Requirements remain fresh; Design and Tasks remain `not_reached`; Contract
+  Review remains absent; only `design.md` and `spec.yaml` remain modified.
+
 ## Configuration scenarios
 
 
