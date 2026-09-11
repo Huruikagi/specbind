@@ -172,8 +172,12 @@ labels so none of it is implicit:
 - `Supplied gate delegation:`
 - `Resume role:`
 
-This is a status handoff, not a question. Do not pause on an open-ended request
-for the user to free, route, or release a receiver slot.
+An inventory that already proves every receiver slot is occupied is the same
+failure as a rejected creation attempt. Once no in-scope recovery above is
+available, return this report immediately even when the requested endpoint was
+an approved plan. This is a status handoff, not a question: do not ask the user
+to free, route, or release a slot, wait for an unrelated receiver to finish, or
+keep the turn open for a future capacity change.
 
 The receiver reads the named reference completely and follows it as the phase
 procedure. Do not assume that a fresh receiver can discover or invoke another

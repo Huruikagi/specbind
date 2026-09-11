@@ -185,7 +185,10 @@ fn planning_recovers_dispatch_capacity_without_collapsing_roles() {
         "`Design revision budget:`",
         "`Supplied gate delegation:`",
         "`Resume role:`",
-        "This is a status handoff, not a question",
+        "An inventory that already proves every receiver slot is occupied is the same\nfailure as a rejected creation attempt",
+        "return this report immediately even when the requested endpoint was\nan approved plan",
+        "This is a status handoff, not a question: do not ask the user\nto free, route, or release a slot",
+        "keep the turn open for a future capacity change",
         "gains no authority omitted from its request",
     ] {
         assert!(

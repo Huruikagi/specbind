@@ -50,6 +50,9 @@ does not infer omitted approval or rewind authority from the report.
 The report is a terminal restart handoff, not a request for the user to manage
 receiver capacity; Plan does not pause on an open-ended request to free, route,
 or release a slot.
+A host inventory that already proves every receiver slot is occupied is the
+same capacity failure as a rejected creation attempt. Plan does not wait for an
+unrelated receiver to finish or keep the turn open for a future capacity change.
 
 Capacity recovery never skips independent validation, changes a receiver's
 role, resets a revision budget, discards a finding, checkpoints an unapproved
