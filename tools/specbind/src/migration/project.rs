@@ -12,7 +12,9 @@ use walkdir::WalkDir;
 
 use crate::{artifacts::split_frontmatter, description::Description, guarded_fs};
 
-const COVERAGE: &str = "1.5.0";
+// Every shipped binary has reviewed the migration interval through its own
+// version, even when that interval adds no concrete migration entries.
+const COVERAGE: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -451,6 +453,15 @@ mod tests {
                 "{from} -> {to}"
             );
         }
+    }
+
+    #[test]
+    fn current_binary_version_is_always_within_catalog_coverage() {
+        assert!(
+            select(CATALOG, "1.5.0", env!("CARGO_PKG_VERSION"), COVERAGE)
+                .expect("the running binary must be covered by its migration catalog")
+                .is_empty()
+        );
     }
 
     #[test]

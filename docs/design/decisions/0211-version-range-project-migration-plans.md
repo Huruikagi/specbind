@@ -16,6 +16,8 @@ whose introduction boundary is in `(from, to]`. Build metadata does not affect
 precedence; prereleases sort before their corresponding stable release. Equal
 precedence yields an empty plan; downgrade requests fail. A target beyond the
 catalog's known coverage fails rather than claiming future migration completeness.
+The running binary's version is the coverage boundary: a release with no new
+entries still advances that boundary because its empty interval has been reviewed.
 
 Entries have stable IDs, source version ranges, introduction boundaries,
 required/recommended/optional classification, deterministic-CLI/agent-procedure/
