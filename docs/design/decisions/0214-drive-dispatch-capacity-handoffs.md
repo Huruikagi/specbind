@@ -44,6 +44,10 @@ fresh owning Skill required to resume. Drive invents no finding ledger or retry
 budget when an owner never started. It never releases unrelated receivers,
 changes the owner, performs owner work in the controller context, or asks the
 user to manage receiver slots.
+Every owner-start field is emitted under a fixed label even when its value is
+`none`; an equivalent narrative summary is not a restart capsule. When no other
+safe action avoids the unavailable capacity, Drive returns that labeled capsule
+as its terminal result immediately.
 
 A returned capsule with unapproved or partial paths keeps the shared worktree
 unsafe and stops Drive after the authoritative reread. A clean owner-start block

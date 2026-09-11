@@ -109,7 +109,11 @@ fields:
 - `Git state:`
 - `Resume owner:`
 
-Invent no finding ledger or retry budget for work that did not start.
+Return every label with its exact value, using `none` rather than omission. A
+narrative equivalent is not a restart capsule. Invent no finding ledger or
+retry budget for work that did not start. When no other safe action avoids the
+unavailable capacity, return the labeled capsule immediately as the terminal
+Drive result; do not leave the turn open for capacity to change.
 
 When an owning Skill returns its own capacity restart handoff, preserve that
 handoff **verbatim** as owner-owned continuation state. Append the independent
