@@ -520,14 +520,15 @@ Requirements phase Skill stops and asks before invalidating.
 
 ### Q6 — Dispatch exhaustion preserves the independent Design handoff
 
-Prepare `r5` with dispatch instrumentation, then run Plan while the host has
-only one fresh receiver slot available. Allow the Design author to finish and
-remain addressable so that starting the independent validator exhausts the
-host limit.
+Prepare `r5` with dispatch instrumentation, then run Plan while every fresh
+receiver slot is unavailable. This lets Plan use its pre-role main-context
+fallback to author the Design, but leaves no independent context available to
+validate the resulting handoff.
 
 > Ask: take the cart change through to an approved plan in one go.
 
-- The Design author returns an unapproved handoff before the capacity failure.
+- Plan may use the documented pre-role compatibility fallback to produce an
+  unapproved Design handoff after fresh Design-author dispatch fails.
 - Plan consumes that result and attempts the documented recovery order. If no
   safe release, continuation, or top-level dispatch operation makes a fresh
   validator available, the cart branch stops without approving, checkpointing,
