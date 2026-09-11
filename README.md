@@ -25,8 +25,6 @@ SpecBind is not a gate on every repository edit. Work enters the workflow when i
 
 ## The lifecycle
 
-The deliberate path is:
-
 ```text
 discover scope
   -> requirements
@@ -39,7 +37,7 @@ discover scope
 
 Approvals bind each phase to the exact inputs that were reviewed. If an upstream artifact changes, SpecBind marks the affected downstream evidence stale rather than letting an agent silently continue from an obsolete plan. Faster orchestration can reuse the same artifacts and guards without defining a weaker workflow.
 
-Projects can adapt document templates, shared rules, and Git, release, or final-validation guidance while keeping the product's validation and state transitions consistent. SpecBind is developed and tested with Codex and Claude Code, and provides shared Agent Skills and `AGENTS.md` integration for other compatible agents. English and Japanese are the v1 artifact languages.
+Projects can adapt document templates, shared rules, and Git, release, or final-validation guidance while keeping the product's validation and state transitions consistent. SpecBind is developed and tested with Codex and Claude Code, and provides shared Agent Skills and `AGENTS.md` integration for other compatible agents. English and Japanese are the officially supported artifact languages.
 
 ## Get started
 
@@ -47,7 +45,6 @@ Projects can adapt document templates, shared rules, and Git, release, or final-
 
 The [latest stable release](https://github.com/Huruikagi/specbind/releases/latest)
 supports Windows x64, Linux x64, macOS ARM64, and Linux ARM64 GNU.
-The latest stable release can be installed without choosing a version.
 
 With [mise](https://mise.jdx.dev/), on any supported platform:
 
@@ -56,12 +53,11 @@ mise use github:Huruikagi/specbind
 mise lock
 ```
 
-This installs the latest stable version eligible under your mise settings and
-records it in the mise configuration selected for the current directory. mise
-applies a minimum release age to `latest` by default. If a newly published
-stable release is not eligible yet, select that version explicitly with
-`github:Huruikagi/specbind@<version>`. `mise lock` records the selected version
-and distribution checksum so the project can use the same release consistently.
+`mise use` records the latest eligible stable version in the mise configuration
+for the current directory, and `mise lock` records its checksum so the team uses
+the same release. mise applies a minimum release age to `latest` by default; to
+take a release that is not yet eligible, select it explicitly with
+`github:Huruikagi/specbind@<version>`.
 
 Without mise, use the platform installer.
 
@@ -80,67 +76,51 @@ curl -fsSL https://raw.githubusercontent.com/Huruikagi/specbind/main/install.sh 
 Both installers verify the release archive against `SHA256SUMS`, install to the
 platform default, and leave persistent `PATH` changes to the user. Use
 `-InstallDir` on PowerShell or `--install-dir` on Linux/macOS to choose another
-location.
-
-Confirm the installed version:
-
-```sh
-specbind --version
-```
+location. Confirm the installation with `specbind --version`.
 
 ### Install SpecBind into a project
 
-From the root of a Git repository with at least one commit, install the Codex
-integration and English artifact defaults:
+From the root of a Git repository with at least one commit:
 
 ```sh
 specbind install --agent codex --language en --project-instructions
 ```
 
 Use `claude-code` instead of `codex` for Claude Code, or `generic` for another
-host that supports Agent Skills and `AGENTS.md`. Repeat `--agent` to install
-more than one integration, and use `ja` instead of `en` for Japanese artifacts.
-The command installs the product-managed Skills and creates project-owned
-templates, rules, and adapter guidance under `.specbind/settings/`.
+host that supports Agent Skills and `AGENTS.md`. Repeat `--agent` for more than
+one integration, and use `ja` instead of `en` for Japanese artifacts. Review and
+commit the installed files, then reopen the coding-agent session so it discovers
+the new Skills.
 
-Then choose the route that matches the repository:
+### Choose a route
 
-- [Start a new project](./docs/en/guide/start-new-project.md) before application
-  implementation has begun.
-- [Start with an existing project](./docs/en/guide/start-existing-project.md)
+- [Start a new project](https://huruikagi.github.io/specbind/guide/start-new-project/)
+  before application implementation has begun.
+- [Start with an existing project](https://huruikagi.github.io/specbind/guide/start-existing-project/)
   when code or tests already exist.
 
-[Choose a route](./docs/en/guide/getting-started.md) explains both routes and
-their prerequisites, and [Install SpecBind](./docs/en/guide/install.md) covers
-the installation step they share. The Japanese guide covers the same workflow
-under [ルートを選ぶ](./docs/ja/guide/getting-started.md).
+Codex invokes Skills as `$sb-*` and Claude Code as `/sb-*`. Ordinary changes
+start with `sb-discovery`, then `sb-plan` and `sb-drive` advance the Milestone.
+Use `sb-configure` whenever project settings need review.
 
-Review and commit the installed files, then reopen the coding-agent session so
-it discovers the new Skills. Codex invokes them as `$sb-*`; Claude Code uses
-`/sb-*`. Ordinary change requests enter through `sb-discovery`, then use
-`sb-plan` and `sb-drive` to advance the active milestone. Existing-product
-baseline establishment uses the opt-in temporary `sb-adopt` Skill. Use
-`sb-configure` whenever the project defaults or integration need review.
+## Reference
 
-## Learn more
+- [Skill index](https://huruikagi.github.io/specbind/reference/current-skill-index/) — every installed Skill and when to use it
+- [Artifact index](https://huruikagi.github.io/specbind/reference/current-artifact-index/) — installed files and maintained artifacts, with their owners
+- [Lifecycle states](https://huruikagi.github.io/specbind/reference/lifecycle-states/) — Spec states and Milestone stages reported by the CLI
+- [CLI commands](https://huruikagi.github.io/specbind/reference/cli-commands/) — `specbind` commands grouped by purpose
 
-- [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
-- [English user guide](./docs/en/index.md) and [Japanese user guide](./docs/ja/index.md) cover installation, delivery, customization, updating, and removal.
-- [Skill index](./docs/en/reference/current-skill-index.md) and [artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
+## Development
 
-### Design and development references
-
-- [Core concepts](./docs/en/guide/concepts.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
-- [Lifecycle states](./docs/en/reference/lifecycle-states.md) and [CLI commands](./docs/en/reference/cli-commands.md) describe the states the CLI reports and the commands it provides.
-- [Repository map](./docs/repository-map.md) indexes the source layout and design documents, and the [Decision index](./docs/design/decisions/index.md) lists every decision.
-
-## Repository layout
+This repository develops SpecBind itself:
 
 - `tools/specbind/` — canonical Rust workspace for the `specbind` executable
 - `tools/cc-sdd/` — inherited TypeScript migration oracle
-- `docs/design/` — lifecycle models, Contract design, and accepted design decisions
+- `docs/` — public user guide (`en/`, `ja/`), design documents, and Decisions
 
-## Development
+The [repository map](./docs/repository-map.md) indexes the source layout and
+design documents, and the [Decision index](./docs/design/decisions/index.md)
+lists every accepted and superseded decision.
 
 The workspace uses Rust 1.98.1, Rustfmt, and Clippy for development through [`rust-toolchain.toml`](./tools/specbind/rust-toolchain.toml), while [`Cargo.toml`](./tools/specbind/Cargo.toml) retains Rust 1.97.1 as the minimum supported Rust version. Install [Rustup](https://rustup.rs/) before running Cargo commands. Windows development with the default MSVC target also requires Visual Studio Build Tools with the **Desktop development with C++** workload and a Windows SDK.
 
@@ -178,9 +158,13 @@ Embedded skills also have behavioral verification that cannot run in CI. Build i
 sh tools/specbind/scripts/forward-test-fixture.sh /tmp/specbind-fixture en
 ```
 
-The inherited TypeScript oracle is excluded from routine unit-test and
-completion verification. Its checks remain available when changing
-`tools/cc-sdd/` or when executable evidence about inherited behavior is needed:
+To build the documentation site locally, install `requirements-docs.txt` and run
+`python -m mkdocs build --strict` from the repository root.
+
+The inherited TypeScript oracle is excluded from routine verification. Its
+checks remain available when changing `tools/cc-sdd/` or when executable
+evidence about inherited behavior is needed; passing them verifies only the
+reference tree, not the current SpecBind product contract:
 
 ```sh
 cd tools/cc-sdd
@@ -188,20 +172,12 @@ npm test
 npm run build
 ```
 
-Passing these checks verifies only the reference tree, not the current SpecBind
-product contract.
-
-## Language support
-
-SpecBind v1 officially supports English (`en`) and Japanese (`ja`). Other
-languages are not currently part of the supported product contract.
-
 ## Upstream and attribution
 
 SpecBind began from the source code of [cc-sdd](https://github.com/gotalab/cc-sdd) by gotalab, which itself inherited from Kiro. We are grateful to Kiro, the original project, and their contributors for the foundation.
 
-SpecBind is an independent project and is not affiliated with or endorsed by gotalab. The original copyright and MIT license notice are retained in [LICENSE](./LICENSE).
+SpecBind is an independent project and is not affiliated with or endorsed by gotalab.
 
 ## License
 
-MIT License. See [LICENSE](./LICENSE).
+MIT License. The original copyright and license notice are retained in [LICENSE](./LICENSE).
