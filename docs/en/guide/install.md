@@ -44,18 +44,26 @@ Repeat `--agent` to select more than one. `generic` installs shared
 `.agents/skills/` Skills and the managed `AGENTS.md` block, but no subagent role
 definitions.
 
-`--language en` selects the language of managed artifacts such as
-`requirements.md` and `design.md`. It also selects the language of the marked
-navigation block in the OKF bundle-root `index.md`. SpecBind maintains only that
-block and the `okf_version: "0.2"` declaration; add project links or notes
-outside its markers. `--project-instructions` adds a separate marked SpecBind
-block to `AGENTS.md` or `CLAUDE.md` without changing text outside the marker.
+### `--language en`
+
+Selects the language of managed artifacts such as `requirements.md` and
+`design.md`, and of the marked navigation block in `.specbind/index.md`, the
+entry point for all artifacts. You may add project links or notes to that file
+outside its markers.
+
+### `--project-instructions`
+
+Adds a marked SpecBind block to `AGENTS.md` or `CLAUDE.md` without changing
+text outside the marker. Recommended in most projects.
+
+### `--with-adoption` (only when needed)
 
 The default installation contains the 15 Skills used for recurring delivery
 work. If this existing project has no trusted Specs and you want to establish a
 baseline from its current implementation, also pass `--with-adoption`. That
-option temporarily installs `sb-adopt`; successful reverse finalization removes
-it again. See [Establish Specs from an existing implementation](./adopt-existing.md).
+option temporarily installs `sb-adopt`, which is removed again once Spec
+establishment completes. See
+[Establish Specs from an existing implementation](./adopt-existing.md).
 
 ## 3. Preview what will be written
 

@@ -62,22 +62,22 @@ specbind install --agent codex --language ja --project-instructions
 
 ### `--language ja`
 
-SpecBindが管理する成果物、具体的には`requirements.md`や`design.md`の言語を
-日本語にします。OKF一式のルートにある`index.md`も作成され、マーカーで囲まれた
-案内ブロックが日本語になります。SpecBindが管理するのは、このブロックと
-`okf_version: "0.2"`の宣言だけです。プロジェクト固有のリンクや説明は、マーカーの
-外側へ自由に追記できます。
+SpecBindが管理する成果物（`requirements.md`や`design.md`など）の言語を日本語に
+します。成果物全体の入口になる`.specbind/index.md`の案内ブロックも日本語になります。
+このファイルでは、マーカーの外側にプロジェクト固有のリンクや説明を自由に追記できます。
 
 ### `--project-instructions`
 
 `AGENTS.md`または`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを
-追加します。もともと書いてある既存の文章はそのまま残ります。普通はつけたほうが
-いいでしょう。
+追加します。もともと書いてある既存の文章はそのまま残ります。通常は指定することを
+おすすめします。
+
+### `--with-adoption`（必要な場合だけ）
 
 通常のインストールでは、繰り返し使う15個のスキルだけを配置します。信頼できるSpecが
 まだない既存プロジェクトで、現在の実装から基準となるSpecを確立する場合は、さらに
-`--with-adoption`を指定してください。一時的な`sb-adopt`が追加され、リバースの
-完了処理に成功すると自動的に削除されます。詳しくは
+`--with-adoption`を指定してください。一時的な`sb-adopt`が追加され、Specの確立が
+完了すると自動的に削除されます。詳しくは
 [既存実装からSpecを確立する](./adopt-existing.md)を参照してください。
 
 ## 3. 書き込まれる内容を確認する
@@ -93,7 +93,7 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 
 ```text
 .specbind.json
-.specbind/index.md               # OKF宣言と共有の入口
+.specbind/index.md               # 成果物全体の入口
 .specbind/settings/
 .agents/skills/sb-*/             # Codexとgenericで共有
 .codex/agents/specbind-*.toml    # Codexの役割別モデル設定

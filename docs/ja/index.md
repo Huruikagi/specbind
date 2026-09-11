@@ -8,17 +8,17 @@ SpecBindの大きな特徴は、エージェントのスキルと`specbind` CLI�
 開発を進めることです。スコープの判断、仕様の作成、レビュー、実装はスキルが担当し、
 成果物の整合性、承認、進捗、状態の遷移はCLIが管理します。
 
-また、[gotlab/cc-sdd](https://github.com/gotalab/cc-sdd/tree/main)を起点に
+また、[gotalab/cc-sdd](https://github.com/gotalab/cc-sdd/tree/main)を起点に
 設計しています。cc-sddはKiroから継承されたものであり、Kiro、cc-sdd、そして
 そのコントリビューターの皆さんが築いてきた知見と取り組みに、深く感謝します。多くの概念はcc-sdd v3から
 継承されており、いくつかの変更を加えて再構成しています。
 
 ## 対応環境
 
-SpecBind v1の配布バイナリは、Windows x64、Linux x64、macOS ARM64を対象としています。
-Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境で検証しています。
-v1.4.4の次のリリースから、Ubuntu ARM64のCI環境でビルド・テストするLinux ARM64 GNUを
-追加します。既存リリースにはLinux ARM64用のアーカイブは含まれません。
+SpecBind v1の配布バイナリは、Windows x64、Linux x64、macOS ARM64、Linux ARM64 GNUを
+対象としています。Linux x64はWSL2上、macOS ARM64はApple SiliconのCI環境、
+Linux ARM64 GNUはUbuntu ARM64のCI環境で検証しています。Linux ARM64用のアーカイブは
+v1.5.0以降に含まれます。
 
 ## はじめに
 

@@ -57,8 +57,8 @@ Driveは`specbind milestone status --json`が示す着手可能な操作だけ�
 | Spec全体の実装検証 | `sb-validate-implementation <spec-id>` |
 | リリース前 | 状態を報告して停止 |
 
-各委譲後に、DriveはGitの作業ツリーとMilestoneの状態を読み直します。最初の実装では、
-状態を変更するワークフローを並列実行せず、1件ずつ進めます。
+各委譲後に、DriveはGitの作業ツリーとMilestoneの状態を読み直します。現在のバージョン
+では、状態を変更するワークフローを並列実行せず、1件ずつ進めます。
 
 ### 実装中の再計画も任せる
 

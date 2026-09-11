@@ -60,7 +60,44 @@ specbind template resolve spec <spec> <selector>
 `template resolve` reports the selected source and exact project-relative
 destination. Use that reported path rather than reconstructing it.
 
-### Named creation outputs and instructions
+The raw template may not itself be a valid live artifact. The Agent follows
+creation instructions, replaces output references, adds real content, removes
+`create` comments, and then validates the result.
+
+### Instruction scopes
+
+Every `specbind:instruction` has one scope:
+
+```markdown
+<!-- specbind:instruction create Decide the initial identifier. -->
+<!-- specbind:instruction maintain Preserve existing identifiers during updates. -->
+<!-- specbind:instruction consume Treat this section as context, not authority. -->
+```
+
+- `create` is followed only during initial materialization and is not retained.
+- `maintain` is copied into the artifact and read during later updates.
+- `consume` is copied into the artifact and read when it is used as input.
+
+Read only the relevant durable instruction scope when appropriate:
+
+```sh
+specbind artifact read <spec> <selector> --for maintain
+specbind artifact read <spec> <selector> --for consume
+specbind steering read <selector> --for maintain
+specbind steering read <selector> --for consume
+```
+
+### Apply template changes to existing artifacts
+
+Template changes affect future materialization by default. Existing artifacts
+are not silently rewritten. When asked, `sb-configure` previews
+reconciliation candidates as format-only, instruction-update, structural,
+semantic, or conflict. Applying changes requires a separate confirmation, and
+semantic changes route to the artifact-owning workflow. Reconciliation never
+rewrites Gate state, completion evidence, released archives, or CLI-owned
+structured state merely to match a template.
+
+### Named creation outputs (advanced)
 
 A Markdown template may use project-defined `{{name}}` output references. Every
 distinct name requires exactly one `create output=<name>` instruction and at
@@ -88,39 +125,6 @@ byte-for-byte, including instructions and output references.
 The official `spec` and `artifact_id` names are not built-ins. Their ordinary
 `create output` instructions tell the Agent to produce them from the current
 authoring context or literal Front Matter.
-
-The raw template may not itself be a valid live artifact. The Agent follows
-creation instructions, replaces output references, adds real content, removes `create`
-comments, and then validates the result.
-
-Template changes affect future materialization by default. Existing artifacts
-are not silently rewritten. When asked, `sb-configure` previews
-reconciliation candidates as format-only, instruction-update, structural,
-semantic, or conflict. Applying changes requires a separate confirmation, and
-semantic changes route to the artifact-owning workflow. Reconciliation never
-rewrites Gate state, completion evidence, released archives, or CLI-owned
-structured state merely to match a template.
-
-Every `specbind:instruction` has one scope:
-
-```markdown
-<!-- specbind:instruction create Decide the initial identifier. -->
-<!-- specbind:instruction maintain Preserve existing identifiers during updates. -->
-<!-- specbind:instruction consume Treat this section as context, not authority. -->
-```
-
-- `create` is followed only during initial materialization and is not retained.
-- `maintain` is copied into the artifact and read during later updates.
-- `consume` is copied into the artifact and read when it is used as input.
-
-Read only the relevant durable instruction scope when appropriate:
-
-```sh
-specbind artifact read <spec> <selector> --for maintain
-specbind artifact read <spec> <selector> --for consume
-specbind steering read <selector> --for maintain
-specbind steering read <selector> --for consume
-```
 
 !!! warning
     Preserve machine-readable structure such as `type`, `artifact_id`, required
@@ -329,6 +333,47 @@ Supported roles are `planner`, `implementer`, `reviewer`, `debugger`, and
 `researcher`. `generic` has no generated role definitions. After editing,
 ensure the worktree is clean, review `install --dry-run`, and reinstall to
 regenerate `.codex/agents/` or `.claude/agents/` files.
+
+## Project shared Contract {#shared-contract}
+
+Record agreements for resources used by several features, such as translation
+catalogs, in `.specbind/specs/shared-contract.yaml` (see "Project shared
+Contract" in [Core concepts](./concepts.md) for the overview). Projects created
+with 1.5.0 remain readable at the former `.specbind/shared-contract.yaml` path;
+new work uses the path above, and both files must not coexist.
+
+```sh
+specbind contract owners locales/ja.json
+specbind contract shared read
+specbind contract shared consumers translations
+specbind schema read shared-contract/v1
+```
+
+`owners` distinguishes Spec declarations, shared resource declarations, and no
+declaration. A Spec that persistently uses a shared resource references
+`{shared: true, section: resources, id: translations}` through `consumes` in
+`contract/v2`. Existing `contract/v1` documents remain readable. The CLI does not
+enforce JSON-key ownership or write permissions; actual catalog validation uses
+the project's checks.
+
+### Change a shared agreement
+
+- A change within the existing policy, such as adding search text, belongs to
+  the search Spec's Task. It needs no agreement edit and does not stale
+  Contract review.
+- To change the agreement itself, Discovery assigns the resource change to a
+  Direct item. `sb-plan --shared` prepares the proposal before Contract review,
+  including in a Direct-only Milestone. If feature specifications must change,
+  include those Specs in the same Milestone.
+- Editing shared rules after review requires renewed review.
+- Even a typo in a shared path enters Discovery and may be Direct when it
+  changes no Spec guarantee.
+
+Scope candidates use the Direct item's `sharedContractChanges` array of resource
+IDs; the CLI writes `shared_contract_changes` in the Roadmap. Use `["*"]` only
+for creating or removing an empty manifest, never as wildcard resource
+authority. Track new shared obligations in another Direct item instead of
+extending a completed one.
 
 ## Not customizable
 

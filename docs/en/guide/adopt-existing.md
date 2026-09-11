@@ -168,7 +168,7 @@ an answer. A question can be deferred only if every answer leaves current Spec
 meaning unchanged.
 
 Suspected defects carry a source revision and evidence locator. If an active
-Deferred Findings Adapter defines where to save deferred findings, the run
+deferred findings adapter (`deferred.md`) defines where to save deferred findings, the run
 follows its instructions and records them at the verified local destination
 after Milestone creation. They are not automatically confirmed as bugs or
 requirements and are not fixed in this procedure. Posting outside the project

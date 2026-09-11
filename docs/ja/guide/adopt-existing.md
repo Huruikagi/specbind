@@ -54,14 +54,14 @@ $sb-configure 既存実装からSpecを確立するために、このプロジ�
 `sb-configure`は現在の設定を確認し、必要に応じてSteeringの作成・更新を`sb-steering`へ
 引き継ぎます。提案されたSteeringを確認し、コミットしてください。
 
-### テンプレートと共有Ruleを見直す
+### テンプレートと共有ルールを見直す
 
-Steeringが整ったら、Requirements・Designテンプレートと共有Ruleがプロジェクトに
+Steeringが整ったら、Requirements・Designテンプレートと共有ルールがプロジェクトに
 合っているかを確認します。
 
 ```text
 $sb-configure 確定したSteeringとリポジトリの事実を使い、このプロジェクト向けに
-Requirements・Designテンプレートと共有Ruleを見直してください。
+Requirements・Designテンプレートと共有ルールを見直してください。
 ```
 
 追加でエージェントや運用アダプターなどを見直す場合は、対象ごとに依頼を分けます。
@@ -159,7 +159,7 @@ $sb-adopt 進行中の、既存実装からSpecを確立する作業を再開し
 どの回答でも現在のSpecの意味が変わらない問いだけ、後回しにできます。
 
 バグの疑いは、リビジョンと根拠の位置を添えて扱います。後回しにする指摘の保存先を定める
-Deferred Findings Adapterが有効なら、その指示に従い、Milestone作成後に確認済みの
+アダプター（`deferred.md`）が有効なら、その指示に従い、Milestone作成後に確認済みの
 ローカル保存先へ記録します。自動的にバグや要件として確定することはなく、この手順内では
 修正しません。プロジェクト外への送信には、別途許可が必要です。
 
@@ -209,7 +209,7 @@ establishment:
 
 Requirements、Design、Design検証、Contract Reviewは通常の担当スキルが処理します。
 Designが承認されると、Specは`adoption_ready`になります。`tasks.yaml`は作成せず、
-実装や実装検証、Release Adapterの実行、タグ作成、公開も行いません。
+実装や実装検証、リリースアダプターの実行、タグ作成、公開も行いません。
 
 ### Contractの検査と完了処理
 

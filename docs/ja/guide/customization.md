@@ -51,7 +51,7 @@ specbind configuration show
 アクセシビリティなどのユーザー可視な責任がある場合だけ選択されます。
 
 独自のDesignテンプレートを追加する場合は、同じセレクターの分類と、
-`conditional`なら適用条件もこのRuleに追加してください。テンプレートとの
+`conditional`なら適用条件もこのルールに追加してください。テンプレートとの
 対応が欠落、重複、または不明な場合、ルールの読み取りは安全側に停止します。
 
 Roadmapテンプレートは、マイルストーン全体の変更要求、境界、分解判断、依存関係の
@@ -81,52 +81,13 @@ specbind template resolve spec <spec> <selector>
 `Project path`が含まれます。ファイル操作では`Project path`をそのまま使用します。
 
 成果物を初めて作るときは、元のテンプレートとその`create`指示をエージェントが
-読み、成果物として生成します。Markdown本文では、プロジェクトが任意の名前付き生成出力を
-`{{名前}}`の形式で参照できます。名前は空ではなく、空白と波括弧を含まない
-必要がありますが、日本語を含むUnicode名を使用できます。
+読み、成果物として生成します。`template read`の結果は未記入のひな形であり、そのまま
+有効な成果物とは限りません。既定のRequirementsは実際のRequirementとAcceptance
+Criterionを書くまで検証に失敗します。Brief、Research、Implementation Notesも、見出しや
+コメントだけでは有効になりません。作成指示に従って実内容を埋め、`create`コメントを
+除いてから有効な成果物として検証・保存してください。
 
-```sh
-specbind template read spec <selector>
-```
-
-異なる名前ごとに、対応する`create output=<名前>`指示がちょうど1つと、参照が
-1つ以上必要です。エージェントは指示を1回実行し、短い文字列またはMarkdown断片
-全体を生成できます。同名の参照はすべてその同じ出力で置換します。CLIはこの対応だけを
-検証し、内容の生成や比較は行いません。
-
-```markdown
-<!-- specbind:instruction create output=components
-新設または変更する責任境界ごとにH3小節を1つ生成する。
-各小節に実際のコンポーネント名を付け、その責任を記載する。
--->
-
-{{components}}
-```
-
-`components`の出力は、それぞれ異なる複数のH3小節を含められます。それでも生成結果全体が
-1つのMarkdown断片です。既定テンプレートの`spec`と`artifact_id`も特別な組み込み出力では
-ありません。それぞれの`create output`指示が、現在の作成時の文脈やリテラルな
-Front Matterから内容を生成するようエージェントへ指示します。
-
-出力宣言の欠落、重複、未使用、`create`以外での宣言、Front Matterでの参照はテンプレート
-診断になります。未展開の参照が残った成果物も無効です。`template read`は出力参照と
-指示を含む元のテンプレートをバイト単位でそのまま返します。
-
-read結果は未記入のひな形であり、そのまま有効な成果物とは限りません。既定の
-Requirementsは実際のRequirementとAcceptance Criterionを書くまで検証に失敗します。
-Brief、Research、Implementation Notesも、見出しやコメントだけでは有効になりません。
-作成指示に従って実内容を埋め、`create`コメントを除いてから有効な成果物として
-検証・保存してください。
-
-テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
-成果物から、新しいテンプレートが使われます。
-
-`sb-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。同意した
-時点では候補と影響のプレビューだけを作り、`format-only`、`instruction-update`、
-`structural`、`semantic`、`conflict`に分類します。実際の書き換えは別に確認し、意味を
-変える変更はRequirementsやDesignなど、その成果物を所有するスキルへ引き渡します。
-Gate、完了記録、リリース済みアーカイブ、CLI所有の構造化状態は、テンプレートに合わせる
-という理由で直接書き換えません。
+### 指示コメントの用途
 
 `specbind:instruction`コメントには、用途を必ず1つ指定します。
 
@@ -153,6 +114,47 @@ specbind artifact read <spec> <selector> --for consume
 specbind steering read <selector> --for maintain
 specbind steering read <selector> --for consume
 ```
+
+### 既存の成果物への反映
+
+テンプレートを変えても、すでにある成果物は書き換わりません。変更後に新しく作る
+成果物から、新しいテンプレートが使われます。
+
+`sb-configure`はテンプレート変更後に、既存成果物も合わせるかを確認します。同意した
+時点では候補と影響のプレビューだけを作り、`format-only`、`instruction-update`、
+`structural`、`semantic`、`conflict`に分類します。実際の書き換えは別に確認し、意味を
+変える変更はRequirementsやDesignなど、その成果物を所有するスキルへ引き渡します。
+Gate、完了記録、リリース済みアーカイブ、CLI所有の構造化状態は、テンプレートに合わせる
+という理由で直接書き換えません。
+
+### 名前付きの生成出力（高度な書き方）
+
+Markdown本文では、プロジェクトが任意の名前付き生成出力を`{{名前}}`の形式で参照
+できます。名前は空ではなく、空白と波括弧を含まない必要がありますが、日本語を含む
+Unicode名を使用できます。
+
+異なる名前ごとに、対応する`create output=<名前>`指示がちょうど1つと、参照が
+1つ以上必要です。エージェントは指示を1回実行し、短い文字列またはMarkdown断片
+全体を生成できます。同名の参照はすべてその同じ出力で置換します。CLIはこの対応だけを
+検証し、内容の生成や比較は行いません。
+
+```markdown
+<!-- specbind:instruction create output=components
+新設または変更する責任境界ごとにH3小節を1つ生成する。
+各小節に実際のコンポーネント名を付け、その責任を記載する。
+-->
+
+{{components}}
+```
+
+`components`の出力は、それぞれ異なる複数のH3小節を含められます。それでも生成結果全体が
+1つのMarkdown断片です。既定テンプレートの`spec`と`artifact_id`も特別な組み込み出力では
+ありません。それぞれの`create output`指示が、現在の作成時の文脈やリテラルな
+Front Matterから内容を生成するようエージェントへ指示します。
+
+出力宣言の欠落、重複、未使用、`create`以外での宣言、Front Matterでの参照はテンプレート
+診断になります。未展開の参照が残った成果物も無効です。`template read`は出力参照と
+指示を含む元のテンプレートをバイト単位でそのまま返します。
 
 !!! warning
     `type`、`artifact_id`、必須の識別子や対応関係など、CLIが読み取る構造は残して
@@ -329,19 +331,19 @@ SteeringはGateの入力ではなく、古くなったかどうかの判定に�
 
 初回インストール後の見直しや、テンプレートをどう分けるかがプロジェクト全体の
 前提に依存する場合は、まずSteeringの初期作成または同期を提案します。次に、確定した
-継続的な方針とリポジトリの事実を、現在のRequirements・Designテンプレートと共有Ruleに
-照らし合わせます。その責任が既存のテンプレートやRuleで共通して扱えるなら更新し、
+継続的な方針とリポジトリの事実を、現在のRequirements・Designテンプレートと共有ルールに
+照らし合わせます。その責任が既存のテンプレートやルールで共通して扱えるなら更新し、
 複数のSpecで独立した設計判断とトレーサビリティを継続して必要とする場合だけ、Design
 テンプレートを追加します。
 
 Steeringが空であること自体は有効な状態です。空だからといって作成せず、欠けている
 プロジェクト知識を必要としない明示的で狭いテンプレート変更も止めません。Steeringは
 プロジェクトに長く残る事実や方針を記録し、各Specにどの候補を適用するかは引き続き
-`design-template-selection` Ruleが決めます。
+`design-template-selection`ルールが決めます。
 
 Web、モバイル、API、インフラといった技術ラベルだけでテンプレートを増やしません。
 ユーザーに見えるWeb・モバイルの変更は通常、既存のUI候補で扱えます。APIの互換性や
-インフラの方針は、まずSteeringとDesignまたはContractのRuleに置きます。`design/api`や
+インフラの方針は、まずSteeringとDesignまたはContractのルールに置きます。`design/api`や
 `design/infrastructure`のような条件付き候補は、その責任に独立した設計の扱いが繰り返し
 必要になるときだけ追加し、適用条件にはフレームワークの有無ではなく責任を記述します。
 
@@ -410,6 +412,42 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 変更したら、リポジトリに未コミットの変更がない状態でドライランの結果を確認し、
 インストールを実行し直してください。`.codex/agents/specbind-*.toml`や
 `.claude/agents/specbind-*.md`は直接編集せず、設定から作り直します。
+
+## 共有Contract {#shared-contract}
+
+翻訳ファイルのように複数の機能が使う資源の約束は、`.specbind/specs/shared-contract.yaml`
+に記録します（概要は[基本概念](./concepts.md)の「共有Contract」）。1.5.0で作成した
+プロジェクトの旧パス`.specbind/shared-contract.yaml`も引き続き読み取れますが、新しい
+作業では上記のパスを使い、両方のファイルを併存させないでください。
+
+```sh
+specbind contract owners locales/ja.json
+specbind contract shared read
+specbind contract shared consumers translations
+specbind schema read shared-contract/v1
+```
+
+`owners`は、Specの宣言、共有資源の宣言、宣言なしを区別して表示します。共有資源を
+継続して利用するSpecは、`contract/v2`の`consumes`から
+`{shared: true, section: resources, id: translations}`を参照します。既存の`contract/v1`
+も引き続き読み取れます。CLIはJSONキー単位の所有権や書き込み権限までは検証しません。
+キーの一致などは、プロジェクトの検証手段で確認します。
+
+### 共有の約束を変更する
+
+- 既存の規則の範囲内の変更（例: 検索機能の文言追加）は、検索SpecのTaskで行います。
+  共有Contractの変更は不要で、Contractレビューも古くなりません。
+- 共有の約束自体を変える場合は、Discoveryで担当するDirect項目と対象資源を宣言し、
+  `sb-plan --shared`で提案を準備してからContractレビューを受けます。Direct項目だけの
+  Milestoneでも、このレビューは必要です。機能側の仕様変更も必要なら、影響するSpecを
+  同じMilestoneに含めます。
+- レビュー後に共有規則を変更した場合は、再レビューが必要です。
+- 共有パスの誤字修正もDiscoveryで分類します。Specの保証を変えなければDirectにできます。
+
+Scope入力では、Direct項目の`sharedContractChanges`配列に資源IDを指定します（Roadmapの
+`shared_contract_changes`はCLIが書きます）。`["*"]`は空の共有ファイルの作成・削除だけに
+使い、資源を一括変更する権限としては使えません。完了済みの項目に新しい共有義務を
+追加せず、別のDirect項目で追跡します。
 
 ## カスタマイズできないもの
 

@@ -45,8 +45,8 @@ or otherwise significant boundary.
 
 ### Bind the release
 
-Release labels are opaque and case-sensitive: `v1.4.0` and `1.4.0` are
-different values. The Skill never invents the value. Binding only
+SpecBind does not interpret release labels; it treats them as exact,
+case-sensitive strings, so `v1.4.0` and `1.4.0` are different values. The Skill never invents the value. Binding only
 `target_release`, including an explicit rebind, preserves completion freshness.
 Changing Roadmap scope, body text, or project version files at the same time
 does not receive that exception.

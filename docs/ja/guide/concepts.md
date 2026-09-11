@@ -152,15 +152,14 @@ SpecBind管理外の利用側が存在するかは、Contractレビューで判�
 File Ownership宣言と照合します。一致結果は管理対象の境界候補ですが、一致しないこと
 だけでは、その依頼がどのSpecにも属さないとは判断できません。対応する進行中の
 Roadmap項目がなければ、ファイルを名指しした命令形の依頼でもDiscoveryへ入り、
-実装前にscope confirmationで停止します。
+実装前にスコープの確認で停止します。
 
 ## 共有Contract
 
-翻訳ファイルのように複数の機能が使う資源は、専用Specを作らずに共有Contractで管理できます。
-任意の`<specDir>/specs/shared-contract.yaml`に、資源ID、対象パス、変更規則、不変条件を記録します。
-既定の`specDir`は`.specbind`です。共有Contractはリリース後も残り、独自のGateやTasksは持ちません。
-1.5.0で作成したプロジェクトの旧`<specDir>/shared-contract.yaml`も引き続き読み取れます。
-新規作業では上記の正規パスを使い、両方のファイルを併存させないでください。
+翻訳ファイルのように複数の機能が使う資源は、専用のSpecを作らずに共有Contractで
+管理できます。任意で置く`.specbind/specs/shared-contract.yaml`に、資源ID、対象パス、
+変更規則、不変条件を記録します。共有Contractはリリース後も残りますが、独自のGateや
+Tasksは持ちません。
 
 ```yaml
 schema_version: 1
@@ -172,28 +171,10 @@ resources:
     invariants: [言語間でキーと補間変数が一致する。]
 ```
 
-```sh
-specbind contract owners locales/ja.json
-specbind contract shared read
-specbind contract shared consumers translations
-specbind schema read shared-contract/v1
-```
-
-`owners`はSpecの宣言、共有資源の宣言、宣言なしを区別します。共有資源を継続して利用するSpecは
-`contract/v2`の`consumes`から`{shared: true, section: resources, id: translations}`を参照します。
-既存の`contract/v1`も引き続き読み取れます。JSONキー単位の所有権や書込み権限をCLIが検証する
-仕組みではなく、キー一致などの実際の検証にはプロジェクトの検証手段を使います。
-
-検索機能の文言追加は検索SpecのTaskで行い、既存規則内なら共有Contractの変更は不要です。
-共有の約束自体を変更する場合は、Discoveryで担当Directと対象資源を宣言し、`sb-plan --shared`で
-提案を準備してからContractレビューを受けます。Direct-onlyのMilestoneでも、このレビューは
-必要です。機能側の仕様変更が必要なら、影響するSpecも同じMilestoneに含めます。
-
-Scope入力ではDirectの`sharedContractChanges`配列に資源IDを指定します。永続Roadmapの
-`shared_contract_changes`はCLIが書きます。空の共有ファイルの作成・削除だけは`["*"]`を使い、
-資源を一括変更する権限には使いません。完了済み項目に新たな共有義務を追加せず、別のDirectで追跡します。
-共有規則をレビュー後に変更すると再レビューが必要ですが、規則内の通常の翻訳値追加では
-レビューは古くなりません。共有パスの誤字修正もDiscoveryで分類し、Specの保証を変えなければDirectにできます。
+規則の範囲内の変更（翻訳の追加など）は、各機能のSpecのTaskで行い、共有Contract
+自体は変更しません。規則そのものを変える場合はDiscoveryから始め、Contractレビューを
+受けます。確認コマンドと変更の手順は、[カスタマイズ](./customization.md#shared-contract)の
+「共有Contract」を参照してください。
 
 ## 無効化とやり直し
 
@@ -209,11 +190,11 @@ Tasksだけが変わった -> Tasks Gateからやり直す
 無効化すると、下流の証拠も消えます。これは失敗ではなく、変わった前提に古い
 承認を使わないための、通常のやり直しです。
 
-!!! warning "v1の制限: Requirementの削除"
-    確立済みのSpecからRequirementグループやAcceptance Criterionを削除する場合、
-    v1では完全な廃止履歴を残せません。既存Requirementの削除が必要になった
-    ときは、履歴が欠けたまま進めず、その操作の手前で停止します。既存内容の更新と、
-    新しいRequirementの追加は問題なく行えます。
+!!! note "Requirementをなくすとき"
+    確立済みのRequirementグループやAcceptance Criterionは削除せず、`_Retired_`
+    マーカーで退役させます。書き方は[1件ずつ計画・実装する](./implement-step-by-step.md#retire-requirements)
+    の「要件を退役させる」を参照してください。Specのすべての義務を退役させる
+    操作には、v1ではまだ対応していません。
 
 ## 通常のライフサイクル
 

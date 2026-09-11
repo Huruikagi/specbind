@@ -57,7 +57,7 @@ specbind migration plan --from <previous-version> --json
 The target defaults to the running binary version. An explicit `--to` is also
 accepted within catalog coverage; future unknown targets and downgrades fail.
 Planning changes no files. Repeating the same command re-evaluates remaining
-work against the current files.
+work against the current files. Work through the plan's entries in step 3.
 
 The new binary embeds the Skills and other product-managed assets for that
 version. Inspect the project refresh plan first:
@@ -83,13 +83,15 @@ Other team members who pull the updated project can run `mise install` to get
 the binary pinned by the lockfile. They receive the refreshed project files
 through Git and do not all need to rerun `specbind install`.
 
-## What changes and what is retained
+## 3. Work through the migration plan
 
 For an agent-driven update, reload the newly installed `sb-configure` package
 after asset refresh before reading the plan's procedures. Pending `required`
 entries prevent reporting migration work complete. You may decline presented
 `recommended` or `optional` work. A `blocked` probe requires resolution of its
 reported input fault.
+
+### 1.5.0: add `description` metadata
 
 The first entries introduce recommended `description` reconciliation at the
 1.5.0 boundary for Requirements, Design, Steering, and their owned templates.
@@ -110,6 +112,16 @@ checks the chosen scaffold's creation obligations, including literal description
 inheritance. An assessed Spec-local one-off uses `--template design/main` and
 provides its own responsibility sentence. This check does not establish the
 provenance of an existing artifact or change its approval state.
+
+### Before retiring Requirements
+
+Existing Requirements need no ID migration. Before using
+[Requirement retirement](./implement-step-by-step.md#retire-requirements),
+refresh installed Skills and any customized template instructions. Older
+binaries cannot interpret `_Retired_` markers correctly, so do not downgrade
+afterward.
+
+## What changes and what is retained
 
 | Target | Owner | Update behavior |
 | --- | --- | --- |

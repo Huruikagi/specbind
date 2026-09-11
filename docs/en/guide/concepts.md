@@ -135,11 +135,9 @@ file enters Discovery and waits at scope confirmation before implementation.
 
 Resources used by several features, such as translation catalogs, can have a
 shared Contract without a dedicated Spec. The optional
-`<specDir>/specs/shared-contract.yaml` declares resource IDs, paths, change policies,
-and invariants. The default `specDir` is `.specbind`. This artifact survives
-release and has no independent gates or Tasks. Projects created with 1.5.0
-remain readable at the former `<specDir>/shared-contract.yaml` path; new work
-uses the canonical path above, and both files must not coexist.
+`.specbind/specs/shared-contract.yaml` declares resource IDs, paths, change
+policies, and invariants. It survives release and has no independent Gates or
+Tasks.
 
 ```yaml
 schema_version: 1
@@ -151,34 +149,11 @@ resources:
     invariants: [Keys and interpolation variables match across languages.]
 ```
 
-```sh
-specbind contract owners locales/ja.json
-specbind contract shared read
-specbind contract shared consumers translations
-specbind schema read shared-contract/v1
-```
-
-`owners` distinguishes Spec declarations, shared resource declarations, and no
-declaration. A Spec that persistently uses a shared resource references
-`{shared: true, section: resources, id: translations}` through `consumes` in
-`contract/v2`. Existing `contract/v1` documents remain readable. The CLI does not
-enforce JSON-key ownership or write permissions; actual catalog validation uses
-the project's checks.
-
-Adding search text belongs to the search Spec's Task and needs no agreement
-edit when it follows the existing policy. To change the agreement itself,
-Discovery assigns the resource change to a Direct item. `sb-plan --shared`
-prepares the proposal before Contract review, including in a Direct-only
-milestone. If feature specifications must change, include those Specs in the
-same milestone.
-
-Scope candidates use the Direct item's `sharedContractChanges` array of resource
-IDs; the CLI writes `shared_contract_changes` in the Roadmap. Use `["*"]` only
-for creating/removing an empty manifest, never as wildcard resource authority.
-Track new shared obligations in another Direct item instead of extending a
-completed one. Editing shared rules after review requires renewed review;
-ordinary translation values within the rules do not stale it. Even a typo in a
-shared path enters Discovery and may be Direct when it changes no Spec guarantee.
+Changes within the existing rules, such as adding translations, belong to each
+feature Spec's Tasks and leave the shared Contract unchanged. Changing the rules
+themselves starts in Discovery and goes through Contract review. See
+"Project shared Contract" in [Customize SpecBind](./customization.md#shared-contract)
+for inspection commands and the change procedure.
 
 ## Invalidation and rewind
 
@@ -196,10 +171,11 @@ Implementation observation
   -> implementation resumes
 ```
 
-!!! warning "v1 limitation: removing Requirements"
-    Removing an active Requirement may require abandoning and re-establishing
-    the Spec rather than silently deleting its identity. Follow the CLI's
-    reported route.
+!!! note "Removing a Requirement"
+    Do not delete an established Requirement group or Acceptance Criterion.
+    Retire it with a `_Retired_` marker instead; see "Retire an obligation" in
+    [Plan and implement one item at a time](./implement-step-by-step.md#retire-requirements).
+    Retiring every obligation of a Spec is not yet supported in v1.
 
 ## Ordinary lifecycle
 

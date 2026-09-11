@@ -41,8 +41,8 @@ Projects can adapt document templates, shared rules, and Git, release, or final-
 ### Install the CLI
 
 The [latest stable release](https://github.com/Huruikagi/specbind/releases/latest)
-supports Windows x64, Linux x64, and macOS ARM64. Linux ARM64 GNU joins
-the release matrix in the next release after v1.4.4.
+supports Windows x64, Linux x64, macOS ARM64, and Linux ARM64 GNU. Linux
+ARM64 GNU archives are available from v1.5.0.
 The latest stable release can be installed without choosing a version.
 
 With [mise](https://mise.jdx.dev/), on any supported platform:
