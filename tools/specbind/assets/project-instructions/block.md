@@ -73,7 +73,13 @@ the only supported writer of machine state.
   an explicitly named file authorizes classification, not implementation. When
   the classification is genuinely unclear, enter the flow. Anything else is
   ordinary work: say in one line that it needs no Spec, and do it.
-- Never hand-edit `spec.yaml`, the active roadmap, or the execution state in
-  `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no command
-  validated. The task plan itself is authored, by the skill that owns it.
+- Never hand-edit `spec.yaml`, the active roadmap, or ordinary execution state
+  in `tasks.yaml`. Those are CLI-owned, and a hand edit produces state no
+  command validated. The sole exception is the Tasks owner's confirmed
+  retained-plan reconciliation in `sb-plan`: in the same replacement that
+  revises the plan, it may keep, reset, remap, or remove only execution entries
+  that already existed, exactly as the before-and-after mapping states. It must
+  then run the required Tasks checks and approval. This exception never permits
+  creating a new completed or blocked judgment. The task plan itself is
+  authored by the skill that owns it.
 - Run `specbind --help` if the command is unfamiliar or appears unavailable.

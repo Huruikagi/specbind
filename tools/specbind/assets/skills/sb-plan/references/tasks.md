@@ -255,6 +255,14 @@ relabel an old completed entry as evidence for a new Requirement. An instruction
 to preserve the plan and progress through review means do not delete it before
 this mapping, not that every item must survive the approved replacement.
 
+This confirmed retained-plan reconciliation is the sole exception to the
+project instruction against hand-editing execution state. It is one Tasks-owned
+replacement of the plan and its existing keyed records, followed immediately by
+the checks in section 4 and the approval in section 7. It permits only keeping,
+resetting, remapping, or removing entries that already existed. Never create a
+new completed or blocked judgment, invent evidence, or change a blocker reason
+through this exception; implementation owns those judgments through the CLI.
+
 Restructuring an approved plan is legitimate. Doing it in a way that mislabels
 completed work is not.
 
@@ -371,8 +379,9 @@ authorizes accepting gates, not discarding accepted work.
 ## Boundaries
 
 - Author `tasks.yaml` only. Requirements, design, and the contract belong to
-  earlier phases; execution state and implementation notes belong to
-  implementation.
+  earlier phases; ordinary execution state and implementation notes belong to
+  implementation. The confirmed retained-plan reconciliation in section 5 is
+  the only exception, and it may transform only entries that already existed.
 - Write no machine state. Never edit `spec.yaml`.
 - Never run `tasks complete`, `tasks block`, or `tasks reopen`. Those record an
   implementer's judgment.

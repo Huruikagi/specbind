@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `a209412` + Issue 61 tree | RR1 — environment-blocked after exact confirmed mapping; old completed record preserved through renewed review; ENV-0004 blocked replacement | [Retained Task mapping boundary](./runs/2026-09-11-codex-a209412-rr1-task-mapping.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + final description checks | MG2 — pass; assessed one-off has own description, main inherits literal, lifecycle preserved | [Assessed one-off descriptions](./runs/2026-09-10-codex-144adf8-description-one-off.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + inventory trial | DS9 — product failure; one-off omitted and main description replaced; decomposition trials withdrawn | [Design inventory retry](./runs/2026-09-10-codex-144adf8-description-design-3.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + assessment repair | DS9 — product failure; condition-only repair still omitted one-off materialization | [Design descriptions retry](./runs/2026-09-10-codex-144adf8-description-design-2.md) |

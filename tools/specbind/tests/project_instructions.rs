@@ -129,6 +129,16 @@ fn creates_a_file_holding_only_the_block() {
             .contains("judge the actual diff without fixing")
     );
     assert!(applied.content.contains("use\n  `sb-debug` directly"));
+    assert!(
+        applied.content.contains(
+            "sole exception is the Tasks owner's confirmed\n  retained-plan reconciliation"
+        )
+    );
+    assert!(
+        applied
+            .content
+            .contains("never permits\n  creating a new completed or blocked judgment")
+    );
 }
 
 #[test]

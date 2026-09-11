@@ -264,6 +264,9 @@ fn renewed_contract_review_preserves_retained_delivery_tasks_until_owned_repair(
         "renewed-review checkpoint",
         "Never\nrelabel an old completed entry as evidence for a new Requirement",
         "do not delete it before\nthis mapping",
+        "sole exception to the\nproject instruction against hand-editing execution state",
+        "permits only keeping,\nresetting, remapping, or removing entries that already existed",
+        "Never create a\nnew completed or blocked judgment",
     ] {
         assert!(
             tasks.contains(required),
