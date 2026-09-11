@@ -6,7 +6,7 @@ agent while preserving the platform-specific front matter and invocation
 syntax.
 
 For the files installed or maintained by these skills, see the
-[current generated artifact index](./current-artifact-index.md). For the design
+[artifact index](./current-artifact-index.md). For the design
 history behind the set, see the
 [target skill catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-skill-catalog.md) and
 [Decision 0176](https://github.com/Huruikagi/specbind/blob/main/docs/design/decisions/0176-skill-namespace-separation.md).

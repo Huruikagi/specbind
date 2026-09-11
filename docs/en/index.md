@@ -51,7 +51,7 @@ The everyday workflow after installation.
 ## Reference
 
 - [Current generated skill index](./reference/current-skill-index.md)
-- [Current generated artifact index](./reference/current-artifact-index.md)
+- [Artifact index](./reference/current-artifact-index.md)
 
 ---
 

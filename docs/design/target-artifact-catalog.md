@@ -3,9 +3,9 @@
 This document records the accepted lifecycle and implementation status for the
 files the SpecBind workflow installs, creates, maintains, or removes. The
 current concise surface is indexed in the
-[current generated artifact index](../current-artifact-index.md).
+[artifact index](../en/reference/current-artifact-index.md).
 
-The catalog is intentionally separate from the [current generated artifact index](../current-artifact-index.md):
+The catalog is intentionally separate from the [artifact index](../en/reference/current-artifact-index.md):
 
 - The current index records what the CLI and skills produce today.
 - This catalog records accepted ownership, lifecycle, and remaining open questions.

@@ -2,7 +2,7 @@
 
 This page is the single index of how this repository is organized to develop SpecBind itself. [CLAUDE.md](https://github.com/Huruikagi/specbind/blob/main/CLAUDE.md) and [AGENTS.md](https://github.com/Huruikagi/specbind/blob/main/AGENTS.md) link here instead of duplicating it, so one edit keeps every agent's map current.
 
-For the files the CLI installs into consumer projects, see the [current generated artifact index](./en/reference/current-artifact-index.md) and the [current generated skill index](./en/reference/current-skill-index.md).
+For the files the CLI installs into consumer projects, see the [artifact index](./en/reference/current-artifact-index.md) and the [current generated skill index](./en/reference/current-skill-index.md).
 
 The canonical Rust dependency direction and module-boundary rules are defined
 in [Implementation architecture](./architecture.md).
@@ -122,7 +122,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese removal and uninstall guide](./ja/guide/uninstall.md) | Exact Agent removal and explicit durable-knowledge uninstall workflow |
 | [Japanese cc-sdd migration guide](./ja/guide/migrate-from-cc-sdd.md) | User and agent playbook for a guarded cc-sdd cutover |
 | [Current generated skill index](./en/reference/current-skill-index.md) | Current installed skill surface for Codex and Claude Code |
-| [Current generated artifact index](./en/reference/current-artifact-index.md) | Current installation and lifecycle artifact surface |
+| [Artifact index](./en/reference/current-artifact-index.md) | Current installation and lifecycle artifact surface |
 
 The documentation site is configured by `mkdocs.yml`, built with the pinned
 dependency in `requirements-docs.txt`, and deployed by

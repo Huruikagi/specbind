@@ -1,150 +1,133 @@
-# Current generated artifact index
+# Artifact index
 
-This page indexes the files the current SpecBind CLI installs and the artifacts
-the current CLI and product-managed skills maintain. `{{SPEC_DIR}}` is configured
-in `.specbind.json` and defaults to `.specbind` for a new installation.
+This page lists the files the current SpecBind CLI installs into a project and
+the artifacts its CLI and Skills maintain. For the workflows that own them, see
+the [current generated skill index](./current-skill-index.md).
 
-For the workflows that own these files, see the
-[current generated skill index](./current-skill-index.md). For their design
-history and detailed lifecycle, see the
-[target artifact catalog](https://github.com/Huruikagi/specbind/blob/main/docs/design/target-artifact-catalog.md).
+Paths below use the default Spec root, `.specbind/`. If your `.specbind.json`
+sets a different `specDir`, read `.specbind/` as that directory.
 
-## Installation surface
+## Who owns each file
 
-`specbind install` creates absent project-owned settings, refreshes
-product-managed skills, maintains the shared OKF bundle-root index, and
-optionally maintains a marked block in each selected agent's root instruction
-file. Existing project-owned settings are kept.
-
-`specbind remove-agent` plans by default and removes only one selected agent's
-exact product-managed Skills, role files, marked instruction block, and config
-entries when rerun with `--apply`. `specbind uninstall --knowledge retain|remove`
-likewise plans before applying and requires an explicit choice to retain or
-remove the configured complete `{{SPEC_DIR}}` knowledge bundle. Both operations
-use `.specbind.json` as the final completion marker and never uninstall the
-machine-level binary.
-
-| Target | Current behavior |
+| Owner | Meaning |
 | --- | --- |
-| `.specbind.json` | Versioned project configuration containing the Spec root, artifact language, selected agents, optional project-instruction integration, and optional agent-role capability overrides. |
-| `{{SPEC_DIR}}/index.md` | Shared OKF v0.2 bundle entry point. SpecBind refreshes only its localized marked navigation block and version declaration; project content outside the block is preserved. |
-| `{{SPEC_DIR}}/settings/templates/specs/requirements.md` | Project-owned Requirements structure and authoring scaffold. |
-| `{{SPEC_DIR}}/settings/templates/specs/design.md` | Project-owned Design structure and authoring scaffold. |
-| `{{SPEC_DIR}}/settings/templates/specs/ui.md` | Project-owned conditional screen-design scaffold; the selection Rule decides whether it applies to one Spec. |
-| `{{SPEC_DIR}}/settings/templates/roadmap.md` | Project-owned scaffold for milestone-wide Roadmap requests and rationale; live Roadmap Front Matter remains CLI-owned. |
-| `{{SPEC_DIR}}/settings/rules/ears-format.md` | Project Requirements style preferences. |
-| `{{SPEC_DIR}}/settings/rules/design-principles.md` | Project Design preferences. |
-| `{{SPEC_DIR}}/settings/rules/design-template-selection.md` | Required classification and applicability policy for every `design/<artifact_id>` template. |
-| `{{SPEC_DIR}}/settings/rules/contract-principles.md` | Project seam and compatibility policy. |
-| `{{SPEC_DIR}}/settings/rules/tasks-generation.md` | Project task-decomposition preferences. |
-| `{{SPEC_DIR}}/settings/rules/steering-principles.md` | Project steering-authoring preferences. |
-| `{{SPEC_DIR}}/settings/rules/language-style.md` | Optional cross-artifact prose preferences; the Japanese default is installed only for `ja`. |
-| `{{SPEC_DIR}}/settings/adapters/release.md` | Project-owned release preparation, publication, verification, and cleanup guidance. |
-| `{{SPEC_DIR}}/settings/adapters/git.md` | Active default policy that commits each eligible workflow unit locally, without pushing or rewriting history. |
-| `{{SPEC_DIR}}/settings/adapters/deferred.md` | Project destination for real review findings that do not hold a gate. |
-| `{{SPEC_DIR}}/settings/adapters/validation.md` | Optional project-specific procedures added to final Spec implementation validation. |
-| `.claude/skills/<skill>/SKILL.md` and known `references/` | Product-managed Claude Code rendering of each of the 15 embedded Skill packages. |
-| `.agents/skills/<skill>/SKILL.md` and known `references/` | Product-managed Codex rendering of each of the 15 embedded Skill packages. |
-| `.codex/agents/specbind-*.toml` | Product-managed Codex role adapters for planning, implementation, review, diagnosis, and bounded research; model capability may be overridden through `.specbind.json`. |
-| `.claude/agents/specbind-*.md` | Product-managed Claude Code role adapters for the same five roles; model capability may be overridden through `.specbind.json`. |
-| `CLAUDE.md` / `AGENTS.md` marked block | Optional product-managed project instruction block; surrounding project text is preserved. |
+| **Project** | Yours to edit. `specbind install` never overwrites it. |
+| **Skill** | Project content that you keep current through its owning Skill rather than by hand. |
+| **CLI** | Structured state written only by guarded CLI operations. Never edit by hand. |
+| **Product** | Product-managed. `specbind install` replaces it with the embedded version; do not edit. |
 
-The binary also embeds seven Spec scaffolds (`brief`, `research`, `requirements`,
-`design/main`, `design/ui`, `contract`, and `implementation-notes/main`), four Steering
-scaffolds (`product`, `tech`, `structure`, and author-identified `document`), and
-one milestone `roadmap` scaffold in English and Japanese. `template list/read`
-exposes all of them. Requirements, main Design, conditional UI Design, and the
-Roadmap body template are installed by default; a project can override any other selector under
-`settings/templates/` deliberately. `template resolve spec <spec> <selector>`
-reports the selected source and exact project-root-relative project path without
-writing it. `template read` validates and returns the raw scaffold, including
-its variables and instruction comments; the authoring agent materializes it.
+## At a glance
 
-`template list spec` reports Design candidates rather than ordering every one
-to be materialized. The required `design-template-selection` Rule classifies
-each `design/<artifact_id>` as `required`, `conditional`, or `disabled` and
-provides project-owned conditions for conditional entries. The CLI validates a
-complete one-to-one classification when that Rule is listed or read;
-the Design phase of `sb-plan` evaluates conditional prose against the current Spec. The
-default selects `design/main` for every Spec and selects `design/ui` only for a
-user-visible screen or interaction responsibility.
+```text
+.specbind.json                          Project   Project configuration
+.specbind/
+├─ index.md                             Project   Entry point; the marked block is Product
+├─ settings/
+│  ├─ templates/                        Project   Artifact scaffolds
+│  ├─ rules/                            Project   Shared judgment rules (7 fixed files)
+│  └─ adapters/                         Project   Operational guidance (4 fixed files)
+├─ steering/
+│  ├─ roadmap.md                        CLI       Active Milestone
+│  └─ <path>.md                         Skill     Steering documents
+├─ specs/
+│  ├─ shared-contract.yaml              Skill     Shared Contract (optional)
+│  └─ <spec>/                                     Per-Spec artifacts (see below)
+├─ state/                               CLI       Accepted Contract review
+├─ releases/                            CLI       Release archives
+├─ deferred.md                          Skill     Deferred findings (optional)
+└─ adoption/                            Skill     Present only while establishing Specs
+.agents/skills/sb-*/                    Product   Skills for Codex and generic agents
+.claude/skills/sb-*/                    Product   Skills for Claude Code
+.codex/agents/specbind-*.toml           Product   Codex role definitions
+.claude/agents/specbind-*.md            Product   Claude Code role definitions
+AGENTS.md / CLAUDE.md (marked block)    Product   Project instructions (optional)
+```
 
-Every template instruction explicitly names `create`, `maintain`, or `consume`.
-Materialization removes `create` and carries the two durable scopes into the
-live artifact. `artifact read` preserves exact raw artifact bytes, and
-`steering read` preserves exact raw Markdown
-by default and accept `--for maintain` or `--for consume` to omit the unrelated
-durable instruction scope. `rule list/read` expose the seven fixed project-owned
-rule selectors without scanning the directory; rule reads provide the same raw,
-maintain, and consume modes and reject live `create` instructions.
+## Project configuration
 
-Managed template bodies may define project-owned `{{name}}` output references.
-Every distinct name requires exactly one corresponding
-`specbind:instruction create output=<name>` comment and one or more references.
-The agent follows the instruction once and may produce a short string or a
-multi-section Markdown fragment, then uses that same output for every reference
-to the name. The CLI does not provide built-ins, produce content, or substitute
-references. Template discovery rejects missing, duplicate, unused, or Front
-Matter output declarations, and live artifact discovery rejects an unresolved
-reference. The
-default Requirements scaffold deliberately has no dummy live Requirement, and
-heading-only Brief, Research, or Implementation Notes artifacts fail live
-validation.
+| File | Owner | Contents |
+| --- | --- | --- |
+| `.specbind.json` | Project | Spec root, artifact language, selected Agents, project-instruction integration, and optional `agentRoles` overrides. `specDir` is fixed at installation; change Agents and language through `specbind install`. |
+| `.specbind/index.md` | Project | Shared entry point for all artifacts. SpecBind refreshes only its localized marked block; add project links outside the markers. |
 
-Thirteen immutable product protocols and the versioned structured-artifact and
-command-input schemas are binary-owned read surfaces exposed by
-`protocol list/read` and `schema list/read`; they are not installed as project
-settings.
+## Settings: `.specbind/settings/`
 
-## Project-level lifecycle artifacts
+Created by the first installation and never overwritten afterward. See
+[Customize SpecBind](../guide/customization.md) for how to edit them.
 
-| Artifact or path | Current lifecycle and owner |
+### `templates/`
+
+| File | Contents |
 | --- | --- |
-| `{{SPEC_DIR}}/adoption/reverse-discovery.yaml` | Temporary Git-tracked evidence and reconciliation ledger created by `sb-adopt`, then deleted by reverse finalization. |
-| `{{SPEC_DIR}}/deferred.md` | Optional project-wide OKF concept created by the default deferred adapter when the first non-blocking finding is recorded. It is not a gate, fingerprint input, lifecycle artifact, or source of work. |
-| `{{SPEC_DIR}}/steering/roadmap.md` | CLI-owned current active-milestone scope, dependency, baseline, release-binding, and Direct-status record; discovery confirms its authored scope and records complete Source Collection disposition when supplied. |
-| `{{SPEC_DIR}}/steering/<path>.md` | Optional durable `SpecBind Steering` collection authored by `sb-steering` and selected by `artifact_id`. |
-| `{{SPEC_DIR}}/state/contract-review.md` | Current accepted milestone-wide Contract review for a Spec-backed milestone; authored by `sb-contract-review` and persisted by the CLI. |
-| `{{SPEC_DIR}}/releases/<version>-roadmap.md` | Final released Roadmap archive written by release finalization. |
-| `{{SPEC_DIR}}/releases/<version>-contract-review.md` | Final accepted Contract-review archive for a Spec-backed release. |
+| `specs/requirements.md` | Requirements structure and authoring scaffold |
+| `specs/design.md` | Main Design scaffold, required for every Spec |
+| `specs/ui.md` | Conditional screen-design scaffold |
+| `roadmap.md` | Body of the Milestone Roadmap; Front Matter stays CLI-owned |
 
-## Per-Spec artifacts
+Other scaffolds are embedded in the binary and can be listed with
+`specbind template list`. Copy one to its reported `template_path` only when
+you want to override it.
 
-The canonical Spec directory is `{{SPEC_DIR}}/specs/<spec>/`.
+### `rules/`
 
-| Artifact | Current lifecycle and owner |
+| File | Contents |
 | --- | --- |
-| `spec.yaml` | Persistent structured lifecycle, active-change, Requirement-selection, gate, and completion state maintained only through guarded CLI operations. |
-| `requirements.md` | Persistent complete current Requirements maintained by the Requirements phase of `sb-plan`. |
-| `design.md` or another `SpecBind Design` document | Persistent Design collection maintained by the Design phase of `sb-plan`; `artifact_id` is its stable selector. |
-| `contract.yaml` | Persistent strict versioned Contract maintained with Design and reviewed milestone-wide. |
-| `implementation-notes.md` or another `SpecBind Implementation Notes` document | Optional persistent implementation memory collection. |
-| `brief.md` | Active-milestone input authored by discovery; records the exact relevant Source Items when a collection was supplied and is removed by successful release finalization. |
-| `research.md` | Optional active-milestone gap-analysis result replaced by `sb-gap-analysis` and removed by finalization. |
-| `tasks.yaml` | Canonical active-milestone task plan and sparse execution state; authored by the Tasks phase of `sb-plan`, progressed by implementation, and removed by finalization. |
-| `log.md` | Persistent newest-first release history maintained by release finalization for Spec-backed milestones. |
+| `ears-format.md` | Requirements style |
+| `design-principles.md` | Design preferences |
+| `design-template-selection.md` | Whether each Design template is required, conditional, or disabled |
+| `contract-principles.md` | Ownership, seams, and compatibility policy |
+| `tasks-generation.md` | Task decomposition preferences |
+| `steering-principles.md` | Steering authoring preferences |
+| `language-style.md` | Prose style; installed only for Japanese |
 
-Markdown artifacts are discovered by their OKF type and, for collections, their
-`artifact_id`; the default filenames above are materialization paths rather than
-general semantic identity. `spec.yaml`, `contract.yaml`, `tasks.yaml`, `roadmap.md`, and the
-Contract-review state keep their accepted fixed structured paths.
+### `adapters/`
 
-## Sources of truth
+| File | Contents |
+| --- | --- |
+| `release.md` | Release preparation, publication, verification, and cleanup |
+| `git.md` | Commit policy; the default commits each workflow unit locally without pushing |
+| `deferred.md` | Where non-blocking review findings go |
+| `validation.md` | Extra project-specific checks for final implementation validation |
 
-- Installation plan and ownership behavior: `tools/specbind/src/installation/install.rs`
-- Agent removal and project uninstall behavior: `tools/specbind/src/installation/removal.rs`
-- Embedded templates, rules, adapters, protocols, and skills: `tools/specbind/assets/`
-- Artifact discovery and lifecycle I/O: `tools/specbind/src/artifacts.rs`
-- Structured wire models and generated schemas: `tools/specbind/src/schema/` and `tools/specbind/schemas/`
-- Guarded lifecycle mutations: `tools/specbind/src/lifecycle/approval.rs`, `tools/specbind/src/lifecycle/milestone/`, `tools/specbind/src/lifecycle/completion/`, and `tools/specbind/src/lifecycle/release_finalize.rs`
+## Milestone and project state
 
-## Project shared agreement
+| File | Owner | Lifetime and contents |
+| --- | --- | --- |
+| `steering/roadmap.md` | CLI | Active Milestone scope, dependencies, target release, and Direct item status. Discovery authors the body. Moved to `releases/` at release. |
+| `steering/<path>.md` | Skill | Durable Steering documents, maintained by `sb-steering`. |
+| `state/contract-review.md` | CLI | Current accepted Milestone-wide Contract review, authored by `sb-contract-review`. |
+| `state/cc-sdd-migration.yaml` | CLI | Present only during a cc-sdd migration. |
+| `releases/<version>-roadmap.md` | CLI | Archived Roadmap of a released Milestone. |
+| `releases/<version>-contract-review.md` | CLI | Archived Contract review of a released Milestone. |
+| `specs/shared-contract.yaml` | Skill | Optional shared Contract for resources used by several features. Survives release. See [Customize SpecBind](../guide/customization.md#shared-contract). |
+| `deferred.md` | Skill | Created by the default deferred adapter when the first non-blocking finding is recorded. Not a work queue. |
+| `adoption/reverse-discovery.yaml` | Skill | Temporary evidence ledger of `sb-adopt`, deleted when Spec establishment completes. |
 
-`{{SPEC_DIR}}/specs/shared-contract.yaml` is an optional project-owned
-`shared-contract/v1` resource manifest. It is not installed automatically and
-survives release finalization; uninstall includes it in the configured durable
-knowledge retain/remove policy. `contract/v2` adds typed shared-resource
-consumes targets while retaining v1 reads. `contract owners` and the complete
-graph include shared declarations. Shared agreement changes are planned by
-`sb-plan --shared`, assigned to Direct scope, and require the milestone review;
-Direct-only reviews are archived when those changes are delivered.
+## Per-Spec artifacts: `.specbind/specs/<spec>/`
+
+| File | Owner | Lifetime | Contents |
+| --- | --- | --- | --- |
+| `spec.yaml` | CLI | Durable | Lifecycle, Gate, and completion state |
+| `requirements.md` | Skill | Durable | Complete current Requirements (`sb-plan`) |
+| `design.md` and other Design documents | Skill | Durable | Design collection (`sb-plan`) |
+| `contract.yaml` | Skill | Durable | Contract, reviewed Milestone-wide |
+| `log.md` | CLI | Durable | Release history, newest first |
+| `implementation-notes.md` | Skill | Durable, optional | Implementation memory |
+| `brief.md` | Skill | Active Milestone | Discovery's summary and relevant sources |
+| `research.md` | Skill | Active Milestone, optional | Gap-analysis result (`sb-gap-analysis`) |
+| `tasks.yaml` | Skill and CLI | Active Milestone | Task plan (`sb-plan`) and execution progress (CLI) |
+
+Active-Milestone artifacts are removed when the release is finalized. Markdown
+artifacts are identified by their type and `artifact_id`, so the filenames above
+are defaults rather than required names.
+
+## Embedded in the binary
+
+These are read through the CLI and never installed as project files:
+
+- Spec, Steering, and Roadmap templates: `specbind template list` / `template read`
+- Product protocols: `specbind protocol list` / `protocol read`
+- Structured artifact and command-input schemas: `specbind schema list` / `schema read`
+
+See [Customize SpecBind](../guide/customization.md) for template instructions
+and overrides.

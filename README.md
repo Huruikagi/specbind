@@ -121,7 +121,7 @@ baseline establishment uses the opt-in temporary `sb-adopt` Skill. Use
 
 - [Documentation site](https://huruikagi.github.io/specbind/) is the published entry point for the user guide and current reference pages.
 - [English user guide](./docs/en/index.md) and [Japanese user guide](./docs/ja/index.md) cover installation, delivery, customization, updating, and removal.
-- [Generated skill index](./docs/en/reference/current-skill-index.md) and [generated artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
+- [Generated skill index](./docs/en/reference/current-skill-index.md) and [artifact index](./docs/en/reference/current-artifact-index.md) are concise snapshots of the current interface.
 
 ### Design and development references
 
