@@ -40,5 +40,5 @@ The fixture was clean before and after the read-only debrief.
 
 ## Cleanup
 
-- Fixture path retained until the Issue 61 delivery commit is complete: `C:/Users/hurui/AppData/Local/Temp/sb-rr1-issue61`
-- Main worktree after recording: Issue 61 source, focused tests, and this run record only
+- Fixture path removed after the Issue 61 delivery commit: `C:/Users/hurui/AppData/Local/Temp/sb-rr1-issue61`
+- Main worktree after cleanup: forward-test documentation only

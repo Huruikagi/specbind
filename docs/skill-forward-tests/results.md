@@ -14,6 +14,13 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `630a9c2` | Q6 — pass; saturated independent Design validation returned the complete restart handoff without approval or commit | [Final Plan capacity recovery](./runs/2026-09-11-codex-630a9c2-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `febcb78` | Q6 — pass; actual unapproved-revision boundary preserved every restart field | [Plan capacity recovery](./runs/2026-09-11-codex-febcb78-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `58025b0` | Q6 pre-role setup — product failure; unstable fallback expectation corrected to the Issue #59 boundary | [Capacity scenario boundary](./runs/2026-09-11-codex-58025b0-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `b065fde` | Q6 — product failure; known saturation still asked for slot management; FT-0054 repeated | [Known-saturation handoff](./runs/2026-09-11-codex-b065fde-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `a328f82` | Q6 — product failure; terminal restart fields omitted; FT-0054 surfaced | [Structured capacity handoff](./runs/2026-09-11-codex-a328f82-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `b90f133` | Q6 — product failure; capacity stop requested user slot management | [Initial capacity recovery](./runs/2026-09-11-codex-b90f133-q6-capacity.md) |
+| 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `d3e3bbc` | Q6 setup attempt — scenario invalid because the host reclaimed completed receivers | [Capacity setup attempt](./runs/2026-09-11-codex-d3e3bbc-q6-capacity.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `a209412` + Issue 61 tree | RR1 — environment-blocked after exact confirmed mapping; old completed record preserved through renewed review; ENV-0004 blocked replacement | [Retained Task mapping boundary](./runs/2026-09-11-codex-a209412-rr1-task-mapping.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + final description checks | MG2 — pass; assessed one-off has own description, main inherits literal, lifecycle preserved | [Assessed one-off descriptions](./runs/2026-09-10-codex-144adf8-description-one-off.md) |
 | 2026-09-10 | Codex | `gpt-5.6-terra` / `medium` | `144adf8` + inventory trial | DS9 — product failure; one-off omitted and main description replaced; decomposition trials withdrawn | [Design inventory retry](./runs/2026-09-10-codex-144adf8-description-design-3.md) |

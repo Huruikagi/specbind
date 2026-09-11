@@ -11,6 +11,7 @@ fixture.
 
 | ID | First seen | Scenario | Finding | Reopening condition |
 | --- | --- | --- | --- | --- |
+| FT-0054 | `a328f82` | Q6 | Two fresh complete-Plan drivers inferred Requirements, Design, and Tasks gate delegation from an approved-plan outcome even though the route requires one explicit confirmation naming those gates before phase work. Other fresh drivers stopped correctly, proving the wording admits both readings. | Strengthen the confirmation boundary without teaching the gate list in the initial user request, then rerun Q1 and the pre-Design portion of Q6. |
 | FT-0053 | `144adf8` + descriptions tree | DS9 | Generic infrastructure Design authoring repeatedly omits the expected one-off supplement. The phase assessment, Splitting section, and Decision 0179 do not produce a stable distinction between one cohesive Spec responsibility and a separately reviewable concern. Condition-only and explicit-inventory trials did not resolve it and were withdrawn. | Reconcile the decomposition decision/scenario boundary, then verify fresh generic Design authoring. Description authoring for an explicitly assessed one-off is measured separately by MG2. |
 
 ## Fixed, behavioral confirmation pending
