@@ -61,6 +61,30 @@ Milestone may be active in a project. The current Roadmap normally lives at
 `.specbind/steering/roadmap.md`; after release, the CLI moves it to the release
 archive.
 
+Specs and Milestones have different lifetimes. Each Milestone closes at its
+release, while Specs remain and later Milestones update the same Specs.
+
+```mermaid
+flowchart LR
+    subgraph MS["Milestones (close at each release)"]
+        direction TB
+        M1["Milestone 1<br/>→ v1.0"]
+        M2["Milestone 2<br/>→ v1.1"]
+    end
+    subgraph SP["Specs (remain)"]
+        direction TB
+        S1[task-management]
+        S2[reminders]
+        S3[csv-export]
+    end
+    M1 -- new --> S1
+    M1 -- new --> S2
+    M2 -- update --> S1
+    M2 -- new --> S3
+    M1 -. after release .-> A[(Release archive)]
+    M2 -. after release .-> A
+```
+
 Once work enters a Milestone, it remains tracked inside that release boundary
 even if it could otherwise be a small standalone change.
 
@@ -196,6 +220,15 @@ Implementation observation
   -> implementation resumes
 ```
 
+Invalidate the earliest affected Gate. Every approval and piece of evidence to
+its right becomes invalid:
+
+```mermaid
+flowchart LR
+    RG["Requirements Gate<br/>start here when<br/>Requirements change"] --> DG["Design Gate<br/>start here when<br/>Design or Contract change"]
+    DG --> CR[Contract review] --> TG["Tasks Gate<br/>start here when<br/>only Tasks change"] --> CE[Completion evidence]
+```
+
 !!! note "Removing a Requirement"
     Do not delete an established Requirement group or Acceptance Criterion.
     Retire it with a `_Retired_` marker instead; see "Retire an obligation" in
@@ -204,16 +237,36 @@ Implementation observation
 
 ## Ordinary lifecycle
 
-```text
-Discovery
-  -> Requirements
-  -> Design and independent validation
-  -> Milestone-wide Contract review
-  -> Tasks
-  -> implementation and per-Task review
-  -> Spec completion validation
-  -> release and finalization
+Each frame is labeled with the Skill that owns that stage.
+
+```mermaid
+flowchart TB
+    subgraph DI[sb-discovery]
+        D[Scope confirmation]
+    end
+    subgraph PL[sb-plan]
+        direction TB
+        R["Requirements<br/>(Gate)"] --> DS["Design and Contract<br/>Design validation (Gate)"]
+        subgraph CRV[sb-contract-review]
+            CR[Milestone-wide<br/>Contract review]
+        end
+        DS --> CR
+        CR --> T["Tasks<br/>(Gate)"]
+    end
+    subgraph IM["sb-implement / sb-validate-implementation"]
+        direction TB
+        I[Implementation and<br/>per-Task review] --> V[Spec completion<br/>validation]
+    end
+    subgraph RL[sb-release]
+        REL[Release and<br/>finalization]
+    end
+    D --> R
+    T --> I
+    V --> REL
 ```
+
+`sb-drive` advances everything from `sb-plan` through completion validation by
+delegating to the owning Skills one at a time.
 
 `sb-plan` is the default entry from Requirements through Tasks approval.
 Use a named Spec or `--all`; an invocation without scope first asks which scope

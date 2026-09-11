@@ -65,6 +65,30 @@ Milestoneは、1回のリリースとしてまとめて届ける作業の単位�
 `.specbind/steering/roadmap.md`にあり、状態はCLIが管理します。リリースが完了
 すると、Roadmapの内容はリリースアーカイブへ移ります。
 
+SpecとMilestoneは寿命が異なります。Milestoneはリリースごとに閉じますが、Specは
+残り続け、次のMilestoneでも同じSpecを更新します。
+
+```mermaid
+flowchart LR
+    subgraph MS["Milestone（リリースごとに閉じる）"]
+        direction TB
+        M1["Milestone 1<br/>→ v1.0"]
+        M2["Milestone 2<br/>→ v1.1"]
+    end
+    subgraph SP["Spec（残り続ける）"]
+        direction TB
+        S1[task-management]
+        S2[reminders]
+        S3[csv-export]
+    end
+    M1 -- 新規 --> S1
+    M1 -- 新規 --> S2
+    M2 -- 更新 --> S1
+    M2 -- 新規 --> S3
+    M1 -. リリース後 .-> A[(リリースアーカイブ)]
+    M2 -. リリース後 .-> A
+```
+
 いったんMilestoneに入れた作業は、単独なら通常の作業で済むような小さな変更でも、
 同じリリース境界の中で追跡します。
 
@@ -207,13 +231,13 @@ resources:
 承認したあとで前提が変わったときは、影響を受ける中でいちばん手前のGateを、
 明示的に無効化します。
 
-```text
-Requirementsが変わった -> Requirements Gateからやり直す
-Design/Contractが変わった -> Design Gateからやり直す
-Tasksだけが変わった -> Tasks Gateからやり直す
+```mermaid
+flowchart LR
+    RG["Requirements Gate<br/>Requirementsが<br/>変わったらここから"] --> DG["Design Gate<br/>Design/Contractが<br/>変わったらここから"]
+    DG --> CR[Contractレビュー] --> TG["Tasks Gate<br/>Tasksだけが<br/>変わったらここから"] --> CE[完了の証拠]
 ```
 
-無効化すると、下流の証拠も消えます。これは失敗ではなく、変わった前提に古い
+無効化したGateより右側にある承認と証拠は、すべて無効になります。これは失敗ではなく、変わった前提に古い
 承認を使わないための、通常のやり直しです。
 
 !!! note "Requirementをなくすとき"
@@ -224,19 +248,35 @@ Tasksだけが変わった -> Tasks Gateからやり直す
 
 ## 通常のライフサイクル
 
-Spec項目は、だいたい次の順で進みます。
+Spec項目は、だいたい次の順で進みます。枠の見出しは、その段階を担当するスキルです。
 
-```text
-Discovery
-  -> Requirements
-  -> DesignとContract
-  -> Design検証
-  -> Milestone全体のContractレビュー
-  -> Tasks
-  -> 実装とTaskレビュー
-  -> 実装検証
-  -> リリース
+```mermaid
+flowchart TB
+    subgraph DI[sb-discovery]
+        D[スコープの確認]
+    end
+    subgraph PL[sb-plan]
+        direction TB
+        R["Requirements<br/>（Gate）"] --> DS["DesignとContract<br/>Design検証（Gate）"]
+        subgraph CRV[sb-contract-review]
+            CR[Milestone全体の<br/>Contractレビュー]
+        end
+        DS --> CR
+        CR --> T["Tasks<br/>（Gate）"]
+    end
+    subgraph IM["sb-implement / sb-validate-implementation"]
+        direction TB
+        I[実装と<br/>Taskレビュー] --> V[実装検証]
+    end
+    subgraph RL[sb-release]
+        REL[リリース]
+    end
+    D --> R
+    T --> I
+    V --> REL
 ```
+
+`sb-drive`は、`sb-plan`から実装検証までの範囲を、担当スキルへ順に委譲して進めます。
 
 この流れを進めるスキルは3つです。
 
