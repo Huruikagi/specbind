@@ -39,6 +39,7 @@
 #   r3     milestone scoping a `cart` update that removes behavior, brief written
 #   r4     milestone scoping the `cart` quantity cap, brief written
 #   r5     r4 with the requirements gate already approved
+#   q6     r5 plus an unapproved Design revision awaiting independent validation
 #   c2     base plus a Git adapter carrying real policy
 #   c3     c2 plus a confirmed cart scope, so a run reaches the approval point
 #   d7     cart driven to implementation with every gate approved
@@ -840,6 +841,31 @@ r3)
         "Cart reporting is removed from the supported cart behavior."
     expect "cart did not reach the requirements state" \
         'specbind spec status cart | grep -q "State: requirements"'
+    ;;
+
+q6)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
+    brief cart \
+        "A cart has no upper bound per SKU." \
+        "A cart rejects an addition that would raise one SKU above 99."
+    cart_cap_approved
+    cart_design_approved \
+        "silently trims additions at 99 instead of rejecting them."
+    git add -A
+    git -c user.name=Fixture -c user.email=fixture@example.invalid \
+        commit --quiet -m "Checkpoint the rejected Design"
+    specbind spec design invalidate cart >/dev/null \
+        || fail "could not invalidate the rejected Design"
+    sed -i \
+        's/silently trims additions at 99 instead of rejecting them\./cap, and leaves the cart unchanged when either bound is violated./' \
+        .specbind/specs/cart/design.md
+    leave_dirty=yes
+    expect "the Design revision did not address the rejected mechanism" \
+        'grep -q "leaves the cart unchanged" .specbind/specs/cart/design.md'
+    expect "the revised Design is already approved" \
+        'specbind spec status cart | grep -q "requirements=fresh, design=not_reached"'
+    expect "the Design revision did not remain uncommitted" \
+        'git status --porcelain | grep -q ".specbind/specs/cart/design.md"'
     ;;
 
 r4 | r5 | ds2 | ds3 | ds5 | x2)

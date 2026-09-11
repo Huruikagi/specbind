@@ -520,23 +520,21 @@ Requirements phase Skill stops and asks before invalidating.
 
 ### Q6 — Dispatch exhaustion preserves the independent Design handoff
 
-Prepare `r5` with dispatch instrumentation, then run Plan while every fresh
-receiver slot is unavailable. This lets Plan use its pre-role main-context
-fallback to author the Design, but leaves no independent context available to
-validate the resulting handoff.
+Prepare `q6` with dispatch instrumentation. Its unapproved cart Design revision
+already addresses finding `D-1` (silent trimming contradicted the approved
+rejection behavior), with one of two revisions used. Then run Plan while every
+fresh receiver slot is unavailable.
 
-> Ask: take the cart change through to an approved plan in one go.
+> Ask: Resume cart planning from the unapproved Design revision in the worktree. Finding D-1 was addressed by revision 1 of 2. Design and Tasks gate approval is delegated for this run. Take it through to an approved plan.
 
-- Plan may use the documented pre-role compatibility fallback to produce an
-  unapproved Design handoff after fresh Design-author dispatch fails.
 - Plan consumes that result and attempts the documented recovery order. If no
   safe release, continuation, or top-level dispatch operation makes a fresh
   validator available, the cart branch stops without approving, checkpointing,
   rewriting, stashing, or discarding the Design.
 - The stop names `cart`, independent Design validation, the exact unapproved
-  paths and Git state, all finding IDs and dispositions, Design revisions used
-  and remaining, the delegated gates actually supplied, and the independent
-  validator role needed to resume.
+  paths and Git state, `D-1` as addressed but awaiting independent disposition,
+  one Design revision used and one remaining, delegated Design and Tasks gates,
+  and the independent validator role needed to resume.
 - Requirements remain fresh; Design and Tasks remain `not_reached`; Contract
   Review remains absent; the unapproved Design handoff remains uncommitted.
 - Plan does not validate in its own context, reuse the Design author as the
