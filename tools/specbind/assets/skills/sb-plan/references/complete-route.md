@@ -162,6 +162,18 @@ unapproved paths and Git state, every accumulated finding ID and disposition,
 Design revisions used and remaining, the gate delegation actually supplied,
 and the exact author or independent-validator role needed to resume. A resumed
 context receives those facts but gains no authority omitted from its request.
+Return that state immediately as a terminal restart handoff, using these
+labels so none of it is implicit:
+
+- `Spec and phase:`
+- `Unapproved paths and Git state:`
+- `Finding ledger:`
+- `Design revision budget:`
+- `Supplied gate delegation:`
+- `Resume role:`
+
+This is a status handoff, not a question. Do not pause on an open-ended request
+for the user to free, route, or release a receiver slot.
 
 The receiver reads the named reference completely and follows it as the phase
 procedure. Do not assume that a fresh receiver can discover or invoke another

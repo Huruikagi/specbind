@@ -47,6 +47,9 @@ phase, the exact unapproved path set and Git state, every accumulated finding ID
 and disposition, revisions used and remaining, the delegation authority that
 was actually supplied, and the exact role required to resume. A later context
 does not infer omitted approval or rewind authority from the report.
+The report is a terminal restart handoff, not a request for the user to manage
+receiver capacity; Plan does not pause on an open-ended request to free, route,
+or release a slot.
 
 Capacity recovery never skips independent validation, changes a receiver's
 role, resets a revision budget, discards a finding, checkpoints an unapproved

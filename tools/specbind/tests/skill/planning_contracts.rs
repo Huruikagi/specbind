@@ -180,6 +180,12 @@ fn planning_recovers_dispatch_capacity_without_collapsing_roles() {
         "Preserve\nthe exact unapproved artifact path set and Git state",
         "every accumulated finding ID and disposition",
         "Design revisions used and remaining",
+        "`Unapproved paths and Git state:`",
+        "`Finding ledger:`",
+        "`Design revision budget:`",
+        "`Supplied gate delegation:`",
+        "`Resume role:`",
+        "This is a status handoff, not a question",
         "gains no authority omitted from its request",
     ] {
         assert!(
