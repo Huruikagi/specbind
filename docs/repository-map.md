@@ -96,7 +96,7 @@ in [Implementation architecture](./architecture.md).
 | [English installation guide](./en/guide/install.md) | Shared CLI installation and project installation step for both routes |
 | [English new-project guide](./en/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [English existing-project guide](./en/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
-| [English update guide](./en/guide/update.md) | Binary update through the installation client followed by guarded project-asset refresh |
+| [English update guide](./en/guide/update.md) | `sb-configure`-driven binary update and guarded project-asset refresh, with manual installation-client updates as the exception |
 | [English step-by-step implementation guide](./en/guide/implement-step-by-step.md) | Advancing one Spec-backed item through each artifact and Gate explicitly |
 | [English Plan and Drive guide](./en/guide/implement-with-plan-and-drive.md) | Planning a whole Milestone and driving every safely reachable action |
 | [English existing-implementation adoption guide](./en/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
@@ -111,7 +111,7 @@ in [Implementation architecture](./architecture.md).
 | [Japanese installation guide](./ja/guide/install.md) | Shared CLI installation and project installation step for both routes |
 | [Japanese new-project guide](./ja/guide/start-new-project.md) | Greenfield installation and the first Spec-backed capability through implementation validation |
 | [Japanese existing-project guide](./ja/guide/start-existing-project.md) | Existing-project installation and routing between a new change and existing-implementation adoption |
-| [Japanese update guide](./ja/guide/update.md) | Installation-client binary update and guarded project-asset refresh in Japanese |
+| [Japanese update guide](./ja/guide/update.md) | `sb-configure`-driven binary update and guarded project-asset refresh, with manual installation-client updates as the exception |
 | [Japanese step-by-step implementation guide](./ja/guide/implement-step-by-step.md) | Advancing one Spec-backed item through each artifact and Gate explicitly |
 | [Japanese Plan and Drive guide](./ja/guide/implement-with-plan-and-drive.md) | Planning a whole Milestone and driving every safely reachable action |
 | [Japanese existing-implementation adoption guide](./ja/guide/adopt-existing.md) | Evidence-backed establishment of Specs from an existing implementation |
