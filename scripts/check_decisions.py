@@ -1,4 +1,4 @@
-"""Validate Decision identifiers, headings, and the repository-map index."""
+"""Validate Decision identifiers, headings, and the Decision index."""
 
 from __future__ import annotations
 
@@ -10,13 +10,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DECISIONS = ROOT / "docs" / "design" / "decisions"
-REPOSITORY_MAP = ROOT / "docs" / "repository-map.md"
+DECISION_INDEX = DECISIONS / "index.md"
 
 FILENAME = re.compile(r"^(?P<id>\d{4})-[a-z0-9][a-z0-9.-]*\.md$")
 HEADING = re.compile(r"^# (?P<id>\d{4}): .+$")
-INDEX_ROW = re.compile(
-    r"^\| \[(?P<id>\d{4})\]\(\./design/decisions/(?P<name>[^)]+)\) \|"
-)
+INDEX_ROW = re.compile(r"^\| \[(?P<id>\d{4})\]\(\./(?P<name>[^)]+)\) \|")
 
 
 def duplicates(values: dict[str, list[str]], label: str) -> list[str]:
@@ -33,6 +31,8 @@ def main() -> int:
     file_ids: dict[str, str] = {}
 
     for path in sorted(DECISIONS.glob("*.md")):
+        if path == DECISION_INDEX:
+            continue
         match = FILENAME.fullmatch(path.name)
         if match is None:
             errors.append(f"invalid Decision filename: {path.name}")
@@ -55,7 +55,7 @@ def main() -> int:
 
     index_by_id: dict[str, list[str]] = defaultdict(list)
     index_by_name: dict[str, list[str]] = defaultdict(list)
-    for line in REPOSITORY_MAP.read_text(encoding="utf-8").splitlines():
+    for line in DECISION_INDEX.read_text(encoding="utf-8").splitlines():
         match = INDEX_ROW.match(line)
         if match is None:
             continue
@@ -64,17 +64,17 @@ def main() -> int:
         index_by_id[decision_id].append(name)
         index_by_name[name].append(decision_id)
         if file_ids.get(name) != decision_id:
-            errors.append(f"repository map id/path mismatch: {decision_id} -> {name}")
+            errors.append(f"Decision index id/path mismatch: {decision_id} -> {name}")
 
-    errors.extend(duplicates(index_by_id, "repository-map Decision id"))
-    errors.extend(duplicates(index_by_name, "repository-map Decision path"))
+    errors.extend(duplicates(index_by_id, "Decision index id"))
+    errors.extend(duplicates(index_by_name, "Decision index path"))
 
     indexed = set(index_by_name)
     files = set(file_ids)
     for name in sorted(files - indexed):
-        errors.append(f"Decision missing from repository map: {name}")
+        errors.append(f"Decision missing from the Decision index: {name}")
     for name in sorted(indexed - files):
-        errors.append(f"repository map references a missing Decision: {name}")
+        errors.append(f"Decision index references a missing Decision: {name}")
 
     if errors:
         print("Decision validation failed:", file=sys.stderr)

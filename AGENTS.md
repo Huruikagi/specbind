@@ -9,7 +9,7 @@
 
 ## Source Layout
 
-The repository source layout, design documents, and the complete decision record are indexed in [docs/repository-map.md](docs/repository-map.md). Read it before navigating unfamiliar parts of the tree or citing a decision. Read [docs/architecture.md](docs/architecture.md) before changing core Rust module boundaries or dependency direction.
+The repository source layout and design documents are indexed in [docs/repository-map.md](docs/repository-map.md). Read it before navigating unfamiliar parts of the tree. The complete decision record is indexed in [docs/design/decisions/index.md](docs/design/decisions/index.md); read it before citing a decision. Read [docs/architecture.md](docs/architecture.md) before changing core Rust module boundaries or dependency direction.
 
 The root `.kiro/` directory is not used to develop SpecBind and is intentionally ignored. Inherited `.kiro/` files under `tools/cc-sdd/templates/shared/settings/` are migration and comparison inputs, not current product sources. Do not require `/kiro-*` or `$kiro-*` workflows for this repository unless the user explicitly requests one.
 

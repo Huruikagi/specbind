@@ -5,13 +5,11 @@ on:
     paths:
       - ".github/workflows/decisions.yml"
       - "docs/design/decisions/**"
-      - "docs/repository-map.md"
       - "scripts/check_decisions.py"
   pull_request:
     paths:
       - ".github/workflows/decisions.yml"
       - "docs/design/decisions/**"
-      - "docs/repository-map.md"
       - "scripts/check_decisions.py"
 
 permissions:

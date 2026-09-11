@@ -127,7 +127,7 @@ baseline establishment uses the opt-in temporary `sb-adopt` Skill. Use
 
 - [Core concepts](./docs/en/guide/concepts.md) explains why judgment belongs to agents while deterministic operations belong to the CLI.
 - [Lifecycle states](./docs/en/reference/lifecycle-states.md) and [CLI commands](./docs/en/reference/cli-commands.md) describe the states the CLI reports and the commands it provides.
-- [Repository map](./docs/repository-map.md) indexes the source layout, design documents, and decision record.
+- [Repository map](./docs/repository-map.md) indexes the source layout and design documents, and the [Decision index](./docs/design/decisions/index.md) lists every decision.
 
 ## Repository layout
 
