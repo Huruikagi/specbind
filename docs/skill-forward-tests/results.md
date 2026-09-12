@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-13 | Codex | `gpt-6-astra` / `medium` | `9b5089f` + Decision 0215 working tree | ST3 — pass; Status follow-up verified the claim without accepting completion | [Focused Skills, Astra](./runs/2026-09-13-codex-9b5089f-focused-skills-astra.md) |
+| 2026-09-13 | Codex | `gpt-5.6-terra` / `medium` | `9b5089f` + Decision 0215 working tree | Q0 — scope boundary passed; ST3 and instrumented I1 environment-blocked; ordinary I1 implementation/review/progress verified, final checkpoint environment-blocked | [Focused Skills, Terra](./runs/2026-09-13-codex-9b5089f-focused-skills-terra.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `4a06547` | DR8 — pass; Drive started the exact Plan owner first and preserved its saturated-validator restart capsule verbatim | [Drive nested capacity handoff](./runs/2026-09-11-codex-4a06547-dr8-capacity-handoff.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `88cce31` | DR8 — product failure; a helper consumed the owner slot before Plan could start | [Drive owner-first dispatch failure](./runs/2026-09-11-codex-88cce31-dr8-capacity-handoff.md) |
 | 2026-09-11 | Codex | `gpt-5.6-terra` / `medium` | `88cce31` | DR7 — pass; pre-owner capacity stop returned every required capsule field | [Drive pre-owner capacity recovery](./runs/2026-09-11-codex-88cce31-dr7-owner-capacity.md) |

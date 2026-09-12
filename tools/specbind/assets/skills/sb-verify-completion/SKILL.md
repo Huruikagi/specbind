@@ -17,9 +17,10 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-Use this **before** saying a task is done, a defect is fixed, a command passed,
-or an implementation is complete — including before trusting a subagent's report
-that any of those is true.
+Use this when the user requests a check of a completion or success claim, or an
+owning workflow calls for that independent judgment. Ordinary reporting of
+checks you already executed does not require a separate Skill invocation.
+Keep every claim within its observed evidence.
 
 You answer one question and change nothing.
 

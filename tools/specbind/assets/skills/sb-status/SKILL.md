@@ -20,10 +20,10 @@ means no additional project preference; any `ERROR` line stops the workflow.
 Answer "where is this work now, and what is the next thing that can happen?"
 using the CLI's derived read models. Change nothing.
 
-This is not the answer to "is this completed implementation actually done?"
-When every task is complete and the user asks whether a named Spec is done, use
-`sb-validate-implementation`; that judgment may record completion evidence
-on `GO`.
+For "is this completed implementation actually done?", use
+`sb-verify-completion`. Use `sb-validate-implementation` only when every Task
+is complete and the user explicitly authorizes recording completion on `GO`.
+If that authority is unclear, keep the claim check consequence-free.
 
 ## Choose the scope
 

@@ -73,8 +73,13 @@ routing around it silently.
 Run the project's applicable checks and make them pass. A task whose tests were
 never executed is not finished, whatever the diff looks like.
 
-- Add or extend tests where the project's convention places them for this kind
-  of work.
+- Add or extend tests when they prove changed behavior or a meaningful regression
+  boundary, following the project's conventions. A prose-only or other low-impact
+  edit does not need a new test merely to mirror its wording.
+- Complete the Task's required checks. Once they pass, continue to the review
+  handoff; broaden or repeat verification only for a subsequent change, failure,
+  unresolved risk, or an explicit project requirement. This does not waive the
+  separate whole-Spec completion checks.
 - A pre-existing failure unrelated to this task is reported, not fixed silently
   and not used as a reason to skip verification.
 - Never weaken a check to make it pass. Deleting an assertion, loosening a

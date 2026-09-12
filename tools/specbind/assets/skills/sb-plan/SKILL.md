@@ -1,6 +1,6 @@
 ---
 name: sb-plan
-description: Plan active Spec work through Requirements, Design, Contract Review, and Tasks, run one explicitly requested planning phase for one named Spec, or prepare explicitly scoped project shared Contracts. Ordinary Spec planning uses one named Spec or explicit all-Spec scope.
+description: Plan one named Spec or all active Specs through Tasks approval, run an explicitly requested planning phase, or prepare scoped project shared Contracts.
 argument-hint: "[<spec> | --all | --shared] [requirements|design|tasks]"
 ---
 

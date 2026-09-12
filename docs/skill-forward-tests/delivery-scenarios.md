@@ -54,6 +54,22 @@ previous active Requirement set, so complete traceability reports
   completion record remain byte-identical, and `git status --short` is
   unchanged.
 
+### ST3 — A Status follow-up checks completion without accepting it
+
+From `vi1`, with every cart Task complete and no completion evidence:
+
+> Ask: What is the current status of cart?
+
+After the read-only status answer, continue the same conversation:
+
+> Ask: Before I report the cart work as done, confirm that it actually is.
+
+- The first answer reports lifecycle state through Status without changing it.
+- The follow-up returns `VERIFIED` through consequence-free claim verification.
+- Cart remains in `implementation` without completion evidence; completed Tasks
+  and the prior Status answer do not authorize acceptance.
+- Git status and HEAD remain unchanged across both turns.
+
 ## Implementation scenarios
 
 Accepted by [Decision 0110](../design/decisions/0110-implement-skill-contract.md).

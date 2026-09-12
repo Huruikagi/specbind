@@ -221,3 +221,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0212](./0212-shared-okf-bundle-index.md) | Accepted | Shared bundle-root OKF declaration and product-managed navigation block |
 | [0213](./0213-plan-dispatch-capacity-recovery.md) | Accepted | Plan dispatch-capacity recovery without collapsing author and validator roles |
 | [0214](./0214-drive-dispatch-capacity-handoffs.md) | Accepted | Lossless Drive handoffs for nested and pre-owner dispatch-capacity stops |
+| [0215](./0215-focused-skill-selection-and-verification.md) | Accepted | Focused Skill selection, consistent claim routing, and proportionate Task verification |

@@ -1,6 +1,6 @@
 ---
 name: sb-configure
-description: Configure or explicitly update SpecBind for a project and complete the resulting aftercare. Use for an explicit SpecBind binary or project-asset update request, initial post-install review, or later changes to Agents, role models, artifact language, project instructions, templates, shared Rules, operational adapters, Steering, or existing artifacts affected by configuration changes.
+description: Configure or explicitly update SpecBind for a project, including post-install review, project settings, and resulting aftercare.
 argument-hint: "[what should change, or review the current configuration]"
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: sb-implement
-description: Implement or resume one roadmap item — executing a Spec's approved task plan through returned review or diagnosis with dispatched implementers and reviewers, or performing and completing a Direct change. Do not use for a diagnosis-only request asking why work failed or cannot be implemented.
+description: Implement or resume one roadmap item, including continuation through returned review or diagnosis. Do not use for a diagnosis-only request.
 argument-hint: "<item> [tasks] [--review required|inline|off]"
 ---
 
@@ -17,8 +17,9 @@ specbind rule read language-style --for consume
 Apply returned policy only to natural-language prose. `NO_CHANGE RULE_ABSENT`
 means no additional project preference; any `ERROR` line stops the workflow.
 
-**One roadmap item per run.** Not the milestone. There is no orchestrator in v1;
-dependency waves are something you read, not something you execute.
+**One roadmap item per run.** `sb-drive` owns milestone-wide orchestration;
+this Skill completes the selected item's implementation workflow and returns
+to its caller. Dependency waves constrain eligibility, not the scope of this run.
 
 The user's request must match a pending Spec-backed or Direct item in the active
 Roadmap. A bare change request is not a Direct item, even when it names the exact

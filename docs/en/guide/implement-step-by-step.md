@@ -101,6 +101,13 @@ Tasks sequentially and completes implementation, review, verification, CLI
 progress recording, and the project adapter's checkpoint for each Task before
 moving on.
 
+Run the required checks that apply to each Task's change. Add tests when they
+prove changed behavior or a meaningful regression; a prose-only edit does not
+need tests that mirror its wording. Once required checks pass, proceed to review.
+Repeat or broaden verification for a later change, failure, unresolved concern,
+or explicit project requirement. The whole-Spec completion validation in the
+next step remains mandatory.
+
 If implementation exposes a Requirements, Design, Contract, or Tasks defect,
 Implement does not rewrite that upstream artifact. Fresh diagnosis identifies
 the owner, the affected Gate is explicitly invalidated, and work resumes
@@ -118,6 +125,12 @@ $sb-status csv-export
 Validation evaluates the implementation against current Requirements and
 Design. A `GO` result and accepted completion evidence complete the Spec-backed
 item and may make dependent Roadmap items actionable.
+
+Use `sb-verify-completion` to check whether work is truly done without updating
+completion state. `sb-status` explains current lifecycle state;
+`sb-validate-implementation` validates for acceptance of completion evidence.
+Reporting checks already executed does not require a separate verification
+Skill invocation each time.
 
 ## 8. Choose the next boundary
 

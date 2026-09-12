@@ -529,13 +529,13 @@ fn authorized_lifecycle_completion_routes_to_validation_not_status() {
             .description
             .contains("do not use to judge whether completed implementation is actually done")
     );
-    assert!(
-        skill::find("sb-status")
-            .expect("status skill")
-            .body()
-            .expect("status body")
-            .contains("use\n`sb-validate-implementation`")
-    );
+    let status_body = skill::find("sb-status")
+        .expect("status skill")
+        .body()
+        .expect("status body");
+    assert!(status_body.contains("`sb-verify-completion`"));
+    assert!(status_body.contains("explicitly authorizes recording completion on `GO`"));
+    assert!(status_body.contains("keep the claim check consequence-free"));
 
     let claim_verification = skill::find("sb-verify-completion").expect("claim verification skill");
     assert!(
