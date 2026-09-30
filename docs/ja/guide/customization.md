@@ -384,6 +384,24 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
 `.agents/skills/`と`AGENTS.md`の共通形式だけを導入する場合は`--agent generic`を
 指定します。`generic`には役割定義がないため、`agentRoles`の対象にはできません。
 
+役割ごとの既定値は次のとおりです。
+
+| 役割 | Codexのモデル | Codexの推論強度 | Claude Codeのモデルエイリアス |
+| --- | --- | --- | --- |
+| `planner` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `implementer` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `reviewer` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `debugger` | `gpt-6-astra` | `high` | `opus` |
+| `researcher` | `gpt-6-luna` | `medium` | `haiku` |
+
+Codexの既定値は[公式のモデル案内](https://learn.chatgpt.com/docs/models)に基づいています。
+Claude Codeは、接続先の推奨バージョンに追従する
+[モデルエイリアス](https://code.claude.com/docs/en/model-config#model-aliases)を使います。
+2026-10-01時点で、最新のClaude CodeからAnthropic APIに接続した場合、`sonnet`は
+Sonnet 5.5、`opus`はOpus 5.5、`haiku`はHaiku 4.5を指します。実際に使われるバージョンは、
+クライアント、接続先、環境変数による上書きに依存します。モデルを利用できるかどうかは、
+アカウントにも依存します。
+
 実装、レビュー、調査といった役割ごとに、使うモデルを変えることもできます。
 `.specbind.json`の`agentRoles`で上書きしてください。Codexでは、あわせて
 `reasoningEffort`も指定できます。
@@ -393,7 +411,7 @@ specbind install --dry-run --agent codex --language ja --spec-dir .specbind --pr
   "agentRoles": {
     "codex": {
       "implementer": {
-        "model": "gpt-5.6-sol",
+        "model": "gpt-6-astra",
         "reasoningEffort": "high"
       }
     },

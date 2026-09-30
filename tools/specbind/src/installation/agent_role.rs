@@ -111,7 +111,7 @@ pub struct AgentRole {
 static ROLES: &[AgentRole] = &[
     AgentRole {
         selector: "planner",
-        default_model: "gpt-5.6-terra",
+        default_model: "gpt-6.1-sol",
         default_reasoning_effort: ReasoningEffort::Medium,
         default_claude_model: "sonnet",
         description: "Use for fresh SpecBind planning-phase and contract-review dispatches.",
@@ -119,7 +119,7 @@ static ROLES: &[AgentRole] = &[
     },
     AgentRole {
         selector: "implementer",
-        default_model: "gpt-5.6-terra",
+        default_model: "gpt-6.1-sol",
         default_reasoning_effort: ReasoningEffort::Medium,
         default_claude_model: "sonnet",
         description: "Use for one implementation or repair task dispatched by sb-implement.",
@@ -127,7 +127,7 @@ static ROLES: &[AgentRole] = &[
     },
     AgentRole {
         selector: "reviewer",
-        default_model: "gpt-5.6-terra",
+        default_model: "gpt-6.1-sol",
         default_reasoning_effort: ReasoningEffort::Medium,
         default_claude_model: "sonnet",
         description: "Use for independent SpecBind task review and validation evidence dispatches.",
@@ -135,7 +135,7 @@ static ROLES: &[AgentRole] = &[
     },
     AgentRole {
         selector: "debugger",
-        default_model: "gpt-5.6-sol",
+        default_model: "gpt-6-astra",
         default_reasoning_effort: ReasoningEffort::High,
         default_claude_model: "opus",
         description: "Use for fresh-context root-cause diagnosis dispatched by SpecBind workflows.",
@@ -143,7 +143,7 @@ static ROLES: &[AgentRole] = &[
     },
     AgentRole {
         selector: "researcher",
-        default_model: "gpt-5.6-luna",
+        default_model: "gpt-6-luna",
         default_reasoning_effort: ReasoningEffort::Medium,
         default_claude_model: "haiku",
         description: "Use for bounded read-only investigation dispatched by SpecBind skills.",

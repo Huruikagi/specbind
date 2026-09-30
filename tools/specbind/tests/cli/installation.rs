@@ -824,7 +824,7 @@ fn shows_the_complete_configuration_without_claiming_global_readiness() {
             )
             .and(predicate::str::contains("    Agents: codex\n"))
             .and(predicate::str::contains(
-                "    codex/implementer: state=default model=gpt-5.6-terra reasoning_effort=medium\n",
+                "    codex/implementer: state=default model=gpt-6.1-sol reasoning_effort=medium\n",
             ))
             .and(predicate::str::contains(
                 "    spec/requirements: current-default\n",
@@ -983,12 +983,23 @@ fn installs_codex_roles_with_cost_aware_defaults() {
         )
         .expect("installed Codex role")
     };
-    let implementer = role("implementer");
-    assert!(implementer.contains("model = \"gpt-5.6-terra\""));
-    assert!(implementer.contains("model_reasoning_effort = \"medium\""));
-    assert!(role("reviewer").contains("model = \"gpt-5.6-terra\""));
-    assert!(role("debugger").contains("model = \"gpt-5.6-sol\""));
-    assert!(role("researcher").contains("model = \"gpt-5.6-luna\""));
+    for (name, model, effort) in [
+        ("planner", "gpt-6.1-sol", "medium"),
+        ("implementer", "gpt-6.1-sol", "medium"),
+        ("reviewer", "gpt-6.1-sol", "medium"),
+        ("debugger", "gpt-6-astra", "high"),
+        ("researcher", "gpt-6-luna", "medium"),
+    ] {
+        let installed = role(name);
+        assert!(
+            installed.contains(&format!("model = \"{model}\"")),
+            "{name}"
+        );
+        assert!(
+            installed.contains(&format!("model_reasoning_effort = \"{effort}\"")),
+            "{name}"
+        );
+    }
 }
 
 #[test]
@@ -1028,7 +1039,7 @@ fn applies_only_project_capability_overrides_to_codex_roles() {
 
     let reviewer = fs::read_to_string(root.path().join(".codex/agents/specbind-reviewer.toml"))
         .expect("overridden reviewer role");
-    assert!(reviewer.contains("model = \"gpt-5.6-terra\""));
+    assert!(reviewer.contains("model = \"gpt-6.1-sol\""));
     assert!(reviewer.contains("model_reasoning_effort = \"high\""));
 
     let mut show = specbind_command();
@@ -1041,10 +1052,10 @@ fn applies_only_project_capability_overrides_to_codex_roles() {
                 "    codex/implementer: state=overridden model=gpt-5.6-luna reasoning_effort=low\n",
             )
             .and(predicate::str::contains(
-                "    codex/reviewer: state=overridden model=gpt-5.6-terra reasoning_effort=high\n",
+                "    codex/reviewer: state=overridden model=gpt-6.1-sol reasoning_effort=high\n",
             ))
             .and(predicate::str::contains(
-                "    codex/planner: state=default model=gpt-5.6-terra reasoning_effort=medium\n",
+                "    codex/planner: state=default model=gpt-6.1-sol reasoning_effort=medium\n",
             )),
         );
 }

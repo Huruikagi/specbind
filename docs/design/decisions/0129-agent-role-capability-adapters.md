@@ -28,11 +28,22 @@ Product-managed skills may name these registered roles:
 
 | Role | Work | Codex default | Claude Code default |
 | --- | --- | --- | --- |
-| `specbind-planner` | planning phases and contract review | `gpt-5.6-terra`, `medium` | `sonnet` |
-| `specbind-implementer` | one implementation or repair task | `gpt-5.6-terra`, `medium` | `sonnet` |
-| `specbind-reviewer` | independent task review and validation evidence | `gpt-5.6-terra`, `medium` | `sonnet` |
-| `specbind-debugger` | fresh root-cause diagnosis | `gpt-5.6-sol`, `high` | `opus` |
-| `specbind-researcher` | bounded read-only investigation | `gpt-5.6-luna`, `medium` | `haiku` |
+| `specbind-planner` | planning phases and contract review | `gpt-6.1-sol`, `medium` | `sonnet` |
+| `specbind-implementer` | one implementation or repair task | `gpt-6.1-sol`, `medium` | `sonnet` |
+| `specbind-reviewer` | independent task review and validation evidence | `gpt-6.1-sol`, `medium` | `sonnet` |
+| `specbind-debugger` | fresh root-cause diagnosis | `gpt-6-astra`, `high` | `opus` |
+| `specbind-researcher` | bounded read-only investigation | `gpt-6-luna`, `medium` | `haiku` |
+
+Defaults refreshed on 2026-10-01 using the official
+[Codex model guidance](https://learn.chatgpt.com/docs/models) and
+[Claude Code model configuration](https://code.claude.com/docs/en/model-config).
+The Codex tiers move from GPT-5.6 Terra/Sol/Luna to GPT-6.1 Sol/GPT-6 Astra/GPT-6
+Luna respectively, preserving each role's reasoning effort. Claude Code keeps
+its family aliases: current clients on the Anthropic API resolve `sonnet` and
+`opus` to Sonnet 5.5 and Opus 5.5; provider and environment overrides can change
+that resolution. Haiku remains the bounded-research tier. Fable is available
+through a project override rather than raising the default diagnosis tier's
+cost and access requirements.
 
 The names describe semantic roles, not a host mechanism. A skill uses the
 registered role when the host provides it and otherwise dispatches an ordinary
@@ -137,9 +148,9 @@ protocol selector continue to travel in every dispatch brief under Decision
 
 ## Consequences
 
-- Common implementation and review work defaults to Terra on Codex and Sonnet
+- Common implementation and review work defaults to GPT-6.1 Sol on Codex and Sonnet
   on Claude Code, while bounded research drops to Luna or Haiku and rare
-  diagnosis rises to Sol or Opus.
+  diagnosis rises to Astra or Opus.
 - The same skill body reaches a comparable capability distribution on both
   supported hosts, so dispatch cost no longer depends on which agent a project
   installed.

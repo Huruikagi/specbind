@@ -308,6 +308,23 @@ The v1 `specDir` cannot be changed after installation. Agents and language are
 stored in `.specbind.json`; Agents may be added later. Use `remove-agent` for
 one integration and `uninstall` for the whole project integration.
 
+The default role models are:
+
+| Role | Codex model | Codex reasoning effort | Claude Code model alias |
+| --- | --- | --- | --- |
+| `planner` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `implementer` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `reviewer` | `gpt-6.1-sol` | `medium` | `sonnet` |
+| `debugger` | `gpt-6-astra` | `high` | `opus` |
+| `researcher` | `gpt-6-luna` | `medium` | `haiku` |
+
+Codex defaults follow the [official model guidance](https://learn.chatgpt.com/docs/models).
+Claude Code uses [model aliases](https://code.claude.com/docs/en/model-config#model-aliases)
+that follow the provider's recommended version. As of 2026-10-01, current Claude
+Code clients on the Anthropic API resolve `sonnet` and `opus` to Sonnet 5.5 and
+Opus 5.5; `haiku` remains Haiku 4.5. Resolution depends on the client, provider,
+and environment overrides. Model access also depends on your account.
+
 Override role capabilities through `.specbind.json` rather than editing
 generated role files:
 
@@ -316,7 +333,7 @@ generated role files:
   "agentRoles": {
     "codex": {
       "implementer": {
-        "model": "gpt-5.6-sol",
+        "model": "gpt-6-astra",
         "reasoningEffort": "high"
       }
     },
