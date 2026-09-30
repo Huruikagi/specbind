@@ -162,10 +162,21 @@ and `Skill` allowed; a denied tool is printed after the reply and makes the turn
 environment-blocked rather than a product result.
 
 The Codex path uses `codex exec` and `codex exec resume` with the default
-driver profile above and a `workspace-write` sandbox. Its argument handling and
-thread resumption are verified, but no Codex measurement has been recorded
-through it yet; record the first one as evidence about ENV-0004 and ENV-0005
-rather than assuming they are gone.
+driver profile above and a `workspace-write` sandbox. It disables memory use
+and generation, login shells, and shell-profile environment capture on every
+turn. A PowerShell profile that activates mise can otherwise replace the
+fixture-first PATH with a different SpecBind installation. Codex still uses
+the host's authentication, configuration, and safety policy; unlike the Claude
+Code path, it does not promise exclusion of all user-level instructions or
+Skills. Inspect the actual actions for contamination before crediting a run.
+The full Codex commands are retained in the action digest, including long
+native Windows paths. Record measured evidence about ENV-0004 and ENV-0005
+rather than assuming they are gone. The initial `fc7ffe8` R1 attempt exposed
+the memory and shell-profile contamination and is recorded as
+[environment-invalid](./runs/2026-09-30-codex-fc7ffe8-r1-real-session.md).
+
+Offline harness regression checks (no model calls) run with
+`python tools/specbind/scripts/test_forward_test_drive.py`.
 
 The debrief continues the same session with `send` after judgment. Compare
 `git status --short` and `HEAD` before and after it, as below.

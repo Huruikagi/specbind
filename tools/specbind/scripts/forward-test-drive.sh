@@ -122,6 +122,12 @@ run_turn() {
         set -- "$@" codex exec
         [ "$turn" = 01 ] || set -- "$@" resume "$session"
         set -- "$@" --json -o "$reply" -c 'sandbox_mode="workspace-write"'
+        # A login profile can replace the fixture-first PATH (for example,
+        # mise activation in PowerShell). Memories leak earlier test answers.
+        # Apply these on resume too; keep host authentication and safety policy.
+        set -- "$@" -c 'allow_login_shell=false' \
+            -c 'shell_environment_policy.experimental_use_profile=false' \
+            -c 'memories.use_memories=false' -c 'memories.generate_memories=false'
         [ -n "$model" ] && set -- "$@" -m "$model"
         [ -n "$effort" ] && set -- "$@" -c "model_reasoning_effort=\"$effort\""
         set -- "$@" -
@@ -211,7 +217,9 @@ else:
     for event in events:
         item = event.get("item") or {}
         if event.get("type") == "item.completed" and item.get("command"):
-            actions.append(f"command: {short(item.get('command'))}")
+            # Native Windows shell paths can consume the entire short() limit
+            # before the Skill path or lifecycle command becomes visible.
+            actions.append("command: " + " ".join(item["command"].split()))
     if not os.path.exists(reply_path):
         open(reply_path, "w", encoding="utf-8").close()
         problems.append("the run wrote no final message")
