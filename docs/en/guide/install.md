@@ -53,8 +53,16 @@ outside its markers.
 
 ### `--project-instructions`
 
-Adds a marked SpecBind block to `AGENTS.md` or `CLAUDE.md` without changing
-text outside the marker. Recommended in most projects.
+Adds a marked SpecBind block to the root `AGENTS.md` without changing text
+outside the marker. Recommended in most projects. Every Agent, including Claude
+Code, reads the same block, so SpecBind never creates `CLAUDE.md`.
+
+Claude Code reads `AGENTS.md` only while no `CLAUDE.md` exists. If your project
+keeps its own `CLAUDE.md`, add an `@AGENTS.md` line to it so Claude Code also
+loads the SpecBind block. A block that an earlier SpecBind release wrote to
+`CLAUDE.md` is removed by the next `specbind install`; the rest of that file is
+kept, and the file itself is deleted only when the block was its entire
+content.
 
 ### `--with-adoption` (only when needed)
 
@@ -84,7 +92,7 @@ The main installed surfaces are:
 .codex/agents/specbind-*.toml    # Codex role configuration
 .claude/skills/sb-*/             # Claude Code
 .claude/agents/specbind-*.md     # Claude Code role configuration
-AGENTS.md / CLAUDE.md            # when project instructions are enabled
+AGENTS.md                        # when project instructions are enabled
 ```
 
 An installation with `--with-adoption` additionally contains

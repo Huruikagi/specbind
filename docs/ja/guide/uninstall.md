@@ -16,10 +16,13 @@ PATH、miseなどのパッケージマネージャー設定は削除しません
 specbind remove-agent codex
 ```
 
-計画には、Codex用の製品管理のスキル、5つの役割定義、`AGENTS.md`の
-マーカーで囲まれたブロック、`.specbind.json`の更新が正確なパスで表示されます。
-Claude Code連携、`.specbind/`以下のSpecsや設定、マーカー外の
-`AGENTS.md`本文は保持されます。
+計画には、Codex用の製品管理のスキル、5つの役割定義、`.specbind.json`の更新が
+正確なパスで表示されます。Claude Code連携と`.specbind/`以下のSpecsや設定は
+保持されます。`AGENTS.md`のマーカーで囲まれたブロックはClaude Codeを含む
+すべてのエージェントが読むため、エージェントが1つでも残る限り`retain`として
+保持され、アンインストール時にだけ削除されます。Claude Codeを外す場合や
+アンインストール時には、以前のリリースが`CLAUDE.md`に書いたブロックも削除され、
+ファイルの他の部分は保持されます。
 
 `generic`も選ばれている場合、Codexと共有する`.agents/skills/`以下の管理対象スキルと
 `AGENTS.md`の管理ブロックは`retain`として表示され、Codex固有の役割定義だけが削除

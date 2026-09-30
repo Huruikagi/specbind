@@ -16,11 +16,14 @@ For example, inspect the Codex removal plan:
 specbind remove-agent codex
 ```
 
-The plan identifies the exact Codex Skills, five role definitions, marked
-`AGENTS.md` block, and `.specbind.json` update. Claude Code integration,
-Specs and settings below `.specbind/`, and text outside the managed marker are
-retained. Shared `.agents/skills/` and `AGENTS.md` targets are retained when
-another selected Agent still needs them.
+The plan identifies the exact Codex Skills, five role definitions, and
+`.specbind.json` update. Claude Code integration and Specs and settings below
+`.specbind/` are retained. Every selected Agent, Claude Code included, reads the
+marked `AGENTS.md` block, so it is retained while any Agent remains and is
+removed only by uninstall. Shared `.agents/skills/` targets are likewise
+retained when another selected Agent still needs them. Removing Claude Code, or
+uninstalling, also removes a block an earlier release wrote to `CLAUDE.md` while
+keeping the rest of that file.
 
 Apply the reviewed plan with:
 

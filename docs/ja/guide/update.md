@@ -95,7 +95,7 @@ Gitアダプターがコミットを許可していない場合は、報告さ�
 | --- | --- | --- |
 | `specbind`バイナリ | mise | `mise upgrade`または明示的な`mise use`で更新 |
 | `.agents/skills/sb-*`、`.claude/skills/sb-*`などの製品管理対象 | SpecBind | `specbind install`で現在の埋め込み版へ置換。廃止された対象は計画に表示して削除 |
-| `AGENTS.md`または`CLAUDE.md`のSpecBind管理ブロック | SpecBind | マーカー内だけを更新し、周囲の文章を保持 |
+| `AGENTS.md`のSpecBind管理ブロック | SpecBind | マーカー内だけを更新し、周囲の文章を保持。以前のリリースが`CLAUDE.md`に書いたブロックは計画に表示して削除 |
 | `.specbind/settings/`以下のテンプレート、ルール、アダプター | プロジェクト | 既存ファイルを上書きしない。新しく追加された既定ファイルがなければ作成 |
 | Specs、Roadmap、Gate、リリース履歴 | プロジェクト | `specbind install`では変更しない |
 

@@ -42,7 +42,7 @@
 .claude/skills/sb-*/                    Product   Claude Code用のスキル
 .codex/agents/specbind-*.toml           Product   Codexの役割定義
 .claude/agents/specbind-*.md            Product   Claude Codeの役割定義
-AGENTS.md / CLAUDE.md（マーカー内）       Product   プロジェクト指示（任意）
+AGENTS.md（マーカー内）                   Product   プロジェクト指示（任意）
 ```
 
 ## プロジェクト設定

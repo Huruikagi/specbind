@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0216](./0216-agents-md-sole-instruction-target.md) changes the
+`claude-code` project-instruction surface below from `CLAUDE.md` to the shared
+`AGENTS.md` block.
+
 ## Context
 
 SpecBind currently selects `claude-code` or `codex` as an installation host.

@@ -97,7 +97,7 @@ through Git and do not need to repeat the update.
 | --- | --- | --- |
 | `specbind` executable | mise | Updated by `mise upgrade` or an explicit `mise use` |
 | Product-managed targets such as `.agents/skills/sb-*` and `.claude/skills/sb-*` | SpecBind | Replaced with the current embedded versions by `specbind install`; retired targets are shown and removed through the plan |
-| SpecBind-managed block in `AGENTS.md` or `CLAUDE.md` | SpecBind | Only the marked block is maintained; surrounding text is preserved |
+| SpecBind-managed block in `AGENTS.md` | SpecBind | Only the marked block is maintained; surrounding text is preserved. A block an earlier release wrote to `CLAUDE.md` is removed through the plan |
 | Templates, Rules, and Adapters below `.specbind/settings/` | Project | Existing files are never overwritten; newly introduced missing defaults may be created |
 | Specs, Roadmap, Gates, and release history | Project | Not changed by `specbind install` |
 

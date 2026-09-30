@@ -98,7 +98,12 @@ if [ "$instrument_dispatch" = "--instrument-dispatch" ]; then
     mkdir -p .forward-test
     printf '%s\n' ".forward-test/" >> .gitignore
 
+    # Every agent reads AGENTS.md. Creating CLAUDE.md here would make Claude
+    # Code ignore AGENTS.md and with it the installed SpecBind block.
     for instructions in CLAUDE.md AGENTS.md; do
+        if [ "$instructions" = CLAUDE.md ] && [ ! -f CLAUDE.md ]; then
+            continue
+        fi
         [ -f "$instructions" ] || : > "$instructions"
         cat >> "$instructions" <<'EOF'
 

@@ -8,6 +8,9 @@ implementation classification rather than guarding ordinary work alone.
 Decision 0175 supersedes the separate `specbind-adopt-existing` routing bullet:
 existing-implementation adoption is now a conditional route of
 `specbind-discovery`.
+[Decision 0216](./0216-agents-md-sole-instruction-target.md) supersedes the
+Targets table: root `AGENTS.md` is now the only target for every Agent, and a
+block in `CLAUDE.md` is retired.
 
 ## Context
 

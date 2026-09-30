@@ -44,12 +44,16 @@ fn assert_review_recovery_routes(content: &str) {
 }
 
 #[test]
-fn writes_each_agent_its_own_instruction_file() {
-    // A shared file would leave one agent without instructions, because each
-    // reads only its own.
-    assert_eq!(project_instructions::target(Agent::ClaudeCode), "CLAUDE.md");
-    assert_eq!(project_instructions::target(Agent::Codex), "AGENTS.md");
-    assert_eq!(project_instructions::target(Agent::Generic), "AGENTS.md");
+fn writes_every_agent_the_shared_agents_file() {
+    // Claude Code reads AGENTS.md when no CLAUDE.md exists, so no selection
+    // creates CLAUDE.md; earlier releases' copy is a legacy target to retire.
+    assert_eq!(project_instructions::TARGET, "AGENTS.md");
+    assert_eq!(
+        project_instructions::legacy_targets(Agent::ClaudeCode),
+        &["CLAUDE.md"]
+    );
+    assert!(project_instructions::legacy_targets(Agent::Codex).is_empty());
+    assert!(project_instructions::legacy_targets(Agent::Generic).is_empty());
 }
 
 #[test]

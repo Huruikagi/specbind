@@ -109,7 +109,9 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
         .stdout(predicate::str::contains(
             "remove .agents/skills/sb-configure/references/aftercare.md [skill]",
         ))
-        .stdout(predicate::str::contains("retain AGENTS.md").not());
+        .stdout(predicate::str::contains(
+            "retain AGENTS.md [project-instructions]",
+        ));
     assert!(
         root.path()
             .join(".agents/skills/sb-status/SKILL.md")
@@ -155,9 +157,9 @@ fn plans_then_applies_one_agent_removal_without_touching_the_other_agent_or_know
     );
     assert!(root.path().join(".specbind").is_dir());
     let agents = fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md retained");
-    assert_eq!(agents, "# Project\n\nCodex rules.\n\n");
+    assert!(agents.starts_with("# Project\n\nCodex rules.\n\n<!-- specbind:block -->"));
     let claude = fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md retained");
-    assert!(claude.contains("<!-- specbind:block -->"));
+    assert_eq!(claude, "# Project\n\nClaude rules.\n");
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
     assert!(config.contains("claude-code"));
     assert!(!config.contains("codex"));
@@ -286,16 +288,21 @@ fn removing_generic_drops_only_its_unshared_surfaces() {
             .join(".agents/skills/sb-status/SKILL.md")
             .exists()
     );
-    assert_eq!(
-        fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md"),
-        "# Project\n\nCodex rules.\n\n"
+    assert!(
+        fs::read_to_string(root.path().join("AGENTS.md"))
+            .expect("AGENTS.md")
+            .contains("<!-- specbind:block -->"),
+        "the remaining Claude Code selection still reads the shared block"
     );
     assert!(
         root.path()
             .join(".claude/skills/sb-status/SKILL.md")
             .is_file()
     );
-    assert!(root.path().join("CLAUDE.md").is_file());
+    assert_eq!(
+        fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md"),
+        "# Project\n\nClaude rules.\n"
+    );
 }
 
 #[test]
@@ -435,19 +442,83 @@ fn apply_converges_from_exact_already_removed_targets() {
     fs::write(&agents_path, without_block).expect("simulate completed block removal");
 
     command(root.path())
-        .args(["remove-agent", "codex", "--apply"])
+        .args(["uninstall", "--knowledge", "retain", "--apply"])
         .assert()
         .success()
-        .stdout(predicate::str::starts_with("OK AGENT_REMOVAL_APPLIED:"))
+        .stdout(predicate::str::starts_with("OK PROJECT_UNINSTALL_APPLIED:"))
         .stdout(predicate::str::contains(
             "absent .agents/skills/sb-status/SKILL.md",
         ))
         .stdout(predicate::str::contains("absent AGENTS.md"));
-    let config = fs::read_to_string(root.path().join(".specbind.json")).expect("config");
-    assert!(!config.contains("codex"));
+    assert!(!root.path().join(".specbind.json").exists());
     assert!(
-        root.path()
+        !root
+            .path()
             .join(".claude/skills/sb-status/SKILL.md")
-            .is_file()
+            .exists()
+    );
+}
+
+/// Simulates a block an earlier release maintained in `CLAUDE.md`.
+fn with_legacy_claude_block(root: &Path) {
+    let path = root.join("CLAUDE.md");
+    let mut claude = fs::read_to_string(&path).expect("CLAUDE.md");
+    claude.push('\n');
+    claude.push_str(&specbind::project_instructions::block());
+    fs::write(&path, claude).expect("legacy block");
+    git(root, &["add", "CLAUDE.md"]);
+    git(root, &["commit", "-qm", "earlier release block"]);
+}
+
+#[test]
+fn removing_claude_code_retires_a_legacy_claude_md_block() {
+    let root = installed(&["codex", "claude-code"], true);
+    with_legacy_claude_block(root.path());
+
+    command(root.path())
+        .args(["remove-agent", "claude-code", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "retain AGENTS.md [project-instructions]",
+        ))
+        .stdout(predicate::str::contains(
+            "update CLAUDE.md [project-instructions]",
+        ));
+
+    assert_eq!(
+        fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md"),
+        "# Project\n\nClaude rules.\n\n"
+    );
+    assert!(
+        fs::read_to_string(root.path().join("AGENTS.md"))
+            .expect("AGENTS.md")
+            .contains("<!-- specbind:block -->")
+    );
+}
+
+#[test]
+fn uninstall_retires_a_legacy_claude_md_block() {
+    let root = installed(&["claude-code"], true);
+    with_legacy_claude_block(root.path());
+
+    command(root.path())
+        .args(["uninstall", "--knowledge", "retain", "--apply"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "update AGENTS.md [project-instructions]",
+        ))
+        .stdout(predicate::str::contains(
+            "update CLAUDE.md [project-instructions]",
+        ));
+
+    assert_eq!(
+        fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md"),
+        "# Project\n\nClaude rules.\n\n"
+    );
+    assert_eq!(
+        fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md"),
+        "# Project\n\nCodex rules.\n\n"
     );
 }

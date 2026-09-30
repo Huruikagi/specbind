@@ -78,7 +78,9 @@ fn apply_entry(project_root: &Path, entry: &PlanEntry) -> Result<(), InstallIssu
                 error.to_string(),
             )
         })?;
-        if let Some(parent) = target.parent() {
+        // A retired root instruction file must never take the project root
+        // with it, so only a package directory below the root is pruned.
+        if let Some(parent) = target.parent().filter(|parent| *parent != project_root) {
             match fs::remove_dir(parent) {
                 Ok(()) => {}
                 Err(error) if error.kind() == std::io::ErrorKind::DirectoryNotEmpty => {}

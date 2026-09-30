@@ -381,8 +381,8 @@ pub(super) fn rule_entries(
     Ok(entries)
 }
 
-/// Plans the Decision 0099 marked block in each selected agent's root
-/// instruction file.
+/// Plans the Decision 0099 marked block in root `AGENTS.md` and retires any
+/// block an earlier release wrote to `CLAUDE.md`.
 ///
 /// Nothing is planned when project instructions are disabled. Disabling does not
 /// remove an existing block: that would delete text from a project-owned file,
@@ -391,66 +391,126 @@ pub(super) fn project_instruction_entries(
     project_root: &Path,
     resolved: &ResolvedInputs,
 ) -> Result<Vec<PlanEntry>, InstallIssues> {
-    if !resolved.project_instructions {
+    if !resolved.project_instructions || resolved.agents.is_empty() {
         return Ok(vec![]);
     }
-    let mut entries = Vec::new();
+    let relative = project_instructions::TARGET;
+    let current = read_instruction_file(project_root, relative)?;
+    let applied = project_instructions::apply(current.as_deref())
+        .map_err(|error| one_issue(error.code, Some(relative.to_owned()), error.message))?;
+    // The entry describes the block, not the file. Adding a block to an
+    // existing file removes no text, so it is a creation rather than a
+    // Decision 0077 replacement and needs no committed clean repository.
+    let action = if applied.had_block {
+        if current.as_deref() == Some(applied.content.as_str()) {
+            PlanAction::Keep
+        } else {
+            PlanAction::Replace
+        }
+    } else {
+        PlanAction::Create
+    };
+    let detail = match action {
+        PlanAction::Keep => Some("already matches the current product asset".to_owned()),
+        PlanAction::Create if current.is_some() => {
+            Some("appended to the existing instruction file".to_owned())
+        }
+        _ => None,
+    };
+    let mut entries = vec![PlanEntry {
+        action,
+        path: relative.to_owned(),
+        category: "project-instructions",
+        detail,
+        content: (action != PlanAction::Keep).then_some(applied.content),
+        expected_current: current,
+        resume_content: None,
+    }];
     let mut planned = std::collections::BTreeSet::new();
     for agent in &resolved.agents {
-        let relative = project_instructions::target(*agent);
-        if !planned.insert(relative) {
-            continue;
+        for legacy in project_instructions::legacy_targets(*agent) {
+            if planned.insert(*legacy)
+                && let Some(entry) = legacy_instruction_entry(project_root, legacy)?
+            {
+                entries.push(entry);
+            }
         }
-        let target = project_root.join(relative);
-        let current = match fs::read(&target) {
-            Ok(bytes) => Some(String::from_utf8(bytes).map_err(|_| {
-                one_issue(
-                    "INSTALL_TARGET_NOT_UTF8",
-                    Some(relative.to_owned()),
-                    "agent instruction file must be UTF-8",
-                )
-            })?),
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
-            Err(error) => {
-                return Err(one_issue(
-                    "INSTALL_TARGET_UNREADABLE",
-                    Some(relative.to_owned()),
-                    error.to_string(),
-                ));
-            }
-        };
-        let applied = project_instructions::apply(current.as_deref())
-            .map_err(|error| one_issue(error.code, Some(relative.to_owned()), error.message))?;
-        // The entry describes the block, not the file. Adding a block to an
-        // existing file removes no text, so it is a creation rather than a
-        // Decision 0077 replacement and needs no committed clean repository.
-        let action = if applied.had_block {
-            if current.as_deref() == Some(applied.content.as_str()) {
-                PlanAction::Keep
-            } else {
-                PlanAction::Replace
-            }
-        } else {
-            PlanAction::Create
-        };
-        let detail = match action {
-            PlanAction::Keep => Some("already matches the current product asset".to_owned()),
-            PlanAction::Create if current.is_some() => {
-                Some("appended to the existing instruction file".to_owned())
-            }
-            _ => None,
-        };
-        entries.push(PlanEntry {
-            action,
-            path: relative.to_owned(),
-            category: "project-instructions",
-            detail,
-            content: (action != PlanAction::Keep).then_some(applied.content),
-            expected_current: current,
-            resume_content: None,
-        });
     }
     Ok(entries)
+}
+
+/// Plans removal of a block an earlier release maintained in a legacy target.
+///
+/// Claude Code ignores `AGENTS.md` while a `CLAUDE.md` exists, so a retained
+/// copy would keep a stale block in front of the agent. Removing it deletes
+/// text, which makes it a Decision 0077 replacement behind the committed clean
+/// repository guard. A file holding only the block is removed entirely.
+fn legacy_instruction_entry(
+    project_root: &Path,
+    relative: &str,
+) -> Result<Option<PlanEntry>, InstallIssues> {
+    // A link is project wiring, commonly `CLAUDE.md -> AGENTS.md`; editing
+    // through it would strip the current block from its target.
+    match fs::symlink_metadata(project_root.join(relative)) {
+        Ok(metadata) if crate::guarded_fs::is_link_like(&metadata) || !metadata.is_file() => {
+            return Ok(None);
+        }
+        _ => {}
+    }
+    let Some(current) = read_instruction_file(project_root, relative)? else {
+        return Ok(None);
+    };
+    let Some(remaining) = project_instructions::remove(&current)
+        .map_err(|error| one_issue(error.code, Some(relative.to_owned()), error.message))?
+    else {
+        return Ok(None);
+    };
+    let entry = if remaining.is_empty() {
+        PlanEntry {
+            action: PlanAction::Remove,
+            path: relative.to_owned(),
+            category: "project-instructions",
+            detail: Some("retired instruction file contains only the managed block".to_owned()),
+            content: None,
+            expected_current: Some(current),
+            resume_content: None,
+        }
+    } else {
+        PlanEntry {
+            action: PlanAction::Replace,
+            path: relative.to_owned(),
+            category: "project-instructions",
+            detail: Some(
+                "retire the managed block and preserve project text; Claude Code reads AGENTS.md only when no CLAUDE.md exists"
+                    .to_owned(),
+            ),
+            content: Some(remaining),
+            expected_current: Some(current),
+            resume_content: None,
+        }
+    };
+    Ok(Some(entry))
+}
+
+fn read_instruction_file(
+    project_root: &Path,
+    relative: &str,
+) -> Result<Option<String>, InstallIssues> {
+    match fs::read(project_root.join(relative)) {
+        Ok(bytes) => String::from_utf8(bytes).map(Some).map_err(|_| {
+            one_issue(
+                "INSTALL_TARGET_NOT_UTF8",
+                Some(relative.to_owned()),
+                "agent instruction file must be UTF-8",
+            )
+        }),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(one_issue(
+            "INSTALL_TARGET_UNREADABLE",
+            Some(relative.to_owned()),
+            error.to_string(),
+        )),
+    }
 }
 
 /// Plans the product-managed skill assets for every selected agent.

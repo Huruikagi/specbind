@@ -222,3 +222,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0213](./0213-plan-dispatch-capacity-recovery.md) | Accepted | Plan dispatch-capacity recovery without collapsing author and validator roles |
 | [0214](./0214-drive-dispatch-capacity-handoffs.md) | Accepted | Lossless Drive handoffs for nested and pre-owner dispatch-capacity stops |
 | [0215](./0215-focused-skill-selection-and-verification.md) | Accepted | Focused Skill selection, consistent claim routing, and proportionate Task verification |
+| [0216](./0216-agents-md-sole-instruction-target.md) | Accepted | Root `AGENTS.md` as the sole project-instruction target and legacy `CLAUDE.md` block retirement |

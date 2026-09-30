@@ -20,12 +20,24 @@ pub struct MarkerError {
     pub message: String,
 }
 
-/// Returns the root-relative instruction file one agent reads.
+/// The root-relative instruction file every selected agent reads.
+///
+/// Decision 0216 makes root `AGENTS.md` the single target: Claude Code reads it
+/// when no `CLAUDE.md` exists, so a Claude-only selection no longer creates one.
+pub const TARGET: &str = "AGENTS.md";
+
+/// The Claude Code instruction file that earlier releases maintained a block in.
+///
+/// Install, agent removal, and uninstall retire a valid block found here so a
+/// stale copy cannot shadow the current one in `AGENTS.md`.
+pub const LEGACY_CLAUDE_TARGET: &str = "CLAUDE.md";
+
+/// Returns the legacy instruction files that may still hold a block for one agent.
 #[must_use]
-pub fn target(agent: Agent) -> &'static str {
+pub fn legacy_targets(agent: Agent) -> &'static [&'static str] {
     match agent {
-        Agent::ClaudeCode => "CLAUDE.md",
-        Agent::Codex | Agent::Generic => "AGENTS.md",
+        Agent::ClaudeCode => &[LEGACY_CLAUDE_TARGET],
+        Agent::Codex | Agent::Generic => &[],
     }
 }
 

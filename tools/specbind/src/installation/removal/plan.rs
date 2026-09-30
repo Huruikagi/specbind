@@ -78,13 +78,9 @@ pub(super) fn agent_entries(
                 entries.push(container_entry(project_root, root)?);
             }
         }
-        let instruction_path = project_instructions::target(*agent);
+        let instruction_path = project_instructions::TARGET;
         if planned.insert(instruction_path.to_owned()) {
-            if project_instructions_enabled
-                && remaining
-                    .iter()
-                    .any(|selected| project_instructions::target(*selected) == instruction_path)
-            {
+            if project_instructions_enabled && !remaining.is_empty() {
                 entries.push(retained_entry(
                     project_root,
                     instruction_path,
@@ -99,8 +95,24 @@ pub(super) fn agent_entries(
                 )?);
             }
         }
+        // A block an earlier release wrote to a legacy target has no remaining
+        // owner, so it is removed whenever one is present and otherwise omitted.
+        for legacy in project_instructions::legacy_targets(*agent) {
+            if !planned.insert((*legacy).to_owned()) || is_link(project_root, legacy) {
+                continue;
+            }
+            let entry = instruction_entry(project_root, legacy, project_instructions_enabled)?;
+            if matches!(entry.action, RemovalAction::Remove | RemovalAction::Update) {
+                entries.push(entry);
+            }
+        }
     }
     Ok(entries)
+}
+
+fn is_link(project_root: &Path, relative: &str) -> bool {
+    fs::symlink_metadata(project_root.join(relative))
+        .is_ok_and(|metadata| guarded_fs::is_link_like(&metadata))
 }
 
 fn role_target(agent: Agent, role: &agent_role::AgentRole) -> Option<String> {

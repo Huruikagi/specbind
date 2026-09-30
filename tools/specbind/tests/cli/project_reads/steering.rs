@@ -240,13 +240,13 @@ type: SpecBind Steering
 }
 
 #[test]
-fn installs_the_marked_block_into_each_agent_instruction_file() {
+fn installs_one_shared_marked_block_into_agents_md() {
     let root = tempfile::tempdir().expect("temporary project root");
     git(root.path(), &["init"]);
     write(root.path(), "AGENTS.md", "# Project\n\nOur own rules.\n");
 
     let mut command = specbind_command();
-    command
+    let output = command
         .current_dir(root.path())
         .args([
             "install",
@@ -258,13 +258,18 @@ fn installs_the_marked_block_into_each_agent_instruction_file() {
             "en",
             "--project-instructions",
         ])
-        .assert()
-        .success()
-        .stdout(
-            predicate::str::contains("- create AGENTS.md [project-instructions]").and(
-                predicate::str::contains("- create CLAUDE.md [project-instructions]"),
-            ),
-        );
+        .output()
+        .expect("install");
+    assert!(output.status.success());
+    let stdout = String::from_utf8(output.stdout).expect("UTF-8 stdout");
+    assert_eq!(
+        stdout
+            .matches("- create AGENTS.md [project-instructions]")
+            .count(),
+        1,
+        "{stdout}"
+    );
+    assert!(!stdout.contains("CLAUDE.md"), "{stdout}");
 
     // The project's own content survives; the block is appended after it.
     let agents = fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md");
@@ -277,10 +282,8 @@ fn installs_the_marked_block_into_each_agent_instruction_file() {
         agents.trim_end().ends_with("<!-- /specbind:block -->"),
         "{agents}"
     );
-
-    // A missing file is created holding the block alone.
-    let claude = fs::read_to_string(root.path().join("CLAUDE.md")).expect("CLAUDE.md");
-    assert!(claude.starts_with("<!-- specbind:block -->\n"), "{claude}");
+    // Claude Code reads AGENTS.md only while no CLAUDE.md exists.
+    assert!(!root.path().join("CLAUDE.md").exists());
 
     // Re-running changes nothing.
     let mut again = specbind_command();
@@ -290,6 +293,132 @@ fn installs_the_marked_block_into_each_agent_instruction_file() {
         .assert()
         .success()
         .stdout(predicate::str::starts_with("NO_CHANGE INSTALL_UP_TO_DATE"));
+}
+
+#[test]
+fn claude_only_install_creates_agents_md_rather_than_claude_md() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+
+    let mut command = specbind_command();
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+            "--project-instructions",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "- create AGENTS.md [project-instructions]",
+        ));
+
+    let agents = fs::read_to_string(root.path().join("AGENTS.md")).expect("AGENTS.md");
+    assert!(agents.starts_with("<!-- specbind:block -->\n"), "{agents}");
+    assert!(!root.path().join("CLAUDE.md").exists());
+}
+
+#[test]
+fn install_retires_a_legacy_claude_md_block() {
+    let block = specbind::project_instructions::block();
+    for (claude, expected) in [
+        (block.clone(), None),
+        (
+            format!("# Claude rules\n\n{block}"),
+            Some("# Claude rules\n\n".to_owned()),
+        ),
+    ] {
+        let root = tempfile::tempdir().expect("temporary project root");
+        git(root.path(), &["init", "-q"]);
+        git(root.path(), &["config", "user.email", "test@example.com"]);
+        git(root.path(), &["config", "user.name", "Test User"]);
+        write(root.path(), "CLAUDE.md", &claude);
+        git(root.path(), &["add", "."]);
+        git(root.path(), &["commit", "-qm", "earlier release"]);
+
+        let mut dry_run = specbind_command();
+        dry_run
+            .current_dir(root.path())
+            .args([
+                "install",
+                "--agent",
+                "claude-code",
+                "--language",
+                "en",
+                "--project-instructions",
+                "--dry-run",
+            ])
+            .assert()
+            .success()
+            .stdout(predicate::str::contains(if expected.is_some() {
+                "- replace CLAUDE.md [project-instructions]"
+            } else {
+                "- remove CLAUDE.md [project-instructions]"
+            }));
+        assert_eq!(
+            fs::read_to_string(root.path().join("CLAUDE.md")).expect("unchanged"),
+            claude
+        );
+
+        let mut install = specbind_command();
+        install
+            .current_dir(root.path())
+            .args([
+                "install",
+                "--agent",
+                "claude-code",
+                "--language",
+                "en",
+                "--project-instructions",
+            ])
+            .assert()
+            .success();
+        assert_eq!(
+            fs::read_to_string(root.path().join("CLAUDE.md")).ok(),
+            expected
+        );
+        assert!(
+            fs::read_to_string(root.path().join("AGENTS.md"))
+                .expect("AGENTS.md")
+                .contains("<!-- specbind:block -->")
+        );
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn install_leaves_a_claude_md_link_to_agents_md_alone() {
+    let root = tempfile::tempdir().expect("temporary project root");
+    git(root.path(), &["init"]);
+    std::os::unix::fs::symlink("AGENTS.md", root.path().join("CLAUDE.md")).expect("link");
+
+    let mut command = specbind_command();
+    command
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--agent",
+            "claude-code",
+            "--language",
+            "en",
+            "--project-instructions",
+        ])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("CLAUDE.md [project-instructions]").not());
+
+    let through_link = fs::read_to_string(root.path().join("CLAUDE.md")).expect("link target");
+    assert!(through_link.contains("<!-- specbind:block -->"));
+    assert!(
+        fs::symlink_metadata(root.path().join("CLAUDE.md"))
+            .expect("link")
+            .file_type()
+            .is_symlink()
+    );
 }
 
 #[test]

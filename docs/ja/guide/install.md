@@ -68,9 +68,16 @@ SpecBindが管理する成果物（`requirements.md`や`design.md`など）の�
 
 ### `--project-instructions`
 
-`AGENTS.md`または`CLAUDE.md`に、マーカーで囲んだSpecBindの案内ブロックを
-追加します。もともと書いてある既存の文章はそのまま残ります。通常は指定することを
-おすすめします。
+ルートの`AGENTS.md`に、マーカーで囲んだSpecBindの案内ブロックを追加します。
+もともと書いてある既存の文章はそのまま残ります。通常は指定することをおすすめします。
+Claude Codeを含むすべてのエージェントが同じブロックを読むため、SpecBindが
+`CLAUDE.md`を作成することはありません。
+
+Claude Codeが`AGENTS.md`を読むのは`CLAUDE.md`が存在しない場合だけです。
+プロジェクト独自の`CLAUDE.md`を使っている場合は、そこに`@AGENTS.md`の行を追加して
+Claude CodeにもSpecBindの案内ブロックを読み込ませてください。以前のSpecBindが
+`CLAUDE.md`に書いたブロックは、次の`specbind install`で削除されます。ファイルの
+他の部分は保持され、ブロックだけで構成されていた場合にだけファイル自体が削除されます。
 
 ### `--with-adoption`（必要な場合だけ）
 
@@ -99,7 +106,7 @@ specbind install --dry-run --agent codex --language ja --project-instructions
 .codex/agents/specbind-*.toml    # Codexの役割別モデル設定
 .claude/skills/sb-*/             # Claude Code
 .claude/agents/specbind-*.md     # Claude Codeの役割別モデル設定
-AGENTS.md / CLAUDE.md            # 指示の統合を有効にした場合
+AGENTS.md                        # 指示の統合を有効にした場合
 ```
 
 `--with-adoption`を指定した場合は、選択したエージェントに応じて

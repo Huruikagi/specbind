@@ -41,7 +41,7 @@ sets a different `specDir`, read `.specbind/` as that directory.
 .claude/skills/sb-*/                    Product   Skills for Claude Code
 .codex/agents/specbind-*.toml           Product   Codex role definitions
 .claude/agents/specbind-*.md            Product   Claude Code role definitions
-AGENTS.md / CLAUDE.md (marked block)    Product   Project instructions (optional)
+AGENTS.md (marked block)                Product   Project instructions (optional)
 ```
 
 ## Project configuration

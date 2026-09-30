@@ -4,6 +4,11 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+- Maintain the project-instruction block only in root `AGENTS.md`, which Claude
+  Code now reads, so a Claude Code installation no longer creates `CLAUDE.md`.
+  A block written to `CLAUDE.md` by an earlier release is removed by the next
+  install, agent removal, or uninstall while the rest of that file is kept.
+
 ## 1.5.1 - 2026-09-11
 
 - Preserve existing-implementation establishment provenance when adding a Spec
