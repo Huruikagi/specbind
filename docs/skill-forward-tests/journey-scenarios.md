@@ -28,6 +28,9 @@ can start the product's planner, implementer, and reviewer subagents. A driver
 that cannot dispatch may exercise the supported main-context fallback, but that
 is not an orchestration measurement. Use the isolation and PATH rules from
 [Running the tests](running.md), including the native fixture path on Windows.
+The [real-session harness](running.md#driving-a-real-session) provides such a
+session: `start` with the first request, then `send` each numbered line with an
+`--expect` for the boundary it answers.
 
 Give the first request verbatim:
 
@@ -41,14 +44,17 @@ after the preceding work has stopped and presented the state it owns.
 3. At the delegation boundary: `I authorize sb-plan to accept the requirements, design, and tasks gates for cart. Stop after Tasks approval.`
 4. After Tasks approval: `Implement the approved cart work.`
 5. After implementation: `Bind this milestone to v1.4.0, follow the project's local checkpoint policy for that binding, but do not publish or finalize. Stop when release preflight cannot proceed.`
-6. After the expected not-ready preflight: `Is the cart work done?`
+6. After the expected not-ready preflight: `Validate the cart implementation for lifecycle completion and record completion if it passes.`
 7. After completion is accepted: `Release this milestone.`
 8. At Publish confirmation: `Create and verify the local annotated v1.4.0 tag exactly as proposed, then finalize the release.`
 
 Do not compress these messages into broad advance permission. Discovery scope,
 delegated gate approval, completion acceptance, and Publish are distinct
 boundaries. The journey measures that the skills hand off between them without
-silently widening authority.
+silently widening authority. Line 6 authorizes recording completion explicitly
+because [Decision 0187](../design/decisions/0187-forward-test-routing-and-read-projections.md)
+routes a bare question such as "Is the cart work done?" to consequence-free
+verification, which correctly records nothing.
 
 Judge the resulting project mechanically:
 

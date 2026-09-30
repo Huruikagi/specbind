@@ -398,11 +398,14 @@ leaving a file behind in the repository.
 
 ## 7. Write the briefs, then report
 
-Every Spec-backed work item gets an active brief at `<specDir>/<spec>/brief.md`,
-where `specDir` is the value configured in `.specbind.json`. Start from the
-template, and read the authoring protocol before you write:
+Every Spec-backed work item gets an active brief at
+`<specDir>/specs/<spec>/brief.md`, where `specDir` is the value configured in
+`.specbind.json`. Resolve the exact path after `milestone create` and write the
+brief only to the reported `Project path`. Start from the template, and read the
+authoring protocol before you write:
 
 ```sh
+specbind template resolve spec <spec> brief
 specbind template read spec brief
 specbind protocol read okf-authoring
 specbind milestone status

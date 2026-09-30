@@ -104,6 +104,72 @@ reasoning effort are properties of the test driver, not of the installed product
 skill. Override them only for an intentional model comparison, and record the
 override with the result. A few rules keep the run honest.
 
+### Driving a real session
+
+A subagent is not a real session. It does not see the fixture's installed
+Skills in its registry (ENV-0001), cannot start the product's own subagents, and
+correctly refuses an approval relayed by the session that spawned it (ENV-0003).
+The real-session harness addresses all three by starting the agent's own
+non-interactive CLI in the fixture directory and resuming that same session for
+every later turn. Its Claude Code runs have measured registry selection,
+user-turn approvals, and, in HP1, ten fresh dispatched contexts:
+
+```sh
+sh tools/specbind/scripts/forward-test-scenario.sh r1 /tmp/sb-r1 en
+sh tools/specbind/scripts/forward-test-drive.sh start claude-code /tmp/sb-r1 \
+    "write the requirements for the new order spec." --model <model> --effort <level>
+# Judge the draft boundary from the fixture, then answer it.
+sh tools/specbind/scripts/forward-test-drive.sh send /tmp/sb-r1 \
+    "I approve the Requirements and active Requirement ID selection you just presented. Stop after Requirements." \
+    --expect 'specbind spec status order | grep -q "requirements=not_reached"'
+```
+
+Each message is a user turn of a top-level session whose project is the
+fixture, so a confirmation is the maintainer's own consent rather than a relay.
+Use the harness for any scenario that crosses an approval, dispatches, or
+measures Skill selection; those previously required a manually started
+session.
+
+The harness owns the isolation the rules below otherwise ask you to state:
+
+- The session runs in the fixture with the fixture CLI first on PATH, so the
+  message is only the scenario's quoted request, with no working directory,
+  PATH line, or "stands alone" preface.
+- Host agent variables are removed from the child environment, apart from
+  credential, provider, and platform-executable selectors. The first probe from
+  a Claude Code host otherwise resumed the host's own session ID.
+- Claude Code loads project and local settings only, so the maintainer's user
+  `CLAUDE.md`, hooks, and settings do not reach the run, and auto memory is off
+  so one run cannot remember another at the same fixture path.
+- Every `--expect` command runs in the fixture before the message is sent. If
+  one fails, nothing is sent and the harness exits 3. Use it to prove the run
+  stopped at the boundary a confirmation is about to answer; a confirmation sent
+  past its boundary is broad advance permission.
+
+Turn records live beside the fixture in `<fixture>.drive/`: each message, the
+raw event stream, the final reply, and an action digest listing every tool call
+with its command or Skill name. The digest is how Skill selection becomes
+checkable: `Skill: sb-plan` means the platform registry selected the installed
+Skill, and a run that only read `SKILL.md` from disk shows a `Read` instead. The
+reply is the run's own unprompted output, so expectations about what the agent
+told the user are read there.
+
+For Claude Code, every turn also checks the session's own initialization
+record and exits 5, environment-invalid, when the session cwd is not the fixture,
+an installed Skill is missing from the registry, no subagent dispatch tool is
+available, or auto memory is on. Permission mode is `acceptEdits` with `Bash`
+and `Skill` allowed; a denied tool is printed after the reply and makes the turn
+environment-blocked rather than a product result.
+
+The Codex path uses `codex exec` and `codex exec resume` with the default
+driver profile above and a `workspace-write` sandbox. Its argument handling and
+thread resumption are verified, but no Codex measurement has been recorded
+through it yet; record the first one as evidence about ENV-0004 and ENV-0005
+rather than assuming they are gone.
+
+The debrief continues the same session with `send` after judgment. Compare
+`git status --short` and `HEAD` before and after it, as below.
+
 **Give the request, never the method.** State the working directory, state that
 `specbind` is on PATH, and then give the maintainer's request as a maintainer
 would phrase it. Naming a skill or a command teaches the answer.
@@ -187,11 +253,11 @@ When the driver is a Claude Code Agent-tool subagent, pick scenarios that do not
 cross an approval. Such a subagent hears the driving session, not the user, and
 refuses a relayed approval on the correct ground that another agent's message is
 not the user's consent — so DS1, DS4, T1, T4 and every other authoring phase stop
-with a correct draft and an unapproved gate. Measure those from a real session
-started in the fixture directory. The same driver has no dispatch tool and does
-not see the fixture's installed skills in its Skill registry; it reads
-`SKILL.md` from disk, which is faithful to the document but leaves dispatch on
-the main-context fallback.
+with a correct draft and an unapproved gate. Measure those through the
+[real-session harness](#driving-a-real-session). The same driver has no dispatch
+tool and does not see the fixture's installed skills in its Skill registry; it
+reads `SKILL.md` from disk, which is faithful to the document but leaves
+dispatch on the main-context fallback.
 
 Name the inherited rules when you say the fixture stands alone. "Instructions
 from any other repository do not apply" was not enough in the 2026-08-29 batch:
@@ -205,8 +271,9 @@ pushing stopped it.
 dispatches parallel investigation. Driving those with a subagent would nest one
 inside another.
 
-Prefer a real session started in the fixture directory when the driver cannot
-nest subagents. A subagent driver is valid only when its platform supports the
+Prefer a real session, driven through the
+[real-session harness](#driving-a-real-session), when the driver cannot nest
+subagents. A subagent driver is valid only when its platform supports the
 product's nested dispatch and leaves enough capacity for it. In either case,
 the dispatch log below is what proves the path actually ran.
 

@@ -549,3 +549,16 @@ fn contract_review_transfers_requirements_and_scope_repairs_to_their_owners() {
 }
 
 use super::*;
+
+#[test]
+fn spec_local_writers_name_the_configured_spec_directory() {
+    let discovery = skill_resource_text("sb-discovery", "references/ordinary.md");
+    assert!(discovery.contains("`<specDir>/specs/<spec>/brief.md`"));
+    assert!(discovery.contains("specbind template resolve spec <spec> brief"));
+    assert!(discovery.contains("write the\nbrief only to the reported `Project path`"));
+    assert!(!discovery.contains("`<specDir>/<spec>/"));
+
+    let tasks = skill_resource_text("sb-plan", "references/tasks.md");
+    assert!(tasks.contains("Write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`"));
+    assert!(tasks.contains("printed by `artifact list` are relative to `specDir`"));
+}

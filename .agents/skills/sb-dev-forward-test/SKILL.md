@@ -88,7 +88,26 @@ the product workflow before it starts.
 
 ## Driving a run
 
-Use a subagent with no prior context.
+Prefer a real top-level session through the harness whenever the scenario
+crosses an approval, dispatches, or measures Skill selection. A subagent cannot
+do any of those faithfully (ENV-0001, ENV-0003):
+
+```sh
+sh tools/specbind/scripts/forward-test-drive.sh start <claude-code|codex> /tmp/sb-<scenario> "<quoted request>"
+sh tools/specbind/scripts/forward-test-drive.sh send /tmp/sb-<scenario> "<confirmation>" --expect '<boundary check>'
+```
+
+The harness runs the agent's own CLI in the fixture, removes host-session
+variables, keeps the maintainer's user-level instructions out, and resumes the
+same session for each turn. Send only the scenario's quoted request: the
+working-directory, PATH, and stands-alone statements below are what the harness
+already makes true. Give every confirmation an `--expect` proving the run
+stopped at that boundary; a failed check sends nothing. Exit 5 is
+environment-invalid. Read `<fixture>.drive/turns/NN-actions.txt` for which Skill
+the registry selected, and see the forward-test running guide for the full
+contract.
+
+Otherwise use a subagent with no prior context.
 
 ### Codex driver profile
 
