@@ -111,9 +111,8 @@ Skills in its registry (ENV-0001), cannot start the product's own subagents, and
 correctly refuses an approval relayed by the session that spawned it (ENV-0003).
 The real-session harness addresses all three by starting the agent's own
 non-interactive CLI in the fixture directory and resuming that same session for
-every later turn. Its first run measured registry selection and a user-turn
-approval; the dispatch tool is present, but no dispatch has yet been measured
-through it:
+every later turn. Its Claude Code runs have measured registry selection,
+user-turn approvals, and, in HP1, ten fresh dispatched contexts:
 
 ```sh
 sh tools/specbind/scripts/forward-test-scenario.sh r1 /tmp/sb-r1 en

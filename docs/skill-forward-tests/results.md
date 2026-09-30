@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `7443689` | HP1 — scenario-invalid as written (line 6 "done" question routes to consequence-free verification under Decision 0187); with corrected line 6 the judge passed all checks with 11 dispatch contexts; FT-0056 opened | [Real-session harness HP1](./runs/2026-09-30-claude-code-7443689-hp1-real-session.md) |
 | 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `7443689` | DS1, T1 — pass; both approvals accepted as user turns; DS1 answered one maintainer question before approval; Design investigation dispatch correctly not taken on the small fixture | [Real-session harness DS1 and T1](./runs/2026-09-30-claude-code-7443689-ds1-t1-real-session.md) |
 | 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `8bde0c6` + real-session harness | R1 — pass; registry selected `sb-plan` and the user-turn approval was accepted (ENV-0001 and ENV-0003 absent) | [Real-session harness R1](./runs/2026-09-30-claude-code-8bde0c6-r1-real-session.md) |
 | 2026-09-13 | Codex | `gpt-6-astra` / `medium` | `9b5089f` + Decision 0215 working tree | ST3 — pass; Status follow-up verified the claim without accepting completion | [Focused Skills, Astra](./runs/2026-09-13-codex-9b5089f-focused-skills-astra.md) |
