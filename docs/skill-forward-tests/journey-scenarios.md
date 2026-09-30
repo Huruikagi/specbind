@@ -28,6 +28,9 @@ can start the product's planner, implementer, and reviewer subagents. A driver
 that cannot dispatch may exercise the supported main-context fallback, but that
 is not an orchestration measurement. Use the isolation and PATH rules from
 [Running the tests](running.md), including the native fixture path on Windows.
+The [real-session harness](running.md#driving-a-real-session) provides such a
+session: `start` with the first request, then `send` each numbered line with an
+`--expect` for the boundary it answers.
 
 Give the first request verbatim:
 
