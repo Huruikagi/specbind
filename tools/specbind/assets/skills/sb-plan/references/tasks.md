@@ -121,8 +121,10 @@ specbind protocol read task-planning
 The protocol owns the judgment: coverage is delivery rather than mapping, every
 task is work that will be done, and order carries the dependencies.
 
-Write `tasks.yaml` at the Spec's directory. A few things the schema enforces and
-the protocol assumes:
+Write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`, beside that Spec's
+`spec.yaml`, where `specDir` is the value configured in `.specbind.json`. Paths
+printed by `artifact list` are relative to `specDir`, not the repository root. A
+few things the schema enforces and the protocol assumes:
 
 - Task IDs are **positional** — `1`, `2`, `1.1`, `1.2` — and match array
   position. There are no gaps and no third level.
