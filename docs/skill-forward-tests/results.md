@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-30 | Codex | `gpt-5.6-terra` / `medium`, headless session | `b33b217` | R1 — pass; installed `sb-plan` read and used (ENV-0005 absent); explicit Requirements approval and checkpoint succeeded under `workspace-write` (ENV-0004 absent at this boundary) | [Codex real-session R1](./runs/2026-09-30-codex-b33b217-r1-real-session.md) |
 | 2026-09-30 | Codex | `gpt-5.6-terra` / `medium`, headless session | `fc7ffe8` | R1 — environment-invalid; host memory and PowerShell profile contaminated the session and CLI selection; approval not attempted | [Initial Codex real-session R1](./runs/2026-09-30-codex-fc7ffe8-r1-real-session.md) |
 | 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `9e2a20e` | D4, T1 — pass; FT-0056 confirmed resolved: first-attempt Brief and Tasks paths were correct | [FT-0056 confirmation](./runs/2026-09-30-claude-code-9e2a20e-d4-t1-spec-paths.md) |
 | 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `7443689` | HP1 — scenario-invalid as written (line 6 "done" question routes to consequence-free verification under Decision 0187); with corrected line 6 the judge passed all checks with 11 dispatch contexts; FT-0056 opened | [Real-session harness HP1](./runs/2026-09-30-claude-code-7443689-hp1-real-session.md) |

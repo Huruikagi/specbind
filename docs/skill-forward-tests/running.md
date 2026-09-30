@@ -174,6 +174,11 @@ native Windows paths. Record measured evidence about ENV-0004 and ENV-0005
 rather than assuming they are gone. The initial `fc7ffe8` R1 attempt exposed
 the memory and shell-profile contamination and is recorded as
 [environment-invalid](./runs/2026-09-30-codex-fc7ffe8-r1-real-session.md).
+The corrected harness then [passed R1 on
+`b33b217`](./runs/2026-09-30-codex-b33b217-r1-real-session.md): fixture `sb-plan`
+was read and used, and the user-turn Requirements approval and local checkpoint
+both succeeded. Other lifecycle and host-safety boundaries remain unmeasured
+through this Codex path.
 
 Offline harness regression checks (no model calls) run with
 `python tools/specbind/scripts/test_forward_test_drive.py`.
