@@ -1,6 +1,29 @@
 use specbind::yaml::{self, ParseError};
 
 #[test]
+fn empty_nodes_remain_null_and_quoted_scalars_remain_strings() {
+    let value = yaml::parse("omitted:\nexplicit: ~\nsequence:\n  -\n  - ~\n  - ''\n  - '~'\n")
+        .expect("empty YAML nodes must remain representable as JSON null");
+
+    assert_eq!(
+        value,
+        serde_json::json!({
+            "omitted": null,
+            "explicit": null,
+            "sequence": [null, null, "", "~"],
+        })
+    );
+}
+
+#[test]
+fn rejects_duplicate_keys_with_empty_values() {
+    let error = yaml::parse("value:\nvalue:\n")
+        .expect_err("empty values must not bypass duplicate-key rejection");
+
+    assert!(matches!(error, ParseError::DuplicateKey { key } if key == "value"));
+}
+
+#[test]
 fn rejects_duplicate_keys() {
     let error = yaml::parse("schema_version: 1\nschema_version: 1\nactive_change: null\n")
         .expect_err("duplicate keys must fail");
