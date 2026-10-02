@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-02 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `49c8da0` | VI1, RL3, I1, DR1, DR2, Q4 — pass with real dispatch measured (I1 3, DR1 3, DR2 7, Q4 7 contexts); DR6 — pass after one continuation turn, 11 contexts; A2, G1 — product failure; I7 — scenario-invalid clean-worktree expectation; one environment-invalid VI1 attempt (ENV-0006) | [Dispatch batch](./runs/2026-10-02-claude-code-49c8da0-dispatch-batch.md) |
 | 2026-09-30 | Codex | `gpt-5.6-terra` / `medium`, headless session | `b33b217` | R1 — pass; installed `sb-plan` read and used (ENV-0005 absent); explicit Requirements approval and checkpoint succeeded under `workspace-write` (ENV-0004 absent at this boundary) | [Codex real-session R1](./runs/2026-09-30-codex-b33b217-r1-real-session.md) |
 | 2026-09-30 | Codex | `gpt-5.6-terra` / `medium`, headless session | `fc7ffe8` | R1 — environment-invalid; host memory and PowerShell profile contaminated the session and CLI selection; approval not attempted | [Initial Codex real-session R1](./runs/2026-09-30-codex-fc7ffe8-r1-real-session.md) |
 | 2026-09-30 | Claude Code | `claude-sonnet-5-5` / `medium`, headless session | `9e2a20e` | D4, T1 — pass; FT-0056 confirmed resolved: first-attempt Brief and Tasks paths were correct | [FT-0056 confirmation](./runs/2026-09-30-claude-code-9e2a20e-d4-t1-spec-paths.md) |
@@ -183,9 +184,9 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 0
-- Fixed, behavioral confirmation pending: 6
-- Active environment limitations: 5
+- Open reproduced product findings: 6
+- Fixed, behavioral confirmation pending: 4
+- Active environment limitations: 6
 
 The authoritative rows and stable identifiers are in
 [the findings worklist](./findings.md). Historical resolved findings through the
