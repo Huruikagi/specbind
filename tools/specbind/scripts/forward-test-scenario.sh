@@ -1736,9 +1736,16 @@ EOF
             commit --quiet -m "Set up the i7 scenario"
         runner=$(python_runner)
         cart_tests "$runner"
+        # Verification guidance is fixture setup, not part of the pending Task.
+        # Keep only implementation and test paths in the uncommitted diff.
+        git add .specbind/steering/conventions.md
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Establish i7 verification guidance"
         cart_cap_implemented
         expect "the i7 implementation does not satisfy the approved Task" \
             'sh scripts/test.sh'
+        expect "the i7 Steering setup is still uncommitted" \
+            'test -z "$(git status --porcelain .specbind/steering)"'
         expect "the i7 implementation diff is absent" \
             'test -n "$(git status --porcelain src/cart.py tests/test_cart.py tests/__init__.py)"'
         expect "the later checkout boundary is already implemented" \

@@ -203,6 +203,9 @@ fn adoption_skill_keeps_evidence_separate_and_owns_non_release_finalization() {
         "ADOPTION_RESUME_READY",
         "handler.mode=reverse_resume",
         "explicitly asked to resume",
+        "no repository-size or complexity threshold",
+        "driver's own inspection does not count as either reader",
+        "If a required\nreader cannot start, report the environment block",
     ] {
         assert!(
             body.contains(required),

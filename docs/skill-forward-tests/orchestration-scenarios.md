@@ -43,6 +43,8 @@ Prepare `i6` with dispatch instrumentation, then ask:
   checkpoints.
 - Drive re-reads authoritative status only after the complete owning workflow
   returns. It may continue to validation, but it does not release the milestone.
+- Owners wait for internal roles in the same turn; no non-terminal owner
+  return or maintainer continuation is needed to reach validation.
 - The final worktree is clean.
 
 ### DR3 — Delegated Design recovery resumes delivery
@@ -117,6 +119,8 @@ Prepare `dr6`, then ask:
   completed by planning.
 - Canonical tests pass, all revised Tasks complete, and Drive reaches final
   implementation validation in this same run without Release execution.
+- No owner ends its turn merely waiting for an internal role, and no maintainer
+  continuation is needed to collect its result.
 
 ### DR7 — Capacity exhaustion before owner startup is resumable
 

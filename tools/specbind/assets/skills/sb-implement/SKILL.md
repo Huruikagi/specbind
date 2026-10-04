@@ -21,6 +21,15 @@ means no additional project preference; any `ERROR` line stops the workflow.
 this Skill completes the selected item's implementation workflow and returns
 to its caller. Dependency waves constrain eligibility, not the scope of this run.
 
+Keep the owning turn active until every started internal role has returned and
+the selected item's workflow has reached its stopping point. Prefer foreground
+dispatch; if the host runs a role in the background, wait for its terminal
+result in this turn and continue the cycle. A progress message such as "waiting
+for the implementer" is not a final response. Do not ask the caller or user to
+send "continue" merely to collect a running role's result. A real host failure,
+unavailable required input, or exhausted retry bound may still stop the workflow;
+report the reason, exact partial paths, and any receiver still running.
+
 The user's request must match a pending Spec-backed or Direct item in the active
 Roadmap. A bare change request is not a Direct item, even when it names the exact
 source file and tells you to edit it. If no active Roadmap or matching pending

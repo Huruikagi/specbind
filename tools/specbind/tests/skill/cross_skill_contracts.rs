@@ -33,6 +33,38 @@ fn drive_uses_authoritative_actions_and_parks_local_attention() {
 }
 
 #[test]
+fn owning_workflows_wait_without_replacing_live_receivers() {
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let drive = skill::find("sb-drive")
+            .expect("drive")
+            .render(agent)
+            .expect("render");
+        let implementation = skill::find("sb-implement")
+            .expect("implement")
+            .render(agent)
+            .expect("render");
+        for required in [
+            "continue that same\nreceiver once",
+            "Never start a replacement\nowner over its partial work",
+            "receiver identity, last progress, and exact partial",
+            "An actual capacity stop follows the separate contract",
+        ] {
+            assert!(
+                drive.contains(required),
+                "missing owner recovery: {required}"
+            );
+        }
+        assert!(implementation.contains("Keep the owning turn active"));
+        assert!(implementation.contains("wait for its terminal\nresult in this turn"));
+        assert!(implementation.contains("any receiver still running"));
+    }
+    let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
+    assert!(procedure.contains("relative to the configured `specDir`"));
+    assert!(procedure.contains("prefix the listed path with its exact `specDir`"));
+    assert!(procedure.contains("Require the implementer to read the governing artifacts itself"));
+}
+
+#[test]
 fn drive_preserves_nested_and_pre_owner_capacity_handoffs() {
     let body = skill::find("sb-drive")
         .expect("drive skill")

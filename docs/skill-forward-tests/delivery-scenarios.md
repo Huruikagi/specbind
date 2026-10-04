@@ -171,8 +171,9 @@ planned work to be implemented.
 
 ### I7 — A diagnosed review-scope defect gets one bounded fresh re-review
 
-Prepare `i7`, which leaves the correct cart implementation and tests as the
-pending Task's uncommitted diff. Continue the Task with the prior returned
+Prepare `i7`, which checkpoints its Steering verification guidance before
+leaving the correct cart implementation, runner, and tests as the pending
+Task's uncommitted diff. Continue the Task with the prior returned
 evidence below:
 
 > Ask: Continue the pending cart Task from the existing implementation diff.

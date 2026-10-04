@@ -37,8 +37,13 @@ the only supported writer of machine state.
 - Use `sb-validate-design` for an independent, read-only judgment of a Spec's
   Design. Use `sb-contract-review` for the milestone-wide Contract Review after
   participating Designs are approved.
-- Use `sb-gap-analysis` when the user explicitly asks to compare planned work
-  with the existing repository. Use `sb-release` only for an explicit request
+- Use `sb-gap-analysis` when the user asks what existing code a named planned
+  item can build on, what can be reused, or what is missing for that work.
+  Questions about available foundations select this Skill even without the
+  words "compare" or "gap analysis" and before Requirements exist. Research
+  persistence is optional; an analysis question does not require a file write.
+  General code explanations unrelated to planned work remain ordinary answers.
+  Use `sb-release` only for an explicit request
   to release and finalize the active milestone.
 - When the user asks to continue or recover a pending implementation and
   supplies a returned review or diagnosis, use `sb-implement`. It remains the

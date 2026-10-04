@@ -1,6 +1,6 @@
 ---
 name: sb-gap-analysis
-description: Compare what a change needs against what the repository already provides, and record the findings worth keeping. Informs the decision; does not make it.
+description: Find what existing code planned work can build on, reuse, or still needs, even before Requirements exist. Answer the analysis question; persist Research only when useful or requested.
 argument-hint: "<spec>"
 ---
 

@@ -10,6 +10,13 @@ fn assert_explicit_update_route(content: &str) {
 }
 
 fn assert_completion_routes(content: &str) {
+    assert!(content.contains("what existing code a named planned"));
+    assert!(content.contains("before Requirements exist. Research"));
+    assert!(
+        content.contains(
+            "General code explanations unrelated to planned work remain ordinary answers"
+        )
+    );
     assert!(content.contains("Use `sb-verify-completion` when the user asks"));
     assert!(
         content.contains("This route takes precedence whenever the request could also be read as")

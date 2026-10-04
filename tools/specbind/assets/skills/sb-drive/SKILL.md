@@ -81,6 +81,24 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
 - An unknown kind, target, or mode is an incompatible product surface. Stop
   rather than guessing a route.
 
+### Wait for the owning workflow to finish
+
+Require each owner to keep its turn active while its internal roles run and to
+return only at its workflow's stopping point. Prefer foreground dispatch; a
+background receiver still belongs to this Drive turn. Wait for its terminal
+handoff before interpreting lifecycle state or selecting another owner.
+
+"Waiting", "started", and internal-role progress are non-terminal updates. If
+an addressable owner ends its turn with only such an update, continue that same
+receiver once to collect its running roles and finish the same workflow. This
+does not grant authority or reset any retry budget. Never start a replacement
+owner over its partial work or take over its internal roles. If that continuation
+still returns no terminal handoff, or the receiver cannot be addressed, report
+`EXTERNAL_BLOCK` with the receiver identity, last progress, and exact partial
+paths after one Git/status reread. Preserve any known live receiver in the
+handoff and stop; do not imply the worktree is safe for another mutating owner.
+An actual capacity stop follows the separate contract below.
+
 ### Preserve dispatch-capacity handoffs
 
 When a `handler.kind=skill` receiver cannot start because the host's finite

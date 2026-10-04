@@ -29,6 +29,12 @@ specbind tasks show <spec> <task-id>
 specbind artifact list <spec>
 ```
 
+Inventory `path=` values are relative to the configured `specDir`, not the
+repository root. Prefer `specbind artifact read <spec> <selector> --for consume`
+using the listed selector. For a direct file read or a dispatch brief, read
+`.specbind.json` and prefix the listed path with its exact `specDir`;
+never assume `.specbind/` or pass an unqualified inventory path to a receiver.
+
 Read every `implementation-notes/<artifact-id>` selector the inventory names:
 
 ```sh
@@ -90,6 +96,9 @@ and the protocol it must read:
 ```sh
 specbind protocol read task-implementation
 ```
+
+Require the implementer to read the governing artifacts itself before editing.
+A paraphrase in the brief is orientation, not a substitute for those reads.
 
 After dispatch, let the implementer finish its work and verification and return
 the protocol's structured status. **Do not interrupt it, ask for an immediate

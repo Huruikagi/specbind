@@ -78,6 +78,12 @@ and tests, and one for structure, dependencies, and seams. If delegation is not
 available, collect those evidence lines yourself and say so in the proposal.
 All claims are about the fixed revision.
 
+This requirement has no repository-size or complexity threshold: even one or
+two small modules require both independent readers when delegation is exposed.
+The driver's own inspection does not count as either reader. If a required
+reader cannot start, report the environment block; do not silently replace it
+with local inspection or present the proposal as ready for confirmation.
+
 For each candidate Spec collect precise project-relative locators for:
 
 - externally observable behavior and acceptance evidence;
