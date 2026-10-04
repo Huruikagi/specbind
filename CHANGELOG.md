@@ -4,6 +4,17 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.5.2 - 2026-10-04
+
+- Report partial installation refresh progress and ensure project migration
+  catalog coverage includes the running binary version.
+- Preserve complete Drive capacity restart handoffs, dispatch the owning Skill
+  before helpers, and wait for delegated workflows through bounded recovery.
+- Clarify Skill selection, verification ownership, and implementation briefs
+  with direct reads of governing artifacts and configured artifact paths.
+- Refresh default Codex role models for GPT-6 and update Rust dependencies.
+- Reorganize the English and Japanese guides and references around installation,
+  updates, lifecycle concepts, and everyday workflows.
 - Maintain the project-instruction block only in root `AGENTS.md`, which Claude
   Code now reads, so a Claude Code installation no longer creates `CLAUDE.md`.
   A block written to `CLAUDE.md` by an earlier release is removed by the next
