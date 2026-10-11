@@ -1,0 +1,5 @@
+interface:
+  display_name: "sb-dev-merge-dependabot"
+  short_description: "Review and merge SpecBind Dependabot updates"
+  icon_small: "./assets/specbind.svg"
+  icon_large: "./assets/specbind.svg"

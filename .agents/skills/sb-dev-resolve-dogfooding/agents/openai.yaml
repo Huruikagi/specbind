@@ -1,0 +1,5 @@
+interface:
+  display_name: "sb-dev-resolve-dogfooding"
+  short_description: "Resolve SpecBind dogfooding findings"
+  icon_small: "./assets/specbind.svg"
+  icon_large: "./assets/specbind.svg"
