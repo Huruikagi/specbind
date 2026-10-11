@@ -1,5 +1,3 @@
 interface:
   display_name: "sb-dev-sync-docs"
   short_description: "Keep English and Japanese SpecBind docs aligned"
-  icon_small: "./assets/specbind.svg"
-  icon_large: "./assets/specbind.svg"

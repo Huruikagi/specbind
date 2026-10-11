@@ -1,5 +1,3 @@
 interface:
   display_name: "sb-dev-forward-test"
   short_description: "Run behavioral forward tests for SpecBind skills"
-  icon_small: "./assets/specbind.svg"
-  icon_large: "./assets/specbind.svg"
