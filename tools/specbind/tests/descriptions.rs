@@ -424,5 +424,5 @@ fn raw_probe_never_follows_symlinked_directories_or_documents() {
     std::os::unix::fs::symlink(outside.path(), root.path().join("knowledge/specs")).unwrap();
     let plan = project::plan(root.path(), "1.4.4", Some("1.5.0")).unwrap();
     assert!(matches!(plan.entries[1].status, project::Status::Blocked));
-    assert!(plan.entries[1].targets.is_empty());
+    assert_eq!(plan.entries[1].targets, [] as [String; 0]);
 }
