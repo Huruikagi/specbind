@@ -64,7 +64,10 @@ fn default_design_template_selection_classifies_main_and_ui() {
         .expect("selection rule")
         .content();
     let selectors = vec!["design/main".to_owned(), "design/ui".to_owned()];
-    assert!(rule::validate_design_template_selection(content, &selectors).is_empty());
+    assert_eq!(
+        rule::validate_design_template_selection(content, &selectors),
+        [] as [specbind::rule::RuleError; 0]
+    );
 }
 
 #[test]

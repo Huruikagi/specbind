@@ -492,7 +492,7 @@ fn reports_composed_spec_status_as_command_specific_json() {
         .expect("spec status runs");
 
     assert!(output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert_eq!(
@@ -765,7 +765,7 @@ fn reports_spec_status_failure_as_json_without_stderr_text() {
         .expect("spec status runs");
 
     assert!(!output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert_eq!(actual["status"], "error");

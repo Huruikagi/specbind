@@ -103,7 +103,7 @@ mod tests {
         );
 
         assert!(!output.success);
-        assert!(output.stdout.is_empty());
+        assert_eq!(output.stdout, Vec::<u8>::new());
         assert_eq!(
             output.stderr,
             b"ERROR BROKEN: message\\n\\t\\u{1b}\n  detail\\r\\u{7}\n".to_vec()
@@ -119,7 +119,7 @@ mod tests {
             output.stdout,
             b"NO_CHANGE UNCHANGED: Nothing changed.\n".to_vec()
         );
-        assert!(output.stderr.is_empty());
+        assert_eq!(output.stderr, Vec::<u8>::new());
     }
 
     #[test]

@@ -157,7 +157,10 @@ fn reports_completion_fresh_when_tasks_and_revision_are_current() {
     let report = freshness::evaluate(&spec, &current);
 
     assert_eq!(report.completion.status, FreshnessStatus::Fresh);
-    assert!(report.completion.issues.is_empty());
+    assert_eq!(
+        report.completion.issues,
+        [] as [specbind::domain::SemanticIssue; 0]
+    );
 }
 
 #[test]

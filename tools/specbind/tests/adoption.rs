@@ -210,7 +210,7 @@ fn reverse_shared_agreement_is_knowledge_and_preserves_the_adoption_handler() {
         .unwrap();
     let status: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
     let actions = status["data"]["actionable"].as_array().unwrap();
-    assert!(!actions.is_empty());
+    assert_ne!(actions, &Vec::<serde_json::Value>::new());
     assert!(
         actions
             .iter()

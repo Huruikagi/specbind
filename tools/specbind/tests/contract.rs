@@ -35,11 +35,23 @@ fn loads_the_strict_contract_profile() {
 #[test]
 fn accepts_the_explicit_empty_contract() {
     let document = contract(EMPTY).expect("empty Contract");
-    assert!(document.owns.is_empty());
-    assert!(document.exports.is_empty());
-    assert!(document.consumes.is_empty());
-    assert!(document.invariants.is_empty());
-    assert!(document.file_ownership.is_empty());
+    assert_eq!(document.owns, [] as [specbind::contract::DescribedEntry; 0]);
+    assert_eq!(
+        document.exports,
+        [] as [specbind::contract::DescribedEntry; 0]
+    );
+    assert_eq!(
+        document.consumes,
+        [] as [specbind::contract::ConsumesEntry; 0]
+    );
+    assert_eq!(
+        document.invariants,
+        [] as [specbind::contract::DescribedEntry; 0]
+    );
+    assert_eq!(
+        document.file_ownership,
+        [] as [specbind::contract::FileOwnershipEntry; 0]
+    );
 }
 
 #[test]

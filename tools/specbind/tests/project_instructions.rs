@@ -59,8 +59,14 @@ fn writes_every_agent_the_shared_agents_file() {
         project_instructions::legacy_targets(Agent::ClaudeCode),
         &["CLAUDE.md"]
     );
-    assert!(project_instructions::legacy_targets(Agent::Codex).is_empty());
-    assert!(project_instructions::legacy_targets(Agent::Generic).is_empty());
+    assert_eq!(
+        project_instructions::legacy_targets(Agent::Codex),
+        &[] as &[&str]
+    );
+    assert_eq!(
+        project_instructions::legacy_targets(Agent::Generic),
+        &[] as &[&str]
+    );
 }
 
 #[test]

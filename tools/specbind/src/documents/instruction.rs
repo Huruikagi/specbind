@@ -483,8 +483,14 @@ mod tests {
 
     #[test]
     fn live_artifacts_accept_durable_scopes_but_reject_create() {
-        assert!(validate_live("<!-- specbind:instruction maintain Keep. -->").is_empty());
-        assert!(validate_live("<!-- specbind:instruction consume Read. -->").is_empty());
+        assert_eq!(
+            validate_live("<!-- specbind:instruction maintain Keep. -->"),
+            Vec::<InstructionIssue>::new()
+        );
+        assert_eq!(
+            validate_live("<!-- specbind:instruction consume Read. -->"),
+            Vec::<InstructionIssue>::new()
+        );
         assert_eq!(
             validate_live("<!-- specbind:instruction create Start. -->")[0].code,
             "ARTIFACT_CREATE_INSTRUCTION_LEAK"
@@ -499,7 +505,10 @@ mod tests {
             "### <decision>\n",
         );
         let valid = "<!-- specbind:instruction maintain Preserve it. -->\n### Actual decision\n";
-        assert!(verify_materialization(template, valid).is_empty());
+        assert_eq!(
+            verify_materialization(template, valid),
+            Vec::<InstructionIssue>::new()
+        );
 
         let invalid = concat!(
             "<!-- specbind:instruction maintain Preserve only part. -->\n",
@@ -528,7 +537,10 @@ mod tests {
             "-->\n",
             "{{今日の天気}}の日に作成。{{今日の天気}}に合わせる。\n",
         );
-        assert!(validate_spec_template(valid, None).is_empty());
+        assert_eq!(
+            validate_spec_template(valid, None),
+            Vec::<InstructionIssue>::new()
+        );
 
         let missing = validate_spec_template("# `{{title}}` Requirements\n", None);
         assert_eq!(missing[0].code, "TEMPLATE_VARIABLE_BINDING_MISSING");
@@ -573,7 +585,7 @@ mod tests {
             ),
             None,
         );
-        assert!(legacy_bind.is_empty());
+        assert_eq!(legacy_bind, Vec::<InstructionIssue>::new());
     }
 
     #[test]
@@ -582,7 +594,7 @@ mod tests {
             "<!-- specbind:instruction create output=audience Ask who will read this. -->\n",
             "# Guidance for {{audience}}\n",
         );
-        assert!(validate_template(source).is_empty());
+        assert_eq!(validate_template(source), Vec::<InstructionIssue>::new());
     }
 
     #[test]
@@ -592,7 +604,10 @@ mod tests {
             "<!-- specbind:instruction create output=artifact_id Use the artifact identity. -->\n",
             "# `{{spec}}` Design — `{{artifact_id}}`\n",
         );
-        assert!(validate_spec_template(source, None).is_empty());
+        assert_eq!(
+            validate_spec_template(source, None),
+            Vec::<InstructionIssue>::new()
+        );
     }
 
     #[test]

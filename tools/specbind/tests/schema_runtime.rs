@@ -27,7 +27,10 @@ fn loads_contract_v1_into_its_wire_model() {
         "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n",
     )
     .expect("minimal Contract should load");
-    assert!(document.exports.is_empty());
+    assert_eq!(
+        document.exports,
+        [] as [specbind::schema::contract::v1::DescribedEntry; 0]
+    );
 }
 
 #[test]
@@ -87,7 +90,7 @@ fn reports_owned_schema_diagnostics() {
     let LoadError::Schema { issues } = error else {
         panic!("expected schema diagnostics");
     };
-    assert!(!issues.is_empty());
+    assert_ne!(issues, [] as [specbind::schema::runtime::SchemaIssue; 0]);
     assert!(
         issues
             .iter()

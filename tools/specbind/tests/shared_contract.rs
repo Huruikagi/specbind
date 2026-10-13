@@ -153,7 +153,10 @@ fn resolves_shared_consumers_owners_and_real_overlaps() {
         Some(shared(SHARED)),
     );
     assert_eq!(report.dependencies.len(), 2);
-    assert!(report.ownership_findings.is_empty());
+    assert_eq!(
+        report.ownership_findings,
+        [] as [specbind::contract_graph::OwnershipFinding; 0]
+    );
     assert!(
         report
             .dependencies

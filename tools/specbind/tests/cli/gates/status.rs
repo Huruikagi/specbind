@@ -217,7 +217,7 @@ fn reports_blocked_task_progress_and_reason_without_misclassifying_dirty_state()
         .output()
         .expect("milestone status runs");
     assert!(output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert!(actual["data"]["revision"].is_string());

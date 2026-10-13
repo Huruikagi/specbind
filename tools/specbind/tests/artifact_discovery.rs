@@ -352,7 +352,10 @@ fn resolves_discovered_markdown_and_fixed_task_plan_inputs() {
 
     let resolution = resolve_gate_inputs(root.path(), "example");
 
-    assert!(resolution.inventory.issues.is_empty());
+    assert_eq!(
+        resolution.inventory.issues,
+        [] as [specbind::artifacts::DiscoveryIssue; 0]
+    );
     assert_eq!(
         resolution.inputs.requirements,
         Some(Fingerprint::markdown(requirements.as_bytes()))

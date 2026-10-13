@@ -59,7 +59,7 @@ fn derives_spec_backed_release_readiness_after_accepted_completion_is_committed(
         .expect("milestone status")
         .expect("active milestone");
     assert_eq!(milestone.stage, DeliveryStage::ReleaseReady);
-    assert!(milestone.release_blockers.is_empty());
+    assert_eq!(milestone.release_blockers, [] as [std::string::String; 0]);
 }
 
 #[test]

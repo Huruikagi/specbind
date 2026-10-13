@@ -310,7 +310,10 @@ fn ignores_yaml_formatting_and_reports_semantic_contract_changes_stale() {
 
     let fresh = cross_spec_review::evaluate_freshness(root.path(), root.path());
     assert_eq!(fresh.status, ReviewFreshnessStatus::Fresh);
-    assert!(fresh.issues.is_empty());
+    assert_eq!(
+        fresh.issues,
+        [] as [specbind::cross_spec_review::ReviewIssue; 0]
+    );
     assert!(fresh.accepted.is_some());
     assert!(fresh.current_input_revisions.is_some());
 

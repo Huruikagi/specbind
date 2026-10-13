@@ -18,7 +18,7 @@ fn retired_groups_work_with_retained_or_omitted_body() {
             "受入条件",
         )
         .unwrap();
-        assert!(doc.live_requirement_ids().is_empty());
+        assert_eq!(doc.live_requirement_ids(), [] as [&str; 0]);
         assert!(doc.is_retired("3.1"));
         assert!(doc.is_retired("3.2"));
         assert!(!doc.is_retired("3.01"));

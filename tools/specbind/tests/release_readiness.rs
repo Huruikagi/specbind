@@ -65,7 +65,7 @@ fn accepts_a_complete_direct_only_milestone_and_ignores_unrelated_dirt() {
 
     assert_eq!(readiness.milestone_id, MILESTONE);
     assert_eq!(readiness.version, "v1.4.0");
-    assert!(readiness.specs.is_empty());
+    assert_eq!(readiness.specs, [] as [std::string::String; 0]);
     assert_eq!(readiness.direct_changes, 1);
     assert_eq!(readiness.mutation_targets.len(), 2);
     assert!(readiness.mutation_targets.iter().any(|target| {
@@ -85,7 +85,7 @@ fn accepts_a_complete_direct_only_milestone_and_ignores_unrelated_dirt() {
         .expect("milestone status")
         .expect("active milestone");
     assert_eq!(status.stage, DeliveryStage::ReleaseReady);
-    assert!(status.release_blockers.is_empty());
+    assert_eq!(status.release_blockers, [] as [std::string::String; 0]);
 }
 
 #[test]

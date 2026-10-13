@@ -201,7 +201,7 @@ fn embeds_the_accepted_skill_set_with_valid_metadata() {
     for entry in skill::all() {
         let metadata = entry.metadata().expect("parseable Front Matter");
         assert_eq!(metadata.name, entry.name, "name must match the directory");
-        assert!(!metadata.description.trim().is_empty());
+        assert_ne!(metadata.description.trim(), "");
         let body = entry.body().expect("body");
         assert!(
             body.trim_start().starts_with("# "),
@@ -379,7 +379,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
                 "{name} entrypoint must directly route {}",
                 resource.relative_path
             );
-            assert!(!resource.content().trim().is_empty());
+            assert_ne!(resource.content().trim(), "");
         }
         for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
             let files = entry.render_files(agent).expect("rendered package");

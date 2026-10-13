@@ -72,7 +72,10 @@ fn embeds_one_milestone_roadmap_template_in_every_language() {
         let (content, _) = template::read_milestone_template(root.path(), language, "roadmap")
             .expect("read embedded milestone template");
         assert!(content.contains("type: SpecBind Roadmap"));
-        assert!(instruction::validate_template(&content).is_empty());
+        assert_eq!(
+            instruction::validate_template(&content),
+            [] as [specbind::instruction::InstructionIssue; 0]
+        );
     }
 }
 
@@ -88,7 +91,10 @@ fn project_milestone_template_overrides_the_embedded_default() {
         template::read_milestone_template(root.path(), ProjectLanguage::En, "roadmap")
             .expect("read project milestone template");
     assert_eq!(read, content);
-    assert!(inventory.issues.is_empty());
+    assert_eq!(
+        inventory.issues,
+        [] as [specbind::artifacts::DiscoveryIssue; 0]
+    );
     assert_eq!(inventory.templates[0].source, TemplateSource::Project);
     assert_eq!(
         inventory.templates[0].template_path.as_str(),
@@ -151,7 +157,10 @@ fn milestone_template_rejects_cli_owned_frontmatter() {
     .expect("write invalid project milestone template");
 
     let inventory = template::discover_milestone_templates(root.path(), ProjectLanguage::En);
-    assert!(inventory.templates.is_empty());
+    assert_eq!(
+        inventory.templates,
+        [] as [specbind::template::MilestoneTemplate; 0]
+    );
     assert_eq!(
         inventory.issues[0].code,
         "TEMPLATE_ROADMAP_MACHINE_FIELD_FORBIDDEN"

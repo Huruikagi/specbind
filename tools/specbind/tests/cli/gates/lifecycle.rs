@@ -406,7 +406,7 @@ fn requirements_rewind_can_reach_design_with_a_retained_previous_task_plan() {
         .output()
         .expect("recovery status runs");
     assert!(recovery_json.status.success());
-    assert!(recovery_json.stderr.is_empty());
+    assert_eq!(recovery_json.stderr, [] as [u8; 0]);
     let recovery_json: serde_json::Value =
         serde_json::from_slice(&recovery_json.stdout).expect("status is one JSON document");
     assert_eq!(recovery_json["data"]["health"], "inconsistent");

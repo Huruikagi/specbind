@@ -171,24 +171,25 @@ fn embedded_and_custom_templates_and_one_off_materialization() {
         "settings/templates/specs/storage.md",
         "---\ntype: SpecBind Design\nartifact_id: storage\n---\n# Storage\n",
     );
-    assert!(
-        template::discover_spec_templates(&knowledge, ProjectLanguage::En)
-            .issues
-            .is_empty()
+    assert_eq!(
+        template::discover_spec_templates(&knowledge, ProjectLanguage::En).issues,
+        [] as [specbind::artifacts::DiscoveryIssue; 0]
     );
     write(
         &knowledge,
         "settings/templates/steering/security.md",
         "---\ntype: SpecBind Steering\nartifact_id: security\n---\n# Security\n",
     );
-    assert!(
-        template::discover_steering_templates(&knowledge, ProjectLanguage::En)
-            .issues
-            .is_empty()
+    assert_eq!(
+        template::discover_steering_templates(&knowledge, ProjectLanguage::En).issues,
+        [] as [specbind::artifacts::DiscoveryIssue; 0]
     );
     let scaffold = "---\ntype: SpecBind Design\nartifact_id: storage\ndescription: Owns persistence boundaries.\n---\n# Storage\n";
     let live = scaffold.replace("---\n#", "requirement_ids: ['1.1']\n---\n#");
-    assert!(instruction::verify_materialization(scaffold, &live).is_empty());
+    assert_eq!(
+        instruction::verify_materialization(scaffold, &live),
+        [] as [specbind::instruction::InstructionIssue; 0]
+    );
     let missing = live.replace("description: Owns persistence boundaries.\n", "");
     assert!(
         instruction::verify_materialization(scaffold, &missing)
@@ -203,16 +204,18 @@ fn embedded_and_custom_templates_and_one_off_materialization() {
     );
     // A one-off document has no project template prerequisite.
     let main_scaffold = scaffold.replace("artifact_id: storage", "artifact_id: main");
-    assert!(instruction::verify_materialization(&main_scaffold, &changed).is_empty());
+    assert_eq!(
+        instruction::verify_materialization(&main_scaffold, &changed),
+        [] as [specbind::instruction::InstructionIssue; 0]
+    );
     write(
         &knowledge,
         "specs/example/storage.md",
         &(live + "_Requirements: 1.1_\n"),
     );
-    assert!(
-        artifacts::discover_spec(&knowledge, "example")
-            .issues
-            .is_empty()
+    assert_eq!(
+        artifacts::discover_spec(&knowledge, "example").issues,
+        [] as [specbind::artifacts::DiscoveryIssue; 0]
     );
     for (path, kind, id) in [
         ("settings/templates/specs/storage.md", "Design", "storage"),
@@ -322,7 +325,7 @@ fn migration_probe_works_before_normal_load_and_resumes_from_remaining_targets()
         .find(|entry| entry.id == "requirements-description")
         .unwrap();
     assert!(matches!(req.status, project::Status::Complete));
-    assert!(req.targets.is_empty());
+    assert_eq!(req.targets, [] as [std::string::String; 0]);
     assert_eq!(
         fs::read_to_string(knowledge.join("specs/example/spec.yaml")).unwrap(),
         "old state format\n"

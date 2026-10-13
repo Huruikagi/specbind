@@ -44,7 +44,10 @@ fn accepts_inactive_design_mappings_and_complete_active_coverage() {
         true,
     );
 
-    assert!(report.issues.is_empty());
+    assert_eq!(
+        report.issues,
+        [] as [specbind::traceability::TraceabilityIssue; 0]
+    );
     assert_eq!(
         report.design_requirement_ids,
         strings(&["1.1", "2.1", "3.1"])
@@ -76,7 +79,10 @@ fn distinguishes_unknown_ids_from_missing_active_coverage() {
 fn skips_active_coverage_when_no_active_set_is_established() {
     let report = traceability::evaluate(&strings(&["1.1"]), Vec::new(), None, None, false);
 
-    assert!(report.issues.is_empty());
+    assert_eq!(
+        report.issues,
+        [] as [specbind::traceability::TraceabilityIssue; 0]
+    );
     assert!(report.active_requirement_ids.is_none());
 }
 
@@ -110,7 +116,10 @@ fn requires_tasks_only_at_the_task_required_boundary() {
         None,
         false,
     );
-    assert!(not_required.issues.is_empty());
+    assert_eq!(
+        not_required.issues,
+        [] as [specbind::traceability::TraceabilityIssue; 0]
+    );
 
     let required = traceability::evaluate(
         &strings(&["1.1"]),
@@ -306,7 +315,10 @@ fn retired_ids_keep_delivery_coverage_but_are_not_live_promises() {
         "schema_version: 1\nactive_change: null\n",
     );
     let report = resolve_traceability(root.path(), "example").report.unwrap();
-    assert!(report.issues.is_empty());
+    assert_eq!(
+        report.issues,
+        [] as [specbind::traceability::TraceabilityIssue; 0]
+    );
     assert_eq!(report.requirement_ids, ["1.1"]);
     assert!(report.active_requirement_ids.is_none());
 }

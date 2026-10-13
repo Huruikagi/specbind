@@ -19,7 +19,7 @@ fn reports_no_active_milestone_as_no_change() {
         .output()
         .expect("milestone status runs");
     assert!(output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert_eq!(
@@ -78,7 +78,7 @@ fn reports_direct_milestone_dependencies_and_actionable_work() {
         .output()
         .expect("milestone status runs");
     assert!(output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let mut actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert!(actual["data"]["revision"].is_string());
@@ -151,7 +151,7 @@ fn reports_milestone_status_failure_as_json_without_stderr_text() {
         .expect("milestone status runs");
 
     assert!(!output.status.success());
-    assert!(output.stderr.is_empty());
+    assert_eq!(output.stderr, [] as [u8; 0]);
     let actual: serde_json::Value =
         serde_json::from_slice(&output.stdout).expect("stdout is one JSON document");
     assert_eq!(actual["status"], "error");
