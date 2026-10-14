@@ -61,7 +61,18 @@ fn shared_reads_follow_custom_spec_dir_and_accept_the_v1_5_0_path() {
         .args(["contract", "shared", "read"])
         .assert()
         .success()
-        .stdout(predicate::str::contains("id: translations"));
+        .stdout(predicate::str::contains("id: translations"))
+        .stderr("");
+    // Consumer projections still require the complete, valid graph.
+    specbind_command()
+        .current_dir(root.path())
+        .args(["contract", "shared", "consumers", "translations"])
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::starts_with(
+            "ERROR CONTRACT_GRAPH_READ_FAILED:",
+        ));
     specbind_command()
         .current_dir(root.path())
         .args(["check", "contracts"])

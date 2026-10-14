@@ -31,6 +31,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/cli/output.rs` — shared CLI output contract, stream routing, escaping, and text-layout helpers
 - `tools/specbind/src/cli/` — stable command-family facades for migration, reads, tasks, external input, and lifecycle operations
 - `tools/specbind/src/cli/read/` — artifact/check, installation, catalog, and project-scope read command execution/rendering
+- `tools/specbind/src/cli/read/contract_commands.rs` — Contract validation, graph and ownership projections, and shared Contract reads behind the existing CLI facade
 - `tools/specbind/src/cli/read/embedded_catalog_commands.rs` — project-independent Protocol and schema catalog commands backed entirely by embedded binary assets
 - `tools/specbind/src/cli/read/template_commands.rs` — project-bound Spec, Milestone, and Steering template discovery, reads, and target resolution
 - `tools/specbind/src/cli/read/adapter_commands.rs`, `rule_commands.rs`, and `steering_commands.rs` — project-bound catalog commands separated by the artifact family they expose

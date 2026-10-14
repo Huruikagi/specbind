@@ -5,6 +5,7 @@ use crate::config;
 
 mod adapter_commands;
 mod artifact_commands;
+mod contract_commands;
 mod embedded_catalog_commands;
 mod install_commands;
 mod project_commands;
@@ -14,9 +15,10 @@ mod steering_commands;
 mod template_commands;
 
 pub use adapter_commands::{adapter_list, adapter_read, adapter_read_for_consume};
-pub use artifact_commands::{
-    artifact_check, artifact_list, artifact_read, check_contracts, check_traceability,
-    contract_consumers, contract_dependencies, contract_graph, contract_owners, contract_shared,
+pub use artifact_commands::{artifact_check, artifact_list, artifact_read, check_traceability};
+pub use contract_commands::{
+    check_contracts, contract_consumers, contract_dependencies, contract_graph, contract_owners,
+    contract_shared,
 };
 pub use embedded_catalog_commands::{protocol_list, protocol_read, schema_list, schema_read};
 pub use install_commands::{install_apply, install_dry_run};

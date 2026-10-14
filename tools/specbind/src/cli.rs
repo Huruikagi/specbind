@@ -32,7 +32,6 @@ use crate::{
     artifacts::{self, Artifact, DiscoveryIssue},
     completion::{self, CompletionIssue},
     config,
-    contract_graph::{self, GraphIssueSeverity},
     cross_spec_review::{self, ReviewFreshnessStatus, ReviewIssue},
     install, instruction, migration, migration_resolution,
     milestone::{self, MilestoneIssue},

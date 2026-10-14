@@ -376,37 +376,27 @@ fn contract_graph_reads_fail_closed_and_reject_unknown_specs() {
         ".specbind/specs/consumer/contract.yaml",
         "schema_version: 1\nowns: []\nexports: []\nconsumes:\n  - { id: missing, target: { spec: checkout, section: exports, id: missing } }\ninvariants: []\nfile_ownership: []\n",
     );
-    let mut invalid = specbind_command();
-    invalid
-        .current_dir(root.path())
-        .args(["contract", "graph"])
-        .assert()
-        .failure()
-        .stdout("")
-        .stderr(
-            predicate::str::starts_with(
-                "ERROR CONTRACT_GRAPH_READ_FAILED: Cannot report an incomplete Contract graph.",
-            )
-            .and(predicate::str::contains(
-                "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
-            )),
-        );
-
-    let mut owners = specbind_command();
-    owners
-        .current_dir(root.path())
-        .args(["contract", "owners", "src/cart.py"])
-        .assert()
-        .failure()
-        .stdout("")
-        .stderr(
-            predicate::str::starts_with(
-                "ERROR CONTRACT_GRAPH_READ_FAILED: Cannot report an incomplete Contract graph.",
-            )
-            .and(predicate::str::contains(
-                "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
-            )),
-        );
+    for args in [
+        vec!["contract", "graph"],
+        vec!["contract", "owners", "src/cart.py"],
+        vec!["contract", "dependencies", "checkout"],
+        vec!["contract", "consumers", "checkout"],
+    ] {
+        specbind_command()
+            .current_dir(root.path())
+            .args(args)
+            .assert()
+            .failure()
+            .stdout("")
+            .stderr(
+                predicate::str::starts_with(
+                    "ERROR CONTRACT_GRAPH_READ_FAILED: Cannot report an incomplete Contract graph.",
+                )
+                .and(predicate::str::contains(
+                    "CONTRACT_GRAPH_TARGET_ENTRY_MISSING",
+                )),
+            );
+    }
 }
 
 #[test]
