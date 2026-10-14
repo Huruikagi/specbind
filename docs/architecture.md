@@ -41,6 +41,13 @@ facade. A mutating use case must rediscover and revalidate its authoritative
 current inputs immediately before persistence. Earlier inventory, status, or
 agent-authored evidence is never mutation authority.
 
+`lifecycle/release_finalize.rs` retains the public finalization API and the
+normal readiness/revalidation sequence. Its private `plan`, `recovery`, and
+`persistence` modules own output planning, recognized partial/completed retries,
+and ordered guarded writes respectively. Both normal and resumed finalization
+use the same persistence path, with the Roadmap archive written last as the
+completion marker.
+
 ### Current-state read models
 
 `artifacts.rs` is the stable facade for spec-local artifact reads:

@@ -147,6 +147,25 @@ fn finalizes_a_spec_backed_release_with_log_cleanup_and_archives() {
 
 #[test]
 fn resumes_an_interrupted_spec_finalization_before_the_roadmap_marker_moves() {
+    assert_resumes_spec_finalization(4);
+}
+
+#[test]
+fn resumes_spec_finalization_after_only_the_log_write() {
+    assert_resumes_spec_finalization(1);
+}
+
+#[test]
+fn resumes_spec_finalization_after_cleanup_before_the_spec_write() {
+    assert_resumes_spec_finalization(2);
+}
+
+#[test]
+fn resumes_spec_finalization_after_the_spec_write_before_review_archival() {
+    assert_resumes_spec_finalization(3);
+}
+
+fn assert_resumes_spec_finalization(completed_steps: u8) {
     let root = accepted_spec_fixture();
     let specbind = root.path().join(".specbind");
 
@@ -167,24 +186,30 @@ fn resumes_an_interrupted_spec_finalization_before_the_roadmap_marker_moves() {
     .expect("render log") else {
         panic!("new milestone should update log");
     };
-    fs::write(log_path, log).expect("simulate completed log step");
-    let mut wire = read_spec(&specbind);
-    wire.active_change.0 = None;
-    let mut idle = serde_saphyr::to_string(&wire).expect("render idle Spec");
-    if !idle.ends_with('\n') {
-        idle.push('\n');
+    fs::write(&log_path, &log).expect("simulate completed log step");
+    if completed_steps >= 2 {
+        fs::remove_file(specbind.join("specs/checkout/brief.md")).expect("remove Brief");
+        fs::remove_file(specbind.join("specs/checkout/research.md")).expect("remove Research");
+        fs::remove_file(specbind.join("specs/checkout/tasks.yaml")).expect("remove Tasks");
     }
-    fs::write(specbind.join("specs/checkout/spec.yaml"), idle)
-        .expect("simulate completed Spec step");
-    fs::remove_file(specbind.join("specs/checkout/brief.md")).expect("remove Brief");
-    fs::remove_file(specbind.join("specs/checkout/research.md")).expect("remove Research");
-    fs::remove_file(specbind.join("specs/checkout/tasks.yaml")).expect("remove Tasks");
-    fs::create_dir(specbind.join("releases")).expect("create releases");
-    fs::rename(
-        specbind.join("state/contract-review.md"),
-        specbind.join("releases/v1.4.0-contract-review.md"),
-    )
-    .expect("simulate completed review archive step");
+    if completed_steps >= 3 {
+        let mut wire = read_spec(&specbind);
+        wire.active_change.0 = None;
+        let mut idle = serde_saphyr::to_string(&wire).expect("render idle Spec");
+        if !idle.ends_with('\n') {
+            idle.push('\n');
+        }
+        fs::write(specbind.join("specs/checkout/spec.yaml"), idle)
+            .expect("simulate completed Spec step");
+    }
+    if completed_steps >= 4 {
+        fs::create_dir(specbind.join("releases")).expect("create releases");
+        fs::rename(
+            specbind.join("state/contract-review.md"),
+            specbind.join("releases/v1.4.0-contract-review.md"),
+        )
+        .expect("simulate completed review archive step");
+    }
 
     assert_eq!(
         release_finalize::finalize(
@@ -201,6 +226,30 @@ fn resumes_an_interrupted_spec_finalization_before_the_roadmap_marker_moves() {
     );
     assert!(!specbind.join("steering/roadmap.md").exists());
     assert!(specbind.join("releases/v1.4.0-roadmap.md").is_file());
+    assert_eq!(fs::read_to_string(&log_path).expect("final log"), log);
+    assert!(read_spec(&specbind).active_change.0.is_none());
+    assert!(!specbind.join("specs/checkout/tasks.yaml").exists());
+    assert!(!specbind.join("specs/checkout/brief.md").exists());
+    assert!(!specbind.join("specs/checkout/research.md").exists());
+    assert!(!specbind.join("state/contract-review.md").exists());
+    assert!(
+        specbind
+            .join("releases/v1.4.0-contract-review.md")
+            .is_file()
+    );
+    assert_eq!(
+        release_finalize::finalize(
+            root.path(),
+            &specbind,
+            specbind::config::ProjectLanguage::En,
+            Some(input),
+        )
+        .expect("retry after resumed finalization"),
+        FinalizeOutcome::AlreadyFinalized {
+            version: "v1.4.0".to_owned(),
+            specs: 1,
+        }
+    );
 }
 
 #[test]
