@@ -35,6 +35,19 @@ they fit together.
 
 ## Skills for specific situations
 
+With `sb-drive --replan`, completion records made stale by that authorized
+replan can be withdrawn automatically. Drive verifies the before/after evidence
+and delegates each withdrawal to `sb-validate-implementation`, which checkpoints
+only that change. Drive then resumes remaining implementation and, once all
+Milestone work is complete, schedules fresh validation. Pre-existing staleness,
+other inconsistencies, missing history, or an uncommitted target file stop this
+automatic recovery. Ordinary completion withdrawal still needs confirmation.
+
+When several Specs are ready for final validation, Drive sends the explicit
+set to one validation owner. It validates each Spec at the same committed
+revision, accepts only after all pass, and commits their completion records
+together so one Spec's acceptance does not stale another's.
+
 For a Spec-backed Task, `sb-implement` permits at most three recovery cycles,
 including authorized replanning and corrected re-review. After a repair, it
 continues only when independent assessment resolves every earlier finding and

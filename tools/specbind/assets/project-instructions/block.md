@@ -34,6 +34,9 @@ the only supported writer of machine state.
   complete and the user asks to validate it for lifecycle completion, recording
   completion evidence on `GO`. Words such as done, complete, or ready do not by
   themselves authorize that mutation.
+  The same validation Skill also owns completion-withdrawal-only recovery from
+  an evidenced authorized Drive replan handoff, before milestone convergence.
+  That exception withdraws old evidence; it never grants `GO` or acceptance.
 - Use `sb-validate-design` for an independent, read-only judgment of a Spec's
   Design. Use `sb-contract-review` for the milestone-wide Contract Review after
   participating Designs are approved.

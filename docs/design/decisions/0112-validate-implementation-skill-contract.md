@@ -2,6 +2,12 @@
 
 Status: Accepted
 
+[Decision 0220](./0220-converged-spec-validation-checkpoint.md) permits an
+explicit Spec set with per-Spec verdicts and one common-revision checkpoint.
+
+[Decision 0219](./0219-replan-completion-recovery.md) adds delegated
+completion-withdrawal-only recovery before milestone convergence.
+
 [Decision 0182](./0182-project-validation-adapter.md) adds the project-specific
 Validation adapter to the required-set derivation while retaining this
 decision's verdict, no-repair, and evidence boundaries.

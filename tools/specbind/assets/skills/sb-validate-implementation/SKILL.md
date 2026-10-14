@@ -1,10 +1,10 @@
 ---
 name: sb-validate-implementation
-description: Use only when every Task for a named Spec is complete and the user explicitly asks for lifecycle validation against the active Requirement IDs that records completion on GO. For a consequence-free claim check, use sb-verify-completion.
-argument-hint: "<spec>"
+description: Use when every Task for a named Spec is complete and the user explicitly asks for lifecycle validation against the active Requirement IDs that records completion on GO. Also owns completion withdrawal under an evidenced Drive replan recovery handoff. For a consequence-free claim check, use sb-verify-completion.
+argument-hint: "<spec> [<spec> ...]"
 ---
 
-# Validate one Spec's implementation
+# Validate Spec implementation at one committed revision
 
 For selected `_Retired_` Requirement IDs, verify the continuation or cessation
 explained beside the marker against baseline obligations, implementation and
@@ -27,6 +27,10 @@ means no additional project preference; any `ERROR` line stops the workflow.
 The gate between "every task is recorded complete" and "this Spec is done".
 
 Enter this workflow only with explicit authority to record completion on `GO`.
+The sole early-entry exception is an evidenced Drive replan handoff with
+completion-withdrawal-only authority: go directly to "When evidence needs
+clearing" before preflight. That mode grants no validation or acceptance and
+does not require milestone Task convergence.
 When the request could instead be a consequence-free truth check, use
 `sb-verify-completion`; completed Tasks and words such as "done" do not resolve
 that ambiguity or authorize mutation.
@@ -41,6 +45,13 @@ After traceability passes, the approved Design artifacts' `requirement_ids` are
 the exact active set you assess.
 
 ## 1. Preflight
+
+Normally validate one named Spec. An explicit set supplied by the user or by
+Drive's current actionable entries is one validation run with a separate
+assessment and verdict for each Spec. Do not expand that set yourself.
+For a set, run **every target's preflight before any acceptance**. All must
+return the same clean committed HEAD; retain that full revision for every
+candidate. A failed preflight stops the entire set without acceptance.
 
 ```sh
 specbind spec status <spec>
@@ -76,6 +87,10 @@ release-policy edit, version bump in project source, or other project change
 still stales it.
 
 ## 2. Read what completion would mean
+
+Repeat the domain reads and semantic assessments for every target in the set.
+Shared canonical checks may run once at the common revision, but passing them
+does not establish another Spec's requirement coverage or semantic verdict.
 
 ```sh
 specbind artifact read <spec> requirements --for consume
@@ -247,17 +262,39 @@ run's `GO` when the adapter requires them.
 
 ### When several Specs converge
 
+Complete all required checks and per-Spec assessments before accepting any
+target. If any target is `NO-GO` or `MANUAL_VERIFY_REQUIRED`, accept none;
+return each target's findings to its owner. Do not accept a passing subset
+before repairs: the repair would stale its evidence again.
+
+After every target has `GO`, confirm HEAD still equals the common preflight
+revision and the worktree is clean. Submit each candidate sequentially with
+that **same implementation revision**, without another preflight, check run,
+or commit between acceptances. Never take a new revision from an intervening
+completion commit. The guarded CLI rechecks each acceptance's preconditions.
+
 The first acceptance at a revision needs a completely clean worktree. Each
 acceptance writes that Spec's `spec.yaml`, so later ones at the same revision
 tolerate exactly the other participants' `implementation` → `release_ready`
 transitions — **and nothing else**. Any other change fails closed.
 
-A pending release binding is not an acceptance exception. Checkpoint it first;
-then later Specs may validate at the new clean `HEAD` while earlier completion
-evidence remains fresh at its original implementation revision.
+A pending release binding is not an acceptance exception. Checkpoint it before
+the group's preflights. Its freshness exception does not permit mixing
+implementation revisions within this acceptance set.
 
 **Commit that metadata set together**, as one commit containing only those
 files. Do not interleave other work into it.
+
+Verify the actual delta contains exactly the accepted targets' state and
+completion transitions, with earlier gates unchanged. After the checkpoint,
+reread every target and milestone status: all accepted records must still be
+fresh. A missing checkpoint or stale record is not a completed validation run.
+
+If acceptance or the checkpoint fails, stop immediately. Preserve the exact
+accepted subset, pending candidates, common revision, diagnostic and dirty
+paths in the handoff. Do not roll back valid evidence, retry at unchanged state,
+or commit a subset and start remaining targets at a new HEAD. Partial acceptance
+is unsafe for another mutating owner; report it without claiming completion.
 
 If the project's Git adapter says not to commit, stop after the acceptances and
 report that the metadata set is uncommitted, rather than leaving the milestone
@@ -271,7 +308,8 @@ specbind adapter read git --for consume
 
 A Spec at `release_ready` whose evidence no longer holds is revalidated. State
 what invalidation clears — completion evidence only; requirements, design, and
-tasks stay approved — and run it after the user confirms:
+tasks stay approved — and run it after the user confirms, unless the delegated
+withdrawal conditions below already supply that exact authority:
 
 ```sh
 specbind spec completion invalidate <spec>
@@ -291,15 +329,44 @@ earlier commit, or carry the dirty invalidation into validation. If the adapter
 is absent or scaffolded, forbids the commit, is ambiguous, or the checkpoint
 fails, stop and report the valid invalidation plus its exact dirty path. The
 clean-repository completion preflight cannot resume until that checkpoint is
-closed. After it is closed, begin again at preflight; a later `GO` acceptance is
+closed. For ordinary revalidation, after it is closed, begin again at preflight;
+a later `GO` acceptance is
 checkpointed separately as fresh completion metadata.
+
+### Delegated withdrawal before convergence
+
+For a Drive **completion-withdrawal-only authority** handoff, independently
+check the baseline/current Git and status evidence before any mutation. Require
+the same active delivery milestone and scope, explicit replan authority, a
+clean baseline with this target's completion fresh, and an intervening delta
+attributable only to that authorized recovery (plus earlier verified withdrawal
+checkpoints in the supplied set). The target must now be `release_ready` with
+fresh earlier gates and completion stale solely because of
+`FRESHNESS_COMPLETION_PROJECT_CHANGED`. Every milestone inconsistency must be
+explained by the remaining prechecked targets. Missing facts, pre-existing
+staleness, other gate or Contract Review inconsistencies, a dirty or staged
+target `spec.yaml`, and unsafe partial work stop this route without mutation.
+
+Report the concrete withdrawal and use the guarded command and independent,
+narrow checkpoint above without a second user confirmation. Handle exactly one
+target; never batch-edit state or include another target in its checkpoint.
+Verify current state and the actual committed diff, then return `WAITING` for
+milestone convergence to Drive with target, checkpoint, earlier-gate freshness,
+remaining affected set, and next owner. Do not run completion preflight, final
+checks, or acceptance in this withdrawal-only dispatch, even if Tasks happen
+to be complete. Do not return `GO`. Drive schedules normal validation later.
+
+If invalidation succeeded but its checkpoint failed, report the exact dirty
+path and stop; preserve that valid withdrawal and never restore old evidence.
+Without this evidenced delegation, the ordinary confirmation still applies.
 
 Never use it to clear a path to a new `GO`. A refused validation is information
 about the implementation.
 
 ## Boundaries
 
-- Validate **one Spec**. A Direct item is not validated here — Direct completion
+- Validate **one Spec or an explicitly supplied set** at one revision. A Direct
+  item is not validated here — Direct completion
   belongs to `sb-implement`, and no synthetic Spec is created for it.
 - Repair nothing. No source changes, no weakened checks, no edits to
   requirements, design, the contract, or the plan.

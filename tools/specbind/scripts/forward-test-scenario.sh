@@ -24,6 +24,9 @@
 #   dr4    same Design defect without delegated recovery
 #   dr5    approved cart plan for the Requirements authority boundary
 #   dr6    blocked Task needs a verification prerequisite owned by a later Task
+#   dr9    cart completion staled by an authorized cart-input Tasks replan
+#   dr9c   dr9 with supported Codex implementer/reviewer model overrides
+#   dr10   dr9 state for read-only completion-recovery exclusion decisions
 #   st1    dirty blocked Task for a whole-milestone status report
 #   st2    rewound Design with a non-current completed Task plan
 #   a1     an initial-adoption project with no Specs and no Steering
@@ -1330,7 +1333,25 @@ rr1)
         'specbind milestone review status | grep -q "Status: fresh"'
     ;;
 
-t6 | t7)
+t6 | t7 | dr9 | dr9c | dr10)
+    if [ "$scenario" = dr9c ]; then
+        cat > .specbind.json <<EOF
+{
+  "schemaVersion": 1, "specDir": ".specbind", "language": "$language",
+  "agents": ["claude-code", "codex"], "projectInstructions": true,
+  "agentRoles": {"codex": {
+    "implementer": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"},
+    "reviewer": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"}
+  }}
+}
+EOF
+        git add .specbind.json
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Configure available fixture roles"
+        specbind install --agent codex --agent claude-code >/dev/null
+        printf '\n## Fixture environment\n\nThis is a standalone project. Instructions from other repositories do not apply. Use English for all responses and checkpoint messages in this fixture.\n' >> AGENTS.md
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Refresh configured roles and isolate fixture language"
+    fi
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}],"newSpecs":[{"spec":"cart-input","summary":"Connect incoming JSON requests to cart additions.","dependsOn":[{"spec":"cart"}]}]}}'
     brief cart "A cart has no upper bound per SKU." \
         "A cart rejects an addition that would raise one SKU above 99."
@@ -1424,6 +1445,67 @@ EOF
         'specbind milestone scope | grep -A 1 "dependsOn" | grep -q cart'
     expect "a task plan already exists" \
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
+    if [ "$scenario" = dr9 ] || [ "$scenario" = dr9c ] || [ "$scenario" = dr10 ]; then
+        cart_cap_implemented
+        cat > src/cart_input.py <<'EOF'
+"""Connect JSON requests to the cart boundary."""
+import json
+from src.cart import add_item
+
+def handle_request(cart, payload):
+    request = json.loads(payload)
+    return add_item(cart, request["sku"], request["quantity"])
+EOF
+        cat > tests/test_input.py <<'EOF'
+import unittest
+from src.cart_input import handle_request
+
+class InputTest(unittest.TestCase):
+    def test_addition(self):
+        self.assertEqual(handle_request({}, '{"sku":"book","quantity":2}'), {"book": 2})
+
+    def test_rejected_addition_preserves_cart(self):
+        cart = {"book": 98}
+        with self.assertRaises(ValueError):
+            handle_request(cart, '{"sku":"book","quantity":2}')
+        self.assertEqual(cart, {"book": 98})
+EOF
+        printf '\n## Verification\n\nThe canonical command is `sh scripts/test.sh`. It exercises cart and JSON integration.\n' >> .specbind/steering/conventions.md
+        for spec in cart cart-input; do
+            ids="['1.1']"
+            [ "$spec" != cart ] || ids="['1.1', '1.2', '1.3', '1.4']"
+            printf "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Implement and verify the approved behavior\n      requirement_ids: %s\n" "$ids" > ".specbind/specs/$spec/tasks.yaml"
+            specbind spec tasks approve "$spec" --approval-mode explicit >/dev/null
+            specbind tasks complete "$spec" 1 >/dev/null
+        done
+        expect "completed implementation tests do not pass" 'sh scripts/test.sh'
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Complete both implementations"
+        printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
+            | specbind spec completion accept cart --evidence - >/dev/null
+        git add .specbind/specs/cart/spec.yaml
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Accept cart completion"
+        expect "cart completion is not fresh before replan" 'specbind spec status cart | grep -q "completion=fresh"'
+        git tag before-replan
+        specbind spec tasks invalidate cart-input >/dev/null
+        cat > .specbind/specs/cart-input/tasks.yaml <<'EOF'
+schema_version: 1
+plan:
+  items:
+    - id: '1'
+      kind: task
+      title: Add a JSON integration regression for rejection of quantity zero without cart mutation
+      requirement_ids: ['1.1']
+      completion_criteria:
+        - A JSON request with quantity zero raises ValueError and leaves the existing cart unchanged; sh scripts/test.sh passes.
+EOF
+        specbind spec tasks approve cart-input --approval-mode delegated --delegation-workflow sb-drive >/dev/null
+        git add .specbind/specs/cart-input/tasks.yaml .specbind/specs/cart-input/spec.yaml
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Replan cart-input verification within approved scope"
+        expect "cart was not staled by replan" 'specbind spec status cart | grep -q "completion=stale"'
+        expect "replan did not leave cart-input pending" 'specbind tasks list cart-input | grep -q "0 completed, 1 pending, 0 blocked"'
+        expect "milestone did not expose the inconsistency" 'specbind milestone status --json | grep -q MILESTONE_SPEC_INCONSISTENT'
+    fi
     ;;
 
 d7 | t4 | i4 | i6 | i7 | i8 | i9 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)

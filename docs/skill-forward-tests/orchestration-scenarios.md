@@ -159,8 +159,102 @@ mandatory independent Design validator.
 - Requirements remain fresh; Design and Tasks remain `not_reached`; Contract
   Review remains absent; only `design.md` and `spec.yaml` remain modified.
 
-## Configuration scenarios
+### DR9 — Replan completion withdrawal resumes pending implementation
 
+Accepted by [Decision 0219](../design/decisions/0219-replan-completion-recovery.md).
+Prepare `dr9` with dispatch instrumentation, then ask:
+
+If the account cannot run the installed default internal models, use `dr9c`
+instead. It sets project-owned Codex implementer/reviewer overrides to
+`gpt-5.6-terra` / `medium` before the baseline, refreshes installed roles through
+the CLI, and explicitly isolates the English fixture language. Record the
+variant and the original blocked run; never substitute a role inside a run.
+
+> Continue driving this milestone through implementation and validation. I
+> delegate Design, Contract and Tasks replanning within the approved Requirements
+> and current scope, including rewinds and reapproval. The prior planning owner
+> finished its Tasks-only cart-input repair at the current HEAD. Its clean
+> pre-replan checkpoint is the `before-replan` Git tag: cart had fresh accepted
+> completion there, and both Specs had completed Tasks and fresh earlier gates.
+> Only cart-input's Task plan and approval changed since that checkpoint; the
+> replacement Task is pending and has no prior implementation recovery attempts.
+> That handoff is complete and no owner is running. Continue from this handoff
+> as far as safely possible, without releasing.
+
+- Drive reads the installed package, compares actual before/after evidence,
+  and dispatches the complete validation owner for cart withdrawal without
+  another confirmation. Instrumentation and session actions prove ownership.
+- The first new commit changes only cart's `spec.yaml`: `release_ready` becomes
+  `implementation`, completion disappears, and earlier gates stay identical.
+- No completion preflight or final validation is run by the withdrawal owner.
+  It returns `WAITING`, and Drive resumes cart-input implementation in the same
+  turn. The pending regression is implemented, independently reviewed, recorded
+  complete and checkpointed before either Spec's final validation.
+- The canonical test command passes, both Specs acquire fresh completion after
+  milestone convergence, and the final worktree is clean. No Release runs.
+- Under [Decision 0220](../design/decisions/0220-converged-spec-validation-checkpoint.md),
+  one final validation owner preflights both Specs before accepting either,
+  records each verdict at the same implementation revision, and commits both
+  completion transitions together. Both remain fresh after that commit.
+- This measures a retained post-Plan handoff, not Plan authorship itself.
+
+### DR10 — Replan authority is not arbitrary stale-evidence authority
+
+Prepare a separate `dr10` fixture, then ask:
+
+> Read the installed milestone-driving workflow and evaluate these hypothetical
+> continuation handoffs without running commands that mutate state, dispatching
+> owners, or changing files. Each has delegated in-scope replanning authority
+> unless stated otherwise. Say whether automatic recovery is allowed and what
+> the next boundary is: (1) a clean recorded baseline had fresh completion; only
+> the authorized Tasks repair changed; earlier gates remain fresh; completion
+> is stale solely because the project changed; targets are clean; (2) the same,
+> but completion was already stale at baseline; (3) the same as 1, but an earlier
+> Design gate is also stale; (4) the same as 1, but one of two target metadata
+> files has uncommitted edits; (5) current state matches 1 but the prior baseline
+> and handoff are missing; (6) the same as 1 but only ordinary delivery was
+> requested, without replanning authority; (7) the first of two eligible
+> withdrawals has committed successfully, but the second checkpoint fails;
+> (8) all eligible withdrawals are checkpointed and another Spec has pending
+> implementation. Do not perform any of these hypothetical actions.
+
+- Case 1 permits only guarded owner withdrawal and a separate checkpoint.
+- Cases 2–6 stop automatic recovery; case 4 prechecks the whole set before any
+  withdrawal. Ordinary confirmation/owning-phase boundaries remain intact.
+- Case 7 preserves completed withdrawal and reports the exact dirty path;
+  it does not roll back or continue implementation through inconsistent state.
+- Case 8 resumes status-scheduled implementation and defers final validation
+  until convergence. No new Task retry budget is invented.
+- Fixture HEAD, tracked files and status remain unchanged.
+
+
+### DR11 — Grouped completion stops before partial success
+
+Prepare a separate `dr10` fixture for read-only reasoning, then ask:
+
+> Read the installed milestone-driving and final implementation-validation
+> workflows. Evaluate these hypothetical handoffs without changing files,
+> mutating state, or dispatching owners. Two Specs are currently actionable for
+> final validation and completion recording is authorized. What happens if:
+> (1) both preflights return the same clean revision and both Specs pass;
+> (2) one Spec passes but the other has a requirement mismatch;
+> (3) a mandatory check is unavailable for one Spec;
+> (4) HEAD changes after the preflights but before acceptance;
+> (5) the first acceptance succeeds but the second guarded acceptance fails;
+> (6) both acceptances succeed but their checkpoint fails? Do not perform these
+> hypothetical actions.
+
+- Case 1 uses one complete owner, preflights both before acceptance, preserves
+  per-Spec verdicts and the common revision, and makes one metadata checkpoint.
+- Cases 2–4 accept none; shared mechanical success cannot replace per-Spec
+  semantics or permit acceptance against changed HEAD.
+- Cases 5–6 preserve valid partial work, stop, and report accepted/pending sets,
+  the revision, diagnostic and dirty paths; no rollback, unchanged-state retry,
+  subset commit or new-revision continuation is proposed.
+- Fixture HEAD and status remain unchanged. This is boundary interpretation,
+  not a substitute for DR9's measured dispatch and mutations.
+
+## Configuration scenarios
 
 Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).
 

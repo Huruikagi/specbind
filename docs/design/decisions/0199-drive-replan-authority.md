@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0219](./0219-replan-completion-recovery.md) includes guarded
+completion withdrawal caused by the same authorized replan.
+
 [Decision 0218](./0218-task-recovery-cycles.md) specifies the shared Task recovery
 budget and independent finding reassessment carried through this route.
 

@@ -41,6 +41,10 @@ specbind milestone status --json
 
 If there is no active milestone, route to `sb-discovery` and stop. If
 state health is inconsistent, report its diagnostics. Do not guess a repair.
+Only the evidenced completion-withdrawal route in [Authorized replan
+routing](references/replan.md), with supplied replan authority and retained
+before/after evidence, may recover the narrowly identified inconsistency before
+ordinary scheduling. The flag alone is not evidence of its cause.
 
 Use only the returned ordered `actionable` entries, their typed `handler`,
 `action`, and exact `commandOperand`, plus `waitingFor`, current blockers, and
@@ -80,6 +84,23 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
   never invoke that workflow from Drive.
 - An unknown kind, target, or mode is an incompatible product surface. Stop
   rather than guessing a route.
+
+### Keep converged Spec validation at one revision
+
+When the first safe entry targets `sb-validate-implementation` for ordinary
+completion validation, collect all currently actionable entries with that same
+target and mode, in returned order. Dispatch the complete Skill **once for that
+explicit Spec set**, passing each exact entry and completion authority. This is
+one owning workflow, not parallel per-Spec dispatch. Never include a parked
+entry, infer extra targets from the Roadmap, or mix withdrawal-only recovery
+with validation. Mark each included action key attempted on return.
+
+The owner preflights every target at the same clean HEAD, assesses each Spec,
+and accepts only after all have `GO`, then checkpoints the accepted metadata
+set together. Never request a separate acceptance commit per Spec. Drive does
+not collect candidate evidence, synthesize verdicts, accept completion, or make
+that checkpoint itself. Preserve the owner's per-Spec findings and partial
+acceptance handoff; reread authoritative state before scheduling again.
 
 ### Wait for the owning workflow to finish
 

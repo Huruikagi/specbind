@@ -234,6 +234,40 @@ fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
 }
 
 #[test]
+fn replan_completion_withdrawal_keeps_causality_ownership_and_convergence() {
+    let drive = skill_resource_text("sb-drive", "references/replan.md");
+    let validation = skill::find("sb-validate-implementation")
+        .expect("validation")
+        .body()
+        .expect("body");
+    for text in [&drive, &validation] {
+        let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
+        for boundary in [
+            "completion-withdrawal-only authority",
+            "FRESHNESS_COMPLETION_PROJECT_CHANGED",
+            "pre-existing staleness",
+            "checkpoint",
+            "WAITING",
+        ] {
+            assert!(text.contains(boundary), "missing {boundary}");
+        }
+    }
+    assert!(drive.contains("Precheck the entire affected set"));
+    assert!(drive.contains("do not retry unchanged evidence"));
+    assert!(drive.contains("do not add or reset the Task recovery budget"));
+    assert!(validation.contains("does not require milestone Task convergence"));
+    assert!(validation.contains("Do not run completion preflight, final"));
+    assert!(validation.contains("Without this evidenced delegation"));
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let entry = skill::find("sb-drive")
+            .expect("Drive")
+            .render(agent)
+            .expect("render");
+        assert!(entry.contains("The flag alone is not evidence of its cause"));
+    }
+}
+
+#[test]
 fn embeds_the_accepted_skill_set_with_valid_metadata() {
     let names = skill::all()
         .iter()
@@ -436,6 +470,32 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
             assert_eq!(files.len(), expected_files, "{name}: {agent:?}");
             assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
         }
+    }
+}
+
+#[test]
+fn converged_validation_has_one_owner_and_common_revision_checkpoint() {
+    let drive = skill::find("sb-drive").unwrap().body().unwrap();
+    let validator = skill::find("sb-validate-implementation")
+        .unwrap()
+        .body()
+        .unwrap();
+    for required in [
+        "once for that\nexplicit Spec set",
+        "Mark each included action key attempted",
+        "Never request a separate acceptance commit per Spec",
+    ] {
+        assert!(drive.contains(required), "missing coordination: {required}");
+    }
+    for required in [
+        "every target's preflight before any acceptance",
+        "If any target is `NO-GO` or `MANUAL_VERIFY_REQUIRED`, accept none",
+        "same implementation revision",
+        "Commit that metadata set together",
+        "all accepted records must still be\nfresh",
+        "Do not roll back valid evidence, retry at unchanged state",
+    ] {
+        assert!(validator.contains(required), "missing boundary: {required}");
     }
 }
 

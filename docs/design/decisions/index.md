@@ -225,3 +225,5 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0216](./0216-agents-md-sole-instruction-target.md) | Accepted | Root `AGENTS.md` as the sole project-instruction target and legacy `CLAUDE.md` block retirement |
 | [0217](./0217-owning-workflow-terminal-handoffs.md) | Accepted | Owning turns wait for internal roles and Drive bounds non-terminal handoff recovery |
 | [0218](./0218-task-recovery-cycles.md) | Accepted | Three Task recovery cycles with independent finding continuity and no budget reset |
+| [0219](./0219-replan-completion-recovery.md) | Accepted | Delegate completion-only withdrawal caused by authorized replanning before resuming delivery |
+| [0220](./0220-converged-spec-validation-checkpoint.md) | Accepted | Validate converged Specs at one revision and checkpoint completion metadata together |

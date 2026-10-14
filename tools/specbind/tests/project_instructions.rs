@@ -22,6 +22,8 @@ fn assert_completion_routes(content: &str) {
         content.contains("This route takes precedence whenever the request could also be read as")
     );
     assert!(content.contains("Use `sb-validate-implementation` only when every Task"));
+    assert!(content.contains("completion-withdrawal-only recovery"));
+    assert!(content.contains("it never grants `GO` or acceptance"));
     assert!(content.contains("do not by\n  themselves authorize that mutation"));
 }
 

@@ -434,6 +434,112 @@ fn completion_cli_revalidation_requires_and_recovers_after_invalidation_checkpoi
 }
 
 #[test]
+fn replan_withdrawal_unblocks_other_spec_before_milestone_convergence() {
+    let root = spec_fixture_with_second(true);
+    let specbind = root.path().join(".specbind");
+    accept_spec_completion(&root);
+    let accepted = read_spec(&specbind);
+    let target = specbind.join("specs/checkout/spec.yaml");
+    let command = |args: &[&str]| {
+        let result = run_cli(root.path(), args, None);
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        result
+    };
+    command(&["spec", "tasks", "invalidate", "catalog"]);
+    write(
+        root.path(),
+        ".specbind/specs/catalog/tasks.yaml",
+        "schema_version: 1\nplan:\n  items:\n    - id: '1'\n      kind: task\n      title: Repair catalog implementation\n      requirement_ids: ['1.1']\n",
+    );
+    command(&[
+        "spec",
+        "tasks",
+        "approve",
+        "catalog",
+        "--approval-mode",
+        "explicit",
+    ]);
+    commit_all(root.path(), "authorized catalog Tasks replan");
+    let status = command(&["spec", "status", "checkout", "--json"]);
+    let status = String::from_utf8_lossy(&status.stdout);
+    assert!(status.contains("FRESHNESS_COMPLETION_PROJECT_CHANGED"));
+    let milestone = command(&["milestone", "status", "--json"]);
+    let milestone = String::from_utf8_lossy(&milestone.stdout);
+    assert!(milestone.contains("MILESTONE_SPEC_INCONSISTENT"));
+    assert!(milestone.contains("implementation"));
+
+    let original = fs::read_to_string(&target).expect("accepted target");
+    fs::write(&target, format!("{original}\n# unrelated local edit\n")).expect("dirty target");
+    let error = completion::spec_invalidate(root.path(), &specbind, "checkout")
+        .expect_err("dirty target refuses withdrawal");
+    assert!(
+        error
+            .issues
+            .iter()
+            .any(|issue| issue.code == "SPEC_COMPLETION_TARGET_DIRTY")
+    );
+    assert!(
+        fs::read_to_string(&target)
+            .unwrap()
+            .contains("unrelated local edit")
+    );
+    fs::write(&target, original).expect("restore only test-created edit");
+
+    command(&["spec", "completion", "invalidate", "checkout"]);
+    let mut expected = accepted;
+    let active = expected.active_change.0.as_mut().unwrap();
+    active.state = WorkflowState::Implementation;
+    active.gate_evidence.as_mut().unwrap().completion = None;
+    assert_eq!(read_spec(&specbind), expected);
+    assert_eq!(
+        git(root.path(), &["diff", "--name-only"]),
+        ".specbind/specs/checkout/spec.yaml"
+    );
+    commit_all(root.path(), "withdraw only stale completion");
+    let status = command(&["milestone", "status", "--json"]);
+    let status = String::from_utf8_lossy(&status.stdout);
+    assert!(!status.contains("MILESTONE_SPEC_INCONSISTENT"));
+    let preflight = run_cli(
+        root.path(),
+        &["spec", "completion", "preflight", "checkout"],
+        None,
+    );
+    assert!(!preflight.status.success());
+    assert!(
+        String::from_utf8_lossy(&preflight.stderr).contains("COMPLETION_MILESTONE_NOT_CONVERGED")
+    );
+    command(&["tasks", "complete", "catalog", "1"]);
+    commit_all(root.path(), "finish catalog repair");
+    command(&["spec", "completion", "preflight", "checkout"]);
+    command(&["spec", "completion", "preflight", "catalog"]);
+    let revision = git(root.path(), &["rev-parse", "HEAD"]);
+    for spec in ["checkout", "catalog"] {
+        completion::spec_accept(root.path(), &specbind, spec, &candidate(&revision))
+            .expect("accept each Spec at the common implementation revision");
+    }
+    assert_eq!(
+        git(root.path(), &["diff", "--name-only"]),
+        ".specbind/specs/catalog/spec.yaml\n.specbind/specs/checkout/spec.yaml"
+    );
+    commit_all(root.path(), "checkpoint the complete acceptance set");
+    for spec in ["checkout", "catalog"] {
+        assert!(matches!(
+            completion::spec_preflight(root.path(), &specbind, spec)
+                .expect("grouped completion stays fresh"),
+            SpecPreflightOutcome::AlreadyAccepted { .. }
+        ));
+    }
+    let status = command(&["milestone", "status", "--json"]);
+    let status = String::from_utf8_lossy(&status.stdout);
+    assert!(!status.contains("MILESTONE_SPEC_INCONSISTENT"));
+    assert!(!status.contains("FRESHNESS_COMPLETION_PROJECT_CHANGED"));
+}
+
+#[test]
 fn rejects_invalid_completion_candidates_without_mutation() {
     let root = spec_fixture();
     let specbind = root.path().join(".specbind");
@@ -522,6 +628,10 @@ fn accept_spec_completion(root: &TempDir) {
 }
 
 fn spec_fixture() -> TempDir {
+    spec_fixture_with_second(false)
+}
+
+fn spec_fixture_with_second(second: bool) -> TempDir {
     let root = git_fixture();
     let specbind = root.path().join(".specbind");
     let baseline = git(root.path(), &["rev-parse", "HEAD"]);
@@ -571,6 +681,15 @@ fn spec_fixture() -> TempDir {
             Fingerprint::markdown(design.as_bytes()),
         ),
     );
+    if second {
+        let roadmap_path = specbind.join("steering/roadmap.md");
+        let roadmap = fs::read_to_string(&roadmap_path).expect("Roadmap");
+        fs::write(&roadmap_path, roadmap.replace("      summary: Update checkout", "      summary: Update checkout\n    - spec: catalog\n      summary: Update catalog")).expect("second participant");
+        copy_second_spec(
+            &specbind,
+            &["spec.yaml", "requirements.md", "design.md", "contract.yaml"],
+        );
+    }
     commit_all(root.path(), "approved design");
     cross_spec_review::accept(
         root.path(),
@@ -605,8 +724,22 @@ fn spec_fixture() -> TempDir {
             design["contract"], design["design/main"]
         ),
     );
+    if second {
+        copy_second_spec(&specbind, &["spec.yaml", "tasks.yaml"]);
+    }
     commit_all(root.path(), "complete implementation");
     root
+}
+
+fn copy_second_spec(specbind: &Path, names: &[&str]) {
+    fs::create_dir_all(specbind.join("specs/catalog")).expect("second Spec");
+    for name in names {
+        fs::copy(
+            specbind.join("specs/checkout").join(name),
+            specbind.join("specs/catalog").join(name),
+        )
+        .expect("second Spec artifact");
+    }
 }
 
 fn direct_fixture() -> TempDir {

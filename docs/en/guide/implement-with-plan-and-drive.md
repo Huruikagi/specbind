@@ -47,7 +47,7 @@ authority, it parks that item and looks for another reachable action.
 $sb-drive
 ```
 
-Drive selects only actions exposed by `specbind milestone status --json` and
+For ordinary scheduling, Drive selects actions exposed by `specbind milestone status --json` and
 delegates one at a time to the owning workflow. It does not author Requirements
 or Design itself and does not batch-complete Tasks.
 
@@ -80,6 +80,15 @@ gates, revises artifacts, runs independent validation and Contract Review, and
 reapproves the plan. Drive then resumes implementation and validation in the
 same run. It reports changes without stopping merely because the plan changed.
 
+If this replan makes another participant's accepted completion stale, Drive
+checks the recorded clean baseline and actual planning changes, then delegates
+completion-only withdrawal to `sb-validate-implementation`. Each withdrawal
+gets its own checkpoint. Drive resumes the remaining implementation and waits
+for all Milestone work to finish before scheduling fresh validation. This
+aftercare needs no additional confirmation, but pre-existing staleness, other
+inconsistencies, missing history, or uncommitted target metadata stop automatic
+withdrawal. Requirements, Design, Tasks, and their approvals are preserved.
+
 Design changes can require renewed Contract Review and Tasks approval across
 the Milestone. Previously completed work may need implementation and proof
 again; unchanged work keeps its progress only when its evidence still applies.
@@ -93,6 +102,12 @@ decision. Reviews and their retry limits remain in force, and Release remains
 separate. Omit `--replan` to keep the ordinary rewind confirmations.
 
 ## 4. Understand attention versus stopping
+
+Once several Specs reach final validation, one validation owner assesses each
+at the same committed revision. Only after every target passes does it accept
+and commit their completion records together. A failed or unavailable required
+check stops acceptance for the whole set; a passing Spec is not recorded early
+while another still needs repair.
 
 An item that cannot advance does not necessarily stop the whole run.
 
@@ -138,6 +153,9 @@ The final report identifies:
 Attention is a run-local report, not a persistent queue. After resolving a
 decision or external condition, invoke `$sb-drive` again. It reconstructs
 reachable work from current state.
+For an interrupted replan recovery, also supply the previous handoff, including
+baseline evidence, completed withdrawal checkpoints, and any remaining Task
+recovery budget. Current status alone cannot reconstruct those facts.
 
 ## 6. Stop before Release
 
