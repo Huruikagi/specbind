@@ -68,7 +68,8 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/documents/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/foundation/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
-- `tools/specbind/src/read_model/freshness.rs` — gate-local requirements, design, and tasks freshness evaluation
+- `tools/specbind/src/read_model/freshness.rs` — stable freshness facade and gate-local evaluation over resolved inputs
+- `tools/specbind/src/read_model/freshness/completion_revision.rs` — completion evidence assessment against Git history, worktree changes, and recognized metadata transitions
 - `tools/specbind/src/lifecycle/approval.rs` and `approval/` — stable guarded gate-transition facade with separate evidence construction and persistence safety
 - `tools/specbind/src/read_model/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
 - `tools/specbind/src/lifecycle/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates

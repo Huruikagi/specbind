@@ -164,6 +164,32 @@ fn reports_completion_fresh_when_tasks_and_revision_are_current() {
 }
 
 #[test]
+fn carries_revision_diagnostics_into_completion_without_staling_other_gates() {
+    let mut current = current_inputs();
+    current.tasks = Some(tasks(
+        "execution:\n  tasks:\n    '1':\n      status: completed\n",
+    ));
+    let spec = release_ready_spec(&current, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    let issue = specbind::domain::SemanticIssue {
+        code: "FRESHNESS_COMPLETION_PROJECT_CHANGED",
+        path: "/completion/implementation_revision".to_owned(),
+        message: "project content changed".to_owned(),
+    };
+    current.completion_revision = Some(CompletionRevisionAssessment {
+        issues: vec![issue.clone(), issue.clone()],
+    });
+
+    let report = freshness::evaluate(&spec, &current);
+
+    assert_eq!(report.requirements.status, FreshnessStatus::Fresh);
+    assert_eq!(report.design.status, FreshnessStatus::Fresh);
+    assert_eq!(report.tasks.status, FreshnessStatus::Fresh);
+    assert_eq!(report.completion.status, FreshnessStatus::Stale);
+    assert_eq!(report.completion.issues, vec![issue]);
+    assert_eq!(freshness::evaluate_wire(spec.as_wire(), &current), report);
+}
+
+#[test]
 fn reports_incomplete_and_blocked_tasks_as_stale_completion() {
     let mut current = current_inputs();
     current.tasks = Some(tasks(

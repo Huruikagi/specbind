@@ -55,6 +55,11 @@ status/list, Roadmap scope, task, and release-readiness projections. `read_model
 existing crate-root paths. They report current state and diagnostics; they do
 not authorize transitions.
 
+`read_model/freshness.rs` evaluates gate-local freshness from resolved inputs and
+preserves the public freshness API. Its private `completion_revision` module
+assesses Git history and current project files, returning diagnostics through
+`CompletionRevisionAssessment` for the gate evaluator and completion guards.
+
 ### Installation and catalogs
 
 `installation/` owns installation planning, exact guarded agent removal and
