@@ -67,6 +67,21 @@ fn rejects_unknown_selectors() {
 }
 
 #[test]
+fn recovery_assessors_preserve_finding_identity_and_terminal_protocols() {
+    for (selector, terminal) in [("debug", "## Diagnosis"), ("task-review", "## Review")] {
+        let content = protocol::read(selector)
+            .expect("assessment protocol")
+            .content();
+        assert!(content.contains("## Recovery findings"));
+        assert!(content.contains("every prior ID exactly once"));
+        assert!(content.contains("RESOLVED | BLOCKING"));
+        assert!(content.contains("failed-attempt reasoning"));
+        assert!(content.contains("current evidence"));
+        assert!(content.rfind(terminal).unwrap() > content.rfind("## Recovery findings").unwrap());
+    }
+}
+
+#[test]
 fn requirements_review_requires_guarded_inline_retirement() {
     let content = protocol::read("requirements-review")
         .expect("requirements review protocol")

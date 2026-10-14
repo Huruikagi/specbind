@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0218](./0218-task-recovery-cycles.md) supersedes the separate diagnosis
+and review-remediation bounds below for Spec-backed Tasks with three recovery
+cycles and independent finding continuity. Direct-item bounds remain unchanged.
+
 [Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
 supersedes concurrent Task dispatch and places the adapter decision for a
 completed Task inside its per-Task cycle.

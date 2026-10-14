@@ -111,6 +111,29 @@ discarding it silently.
 
 ## The verdict is one of three
 
+### Task recovery finding continuity
+
+When the caller requests Task recovery assessment, include a `## Recovery findings`
+mapping before the terminal `## Review` block. Assign stable IDs on the initial
+assessment; on reassessment account for every prior ID exactly once as `RESOLVED`
+or `BLOCKING`, with the affected obligation, cause, and current evidence. Use:
+
+```text
+## Recovery findings
+- <ID>: RESOLVED | BLOCKING — <obligation and cause> — <current evidence>
+```
+
+Judge from current artifacts, diff, and verification evidence, not the author's
+claim or failed-attempt reasoning. Renamed symptoms, moved paths, and remapped
+Task IDs do not create new findings. Reopened findings reuse their old IDs.
+Unproven resolution stays `BLOCKING`; state ambiguous identity explicitly.
+Use `none` only when both history and current findings are empty. The final
+verdict must agree with the mapping: `APPROVED` cannot leave a blocker. Deferred
+nonblocking observations remain in the ordinary review findings, never a way to
+erase an earlier blocker. The caller owns recovery limits; review grants no
+extra attempts. Standalone review without recovery context keeps its ordinary
+output and does not invent a Task ledger.
+
 - **Approved.** The task is done correctly. Nothing outstanding blocks it.
 - **Rejected.** Something specific and stated must change. Every rejection names
   what would make it approvable.

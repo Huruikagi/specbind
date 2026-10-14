@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0218](./0218-task-recovery-cycles.md) specifies the shared Task recovery
+budget and independent finding reassessment carried through this route.
+
 Amends the ordinary authority and unsafe-handoff boundaries of
 [Decision 0168](./0168-milestone-drive-orchestrator.md) only for explicit replan
 delegation, and the confirmation requirements of the Design and Tasks phases.

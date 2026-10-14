@@ -224,3 +224,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0215](./0215-focused-skill-selection-and-verification.md) | Accepted | Focused Skill selection, consistent claim routing, and proportionate Task verification |
 | [0216](./0216-agents-md-sole-instruction-target.md) | Accepted | Root `AGENTS.md` as the sole project-instruction target and legacy `CLAUDE.md` block retirement |
 | [0217](./0217-owning-workflow-terminal-handoffs.md) | Accepted | Owning turns wait for internal roles and Drive bounds non-terminal handoff recovery |
+| [0218](./0218-task-recovery-cycles.md) | Accepted | Three Task recovery cycles with independent finding continuity and no budget reset |

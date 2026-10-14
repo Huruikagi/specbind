@@ -16,6 +16,9 @@ finding about the plan or the design — that is a real outcome, not an obstacle
 
 When resuming from an authorized Drive replan, read the planning owner's exact
 Task identity mapping and resolved blocker evidence. Before selecting work,
+load [Task recovery](recovery.md) and recover its full ledger and used/remaining
+cycles. Independently reassess the planning evidence before treating a Task
+blocker as resolved; approval alone is not resolution. Then
 use `specbind tasks reopen <spec> <task-id>` for each mapped blocked Task whose
 cause the revised approved plan resolved. Reopen also any retained completed
 record whose evidence the recovery identified as invalid. Verify the current
@@ -116,15 +119,15 @@ replaced with narrative, **re-dispatch once asking only for the block.** Never
 infer success because nothing said otherwise.
 
 - `READY_FOR_REVIEW` → review it
-- `NEEDS_CONTEXT` → re-dispatch once with what it asked for; still unresolved →
-  diagnose
-- `BLOCKED` → diagnose
+- `NEEDS_CONTEXT` → provide already available context once without a corrective
+  edit; if still unresolved, enter [Task recovery](recovery.md)
+- `BLOCKED` → enter [Task recovery](recovery.md)
 
 Before accepting `READY_FOR_REVIEW`, compare the worktree with the snapshot
 from before dispatch. New caches, reports, coverage data, or other verification
-leftovers outside the intended `CHANGED` paths make the result not ready. Send
-the exact generated paths back to a fresh implementer within the normal retry
-limit so it can prevent their creation or remove only outputs created by this
+leftovers outside the intended `CHANGED` paths make the result not ready. Route
+the exact generated paths through Task recovery so the corrective implementer
+can prevent their creation or remove only outputs created by this
 task. The orchestrator never deletes them itself. If generated ownership is not
 certain, diagnose and stop rather than cleaning a possibly unrelated path.
 
@@ -150,9 +153,11 @@ a check on whether it is right.
 `inline` applies the same protocol in your own context. It is weaker, which is
 why it is not the default for Spec-backed work.
 
-Verdicts are `APPROVED`, `REJECTED`, or `CANNOT_REVIEW`. A rejection goes back
-to a fresh implementer with the findings — **at most two rounds**. After that
-the task is blocked, with the outstanding findings as the reason.
+Verdicts are `APPROVED`, `REJECTED`, or `CANNOT_REVIEW`. Request recovery finding
+IDs with an initial fresh review and the complete prior-ID mapping on every
+re-review. A rejection enters [Task recovery](recovery.md), sharing its fixed
+three-cycle budget with diagnosis and authorized planning repair. Never start
+a separate review-repair counter.
 
 `CANNOT_REVIEW` is not a rejection to retry blindly. It enters diagnosis with
 the reason the subject could not be judged.
@@ -162,15 +167,15 @@ finding assigned another Task, Spec, or later lifecycle boundary to this Task
 and that no approved current-Task input must change. If either condition is
 missing, treat the diagnosis as `UNDETERMINED`; do not manufacture a retry.
 
-With a valid `REVIEW` diagnosis and an unspent review/remediation round,
+With a valid `REVIEW` diagnosis permitted by the recovery mapping and bound,
 dispatch a fresh independent reviewer. Give it the exact current Task scope,
 the rejected findings, and the diagnosis evidence, but no desired verdict. The
 reviewer applies the ordinary `task-review` protocol again from the diff and
-approved artifacts. This re-review consumes the existing at-most-two-round
-budget; it never adds or resets an attempt. Diagnosis is not approval. After
+approved artifacts. This re-review consumes one shared recovery cycle;
+it never adds or resets an attempt. Diagnosis is not approval. After
 the fresh review returns `APPROVED`, you must resume as cycle owner and run
 `tasks complete` before the checkpoint decision. With no
-round left, block the Task with the outstanding finding and diagnosis. `PLAN`
+cycle left, block the Task with the outstanding finding and diagnosis. `PLAN`
 and `ARTIFACT` still leave the run and never enter this re-review path.
 
 ### Record

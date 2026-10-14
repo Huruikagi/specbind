@@ -67,6 +67,8 @@
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
 #   i6     cart in implementation with two sequential Tasks to checkpoint apart
 #   i7     t4 plus a correct uncommitted implementation awaiting bounded re-review
+#   i8     i7 state for read-only Task recovery continuation decisions
+#   i9     i7 state for third-cycle independent review continuation
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
@@ -1424,7 +1426,7 @@ EOF
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
     ;;
 
-d7 | t4 | i4 | i6 | i7 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | i8 | i9 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1726,7 +1728,7 @@ EOF
                 'test -n "$(git status --porcelain src/orders.py)"'
         fi
     fi
-    if [ "$scenario" = i7 ]; then
+    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ]; then
         # A correct pending diff whose only prior rejection assigned a later
         # integration boundary to this Task. The driven run owns re-review and
         # completion; the recipe owns only the reproducible starting state.

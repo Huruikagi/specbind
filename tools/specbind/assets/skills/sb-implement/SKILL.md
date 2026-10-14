@@ -75,6 +75,13 @@ Read the directly applicable reference completely before changing anything:
 
 ## 3. When something fails
 
+For a **Spec-backed Task**, read [Task recovery](references/recovery.md)
+completely at the first failure or recovery continuation. It replaces separate
+diagnosis and review-repair counters with three shared recovery cycles per Task.
+Do not apply the Direct-only bounds below to a Spec-backed Task.
+
+For a **Direct item**, retain the following failure route and bounds:
+
 `BLOCKED`, unresolved `NEEDS_CONTEXT`, `CANNOT_REVIEW`, and a rejection surviving
 two rounds all go to the same place: **a fresh dispatch that receives the
 failure and the inputs, and not the failed attempts.**
@@ -105,8 +112,8 @@ inherits the reasoning that just failed reproduces it.
 - **undetermined** → gather the named evidence when it is safely available;
   otherwise report what remains open rather than assigning it to an owner
 
-When the rounds are spent, record the task blocked with a reason naming what is
-unresolved. A blocked task is a legitimate outcome.
+When the Direct rounds are spent, leave the item pending and report what remains
+unresolved. Do not create a Spec Task record for a Direct item.
 
 ## 4. Never rescue the worktree
 

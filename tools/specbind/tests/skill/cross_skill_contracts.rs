@@ -131,6 +131,55 @@ fn implementation_re_reviews_only_a_diagnosed_review_scope_defect_within_budget(
 }
 
 #[test]
+fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
+    let recovery = skill_resource_text("sb-implement", "references/recovery.md");
+    for required in [
+        "At most three recovery cycles per Task",
+        "any prior finding still `BLOCKING` stops the Task",
+        "all prior findings `RESOLVED` plus materially new blocking IDs",
+        "After cycle three, any blocker stops the Task",
+        "Missing, duplicate, or ambiguous prior-ID mappings stop recovery",
+        "no free retry",
+        "at most four\ndiagnostic assessments",
+        "never infer zero from Git or Task status",
+        "mapped descendants share the original recovery identity",
+        "A receiver\nthat never starts consumes no cycle",
+        "An owner that starts and fails during\npreparation consumes it",
+        "A diagnosis is never Task approval",
+        "even\nwith `--review inline` or `--review off`",
+        "no configuration setting",
+    ] {
+        assert!(
+            recovery.contains(required),
+            "missing Task recovery boundary: {required}"
+        );
+    }
+    let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
+    assert!(procedure.contains("[Task recovery](recovery.md)"));
+    assert!(!procedure.contains("at most two rounds"));
+    assert!(!procedure.contains("at-most-two-round"));
+    let entry = skill::find("sb-implement").expect("implementation skill");
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let rendered = entry.render(agent).expect("render implementation skill");
+        assert!(rendered.contains("references/recovery.md"));
+        assert!(rendered.contains("Direct-only bounds"));
+    }
+    for owner in ["sb-drive", "sb-plan"] {
+        let replan = skill_resource_text(owner, "references/replan.md");
+        assert!(replan.contains("cycles used/remaining out of three"));
+        assert!(
+            replan
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ")
+                .contains("independent reassessment")
+        );
+    }
+    let direct = skill_resource_text("sb-implement", "references/direct.md");
+    assert!(direct.contains("at most twice"));
+}
+
+#[test]
 fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
     for agent in [Agent::Codex, Agent::ClaudeCode] {
         let rendered = skill::find("sb-drive")
@@ -363,7 +412,7 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
         ("sb-configure", 8),
         ("sb-discovery", 3),
         ("sb-drive", 1),
-        ("sb-implement", 2),
+        ("sb-implement", 3),
         ("sb-plan", 6),
         ("sb-release", 1),
     ] {

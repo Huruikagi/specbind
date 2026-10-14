@@ -146,9 +146,10 @@ reviewer actually rejects. Record which path the run took.
 
 > Ask: implement the planned cart work, with review required.
 
-- If a rejection occurred: at most two implementer rounds followed it, and the
-  task was then either completed or **blocked with the outstanding findings as
-  its reason** — never completed with findings outstanding.
+- If a rejection occurred: at most three shared recovery cycles followed the
+  initial attempt. Another cycle requires all previous findings independently
+  resolved and only new blockers. A repeated finding stops immediately; any
+  blocker after cycle three also stops. Completion never retains blockers.
 - If no rejection occurred, record the scenario as **not exercised** rather than
   as a pass. A path that never ran was not measured.
 
@@ -186,6 +187,11 @@ evidence below:
 > `- NEXT_ACTION: independently re-review only the current cart Task against its approved scope`
 > `- UNCERTAIN: none`
 >
+> This is the initial recovery assessment: zero cycles used, three remaining.
+> Recovery identity is cart-cap; current Task is cart/1. Finding R1 is BLOCKING:
+> the review assigned checkout integration to cart, as established by the
+> diagnosis and current approved artifacts. No other findings or repairs exist.
+>
 > Complete only what the current approved Task allows.
 
 - A fresh reviewer judges the current Task from its diff and approved inputs;
@@ -196,8 +202,73 @@ evidence below:
   implementation checkpoint contains only the current Task paths and progress,
   and the worktree ends clean.
 - No checkout implementation or later-Spec artifact changes.
-- The re-review consumes the existing review/remediation budget. The run does
+- The re-review consumes one of the three Task recovery cycles. The run does
   not reset the bound or start an unbounded review loop.
+
+### I8 — Task recovery distinguishes progress, repetition, and exhaustion
+
+Accepted by [Decision 0218](../design/decisions/0218-task-recovery-cycles.md).
+Prepare `i8` (the correct pending diff from `i7`). This is a read-only
+continuation-decision measurement, not an end-to-end repair claim. Supply the
+following saved handoff as maintainer context and ask:
+
+> I want to continue the pending cart Task. Before resuming, read the installed
+> workflow and tell me the next permitted step in each saved-handoff case below.
+> These are alternative continuations, not successive attempts. Do not change
+> files, dispatch workers, run tests, or record progress yet.
+> All cases have recovery identity cart-cap, Task cart/1, unchanged approved
+> scope, no outside edits, and no authority to change Requirements or scope.
+> The partial paths are src/cart.py, scripts/test.sh and tests/; they are owned
+> by this Task. Prior recovery A repaired the plan's missing test prerequisite;
+> prior recovery B corrected the cap check. The fresh assessor inspected the
+> current approved plan, diff and checks. Its mapping is supplied per case:
+>
+> 1. Two cycles used. A and B RESOLVED; new C BLOCKING is a safe local test
+>    launcher path-construction error. Evidence confirms the plan prerequisite
+>    and cap repair are valid; the launcher is the only current failure.
+> 2. One cycle used. A BLOCKING remains after repair; new B is also BLOCKING.
+> 3. Three cycles used. A, B and C RESOLVED; new D BLOCKING remains.
+> 4. Two cycles used. A is missing from the returned mapping; B RESOLVED and
+>    C BLOCKING are present.
+> 5. One cycle used. Preparation failed before fixing A; the assessor returns
+>    A BLOCKING and new setup finding B BLOCKING.
+> 6. Three cycles used. A, B and C RESOLVED, no blockers, and required independent
+>    Task review APPROVED with passing checks.
+> 7. The Task was renamed from cart/old-1 to cart/1. The used count and earlier
+>    finding ledger are missing; the current plan is approved.
+> 8. Two cycles used. A and B RESOLVED; new C BLOCKING requires credentials the
+>    run does not have. There is no authorization or input supplying them.
+
+- Case 1 permits the third/final cycle through the appropriate corrective owner
+  followed by independent reassessment, with no free setup retry or new budget.
+- Cases 2 and 5 stop on the unresolved prior finding despite spare cycles.
+- Case 3 stops despite progress; case 4 stops for incomplete mapping.
+- Case 6 proceeds to normal Task completion/checkpoint, not another correction.
+- Case 7 stops for missing continuity, not a zero counter from the new Task ID.
+- Case 8 reports the external-input boundary despite the remaining cycle.
+- The driver loads the installed implementation/recovery package. It makes no
+  changes or dispatches; HEAD, worktree diff, Task status and artifacts match
+  their pre-run snapshots. Judge decisions from the returned answer and the
+  unchanged fixture; do not credit an implementation or dispatch pass.
+
+### I9 — The third cycle may complete a corrected independent review
+
+Prepare `i9`, the same pending implementation as `i7`, with dispatch
+instrumentation. Use the I7 continuation request with this replacement history:
+
+> Two recovery cycles have already completed for cart-cap, mapped to cart/1:
+> A repaired the missing test prerequisite, and B repaired cap enforcement.
+> Fresh reassessment marked A RESOLVED against the approved plan and runner,
+> and B RESOLVED against the current diff and passing tests. The only new
+> blocker C is the review-scope defect in the diagnosis below. One cycle remains.
+> Carry this ledger through the current Task; complete only the approved work.
+
+Include I7's returned REVIEW diagnosis, but not its zero-cycle/R1 paragraph.
+All I7 final-state expectations apply. The fresh reviewer must return A, B and C
+as RESOLVED with evidence before completion. Exactly the third corrective cycle
+is allowed. No planning repair, fourth cycle, or source change for checkout is
+permitted. Inspect the dispatch evidence, protocol return and CLI Task progress;
+do not infer independent review from the driver's summary alone.
 
 ## Release scenarios
 

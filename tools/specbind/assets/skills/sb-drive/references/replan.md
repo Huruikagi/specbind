@@ -32,6 +32,17 @@ approval within that boundary. Preserve existing retry budgets and finding
 history across dispatches; the same unresolved defect after recovery is parked,
 not another fresh replan attempt. A replan is not a way to reset a spent budget.
 
+For a Spec-backed Task recovery, carry the implementation owner's full ledger:
+recovery identity and Task mapping, cycles used/remaining out of three, all
+finding IDs/dispositions/evidence, latest assessment, partial paths, authority,
+and next owner. Reserve one Task cycle when the planning owner starts; the whole
+Plan repair consumes that cycle, while Plan's own phase bounds still apply.
+Preserve whether a cycle is already reserved so a resumed owner never counts it
+twice. Return the same ledger and Plan's evidence to implementation for independent
+reassessment. Drive cannot mark findings resolved or infer missing counters from
+status. A repeated finding, missing history, or exhausted budget cannot gain an
+allowance from a new dispatch or remapped Task ID.
+
 After the planning owner completes its checkpoints, reread status and resume
 implementation and validation in this same Drive run. "The plan is revised;
 resume next time" is not a terminal result while safe work remains reachable.

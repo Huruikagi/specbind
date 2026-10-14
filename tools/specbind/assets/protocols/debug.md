@@ -86,6 +86,30 @@ implementation defect produces repeated attempts at work that cannot succeed.
 
 ## The diagnosis must be actionable without you
 
+### Task recovery finding continuity
+
+When the caller requests Task recovery assessment, independently map the supplied
+factual finding ledger against current artifacts, diff, and verification evidence.
+Do not inherit failed-attempt reasoning. Assign stable IDs to new findings and
+account for every prior ID exactly once as `RESOLVED` or `BLOCKING`, with evidence.
+Identity follows the affected obligation and cause, not wording, paths, or Task
+renumbering. A recurring resolved finding reuses its old ID. An unproven resolution
+remains `BLOCKING`; missing or ambiguous identity is explicitly unresolved.
+Plan approval or an implementer's claim alone cannot establish resolution.
+
+Before the terminal `## Diagnosis` block, return:
+
+```text
+## Recovery findings
+- <ID>: RESOLVED | BLOCKING — <obligation and cause> — <current evidence>
+```
+
+Use `none` only for an empty history with no current findings. Include this
+mapping even after the final recovery cycle; the caller owns the bound and may
+use the result only to explain a stop. Do not prescribe another attempt from
+remaining-budget assumptions. This mapping is conditional; ordinary standalone
+diagnosis retains its existing terminal block and does not invent a Task ledger.
+
 The report is read by an agent with no memory of this analysis. It contains:
 
 - the failure, stated precisely enough to recognize

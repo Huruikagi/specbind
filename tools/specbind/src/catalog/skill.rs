@@ -313,6 +313,10 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
         source: include_str!("../../assets/skills/sb-implement/references/direct.md"),
     },
     SkillResource {
+        relative_path: "references/recovery.md",
+        source: include_str!("../../assets/skills/sb-implement/references/recovery.md"),
+    },
+    SkillResource {
         relative_path: "references/spec-backed.md",
         source: include_str!("../../assets/skills/sb-implement/references/spec-backed.md"),
     },

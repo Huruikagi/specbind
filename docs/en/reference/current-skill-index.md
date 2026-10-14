@@ -35,6 +35,14 @@ they fit together.
 
 ## Skills for specific situations
 
+For a Spec-backed Task, `sb-implement` permits at most three recovery cycles,
+including authorized replanning and corrected re-review. After a repair, it
+continues only when independent assessment resolves every earlier finding and
+the remaining blockers are new. A repeated or uncertain finding stops the Task;
+any blocker after the third cycle also stops it. The budget follows the Task
+across handoffs and cannot be reset by restarting Drive. There is no setting
+for this limit. Direct-item recovery keeps its separate existing bounds.
+
 | Skill | When to use it |
 | --- | --- |
 | `sb-gap-analysis` | Before planning, compare the intended change with the current code and keep the findings as Research. |

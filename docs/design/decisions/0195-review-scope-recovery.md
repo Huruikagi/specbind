@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0218](./0218-task-recovery-cycles.md) replaces the Spec-backed attempt
+budget below with the shared three-cycle Task recovery budget; the evidence
+threshold and independent-review ownership remain in force.
+
 ## Context
 
 The Spec-backed implementation cycle already bounds review remediation and

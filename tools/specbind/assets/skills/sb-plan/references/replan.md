@@ -31,6 +31,17 @@ the delegation workflow, exact Design/Tasks authority, original scope boundary,
 and accumulated review findings/budgets to every owning receiver. No receiver
 may infer authority omitted from its dispatch.
 
+When recovery comes from a Spec-backed Task, retain its supplied recovery identity,
+Task mapping, cycles used/remaining out of three, all finding IDs/dispositions and
+evidence, latest assessment, partial paths, and authority. The whole planning
+repair is one already-reserved Task recovery cycle; do not charge each phase or
+reset that cycle. Your existing Design and Contract Review bounds still apply.
+Return exact before/after Task mappings and repair evidence with the ledger;
+renaming or splitting the same obligation preserves its shared remaining budget.
+Do not declare implementation findings resolved: the resumed implementation owner
+must obtain independent reassessment. Missing continuation facts are a stop,
+not permission to invent unused cycles.
+
 ## Preserve work before rewinding
 
 Inspect Git status and the exact diff. Preserve reported partial implementation
