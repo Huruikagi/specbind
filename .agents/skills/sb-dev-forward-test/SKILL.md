@@ -114,7 +114,7 @@ Otherwise use a subagent with no prior context.
 When Codex drives a scenario through a subagent, use this profile:
 
 - `fork_turns: "none"`
-- `model: "gpt-5.6-terra"`
+- `model: "gpt-6.1-sol"`
 - `reasoning_effort: "medium"`
 
 This is the default forward-test driver profile, not part of the product skill

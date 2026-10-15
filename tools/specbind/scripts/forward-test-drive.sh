@@ -278,7 +278,7 @@ start)
     codex)
         command -v codex >/dev/null 2>&1 || fail "codex is not on PATH"
         # The default forward-test driver profile for Codex.
-        [ -n "$model" ] || model=gpt-5.6-terra
+        [ -n "$model" ] || model=gpt-6.1-sol
         [ -n "$effort" ] || effort=medium ;;
     *) fail "unknown agent: $agent (expected claude-code or codex)" ;;
     esac

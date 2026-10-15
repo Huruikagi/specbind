@@ -82,7 +82,7 @@ class CodexDriveTest(unittest.TestCase):
                 self.assertTrue(os.path.samefile(call["cwd"], fixture))
                 self.assertIsNone(call["thread_env"])
                 args = call["args"]
-                self.assertEqual(args[args.index("-m") + 1], "gpt-5.6-terra")
+                self.assertEqual(args[args.index("-m") + 1], "gpt-6.1-sol")
                 configs = [args[i + 1] for i, arg in enumerate(args) if arg == "-c"]
                 for expected in (
                     'sandbox_mode="workspace-write"',

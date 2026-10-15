@@ -95,7 +95,7 @@ following default profile:
 
 ```yaml
 fork_turns: none
-model: gpt-5.6-terra
+model: gpt-6.1-sol
 reasoning_effort: medium
 ```
 
