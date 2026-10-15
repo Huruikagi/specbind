@@ -1,6 +1,6 @@
 ---
 name: sb-validate-implementation
-description: Use when every Task for a named Spec is complete and the user explicitly asks for lifecycle validation against the active Requirement IDs that records completion on GO. Also owns completion withdrawal under an evidenced Drive replan recovery handoff. For a consequence-free claim check, use sb-verify-completion.
+description: Validate completed Tasks against active Requirement IDs and record completion on GO under an explicit lifecycle-validation request or ordinary Drive authority. Also owns completion withdrawal under an evidenced Drive replan recovery handoff. For a consequence-free claim check, use sb-verify-completion.
 argument-hint: "<spec> [<spec> ...]"
 ---
 
@@ -27,6 +27,10 @@ means no additional project preference; any `ERROR` line stops the workflow.
 The gate between "every task is recorded complete" and "this Spec is done".
 
 Enter this workflow only with explicit authority to record completion on `GO`.
+An ordinary Drive request supplies that authority for the exact actionable Spec
+set in its handoff, unless the user explicitly restricted completion recording
+or mutation. No additional confirmation is needed for that handoff. A bare
+status result or an agent's unsupported assertion of authority is insufficient.
 The sole early-entry exception is an evidenced Drive replan handoff with
 completion-withdrawal-only authority: go directly to "When evidence needs
 clearing" before preflight. That mode grants no validation or acceptance and
@@ -268,7 +272,17 @@ return each target's findings to its owner. Do not accept a passing subset
 before repairs: the repair would stale its evidence again.
 
 After every target has `GO`, confirm HEAD still equals the common preflight
-revision and the worktree is clean. Submit each candidate sequentially with
+revision and the worktree is clean. If either check fails before acceptance,
+accept none and return `BLOCKED`: name the entire target set, common preflight
+revision, observed HEAD, dirty paths, and the failed check. Discard the old
+candidates and verdicts for acceptance purposes; do not repair, commit, clean,
+or retry in this run. Tell the caller to resolve the intervening work and start
+a new validation run with all current targets, all preflights, checks and
+per-Spec assessments at one clean revision. For a Drive caller, the restart
+entry point is a new user invocation of Drive, which schedules a fresh ordinary
+validation owner from current status. This is not a `RETRYABLE` handoff.
+
+When both checks hold, submit each candidate sequentially with
 that **same implementation revision**, without another preflight, check run,
 or commit between acceptances. Never take a new revision from an intervening
 completion commit. The guarded CLI rechecks each acceptance's preconditions.

@@ -517,7 +517,7 @@ fn authorized_lifecycle_completion_routes_to_validation_not_status() {
     assert!(
         validation
             .description
-            .contains("explicitly asks for lifecycle validation")
+            .contains("explicit lifecycle-validation request or ordinary Drive authority")
     );
 
     let status = skill::find("sb-status")

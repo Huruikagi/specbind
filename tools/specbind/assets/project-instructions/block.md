@@ -18,7 +18,11 @@ the only supported writer of machine state.
 - Use `sb-drive` when the user asks to drive, continue, or advance the
   active milestone as far as safely possible. It may cross planning,
   implementation, and validation while preserving each owning Skill. A request
-  to implement one named Roadmap item still uses `sb-implement`.
+  to Drive includes ordinary completion recording on `GO` and its checkpoint
+  for the exact actionable Specs, unless the user explicitly limits mutation
+  or completion recording. It grants no planning Gate approval or Release
+  authority. No additional completion confirmation is needed. A request to
+  implement one named Roadmap item still uses `sb-implement`.
 - Use `sb-plan` as the default planning entry point when the user asks to
   plan active work. It coordinates Requirements through Tasks approval and is
   also the single entry point when the user explicitly asks to work on only
@@ -32,7 +36,9 @@ the only supported writer of machine state.
   lifecycle validation but does not explicitly authorize recording completion.
   Use `sb-validate-implementation` only when every Task for a named Spec is
   complete and the user asks to validate it for lifecycle completion, recording
-  completion evidence on `GO`. Words such as done, complete, or ready do not by
+  completion evidence on `GO`, or the owning workflow receives that ordinary
+  Drive authority for the exact actionable Spec set. Words such as done,
+  complete, or ready do not by
   themselves authorize that mutation.
   The same validation Skill also owns completion-withdrawal-only recovery from
   an evidenced authorized Drive replan handoff, before milestone convergence.

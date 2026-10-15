@@ -499,4 +499,41 @@ fn converged_validation_has_one_owner_and_common_revision_checkpoint() {
     }
 }
 
+#[test]
+fn drive_authority_and_revision_stop_survive_both_agent_renderings() {
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let drive = skill::find("sb-drive").unwrap().render(agent).unwrap();
+        let validation = skill::find("sb-validate-implementation")
+            .unwrap()
+            .render(agent)
+            .unwrap();
+        let drive = drive.split_whitespace().collect::<Vec<_>>().join(" ");
+        let validation = validation.split_whitespace().collect::<Vec<_>>().join(" ");
+        for boundary in [
+            "A request to drive the active milestone authorizes ordinary completion",
+            "An explicit user limit",
+            "never in a registered internal role",
+            "Claude Code: `general-purpose`; Codex: the ordinary/default agent",
+            "return `EXTERNAL_BLOCK`; do not substitute an internal role",
+            "stop this Drive run after one Git/status reread",
+            "Do not retry or switch owners",
+            "A later user invocation of Drive",
+            "prior candidates and `GO` verdicts cannot be reused",
+        ] {
+            assert!(drive.contains(boundary), "{agent:?}: {boundary}");
+        }
+        for boundary in [
+            "An ordinary Drive request supplies that authority",
+            "unless the user explicitly restricted completion recording or mutation",
+            "accept none and return `BLOCKED`",
+            "common preflight revision, observed HEAD, dirty paths, and the failed check",
+            "all preflights, checks and per-Spec assessments",
+            "This is not a `RETRYABLE` handoff",
+            "Do not roll back valid evidence",
+        ] {
+            assert!(validation.contains(boundary), "{agent:?}: {boundary}");
+        }
+    }
+}
+
 use super::*;

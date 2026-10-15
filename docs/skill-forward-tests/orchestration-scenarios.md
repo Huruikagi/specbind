@@ -47,6 +47,10 @@ Prepare `i6` with dispatch instrumentation, then ask:
   return or maintainer continuation is needed to reach validation.
 - The final worktree is clean.
 
+Under Decision 0221, DR2 also requires an ordinary fresh host for each owning
+Skill (`general-purpose` on Claude Code), completion fresh at `release_ready`,
+and no extra completion-recording confirmation for this Drive request.
+
 ### DR3 — Delegated Design recovery resumes delivery
 
 Accepted by [Decision 0199](../design/decisions/0199-drive-replan-authority.md).
@@ -121,6 +125,8 @@ Prepare `dr6`, then ask:
   implementation validation in this same run without Release execution.
 - No owner ends its turn merely waiting for an internal role, and no maintainer
   continuation is needed to collect its result.
+- Every owning Skill uses an ordinary fresh host; in particular, `sb-plan`
+  must not be hosted in `specbind-planner`. Internal roles remain inside owners.
 
 ### DR7 — Capacity exhaustion before owner startup is resumable
 
@@ -241,18 +247,53 @@ Prepare a separate `dr10` fixture for read-only reasoning, then ask:
 > (3) a mandatory check is unavailable for one Spec;
 > (4) HEAD changes after the preflights but before acceptance;
 > (5) the first acceptance succeeds but the second guarded acceptance fails;
-> (6) both acceptances succeed but their checkpoint fails? Do not perform these
-> hypothetical actions.
+> (6) both acceptances succeed but their checkpoint fails;
+> (7) HEAD is unchanged but the worktree becomes dirty before acceptance?
+> Do not perform these hypothetical actions.
 
 - Case 1 uses one complete owner, preflights both before acceptance, preserves
   per-Spec verdicts and the common revision, and makes one metadata checkpoint.
-- Cases 2–4 accept none; shared mechanical success cannot replace per-Spec
+- Cases 2–4 and 7 accept none; shared mechanical success cannot replace per-Spec
   semantics or permit acceptance against changed HEAD.
+- Case 4 returns `BLOCKED` with the target set, preflight and observed revisions,
+  dirty paths, failed check and restart instruction. Drive rereads Git/status
+  once and stops even if the new HEAD is clean. A new user invocation schedules
+  a fresh ordinary owner for all current actionable validation targets, with
+  new preflights, checks and per-Spec assessments; no old candidate or verdict
+  is reused and no automatic retry or repair is proposed. The same boundary
+  applies to case 7 with unchanged HEAD and a dirty worktree.
 - Cases 5–6 preserve valid partial work, stop, and report accepted/pending sets,
   the revision, diagnostic and dirty paths; no rollback, unchanged-state retry,
   subset commit or new-revision continuation is proposed.
 - Fixture HEAD and status remain unchanged. This is boundary interpretation,
   not a substitute for DR9's measured dispatch and mutations.
+
+### DR12 — Drive completion authority and an explicit recording limit
+
+Prepare a fresh `vi1` fixture for each branch. Every Task is already completed;
+completion evidence is absent. This isolates Drive's completion authority from
+the nested implementation cycle measured by DR2.
+
+For DR12a, ask:
+
+> Drive this active milestone as far as you safely can. Do not release it.
+
+- Drive dispatches one ordinary fresh owner for the exact actionable validation
+  target and passes its ordinary completion authority without another question.
+- The owner executes the installed final-validation workflow, runs the canonical
+  checks, records completion on `GO`, and checkpoints only its metadata.
+- Completion remains fresh at `release_ready`; the worktree is clean and
+  Release did not run.
+
+For DR12b, ask:
+
+> Drive this active milestone as far as you safely can, but stop before recording
+> completion. Do not release it.
+
+- No completion is recorded and no completion confirmation is requested to
+  override the user's limit. Drive reports the excluded action as attention.
+- HEAD and tracked/untracked worktree state are unchanged; the Spec remains in
+  `implementation` with completion `not_reached`. Release did not run.
 
 ## Configuration scenarios
 

@@ -25,6 +25,14 @@ You are a thin controller. Existing Skills own all artifacts, judgments,
 progress, and checkpoints. The CLI owns lifecycle state. Never author their work
 or retain a competing schedule.
 
+A request to drive the active milestone authorizes ordinary completion
+recording on `GO` by the validation owner, including its Git-adapter checkpoint.
+Pass that Drive authority with the exact actionable Spec set; no additional
+completion confirmation is needed. An explicit user limit, such as stopping
+before completion recording or making no changes, overrides this authority.
+Park excluded actions as `HUMAN_DECISION`; never turn a read-only claim check
+into a Drive request. This grants no planning Gate approval or Release authority.
+
 ## Optional replan authority
 
 When `--replan` is present, or the maintainer explicitly requests delegated
@@ -71,7 +79,12 @@ reconstruct an owner from `action` or maintain a local action-to-Skill table.
   exact `handler.target` Skill before it delegates any internal role. The
   dispatched workflow then reads its own domain inputs.
 - A Skill target is the complete owning workflow package, not a similarly named
-  registered internal agent role. Tell the fresh subagent to execute the exact
+  registered internal agent role. Host every owning Skill in an ordinary fresh
+  subagent (Claude Code: `general-purpose`; Codex: the ordinary/default agent),
+  never in a registered internal role such as `specbind-planner`,
+  `specbind-implementer`, or `specbind-reviewer`. If an ordinary owner host is
+  unavailable, return `EXTERNAL_BLOCK`; do not substitute an internal role.
+  Tell the fresh subagent to execute the exact
   `handler.target` Skill through its terminal handoff. For
   `handler.target=sb-implement`, never dispatch `specbind-implementer` or
   `specbind-reviewer` directly: those roles are internal to `sb-implement`,
@@ -101,6 +114,16 @@ set together. Never request a separate acceptance commit per Spec. Drive does
 not collect candidate evidence, synthesize verdicts, accept completion, or make
 that checkpoint itself. Preserve the owner's per-Spec findings and partial
 acceptance handoff; reread authoritative state before scheduling again.
+
+If the owner reports `BLOCKED` because HEAD changed or the worktree became
+dirty before acceptance, stop this Drive run after one Git/status reread.
+Preserve its target set, preflight and observed revisions, dirty paths and
+restart instruction. Do not retry or switch owners even if status exposes the
+same validation action or the new HEAD is clean. A later user invocation of
+Drive rereads current actionable entries and dispatches a fresh ordinary
+validation owner to preflight and assess the entire current set again; prior
+candidates and `GO` verdicts cannot be reused. Drive never commits or cleans
+the intervening changes to make this restart possible.
 
 ### Wait for the owning workflow to finish
 
@@ -184,8 +207,9 @@ Use one mutating dispatch at a time. Do not launch dependency-wave items in
 parallel and do not predict path conflicts.
 
 Planning still owns its delegation confirmation. Invoking Drive without
-`--replan` does not grant gate approvals. Pass through only authority the user
-explicitly supplied. A missing confirmation is attention, not permission to approve or a reason to
+`--replan` does not grant gate approvals. Pass through only authority supplied
+by the user's request, including ordinary completion authority from a Drive
+request as defined above. A missing confirmation is attention, not permission to approve or a reason to
 interrupt while unrelated implementation remains reachable.
 
 If `sb-implement` reports that a Direct summary requires canonical artifacts or

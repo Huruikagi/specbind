@@ -51,6 +51,11 @@ For ordinary scheduling, Drive selects actions exposed by `specbind milestone st
 delegates one at a time to the owning workflow. It does not author Requirements
 or Design itself and does not batch-complete Tasks.
 
+A Drive request includes recording completion on `GO` and its Git-adapter
+checkpoint for the actionable Specs, without another completion confirmation.
+An explicit instruction to stop before completion recording or make no changes
+limits that authority. Planning Gate approvals and Release remain separate.
+
 Typical ownership is:
 
 | State | Owning workflow |
@@ -108,6 +113,12 @@ at the same committed revision. Only after every target passes does it accept
 and commit their completion records together. A failed or unavailable required
 check stops acceptance for the whole set; a passing Spec is not recorded early
 while another still needs repair.
+
+If HEAD changes or the worktree becomes dirty before acceptance, no completion
+is recorded and Drive stops with the affected Specs, old and current revisions,
+and changed paths. Resolve the intervening work, then invoke Drive again. A
+fresh validation owner repeats all preflights, checks and per-Spec assessments
+for the current set; earlier candidates and verdicts are not reused.
 
 An item that cannot advance does not necessarily stop the whole run.
 
