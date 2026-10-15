@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-15 | Claude Code | `claude-sonnet-5-5` / `medium`, headless sessions | `3513446` | G1, A2, I1, DR2, DR6, DS1, I8, I9, DR10, DR11 — pass (G1 in a fresh session; one same-session G1 attempt scenario-invalid); FT-0058, FT-0057, FT-0037, FT-0018, FT-0022 confirmed; FT-0060..FT-0064 opened from reproduced debrief observations | [Confirmation batch](./runs/2026-10-15-claude-code-3513446-confirmation-batch.md) |
 | 2026-10-15 | Codex | `gpt-5.6-terra` / `medium`, headless sessions | `8fc9917` + Decisions 0219/0220 working tree | DR9c passes withdrawal, implementation and grouped final acceptance after a non-mutating CLI-selection environment correction; both records remain fresh; DR11 six stop/success boundaries pass; FT-0059 resolved | [Grouped completion](./runs/2026-10-15-codex-8fc9917-grouped-completion.md) |
 | 2026-10-14 | Codex | `gpt-5.6-terra` / `medium`, headless sessions | `8fc9917` + Decision 0219 working tree | DR10 exclusion decisions pass; DR9 withdrawal/implementation routing succeeds but default role is environment-blocked; DR9c reaches completed implementation, then separate final completion commits expose FT-0059 | [Initial measurement](./runs/2026-10-14-codex-8fc9917-completion-recovery.md), [configured-role follow-up](./runs/2026-10-14-codex-8fc9917-completion-recovery-2.md) |
 | 2026-10-14 | Codex | `gpt-5.6-terra` / `medium`, headless sessions | `34bb678` + Decision 0218 working tree | I8 — all eight continuation boundaries pass; I9 — third-cycle independent review, finding resolution, Task completion and checkpoint pass | [Task recovery cycles](./runs/2026-10-14-codex-34bb678-task-recovery.md) |
@@ -188,9 +189,9 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 6
-- Fixed, behavioral confirmation pending: 4
-- Active environment limitations: 6
+- Open reproduced product findings: 7
+- Fixed, behavioral confirmation pending: 3
+- Active environment limitations: 8
 
 The authoritative rows and stable identifiers are in
 [the findings worklist](./findings.md). Historical resolved findings through the
