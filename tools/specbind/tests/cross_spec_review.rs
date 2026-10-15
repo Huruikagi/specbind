@@ -241,6 +241,39 @@ fn atomically_accepts_and_replaces_a_guarded_review() {
 }
 
 #[test]
+fn local_design_contract_success_cannot_accept_an_incomplete_global_review() {
+    let root = acceptance_fixture();
+    write(
+        root.path(),
+        "specs/unfinished/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    git(root.path(), &["add", "."]);
+    git(
+        root.path(),
+        &["commit", "--quiet", "-m", "Add unfinished independent Spec"],
+    );
+    let scoped = specbind::contract_graph::resolve_for_design(root.path(), "checkout");
+    assert!(
+        scoped.report.issues.is_empty(),
+        "{:?}",
+        scoped.report.issues
+    );
+    let candidate = r#"{"schemaVersion":1,"assessment":"Locally ready.","deepInputs":[]}"#;
+    let error = cross_spec_review::accept(root.path(), root.path(), candidate)
+        .expect_err("full graph is still required");
+    assert!(
+        error
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE"),
+        "{error:?}"
+    );
+    assert!(!root.path().join("state/contract-review.md").exists());
+    assert_eq!(git(root.path(), &["status", "--porcelain"]), "");
+}
+
+#[test]
 fn accepts_delivery_review_without_reading_retained_tasks_but_rejects_stale_design() {
     let root = acceptance_fixture();
     let candidate = r#"{"schemaVersion":1,"assessment":"Reviewed.","deepInputs":[]}"#;

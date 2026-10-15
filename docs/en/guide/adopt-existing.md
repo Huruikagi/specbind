@@ -225,10 +225,11 @@ Release Adapter execution, tagging, or publication takes place.
 
 ### Contract checks and finalization
 
-A Design check may treat the complete Contract graph as provisional only while
-a downstream Spec is waiting for an earlier Design and therefore has no
-Contract yet. No other graph errors are waived. The milestone-wide Contract
-Review requires the complete graph.
+A Design check verifies that Spec's Contract and the seams it directly consumes.
+Unrelated Specs may still be unfinished, but every directly consumed provider
+Contract and target entry must resolve. A local verdict does not verify the
+whole graph. The milestone-wide Contract Review still requires the complete
+graph and may send an earlier Design back for revision.
 
 When every Spec is `adoption_ready` and Contract Review is valid for the latest
 artifacts (fresh), `sb-adopt` runs:

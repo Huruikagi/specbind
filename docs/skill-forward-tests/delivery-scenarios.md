@@ -415,6 +415,34 @@ set, the current Design completely realizes that set, and the retained previous
   and milestone review state are unchanged. In particular, the validator does
   not delete or repair the retained Task plan and does not approve Design.
 
+### VD4 — An unrelated unfinished Spec does not block individual Design review
+
+Accepted by [Decision 0223](../design/decisions/0223-design-scoped-contract-validation.md).
+
+From `vd4` — cart's current Design and Contract are complete, while an independent
+new wishlist Spec in the same delivery milestone has no Contract — ask:
+
+> Ask: check the cart design before we build on it.
+
+- The validator runs the Design-scoped Contract check, reaches semantic review
+  and returns `READY`. Whole-project incompleteness is not a cart finding.
+- It states that this is a local verdict and complete Contract Review is still
+  required; `check contracts` continues to reject the missing wishlist Contract.
+- It does not fabricate wishlist artifacts, approve a review, rewind a gate or
+  alter any artifact. HEAD and worktree remain unchanged.
+
+### VD5 — An unfinished direct provider still prevents readiness
+
+From `vd5` — the same milestone, but cart's Contract directly consumes an export
+from the unavailable wishlist Contract — ask the same natural request as VD4.
+
+- The validator returns `NOT_READY` for the unavailable consumed provider. It
+  does not treat this dependency as an unrelated unfinished Spec or waive it
+  until Contract Review.
+- No artifact, gate or review state changes. No provider Contract is invented.
+- The scoped check fails with `CONTRACT_GRAPH_TARGET_CONTRACT_UNAVAILABLE`;
+  the whole graph also remains invalid.
+
 ## Implementation validation scenarios
 
 Accepted by [Decision 0112](../design/decisions/0112-validate-implementation-skill-contract.md).

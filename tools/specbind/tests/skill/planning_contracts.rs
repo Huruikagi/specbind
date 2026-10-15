@@ -74,7 +74,7 @@ fn design_does_not_retire_an_export_only_to_silence_a_warning() {
 }
 
 #[test]
-fn reverse_design_checks_tolerate_only_waiting_participant_contracts() {
+fn design_checks_use_local_contract_scope_and_preserve_the_global_barrier() {
     for (name, body) in [
         (
             "sb-plan design",
@@ -90,10 +90,10 @@ fn reverse_design_checks_tolerate_only_waiting_participant_contracts() {
     ] {
         let normalized = body.split_whitespace().collect::<Vec<_>>().join(" ");
         for required in [
-            "all errors are `CONTRACT_GRAPH_CONTRACT_UNAVAILABLE`",
-            "another participant in this same reverse milestone",
-            "waiting for an earlier Design dependency",
-            "The current Spec's Contract must be readable",
+            "specbind check contracts --for-design <spec>",
+            "every direct consumed provider Contract/shared resource and target entry",
+            "both delivery and reverse establishment",
+            "not a complete graph verdict",
             "complete graph remains mandatory",
         ] {
             assert!(
@@ -105,6 +105,11 @@ fn reverse_design_checks_tolerate_only_waiting_participant_contracts() {
 
     let orchestrator = skill_resource_text("sb-plan", "references/complete-route.md");
     assert!(orchestrator.contains("Contract Review accepts no provisional graph"));
+    let validator = skill::find("sb-validate-design").unwrap().body().unwrap();
+    assert!(
+        validator.contains("In the final report, state that this verdict covers the selected Spec")
+    );
+    assert!(validator.contains("Keep that scope statement even for `READY` with no findings"));
 }
 
 #[test]

@@ -44,7 +44,7 @@ metadata path stops validation as an unsafe handoff.
 ```sh
 specbind spec status <spec>
 specbind check traceability <spec> --for-design
-specbind check contracts
+specbind check contracts --for-design <spec>
 ```
 
 These are cheap, and a structural failure makes semantic review premature.
@@ -61,17 +61,21 @@ not stop or weaken the Design verdict because of those Task-only diagnostics;
 report them only as later Tasks repair state. Any status diagnostic involving
 Requirements or Design remains relevant and must agree with the scoped check.
 
-There is one phase-relative result during dependency-ordered reverse
-establishment. If `check contracts` fails, run `specbind milestone status` and
-inspect every error. Continue to semantic review only when all errors are
-`CONTRACT_GRAPH_CONTRACT_UNAVAILABLE`, every source names another participant
-in this same reverse milestone, and status proves each named participant is
-waiting for an earlier Design dependency and is not yet actionable. The current
-Spec's Contract must be readable. State that the whole graph is provisional;
-do not report the command as passing. An unavailable current Contract, an
-unavailable Contract outside that exact waiting set, any other graph error, or
-an unproved status is a structural `NOT_READY`; the complete graph remains
-mandatory at milestone Contract Review.
+The Design-scoped Contract check requires this Spec's valid Contract and every
+direct consumed provider Contract/shared resource and target entry. An absent
+or invalid required input is structural `NOT_READY`; do not waive it because
+the provider is unfinished. Unrelated Specs and providers' own outgoing
+references are outside this check, in both delivery and reverse establishment.
+Its `Whole graph: not evaluated (Design scope)` result is not a complete graph
+verdict. Do not substitute the whole-project check as this phase's prerequisite.
+The complete graph remains mandatory at milestone Contract Review.
+
+Read the direct provider Contracts named by the scoped check when judging the
+actual consumed seams. A dependency visible in the Design but missing from its
+Contract is a finding, not permission to omit that dependency from review.
+`READY` settles this Spec against its current inputs. Later Design work or
+Contract Review can reveal a conflict and send the owning Spec back through
+the ordinary Design recovery; this validator never performs that rewind.
 
 **Fix the review scope from CLI-owned lifecycle state before reading prose.**
 `specbind check traceability <spec> --for-design` reports the exact `Active requirement set`;
@@ -173,6 +177,11 @@ conflicting obligation, not incidental rewording or a moved location.
 
 Every finding carries a disposition. A finding with none is one nobody carries
 past this report.
+
+In the final report, state that this verdict covers the selected Spec and its
+direct consumed seams, and that complete Contract Review is still required.
+Keep that scope statement even for `READY` with no findings; a clean local
+verdict must not sound like whole-project acceptance.
 
 **There is no "cannot judge" verdict, and that is deliberate.** If you cannot
 judge readiness from the design as written, that is the finding — the design

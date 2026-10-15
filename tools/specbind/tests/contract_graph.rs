@@ -34,6 +34,175 @@ fn write(root: &Path, relative: &str, content: &str) {
 }
 
 #[test]
+fn design_scope_does_not_discover_unrelated_specs_or_follow_provider_dependencies() {
+    let root = TempDir::new().unwrap();
+    write(
+        root.path(),
+        "specs/checkout/contract.yaml",
+        &EMPTY.replace(
+            "consumes: []",
+            "consumes:\n  - { id: value, target: { spec: provider, section: exports, id: value } }",
+        ),
+    );
+    write(root.path(), "specs/provider/contract.yaml", &EMPTY
+        .replace("exports: []", "exports:\n  - { id: value, description: Stable value. }")
+        .replace("consumes: []", "consumes:\n  - { id: later, target: { spec: unfinished, section: exports, id: later } }"));
+    write(
+        root.path(),
+        "specs/unfinished/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    write(root.path(), "specs/invalid/contract.yaml", "broken");
+    write(root.path(), "specs/shared-contract.yaml", "broken");
+    let scoped = contract_graph::resolve_for_design(root.path(), "checkout");
+    assert!(
+        scoped.project_issues.is_empty(),
+        "{:?}",
+        scoped.project_issues
+    );
+    assert!(
+        scoped
+            .inventories
+            .values()
+            .all(|value| value.issues.is_empty())
+    );
+    assert_eq!(
+        scoped
+            .inventories
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>(),
+        ["checkout", "provider"]
+    );
+    assert!(
+        scoped.report.issues.is_empty(),
+        "{:?}",
+        scoped.report.issues
+    );
+    assert_eq!(scoped.report.dependencies.len(), 1);
+    let whole = contract_graph::resolve(root.path());
+    assert!(
+        !whole.project_issues.is_empty(),
+        "invalid shared Contract must fail globally"
+    );
+    assert!(
+        whole
+            .report
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CONTRACT_GRAPH_TARGET_CONTRACT_UNAVAILABLE")
+    );
+}
+
+#[test]
+fn design_scope_requires_current_provider_and_exact_target_contracts() {
+    let root = TempDir::new().unwrap();
+    let consumer = EMPTY.replace(
+        "consumes: []",
+        "consumes:\n  - { id: value, target: { spec: provider, section: exports, id: value } }",
+    );
+    write(root.path(), "specs/checkout/contract.yaml", &consumer);
+    for provider in [None, Some("broken"), Some(EMPTY)] {
+        if let Some(provider) = provider {
+            write(root.path(), "specs/provider/contract.yaml", provider);
+        }
+        let result = contract_graph::resolve_for_design(root.path(), "checkout");
+        assert!(
+            result
+                .report
+                .issues
+                .iter()
+                .any(|issue| issue.severity == GraphIssueSeverity::Error),
+            "{provider:?}"
+        );
+        assert!(
+            result.report.dependencies.is_empty(),
+            "{:?}",
+            result.report.dependencies
+        );
+    }
+    write(
+        root.path(),
+        "specs/provider/contract.yaml",
+        &EMPTY.replace(
+            "exports: []",
+            "exports:\n  - { id: value, description: Stable value. }",
+        ),
+    );
+    let ready = contract_graph::resolve_for_design(root.path(), "checkout");
+    assert!(ready.report.issues.is_empty(), "{:?}", ready.report.issues);
+    write(root.path(), "specs/checkout/contract.yaml", "broken");
+    assert!(
+        contract_graph::resolve_for_design(root.path(), "checkout")
+            .report
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE")
+    );
+    fs::remove_file(root.path().join("specs/checkout/contract.yaml")).unwrap();
+    assert!(
+        contract_graph::resolve_for_design(root.path(), "checkout")
+            .report
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE")
+    );
+    write(
+        root.path(),
+        "specs/checkout/contract.yaml",
+        &consumer.replace("spec: provider", "spec: checkout"),
+    );
+    assert!(
+        contract_graph::resolve_for_design(root.path(), "checkout")
+            .report
+            .issues
+            .iter()
+            .any(|issue| issue.code == "CONTRACT_GRAPH_SELF_CONSUME")
+    );
+}
+
+#[test]
+fn design_scope_requires_consumed_shared_resources() {
+    let root = TempDir::new().unwrap();
+    write(root.path(), "specs/checkout/contract.yaml", &EMPTY.replace("schema_version: 1", "schema_version: 2").replace(
+        "consumes: []", "consumes:\n  - { id: locale, target: { shared: true, section: resources, id: translations } }"));
+    for shared in [
+        None,
+        Some("broken"),
+        Some("schema_version: 1\nresources: []\n"),
+    ] {
+        if let Some(shared) = shared {
+            write(root.path(), "specs/shared-contract.yaml", shared);
+        }
+        let result = contract_graph::resolve_for_design(root.path(), "checkout");
+        assert!(
+            result
+                .report
+                .issues
+                .iter()
+                .any(|issue| issue.code == "CONTRACT_GRAPH_SHARED_RESOURCE_MISSING")
+        );
+    }
+    write(
+        root.path(),
+        "specs/shared-contract.yaml",
+        "schema_version: 1\nresources:\n  - id: translations\n    description: Catalogs\n    paths: [locales/**]\n    change_policy: Preserve matching keys.\n    invariants: [Matching keys]\n",
+    );
+    let result = contract_graph::resolve_for_design(root.path(), "checkout");
+    assert!(
+        result.project_issues.is_empty(),
+        "{:?}",
+        result.project_issues
+    );
+    assert!(
+        result.report.issues.is_empty(),
+        "{:?}",
+        result.report.issues
+    );
+    assert_eq!(result.report.dependencies.len(), 1);
+}
+
+#[test]
 fn resolves_typed_consumes_edges() {
     let report = contract_graph::evaluate(
         &specs(&["catalog", "checkout"]),

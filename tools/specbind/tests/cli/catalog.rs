@@ -221,6 +221,60 @@ fn verifies_the_contract_graph_and_keeps_review_warnings_non_fatal() {
 }
 
 #[test]
+fn design_contract_check_is_read_only_scoped_and_does_not_replace_global_validation() {
+    let root = project_fixture();
+    let empty = "schema_version: 1\nowns: []\nexports: []\nconsumes: []\ninvariants: []\nfile_ownership: []\n";
+    write(root.path(), ".specbind/specs/checkout/contract.yaml", empty);
+    write(
+        root.path(),
+        ".specbind/specs/unfinished/spec.yaml",
+        "schema_version: 1\nactive_change: null\n",
+    );
+    commit_all(root.path());
+    let before = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    specbind_command()
+        .current_dir(root.path())
+        .args(["check", "contracts", "--for-design", "checkout"])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::starts_with("OK DESIGN_CONTRACTS_VERIFIED:")
+                .and(predicate::str::contains("Contract scope: checkout"))
+                .and(predicate::str::contains(
+                    "Whole graph: not evaluated (Design scope); required at Contract Review",
+                )),
+        )
+        .stderr("");
+    specbind_command()
+        .current_dir(root.path())
+        .args(["check", "contracts"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "CONTRACT_GRAPH_CONTRACT_UNAVAILABLE",
+        ));
+    assert_eq!(git_stdout(root.path(), &["rev-parse", "HEAD"]), before);
+    assert_eq!(git_stdout(root.path(), &["status", "--porcelain"]), "");
+    write(root.path(), ".specbind/specs/checkout/contract.yaml", &empty.replace("consumes: []", "consumes:\n  - { id: missing, target: { spec: unfinished, section: exports, id: value } }"));
+    specbind_command()
+        .current_dir(root.path())
+        .args(["check", "contracts", "--for-design", "checkout"])
+        .assert()
+        .failure()
+        .stderr(
+            predicate::str::starts_with("ERROR DESIGN_CONTRACTS_FAILED:").and(
+                predicate::str::contains("CONTRACT_GRAPH_TARGET_CONTRACT_UNAVAILABLE"),
+            ),
+        );
+    specbind_command()
+        .current_dir(root.path())
+        .args(["check", "contracts", "--for-design", "../checkout"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("ARTIFACT_SPEC_ID_INVALID"));
+}
+
+#[test]
 fn reports_contract_graph_dependencies_and_reverse_consumers() {
     let root = project_fixture();
     write(

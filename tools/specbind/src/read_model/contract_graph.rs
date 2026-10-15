@@ -97,24 +97,10 @@ pub fn resolve(specbind_root: &Path) -> ContractGraphResolution {
     let mut contracts = BTreeMap::new();
 
     for canonical_spec in &expected_specs {
-        let mut inventory = discover_spec(specbind_root, canonical_spec);
-        let contract = inventory
-            .artifacts
-            .iter()
-            .find(|artifact| artifact.kind == ArtifactKind::Contract)
-            .cloned();
-        if let Some(artifact) = contract
-            && !inventory
-                .issues
-                .iter()
-                .any(|issue| issue.path.as_ref() == Some(&artifact.path))
-            && let Some(document) =
-                resolve_contract_projection(specbind_root, &artifact, &mut inventory.issues)
-        {
+        let (inventory, contract) = resolve_one_contract(specbind_root, canonical_spec);
+        if let Some(document) = contract {
             contracts.insert(canonical_spec.clone(), document);
         }
-        inventory.issues.sort();
-        inventory.issues.dedup();
         inventories.insert(canonical_spec.clone(), inventory);
     }
 
@@ -141,6 +127,85 @@ pub fn resolve(specbind_root: &Path) -> ContractGraphResolution {
     }
 }
 
+fn resolve_one_contract(
+    specbind_root: &Path,
+    canonical_spec: &str,
+) -> (ArtifactInventory, Option<ContractDocument>) {
+    let mut inventory = discover_spec(specbind_root, canonical_spec);
+    let artifact = inventory
+        .artifacts
+        .iter()
+        .find(|artifact| artifact.kind == ArtifactKind::Contract)
+        .cloned();
+    let contract = artifact.and_then(|artifact| {
+        if inventory
+            .issues
+            .iter()
+            .any(|issue| issue.path.as_ref() == Some(&artifact.path))
+        {
+            None
+        } else {
+            resolve_contract_projection(specbind_root, &artifact, &mut inventory.issues)
+        }
+    });
+    inventory.issues.sort();
+    inventory.issues.dedup();
+    (inventory, contract)
+}
+
+/// Resolves one Design's Contract and its direct consumed providers. Does not
+/// discover unrelated Specs or follow providers' own outgoing references.
+#[must_use]
+pub fn resolve_for_design(specbind_root: &Path, canonical_spec: &str) -> ContractGraphResolution {
+    let (inventory, contract) = resolve_one_contract(specbind_root, canonical_spec);
+    let mut inventories = BTreeMap::from([(canonical_spec.to_owned(), inventory)]);
+    let mut contracts = BTreeMap::new();
+    let mut expected_specs = BTreeSet::from([canonical_spec.to_owned()]);
+    let mut needs_shared = false;
+    if let Some(contract) = contract {
+        for consume in &contract.consumes {
+            match &consume.target.owner {
+                ContractOwner::Spec(provider) => {
+                    expected_specs.insert(provider.clone());
+                }
+                ContractOwner::Shared => needs_shared = true,
+            }
+        }
+        contracts.insert(canonical_spec.to_owned(), contract);
+    }
+    for provider in expected_specs.iter().filter(|spec| *spec != canonical_spec) {
+        let (inventory, contract) = resolve_one_contract(specbind_root, provider);
+        inventories.insert(provider.clone(), inventory);
+        if let Some(contract) = contract {
+            contracts.insert(provider.clone(), contract);
+        }
+    }
+    let mut project_issues = Vec::new();
+    let shared = if needs_shared {
+        match super::shared_contract::read(specbind_root) {
+            Ok(shared) => shared,
+            Err(message) => {
+                project_issues.push(discovery_issue(
+                    "SHARED_CONTRACT_INVALID",
+                    Some(Utf8PathBuf::from(
+                        super::shared_contract::SHARED_CONTRACT_RELATIVE,
+                    )),
+                    message,
+                ));
+                None
+            }
+        }
+    } else {
+        None
+    };
+    let report = evaluate_scope(&expected_specs, contracts, shared, Some(canonical_spec));
+    ContractGraphResolution {
+        inventories,
+        project_issues,
+        report,
+    }
+}
+
 /// Validates typed Contract manifests against the complete persistent Spec set.
 #[must_use]
 pub fn evaluate(
@@ -156,6 +221,15 @@ pub fn evaluate_with_shared(
     contracts: BTreeMap<String, ContractDocument>,
     shared: Option<crate::domain::shared_contract::SharedContract>,
 ) -> ContractGraphReport {
+    evaluate_scope(expected_specs, contracts, shared, None)
+}
+
+fn evaluate_scope(
+    expected_specs: &BTreeSet<String>,
+    contracts: BTreeMap<String, ContractDocument>,
+    shared: Option<crate::domain::shared_contract::SharedContract>,
+    design_spec: Option<&str>,
+) -> ContractGraphReport {
     let mut issues = Vec::new();
     for canonical_spec in expected_specs {
         if !contracts.contains_key(canonical_spec) {
@@ -168,9 +242,21 @@ pub fn evaluate_with_shared(
         }
     }
 
-    let dependencies =
-        resolve_dependencies(expected_specs, &contracts, shared.as_ref(), &mut issues);
-    let ownership_findings = ownership_findings(&contracts, shared.as_ref());
+    let dependencies = resolve_dependencies(
+        expected_specs,
+        &contracts,
+        shared.as_ref(),
+        design_spec,
+        &mut issues,
+    );
+    let ownership_findings = ownership_findings(&contracts, shared.as_ref())
+        .into_iter()
+        .filter(|finding| {
+            design_spec.is_none_or(|spec| {
+                finding.left.owner.spec() == Some(spec) || finding.right.owner.spec() == Some(spec)
+            })
+        })
+        .collect::<Vec<_>>();
     for finding in &ownership_findings {
         let (code, relation) = match finding.kind {
             OwnershipFindingKind::Duplicate => ("CONTRACT_GRAPH_OWNERSHIP_DUPLICATE", "duplicates"),
@@ -189,7 +275,10 @@ pub fn evaluate_with_shared(
         ));
     }
 
-    for entry in unconsumed_exports(&contracts, &dependencies) {
+    for entry in unconsumed_exports(&contracts, &dependencies)
+        .into_iter()
+        .filter(|_| design_spec.is_none())
+    {
         issues.push(graph_issue(
             GraphIssueSeverity::Warning,
             "CONTRACT_GRAPH_EXPORT_UNCONSUMED",
@@ -201,7 +290,11 @@ pub fn evaluate_with_shared(
         ));
     }
 
-    let dependency_cycles = dependency_cycles(&contracts, &dependencies);
+    let dependency_cycles = if design_spec.is_none() {
+        dependency_cycles(&contracts, &dependencies)
+    } else {
+        Vec::new()
+    };
     for cycle in &dependency_cycles {
         issues.push(graph_issue(
             GraphIssueSeverity::Warning,
@@ -365,10 +458,14 @@ fn resolve_dependencies(
     expected_specs: &BTreeSet<String>,
     contracts: &BTreeMap<String, ContractDocument>,
     shared: Option<&crate::domain::shared_contract::SharedContract>,
+    design_spec: Option<&str>,
     issues: &mut Vec<ContractGraphIssue>,
 ) -> Vec<ContractDependency> {
     let mut dependencies = Vec::new();
-    for (consumer_spec, contract) in contracts {
+    for (consumer_spec, contract) in contracts
+        .iter()
+        .filter(|(spec, _)| design_spec.is_none_or(|selected| spec.as_str() == selected))
+    {
         for consume in &contract.consumes {
             let consumer = ContractEntryRef {
                 owner: ContractOwner::Spec(consumer_spec.clone()),

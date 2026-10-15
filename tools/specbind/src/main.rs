@@ -89,7 +89,9 @@ fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
         CheckCommand::Traceability { spec, for_design } => {
             specbind::cli::check_traceability(start, &spec, for_design)
         }
-        CheckCommand::Contracts => specbind::cli::check_contracts(start),
+        CheckCommand::Contracts { for_design } => {
+            specbind::cli::check_contracts(start, for_design.as_deref())
+        }
     }
 }
 

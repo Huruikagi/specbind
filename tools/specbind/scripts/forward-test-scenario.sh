@@ -83,6 +83,8 @@
 #   vi4    vi1 plus an active Validation adapter requiring an unavailable check
 #   vi5    accepted completion made stale by a later committed cart source change
 #   vd1    an approved design that defers the bound to a research document
+#   vd4    a complete cart Design beside an unfinished independent new Spec
+#   vd5    vd4 with cart directly consuming the unavailable new Spec Contract
 #   vd3    a rewound Design with a retained Task plan for the previous active set
 #   rr1    an implemented plan ready for Requirements-to-Tasks recovery
 #   rl1    cart released-ready but with no version bound yet
@@ -1170,6 +1172,48 @@ ds7 | ds8 | ds9)
         expect "the dashboard Design fixture does not define its implementation foundation" \
             'grep -q "caller-supplied account snapshot" .specbind/specs/dashboard/requirements.md'
     fi
+    ;;
+
+vd4 | vd5)
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}],"newSpecs":[{"spec":"wishlist","summary":"Keep an independent list of desired book identifiers, separate from cart quantities."}]}}'
+    brief cart "A cart has no upper bound per SKU." "Reject additions above 99 and preserve the cart on rejection."
+    brief wishlist "Customers want to remember books independently of a cart." "Keep an independent list of desired book identifiers."
+    cart_cap_approved
+    if [ "$scenario" = vd5 ]; then
+        sed 's/^consumes: \[\]/consumes:\n  - { id: desired-books, target: { spec: wishlist, section: exports, id: books } }/' \
+            .specbind/specs/cart/contract.yaml > contract-draft.tmp
+        mv contract-draft.tmp .specbind/specs/cart/contract.yaml
+    fi
+    sed 's/paths: \[src\/cart.py\]/paths: [src\/cart.py, tests\/test_cart.py]/' \
+        .specbind/specs/cart/contract.yaml > contract-draft.tmp
+    mv contract-draft.tmp .specbind/specs/cart/contract.yaml
+    cart_design_approved "upper bound of 99 before any mutation. Reject an input quantity below 1 with
+ValueError('Quantity must be at least 1.'). Compute total = cart.get(sku, 0) + quantity;
+if total exceeds 99, raise ValueError('At most 99 units per SKU are allowed.').
+Neither rejection inserts a missing SKU or changes an existing quantity. Otherwise
+assign cart[sku] = total and return the same dictionary. The production change stays
+in src/cart.py, preserves the dictionary API, and introduces no service or data
+dependency. Payment, order placement and wishlist behavior are outside this Design." updated \
+        "Verification: this change also owns creation of tests/test_cart.py using Python's
+standard-library unittest. Run python -m unittest discover -s tests after creating
+that file. Cover a new SKU, cumulative additions, acceptance at 99, rejection of
+100, and rejection of zero/negative input. Assert the exact error guidance,
+unchanged dictionary on rejection (including absence of a new SKU), and same
+dictionary identity on acceptance. No third-party test dependency is needed."
+    if [ "$scenario" = vd5 ]; then
+        expect "the required provider was not rejected" \
+            '! specbind check contracts --for-design cart'
+    else
+        expect "the local Design Contract check did not pass" \
+            'specbind check contracts --for-design cart'
+    fi
+    expect "whole graph unexpectedly passes" '! specbind check contracts'
+    expect "the unrelated Spec already has a Contract" \
+        '! test -e .specbind/specs/wishlist/contract.yaml'
+    expect "local Design traceability is not complete" \
+        'specbind check traceability cart --for-design'
+    expect "the global review is already accepted" \
+        'specbind milestone review status | grep -q "Status: absent"'
     ;;
 
 ds4 | t1 | t2 | x1 | x1r | vd1)

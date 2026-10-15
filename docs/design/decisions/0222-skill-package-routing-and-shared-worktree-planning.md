@@ -56,6 +56,8 @@ choice in this change; parallel isolated planning can be designed separately.
 
 ### Separate follow-up: absent Contracts for new delivery Specs
 
+Resolved by [Decision 0223](./0223-design-scoped-contract-validation.md).
+
 The existing Design validator runs the complete Contract graph check, whose
 `CONTRACT_GRAPH_CONTRACT_UNAVAILABLE` diagnostic includes other persistent Specs.
 Its provisional-graph exception currently covers only waiting participants in

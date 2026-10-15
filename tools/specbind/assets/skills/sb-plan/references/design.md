@@ -137,6 +137,16 @@ current graph cannot name the other side yet; use `specbind spec list` and the
 investigation below to find the owning Spec, then read its Contract. Do not infer
 that an empty query means there is no external consumer.
 
+These neighbor queries require a complete graph. If they fail only because
+other Specs are still unfinished, use `specbind spec list` and artifact
+inventories to read the available Contracts and identify declared incoming
+references and this Spec's direct consumed seams. Report the unavailable
+neighbors and incomplete incoming-impact knowledge; do not invent their
+Contracts or claim no consumers exist. The Design-scoped check below still
+requires every direct consumed provider. Full incoming-impact reconciliation
+remains mandatory at Contract Review. Other query failures must be diagnosed,
+not relabeled as unfinished work.
+
 ## 2. Investigate before you decide
 
 ```sh
@@ -392,7 +402,7 @@ explanations after release; they do not restore live obligations or future scope
 
 ```sh
 specbind check traceability <spec> --for-design
-specbind check contracts
+specbind check contracts --for-design <spec>
 ```
 
 The Design-scoped check does not read a retained downstream `tasks.yaml`; its
@@ -402,27 +412,24 @@ approval will run the strict complete check after Design approval and Contract
 Review.
 
 Approval independently enforces traceability and the presence of this Spec's
-Contract. Running the graph check first exposes cross-Spec diagnostics you can
-act on before approval.
+Contract. The Design-scoped Contract check requires this Spec's valid Contract
+and every direct consumed provider Contract/shared resource and target entry.
+An absent or invalid required input stops this phase, even if its provider is
+unfinished. Unrelated Specs and providers' own outgoing references are outside
+this check, in both delivery and reverse establishment. Its `Whole graph: not
+evaluated (Design scope)` result is not a complete graph verdict. Do not
+substitute the whole-project check as this phase's prerequisite. The complete
+graph remains mandatory at milestone Contract Review.
 
-There is one phase-relative result during dependency-ordered reverse
-establishment. If `check contracts` fails, run `specbind milestone status` and
-inspect every error. You may continue only when all errors are
-`CONTRACT_GRAPH_CONTRACT_UNAVAILABLE`, every source names another participant
-in this same reverse milestone, and status proves each named participant is
-waiting for an earlier Design dependency and is not yet actionable. The current
-Spec's Contract must be readable. Report that the whole graph is provisional;
-do not call the check clean. An unavailable current Contract, an unavailable
-Contract outside that exact waiting set, any other error, or an unproved status
-still stops this phase. The complete graph remains mandatory at the later
-milestone Contract Review.
-
-Resolve what `check contracts` reports. A reference left dangling by a removal is
+Resolve every scoped error and every known conflict affecting this Design.
+A reference left dangling by a removal is
 either fixed in this Spec, or the consuming Spec needs owned work — which is a
 scope question for the user, not something you fix. **Never edit another Spec's
 contract to make your own graph clean.**
 
-Ownership overlaps and dependency cycles are warnings, because they are
+The scoped check reports ownership overlaps with its loaded providers. Whole-
+graph ownership overlaps, dependency cycles and unused exports are evaluated
+by `check contracts` at Contract Review. Overlaps and cycles are warnings, because they are
 sometimes deliberate. Say why the overlap is acceptable, or treat it as a
 finding. Passing it silently to contract review is not a judgment.
 
@@ -440,6 +447,8 @@ export should be removed. The managed graph cannot see external consumers:
 
 The later contract review owns the final cross-Spec judgment. This phase makes
 its own change defensible and preserves untouched current-state contracts.
+Approval is a local checkpoint against current inputs, not a guarantee that
+later Design work or Contract Review cannot require ordinary Design recovery.
 
 ## 6. Review your own design
 

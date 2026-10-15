@@ -192,7 +192,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0183](./0183-codex-skill-interface-metadata.md) | Accepted | Branded Codex interface metadata for product-managed Skills |
 | [0184](./0184-agent-executable-update-workflow.md) | Accepted | Explicit installation-client updates routed through `sb-configure` with post-refresh package reload |
 | [0185](./0185-reverse-deferred-finding-checkpoint.md) | Accepted | Reverse deferred findings recorded after the clean milestone baseline exists |
-| [0186](./0186-reverse-design-contract-preflight.md) | Accepted | Phase-relative Contract preflight for dependency-ordered reverse Design |
+| [0186](./0186-reverse-design-contract-preflight.md) | Superseded by 0223 | Phase-relative Contract preflight for dependency-ordered reverse Design |
 | [0187](./0187-forward-test-routing-and-read-projections.md) | Accepted | Forward-test routing, active Requirement scope, and Contract graph status projections |
 | [0188](./0188-retire-legacy-staged-adoption.md) | Accepted | Legacy staged adoption retired in favor of one reverse-establishment route |
 | [0189](./0189-active-adapter-consumption-projection.md) | Accepted | Active-only adapter consumption with raw configuration reads preserved |
@@ -229,3 +229,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0220](./0220-converged-spec-validation-checkpoint.md) | Accepted | Validate converged Specs at one revision and checkpoint completion metadata together |
 | [0221](./0221-drive-validation-authority-and-restart.md) | Accepted | Drive completion authority, ordinary Skill owner hosts, and fresh validation after revision changes |
 | [0222](./0222-skill-package-routing-and-shared-worktree-planning.md) | Accepted | Package-relative Skill links, serial shared-worktree planning, and Direct diagnosis inputs |
+| [0223](./0223-design-scoped-contract-validation.md) | Accepted | Individual Design Contract checks with strict direct providers and a mandatory complete Contract Review |

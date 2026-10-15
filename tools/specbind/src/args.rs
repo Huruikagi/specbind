@@ -209,7 +209,11 @@ pub enum CheckCommand {
         for_design: bool,
     },
     /// Verify the project-wide Contract graph.
-    Contracts,
+    Contracts {
+        /// Check one Spec and its direct consumed Contracts, not the whole graph.
+        #[arg(long, value_name = "SPEC")]
+        for_design: Option<String>,
+    },
 }
 
 #[derive(Debug, Subcommand)]

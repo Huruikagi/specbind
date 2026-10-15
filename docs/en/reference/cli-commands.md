@@ -21,10 +21,16 @@ Safe to run at any time. They never change files.
 | `specbind release preflight` | What still blocks release |
 | `specbind check traceability <spec>` | Requirement coverage by Design and Tasks |
 | `specbind check contracts` | Project-wide Contract graph errors |
+| `specbind check contracts --for-design <spec>` | One Spec's Contract and its direct consumed targets; does not evaluate the whole graph |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contract relationships and file ownership |
 
 `milestone status` and `spec status` also accept `--json` for tools and scripts.
 See [Lifecycle states](./lifecycle-states.md) for the state names they report.
+
+Individual Design checks can pass while unrelated Specs are still being designed.
+Required provider Contracts must already exist and their consumed entries must
+resolve. The complete graph is still required at Contract Review; later Design
+work or that review may require revising a previously approved Design.
 
 ## Read project settings and embedded content (read-only)
 

@@ -21,10 +21,16 @@
 | `specbind release preflight` | リリースを止めているもの |
 | `specbind check traceability <spec>` | DesignとTasksによるRequirementsの網羅状況 |
 | `specbind check contracts` | プロジェクト全体のContractのエラー |
+| `specbind check contracts --for-design <spec>` | 対象SpecのContractと直接の依存先の検証結果。全体の整合性は検証しない |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contractの関係とファイルの所有 |
 
 `milestone status`と`spec status`は、ツールやスクリプト向けに`--json`も受け付けます。
 表示される状態名は[状態の一覧](./lifecycle-states.md)を参照してください。
+
+個別のDesignは、関係のないSpecが設計中でも検証を通せます。ただし、直接使う
+相手のContractが存在し、参照する項目を確認できることが必要です。Contract Reviewでは
+引き続き全体を検証します。別のSpecの設計や全体レビューで矛盾が見つかれば、
+一度承認したDesignでも戻って修正することがあります。
 
 ## プロジェクトの設定と埋め込みの内容を読む（読み取り専用）
 

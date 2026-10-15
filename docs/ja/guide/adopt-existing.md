@@ -213,9 +213,11 @@ Designが承認されると、Specは`adoption_ready`になります。`tasks.ya
 
 ### Contractの検査と完了処理
 
-後続Specが先行Designの完了を待っていて、まだContractを持たない間に限り、Designの
-検査ではContractグラフ全体を暫定状態として扱えます。それ以外のグラフエラーは許容しません。
-Milestone全体のContract Reviewでは、完全なグラフが必要です。
+Designの検査では、そのSpecのContractと直接使う相手との約束を確認します。
+関係のないSpecは未完成でも構いませんが、直接使う相手のContractと参照する項目は
+確認できる必要があります。個別の合格は全体の整合性を保証するものではありません。
+Milestone全体のContract Reviewでは引き続き完全なグラフが必要で、先に承認した
+Designへ戻って修正することもあります。
 
 すべてのSpecが`adoption_ready`になり、Contract Reviewが最新の成果物に対して有効
 （fresh）になると、`sb-adopt`が次を実行します。

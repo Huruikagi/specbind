@@ -13,17 +13,28 @@ use crate::{
 };
 
 #[must_use]
-pub fn check_contracts(start: &Path) -> CommandOutput {
+pub fn check_contracts(start: &Path, design_spec: Option<&str>) -> CommandOutput {
     let paths = match config::resolve_from(start) {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    let graph = contract_graph::resolve(&paths.specbind_root);
+    let graph = design_spec.map_or_else(
+        || contract_graph::resolve(&paths.specbind_root),
+        |spec| contract_graph::resolve_for_design(&paths.specbind_root, spec),
+    );
     let errors = contract_graph_errors(&graph);
     if !errors.is_empty() {
         return CommandOutput::failure(
-            "CONTRACTS_FAILED",
-            "Contract graph has structural diagnostics.",
+            if design_spec.is_some() {
+                "DESIGN_CONTRACTS_FAILED"
+            } else {
+                "CONTRACTS_FAILED"
+            },
+            if design_spec.is_some() {
+                "Design-scoped Contracts have structural diagnostics."
+            } else {
+                "Contract graph has structural diagnostics."
+            },
             errors,
         );
     }
@@ -34,21 +45,49 @@ pub fn check_contracts(start: &Path) -> CommandOutput {
         .filter(|issue| issue.severity == GraphIssueSeverity::Warning)
         .map(render_graph_issue)
         .collect::<Vec<_>>();
-    let mut output = format!(
-        "OK CONTRACTS_VERIFIED: Verified {} contract(s) and {} dependency reference(s).\n",
-        graph.report.contracts.len(),
-        graph.report.dependencies.len()
-    );
-    push_field(
-        &mut output,
-        "Ownership findings",
-        &graph.report.ownership_findings.len().to_string(),
-    );
-    push_field(
-        &mut output,
-        "Dependency cycles",
-        &graph.report.dependency_cycles.len().to_string(),
-    );
+    let mut output = if let Some(spec) = design_spec {
+        let mut output = format!(
+            "OK DESIGN_CONTRACTS_VERIFIED: Verified Contract and {} direct dependency reference(s) for spec {}.\n",
+            graph.report.dependencies.len(),
+            escape(spec)
+        );
+        push_field(
+            &mut output,
+            "Contract scope",
+            &graph
+                .report
+                .contracts
+                .keys()
+                .map(|spec| escape(spec))
+                .collect::<Vec<_>>()
+                .join(", "),
+        );
+        push_dependency_list(&mut output, "Dependencies", &graph.report.dependencies);
+        push_field(
+            &mut output,
+            "Whole graph",
+            "not evaluated (Design scope); required at Contract Review",
+        );
+        output
+    } else {
+        format!(
+            "OK CONTRACTS_VERIFIED: Verified {} contract(s) and {} dependency reference(s).\n",
+            graph.report.contracts.len(),
+            graph.report.dependencies.len()
+        )
+    };
+    if design_spec.is_none() {
+        push_field(
+            &mut output,
+            "Ownership findings",
+            &graph.report.ownership_findings.len().to_string(),
+        );
+        push_field(
+            &mut output,
+            "Dependency cycles",
+            &graph.report.dependency_cycles.len().to_string(),
+        );
+    }
     if warnings.is_empty() {
         push_field(&mut output, "Warnings", "none");
     } else {

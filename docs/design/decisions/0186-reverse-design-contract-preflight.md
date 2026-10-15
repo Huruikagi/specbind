@@ -1,6 +1,6 @@
 # 0186: Make reverse Design Contract checks phase-relative
 
-Status: Accepted
+Status: Superseded by [Decision 0223](./0223-design-scoped-contract-validation.md)
 
 ## Context
 

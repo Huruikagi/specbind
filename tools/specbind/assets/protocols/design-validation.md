@@ -36,6 +36,13 @@ not reviewed anything.
 
 ## The boundary must be inspectable
 
+Individual Design review covers the Spec and the seams it directly consumes.
+An unfinished unrelated Spec does not prevent a local verdict. Required
+provider Contracts and shared resources must already resolve, and undeclared
+dependencies in Design prose must not escape review. A local `READY` is not
+whole-project acceptance: later Design work or the mandatory complete Contract
+Review can require the owning Spec to revise and revalidate its Design.
+
 - What the Spec owns and what is explicitly outside it must both be stated.
 - Allowed dependencies must be concrete enough that a later reviewer can detect
   a violation. "Depends on the platform layer" is not detectable; a named seam
