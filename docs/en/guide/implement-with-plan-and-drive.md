@@ -32,6 +32,13 @@ validation in dependency order, one Milestone-wide Contract review, and Tasks.
 It stops after Tasks approval. Direct items have no Spec artifacts and are not
 part of this planning scope.
 
+Plan runs one authoring phase at a time in the shared worktree, including its
+approval and checkpoint. Each Spec's Design passes independent validation and
+approval before another Spec's Design starts. Requirements and Tasks remain
+eligible independently of Roadmap dependencies; eligibility does not mean
+concurrent file edits. An unfinished draft stops switching to another Spec
+until its owner can provide a clean handoff.
+
 At the start, Plan asks whether Requirements, Design, and Tasks Gate approvals
 may be delegated to this named run. Delegation combines confirmation points;
 it does not skip reviews or CLI checks.

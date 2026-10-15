@@ -459,7 +459,7 @@ fn direct_debug_surface_can_report_an_undetermined_owner() {
     assert!(
         metadata
             .description
-            .contains("Use directly when the user asks why a Task failed")
+            .contains("Use directly when the user asks why a Task or Direct item failed")
     );
     assert!(metadata.description.contains("never starts implementation"));
     let body = debug.body().expect("body");

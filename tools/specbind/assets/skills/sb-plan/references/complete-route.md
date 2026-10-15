@@ -86,14 +86,22 @@ The phases do not share one dependency shape:
 | Requirements | **Not gated.** Every in-scope item is immediately available |
 | Design | Waits on direct Spec-backed predecessors having current Design approval |
 | Contract Review | **One global barrier** across every participating Spec |
-| Tasks | **Parallel again.** Roadmap dependencies do not serialize Tasks |
+| Tasks | **Not gated by Roadmap dependencies.** Every in-scope Tasks action is eligible after Contract Review |
 
 Do not build or persist dependency waves. `specbind milestone status` already
 reports `waiting_for` and the authoritative `Actionable` list. The loop is:
 read status → dispatch in-scope actionable work → collect → read status again.
 
-In all scope, dispatch every in-scope actionable item, in parallel where the host
-supports it. In named scope, dispatch only the selected item. Never expand named
+In all scope, process every in-scope actionable item, one owning phase at a time
+in the shared worktree. Eligibility does not authorize concurrent writers or
+Git checkpoints. Keep a Spec's Design authoring, independent validation, and
+approval/checkpoint together before starting another Spec's Design. Collect each
+receiver's terminal result and verify its handoff before selecting the next
+action from fresh status. Do not create worktrees or merge branches implicitly.
+If an unfinished phase leaves unapproved or partial changes, stop before another
+Spec writes. Continue independent reachable work only when the current handoff
+is clean; never commit, stash, or discard a draft merely to switch Specs.
+In named scope, dispatch only the selected item. Never expand named
 scope to a predecessor or another participant merely to clear a dependency or
 the global barrier. If outside-scope work must progress before the selected item
 can reach Tasks approval, report that blocker and stop. An explicit all-scope
@@ -287,8 +295,9 @@ and remaining two-round budget across either route.
 After the review is accepted:
 
 6. [Tasks phase](tasks.md) — revise or author `tasks.yaml` and approve its gate
-   for every in-scope item the returned status now marks actionable; parallel in
-   all scope. Do not redispatch unaffected items whose Tasks gate remains fresh.
+   for every in-scope item the returned status now marks actionable, one at a
+   time through its checkpoint. Do not redispatch unaffected items whose Tasks
+   gate remains fresh.
 
 For a reverse milestone, stop this sequence after the accepted Contract Review.
 Design approval reports `adoption_ready`; Tasks are forbidden. Return control

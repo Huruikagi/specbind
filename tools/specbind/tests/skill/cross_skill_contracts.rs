@@ -66,10 +66,7 @@ fn owning_workflows_wait_without_replacing_live_receivers() {
 
 #[test]
 fn drive_preserves_nested_and_pre_owner_capacity_handoffs() {
-    let body = skill::find("sb-drive")
-        .expect("drive skill")
-        .body()
-        .expect("drive body");
+    let body = skill_package_text("sb-drive");
 
     for required in [
         "Consume completed Drive-owned receiver results first",
@@ -236,11 +233,8 @@ fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
 #[test]
 fn replan_completion_withdrawal_keeps_causality_ownership_and_convergence() {
     let drive = skill_resource_text("sb-drive", "references/replan.md");
-    let validation = skill::find("sb-validate-implementation")
-        .expect("validation")
-        .body()
-        .expect("body");
-    for text in [&drive, &validation] {
+    let validation = skill_package_text("sb-validate-implementation");
+    for text in [drive, validation.as_str()] {
         let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
         for boundary in [
             "completion-withdrawal-only authority",
@@ -445,10 +439,11 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
     for (name, expected_resources) in [
         ("sb-configure", 8),
         ("sb-discovery", 3),
-        ("sb-drive", 1),
+        ("sb-drive", 2),
         ("sb-implement", 3),
         ("sb-plan", 6),
         ("sb-release", 1),
+        ("sb-validate-implementation", 1),
     ] {
         let entry = skill::find(name).expect("progressive skill package");
         let resources = entry.resources();
@@ -469,6 +464,59 @@ fn progressive_skill_packages_carry_only_directly_routed_reference_files() {
             let expected_files = expected_resources + 1 + usize::from(agent == Agent::Codex);
             assert_eq!(files.len(), expected_files, "{name}: {agent:?}");
             assert!(files.iter().any(|file| file.target.ends_with("/SKILL.md")));
+        }
+    }
+}
+
+#[test]
+fn every_local_markdown_link_resolves_inside_its_rendered_package() {
+    use std::path::{Component, Path, PathBuf};
+
+    use pulldown_cmark::{Event, Parser, Tag};
+
+    for entry in skill::all() {
+        for agent in [Agent::ClaudeCode, Agent::Codex, Agent::Generic] {
+            let files = entry.render_files(agent).expect("rendered package");
+            for file in &files {
+                if !Path::new(&file.target)
+                    .extension()
+                    .is_some_and(|extension| extension.eq_ignore_ascii_case("md"))
+                {
+                    continue;
+                }
+                for event in Parser::new(&file.content) {
+                    let Event::Start(Tag::Link { dest_url, .. }) = event else {
+                        continue;
+                    };
+                    if dest_url.contains(':') || dest_url.starts_with('#') {
+                        continue;
+                    }
+                    let relative = dest_url.split(['#', '?']).next().unwrap();
+                    if relative.is_empty() {
+                        continue;
+                    }
+                    let joined = Path::new(&file.target).parent().unwrap().join(relative);
+                    let mut target = PathBuf::new();
+                    for component in joined.components() {
+                        match component {
+                            Component::CurDir => {}
+                            Component::ParentDir => {
+                                assert!(target.pop(), "link escapes package: {dest_url}");
+                            }
+                            Component::Normal(part) => target.push(part),
+                            _ => panic!("non-relative package link: {dest_url}"),
+                        }
+                    }
+                    assert!(
+                        files
+                            .iter()
+                            .any(|candidate| Path::new(&candidate.target) == target),
+                        "{agent:?}: {} links to undistributed {dest_url} ({})",
+                        file.target,
+                        target.display()
+                    );
+                }
+            }
         }
     }
 }

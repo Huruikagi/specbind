@@ -94,6 +94,12 @@ role: fresh diagnostic judgment is the reason this dispatch exists.
 specbind protocol read debug
 ```
 
+Identify the subject as a Direct item in the diagnostic brief. Supply the exact
+Roadmap item and summary, observable done condition, applicable checks and their
+results, actual diff, current Steering, and any applicable shared Contract.
+There are no Spec Requirements, Design, Tasks, or Spec Contract to fetch. Apply
+the protocol's Direct input branch; missing Spec artifacts are not a defect.
+
 Withholding the attempt history is the mechanism, not an oversight. A retry that
 inherits the reasoning that just failed reproduces it.
 

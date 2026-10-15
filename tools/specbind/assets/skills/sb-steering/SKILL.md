@@ -21,9 +21,10 @@ Steering carries what outlives any single change: how this project is built,
 what it values, and the constraints every change inherits. You author it. The
 CLI owns discovery and identity.
 
-Nothing else in SpecBind depends on this running, and nothing invalidates when
-it does — steering is never gate evidence and editing it approves nothing. That
-cuts the other way too: **`sb-discovery` reads the whole collection and
+Steering is not planning-gate evidence, and editing it approves no gate. Like
+any ordinary project-content change, however, a Steering edit stales accepted
+completion evidence; follow the authoring protocol's write-safety preflight
+before writing. **`sb-discovery` reads the whole collection and
 routes work on it**, so a document that has quietly gone out of date misroutes
 real work. Guidance you are not confident is still true is worth removing.
 

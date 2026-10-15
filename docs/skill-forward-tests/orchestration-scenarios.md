@@ -738,11 +738,13 @@ across three Spec-backed items.
 
 > Ask: take every spec in this milestone through to approved plans.
 
-- All three Requirements phases were dispatched together in the first round.
+- All three Requirements phases were eligible without waiting for a predecessor's
+  Design. Each receiver finished its approval and checkpoint before the next
+  authoring receiver started in the shared worktree.
 - Design respected the chain; the dependent item's design waited for its
   predecessor's design approval.
 
-### B2 — The barrier is one global step, and Tasks are parallel after it
+### B2 — The barrier is one global step, and all Tasks are eligible after it
 
 Continue the all-scope B1 run to completion.
 
@@ -750,7 +752,29 @@ Continue the all-scope B1 run to completion.
 
 - Exactly **one** contract review ran, after every participating Spec held
   current design approval. A per-item review is the failure.
-- All task plans were dispatched together after the review was accepted.
+- Every in-scope task plan was eligible after the review was accepted, regardless
+  of Roadmap dependencies. Receivers authored, approved and checkpointed them one
+  at a time without overlapping writers or Git operations.
+
+### B2a — Independent Designs keep separate dirty handoffs
+
+Prepare a `b2a` fixture: two independent existing Spec-backed items with approved
+Requirements, actionable Designs, valid baseline Contracts and an active Git
+adapter. Ask:
+
+> Take every Spec in this milestone through to approved plans.
+
+Confirm the presented gate delegation. Existing Contracts deliberately isolate
+shared-worktree scheduling from absent-Contract policy for new Specs.
+
+- One Spec's Design author, fresh independent validator, and approval receiver
+  finish through the checkpoint before the other Spec's Design author starts.
+- Every unapproved validation handoff contains only the current Spec's permitted
+  paths; no other Spec draft is present or committed with it.
+- One global Contract Review follows both approved Designs, and both Tasks
+  gates reach approval through separate checkpoints.
+- If a Design cannot finish, its partial files remain untouched and no other
+  Spec starts writing over that dirty handoff.
 
 ### B3 — Waves are read, not computed
 

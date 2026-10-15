@@ -67,6 +67,8 @@
 #   x3     cart in tasks state with a plan already written and no review
 #   x4     d10's state: a Direct-only milestone that needs no review
 #   i3     a Direct item still pending, for the run under test to implement
+#   db2    a pending Direct guide with a failing content check, no Spec subject
+#   b2a    two independent existing Specs ready for Design in one worktree
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
 #   i6     cart in implementation with two sequential Tasks to checkpoint apart
 #   i7     t4 plus a correct uncommitted implementation awaiting bounded re-review
@@ -1884,6 +1886,105 @@ t3)
         'specbind tasks list cart | grep -q "2 completed"'
     expect "task 3 is not the remaining pending one" \
         'specbind tasks list cart | grep -q "\[pending actionable\] 3 "'
+    ;;
+
+db2)
+    milestone '{"schemaVersion":1,"workItems":{"directChanges":[{"id":"contributing-guide","summary":"Add CONTRIBUTING.md documenting the existing Python unittest command: python -m unittest discover -s tests. Do not change application behavior."}]}}'
+    mkdir -p scripts tests
+    : > tests/__init__.py
+    cat > tests/test_cart.py <<'EOF'
+import unittest
+from src.cart import add_item
+
+class CartBaseline(unittest.TestCase):
+    def test_adds_a_new_sku(self):
+        self.assertEqual(add_item({}, "book", 2), {"book": 2})
+EOF
+    cat > scripts/check-guide.sh <<'EOF'
+#!/usr/bin/env sh
+set -eu
+grep -Fq 'python -m unittest discover -s tests' CONTRIBUTING.md
+EOF
+    printf '%s\n' '# Contributing' '' 'Run npm test before submitting changes.' > CONTRIBUTING.md
+    expect "the Direct guide check unexpectedly passes" '! sh scripts/check-guide.sh'
+    expect "the Direct item is not pending" \
+        'specbind milestone status | grep -q "0/1 completed"'
+    ;;
+
+b2a)
+    mkdir -p .specbind/specs/order
+    printf '%s\n' 'schema_version: 1' 'active_change: null' > .specbind/specs/order/spec.yaml
+    cat > .specbind/specs/order/requirements.md <<'EOF'
+---
+type: SpecBind Requirements
+heading_labels:
+  requirement: Requirement
+  acceptance_criteria: Acceptance Criteria
+---
+
+# Requirements
+
+## Context
+
+The existing Python place(cart, customer) function copies the supplied cart
+dictionary into an order with its customer and status placed. This responsibility
+starts with a supplied dictionary; it does not call or depend on cart operations.
+
+## Requirements
+
+### Requirement 1: Place an order
+
+**Objective:** A customer receives an independent record of the submitted lines.
+
+#### Acceptance Criteria
+
+1. place(cart, customer) returns customer, a shallow copy of cart as lines, and status placed; changing cart afterward leaves the returned lines unchanged.
+EOF
+    cat > .specbind/specs/order/contract.yaml <<'EOF'
+schema_version: 1
+owns:
+  - { id: placed-orders, description: Customer and copied line items at placement. }
+exports:
+  - { id: place, description: Create a placed order from a supplied dictionary and customer. }
+consumes: []
+invariants: []
+file_ownership:
+  - { id: order-module, paths: [src/orders.py] }
+EOF
+    git add .specbind/specs/order
+    git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Establish the independent order responsibility"
+    milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU using the current dictionary API."},{"spec":"order","summary":"Document and verify the existing shallow-copy order placement behavior; no new API or cart dependency."}]}}'
+    brief cart "A cart has no upper bound per SKU." "Reject quantities below one or above 99 after addition with ValueError and an actionable message, leaving the cart unchanged. Preserve the dictionary API."
+    brief order "Order copy behavior has no verification." "Specify and test the existing place(cart, customer) output and independent lines dictionary without changing its public API."
+    cart_cap_approved
+    specbind spec requirements approve order --approval-mode explicit --requirement-ids 1.1 >/dev/null
+    mkdir -p scripts tests
+    : > tests/__init__.py
+    printf '%s\n' '#!/usr/bin/env sh' "$(python_runner) -m unittest discover -s tests" > scripts/test.sh
+    cat > tests/test_baseline.py <<'EOF'
+import unittest
+from src.orders import place
+
+class PlacementBaseline(unittest.TestCase):
+    def test_places_supplied_lines(self):
+        self.assertEqual(place({"book": 1}, "customer"),
+                         {"customer": "customer", "lines": {"book": 1}, "status": "placed"})
+EOF
+    cat > .specbind/settings/adapters/git.md <<'EOF'
+---
+type: SpecBind Git Adapter
+---
+
+Commit every approved planning phase and accepted Contract Review separately.
+Include only that phase's verified artifacts and CLI-owned state. Never commit
+an unapproved draft or another phase's files. Stay on the current branch; never push.
+EOF
+    expect "both Specs are not ready for Design" \
+        'specbind spec status cart | grep -q "State: design" && specbind spec status order | grep -q "State: design"'
+    expect "the starting Contract graph is invalid" 'specbind check contracts'
+    expect "the canonical check is unavailable" 'sh scripts/test.sh'
+    expect "a Design draft already exists" \
+        '! test -e .specbind/specs/cart/design.md && ! test -e .specbind/specs/order/design.md'
     ;;
 
 i3)

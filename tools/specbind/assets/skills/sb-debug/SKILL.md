@@ -1,6 +1,6 @@
 ---
 name: sb-debug
-description: Use directly when the user asks why a Task failed or cannot be implemented. Establish the root cause, categorize it, and return a next action. Read-only; never starts implementation or applies the fix.
+description: Use directly when the user asks why a Task or Direct item failed or cannot be implemented. Establish the root cause, categorize it, and return a next action. Read-only; never starts implementation or applies the fix.
 argument-hint: "<failure>"
 ---
 
@@ -46,6 +46,33 @@ Use the explicit failure, Spec, and Task identity supplied by the caller. When a
 bare diagnosis request omits them, do not infer identity from a repository path
 or from whichever Task you notice first.
 
+### Explicit Direct item
+
+An explicitly identified Direct-item failure uses the debug protocol's Direct
+input branch:
+
+```sh
+specbind milestone scope --include-body
+specbind contract shared read
+specbind steering list
+```
+
+Identify the exact item and read every listed Steering document with
+`specbind steering read <selector> --for consume`. Apply shared Contract entries
+that govern the changed paths or behavior; `OK SHARED_CONTRACT_ABSENT` is a
+complete answer. A failed required read is `UNDETERMINED`, not evidence that no
+shared constraint applies.
+
+Use the summary, done condition, current change and checks instead of Spec/Task
+reads. The done condition and checks are evidence from the request, implementation
+handoff and repository, not required Roadmap fields. Derive a condition only
+when the summary determines it; otherwise report the missing fact. A Direct
+item can remain pending after a failed attempt: reproduce or locate the named
+failure in the supplied revision or current files without inventing Task state.
+Do not invent a Spec identity or treat absent Spec artifacts as a failure.
+
+### Spec-backed Task
+
 ```sh
 specbind milestone status
 specbind tasks list <spec>
@@ -89,6 +116,9 @@ to break.
 ## Establish the cause
 
 Read what the system was supposed to do, not only what it did:
+
+For a Spec-backed Task, establish the following inputs. A Direct subject keeps
+the input branch resolved above.
 
 ```sh
 specbind spec status <spec>

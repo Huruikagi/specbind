@@ -24,8 +24,9 @@ weakened-verification standard from `task-review` here, using the Roadmap summar
 as the obligation. `required` dispatches a fresh reviewer with that summary, the
 actual diff, the checks, and the protocol; `off` skips only this run-scoped
 review. A rejection may return to implementation at most twice. `CANNOT_REVIEW`
-and an unresolved rejection enter the same bounded diagnosis route as
-Spec-backed work.
+and an unresolved rejection enter the Direct-only diagnosis route in the
+entrypoint: at most two diagnosis rounds. Do not load the Spec-backed recovery
+procedure or create a Task recovery ledger for a Direct item.
 
 When `required`, use the registered `specbind-reviewer` role when available,
 with an ordinary fresh subagent as the fallback.

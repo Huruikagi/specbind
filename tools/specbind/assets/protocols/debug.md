@@ -51,12 +51,23 @@ else.
 - Follow the failure to the point where the system's actual behavior first
   diverges from what the approved artifacts require. That divergence is the
   cause; everything after it is consequence.
-- Establish the complete governing input set before naming that divergence:
+- Establish the complete governing input set for a Spec-backed Task:
   Requirements, governing Designs, the Spec's Contract, current Steering, and
   any Implementation Notes. Do not infer that a Contract boundary is missing
   without reading the Contract, or turn omitted Steering into permission. If an
   inventory or read fails, use `UNDETERMINED` and make that failed read the next
   evidence step.
+- For a Direct item, use its exact Roadmap summary, observable done condition,
+  applicable project checks, current Steering, and any applicable shared
+  Contract instead. Compare these obligations with the actual diff and failure
+  evidence. The done condition and checks come from the request, implementation
+  handoff or inspected repository; they are not additional Roadmap schema fields.
+  Derive a condition only when the summary determines it. Do not require or
+  create Spec Requirements, Design, Tasks, or a Spec
+  Contract. A missing required Direct input is `UNDETERMINED`; absence of those
+  Spec artifacts is expected. If diagnosis reveals an unsettled product or
+  architecture decision that needs canonical artifacts, return `ARTIFACT` with
+  Discovery as the next owner. Diagnosis grants no scope or planning authority.
 - When two causes remain possible, state both and state what would distinguish
   them. A confident single answer that is wrong costs more than an honest fork.
 

@@ -69,7 +69,7 @@ not continue into ordinary scope classification.
 ### When the request names local source material
 
 If the maintainer explicitly supplies a local file or directory as input, read
-[the local-files procedure](references/local-files.md) and follow it before
+[the local-files procedure](local-files.md) and follow it before
 classification. That procedure reads the `source-material` protocol, proves the
 complete Git-backed UTF-8 collection, and adds source coverage to the normal
 confirmation and authoring flow.
@@ -83,7 +83,7 @@ ordinary conversational request path below is unchanged.
 Use this route when the maintainer explicitly supplies both a GitHub
 `OWNER/REPO` and a Milestone number, or the exact canonical URL
 `https://github.com/OWNER/REPO/milestone/NUMBER`. Read [the GitHub Milestone
-procedure](references/github-milestone.md) completely and follow it before
+procedure](github-milestone.md) completely and follow it before
 classification. It performs one complete read-only acquisition, adds Source
 coverage to the normal confirmation and authoring flow, and never turns GitHub
 metadata into specification authority.

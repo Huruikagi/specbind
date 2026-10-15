@@ -595,3 +595,19 @@ the task cannot be implemented.
   `CAUSE:`, `NEXT_ACTION:`, and `UNCERTAIN:` fields. A prose-only categorization
   is not a passing result.
 - No fix was applied and no file was created, including implementation notes.
+
+### DB2 — A Direct failure is diagnosed without synthetic Spec artifacts
+
+Prepare `db2`, then ask:
+
+> Why did the contributing-guide Direct task fail its sh scripts/check-guide.sh
+> check? Diagnose only; do not fix it.
+
+- The installed diagnosis workflow reads the exact Direct summary, its guide
+  and check, and current Steering. It identifies the documented npm command as
+  differing from the required Python unittest command.
+- The terminal diagnosis is `IMPLEMENTATION`, with a concrete correction for
+  the implementation owner. It does not route to planning because Direct has
+  no Requirements, Design, Tasks, or Spec Contract.
+- No invented Spec read, new canonical artifact, fix, Task progress or Direct
+  completion occurs. HEAD and the entire worktree remain unchanged.

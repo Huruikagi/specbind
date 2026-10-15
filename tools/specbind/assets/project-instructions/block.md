@@ -62,7 +62,7 @@ the only supported writer of machine state.
 - When the user asks to review one implemented Task, use
   `sb-review-task`; the review must judge the actual diff without fixing
   it or recording Task state.
-- When the user asks why a Task failed or cannot be implemented, use
+- When the user asks why a Task or Direct item failed or cannot be implemented, use
   `sb-debug` directly. A diagnosis-only request does not start
   implementation, and its final response must preserve the exact diagnosis
   block rather than summarize a nested result.

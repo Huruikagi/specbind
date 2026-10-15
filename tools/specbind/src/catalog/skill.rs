@@ -322,9 +322,20 @@ static IMPLEMENT_RESOURCES: &[SkillResource] = &[
     },
 ];
 
-static DRIVE_RESOURCES: &[SkillResource] = &[SkillResource {
-    relative_path: "references/replan.md",
-    source: include_str!("../../assets/skills/sb-drive/references/replan.md"),
+static DRIVE_RESOURCES: &[SkillResource] = &[
+    SkillResource {
+        relative_path: "references/replan.md",
+        source: include_str!("../../assets/skills/sb-drive/references/replan.md"),
+    },
+    SkillResource {
+        relative_path: "references/capacity.md",
+        source: include_str!("../../assets/skills/sb-drive/references/capacity.md"),
+    },
+];
+
+static VALIDATION_RESOURCES: &[SkillResource] = &[SkillResource {
+    relative_path: "references/withdrawal.md",
+    source: include_str!("../../assets/skills/sb-validate-implementation/references/withdrawal.md"),
 }];
 
 static PLAN_RESOURCES: &[SkillResource] = &[
@@ -488,6 +499,7 @@ impl Skill {
             "sb-plan" => PLAN_RESOURCES,
             "sb-release" => RELEASE_RESOURCES,
             "sb-status" => STATUS_RESOURCES,
+            "sb-validate-implementation" => VALIDATION_RESOURCES,
             _ => &[],
         }
     }

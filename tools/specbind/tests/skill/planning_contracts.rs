@@ -502,9 +502,7 @@ fn planning_phase_procedures_are_directly_routed_references() {
 
 #[test]
 fn completion_revalidation_checkpoints_evidence_withdrawal_before_fresh_preflight() {
-    let validation =
-        skill::find("sb-validate-implementation").expect("implementation validation skill");
-    let body = validation.body().expect("validation body");
+    let body = skill_package_text("sb-validate-implementation");
 
     for required in [
         "specbind spec completion invalidate <spec>",
