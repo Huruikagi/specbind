@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-15 | Claude Code | `claude-sonnet-5-5` / `medium`, headless sessions, Linux | `6155a5f` | DR2, DR11, DR12a, DR12b — pass; DR6 — product failure (Plan owner returned waiting once; Drive's continuation completed the run); FT-0057 confirmed, FT-0065 opened; ENV-0009 absent | [Linux Drive boundaries](./runs/2026-10-15-claude-code-6155a5f-drive-boundaries-linux.md) |
 | 2026-10-15 | Claude Code | `claude-sonnet-5-5` / `medium`, Windows headless sessions | `6155a5f` (measured as `8d9b2bb` + Decision 0221 tree) | DR11 and DR12a/b pass; FT-0061/0064 confirmed and FT-0062 host selection confirmed. DR2/DR6 first attempts environment-invalid (ENV-0006), fresh retries environment-blocked (ENV-0009); FT-0057 returned to confirmation-pending | [Drive authority and restart](./runs/2026-10-15-claude-code-6155a5f-drive-boundaries.md) |
 | 2026-10-15 | Claude Code | `claude-sonnet-5-5` / `medium`, headless sessions | `3513446` | G1, A2, I1, DR2, DR6, DS1, I8, I9, DR10, DR11 — pass (G1 in a fresh session; one same-session G1 attempt scenario-invalid); FT-0058, FT-0057, FT-0037, FT-0018, FT-0022 confirmed; FT-0060..FT-0064 opened from reproduced debrief observations | [Confirmation batch](./runs/2026-10-15-claude-code-3513446-confirmation-batch.md) |
 | 2026-10-15 | Codex | `gpt-5.6-terra` / `medium`, headless sessions | `8fc9917` + Decisions 0219/0220 working tree | DR9c passes withdrawal, implementation and grouped final acceptance after a non-mutating CLI-selection environment correction; both records remain fresh; DR11 six stop/success boundaries pass; FT-0059 resolved | [Grouped completion](./runs/2026-10-15-codex-8fc9917-grouped-completion.md) |
@@ -190,8 +191,8 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 4
-- Fixed, behavioral confirmation pending: 4
+- Open reproduced product findings: 5
+- Fixed, behavioral confirmation pending: 3
 - Active environment limitations: 9
 
 The authoritative rows and stable identifiers are in

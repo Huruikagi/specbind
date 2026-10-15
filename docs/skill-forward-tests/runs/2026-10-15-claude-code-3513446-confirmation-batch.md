@@ -1,6 +1,6 @@
 # Forward-test run: 2026-10-15 / Claude Code / 3513446
 
-[Back to the measurement dashboard](./results.md).
+[Back to the measurement dashboard](../results.md).
 
 - Date: `2026-10-15`
 - Driver: `Claude Code`
