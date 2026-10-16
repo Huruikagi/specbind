@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-16 | Codex | CLI `gpt-5.6-terra` / `medium` compatibility comparison; app `gpt-6.1-sol` / `medium` | `84bed31` | VD4c pass with completed researcher; VD6 pass with actual failure and no verdict; FT-0067 resolved. App VD4 environment-invalid (language contamination); canonical CLI ENV-0007 remains | [Design environment stops](./runs/2026-10-16-codex-84bed31-design-environment.md) |
 | 2026-10-15 | Codex | `gpt-5.6-terra` / `medium`, Windows real sessions | `4022a4f` | VD4 environment-blocked by configured researcher model; scoped routing, read-only state and final local/global qualification confirmed | [Design scope follow-up](./runs/2026-10-15-codex-4022a4f-design-scope.md) |
 | 2026-10-15 | Codex | `gpt-5.6-terra` / `medium`, Windows real sessions | `6305493` + initial Decision 0223 tree | VD4 scenario-invalid (fixture verification strategy missing), VD5 structural rejection pass; ENV-0007 encountered; FT-0067 opened | [Initial Design scope](./runs/2026-10-15-codex-6305493-design-scope.md) |
 | 2026-10-15 | Claude Code | `claude-opus-5-5`, Windows real session | `6305493` + initial Decision 0223 tree | VD4 environment-blocked before any tool action (provider credit balance) | [Claude attempt](./runs/2026-10-15-claude-code-6305493-design-scope.md) |
