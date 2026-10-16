@@ -230,3 +230,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0221](./0221-drive-validation-authority-and-restart.md) | Accepted | Drive completion authority, ordinary Skill owner hosts, and fresh validation after revision changes |
 | [0222](./0222-skill-package-routing-and-shared-worktree-planning.md) | Accepted | Package-relative Skill links, serial shared-worktree planning, and Direct diagnosis inputs |
 | [0223](./0223-design-scoped-contract-validation.md) | Accepted | Individual Design Contract checks with strict direct providers and a mandatory complete Contract Review |
+| [0224](./0224-design-validation-environment-stops.md) | Accepted | Required Design investigation failures stop validation without a verdict or local substitution |

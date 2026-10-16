@@ -137,6 +137,20 @@ agent-role availability. When the runtime exposes only ordinary subagent
 dispatch, use an ordinary fresh subagent directly. A named role that the runtime
 does expose but whose configured model cannot start is a configuration or
 environment failure, not permission to change models.
+
+Once you dispatch a required investigation, wait for its result. If the
+configured role or required investigation cannot start or complete, stop with
+`STATUS: BLOCKED` and `BLOCKER: ENVIRONMENT`, name the failed role and operation,
+and state that no Design verdict was completed. Do not substitute your own
+investigation, another model or role, emit `READY`/`NOT_READY`, or record deferred
+findings. Leave artifacts and lifecycle state unchanged. Resume independent
+validation after the environment is repaired; do not ask the Design author to
+revise a document merely to work around this failure.
+
+Before dispatch, a small, bounded context read that needs no independent
+investigation may stay in this context. A failed required dispatch cannot be
+reclassified as that small-read path after the fact.
+
 Everything else is a reading judgment — the criteria interlock, and splitting
 them loses the picture.
 
@@ -185,9 +199,10 @@ verdict must not sound like whole-project acceptance.
 
 **There is no "cannot judge" verdict, and that is deliberate.** If you cannot
 judge readiness from the design as written, that is the finding — the design
-does not yet stand on its own — and the verdict is `NOT_READY`. A review of an
-implementation can be blocked by a missing environment; a design's inputs are
-always present, so inconclusiveness is a property of the document.
+does not yet stand on its own — and the verdict is `NOT_READY`. Insufficient
+meaning in a document is not an environment failure. The
+`BLOCKED / ENVIRONMENT` stop above instead means the required review operation
+could not execute; it carries no verdict about the Design.
 
 `READY` asserts all of: every active requirement substantively realized, the
 owned boundary explicit and inspectable, the work decomposable into bounded

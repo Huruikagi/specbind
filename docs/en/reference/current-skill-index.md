@@ -64,6 +64,12 @@ for this limit. Direct-item recovery keeps its separate existing bounds.
 | `sb-debug` | Find and classify the root cause when a run has stopped, without fixing anything. |
 | `sb-verify-completion` | Check a "done" claim against fresh evidence without changing lifecycle state. |
 
+If a required investigation for Design validation cannot run, the validator
+stops with `BLOCKED / ENVIRONMENT` without a Design verdict. Repair the review
+environment before resuming validation. Plan does not ask the author to revise
+the Design or consume a revision attempt for this stop. A completed review that
+finds the Design insufficient still returns `NOT_READY`.
+
 ## Temporary Skill
 
 | Skill | When to use it |

@@ -84,7 +84,9 @@
 #   vi5    accepted completion made stale by a later committed cart source change
 #   vd1    an approved design that defers the bound to a research document
 #   vd4    a complete cart Design beside an unfinished independent new Spec
+#   vd4c   vd4 with an available Codex researcher for CLI compatibility comparison
 #   vd5    vd4 with cart directly consuming the unavailable new Spec Contract
+#   vd6    vd4 with an intentionally unavailable configured Codex researcher
 #   vd3    a rewound Design with a retained Task plan for the previous active set
 #   rr1    an implemented plan ready for Requirements-to-Tasks recovery
 #   rl1    cart released-ready but with no version bound yet
@@ -1174,7 +1176,28 @@ ds7 | ds8 | ds9)
     fi
     ;;
 
-vd4 | vd5)
+vd4 | vd4c | vd5 | vd6)
+    if [ "$scenario" = vd4c ] || [ "$scenario" = vd6 ]; then
+        researcher_model=gpt-5.6-terra
+        [ "$scenario" != vd6 ] || researcher_model=specbind-forward-test-unavailable-model
+        cat > .specbind.json <<EOF
+{
+  "schemaVersion": 1, "specDir": ".specbind", "language": "$language",
+  "agents": ["claude-code", "codex"], "projectInstructions": true,
+  "agentRoles": {"codex": {
+    "researcher": {"model": "$researcher_model", "reasoningEffort": "medium"}
+  }}
+}
+EOF
+        git add .specbind.json
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Configure researcher scenario input"
+        specbind install --agent codex --agent claude-code >/dev/null \
+            || fail "could not install the researcher scenario input"
+        expect "the researcher model precondition was not installed" \
+            "grep -q '$researcher_model' .codex/agents/specbind-researcher.toml"
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Refresh configured researcher assets"
+    fi
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}],"newSpecs":[{"spec":"wishlist","summary":"Keep an independent list of desired book identifiers, separate from cart quantities."}]}}'
     brief cart "A cart has no upper bound per SKU." "Reject additions above 99 and preserve the cart on rejection."
     brief wishlist "Customers want to remember books independently of a cart." "Keep an independent list of desired book identifiers."

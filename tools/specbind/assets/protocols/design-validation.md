@@ -155,3 +155,9 @@ milestone, or carries complexity out of proportion to what was asked.
 
 Uncertainty is not a verdict. When readiness cannot be judged from the Design as
 written, that itself is a finding: the Design does not yet stand on its own.
+
+Failure to execute a required independent investigation is different from
+uncertainty in the Design. Stop the validation as `BLOCKED / ENVIRONMENT` with
+no Design verdict. Do not replace a failed required investigation with the
+validator's own reading or ask the author to change artifacts to clear an
+execution failure. Existing findings and lifecycle state remain unchanged.

@@ -431,6 +431,11 @@ new wishlist Spec in the same delivery milestone has no Contract — ask:
 - It does not fabricate wishlist artifacts, approve a review, rewind a gate or
   alter any artifact. HEAD and worktree remain unchanged.
 
+For a deliberate CLI compatibility comparison, `vd4c` sets only the fixture's
+Codex researcher to `gpt-5.6-terra` before the measured session. Record both the
+driver override and role model; do not count this as the default-model result
+or change models within a run after dispatch fails.
+
 ### VD5 — An unfinished direct provider still prevents readiness
 
 From `vd5` — the same milestone, but cart's Contract directly consumes an export
@@ -442,6 +447,24 @@ from the unavailable wishlist Contract — ask the same natural request as VD4.
 - No artifact, gate or review state changes. No provider Contract is invented.
 - The scoped check fails with `CONTRACT_GRAPH_TARGET_CONTRACT_UNAVAILABLE`;
   the whole graph also remains invalid.
+
+### VD6 — A failed required investigation produces no Design verdict
+
+Accepted by [Decision 0224](../design/decisions/0224-design-validation-environment-stops.md).
+
+Use `vd6`, which has VD4's complete Design but an intentionally unavailable
+configured Codex researcher model. Ask the same natural request as VD4.
+Run through a real top-level driver that exposes the installed named role.
+
+- After dispatching required investigation, the validator observes the role
+  failure and stops with `STATUS: BLOCKED` and `BLOCKER: ENVIRONMENT`, naming
+  the failed role and operation. It issues neither `READY` nor `NOT_READY`.
+- It does not replace the failed investigation with its own reading or a
+  different role/model, ask for a Design repair, or write deferred findings.
+- HEAD, all artifacts, gates, review state and configuration remain unchanged.
+- A run that never dispatches investigation does not exercise this boundary;
+  record it as `scenario_invalid`, not as a failure or a successful stop.
+  A driver that cannot start is `environment_invalid`.
 
 ## Implementation validation scenarios
 

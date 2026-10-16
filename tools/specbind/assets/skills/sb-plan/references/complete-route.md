@@ -205,6 +205,12 @@ Spec's current Plan run and return the complete verdict to that item's
 Design-phase receiver. The initial draft does not count as a revision; each
 target Spec has its own budget of at most **two** Design-owned revisions.
 
+A validator's `BLOCKED / ENVIRONMENT` is no Design verdict. Stop that item's
+validation without approval, authoring repairs, consuming a Design revision,
+or changing its finding ledger. Preserve the bounded dirty handoff and resume
+independent validation only after the failed review operation can execute.
+Never treat this stop as `READY` or turn it into a document finding.
+
 After the first `NOT_READY`, dispatch the first revision, then give a fresh
 validator the complete accumulated blocking-finding ledger. On every
 revalidation, require the validator to account for every prior blocking finding

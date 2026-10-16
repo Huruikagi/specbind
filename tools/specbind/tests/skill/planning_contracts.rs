@@ -554,6 +554,40 @@ fn contract_review_transfers_requirements_and_scope_repairs_to_their_owners() {
 use super::*;
 
 #[test]
+fn failed_design_investigation_is_not_a_verdict_or_authoring_revision() {
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        let validator = skill::find("sb-validate-design")
+            .expect("validator")
+            .render(agent)
+            .expect("render");
+        for required in [
+            "`STATUS: BLOCKED` and `BLOCKER: ENVIRONMENT`",
+            "no Design verdict was completed",
+            "Do not substitute your own\ninvestigation, another model or role",
+            "Before dispatch, a small, bounded context read",
+            "reclassified as that small-read path after the fact",
+            "Leave artifacts and lifecycle state unchanged",
+        ] {
+            assert!(validator.contains(required), "missing {required}");
+        }
+    }
+    let route = skill_resource_text("sb-plan", "references/complete-route.md");
+    assert!(
+        route.contains(
+            "validation without approval, authoring repairs, consuming a Design revision"
+        )
+    );
+    assert!(route.contains("or changing its finding ledger"));
+    let baseline = protocol::read("design-validation").expect("protocol");
+    assert!(baseline.content().contains("no Design verdict"));
+    assert!(
+        baseline
+            .content()
+            .contains("Existing findings and lifecycle state remain unchanged")
+    );
+}
+
+#[test]
 fn spec_local_writers_name_the_configured_spec_directory() {
     let discovery = skill_resource_text("sb-discovery", "references/ordinary.md");
     assert!(discovery.contains("`<specDir>/specs/<spec>/brief.md`"));
