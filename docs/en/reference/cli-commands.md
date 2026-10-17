@@ -42,6 +42,10 @@ work or that review may require revising a previously approved Design.
 | `specbind protocol list` / `read` | Product protocols embedded in the binary |
 | `specbind schema list` / `read` | Structured artifact schemas embedded in the binary |
 
+`specbind schema read drive/v1` returns the schema for the `drive` member of
+`.specbind.json`, not the entire root configuration. `configuration show` reports
+effective Drive defaults and whether each comes from configuration or legacy fallback.
+
 See [Customize SpecBind](../guide/customization.md) for how these are used.
 
 ## Install, update, and remove

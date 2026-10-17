@@ -42,6 +42,9 @@
 | `specbind protocol list` / `read` | バイナリに埋め込まれた製品プロトコル |
 | `specbind schema list` / `read` | バイナリに埋め込まれた構造化成果物のスキーマ |
 
+`specbind schema read drive/v1`は、`.specbind.json`全体ではなく、`drive`項目のスキーマを
+返します。`configuration show`ではDriveの既定値と、設定値か従来の既定値かを確認できます。
+
 使い方は[カスタマイズ](../guide/customization.md)を参照してください。
 
 ## インストール・更新・削除

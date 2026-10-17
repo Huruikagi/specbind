@@ -1,7 +1,7 @@
 # Installation and Agent configuration
 
 Use this procedure for selected Agents, artifact language, root project
-instructions, or role capability overrides.
+instructions, Drive defaults, or role capability overrides.
 
 ## Inspect
 
@@ -13,9 +13,35 @@ Treat these as the supported configuration fields:
 - `agents`: `claude-code`, `codex`, or `generic`;
 - optional `projectInstructions: true`;
 - optional `adoption: true` while the temporary `sb-adopt` capability is installed; and
-- optional `agentRoles` for Codex or Claude Code.
+- optional `agentRoles` for Codex or Claude Code; and
+- optional `drive` with optional boolean `replan` and `recovery: bounded|progress`.
 
 `generic` has no product role definitions and cannot own `agentRoles`.
+
+## Drive defaults
+
+Edit only the requested fields under `.specbind.json` `drive`, preserving all
+unrelated configuration. Read `specbind schema read drive/v1` for this member's
+shape. Explicit null, wrong types, unknown member keys and unknown recovery
+values are invalid. Validate with `specbind configuration show`; a change only
+to Drive defaults needs no reinstall or generated-asset refresh.
+
+A fresh install without root configuration saves `replan: true` and
+`recovery: progress`. Existing omitted fields retain `false` and `bounded`;
+refresh, Agent addition/removal and language changes do not opt them in.
+Explain these effective defaults and their per-field sources.
+
+They apply when the user next invokes Drive. Explicit `--no-replan` or
+`--recovery bounded` overrides them for that invocation; `--replan` and
+`--recovery progress` can opt in on a conservative project. Configured replan
+plus an actual Drive execution request authorizes the same in-scope
+Design/Contract/Tasks recovery as the option, never Requirements, scope or
+Release changes. Progress removes only the Task cycle cap while independent
+assessment proves all prior findings resolved. Read-only requests stay read-only.
+Drive passes its resolved settings and provenance to implementation and Plan.
+Standalone implementation retains its own default. Changing config does not
+change an ongoing run, renew recovery counters or authorize lifecycle work.
+Continue through ordinary configuration aftercare and its local checkpoint.
 
 ## Add or refresh
 

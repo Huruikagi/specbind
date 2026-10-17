@@ -31,6 +31,7 @@ Common mappings:
 | Change | Follow-up |
 | --- | --- |
 | Agent or role | Reinstall and verify derived assets |
+| Drive defaults | Validate effective values and sources; apply on the next Drive invocation, with no reinstall or lifecycle mutation |
 | Template | Offer existing-artifact reconciliation |
 | Design candidate or selection | Inspect affected existing Specs |
 | Rule | Offer review, never automatic rewrite |

@@ -45,12 +45,15 @@ this package, not separately selectable Skills.
 
 ## Select the planning mode
 
-A Drive recovery dispatch carrying explicit `--replan` authority and named
+A Drive recovery dispatch carrying resolved replan authority (from the request
+or project defaults with an actual Drive execution request) and named
 affected Specs is the recovery mode. Read [Replan during
 Drive](references/replan.md) first, then [Complete planning
 route](references/complete-route.md). The recovery procedure owns the supplied
 scope and authority where it overrides the ordinary complete-route rules. Do
 not repeat a scope or delegation question already settled by that dispatch.
+Preserve both resolved settings and provenance; do not reread Drive defaults
+or renew Task recovery counts during this handoff.
 
 Use **single-phase mode** only when the maintainer explicitly asks to author,
 revise, resume, or rerun exactly one of Requirements, Design, or Tasks for one

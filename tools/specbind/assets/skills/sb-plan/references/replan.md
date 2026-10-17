@@ -1,6 +1,7 @@
 # Replan during an authorized Drive run
 
-Read this procedure only for a Drive dispatch with explicit replan authority,
+Read this procedure only for a Drive dispatch with resolved replan authority
+(request override or configured default with an actual Drive execution request),
 named affected Specs, and a concrete Design, Contract, or Tasks finding. This
 is recovery within the existing delivery Milestone, not a new planning scope.
 The option grants Design/Tasks rewind and approval authority under workflow

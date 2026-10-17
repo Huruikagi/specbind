@@ -11,6 +11,27 @@ use specbind::schema::{
 use specbind::yaml;
 
 #[test]
+fn drive_member_schema_and_wire_conform() {
+    use specbind::schema::{DRIVE_V1_SCHEMA_JSON, drive::v1::DriveDefaults};
+    assert_eq!(
+        DRIVE_V1_SCHEMA_JSON,
+        generate::to_pretty_json(&generate::drive_v1()).unwrap()
+    );
+    let schema = serde_json::from_str(DRIVE_V1_SCHEMA_JSON).unwrap();
+    jsonschema::draft202012::meta::validate(&schema).unwrap();
+    assert_fixture_set::<DriveDefaults>("drive/v1", DRIVE_V1_SCHEMA_JSON);
+    let root =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/schemas/drive/v1/invalid");
+    for path in fixture_paths(&root) {
+        assert!(
+            serde_json::from_value::<DriveDefaults>(parse_fixture(&path)).is_err(),
+            "{}",
+            path.display()
+        );
+    }
+}
+
+#[test]
 fn checked_in_schemas_are_current_and_valid_draft_2020_12() {
     let cases = [
         (

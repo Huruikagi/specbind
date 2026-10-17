@@ -1,7 +1,7 @@
 ---
 name: sb-drive
 description: Drive the active milestone through every safe reachable planning, implementation, and validation action. Park branch-local attention and continue elsewhere; stop before release execution.
-argument-hint: "[--replan] [--target-release <version>] [--recovery bounded|progress]"
+argument-hint: "[--replan|--no-replan] [--target-release <version>] [--recovery bounded|progress]"
 ---
 
 # Drive the active milestone to its next real boundary
@@ -31,27 +31,63 @@ Pass that Drive authority with the exact actionable Spec set; no additional
 completion confirmation is needed. An explicit user limit, such as stopping
 before completion recording or making no changes, overrides this authority.
 Park excluded actions as `HUMAN_DECISION`; never turn a read-only claim check
-into a Drive request. This grants no planning Gate approval or Release authority.
+into a Drive request. Planning authority depends on the resolved replan setting
+below; Drive never grants Release authority.
 
-## Select Task recovery mode
+## Resolve project Drive defaults
 
-Accept the Skill argument `--recovery bounded|progress`. Default a new execution
-or human-authorized resumption to `bounded` (three Task cycles). Explicit
-`progress`, or a clear request to continue without a cycle limit while progress
-is independently verified, removes only the numerical Spec-backed Task cap.
-Generic "continue" is not selection. This is not a `specbind` CLI flag or saved
-project setting. Clarify invalid/conflicting values before corrective work.
+Before scheduling each new invocation or human-authorized resumption, run
+`specbind configuration show`. Any error stops the workflow; never silently
+fall back from invalid configuration. Resolve each setting independently:
+explicit current-request options or clear natural-language limits override
+the root `.specbind.json` `drive` member, then omitted fields fall back to
+`replan: false` and `recovery: bounded`. New installations explicitly save
+`replan: true` and `recovery: progress`; existing omitted fields keep the legacy
+fallback. Accept `--replan`, `--no-replan`, and `--recovery bounded|progress`.
+These are Skill options, not a `specbind` CLI flag. Clarify invalid/conflicting
+explicit choices before corrective work. Report the effective settings and
+their sources (request, configured value, or legacy fallback) before dispatch.
 
-Pass the selected mode, actual user selection and scope to every affected
+Only the current request's choices override configuration. A previous mode
+quoted in a historical recovery handoff is evidence, not a current option or
+an instruction to preserve that mode in a new invocation. Likewise, "no new
+allowance" preserves counts, not selection. "No scope expansion" preserves
+Drive's existing scope boundary and does not disable in-scope replan; an actual
+prohibition on revising planning artifacts does disable it.
+
+When explaining the current project's Drive defaults in a read-only request,
+also run `specbind configuration show`; reading raw JSON alone is not validated
+configuration. This read grants no execution authority. Pure hypothetical
+values without a claim about the current project need no project mutation.
+
+Snapshot both resolved settings and provenance for this run. Generic "continue"
+does not itself select progress, but a new Drive invocation uses its configured
+default. A clear request to continue without a cycle limit while progress is
+independently verified selects `progress`, which removes only the numerical
+Spec-backed Task cap. A config edit, automatic redispatch or session change
+does not alter a running selection or renew an allowance.
+
+Distinguish a fresh human Drive invocation from an automatic receiver of the
+same invocation. The fresh invocation's resolved settings replace the prior
+selection even when it carries an existing recovery allowance. Keep that
+allowance's identity, used count and findings unless the qualifying resumption
+below renews it. For example, a new invocation resolving bounded with three
+cycles already used cannot start cycle four while blockers remain. An automatic
+receiver instead preserves the invoking controller's snapshot. Tell owners
+which boundary occurred; retaining history never means ignoring a new invocation's
+resolved setting.
+
+Pass both resolved settings, selection provenance, actual user request and scope to every affected
 `sb-implement` owner in this active Milestone, including after replan or a
 capacity restart. Carry existing ledgers unchanged. Receivers continuing the
 same run retain its evidenced mode even when no flag is repeated. Implementation
 owns progress judgment and mode changes; Drive never infers progress from a
 success message or resets counts. `progress` still stops on an unresolved or
 reopened prior finding, missing continuity or external/authority boundaries.
-It does not change Direct, Design or Contract Review bounds, imply `--replan`,
-or authorize execution from a read-only request. Do not carry selection into a
-new execution or Milestone without explicit user selection for that run.
+It does not change Direct, Design or Contract Review bounds or authorize
+execution from a read-only request. A new invocation rereads defaults; this
+never discards history or independently renews an allowance. Standalone
+`sb-implement` does not read Drive defaults.
 
 ## Carry an explicit Task resumption
 
@@ -61,7 +97,7 @@ Include the actual user instruction and its target, allowance identity/current
 counts if already assigned, recovery mode and its selection evidence, and
 historical counts/findings/evidence separately.
 The implementation owner applies its recovery procedure to start at most one new
-allowance for that instruction (uncapped only with explicit progress selection);
+allowance for that instruction (uncapped only with resolved progress selection);
 Drive never resets counters itself. Contextual
 "continue" or "I updated it; resume" needs no special reset wording or second
 confirmation. Read-only checks, automatic redispatch, compaction, sessions and
@@ -79,10 +115,12 @@ the CLI, and applies independent recovery assessment before correction.
 
 ## Optional replan authority
 
-When `--replan` is present, or the maintainer explicitly requests delegated
-replanning, read [Authorized replan routing](references/replan.md) completely
-before scheduling work. The option or explicit request is itself the authority;
-do not ask for it again. Without that authority, do not load the procedure and
+When resolved `replan` is true, read [Authorized replan routing](references/replan.md)
+completely before scheduling work. An actual Drive execution request with that
+configured default grants the same bounded authority as `--replan`; do not ask
+for it again. `--no-replan` or an explicit prohibition overrides the default.
+Configuration alone grants no execution or read-only override.
+Without that authority, do not load the procedure and
 retain the ordinary approval and rewind confirmations below.
 
 ## 1. Read the only scheduler
@@ -210,8 +248,8 @@ name `sb-adopt` as the continuation owner.
 Use one mutating dispatch at a time. Do not launch dependency-wave items in
 parallel and do not predict path conflicts.
 
-Planning still owns its delegation confirmation. Invoking Drive without
-`--replan` does not grant gate approvals. Pass through only authority supplied
+Planning still owns its delegation confirmation when resolved replan is false.
+Pass through only authority supplied
 by the user's request, including ordinary completion authority from a Drive
 request as defined above. A missing confirmation is attention, not permission to approve or a reason to
 interrupt while unrelated implementation remains reachable.

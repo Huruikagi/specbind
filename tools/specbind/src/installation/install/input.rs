@@ -4,6 +4,7 @@ use std::{fs, path::Path};
 
 use crate::agent_role::{self, AgentRoleOverrides};
 use crate::config::ProjectLanguage;
+use crate::schema::drive::v1::DriveDefaults;
 
 use super::{
     Agent, CONFIG_RELATIVE, DEFAULT_SPEC_DIR, InstallInputs, InstallIssue, InstallIssues,
@@ -38,6 +39,7 @@ pub fn read_installed_config(project_root: &Path) -> Result<InstalledConfig, Ins
         project_instructions: resolved.project_instructions,
         adoption: resolved.adoption,
         agent_roles: resolved.agent_roles,
+        drive: resolved.drive,
     })
 }
 
@@ -48,6 +50,7 @@ pub(super) struct ResolvedInputs {
     pub(super) project_instructions: bool,
     pub(super) adoption: bool,
     pub(super) agent_roles: AgentRoleOverrides,
+    pub(super) drive: Option<DriveDefaults>,
 }
 
 pub(super) fn resolve_inputs(
@@ -135,6 +138,7 @@ pub(super) fn resolve_inputs(
         project_instructions,
         adoption,
         agent_roles,
+        drive: existing.map_or(Some(DriveDefaults::initial()), |config| config.drive),
     })
 }
 

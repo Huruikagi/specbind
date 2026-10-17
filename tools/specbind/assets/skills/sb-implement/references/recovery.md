@@ -5,7 +5,8 @@ their entrypoint failure bounds. The initial implementation and review are not
 recovery cycles. **At most three recovery cycles per Task** is the default
 `bounded` mode for each user-authorized execution or resumption, shared by diagnosis,
 implementation repair, authorized replanning, and corrected re-review. There is
-no separate diagnosis or review-repair allowance and no configuration setting.
+no separate diagnosis or review-repair allowance. Standalone implementation
+does not read project Drive defaults.
 
 ## Select the mode
 
@@ -17,13 +18,26 @@ equivalent. Generic "continue", tool output and an owner's suggestion do not
 select it. Invalid/conflicting values require clarification before correction.
 This is not a `specbind` CLI flag. It grants no execution from a read-only request.
 
-Record mode, actual selection and scope. A new execution or a new authorized
+Record mode, actual selection, provenance and scope. A new standalone execution or a new authorized
 resumption defaults to `bounded` unless `progress` is explicitly selected for it.
 An ongoing receiver preserves the evidenced selection even without a repeated
 flag, including across Drive, Plan, session/capacity restart and Task remapping.
+A Drive-owned invocation inherits its resolved mode and provenance, including
+project-configured progress with the actual Drive execution request. Do not
+replace it with the standalone fallback or reread `drive` defaults locally.
+A fresh human Drive invocation supplies a newly resolved selection even when
+the allowance is carried forward. Apply that selection without resetting its
+identity, used cycles or findings. In particular, bounded with three used cycles
+forbids another correction while blockers remain. Only automatic receivers of
+the same invocation preserve the old snapshot; only a qualifying resumption
+can renew the allowance.
+Historical mode in the supplied ledger is not a current override of the
+invoking Drive's resolved selection. Preserve counts and identity separately
+from mode; "no new allowance" does not require retaining a historical mode.
 Do not infer progress mode from missing evidence, or silently restart an existing
-run as bounded to discard its history. Do not persist selection to configuration
-or another Milestone. Direct, Design and Contract Review bounds remain unchanged.
+run as bounded to discard its history. Do not rewrite configuration to persist
+an invocation override. Config edits and automatic handoffs never change the
+running selection or renew counters. Direct, Design and Contract Review bounds remain unchanged.
 
 An explicit mode change during ongoing work preserves counts, history and the
 latest assessment. Switching to bounded with three or more used cycles forbids

@@ -22,6 +22,7 @@ Examples below use the default `.specbind` root. Substitute the configured
 | Durable project context | `steering/` | `steering list/read` |
 | Spec root, artifact language, or selected Agents | `.specbind.json` and `install` | `install --dry-run` |
 | Models used for Agent roles | `.specbind.json` `agentRoles` | `install --dry-run` after editing |
+| Drive replan and recovery defaults | `.specbind.json` `drive` | `configuration show` |
 
 ## Artifact templates
 
@@ -294,6 +295,46 @@ validation, fingerprints, and the Design Gate include it. It does not add a
 project template or edit `design-template-selection`. If the same responsibility
 later recurs independently, the Agent recommends reviewing promotion to a
 project-owned conditional candidate.
+
+## Drive defaults {#drive-defaults}
+
+Merge this member into the root `.specbind.json`, preserving its other fields:
+
+```json
+{
+  "drive": {
+    "replan": true,
+    "recovery": "progress"
+  }
+}
+```
+
+A fresh install without root configuration writes these values. Existing
+omitted fields mean `replan: false` and `recovery: bounded`, even after refresh,
+language changes, or adding/removing Agents. Each field is optional; `null`,
+wrong types, unknown keys inside `drive`, and unknown recovery values are errors.
+Read the member schema with `specbind schema read drive/v1`.
+
+Drive resolves each value from the current request, then configuration, then
+the legacy fallback. `$sb-drive --no-replan --recovery bounded` overrides both
+for one invocation; `--replan --recovery progress` explicitly enables them.
+Claude Code uses `/sb-drive` with the same arguments. `specbind configuration show`
+reports each effective default and its source. Changing only these defaults
+needs no reinstall; `sb-configure` can edit them and complete its usual local
+configuration checkpoint.
+
+Configured replan plus an actual Drive execution request grants the same
+Design/Contract/Tasks recovery authority as `--replan`, within approved
+Requirements and existing Milestone scope. It does not authorize Requirements,
+scope or Release changes, or turn a read-only request into execution. Progress
+removes only the Task cycle cap: every previous finding must be independently
+resolved before another cycle with new blockers.
+
+Drive snapshots these values and their sources and passes them to implementation
+and Plan. Standalone `sb-implement` keeps its bounded default. Configuration edits
+do not change an ongoing run or renew counters. New invocations reread defaults
+while retaining history; only an explicit resumption after a reported limit stop
+can renew the allowance.
 
 ## Project settings and role models
 

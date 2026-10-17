@@ -27,6 +27,9 @@
 #   dr9    cart completion staled by an authorized cart-input Tasks replan
 #   dr9c   dr9 with supported Codex implementer/reviewer model overrides
 #   dr10   dr9 state for read-only completion-recovery exclusion decisions
+#   dr13   fresh defaults for read-only configuration boundary decisions
+#   dr14c  approved cart with fresh Drive defaults and comparison role models
+#   dr15c  i13 pending review with configured Drive progress and comparison roles
 #   st1    dirty blocked Task for a whole-milestone status report
 #   st2    rewound Design with a non-current completed Task plan
 #   a1     an initial-adoption project with no Specs and no Steering
@@ -1582,13 +1585,21 @@ EOF
     fi
     ;;
 
-d7 | t4 | i4 | i6 | i7 | i8 | i9 | i10 | i11 | i11c | i12 | i13c | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
-    if [ "$scenario" = i11c ] || [ "$scenario" = i13c ]; then
+d7 | t4 | i4 | i6 | i7 | i8 | i9 | i10 | i11 | i11c | i12 | i13c | dr13 | dr14c | dr15c | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
+    if [ "$scenario" = i11c ] || [ "$scenario" = i13c ] || [ "$scenario" = dr14c ] || [ "$scenario" = dr15c ]; then
+        drive_member=''
+        implementer_member=''
+        if [ "$scenario" = dr14c ] || [ "$scenario" = dr15c ]; then
+            drive_member='"drive": {"replan": true, "recovery": "progress"},'
+            implementer_member='"implementer": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"},'
+        fi
         cat > .specbind.json <<EOF
 {
   "schemaVersion": 1, "specDir": ".specbind", "language": "$language",
   "agents": ["claude-code", "codex"], "projectInstructions": true,
+  $drive_member
   "agentRoles": {"codex": {
+    $implementer_member
     "debugger": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"},
     "reviewer": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"}
   }}
@@ -1599,6 +1610,19 @@ EOF
         specbind install --agent codex --agent claude-code >/dev/null
         git add -A
         git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Refresh comparison fixture roles"
+    fi
+    if [ "$scenario" = dr4 ]; then
+        cat > .specbind.json <<EOF
+{"schemaVersion":1,"specDir":".specbind","language":"$language","agents":["claude-code","codex"],"projectInstructions":true}
+EOF
+        expect "legacy Drive defaults were not retained" \
+            'specbind configuration show | grep -q "Recovery: bounded (legacy default)"'
+    fi
+    if [ "$scenario" = dr13 ] || [ "$scenario" = dr14c ] || [ "$scenario" = dr15c ]; then
+        expect "fresh Drive replan default is absent" \
+            'specbind configuration show | grep -q "Replan: true (configured)"'
+        expect "fresh Drive recovery default is absent" \
+            'specbind configuration show | grep -q "Recovery: progress (configured)"'
     fi
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
@@ -1901,7 +1925,7 @@ EOF
                 'test -n "$(git status --porcelain src/orders.py)"'
         fi
     fi
-    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ] || [ "$scenario" = i10 ] || [ "$scenario" = i11 ] || [ "$scenario" = i11c ] || [ "$scenario" = i12 ] || [ "$scenario" = i13c ]; then
+    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ] || [ "$scenario" = i10 ] || [ "$scenario" = i11 ] || [ "$scenario" = i11c ] || [ "$scenario" = i12 ] || [ "$scenario" = i13c ] || [ "$scenario" = dr15c ]; then
         # A correct pending diff whose only prior rejection assigned a later
         # integration boundary to this Task. The driven run owns re-review and
         # completion; the recipe owns only the reproducible starting state.

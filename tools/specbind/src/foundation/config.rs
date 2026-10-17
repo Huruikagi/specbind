@@ -46,6 +46,12 @@ struct RootConfig {
     schema_version: u64,
     spec_dir: String,
     language: ProjectLanguage,
+    #[serde(
+        default,
+        rename = "drive",
+        deserialize_with = "crate::schema::deserialize_optional_non_null"
+    )]
+    _drive: Option<crate::schema::drive::v1::DriveDefaults>,
 }
 
 /// Resolves only the containing Git project root.

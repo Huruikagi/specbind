@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0228](./0228-project-drive-defaults.md) adds project defaults for Drive
+and configuration provenance to its delegated selection. Standalone
+implementation retains the explicit selection and bounded fallback below.
+
 ## Context
 
 Decisions 0218 and 0226 stop a Task after three corrective cycles even when

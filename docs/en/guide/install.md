@@ -81,6 +81,15 @@ option temporarily installs `sb-adopt`, which is removed again once Spec
 establishment completes. See
 [Establish Specs from an existing implementation](./adopt-existing.md).
 
+### Drive defaults
+
+When no root `.specbind.json` exists, installation saves
+`"drive": {"replan": true, "recovery": "progress"}`. A later Drive request can
+delegate in-scope replanning and continue Task recovery while independent
+assessment proves progress, without repeating options. The install summary
+reports these values. Existing omitted fields keep `false` and `bounded`;
+refreshing does not opt them in. See [Drive defaults](./customization.md#drive-defaults).
+
 ## 3. Preview what will be written
 
 Add `--dry-run` to the same command to see the `create`, `replace`, `keep`, and

@@ -3,6 +3,11 @@ use schemars::{JsonSchema, Schema, generate::SchemaSettings};
 use super::{contract, scope, spec, tasks};
 
 #[must_use]
+pub fn drive_v1() -> Schema {
+    generate::<super::drive::v1::DriveDefaults>()
+}
+
+#[must_use]
 pub fn contract_v2() -> Schema {
     generate::<contract::v2::ContractDocument>()
 }

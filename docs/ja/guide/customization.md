@@ -25,6 +25,7 @@ specbind configuration show
 | リリース、Git、保留した指摘の届け先、実装完了時に追加する検証手順 | `.specbind/settings/adapters/` | `specbind adapter list`、`specbind adapter read` |
 | プロジェクトについてエージェントが長く参照する知識 | `.specbind/steering/` | `specbind steering list`、`specbind steering read` |
 | Specの置き場所、成果物の言語、使うエージェント | `.specbind.json`と`specbind install`のオプション | `specbind install --dry-run ...` |
+| Driveの再計画と回復の既定値 | `.specbind.json`の`drive` | `specbind configuration show` |
 | 役割ごとのモデルと推論の深さ | `.specbind.json`の`agentRoles` | 設定後に`specbind install --dry-run` |
 
 このページでは、Specの置き場所が既定値の`.specbind`である前提でパスを書きます。
@@ -365,6 +366,41 @@ artifact ID、対応するRequirements、配置先、既存Designへ統合する
 トレーサビリティ、検証、フィンガープリント、Design Gateの対象です。プロジェクト全体の
 テンプレートや`design-template-selection`は変更しません。同じ責任が別のSpecでも独立して
 必要になったときにだけ、エージェントが条件付き候補テンプレートへの昇格を提案します。
+
+## Driveの既定値 {#drive-defaults}
+
+ルートの`.specbind.json`で、ほかの項目を保持したまま次の`drive`を追加・更新します。
+
+```json
+{
+  "drive": {
+    "replan": true,
+    "recovery": "progress"
+  }
+}
+```
+
+ルート設定がない初回インストールでは、この値を保存します。既存設定で省略した項目は
+`replan: false`と`recovery: bounded`として扱い、更新、言語変更、エージェントの追加・削除でも
+維持します。各項目は省略できますが、`null`、型の違い、`drive`内の未知のキー、未知の回復モードは
+エラーになります。項目のスキーマは`specbind schema read drive/v1`で確認できます。
+
+Driveは項目ごとに、今回の依頼、プロジェクト設定、従来の既定値の順に優先します。
+今回だけ無効にするには`$sb-drive --no-replan --recovery bounded`、明示的に有効にするには
+`--replan --recovery progress`を指定します。Claude Codeでは`/sb-drive`を使います。
+`specbind configuration show`で各既定値とその由来を確認でき、この設定だけの変更なら
+再インストールは不要です。`sb-configure`に変更と通常の設定チェックポイントまで任せられます。
+
+再計画を有効にした設定でDriveの実行を依頼すると、`--replan`と同じく、承認済みRequirementsと
+既存Milestoneの範囲でDesign・Contract・Tasksの修正を任せられます。Requirements、スコープ、
+リリースの変更や、読み取り専用の依頼を変更作業に広げる権限は含みません。`progress`が外すのは
+Task回復の回数上限だけです。以前の所見が独立評価ですべて解消し、新しい問題だけが残る場合に
+限って次の回復へ進めます。
+
+Driveは解決した値と由来を実行中は保持し、実装担当とPlanへ引き継ぎます。
+`sb-implement`を直接呼ぶ場合の既定値は`bounded`のままです。設定を編集しても実行中のモードや
+使用回数は変わりません。新たな呼び出しでは設定を読み直しますが、回復履歴は保持します。
+回復枠の更新には、上限停止の報告後に、その作業の再開を明示的に依頼する必要があります。
 
 ## プロジェクト設定と役割別モデル
 

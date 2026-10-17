@@ -96,6 +96,7 @@ pub(super) fn config_entry(
         && config.project_instructions == resolved.project_instructions
         && config.adoption == resolved.adoption
         && config.agent_roles == resolved.agent_roles
+        && config.drive == resolved.drive
         && installed_agents == resolved.agents;
     PlanEntry {
         action: if unchanged {
@@ -135,8 +136,14 @@ fn render_config(resolved: &ResolvedInputs) -> String {
         ""
     };
     let agent_roles = render_agent_role_overrides(&resolved.agent_roles);
+    let drive = resolved.drive.map_or_else(String::new, |drive| {
+        format!(
+            ",\n  \"drive\": {}",
+            serde_json::to_string(&drive).expect("Drive defaults serialize")
+        )
+    });
     let output = format!(
-        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}{adoption}{agent_roles}\n}}\n",
+        "{{\n  \"schemaVersion\": 1,\n  \"specDir\": \"{}\",\n  \"language\": \"{language}\",\n  \"agents\": [{agents}]{instructions}{adoption}{agent_roles}{drive}\n}}\n",
         resolved.spec_dir
     );
     output

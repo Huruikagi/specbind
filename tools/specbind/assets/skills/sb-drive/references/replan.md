@@ -1,7 +1,8 @@
 # Authorized replan routing
 
-Read this procedure only when `--replan` is present or the maintainer explicitly
-requests delegated replanning. The option or explicit request is authorization:
+Read this procedure only when Drive resolved replan to true from the current
+request or project default. The Drive execution request with that resolved
+setting is authorization within the boundary below:
 do not ask for a second delegation confirmation.
 
 The authority covers Design, Contract, and Tasks revisions within the active
@@ -43,7 +44,7 @@ not another fresh replan attempt. A replan is not a way to reset a spent budget.
 
 For a Spec-backed Task recovery, carry the implementation owner's full ledger:
 recovery identity and Task mapping, allowance identity and user authorization,
-recovery mode and its explicit selection/scope, current cycles used/remaining
+recovery mode and its selection provenance/scope, current cycles used/remaining
 (out of three for bounded, `uncapped` remaining for progress), historical counts separately, all
 finding IDs/dispositions/evidence, latest assessment, partial paths, authority,
 and next owner. Reserve one Task cycle when the planning owner starts; the whole

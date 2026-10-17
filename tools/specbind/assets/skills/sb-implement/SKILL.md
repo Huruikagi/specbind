@@ -55,11 +55,14 @@ value wins; otherwise the default is `required` for Spec-backed work and
 value, not a setting to search for elsewhere.
 
 Resolve `--recovery bounded|progress` for Spec-backed Tasks. `bounded` is the
-default for a new execution or user-authorized resumption; `progress` removes
+default for a new standalone execution or user-authorized resumption; `progress` removes
 the Task cycle cap only while independent assessment proves progress. An
 explicit request to continue without a cycle limit while progress is verified
 also selects `progress`; generic "continue" does not. These are Skill arguments,
-not `specbind` CLI flags or project settings. Clarify invalid/conflicting modes.
+not `specbind` CLI flags. Standalone implementation ignores project Drive
+defaults. A Drive dispatch inherits both resolved replan/recovery settings and
+their provenance, including configured defaults with the Drive execution
+request; do not replace them with standalone defaults. Clarify invalid/conflicting modes.
 For an ongoing handoff, retain the evidenced mode, selection scope and ledger;
 omitting the flag in a receiver does not start a new run or reset the mode.
 Read [Task recovery](references/recovery.md) for selection and stop conditions.

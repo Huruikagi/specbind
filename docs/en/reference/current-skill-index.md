@@ -30,12 +30,19 @@ they fit together.
 | `sb-implement` | Implement one Roadmap item, with review of each Task. |
 | `sb-validate-implementation` | Validate a completed Spec against its Requirements and record completion on `GO`. |
 | `sb-release` | Release the Milestone: bind the version, publish, verify, and finalize. |
-| `sb-drive` | Advance all safely reachable work in the Milestone and stop before release. `--replan` also delegates in-scope replanning. |
+| `sb-drive` | Advance all safely reachable work in the Milestone and stop before release. Resolved `replan` also delegates in-scope replanning. |
 | `sb-status` | Show the current state and the next available action. Read-only. |
+
+Drive reads `.specbind.json` `drive.replan` and `drive.recovery` at invocation.
+Fresh installs save `true` and `progress`; existing omitted fields use `false`
+and `bounded`. Explicit options win, including `--no-replan` and
+`--recovery bounded`. Drive passes resolved values and sources to its owners;
+config edits do not alter an ongoing run or renew counters. See
+[Drive defaults](../guide/customization.md#drive-defaults).
 
 ## Skills for specific situations
 
-With `sb-drive --replan`, completion records made stale by that authorized
+With Drive replan enabled by configuration or `--replan`, completion records made stale by that authorized
 replan can be withdrawn automatically. Drive verifies the before/after evidence
 and delegates each withdrawal to `sb-validate-implementation`, which checkpoints
 only that change. Drive then resumes remaining implementation and, once all
@@ -48,7 +55,7 @@ set to one validation owner. It validates each Spec at the same committed
 revision, accepts only after all pass, and commits their completion records
 together so one Spec's acceptance does not stale another's.
 
-By default, for a Spec-backed Task, `sb-implement` permits at most three recovery cycles per
+When invoked standalone, by default `sb-implement` permits at most three recovery cycles per
 user-authorized execution or resumption,
 including authorized replanning and corrected re-review. After a repair, it
 continues only when independent assessment resolves every earlier finding and
@@ -66,14 +73,14 @@ unchanged. Direct-item recovery keeps its
 separate existing bounds.
 
 To continue past three cycles while independent assessment proves progress,
-select `--recovery progress` on `sb-implement` or `sb-drive`. The default is
-`--recovery bounded`. These are Skill arguments, not CLI flags or saved project
-settings. An explicit natural-language request for no cycle limit while progress
+select `--recovery progress` on `sb-implement` or `sb-drive`. Standalone
+implementation defaults to `--recovery bounded`; Drive uses its project default.
+These are Skill arguments, not CLI flags. An explicit natural-language request for no cycle limit while progress
 continues is equivalent; a generic "continue" does not select progress mode.
 Every prior finding must be resolved before another cycle; partial improvement,
 reopened findings or uncertain mappings still stop recovery. Counts and history
 are retained across handoffs. Selection applies only to that execution or
-resumption; a new one defaults to bounded unless you select progress again.
+resumption; a new Drive invocation rereads its defaults without discarding history.
 Direct-item, Design and Contract Review bounds remain unchanged.
 
 | Skill | When to use it |

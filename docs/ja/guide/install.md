@@ -95,6 +95,15 @@ Claude Codeを選択し、プロジェクト指示を有効にしている場合
 完了すると自動的に削除されます。詳しくは
 [既存実装からSpecを確立する](./adopt-existing.md)を参照してください。
 
+### Driveの既定値
+
+ルートに`.specbind.json`がない初回インストールでは、
+`"drive": {"replan": true, "recovery": "progress"}`を保存します。以後Driveを依頼すると、
+オプションを毎回指定せずに、範囲内の再計画と、独立評価で前進を確認できる間のTask回復を
+任せられます。インストール結果にもこの値を表示します。既存設定で省略した項目は
+`false`と`bounded`のままで、更新だけでは有効になりません。詳しくは
+[Driveの既定値](./customization.md#drive-defaults)を参照してください。
+
 ## 3. 書き込まれる内容を確認する
 
 同じコマンドへ`--dry-run`を追加すると、変更を適用せずに`create`、`replace`、

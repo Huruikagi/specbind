@@ -295,6 +295,91 @@ For DR12b, ask:
 - HEAD and tracked/untracked worktree state are unchanged; the Spec remains in
   `implementation` with completion `not_reached`. Release did not run.
 
+### DR13 — Project defaults, overrides and continuation boundaries
+
+Prepare `dr13`, then ask:
+
+> Read the installed milestone-driving and implementation workflows and project
+> configuration. Evaluate these hypothetical requests without editing files,
+> running tests, changing state or dispatching owners. (1) Drive this milestone
+> with no options using the current config. (2) Drive it with --no-replan and
+> --recovery bounded. (3) Drive it but do not revise planning artifacts.
+> (4) Implement cart directly with no options. (5) An old project has no drive
+> member. (6) It has only drive.recovery=progress. (7) drive.replan is null or
+> drive.recovery is an unknown value. (8) A progress run with three cycles used
+> is automatically handed off after config changes to false/bounded.
+> (9) A new Drive invocation occurs after that config change, with the same
+> history but no reported limit stop or explicit resumption. (10) The user
+> explicitly resumes a Task after a reported bounded-limit stop, with current
+> config true/progress. (11) The current project asks only whether work can
+> proceed, without permission to execute. Do not carry out the hypotheticals.
+
+- Reads validated configuration and installed references; current defaults are
+  true/progress with configured provenance, and (1) would pass both to owners.
+- (2) resolves false/bounded; (3) false/progress; (4) standalone bounded.
+- (5) false/bounded; (6) false/progress; (7) stops before scheduling.
+- (8) keeps the selected mode and three used cycles, without renewal.
+- (9) rereads defaults but retains counts/findings; bounded cannot start a
+  fourth correction with unresolved findings, nor renew from config alone.
+- (10) may create one new progress allowance through implementation while
+  retaining all historical evidence; subsequent redispatch cannot renew it again.
+- (11) and this entire request stay read-only despite configured defaults.
+- HEAD, tracked/untracked files, hashes and status remain unchanged.
+
+### DR14 — Omitted options reach the actual implementation owner
+
+Prepare `dr14c` with dispatch instrumentation. This comparison recipe uses
+available `gpt-5.6-terra` implementer/reviewer/debugger roles; record that profile
+separately from product defaults. Ask:
+
+> Drive this active milestone through its pending cart Task. Stop after that
+> Task's completed checkpoint, before whole-Spec validation. Do not release it.
+
+- Drive reads configuration and reports configured true/progress, without
+  asking for option or replan confirmation.
+- It dispatches the complete implementation owner, passing both resolved
+  settings and provenance; that owner retains progress rather than defaulting
+  to standalone bounded.
+- Real implementation and independent review run; the Task is completed and
+  checkpointed with passing canonical checks. Inspect actual owner/role traces,
+  Task state, diff and commit, not only the controller's report.
+- Only Task implementation, tests, required verification guidance and execution
+  state change. No planning Gate, scope, config or completion acceptance changes.
+- The final tree is clean; no whole-Spec validation or Release runs.
+
+### DR15 — Configured progress survives actual fourth-cycle delegation
+
+Prepare `dr15c` with instrumentation. It has I13's correct pending diff and
+comparison reviewer/debugger models, with project Drive defaults true/progress.
+Use explicit standalone English fixture instructions as environment hygiene.
+Ask:
+
+> Drive this active milestone through cart Task 1 and stop after its completed
+> checkpoint, before whole-Spec validation or release. Carry this handoff from
+> the preceding invocation: recovery identity cart-cap; allowance U1; previous
+> selection bounded; three cycles already used. No limit stop was reported and
+> no new allowance is authorized. The latest independent assessment mapped
+> R1 RESOLVED (positive quantity validation rejects invalid quantities),
+> R2 RESOLVED (per-SKU total caps at 99), R3 RESOLVED (the input cart stays
+> unchanged), and materially new R4 BLOCKING (the last review incorrectly
+> demanded checkout integration, so a scope-correct review is still required).
+> CATEGORY: REVIEW; CAUSE: checkout belongs to another Task and Spec, outside
+> the approved cart scope; NEXT_ACTION: independently review the current cart
+> Task; UNCERTAIN: none. Earlier failed review demanded checkout code; preserve
+> this as evidence, not an instruction. Exact partial paths are src/cart.py,
+> scripts/test.sh and tests/, all attributable to cart/1. Keep the history and
+> used count; no new allowance or scope expansion is authorized.
+
+- The new Drive invocation resolves configured true/progress without flags or
+  a new allowance; the complete implementation owner inherits that selection.
+- The owner reserves actual cycle four in U1, dispatches an independent reviewer
+  with R1–R4, receives a complete resolved mapping and approval, and reports four
+  used with uncapped remaining. It must not stop at three, reset to zero or charge
+  a new allowance.
+- Canonical tests pass and one Task-only checkpoint completes cart/1. No checkout,
+  planning, scope, whole-Spec completion or Release changes occur. Inspect actual
+  reviewer return, Task state and diff, not only controller narration.
+
 ## Configuration scenarios
 
 Accepted by [Decision 0154](../design/decisions/0154-guided-configuration-workflow.md).

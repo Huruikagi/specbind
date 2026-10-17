@@ -144,7 +144,7 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
         "An owner that starts and fails during\npreparation consumes it",
         "A diagnosis is never Task approval",
         "even\nwith `--review inline` or `--review off`",
-        "no configuration setting",
+        "does not read project Drive defaults",
         "Require no special reset phrase or additional confirmation",
         "Apply each instruction once\nper recovery identity",
         "An unknown historical total remains\nunknown",
@@ -244,7 +244,7 @@ fn drive_replan_delegation_reaches_owners_without_expanding_requirements() {
         .body()
         .expect("body");
     assert!(drive_entrypoint.contains("references/replan.md"));
-    assert!(drive_entrypoint.contains("do not ask for it again"));
+    assert!(drive_entrypoint.contains("do not ask\nfor it again"));
     let drive = skill_resource_text("sb-drive", "references/replan.md");
     for text in [
         "do not ask for a second delegation confirmation",

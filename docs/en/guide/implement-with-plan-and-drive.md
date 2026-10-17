@@ -45,7 +45,8 @@ it does not skip reviews or CLI checks.
 
 Separating planning lets you review Milestone behavior, Design boundaries, and
 execution order before implementation. Drive may also enter while planning is
-incomplete, but invoking ordinary Drive grants no Gate approval. Without applicable
+incomplete. Its resolved replan setting grants only the in-scope recovery
+authority described below. Without applicable
 authority, it parks that item and looks for another reachable action.
 
 ## 3. Drive reachable work
@@ -61,7 +62,13 @@ or Design itself and does not batch-complete Tasks.
 A Drive request includes recording completion on `GO` and its Git-adapter
 checkpoint for the actionable Specs, without another completion confirmation.
 An explicit instruction to stop before completion recording or make no changes
-limits that authority. Planning Gate approvals and Release remain separate.
+limits that authority. Planning authority follows the resolved replan setting;
+Release remains separate.
+
+Drive reads the root `.specbind.json` `drive` defaults and reports their values
+and sources before dispatch. New installations save `replan: true` and
+`recovery: progress`; existing omitted fields mean `false` and `bounded`.
+Current-request options override each field. See [Drive defaults](./customization.md#drive-defaults).
 
 Typical ownership is:
 
@@ -85,7 +92,8 @@ $sb-drive --replan
 This option delegates Design, Contract, and Tasks corrections within the
 approved Requirements and existing Milestone scope. The option itself grants
 that authority; Drive does not ask for another delegation confirmation. You
-can also explicitly ask it to delegate replanning in natural language.
+can also explicitly ask it to delegate replanning in natural language. A Drive
+execution request with configured `replan: true` grants the same authority.
 
 Drive returns findings to the planning owner, which invalidates the necessary
 gates, revises artifacts, runs independent validation and Contract Review, and
@@ -111,7 +119,7 @@ conflicting changes still stop the run.
 Requirements, Milestone scope or dependency changes, out-of-scope Spec changes,
 and unsettled external compatibility or migration obligations still need your
 decision. Reviews and their retry limits remain in force, and Release remains
-separate. Omit `--replan` to keep the ordinary rewind confirmations.
+separate. Use `--no-replan` to keep the ordinary rewind confirmations.
 
 ### Continue while recovery makes progress
 
@@ -124,22 +132,23 @@ Use the first form for Spec-backed Tasks reached in this Milestone run, or the
 second for the selected item's Tasks. In Claude Code, use `/sb-drive` or
 `/sb-implement` instead. These are Skill arguments, not `specbind` CLI flags.
 You can also explicitly ask to continue without a cycle limit while independent
-assessment confirms progress. Generic "continue" does not select progress mode:
-a new execution defaults to `bounded` (at most three cycles), while an ongoing
-execution retains its already selected mode.
+assessment confirms progress. A new Drive invocation uses its configured default
+unless overridden; standalone implementation defaults to `bounded` (at most three
+cycles). Generic "continue" does not itself select a mode. An ongoing execution
+retains its already selected mode.
 
 Progress mode permits a fourth and later cycle only when every previous finding
 is independently resolved and remaining blockers are new. Partial improvement,
 a repeated or reopened finding, or unclear history still stops recovery. The
-mode and used count follow handoffs; they are not saved as project defaults.
-A new execution or human-authorized resumption defaults to bounded unless you
-select progress again. During ongoing work, switching back with
+mode and used count follow handoffs; invocation overrides do not rewrite project
+defaults. New Drive invocations and human-authorized resumptions reread defaults
+without discarding history or automatically renewing counters. During ongoing work, switching back with
 `--recovery bounded` preserves the count: three or more used cycles stops further
 correction if blockers remain.
 
 Direct items and Design/Contract Review phase limits stay unchanged. This option
-grants no replanning, scope or release authority. Combine it with `--replan` only
-when you also want to delegate the in-scope planning corrections described above.
+grants no replanning, scope or release authority. Replanning is resolved separately
+from `--replan`, `--no-replan` and the project default.
 
 ## 4. Understand attention versus stopping
 
@@ -205,8 +214,9 @@ recovery budget. Current status alone cannot reconstruct those facts.
 
 After a Task stops at its recovery limit, you can explicitly ask to resume that
 work, for example "I updated it; check whether we can resume and proceed if
-possible." By default, this grants up to three new recovery cycles for that Task without
-another confirmation. Drive passes your instruction and retained history to
+possible." This grants a new allowance without another confirmation: up to three
+cycles in bounded mode, or no numerical cap under the same independent progress
+conditions in progress mode. Drive passes your instruction and retained history to
 the implementation owner, which reassesses current evidence before retrying.
 It can reopen the named blocked Task for that retry, but cannot bypass waiting
 dependencies or unrelated changes. Old findings and failed approaches remain;

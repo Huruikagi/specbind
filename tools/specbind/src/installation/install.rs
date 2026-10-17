@@ -14,6 +14,7 @@ use std::{fmt, fs, path::Path};
 
 use serde::Deserialize;
 
+use crate::schema::{deserialize_optional_non_null, drive::v1::DriveDefaults};
 use crate::{agent_role::AgentRoleOverrides, config::ProjectLanguage};
 
 pub use apply::apply;
@@ -131,6 +132,7 @@ pub struct InstallPlan {
     pub agents: Vec<Agent>,
     pub project_instructions: bool,
     pub adoption: bool,
+    pub drive: DriveDefaults,
     /// Dirty Git paths outside every managed mutation target. Installation
     /// preserves them and reports them so callers do not mistake the refresh
     /// for a clean-worktree operation.
@@ -207,6 +209,8 @@ pub struct InstalledConfig {
     pub adoption: bool,
     #[serde(default)]
     pub agent_roles: AgentRoleOverrides,
+    #[serde(default, deserialize_with = "deserialize_optional_non_null")]
+    pub drive: Option<DriveDefaults>,
 }
 
 /// Computes the installation plan without touching the filesystem.
@@ -253,6 +257,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
         agents: resolved.agents,
         project_instructions: resolved.project_instructions,
         adoption: resolved.adoption,
+        drive: resolved.drive.unwrap_or_default(),
         unrelated_changes,
         attention,
         entries,

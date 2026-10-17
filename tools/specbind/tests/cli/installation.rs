@@ -1,5 +1,178 @@
 use super::*;
 
+#[test]
+fn drive_defaults_are_initial_only_and_survive_configuration_rewrites() {
+    for drive in [
+        None,
+        Some(serde_json::json!({})),
+        Some(serde_json::json!({"replan": true})),
+        Some(serde_json::json!({"replan": false, "recovery": "bounded"})),
+        Some(serde_json::json!({"recovery": "progress"})),
+    ] {
+        let root = tempfile::tempdir().unwrap();
+        git(root.path(), &["init"]);
+        let mut config = serde_json::json!({"schemaVersion": 1, "specDir": ".specbind", "language": "en", "agents": ["codex"]});
+        if let Some(value) = &drive {
+            config["drive"] = value.clone();
+        }
+        write(
+            root.path(),
+            ".specbind.json",
+            &serde_json::to_string_pretty(&config).unwrap(),
+        );
+        commit_all(root.path());
+        specbind_command()
+            .current_dir(root.path())
+            .args([
+                "install",
+                "--agent",
+                "claude-code",
+                "--language",
+                "ja",
+                "--with-adoption",
+            ])
+            .assert()
+            .success();
+        let installed: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(root.path().join(".specbind.json")).unwrap())
+                .unwrap();
+        assert_eq!(installed.get("drive"), drive.as_ref());
+        let replan = drive.as_ref().and_then(|v| v.get("replan"));
+        let recovery = drive.as_ref().and_then(|v| v.get("recovery"));
+        let expected = format!(
+            "Replan: {} ({})\n    Recovery: {} ({})",
+            replan.and_then(serde_json::Value::as_bool).unwrap_or(false),
+            if replan.is_some() {
+                "configured"
+            } else {
+                "legacy default"
+            },
+            recovery
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("bounded"),
+            if recovery.is_some() {
+                "configured"
+            } else {
+                "legacy default"
+            }
+        );
+        specbind_command()
+            .current_dir(root.path())
+            .args(["configuration", "show"])
+            .assert()
+            .success()
+            .stdout(predicate::str::contains(expected));
+        commit_all(root.path());
+        specbind_command()
+            .current_dir(root.path())
+            .args(["install", "--without-adoption"])
+            .assert()
+            .success();
+        commit_all(root.path());
+        specbind_command()
+            .current_dir(root.path())
+            .args(["remove-agent", "claude-code", "--apply"])
+            .assert()
+            .success();
+        let removed: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(root.path().join(".specbind.json")).unwrap())
+                .unwrap();
+        assert_eq!(removed.get("drive"), drive.as_ref());
+    }
+}
+
+#[test]
+fn invalid_drive_defaults_fail_before_installation_or_configuration_reads() {
+    for drive in [
+        serde_json::json!(null),
+        serde_json::json!([]),
+        serde_json::json!({"replan": null}),
+        serde_json::json!({"replan": "true"}),
+        serde_json::json!({"recovery": null}),
+        serde_json::json!({"recovery": "unlimited"}),
+        serde_json::json!({"unknown": true}),
+    ] {
+        let root = tempfile::tempdir().unwrap();
+        git(root.path(), &["init"]);
+        let config = serde_json::to_string(&serde_json::json!({"schemaVersion": 1, "specDir": ".specbind", "language": "en", "agents": ["codex"], "drive": drive})).unwrap();
+        write(root.path(), ".specbind.json", &config);
+        for args in [
+            vec!["install", "--dry-run"],
+            vec!["install"],
+            vec!["configuration", "show"],
+            vec!["milestone", "status"],
+        ] {
+            specbind_command()
+                .current_dir(root.path())
+                .args(args)
+                .assert()
+                .failure()
+                .stderr(predicate::str::contains("ERROR"));
+        }
+        assert_eq!(
+            fs::read_to_string(root.path().join(".specbind.json")).unwrap(),
+            config
+        );
+        assert!(!root.path().join(".specbind").exists());
+        assert!(!root.path().join(".agents").exists());
+    }
+}
+
+#[test]
+fn fresh_drive_defaults_are_reported_and_editable_without_reinstall() {
+    let root = tempfile::tempdir().unwrap();
+    git(root.path(), &["init"]);
+    specbind_command()
+        .current_dir(root.path())
+        .args([
+            "install",
+            "--dry-run",
+            "--agent",
+            "codex",
+            "--language",
+            "en",
+        ])
+        .assert()
+        .success()
+        .stdout(
+            predicate::str::contains("Drive replan default: true")
+                .and(predicate::str::contains("Drive recovery default: progress")),
+        );
+    assert!(!root.path().join(".specbind.json").exists());
+    specbind_command()
+        .current_dir(root.path())
+        .args(["install", "--agent", "codex", "--language", "en"])
+        .assert()
+        .success();
+    specbind_command()
+        .current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "Replan: true (configured)\n    Recovery: progress (configured)",
+        ));
+    let path = root.path().join(".specbind.json");
+    let mut config: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+    config["drive"] = serde_json::json!({"replan": false, "recovery": "bounded"});
+    fs::write(&path, serde_json::to_string_pretty(&config).unwrap()).unwrap();
+    specbind_command()
+        .current_dir(root.path())
+        .args(["configuration", "show"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains(
+            "Replan: false (configured)\n    Recovery: bounded (configured)",
+        ));
+    specbind_command()
+        .current_dir(root.path())
+        .args(["install", "--dry-run"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("0 create, 0 replace"));
+}
+
 fn assert_codex_status_metadata(root: &Path) {
     let metadata = fs::read_to_string(root.join(".agents/skills/sb-status/agents/openai.yaml"))
         .expect("rendered Codex skill metadata");
@@ -355,7 +528,7 @@ fn applies_an_initial_installation_and_is_idempotent() {
     let config = fs::read_to_string(root.path().join(".specbind.json")).expect("written config");
     assert_eq!(
         config,
-        "{\n  \"schemaVersion\": 1,\n  \"specDir\": \".specbind\",\n  \"language\": \"en\",\n  \"agents\": [\"codex\"]\n}\n"
+        "{\n  \"schemaVersion\": 1,\n  \"specDir\": \".specbind\",\n  \"language\": \"en\",\n  \"agents\": [\"codex\"],\n  \"drive\": {\"replan\":true,\"recovery\":\"progress\"}\n}\n"
     );
     for relative in [
         ".specbind/settings/templates/specs/requirements.md",

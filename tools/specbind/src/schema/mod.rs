@@ -1,12 +1,15 @@
 use serde::{Deserialize, Deserializer};
 
 pub mod contract;
+pub mod drive;
 pub mod generate;
 pub mod runtime;
 pub mod scope;
 pub mod shared_contract;
 pub mod spec;
 pub mod tasks;
+
+pub const DRIVE_V1_SCHEMA_JSON: &str = include_str!("../../schemas/drive/v1.schema.json");
 
 pub const CONTRACT_V2_SCHEMA_JSON: &str = include_str!("../../schemas/contract/v2.schema.json");
 pub const SHARED_CONTRACT_V1_SCHEMA_JSON: &str =
@@ -43,6 +46,12 @@ impl EmbeddedSchema {
 
 /// Every embedded schema. This is the whole accepted selector set.
 static SCHEMAS: &[EmbeddedSchema] = &[
+    EmbeddedSchema {
+        selector: "drive/v1",
+        artifact: ".specbind.json drive member",
+        written_by: "project configuration",
+        content: DRIVE_V1_SCHEMA_JSON,
+    },
     EmbeddedSchema {
         selector: "contract/v2",
         artifact: "contract.yaml",

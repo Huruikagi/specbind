@@ -16,6 +16,25 @@ struct AdoptionResumeRecord {
     source_revision: String,
 }
 
+fn render_drive_defaults(output: &mut String, drive: crate::schema::drive::v1::DriveDefaults) {
+    let _ = writeln!(
+        output,
+        "  Drive defaults:\n    Replan: {} ({})\n    Recovery: {} ({})",
+        drive.replan_enabled(),
+        if drive.replan.is_some() {
+            "configured"
+        } else {
+            "legacy default"
+        },
+        drive.recovery_mode().name(),
+        if drive.recovery.is_some() {
+            "configured"
+        } else {
+            "legacy default"
+        },
+    );
+}
+
 /// Validates and summarizes every supported project configuration surface.
 #[must_use]
 pub fn configuration_show(start: &Path) -> CommandOutput {
@@ -69,6 +88,7 @@ pub fn configuration_show(start: &Path) -> CommandOutput {
             "disabled"
         }
     );
+    render_drive_defaults(&mut output, report.drive);
     output.push_str("  Agent roles:\n");
     if report.roles.is_empty() {
         output.push_str("    none\n");

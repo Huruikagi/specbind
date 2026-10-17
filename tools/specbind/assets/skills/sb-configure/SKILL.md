@@ -39,7 +39,7 @@ are good. Inspect only the repository evidence needed to make that judgment.
 Read every directly applicable reference completely before proposing or making
 that part of the change. Do not load unrelated procedures.
 
-- Agent selection, language, project instructions, or role capability:
+- Agent selection, language, project instructions, Drive defaults, or role capability:
   [installation and Agents](references/installation-and-agents.md)
 - Artifact, Steering, or Roadmap template; Design-template selection; or
   existing-artifact alignment:

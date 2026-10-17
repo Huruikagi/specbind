@@ -119,6 +119,20 @@ fn push_install_summary(output: &mut String, plan: &install::InstallPlan) {
         "Adoption Skill",
         if plan.adoption { "enabled" } else { "disabled" },
     );
+    push_field(
+        output,
+        "Drive replan default",
+        if plan.drive.replan_enabled() {
+            "true"
+        } else {
+            "false"
+        },
+    );
+    push_field(
+        output,
+        "Drive recovery default",
+        plan.drive.recovery_mode().name(),
+    );
     if !plan.unrelated_changes.is_empty() {
         output.push_str("  Unrelated changes: preserved\n");
         for path in &plan.unrelated_changes {
