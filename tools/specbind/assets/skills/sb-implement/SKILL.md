@@ -1,7 +1,7 @@
 ---
 name: sb-implement
 description: Implement or resume one roadmap item, including continuation through returned review or diagnosis. Do not use for a diagnosis-only request.
-argument-hint: "<item> [tasks] [--review required|inline|off]"
+argument-hint: "<item> [tasks] [--review required|inline|off] [--recovery bounded|progress]"
 ---
 
 # Implement one item
@@ -54,6 +54,18 @@ value wins; otherwise the default is `required` for Spec-backed work and
 `inline` for Direct work. “Selected mode” in either procedure means this resolved
 value, not a setting to search for elsewhere.
 
+Resolve `--recovery bounded|progress` for Spec-backed Tasks. `bounded` is the
+default for a new execution or user-authorized resumption; `progress` removes
+the Task cycle cap only while independent assessment proves progress. An
+explicit request to continue without a cycle limit while progress is verified
+also selects `progress`; generic "continue" does not. These are Skill arguments,
+not `specbind` CLI flags or project settings. Clarify invalid/conflicting modes.
+For an ongoing handoff, retain the evidenced mode, selection scope and ledger;
+omitting the flag in a receiver does not start a new run or reset the mode.
+Read [Task recovery](references/recovery.md) for selection and stop conditions.
+The option does not change Direct-only bounds or authorize read-only work to
+mutate. Report the selected mode when recovery starts.
+
 **Never create Spec canonical artifacts for a Direct item.** If the work turns out to
 need Spec requirements, design, or a Spec contract, the premise that made it Direct has
 failed. Stop and report that it needs rerouting through discovery.
@@ -77,8 +89,9 @@ Read the directly applicable reference completely before changing anything:
 
 For a **Spec-backed Task**, read [Task recovery](references/recovery.md)
 completely at the first failure or recovery continuation. It replaces separate
-diagnosis and review-repair counters with three shared recovery cycles per Task
-for each user-authorized execution or resumption. It owns recognition of a
+diagnosis and review-repair counters with one shared allowance per Task:
+three cycles in `bounded`, or no numerical cap in explicit `progress` mode.
+Both require independent progress after each cycle. It owns recognition of a
 later explicit resumption, including ordinary contextual "continue" wording,
 and preservation of the prior ledger; other continuations cannot renew it.
 Do not apply the Direct-only bounds below to a Spec-backed Task.

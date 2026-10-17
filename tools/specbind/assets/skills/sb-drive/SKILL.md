@@ -1,7 +1,7 @@
 ---
 name: sb-drive
 description: Drive the active milestone through every safe reachable planning, implementation, and validation action. Park branch-local attention and continue elsewhere; stop before release execution.
-argument-hint: "[--replan] [--target-release <version>]"
+argument-hint: "[--replan] [--target-release <version>] [--recovery bounded|progress]"
 ---
 
 # Drive the active milestone to its next real boundary
@@ -33,14 +33,36 @@ before completion recording or making no changes, overrides this authority.
 Park excluded actions as `HUMAN_DECISION`; never turn a read-only claim check
 into a Drive request. This grants no planning Gate approval or Release authority.
 
+## Select Task recovery mode
+
+Accept the Skill argument `--recovery bounded|progress`. Default a new execution
+or human-authorized resumption to `bounded` (three Task cycles). Explicit
+`progress`, or a clear request to continue without a cycle limit while progress
+is independently verified, removes only the numerical Spec-backed Task cap.
+Generic "continue" is not selection. This is not a `specbind` CLI flag or saved
+project setting. Clarify invalid/conflicting values before corrective work.
+
+Pass the selected mode, actual user selection and scope to every affected
+`sb-implement` owner in this active Milestone, including after replan or a
+capacity restart. Carry existing ledgers unchanged. Receivers continuing the
+same run retain its evidenced mode even when no flag is repeated. Implementation
+owns progress judgment and mode changes; Drive never infers progress from a
+success message or resets counts. `progress` still stops on an unresolved or
+reopened prior finding, missing continuity or external/authority boundaries.
+It does not change Direct, Design or Contract Review bounds, imply `--replan`,
+or authorize execution from a read-only request. Do not carry selection into a
+new execution or Milestone without explicit user selection for that run.
+
 ## Carry an explicit Task resumption
 
 After a reported Task recovery-limit stop, carry a later explicit human request
 to resume that work to `sb-implement`, together with the prior recovery handoff.
 Include the actual user instruction and its target, allowance identity/current
-counts if already assigned, and historical counts/findings/evidence separately.
+counts if already assigned, recovery mode and its selection evidence, and
+historical counts/findings/evidence separately.
 The implementation owner applies its recovery procedure to start at most one new
-allowance for that instruction; Drive never resets counters itself. Contextual
+allowance for that instruction (uncapped only with explicit progress selection);
+Drive never resets counters itself. Contextual
 "continue" or "I updated it; resume" needs no special reset wording or second
 confirmation. Read-only checks, automatic redispatch, compaction, sessions and
 version updates alone do not renew it. This routing applies without `--replan`

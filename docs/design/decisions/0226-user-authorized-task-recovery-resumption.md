@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0227](./0227-progress-gated-task-recovery.md) adds explicit selection
+of progress mode for an execution or resumption. Three cycles remain the default.
+
 ## Context
 
 Issue #83 exposed a Task remaining blocked after an explicitly requested retry

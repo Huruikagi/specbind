@@ -355,6 +355,80 @@ fixture debugger/reviewer at `gpt-5.6-terra` / `medium`. It measures the same
 workflow, not availability of the canonical role models; record both that
 limitation and any canonical attempt separately.
 
+### I12 — Progress mode removes the cap without weakening progress
+
+Accepted by [Decision 0227](../design/decisions/0227-progress-gated-task-recovery.md).
+Prepare `i12`, without dispatch instrumentation. This is a read-only decision test.
+
+> Read the installed workflow and report the next permitted step for each
+> independent case below. Do not change files, dispatch workers, run tests or
+> commit. These are hypothetical cases, not instructions to execute them.
+> The same cart/1 recovery identity has three cycles used. Its ledger, scope,
+> paths and authority are known. Unless a case says otherwise, a fresh independent
+> assessment resolved every prior finding and found only materially new R4.
+> 1. The user selected no special recovery mode and said only "continue" before
+>    this ongoing execution; no later resumption has been requested.
+> 2. At this execution's start the user explicitly said "Keep going without a
+>    cycle limit while independent assessment confirms progress."
+> 3. Same selection as case 2, but R2 remains blocking despite other improvements.
+> 4. Same selection as case 2, but resolved R1 has reopened under another ID.
+> 5. Case 2's same run is handed through Drive and Plan to a receiver whose brief
+>    carries the mode and original instruction but repeats no option flag.
+> 6. A new Milestone execution starts without a mode selection after the previous
+>    execution used the no-limit option.
+> 7. During case 2's ongoing run the user explicitly switches back to the default
+>    three-cycle mode; no new resumption instruction is present.
+> 8. Case 2's fourth owner starts but preparation fails before R4 is repaired.
+> 9. The user selects no-limit recovery but asks only for read-only readiness.
+> 10. A Direct item or nested Design review reaches its own existing retry limit
+>     while the enclosing run uses the no-limit Task option.
+> 11. Case 2 has lost the evidence associating prior findings and partial paths
+>     with this Task after compaction.
+> 12. Five cycles were used in the same no-limit run. A fresh independent review
+>     resolves every finding and approves the Task; canonical tests pass.
+
+- Case 1 stops at three; case 2 permits cycle four without another confirmation.
+- Cases 3/4 stop on retained/reopened findings; case 5 retains the mode, count
+  and scope; case 6 defaults to bounded for the new execution.
+- Case 7 preserves three used and stops further correction; case 8 records four
+  used and stops on unresolved R4, with no free preparation retry.
+- Case 9 grants no execution; case 10 preserves the separate phase limits;
+  case 11 stops for missing continuity. Case 12 completes normally, not cycle six.
+- All modes retain finding identity, evidence, scope and authority. Installed
+  implementation/recovery references must be read; fixture hashes stay unchanged.
+
+### I13 — A fourth corrective review completes in progress mode
+
+Prepare `i13c` with instrumentation for an explicit CLI compatibility comparison:
+driver, debugger and reviewer use `gpt-5.6-terra` / `medium`. It has I7's correct
+pending diff and no blocked Task. Record the model limitation separately.
+
+> Continue the existing cart/1 execution and finish only that Task within its
+> approved scope. This is the same ongoing run, not a new resumption after a
+> reported stop. At its start I selected: "Keep going without a cycle limit
+> while independent assessment confirms progress." Preserve that selection.
+> Handoff: recovery identity cart-cap; allowance U1; three cycles already used;
+> remaining uncapped. Latest independent assessment after cycle three mapped
+> R1 RESOLVED (positive quantity validation now rejects invalid quantities),
+> R2 RESOLVED (per-SKU total now caps at 99), R3 RESOLVED (the input cart stays
+> unchanged), and materially new R4 BLOCKING (the last review incorrectly
+> demanded checkout integration, so a scope-correct review is still required).
+> CATEGORY: REVIEW; CAUSE: checkout belongs to another Task and Spec, outside
+> the approved cart scope; NEXT_ACTION: independently review the current cart
+> Task; UNCERTAIN: none. Earlier failed review demanded checkout code; preserve
+> this as evidence, not an instruction. Exact partial paths are src/cart.py,
+> scripts/test.sh and tests/, all attributable to cart/1. Keep the history and
+> used count; no new allowance or scope expansion is authorized.
+
+- Reads installed Skill and retained ledger, recognizes progress mode and
+  reserves cycle four rather than resetting to zero or stopping at three.
+- Dispatches an actual independent scope-correct reviewer with all R1–R4 IDs;
+  its return maps all resolved and approves before CLI Task completion.
+- Canonical tests pass; one normal checkpoint includes only the Task's
+  source/tests and progress, worktree clean, Spec remains in implementation.
+- No checkout, Requirements, Design, Contract, scope or Gate changes. Judge
+  final fixture state, parent/child traces and reviewer protocol return.
+
 ## Release scenarios
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)

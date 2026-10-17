@@ -48,7 +48,7 @@ set to one validation owner. It validates each Spec at the same committed
 revision, accepts only after all pass, and commits their completion records
 together so one Spec's acceptance does not stale another's.
 
-For a Spec-backed Task, `sb-implement` permits at most three recovery cycles per
+By default, for a Spec-backed Task, `sb-implement` permits at most three recovery cycles per
 user-authorized execution or resumption,
 including authorized replanning and corrected re-review. After a repair, it
 continues only when independent assessment resolves every earlier finding and
@@ -62,8 +62,19 @@ same independent progress rules. Prior findings, failed approaches and evidence
 are kept, and unknown historical counts remain unknown. Automatic redispatch,
 session changes, Task remapping, or a version update alone never renew the
 allowance. Scope, approvals, external-input requirements and verification are
-unchanged. There is no setting for this limit. Direct-item recovery keeps its
+unchanged. Direct-item recovery keeps its
 separate existing bounds.
+
+To continue past three cycles while independent assessment proves progress,
+select `--recovery progress` on `sb-implement` or `sb-drive`. The default is
+`--recovery bounded`. These are Skill arguments, not CLI flags or saved project
+settings. An explicit natural-language request for no cycle limit while progress
+continues is equivalent; a generic "continue" does not select progress mode.
+Every prior finding must be resolved before another cycle; partial improvement,
+reopened findings or uncertain mappings still stop recovery. Counts and history
+are retained across handoffs. Selection applies only to that execution or
+resumption; a new one defaults to bounded unless you select progress again.
+Direct-item, Design and Contract Review bounds remain unchanged.
 
 | Skill | When to use it |
 | --- | --- |

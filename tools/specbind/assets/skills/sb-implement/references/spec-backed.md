@@ -166,10 +166,15 @@ why it is not the default for Spec-backed work.
 
 Verdicts are `APPROVED`, `REJECTED`, or `CANNOT_REVIEW`. Request recovery finding
 IDs with an initial fresh review and the complete prior-ID mapping on every
-re-review. A rejection enters [Task recovery](recovery.md), sharing its fixed
-three-cycle allowance for this authorized execution or resumption with diagnosis
-and authorized planning repair. Never start
+re-review. A rejection enters [Task recovery](recovery.md), sharing its
+selected recovery mode and allowance for this authorized execution or resumption
+with diagnosis and authorized planning repair. Never start
 a separate review-repair counter.
+
+A scope-correct re-review is itself the corrective action. Before starting its
+fresh reviewer, reserve the next Task recovery cycle and pass its number with
+the ledger. Count it in the final report even when no source repair is needed;
+progress mode removes the cap, not this accounting.
 
 `CANNOT_REVIEW` is not a rejection to retry blindly. It enters diagnosis with
 the reason the subject could not be judged.

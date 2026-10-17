@@ -134,7 +134,7 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
         "At most three recovery cycles per Task",
         "any prior finding still `BLOCKING` stops the Task",
         "all prior findings `RESOLVED` plus materially new blocking IDs",
-        "After cycle three, any blocker stops the Task",
+        "In bounded mode: after cycle three, any blocker stops the Task",
         "Missing, duplicate, or ambiguous prior-ID mappings stop recovery",
         "no free retry",
         "at most four\ndiagnostic assessments",
@@ -170,7 +170,8 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
     }
     for owner in ["sb-drive", "sb-plan"] {
         let replan = skill_resource_text(owner, "references/replan.md");
-        assert!(replan.contains("cycles used/remaining out of three"));
+        assert!(replan.contains("out of three for bounded"));
+        assert!(replan.contains("`uncapped` remaining for progress"));
         assert!(replan.contains("allowance identity and user authorization"));
         assert!(replan.contains("historical counts separately"));
         assert!(
@@ -186,6 +187,47 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
     let drive = skill_package_text("sb-drive");
     assert!(drive.contains("This routing applies without `--replan`"));
     assert!(drive.contains("blocked Task may have no ordinary\nactionable implementation entry"));
+}
+
+#[test]
+fn progress_recovery_is_explicit_scoped_and_preserves_independent_stops() {
+    for agent in [Agent::Codex, Agent::ClaudeCode] {
+        for owner in ["sb-implement", "sb-drive"] {
+            let rendered = skill::find(owner).unwrap().render(agent).unwrap();
+            assert!(rendered.contains("--recovery bounded|progress"));
+            assert!(
+                rendered.contains("not `specbind` CLI flags")
+                    || rendered.contains("not a `specbind` CLI flag")
+            );
+            assert!(rendered.contains("read-only"));
+        }
+    }
+    let recovery = skill_resource_text("sb-implement", "references/recovery.md");
+    for boundary in [
+        "resumption defaults to `bounded`",
+        "progress mode allows cycle four and later",
+        "Partial improvement is not enough",
+        "An ongoing receiver preserves the evidenced selection",
+        "Switching to bounded with three or more used cycles",
+        "Switching to progress cannot override",
+        "one reassessment after each started cycle",
+        "Do not rediagnose unchanged",
+        "Progress mode grants no free preparation retry",
+        "three\nused in progress mode plus one started corrected review is four used",
+        "include the reserved cycle number in the owner brief",
+        "Direct, Design and Contract Review bounds remain unchanged",
+    ] {
+        assert!(
+            recovery.contains(boundary),
+            "missing progress boundary: {boundary}"
+        );
+    }
+    for owner in ["sb-drive", "sb-plan"] {
+        let replan = skill_resource_text(owner, "references/replan.md");
+        assert!(replan.contains("recovery mode and its"));
+        assert!(replan.contains("restart"));
+        assert!(replan.contains("phase budgets") || replan.contains("phase bounds"));
+    }
 }
 
 #[test]

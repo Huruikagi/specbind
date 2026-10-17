@@ -113,6 +113,34 @@ and unsettled external compatibility or migration obligations still need your
 decision. Reviews and their retry limits remain in force, and Release remains
 separate. Omit `--replan` to keep the ordinary rewind confirmations.
 
+### Continue while recovery makes progress
+
+```text
+$sb-drive --recovery progress
+$sb-implement <item-id> --recovery progress
+```
+
+Use the first form for Spec-backed Tasks reached in this Milestone run, or the
+second for the selected item's Tasks. In Claude Code, use `/sb-drive` or
+`/sb-implement` instead. These are Skill arguments, not `specbind` CLI flags.
+You can also explicitly ask to continue without a cycle limit while independent
+assessment confirms progress. Generic "continue" does not select progress mode:
+a new execution defaults to `bounded` (at most three cycles), while an ongoing
+execution retains its already selected mode.
+
+Progress mode permits a fourth and later cycle only when every previous finding
+is independently resolved and remaining blockers are new. Partial improvement,
+a repeated or reopened finding, or unclear history still stops recovery. The
+mode and used count follow handoffs; they are not saved as project defaults.
+A new execution or human-authorized resumption defaults to bounded unless you
+select progress again. During ongoing work, switching back with
+`--recovery bounded` preserves the count: three or more used cycles stops further
+correction if blockers remain.
+
+Direct items and Design/Contract Review phase limits stay unchanged. This option
+grants no replanning, scope or release authority. Combine it with `--replan` only
+when you also want to delegate the in-scope planning corrections described above.
+
 ## 4. Understand attention versus stopping
 
 Once several Specs reach final validation, one validation owner assesses each
@@ -177,7 +205,7 @@ recovery budget. Current status alone cannot reconstruct those facts.
 
 After a Task stops at its recovery limit, you can explicitly ask to resume that
 work, for example "I updated it; check whether we can resume and proceed if
-possible." This grants up to three new recovery cycles for that Task without
+possible." By default, this grants up to three new recovery cycles for that Task without
 another confirmation. Drive passes your instruction and retained history to
 the implementation owner, which reassesses current evidence before retrying.
 It can reopen the named blocked Task for that retry, but cannot bypass waiting

@@ -32,8 +32,9 @@ and accumulated review findings/budgets to every owning receiver. No receiver
 may infer authority omitted from its dispatch.
 
 When recovery comes from a Spec-backed Task, retain its supplied recovery identity,
-Task mapping, allowance identity and user authorization, current
-cycles used/remaining out of three, historical counts separately, all finding IDs/dispositions and
+Task mapping, allowance identity and user authorization, recovery mode and its
+explicit selection/scope, current cycles used/remaining (out of three for bounded,
+`uncapped` remaining for progress), historical counts separately, all finding IDs/dispositions and
 evidence, latest assessment, partial paths, and authority. The whole planning
 repair is one already-reserved Task recovery cycle; do not charge each phase or
 reset that cycle. Your existing Design and Contract Review bounds still apply.
@@ -45,6 +46,8 @@ not permission to invent unused cycles.
 Keep failed approaches and unknown historical totals as supplied. Only the
 implementation owner recognizes a qualifying human resumption; Plan never
 renews its allowance or reuses the same user instruction to renew it again.
+Return progress mode unchanged, including on capacity restart; it removes only
+the Task cap, not your Design or Contract Review phase bounds.
 
 ## Preserve work before rewinding
 

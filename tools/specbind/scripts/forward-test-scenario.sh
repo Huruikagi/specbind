@@ -77,6 +77,8 @@
 #   i10    i7 state for read-only explicit-resumption decisions
 #   i11    i7 diff with a blocked Task for user-authorized resumption
 #   i11c   i11 with available Codex roles for explicit CLI compatibility comparison
+#   i12    i7 state for read-only progress-mode boundary decisions
+#   i13c   i7 with comparison roles for a fourth-cycle review in progress mode
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
@@ -1580,8 +1582,8 @@ EOF
     fi
     ;;
 
-d7 | t4 | i4 | i6 | i7 | i8 | i9 | i10 | i11 | i11c | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
-    if [ "$scenario" = i11c ]; then
+d7 | t4 | i4 | i6 | i7 | i8 | i9 | i10 | i11 | i11c | i12 | i13c | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
+    if [ "$scenario" = i11c ] || [ "$scenario" = i13c ]; then
         cat > .specbind.json <<EOF
 {
   "schemaVersion": 1, "specDir": ".specbind", "language": "$language",
@@ -1899,7 +1901,7 @@ EOF
                 'test -n "$(git status --porcelain src/orders.py)"'
         fi
     fi
-    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ] || [ "$scenario" = i10 ] || [ "$scenario" = i11 ] || [ "$scenario" = i11c ]; then
+    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ] || [ "$scenario" = i10 ] || [ "$scenario" = i11 ] || [ "$scenario" = i11c ] || [ "$scenario" = i12 ] || [ "$scenario" = i13c ]; then
         # A correct pending diff whose only prior rejection assigned a later
         # integration boundary to this Task. The driven run owns re-review and
         # completion; the recipe owns only the reproducible starting state.

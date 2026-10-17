@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0227](./0227-progress-gated-task-recovery.md) adds an explicit per-run
+progress mode without the numerical Task cap; the progress rules below remain.
+
 [Decision 0226](./0226-user-authorized-task-recovery-resumption.md) allows one
 new three-cycle allowance after an explicit user resumption of stopped work.
 It supersedes the unconditional no-renewal wording below; autonomous

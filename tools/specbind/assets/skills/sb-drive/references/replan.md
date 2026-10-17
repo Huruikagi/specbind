@@ -43,7 +43,8 @@ not another fresh replan attempt. A replan is not a way to reset a spent budget.
 
 For a Spec-backed Task recovery, carry the implementation owner's full ledger:
 recovery identity and Task mapping, allowance identity and user authorization,
-current cycles used/remaining out of three, historical counts separately, all
+recovery mode and its explicit selection/scope, current cycles used/remaining
+(out of three for bounded, `uncapped` remaining for progress), historical counts separately, all
 finding IDs/dispositions/evidence, latest assessment, partial paths, authority,
 and next owner. Reserve one Task cycle when the planning owner starts; the whole
 Plan repair consumes that cycle, while Plan's own phase bounds still apply.
@@ -56,6 +57,8 @@ Only a later qualifying human resumption after a reported recovery-limit stop
 can authorize a new allowance through the implementation owner. Transport that
 instruction and the resulting allowance unchanged; never reuse the instruction
 to renew it again. Preserve failed approaches and unknown historical totals.
+Preserve progress mode through every owner return and restart; do not replace it
+with a three-cycle cap or apply it to Plan's independent phase budgets.
 
 After the planning owner completes its checkpoints, reread status, apply the
 completion withdrawal below when eligible, and resume

@@ -233,3 +233,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0224](./0224-design-validation-environment-stops.md) | Accepted | Required Design investigation failures stop validation without a verdict or local substitution |
 | [0225](./0225-claude-instruction-import-attention.md) | Accepted | Non-blocking import reminders for retained root Claude instruction files |
 | [0226](./0226-user-authorized-task-recovery-resumption.md) | Accepted | Explicit user resumption renews three Task recovery cycles while retaining history |
+| [0227](./0227-progress-gated-task-recovery.md) | Accepted | Opt-in Task recovery without a cycle cap while independent progress continues |
