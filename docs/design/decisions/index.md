@@ -224,7 +224,7 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0215](./0215-focused-skill-selection-and-verification.md) | Accepted | Focused Skill selection, consistent claim routing, and proportionate Task verification |
 | [0216](./0216-agents-md-sole-instruction-target.md) | Accepted | Root `AGENTS.md` as the sole project-instruction target and legacy `CLAUDE.md` block retirement |
 | [0217](./0217-owning-workflow-terminal-handoffs.md) | Accepted | Owning turns wait for internal roles and Drive bounds non-terminal handoff recovery |
-| [0218](./0218-task-recovery-cycles.md) | Accepted | Three Task recovery cycles with independent finding continuity and no budget reset |
+| [0218](./0218-task-recovery-cycles.md) | Accepted | Three Task recovery cycles with independent finding continuity; explicit resumption refined by 0226 |
 | [0219](./0219-replan-completion-recovery.md) | Accepted | Delegate completion-only withdrawal caused by authorized replanning before resuming delivery |
 | [0220](./0220-converged-spec-validation-checkpoint.md) | Accepted | Validate converged Specs at one revision and checkpoint completion metadata together |
 | [0221](./0221-drive-validation-authority-and-restart.md) | Accepted | Drive completion authority, ordinary Skill owner hosts, and fresh validation after revision changes |
@@ -232,3 +232,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0223](./0223-design-scoped-contract-validation.md) | Accepted | Individual Design Contract checks with strict direct providers and a mandatory complete Contract Review |
 | [0224](./0224-design-validation-environment-stops.md) | Accepted | Required Design investigation failures stop validation without a verdict or local substitution |
 | [0225](./0225-claude-instruction-import-attention.md) | Accepted | Non-blocking import reminders for retained root Claude instruction files |
+| [0226](./0226-user-authorized-task-recovery-resumption.md) | Accepted | Explicit user resumption renews three Task recovery cycles while retaining history |

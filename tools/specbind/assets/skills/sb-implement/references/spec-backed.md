@@ -14,6 +14,17 @@ finding about the plan or the design — that is a real outcome, not an obstacle
 
 ## Select the work
 
+For a user-requested resumption after a reported recovery-limit stop, first read
+[Task recovery](recovery.md). Recognize the user authorization and retain the
+same Task identity, history and attributable partial work. Verify current
+prerequisites and obtain the new allowance's independent initial assessment.
+If it permits a corrective cycle within existing authority, reopen only the
+named blocked Task with `specbind tasks reopen <spec> <task-id>` and reread its
+eligibility before correction. The carried finding need not already be
+resolved: reopening permits retry, not completion. Do not reopen dependencies
+or completed Tasks merely because the user asked to resume. Stop on unrelated
+or unattributed changes, waiting prerequisites, or an unsafe recovery route.
+
 When resuming from an authorized Drive replan, read the planning owner's exact
 Task identity mapping and resolved blocker evidence. Before selecting work,
 load [Task recovery](recovery.md) and recover its full ledger and used/remaining
@@ -156,7 +167,8 @@ why it is not the default for Spec-backed work.
 Verdicts are `APPROVED`, `REJECTED`, or `CANNOT_REVIEW`. Request recovery finding
 IDs with an initial fresh review and the complete prior-ID mapping on every
 re-review. A rejection enters [Task recovery](recovery.md), sharing its fixed
-three-cycle budget with diagnosis and authorized planning repair. Never start
+three-cycle allowance for this authorized execution or resumption with diagnosis
+and authorized planning repair. Never start
 a separate review-repair counter.
 
 `CANNOT_REVIEW` is not a rejection to retry blindly. It enters diagnosis with

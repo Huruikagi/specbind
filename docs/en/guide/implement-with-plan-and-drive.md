@@ -175,6 +175,18 @@ For an interrupted replan recovery, also supply the previous handoff, including
 baseline evidence, completed withdrawal checkpoints, and any remaining Task
 recovery budget. Current status alone cannot reconstruct those facts.
 
+After a Task stops at its recovery limit, you can explicitly ask to resume that
+work, for example "I updated it; check whether we can resume and proceed if
+possible." This grants up to three new recovery cycles for that Task without
+another confirmation. Drive passes your instruction and retained history to
+the implementation owner, which reassesses current evidence before retrying.
+It can reopen the named blocked Task for that retry, but cannot bypass waiting
+dependencies or unrelated changes. Old findings and failed approaches remain;
+only the current allowance starts at zero. An unknown legacy total stays
+unknown. Automatic redispatch, compaction, Task renaming or updating SpecBind
+alone does not grant another allowance. The same instruction cannot renew an
+allowance again at the next handoff. Scope and approval boundaries still apply.
+
 ## 6. Stop before Release
 
 When implementation validation is complete, the next boundary is release

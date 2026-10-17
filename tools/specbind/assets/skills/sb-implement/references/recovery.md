@@ -2,24 +2,58 @@
 
 Use this procedure for a failed or resumed Spec-backed Task. Direct items keep
 their entrypoint failure bounds. The initial implementation and review are not
-recovery cycles. **At most three recovery cycles per Task**, shared by diagnosis,
+recovery cycles. **At most three recovery cycles per Task** in each user-authorized
+execution or resumption, shared by diagnosis,
 implementation repair, authorized replanning, and corrected re-review. There is
 no separate diagnosis or review-repair allowance and no configuration setting.
 
 ## Establish the continuation
 
 Keep run-local handoff data: recovery identity, current Spec/Task mapping,
-cycles used and remaining, every finding ID with obligation, disposition and
-evidence, latest independent assessment, exact partial paths, supplied authority,
-and next owner. Do not write a recovery file or edit CLI-owned state by hand.
+allowance identity and its user authorization, current cycles used and remaining,
+historical counts separately, every finding ID with obligation, disposition and
+evidence, failed approaches as facts, latest independent assessment, exact partial
+paths, supplied authority, and next owner. Do not write a recovery file or edit
+CLI-owned state by hand.
 
 At a fresh failure, start with zero cycles and an empty history. At a continuation,
 require the previous handoff; never infer zero from Git or Task status. Preserve
 the budget across Drive, Plan, new dispatches, sessions, and Task remapping.
 Renaming or splitting the same obligation does not create another allowance;
 mapped descendants share the original recovery identity and remaining budget.
-Missing history stops continuation. A generic request to continue cannot reset
-an exhausted budget. Report the specific missing evidence or maintainer decision.
+Missing history stops ordinary continuation. The explicit resumption below is
+the only renewal path; never invent historical counts or erase findings.
+
+## Recognize a user-authorized resumption
+
+After a recovery-limit stop was reported, a later human instruction clearly
+asking to resume that stopped Task authorizes one new three-cycle allowance.
+"Continue" or "I updated it; resume" qualifies when the context identifies that
+work. Require no special reset phrase or additional confirmation. A request to
+check and proceed when possible includes execution; a read-only readiness check
+does not. If the target or execution intent is ambiguous, clarify before acting.
+
+Record the actual user instruction, stopped Task and new allowance identity,
+with zero current cycles used and three remaining. Apply each instruction once
+per recovery identity. A receiver inheriting that allowance must reuse it, not
+renew it again. Automatic redispatch, sessions, compaction, Task splitting or
+renaming, replanning, and a version update alone cannot renew an allowance.
+An instruction during ongoing work does not erase already used cycles.
+
+Retain all available prior counts, finding IDs and dispositions, failed
+approaches, evidence and partial paths. An unknown historical total remains
+unknown; that alone does not block a new authorized allowance, including when
+legacy counters exceed three. Missing current identity, safe path attribution,
+finding continuity or governing inputs still stops action. Do not treat missing
+history as evidence that a user authorized resumption.
+
+Obtain a fresh independent initial assessment using the retained facts and
+current evidence. Carried unresolved or reopened findings form the baseline and
+may receive the first corrective cycle: their earlier occurrence alone is not
+a stop at this boundary. Do not mark them resolved. After that cycle, apply the
+ordinary progress rule below to the full ledger. Failed approaches remain
+evidence to consider, not reasoning to copy. Scope, approvals, external inputs,
+host restrictions, verification and review requirements remain unchanged.
 
 ## Assess once, independently
 
@@ -42,7 +76,7 @@ prior ID as `RESOLVED` or `BLOCKING` with current evidence. The implementer and
 controller cannot declare a finding resolved or rename it to obtain another try.
 
 Allow one initial assessment and one reassessment after each cycle: at most four
-diagnostic assessments. Do not rediagnose unchanged evidence or spend extra
+diagnostic assessments per allowance. Do not rediagnose unchanged evidence or spend extra
 diagnoses to reinterpret a negative result. The final assessment can explain a
 stop but cannot authorize a fourth corrective cycle. The existing single
 status-only repair of an unparsable role return is not a new assessment and must
@@ -50,7 +84,8 @@ not investigate, mutate, or change the verdict.
 
 ## Decide from the mapping before acting
 
-- An initial blocking assessment may permit cycle one within existing authority.
+- An initial blocking assessment, including an authorized resumption's carried
+  blockers, may permit cycle one within existing authority.
 - After a cycle, **any prior finding still `BLOCKING` stops the Task**, even if
   other findings were resolved and cycles remain. A reopened resolved finding
   also stops; it is not a new ID.
@@ -110,4 +145,6 @@ run. Preserve partial work, never reset, stash, revert, or make a WIP commit.
 Return the complete continuation data above, including used/remaining cycles
 and evidence for resolved as well as blocking findings. Do not commit partial
 source to make a blocked handoff look clean. Drive carries the ledger unchanged;
-another owner cannot infer missing counters or renew an exhausted allowance.
+another owner cannot infer missing counters or renew an exhausted allowance
+without a new qualifying human resumption. Carry the allowance identity and
+authorization so the same instruction cannot renew it twice.

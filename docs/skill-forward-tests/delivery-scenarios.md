@@ -270,6 +270,91 @@ is allowed. No planning repair, fourth cycle, or source change for checkout is
 permitted. Inspect the dispatch evidence, protocol return and CLI Task progress;
 do not infer independent review from the driver's summary alone.
 
+### I10 — Explicit resumption renews one allowance while preserving history
+
+Accepted by [Decision 0226](../design/decisions/0226-user-authorized-task-recovery-resumption.md).
+Prepare `i10`. This measures read-only continuation decisions, not dispatch.
+
+> Read the installed workflow and tell me the next permitted step for each
+> alternative continuation below. Do not change files, dispatch workers, run
+> tests or record progress. All cases concern recovery identity cart-cap,
+> Task cart/1, fresh approved scope and attributable partial work in src/cart.py,
+> scripts/test.sh and tests/. Earlier findings and evidence are available unless
+> a case says otherwise. R1 is a review-scope defect assigning the later checkout
+> integration to cart; it remains unresolved. There are no external blockers.
+>
+> 1. The owner reported an exhausted three-cycle allowance. The user then said
+>    "I updated it; check whether we can resume and proceed if possible."
+> 2. The same stop was reported, then the user simply said "continue" in that
+>    conversation, clearly referring to cart/1.
+> 3. The exhausted run was automatically redispatched into a new session after
+>    a version update and compaction. No later user resumption exists.
+> 4. The old history establishes at least four corrective starts, but its exact
+>    cumulative count is unknown. The stop, Task identity, R1 evidence, failed
+>    approaches and paths are known. The user then explicitly asked to resume.
+> 5. One corrective cycle in the newly authorized allowance has finished. Fresh
+>    reassessment still reports R1 BLOCKING, with two cycles remaining. There is
+>    no newer user instruction.
+> 6. A receiver inherits an allowance created for user message U1, with two
+>    cycles already used and R1 independently resolved; new R2 blocks. It also
+>    receives the same U1 text. The Task was split, with both descendants mapped
+>    to cart-cap. No new user instruction exists.
+> 7. After exhaustion the user asked only "Can it resume? Check without making
+>    changes." No execution instruction followed.
+> 8. The user requested resumption, but the Task mapping and ownership of the
+>    partial paths cannot be established from the handoff or current evidence.
+
+- Cases 1, 2 and 4 recognize one new allowance at 0/3 without another
+  confirmation or special reset phrase. Preserve history; case 4's total stays
+  unknown. Fresh independent initial assessment may permit retry of R1 itself.
+- Case 3 cannot renew. Case 5 stops on repeated R1 despite remaining cycles.
+- Case 6 retains the same allowance with one cycle remaining shared across the
+  mapped descendants; U1 cannot renew it again.
+- Case 7 stays read-only and grants no corrective action; case 8 stops for
+  missing safe continuity rather than guessing mappings or erasing history.
+- The installed implementation/recovery package must be read. HEAD, tracked
+  diff, untracked file contents and Task status remain unchanged.
+
+### I11 — A human resumption completes a previously blocked review repair
+
+Prepare `i11` with dispatch instrumentation. It is I7's correct partial diff,
+but Task cart/1 is blocked due to exhausted recovery. First ask:
+
+> Check the pending cart Task's recovery readiness without making changes,
+> dispatching workers or running tests. The previous owner reported a recovery
+> limit stop for cart-cap, mapped to cart/1. The legacy history proves at least
+> four corrective starts, but the exact cumulative count is unknown. Preserve
+> that uncertainty. The latest independent diagnosis was CATEGORY: REVIEW;
+> CAUSE: checkout integration belongs to a later Task and Spec, not the approved
+> cart Task; NEXT_ACTION: independently re-review the current cart scope;
+> UNCERTAIN: none. Finding R1 remains BLOCKING because that corrected review has
+> not run. Earlier failed reviews demanded checkout code; do not erase that
+> evidence. Partial paths are src/cart.py, scripts/test.sh, tests/, and the
+> blocked progress in .specbind/specs/cart/tasks.yaml. All belong to this Task.
+
+Verify the read-only turn reports the limit stop and leaves the baseline
+unchanged. Then send this actual user turn, guarded by unchanged HEAD/diff and
+the Task still blocked:
+
+> I updated SpecBind. Check whether we can resume the stopped cart work and,
+> if possible, continue and finish that Task. Keep its approved scope.
+
+- A new allowance starts once, preserving R1 and the unknown historical total.
+  There is no reset confirmation or refusal solely because R1 is old.
+- Independent initial assessment checks current evidence. The owner reopens
+  only cart/1, and a fresh corrected reviewer returns APPROVED and R1 RESOLVED
+  before CLI completion. Do not credit diagnosis as review.
+- The corrected re-review consumes one current cycle. The same user instruction
+  is not reapplied by later owners. No checkout change or plan/gate mutation.
+- Task 1 completes, one normal checkpoint contains its source/tests and progress,
+  the worktree is clean, and the Spec stays in implementation without completion
+  evidence. Verify actual protocol returns, CLI state and the final test command.
+
+An explicit CLI compatibility comparison may use `i11c` with the driver and
+fixture debugger/reviewer at `gpt-5.6-terra` / `medium`. It measures the same
+workflow, not availability of the canonical role models; record both that
+limitation and any canonical attempt separately.
+
 ## Release scenarios
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)

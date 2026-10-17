@@ -74,6 +74,9 @@
 #   i7     t4 plus a correct uncommitted implementation awaiting bounded re-review
 #   i8     i7 state for read-only Task recovery continuation decisions
 #   i9     i7 state for third-cycle independent review continuation
+#   i10    i7 state for read-only explicit-resumption decisions
+#   i11    i7 diff with a blocked Task for user-authorized resumption
+#   i11c   i11 with available Codex roles for explicit CLI compatibility comparison
 #   rt1    t4 plus an uncommitted implementation that caps at the wrong bound
 #   rt2    rt1 plus unrelated uncommitted work no task owns
 #   db1    t4 whose approved design contradicts the requirements, gates fresh
@@ -1577,7 +1580,24 @@ EOF
     fi
     ;;
 
-d7 | t4 | i4 | i6 | i7 | i8 | i9 | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
+d7 | t4 | i4 | i6 | i7 | i8 | i9 | i10 | i11 | i11c | dr3 | dr4 | dr5 | dr6 | st1 | rt1 | rt2 | db1 | vi1 | vi2 | vi3 | vi4 | vi5 | rl1 | rl2 | rl3 | rl4)
+    if [ "$scenario" = i11c ]; then
+        cat > .specbind.json <<EOF
+{
+  "schemaVersion": 1, "specDir": ".specbind", "language": "$language",
+  "agents": ["claude-code", "codex"], "projectInstructions": true,
+  "agentRoles": {"codex": {
+    "debugger": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"},
+    "reviewer": {"model": "gpt-5.6-terra", "reasoningEffort": "medium"}
+  }}
+}
+EOF
+        git add .specbind.json
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Configure comparison fixture roles"
+        specbind install --agent codex --agent claude-code >/dev/null
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Refresh comparison fixture roles"
+    fi
     milestone '{"schemaVersion":1,"workItems":{"specUpdates":[{"spec":"cart","summary":"Cap cart quantities at 99 per SKU."}]}}'
     brief cart \
         "A cart has no upper bound per SKU." \
@@ -1879,7 +1899,7 @@ EOF
                 'test -n "$(git status --porcelain src/orders.py)"'
         fi
     fi
-    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ]; then
+    if [ "$scenario" = i7 ] || [ "$scenario" = i8 ] || [ "$scenario" = i9 ] || [ "$scenario" = i10 ] || [ "$scenario" = i11 ] || [ "$scenario" = i11c ]; then
         # A correct pending diff whose only prior rejection assigned a later
         # integration boundary to this Task. The driven run owns re-review and
         # completion; the recipe owns only the reproducible starting state.
@@ -1903,6 +1923,12 @@ EOF
             'test -n "$(git status --porcelain src/cart.py tests/test_cart.py tests/__init__.py)"'
         expect "the later checkout boundary is already implemented" \
             '! git status --porcelain src/orders.py | grep -q .'
+        if [ "$scenario" = i11 ] || [ "$scenario" = i11c ]; then
+            specbind tasks block cart 1 --reason "Recovery allowance exhausted; R1 review-scope finding remains unresolved." >/dev/null \
+                || fail "could not record the exhausted Task"
+            expect "the resumption fixture Task is not blocked" \
+                'specbind tasks list cart | grep -q "1 blocked"'
+        fi
     fi
     if [ "$scenario" = i4 ]; then
         # An unrelated uncommitted edit. The run must leave it exactly as it is;

@@ -145,6 +145,11 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
         "A diagnosis is never Task approval",
         "even\nwith `--review inline` or `--review off`",
         "no configuration setting",
+        "Require no special reset phrase or additional confirmation",
+        "Apply each instruction once\nper recovery identity",
+        "An unknown historical total remains\nunknown",
+        "Carried unresolved or reopened findings form the baseline",
+        "diagnostic assessments per allowance",
     ] {
         assert!(
             recovery.contains(required),
@@ -155,6 +160,8 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
     assert!(procedure.contains("[Task recovery](recovery.md)"));
     assert!(!procedure.contains("at most two rounds"));
     assert!(!procedure.contains("at-most-two-round"));
+    assert!(procedure.contains("reopening permits retry, not completion"));
+    assert!(!recovery.contains("A generic request to continue cannot reset"));
     let entry = skill::find("sb-implement").expect("implementation skill");
     for agent in [Agent::Codex, Agent::ClaudeCode] {
         let rendered = entry.render(agent).expect("render implementation skill");
@@ -164,6 +171,8 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
     for owner in ["sb-drive", "sb-plan"] {
         let replan = skill_resource_text(owner, "references/replan.md");
         assert!(replan.contains("cycles used/remaining out of three"));
+        assert!(replan.contains("allowance identity and user authorization"));
+        assert!(replan.contains("historical counts separately"));
         assert!(
             replan
                 .split_whitespace()
@@ -174,6 +183,9 @@ fn task_recovery_package_installs_one_progress_aware_budget_for_both_agents() {
     }
     let direct = skill_resource_text("sb-implement", "references/direct.md");
     assert!(direct.contains("at most twice"));
+    let drive = skill_package_text("sb-drive");
+    assert!(drive.contains("This routing applies without `--replan`"));
+    assert!(drive.contains("blocked Task may have no ordinary\nactionable implementation entry"));
 }
 
 #[test]

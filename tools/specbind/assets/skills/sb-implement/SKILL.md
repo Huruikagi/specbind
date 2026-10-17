@@ -77,7 +77,10 @@ Read the directly applicable reference completely before changing anything:
 
 For a **Spec-backed Task**, read [Task recovery](references/recovery.md)
 completely at the first failure or recovery continuation. It replaces separate
-diagnosis and review-repair counters with three shared recovery cycles per Task.
+diagnosis and review-repair counters with three shared recovery cycles per Task
+for each user-authorized execution or resumption. It owns recognition of a
+later explicit resumption, including ordinary contextual "continue" wording,
+and preservation of the prior ledger; other continuations cannot renew it.
 Do not apply the Direct-only bounds below to a Spec-backed Task.
 
 For a **Direct item**, retain the following failure route and bounds:

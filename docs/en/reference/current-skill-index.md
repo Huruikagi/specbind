@@ -48,13 +48,22 @@ set to one validation owner. It validates each Spec at the same committed
 revision, accepts only after all pass, and commits their completion records
 together so one Spec's acceptance does not stale another's.
 
-For a Spec-backed Task, `sb-implement` permits at most three recovery cycles,
+For a Spec-backed Task, `sb-implement` permits at most three recovery cycles per
+user-authorized execution or resumption,
 including authorized replanning and corrected re-review. After a repair, it
 continues only when independent assessment resolves every earlier finding and
 the remaining blockers are new. A repeated or uncertain finding stops the Task;
 any blocker after the third cycle also stops it. The budget follows the Task
-across handoffs and cannot be reset by restarting Drive. There is no setting
-for this limit. Direct-item recovery keeps its separate existing bounds.
+across handoffs. After a recovery-limit stop is reported, explicitly asking to
+resume that work grants a new allowance without a special reset phrase or
+another confirmation. A contextual "continue" or "I updated it; resume" is
+enough. The first cycle may retry carried blockers; later cycles retain the
+same independent progress rules. Prior findings, failed approaches and evidence
+are kept, and unknown historical counts remain unknown. Automatic redispatch,
+session changes, Task remapping, or a version update alone never renew the
+allowance. Scope, approvals, external-input requirements and verification are
+unchanged. There is no setting for this limit. Direct-item recovery keeps its
+separate existing bounds.
 
 | Skill | When to use it |
 | --- | --- |

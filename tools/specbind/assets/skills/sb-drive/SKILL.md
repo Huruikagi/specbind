@@ -33,6 +33,28 @@ before completion recording or making no changes, overrides this authority.
 Park excluded actions as `HUMAN_DECISION`; never turn a read-only claim check
 into a Drive request. This grants no planning Gate approval or Release authority.
 
+## Carry an explicit Task resumption
+
+After a reported Task recovery-limit stop, carry a later explicit human request
+to resume that work to `sb-implement`, together with the prior recovery handoff.
+Include the actual user instruction and its target, allowance identity/current
+counts if already assigned, and historical counts/findings/evidence separately.
+The implementation owner applies its recovery procedure to start at most one new
+allowance for that instruction; Drive never resets counters itself. Contextual
+"continue" or "I updated it; resume" needs no special reset wording or second
+confirmation. Read-only checks, automatic redispatch, compaction, sessions and
+version updates alone do not renew it. This routing applies without `--replan`
+and grants no additional planning authority or unsafe-worktree exception.
+
+For that exact reported recovery-limit stop, a blocked Task may have no ordinary
+actionable implementation entry. After reading current Milestone and Task state,
+dispatch the complete `sb-implement` owner for the named item and Task with the
+resumption evidence, even in that case. This narrow continuation route does not
+create a scheduler: do not select other blocked or waiting Tasks. Preserve only
+attributable partial work for this same Task; conflicting or unknown changes
+still stop the run. The owner verifies prerequisites, handles reopening through
+the CLI, and applies independent recovery assessment before correction.
+
 ## Optional replan authority
 
 When `--replan` is present, or the maintainer explicitly requests delegated

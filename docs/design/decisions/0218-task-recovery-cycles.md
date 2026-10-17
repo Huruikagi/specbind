@@ -2,6 +2,11 @@
 
 Status: Accepted
 
+[Decision 0226](./0226-user-authorized-task-recovery-resumption.md) allows one
+new three-cycle allowance after an explicit user resumption of stopped work.
+It supersedes the unconditional no-renewal wording below; autonomous
+continuations still preserve the existing allowance and progress rules.
+
 ## Context
 
 Issue #76 exposed independent diagnosis and repair budgets stopping a Task even

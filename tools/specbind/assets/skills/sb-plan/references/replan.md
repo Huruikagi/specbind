@@ -32,7 +32,8 @@ and accumulated review findings/budgets to every owning receiver. No receiver
 may infer authority omitted from its dispatch.
 
 When recovery comes from a Spec-backed Task, retain its supplied recovery identity,
-Task mapping, cycles used/remaining out of three, all finding IDs/dispositions and
+Task mapping, allowance identity and user authorization, current
+cycles used/remaining out of three, historical counts separately, all finding IDs/dispositions and
 evidence, latest assessment, partial paths, and authority. The whole planning
 repair is one already-reserved Task recovery cycle; do not charge each phase or
 reset that cycle. Your existing Design and Contract Review bounds still apply.
@@ -41,6 +42,9 @@ renaming or splitting the same obligation preserves its shared remaining budget.
 Do not declare implementation findings resolved: the resumed implementation owner
 must obtain independent reassessment. Missing continuation facts are a stop,
 not permission to invent unused cycles.
+Keep failed approaches and unknown historical totals as supplied. Only the
+implementation owner recognizes a qualifying human resumption; Plan never
+renews its allowance or reuses the same user instruction to renew it again.
 
 ## Preserve work before rewinding
 
