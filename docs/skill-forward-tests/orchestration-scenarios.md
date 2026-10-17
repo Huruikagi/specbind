@@ -606,6 +606,8 @@ Prepare `a2` with dispatch instrumentation, then ask:
 - Preflight succeeds and the returned full source revision is the fixture HEAD.
 - Every Steering document is read, and fresh readers map the repository before
   the driver synthesizes the boundary proposal.
+- Each `steering read` invocation has exactly one listed selector; no failed
+  multi-selector call or guessed combined selector precedes the valid reads.
 - One proposal names reverse mode, the fixed source revision, baseline version
   `v1.0.0`, `cart` and `order` responsibilities, their dependency or seam,
   maintained intent, blocking and deferred unknowns, suspected defects, and

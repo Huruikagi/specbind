@@ -55,8 +55,16 @@ Then run:
 
 ```sh
 specbind steering list
-specbind steering read <every-selector> --for consume
 ```
+
+For each selector returned by that listing, run one separate read:
+
+```sh
+specbind steering read <selector> --for consume
+```
+
+The command accepts exactly one selector. Do not combine several selectors in
+one invocation. An error stops this run; never synthesize missing guidance.
 
 Steering must establish product purpose, technology and verification constraints,
 and responsibility placement. Internally contradictory Steering stops and routes

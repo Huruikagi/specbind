@@ -24,12 +24,28 @@ happened. Review the diff.
 
 - Read the actual change with the repository's own tools before forming any
   view.
-- Read the Requirements the task carries and the Design sections that govern it,
-  from the artifacts rather than from the implementer's summary of them.
-- Read the Spec's Contract and every current Steering document. They carry
+- For a Spec-backed Task, read the Requirements the task carries and the Design
+  sections that govern it, from the artifacts rather than from the implementer's
+  summary of them.
+- For that Spec-backed subject, read the Spec's Contract and every current
+  Steering document. They carry
   persistent boundaries and project-wide constraints that a mapped Requirement
   or Design may not repeat. A partial or unreadable Steering set makes the
   subject undetermined rather than safe to approve.
+- For a Direct item, read its exact Roadmap summary, observable done condition,
+  applicable project checks and results, every current Steering document, and
+  any applicable shared Contract instead of Spec artifacts. Use
+  `specbind milestone scope --include-body`, `specbind steering list`, one
+  `specbind steering read <selector> --for consume` per listed selector, and
+  `specbind contract shared read`. `OK SHARED_CONTRACT_ABSENT` and an empty
+  Steering listing are complete answers. Failed required reads or an unclear
+  done condition produce `CANNOT_REVIEW`; never infer missing constraints.
+  The done condition and checks come from the request, implementation handoff,
+  and repository, not additional Roadmap fields. No Spec Requirements, Design,
+  Tasks, or Spec Contract is required or created for Direct work. Apply the
+  criteria below to these Direct obligations. A need for canonical artifacts or
+  an unsettled product/architecture decision goes back to Discovery; review
+  grants no reclassification or planning authority.
 - Treat the report as a claim to verify. A report and a diff that disagree is
   itself a finding, and the diff is what is true.
 

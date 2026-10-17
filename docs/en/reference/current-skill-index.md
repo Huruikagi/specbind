@@ -83,6 +83,12 @@ are retained across handoffs. Selection applies only to that execution or
 resumption; a new Drive invocation rereads its defaults without discarding history.
 Direct-item, Design and Contract Review bounds remain unchanged.
 
+Direct review uses the Roadmap summary, done condition, project checks,
+Steering, and applicable shared Contract; it requires no Spec artifacts.
+If implementation or diagnosis reveals a need for canonical artifacts or an
+unsettled product decision, the item returns to Discovery. Drive replan
+authority does not authorize reclassifying Direct work or sending it to Plan.
+
 | Skill | When to use it |
 | --- | --- |
 | `sb-gap-analysis` | Before planning, compare the intended change with the current code and keep the findings as Research. |
@@ -90,6 +96,11 @@ Direct-item, Design and Contract Review bounds remain unchanged.
 | `sb-review-task` | Review one implemented Task from its diff, without fixing anything. |
 | `sb-debug` | Find and classify the root cause when a run has stopped, without fixing anything. |
 | `sb-verify-completion` | Check a "done" claim against fresh evidence without changing lifecycle state. |
+
+Design validation independently reads every current Steering document. A
+conflict with readable guidance is a Design finding. An unreadable Steering
+collection stops validation with `BLOCKED / INPUT` and no verdict; repair the
+input before resuming, without spending a Design revision attempt.
 
 If a required investigation for Design validation cannot run, the validator
 stops with `BLOCKED / ENVIRONMENT` without a Design verdict. Repair the review

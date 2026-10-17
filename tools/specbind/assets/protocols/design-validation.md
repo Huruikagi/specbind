@@ -92,6 +92,12 @@ who did not participate in it. Everything it needs to mean must be inside it.
 
 ## It must fit the system it enters
 
+- Read every current Steering document independently of the author's summary.
+  Project Rules supplement that guidance; they do not replace it. An empty
+  Steering collection is valid. An unreadable or incomplete collection stops
+  validation with `BLOCKED / INPUT` and no Design verdict; do not infer guidance
+  or ask the Design author to repair an input-read failure. A demonstrated
+  conflict between Design and readable Steering is instead a Design finding.
 - Integration with existing boundaries, layers, and module organization is part
   of correctness, not style.
 - Departures from established patterns are legitimate, but they must be

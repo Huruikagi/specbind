@@ -125,14 +125,13 @@ inherits the reasoning that just failed reproduces it.
 **At most two diagnosis rounds.** Route by the category the diagnosis returns:
 
 - **implementation defect** → fresh implementer with the fix plan
-- **plan, design, or requirements defect** → **leave the run.** Report it to the
-  invoking owner, or the user when standalone. Under Drive replan authority,
-  return a `REROUTABLE` finding with affected artifacts, exact partial-change
-  paths and diff, and recorded Task progress. This ends this implementation
-  dispatch, not Drive: the planning owner repairs Design/Contract/Tasks and
-  Drive resumes implementation. Requirements changes still need the user.
-  No amount of implementation effort repairs an artifact that specifies
-  something unworkable.
+- **plan, design, or requirements defect** → **leave the run for Discovery.**
+  A Direct item has no Spec artifacts or Task progress to repair. Return the
+  exact item, summary, finding, and partial-change paths and diff to the caller,
+  or the user when standalone. Under Drive, return `REROUTABLE` plus
+  `HUMAN_DECISION`, with `sb-discovery` as the next owner. Drive replan authority
+  does not cover Direct reclassification; never send this item to `sb-plan`
+  or create canonical artifacts to make the existing classification work.
 - **environment or dependency** → usually outside the change; report it
 - **undetermined** → gather the named evidence when it is safely available;
   otherwise report what remains open rather than assigning it to an owner

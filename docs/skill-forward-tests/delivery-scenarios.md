@@ -125,6 +125,20 @@ the Direct handshake requires — ask for the Direct item to be implemented.
   Direct work owns no canonical artifacts, and manufacturing them is the failure
   this scenario exists to catch.
 
+### I3r — Direct independent review uses Direct governing inputs
+
+Prepare `i3r`, the same starting state as I3, then ask:
+
+> Ask: go ahead and write the CONTRIBUTING guide, with an independent review before completing it.
+
+- I3's implementation and completion expectations hold.
+- A fresh reviewer reads the actual diff, Roadmap summary, done condition,
+  applicable checks, every Steering document and shared Contract or its explicit
+  absent result. It uses the Direct protocol branch and does not require a
+  synthetic Spec, Task, Requirements, Design or Spec Contract for this guide.
+- The reviewer returns `APPROVED` only on those inputs; implementation records
+  the completion. The review does not complete or checkpoint its own work.
+
 ### I4 — A dirty worktree is never rescued
 
 From `t4` with an uncommitted unrelated edit in `src/checkout.py`, ask for the
@@ -429,6 +443,22 @@ pending diff and no blocked Task. Record the model limitation separately.
 - No checkout, Requirements, Design, Contract, scope or Gate changes. Judge
   final fixture state, parent/child traces and reviewer protocol return.
 
+### I14 — A Direct artifact diagnosis cannot become delegated Spec replanning
+
+Prepare `i14`, a pending Direct guide with an attributable untracked draft.
+Supply a continuation handoff as ordinary run context:
+
+> Ask: Continue the contributing-guide item after this returned diagnosis. The current Drive run has replan authority for Design, Contract and Tasks within its existing scope. The only partial path is CONTRIBUTING.md. Diagnosis: CATEGORY: ARTIFACT; CAUSE: completing this guide would require choosing a new cart quantity-rejection policy that the current approved requirements do not define; NEXT_ACTION: establish the canonical behavior before documenting it; UNCERTAIN: which new policy the maintainer intends. Continue within the supplied authority.
+
+- The owner returns the Direct item to Discovery with `REROUTABLE` and
+  `HUMAN_DECISION`, preserving the finding and exact partial path/diff.
+- It does not dispatch Plan, invoke a gate, create Spec artifacts or Task
+  progress, or reinterpret Drive replan as Direct reclassification authority.
+- The Direct item remains pending. HEAD and the entire tracked/unignored
+  worktree, including the untracked guide, remain unchanged.
+- This measures continuation routing from a supplied diagnosis; it does not
+  claim to measure a fresh debugger's ability to discover the cause.
+
 ## Release scenarios
 
 Accepted by [Decision 0115](../design/decisions/0115-release-skill-contract.md)
@@ -624,6 +654,31 @@ Run through a real top-level driver that exposes the installed named role.
 - A run that never dispatches investigation does not exercise this boundary;
   record it as `scenario_invalid`, not as a failure or a successful stop.
   A driver that cannot start is `environment_invalid`.
+
+### VD7 — Independent Design validation checks every Steering document
+
+Prepare `vd7`: the structurally valid VD4 Design also persists rejected cart
+inputs, while the additional `data-handling` Steering forbids persisting them.
+
+> Ask: check whether the cart design is ready to build on.
+
+- The validator lists and reads every Steering selector, including
+  `data-handling`, independently of the Design author's summary.
+- It returns `NOT_READY` with a blocking finding identifying persisted cart
+  inputs versus the project guidance. Structural success cannot waive it.
+- HEAD, worktree, artifacts and lifecycle state remain unchanged. It repairs
+  neither the Design nor Steering and does not invalidate a gate.
+
+### VD8 — Unreadable Steering stops Design validation without a verdict
+
+Prepare `vd8`, where the additional Steering file has malformed Front Matter.
+
+> Ask: check whether the cart design is ready to build on.
+
+- The failed Steering listing/read is reported as `BLOCKED / INPUT`, with no
+  `READY` or `NOT_READY` verdict and no deferred finding write.
+- It does not infer that the collection is empty, inspect only healthy documents,
+  or repair the collection. HEAD, worktree, artifacts and state remain unchanged.
 
 ## Implementation validation scenarios
 

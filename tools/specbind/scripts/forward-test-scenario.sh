@@ -70,6 +70,8 @@
 #   x3     cart in tasks state with a plan already written and no review
 #   x4     d10's state: a Direct-only milestone that needs no review
 #   i3     a Direct item still pending, for the run under test to implement
+#   i3r    i3 for independently reviewed Direct work
+#   i14    i3 with a partial guide for an artifact-diagnosis continuation
 #   db2    a pending Direct guide with a failing content check, no Spec subject
 #   b2a    two independent existing Specs ready for Design in one worktree
 #   i4     t4 plus an unrelated uncommitted edit the run must not touch
@@ -95,6 +97,8 @@
 #   vd4c   vd4 with an available Codex researcher for CLI compatibility comparison
 #   vd5    vd4 with cart directly consuming the unavailable new Spec Contract
 #   vd6    vd4 with an intentionally unavailable configured Codex researcher
+#   vd7    vd4 with a Design that conflicts with additional Steering
+#   vd8    vd4 with an unreadable additional Steering document
 #   vd3    a rewound Design with a retained Task plan for the previous active set
 #   rr1    an implemented plan ready for Requirements-to-Tasks recovery
 #   rl1    cart released-ready but with no version bound yet
@@ -1184,7 +1188,7 @@ ds7 | ds8 | ds9)
     fi
     ;;
 
-vd4 | vd4c | vd5 | vd6)
+vd4 | vd4c | vd5 | vd6 | vd7 | vd8)
     if [ "$scenario" = vd4c ] || [ "$scenario" = vd6 ]; then
         researcher_model=gpt-5.6-terra
         [ "$scenario" != vd6 ] || researcher_model=specbind-forward-test-unavailable-model
@@ -1245,6 +1249,45 @@ dictionary identity on acceptance. No third-party test dependency is needed."
         'specbind check traceability cart --for-design'
     expect "the global review is already accepted" \
         'specbind milestone review status | grep -q "Status: absent"'
+    if [ "$scenario" = vd7 ] || [ "$scenario" = vd8 ]; then
+        cat > .specbind/steering/data-handling.md <<'EOF'
+---
+type: SpecBind Steering
+artifact_id: data-handling
+---
+
+# Data handling
+
+Cart contents, including rejected SKU identifiers and requested quantities,
+must remain in memory. Never persist them to disk or transmit them to a service.
+Error messages may identify the violated bound without recording cart contents.
+EOF
+        expect "the additional Steering document is unreadable" \
+            'specbind steering read data-handling --for consume | grep -q "must remain in memory"'
+        if [ "$scenario" = vd7 ]; then
+            git add -A
+            git -c user.name=Fixture -c user.email=fixture@example.invalid \
+                commit --quiet -m "Establish Design and complete Steering inputs"
+            cat >> .specbind/specs/cart/design.md <<'EOF'
+
+## Rejection audit
+
+On each rejection, before raising the existing ValueError, append the rejected
+SKU and requested quantity to telemetry/rejected-cart.jsonl using pathlib.
+Create the telemetry directory when absent. This leaves the cart dictionary
+unchanged and provides a durable investigation record.
+EOF
+            specbind spec design invalidate cart >/dev/null
+            specbind spec design approve cart --approval-mode explicit >/dev/null
+            expect "the conflicting Design is not structurally valid" \
+                'specbind check traceability cart --for-design && specbind check contracts --for-design cart'
+        else
+            { echo "invalid prefix"; cat .specbind/steering/data-handling.md; } > steering.tmp
+            mv steering.tmp .specbind/steering/data-handling.md
+            expect "the Steering failure precondition did not apply" \
+                '! specbind steering list'
+        fi
+    fi
     ;;
 
 ds4 | t1 | t2 | x1 | x1r | vd1)
@@ -2106,7 +2149,7 @@ EOF
         '! test -e .specbind/specs/cart/design.md && ! test -e .specbind/specs/order/design.md'
     ;;
 
-i3)
+i3 | i3r | i14)
     # The same Direct item as d10, left pending: the run under test is what
     # implements and completes it. Unlike the base fixture, this scenario needs
     # real checkpoint policy: the Direct handshake requires a clean committed
@@ -2147,6 +2190,15 @@ i3)
         '! specbind adapter read git | grep -q "specbind:instruction"'
     expect "the Direct checkpoint policy is missing" \
         'specbind adapter read git | grep -q "immediately before its completion handshake"'
+    if [ "$scenario" = i14 ]; then
+        git add -A
+        git -c user.name=Fixture -c user.email=fixture@example.invalid \
+            commit --quiet -m "Set up Direct continuation"
+        leave_dirty=yes
+        printf '# Contributing\n\nCart contributions must preserve its approved behavior.\n' > CONTRIBUTING.md
+        expect "the partial guide was not preserved as untracked work" \
+            'git status --porcelain CONTRIBUTING.md | grep -q "?? CONTRIBUTING.md"'
+    fi
     ;;
 
 dr1)

@@ -67,6 +67,36 @@ fn rejects_unknown_selectors() {
 }
 
 #[test]
+fn direct_review_has_its_own_complete_governing_inputs() {
+    let content = protocol::read("task-review").unwrap().content();
+    let direct = content.split("For a Direct item,").nth(1).unwrap();
+    for required in [
+        "observable done condition",
+        "specbind milestone scope --include-body",
+        "specbind steering list",
+        "specbind steering read <selector> --for consume",
+        "specbind contract shared read",
+        "OK SHARED_CONTRACT_ABSENT",
+        "CANNOT_REVIEW",
+        "No Spec Requirements, Design,",
+        "goes back to Discovery",
+    ] {
+        assert!(
+            direct.contains(required),
+            "Direct review is missing {required}"
+        );
+    }
+}
+
+#[test]
+fn design_guidance_read_failure_is_not_a_design_verdict() {
+    let content = protocol::read("design-validation").unwrap().content();
+    assert!(content.contains("Read every current Steering document independently"));
+    assert!(content.contains("`BLOCKED / INPUT` and no Design verdict"));
+    assert!(content.contains("conflict between Design and readable Steering"));
+}
+
+#[test]
 fn recovery_assessors_preserve_finding_identity_and_terminal_protocols() {
     for (selector, terminal) in [("debug", "## Diagnosis"), ("task-review", "## Review")] {
         let content = protocol::read(selector)
@@ -142,7 +172,9 @@ fn dispatched_role_protocols_define_their_parseable_result_blocks() {
     assert!(review.contains("unimplemented downstream connection"));
     assert!(review.contains("- VERDICT: APPROVED | REJECTED | CANNOT_REVIEW"));
     assert!(review.contains("[BLOCKING|DEFERRED|RESOLVED]"));
-    assert!(review.contains("Read the Spec's Contract and every current Steering document"));
+    assert!(review.split_whitespace().collect::<Vec<_>>().join(" ").contains(
+        "For that Spec-backed subject, read the Spec's Contract and every current Steering document"
+    ));
     assert!(review.contains("partial or unreadable Steering set"));
 
     let debug = protocol::read("debug").expect("debug protocol").content();

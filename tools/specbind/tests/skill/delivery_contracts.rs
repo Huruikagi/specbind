@@ -109,6 +109,65 @@ fn task_review_puts_its_no_write_rule_before_commands() {
 }
 
 #[test]
+fn independent_design_validation_reads_all_steering_and_preserves_input_stops() {
+    for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
+        let body = skill::find("sb-validate-design")
+            .unwrap()
+            .render(agent)
+            .unwrap();
+        for required in [
+            "specbind steering list",
+            "specbind steering read <selector> --for consume",
+            "Read every Steering selector",
+            "Zero Steering documents is a complete answer",
+            "`BLOCKER: INPUT`",
+            "return no Design verdict",
+        ] {
+            assert!(body.contains(required), "{agent:?}: missing {required}");
+        }
+        assert!(
+            body.find("specbind steering list").unwrap()
+                < body.find("## 4. Return the verdict").unwrap()
+        );
+    }
+    let route = skill_resource_text("sb-plan", "references/complete-route.md");
+    assert!(route.contains("`BLOCKED / ENVIRONMENT` or `BLOCKED / INPUT`"));
+    assert!(route.contains("without approval, authoring repairs, consuming a Design revision"));
+}
+
+#[test]
+fn direct_diagnosis_cannot_inherit_spec_replan_authority() {
+    for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
+        let body = skill::find("sb-implement").unwrap().render(agent).unwrap();
+        let direct = body.split("For a **Direct item**, retain").nth(1).unwrap();
+        for required in [
+            "leave the run for Discovery",
+            "`REROUTABLE` plus",
+            "`HUMAN_DECISION`, with `sb-discovery` as the next owner",
+            "never send this item to `sb-plan`",
+        ] {
+            assert!(direct.contains(required), "{agent:?}: missing {required}");
+        }
+        assert!(!direct.contains("recorded Task progress"));
+        assert!(!direct.contains("planning owner repairs Design/Contract/Tasks"));
+    }
+    let direct = skill_resource_text("sb-implement", "references/direct.md");
+    assert!(direct.contains("protocol's Direct input branch"));
+    assert!(direct.contains("current Steering selectors, applicable shared Contract"));
+}
+
+#[test]
+fn adoption_reads_one_steering_selector_per_invocation() {
+    for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
+        let body = skill::find("sb-adopt").unwrap().render(agent).unwrap();
+        assert!(body.contains("specbind steering read <selector> --for consume"));
+        assert!(body.contains("run one separate read"));
+        assert!(body.contains("Do not combine several selectors"));
+        assert!(!body.contains("<every-selector>"));
+    }
+}
+
+#[test]
 fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     let body = skill::find("sb-contract-review")
         .expect("contract review skill")

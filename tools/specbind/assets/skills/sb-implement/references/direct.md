@@ -21,9 +21,13 @@ Review the resulting diff under the run's selected mode. Direct work defaults to
 `inline` when the invocation supplied no explicit `--review` value; there is no
 separate project setting to discover. `inline` applies the correctness and
 weakened-verification standard from `task-review` here, using the Roadmap summary
-as the obligation. `required` dispatches a fresh reviewer with that summary, the
-actual diff, the checks, and the protocol; `off` skips only this run-scoped
-review. A rejection may return to implementation at most twice. `CANNOT_REVIEW`
+as the obligation. `required` dispatches a fresh reviewer with the exact Direct
+identity and summary, observable done condition, actual diff, applicable checks
+and results, current Steering selectors, applicable shared Contract, and the
+protocol. Require the reviewer to read those governing inputs independently
+using the protocol's Direct input branch; absent Spec artifacts are expected.
+`off` skips only this run-scoped review. A rejection may return to implementation
+at most twice. `CANNOT_REVIEW`
 and an unresolved rejection enter the Direct-only diagnosis route in the
 entrypoint: at most two diagnosis rounds. Do not load the Spec-backed recovery
 procedure or create a Task recovery ledger for a Direct item.

@@ -100,10 +100,25 @@ specbind artifact list <spec>
 specbind artifact read <spec> requirements --for consume
 specbind artifact read <spec> design/main --for consume
 specbind artifact read <spec> contract --for consume
+specbind steering list
 ```
 
 Read every design artifact when the set is split. Read the research if the Spec
 has one — you need to know what the design might be leaning on.
+
+Read every Steering selector returned by the listing, one command per selector:
+
+```sh
+specbind steering read <selector> --for consume
+```
+
+Zero Steering documents is a complete answer. Do not select a subset from names
+or rely on the Design author's account of project guidance. Check the Design
+against the complete current Steering set as well as the Rules below. A conflict
+with that guidance is a Design finding; do not silently choose which obligation
+to ignore. If the listing or a required read fails, stop with `STATUS: BLOCKED`
+and `BLOCKER: INPUT`, name the failed read, and return no Design verdict. Do not
+judge from an incomplete input set or repair Steering in this workflow.
 
 Then the standard:
 
