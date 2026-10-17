@@ -135,6 +135,8 @@ pub struct InstallPlan {
     /// preserves them and reports them so callers do not mistake the refresh
     /// for a clean-worktree operation.
     pub unrelated_changes: Vec<String>,
+    /// Non-blocking checks of project-owned instruction wiring.
+    pub attention: Vec<String>,
     pub entries: Vec<PlanEntry>,
 }
 
@@ -225,6 +227,16 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
     entries.extend(retired_skill_entries(project_root, &resolved)?);
     entries.extend(agent_role_entries(project_root, &resolved)?);
     entries.extend(project_instruction_entries(project_root, &resolved)?);
+    let attention = if resolved.project_instructions && resolved.agents.contains(&Agent::ClaudeCode)
+    {
+        let removing_legacy_file = entries.iter().any(|entry| {
+            entry.path == crate::project_instructions::LEGACY_CLAUDE_TARGET
+                && entry.action == PlanAction::Remove
+        });
+        crate::project_instructions::claude_import_attention(project_root, removing_legacy_file)
+    } else {
+        Vec::new()
+    };
     let replaces_or_removes = entries
         .iter()
         .any(|entry| matches!(entry.action, PlanAction::Replace | PlanAction::Remove));
@@ -242,6 +254,7 @@ pub fn plan(project_root: &Path, inputs: &InstallInputs) -> Result<InstallPlan, 
         project_instructions: resolved.project_instructions,
         adoption: resolved.adoption,
         unrelated_changes,
+        attention,
         entries,
     })
 }

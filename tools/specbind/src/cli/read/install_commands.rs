@@ -41,13 +41,14 @@ pub fn install_apply(start: &Path, inputs: &install::InstallInputs) -> CommandOu
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
     match install::apply(&project_root, inputs) {
-        Ok(outcome) if outcome.unchanged => CommandOutput::no_change(
-            "INSTALL_UP_TO_DATE",
-            &format!(
-                "SpecBind product assets are already installed for {} agent(s).",
+        Ok(outcome) if outcome.unchanged => {
+            let mut output = format!(
+                "NO_CHANGE INSTALL_UP_TO_DATE: SpecBind product assets are already installed for {} agent(s).\n",
                 outcome.plan.agents.len()
-            ),
-        ),
+            );
+            push_install_attention(&mut output, &outcome.plan);
+            CommandOutput::success(output.into_bytes())
+        }
         Ok(outcome) => {
             let (create, replace, keep, remove) = outcome.plan.counts();
             let mut output = format!(
@@ -124,6 +125,7 @@ fn push_install_summary(output: &mut String, plan: &install::InstallPlan) {
             writeln!(output, "    - {}", escape(path)).expect("writing to a String cannot fail");
         }
     }
+    push_install_attention(output, plan);
     output.push_str("  Actions:\n");
     for entry in &plan.entries {
         let detail = entry
@@ -138,6 +140,12 @@ fn push_install_summary(output: &mut String, plan: &install::InstallPlan) {
             entry.category
         )
         .expect("writing to a String cannot fail");
+    }
+}
+
+fn push_install_attention(output: &mut String, plan: &install::InstallPlan) {
+    if !plan.attention.is_empty() {
+        push_list(output, "Attention", &plan.attention);
     }
 }
 

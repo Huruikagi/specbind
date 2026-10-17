@@ -64,6 +64,14 @@ loads the SpecBind block. A block that an earlier SpecBind release wrote to
 kept, and the file itself is deleted only when the block was its entire
 content.
 
+With Claude Code selected and project instructions enabled, `install` (including
+`--dry-run` and an up-to-date result) and `configuration show` remind you to
+check loading when root `CLAUDE.md` or `CLAUDE.local.md` remains. The reminder
+also appears when imports or links are already configured: SpecBind checks
+presence, not import contents or actual loading. It does not modify that wiring
+or inspect inherited instruction files. A block-only `CLAUDE.md` scheduled for
+deletion does not need this reminder.
+
 ### `--with-adoption` (only when needed)
 
 The default installation contains the 15 Skills used for recurring delivery

@@ -231,3 +231,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0222](./0222-skill-package-routing-and-shared-worktree-planning.md) | Accepted | Package-relative Skill links, serial shared-worktree planning, and Direct diagnosis inputs |
 | [0223](./0223-design-scoped-contract-validation.md) | Accepted | Individual Design Contract checks with strict direct providers and a mandatory complete Contract Review |
 | [0224](./0224-design-validation-environment-stops.md) | Accepted | Required Design investigation failures stop validation without a verdict or local substitution |
+| [0225](./0225-claude-instruction-import-attention.md) | Accepted | Non-blocking import reminders for retained root Claude instruction files |

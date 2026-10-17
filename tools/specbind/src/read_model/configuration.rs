@@ -102,6 +102,12 @@ pub fn resolve(project_root: &Path) -> Result<ConfigurationReport, Configuration
     if steering_documents == 0 {
         attention.push("no Steering documents are present".to_owned());
     }
+    if config.project_instructions && agents.contains(&Agent::ClaudeCode) {
+        attention.extend(crate::project_instructions::claude_import_attention(
+            project_root,
+            false,
+        ));
+    }
     if !diagnostics.is_empty() {
         return Err(ConfigurationReportError { diagnostics });
     }

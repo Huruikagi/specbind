@@ -359,6 +359,17 @@ fn install_retires_a_legacy_claude_md_block() {
             } else {
                 "- remove CLAUDE.md [project-instructions]"
             }));
+        let planned = specbind::install::plan(
+            root.path(),
+            &specbind::install::InstallInputs {
+                agents: vec![specbind::install::Agent::ClaudeCode],
+                language: Some(specbind::config::ProjectLanguage::En),
+                project_instructions: Some(true),
+                ..Default::default()
+            },
+        )
+        .expect("plan");
+        assert_eq!(planned.attention.is_empty(), expected.is_none());
         assert_eq!(
             fs::read_to_string(root.path().join("CLAUDE.md")).expect("unchanged"),
             claude
@@ -386,6 +397,81 @@ fn install_retires_a_legacy_claude_md_block() {
                 .expect("AGENTS.md")
                 .contains("<!-- specbind:block -->")
         );
+        for args in [
+            vec!["install", "--dry-run"],
+            vec!["install"],
+            vec!["configuration", "show"],
+        ] {
+            let result = specbind_command()
+                .current_dir(root.path())
+                .args(args)
+                .assert()
+                .success();
+            let stdout = String::from_utf8_lossy(&result.get_output().stdout);
+            assert_eq!(
+                stdout.contains("verify that Claude Code loads AGENTS.md"),
+                expected.is_some(),
+                "{stdout}"
+            );
+        }
+    }
+}
+
+#[test]
+fn claude_import_attention_preserves_project_wiring_and_respects_selection() {
+    for (agent, enabled) in [
+        ("claude-code", true),
+        ("claude-code", false),
+        ("codex", true),
+    ] {
+        let root = tempfile::tempdir().expect("temporary project root");
+        git(root.path(), &["init", "-q"]);
+        for relative in ["CLAUDE.md", "CLAUDE.local.md"] {
+            write(
+                root.path(),
+                relative,
+                "# Project rules\r\n\r\n@AGENTS.md\r\n",
+            );
+        }
+        let inputs = specbind::install::InstallInputs {
+            agents: vec![specbind::install::Agent::parse(agent).expect("agent")],
+            language: Some(specbind::config::ProjectLanguage::En),
+            project_instructions: Some(enabled),
+            ..Default::default()
+        };
+        let plan = specbind::install::plan(root.path(), &inputs).expect("plan");
+        let expected = agent == "claude-code" && enabled;
+        assert_eq!(plan.attention.len(), if expected { 2 } else { 0 });
+        assert!(
+            !plan
+                .entries
+                .iter()
+                .any(|entry| entry.path.starts_with("CLAUDE"))
+        );
+        specbind::install::apply(root.path(), &inputs).expect("install");
+        for args in [
+            vec!["install", "--dry-run"],
+            vec!["install"],
+            vec!["configuration", "show"],
+        ] {
+            let result = specbind_command()
+                .current_dir(root.path())
+                .args(args)
+                .assert()
+                .success();
+            let stdout = String::from_utf8_lossy(&result.get_output().stdout);
+            for relative in ["CLAUDE.md", "CLAUDE.local.md"] {
+                assert_eq!(
+                    stdout.contains(&format!("{relative} is present; verify")),
+                    expected,
+                    "{stdout}"
+                );
+                assert_eq!(
+                    fs::read(root.path().join(relative)).expect("unchanged"),
+                    b"# Project rules\r\n\r\n@AGENTS.md\r\n"
+                );
+            }
+        }
     }
 }
 
@@ -409,7 +495,8 @@ fn install_leaves_a_claude_md_link_to_agents_md_alone() {
         ])
         .assert()
         .success()
-        .stdout(predicate::str::contains("CLAUDE.md [project-instructions]").not());
+        .stdout(predicate::str::contains("CLAUDE.md [project-instructions]").not())
+        .stdout(predicate::str::contains("CLAUDE.md is present; verify"));
 
     let through_link = fs::read_to_string(root.path().join("CLAUDE.md")).expect("link target");
     assert!(through_link.contains("<!-- specbind:block -->"));

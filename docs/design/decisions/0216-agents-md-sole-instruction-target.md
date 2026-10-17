@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0225](./0225-claude-instruction-import-attention.md) adds presence-based
+import reminders to install and configuration output. The no-detection
+consequence below is superseded; project-owned wiring is unchanged.
+
 ## Context
 
 [Decision 0099](./0099-project-instruction-block.md) writes the marked SpecBind

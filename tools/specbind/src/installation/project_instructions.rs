@@ -6,6 +6,7 @@
 //! nothing here can reach it.
 
 use crate::install::Agent;
+use std::{fs, io::ErrorKind, path::Path};
 
 /// The embedded block body, authored as prose rather than as a string literal.
 pub const BODY: &str = include_str!("../../assets/project-instructions/block.md");
@@ -31,6 +32,28 @@ pub const TARGET: &str = "AGENTS.md";
 /// Install, agent removal, and uninstall retire a valid block found here so a
 /// stale copy cannot shadow the current one in `AGENTS.md`.
 pub const LEGACY_CLAUDE_TARGET: &str = "CLAUDE.md";
+
+/// Presence-based reminders, without interpreting or changing project wiring.
+/// A plan that removes the legacy file reports the resulting state.
+pub(crate) fn claude_import_attention(
+    project_root: &Path,
+    removing_legacy_file: bool,
+) -> Vec<String> {
+    [LEGACY_CLAUDE_TARGET, "CLAUDE.local.md"]
+        .into_iter()
+        .filter(|relative| !removing_legacy_file || *relative != LEGACY_CLAUDE_TARGET)
+        .filter_map(|relative| {
+            let status = match fs::symlink_metadata(project_root.join(relative)) {
+                Ok(_) => "is present",
+                Err(error) if error.kind() == ErrorKind::NotFound => return None,
+                Err(_) => "could not be inspected",
+            };
+            Some(format!(
+                "{relative} {status}; verify that Claude Code loads AGENTS.md through project-owned wiring (for example @AGENTS.md). SpecBind does not validate imports or actual loading."
+            ))
+        })
+        .collect()
+}
 
 /// Returns the legacy instruction files that may still hold a block for one agent.
 #[must_use]
