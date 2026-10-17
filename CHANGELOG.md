@@ -4,6 +4,24 @@ All notable changes to SpecBind will be documented in this file.
 
 ## Unreleased
 
+## 1.5.3 - 2026-10-17
+
+- Bound Task recovery by measurable progress and three review cycles, and
+  recover completion after delegated replanning with a shared validation
+  checkpoint for converged Specs.
+- Clarify Drive completion authority, owner dispatch, and restart handoffs,
+  while preserving explicit user limits on recording completion.
+- Align Skill routing, Direct diagnosis, shared Contract reads, and serial
+  Design/Tasks handoffs in shared-worktree planning.
+- Scope Design Contract checks to the selected Spec and its direct consumed
+  Contracts with `check contracts --for-design`, while retaining whole-project
+  checks for Contract Review.
+- Stop Design validation without a verdict when required independent
+  investigation cannot execute; preserve Plan findings and revision budgets.
+- Refactor Contract reads, completion freshness, and release finalization
+  without changing their public contracts, and refresh Rust dependencies,
+  the development toolchain, and release verification tooling.
+
 ## 1.5.2 - 2026-10-04
 
 - Report partial installation refresh progress and ensure project migration
