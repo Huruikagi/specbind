@@ -14,6 +14,8 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture driver | `2036dec` + final FT-0073 tree | DR9w pass: no-history withdrawal owner, narrow checkpoint and bounded stop; FT-0073 resolved with prior DR6 evidence | [Final owner isolation](./runs/2026-10-21-codex-2036dec-owner-isolation-final.md) |
+| 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `2036dec` + initial FT-0073 tree | DR6 pass with distinct no-history Plan/implementation/validation owners; DR9w product failure: controller performed withdrawal itself | [Initial owner isolation](./runs/2026-10-21-codex-2036dec-owner-isolation.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `f764a6b` + Decisions 0231/0232 tree | T3 pass, FT-0074 resolved; DR9w CLI and narrow withdrawal succeed, but inherited owner history reproduces FT-0073 | [Readiness and replan checks](./runs/2026-10-21-codex-f764a6b-readiness-replan.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture; canonical CLI attempt | `35a9afd` + Decision 0230 tree | T3 pass: guarded CLI revision preserves exact progress, separate gate approval and checkpoint; CLI attempt ENV-0007; readiness observation FT-0074 | [Task revision](./runs/2026-10-21-codex-35a9afd-task-revision.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`; isolated fixture instructions | `f6b3cbd`, product fixes `b3d2057` | A2/I3r pass; FT-0071/0072 confirmed. DR6 converges but fails fresh-owner isolation (FT-0073); FT-0065 waiting branch not exercised | [Isolated boundary measurements](./runs/2026-10-21-codex-f6b3cbd-isolated-boundaries.md) |
@@ -212,7 +214,7 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 4
+- Open reproduced product findings: 3
 - Fixed, behavioral confirmation pending: 4
 - Active environment limitations: 9
 

@@ -29,6 +29,12 @@ checkpointed separately as fresh completion metadata.
 
 ### Delegated withdrawal before convergence
 
+This procedure executes only in the separately dispatched validation owner.
+If you are the Drive controller inspecting this reference, return to Drive's
+replan routing and dispatch that owner; do not invalidate completion or create
+its checkpoint here. A user's withdrawal-only limit on a Drive request is not
+a handoff that makes the controller the validation owner.
+
 For a Drive **completion-withdrawal-only authority** handoff, independently run:
 
 ```sh

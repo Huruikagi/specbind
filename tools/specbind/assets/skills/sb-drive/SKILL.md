@@ -25,6 +25,13 @@ You are a thin controller. Existing Skills own all artifacts, judgments,
 progress, and checkpoints. The CLI owns lifecycle state. Never author their work
 or retain a competing schedule.
 
+A Drive request limited to one recovery action, such as "only withdraw stale
+completion and stop", still uses this controller and a separately dispatched
+owner. The limit narrows the work; it does not make Drive the validation owner.
+Reading another Skill for routing does not transfer ownership into this context.
+Read the applicable replan procedure and dispatch its isolated complete owner
+even when no implementation or final validation is authorized afterward.
+
 A request to drive the active milestone authorizes ordinary completion
 recording on `GO` by the validation owner, including its Git-adapter checkpoint.
 Pass that Drive authority with the exact actionable Spec set; no additional
@@ -153,6 +160,23 @@ status as semantic approval of the Direct kind.
 Choose the first safe actionable entry not parked at the current state. Never
 reconstruct an owner from `action` or maintain a local action-to-Skill table.
 
+Every new owning workflow starts without inheriting Drive's conversation or any
+previous owner's context. Select the host's no-history option explicitly
+(Codex `fork_turns: "none"` when exposed); a new receiver name with inherited
+history is not fresh. Send a self-contained brief with the facts below and any
+required recovery evidence, rather than forking the conversation. If the host
+cannot provide an isolated ordinary owner, return `EXTERNAL_BLOCK` before
+dispatch; do not substitute inherited history or execute the owner yourself.
+This applies to ordinary scheduling, replan, completion withdrawal, explicit
+Task resumption and capacity restarts alike.
+
+After a terminal handoff, the next owning workflow gets a new receiver. Never
+reuse a completed receiver through resume, follow-up or message tools, even for
+the same Spec or the same Skill. In particular, Plan's receiver must not become
+the implementation owner, and a withdrawal owner must not become the final
+validation owner. Carry authority, exact revisions, findings, Task mappings and
+budget counts in the new brief; isolation never discards or resets that evidence.
+
 - `handler.kind=skill` names the installed owning Skill in `handler.target`.
   Dispatch a fresh subagent with the exact item, action, handler mode,
   `commandOperand`, applicable authority, project working directory,
@@ -217,6 +241,10 @@ handoff before interpreting lifecycle state or selecting another owner.
 "Waiting", "started", and internal-role progress are non-terminal updates. If
 an addressable owner ends its turn with only such an update, continue that same
 receiver once to collect its running roles and finish the same workflow. This
+exception requires the same Skill, action, item and handler mode, with no
+terminal handoff yet; it never permits a switch from planning to implementation
+or from withdrawal to final validation. A terminal `WAITING` for milestone
+convergence is a completed handoff, not unfinished internal-role progress. This
 does not grant authority or reset any retry budget. Never start a replacement
 owner over its partial work or take over its internal roles. If that continuation
 still returns no terminal handoff, or the receiver cannot be addressed, report
@@ -289,7 +317,8 @@ as lifecycle evidence.
 
 Normalize a returned or re-read condition to one cause:
 
-- `RETRYABLE` — the same owner may repeat within its existing bound
+- `RETRYABLE` — the same owning workflow may repeat within its existing bound;
+  a new dispatch after its terminal handoff still requires a fresh receiver
 - `REPAIRABLE` — the owner may apply concrete review findings within its bound
 - `REROUTABLE` — an earlier owning phase is required
 - `WAITING` — a dependency or global barrier is not satisfied

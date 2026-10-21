@@ -26,7 +26,10 @@ installed `references/replan.md` path from that Skill. This is the explicit
 recovery exception to selecting an ordinary status action: status cannot
 diagnose a semantic defect in a fresh approved artifact. The planning owner
 validates the boundary before mutation. Do not revise artifacts in Drive or
-dispatch an internal planner role in place of that Skill.
+dispatch an internal planner role in place of that Skill. Use the entrypoint's
+isolated-owner dispatch: a new receiver with no inherited conversation and a
+self-contained recovery brief. Never reuse the prior implementation receiver
+as Plan, or Plan's completed receiver for the subsequent implementation.
 
 Before Plan starts, run `specbind milestone replan capture`. Retain its exact
 `baselineRevision` and report the `freshCompletions` the repair can stale.
@@ -100,7 +103,8 @@ an index. Paths or the planning owner's narrative alone do not prove cause.
 work stops automatic recovery. This exception does not permit implementation
 through inconsistent health.
 
-For each target in the returned `remaining` order, dispatch the complete
+For each target in the returned `remaining` order, dispatch a new isolated owner
+with no inherited conversation for the complete
 `sb-validate-implementation` Skill with **completion-withdrawal-only authority**,
 the original replan authority, fixed baseline/recovery revisions and check output,
 exact target path, authorized delta, and the remaining eligible set. Supply the

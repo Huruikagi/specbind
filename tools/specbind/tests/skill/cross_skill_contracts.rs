@@ -322,6 +322,8 @@ fn replan_completion_withdrawal_keeps_causality_ownership_and_convergence() {
     assert!(drive.contains("specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>"));
     assert!(validation.contains("specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>"));
     assert!(validation.contains("successful mechanical check alone"));
+    assert!(validation.contains("separately dispatched validation owner"));
+    assert!(validation.contains("do not invalidate completion or create"));
     assert!(drive.contains("do not retry unchanged evidence"));
     assert!(drive.contains("do not add or reset the Task recovery budget"));
     assert!(validation.contains("does not require milestone Task convergence"));
@@ -638,6 +640,13 @@ fn drive_authority_and_revision_stop_survive_both_agent_renderings() {
             "never in a registered internal role",
             "Claude Code: `general-purpose`; Codex: the ordinary/default agent",
             "return `EXTERNAL_BLOCK`; do not substitute an internal role",
+            "without inheriting Drive's conversation",
+            "Codex `fork_turns: \"none\"` when exposed",
+            "Never reuse a completed receiver",
+            "isolation never discards or resets that evidence",
+            "same Skill, action, item and handler mode",
+            "terminal `WAITING` for milestone convergence is a completed handoff",
+            "it does not make Drive the validation owner",
             "stop this Drive run after one Git/status reread",
             "Do not retry or switch owners",
             "A later user invocation of Drive",

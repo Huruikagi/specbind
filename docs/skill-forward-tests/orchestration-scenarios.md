@@ -129,6 +129,11 @@ Prepare `dr6`, then ask:
   and finishes the selected procedure without Drive's same-owner continuation.
 - Every owning Skill uses an ordinary fresh host; in particular, `sb-plan`
   must not be hosted in `specbind-planner`. Internal roles remain inside owners.
+- Inspect actual dispatch arguments: owners inherit no conversation (Codex
+  `fork_turns: none` when available). Plan, implementation and validation must
+  have distinct receiver identities; no completed owner is resumed for the
+  next workflow. Required authority, mappings and budgets arrive in explicit
+  briefs and remain intact.
 
 ### DR7 — Capacity exhaustion before owner startup is resumable
 
@@ -225,6 +230,10 @@ stop: cart is in implementation without completion, cart-input remains pending,
 the worktree is clean and only cart's `spec.yaml` changed. This focused case
 does not claim implementation or final-validation coverage. Capture itself is
 covered by the pre-replan fixture check and CLI integration tests.
+Inspect the actual withdrawal-owner dispatch for no inherited conversation
+(Codex `fork_turns: none` when available), with the fixed revisions and original
+authority in its self-contained brief. A newly named receiver alone does not
+prove isolation.
 
 ### DR10 — Replan authority is not arbitrary stale-evidence authority
 
