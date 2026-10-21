@@ -88,6 +88,36 @@ struct OwnershipClaim {
     subtree: bool,
 }
 
+/// Which relationships are evaluated among the already resolved Contracts.
+/// Discovery separately limits Design inputs to the selected Spec and direct providers.
+#[derive(Debug, Clone, Copy)]
+enum EvaluationScope<'a> {
+    WholeProject,
+    Design { spec: &'a str },
+}
+
+impl EvaluationScope<'_> {
+    fn includes_consumer(self, consumer: &str) -> bool {
+        match self {
+            Self::WholeProject => true,
+            Self::Design { spec } => consumer == spec,
+        }
+    }
+
+    fn includes_ownership_finding(self, finding: &OwnershipFinding) -> bool {
+        match self {
+            Self::WholeProject => true,
+            Self::Design { spec } => {
+                finding.left.owner.spec() == Some(spec) || finding.right.owner.spec() == Some(spec)
+            }
+        }
+    }
+
+    fn is_whole_project(self) -> bool {
+        matches!(self, Self::WholeProject)
+    }
+}
+
 /// Discovers every immediate canonical Spec directory and resolves the complete
 /// persistent Contract graph below one `SpecBind` root.
 #[must_use]
@@ -198,7 +228,14 @@ pub fn resolve_for_design(specbind_root: &Path, canonical_spec: &str) -> Contrac
     } else {
         None
     };
-    let report = evaluate_scope(&expected_specs, contracts, shared, Some(canonical_spec));
+    let report = evaluate_scope(
+        &expected_specs,
+        contracts,
+        shared,
+        EvaluationScope::Design {
+            spec: canonical_spec,
+        },
+    );
     ContractGraphResolution {
         inventories,
         project_issues,
@@ -221,14 +258,19 @@ pub fn evaluate_with_shared(
     contracts: BTreeMap<String, ContractDocument>,
     shared: Option<crate::domain::shared_contract::SharedContract>,
 ) -> ContractGraphReport {
-    evaluate_scope(expected_specs, contracts, shared, None)
+    evaluate_scope(
+        expected_specs,
+        contracts,
+        shared,
+        EvaluationScope::WholeProject,
+    )
 }
 
 fn evaluate_scope(
     expected_specs: &BTreeSet<String>,
     contracts: BTreeMap<String, ContractDocument>,
     shared: Option<crate::domain::shared_contract::SharedContract>,
-    design_spec: Option<&str>,
+    scope: EvaluationScope<'_>,
 ) -> ContractGraphReport {
     let mut issues = Vec::new();
     for canonical_spec in expected_specs {
@@ -246,16 +288,12 @@ fn evaluate_scope(
         expected_specs,
         &contracts,
         shared.as_ref(),
-        design_spec,
+        scope,
         &mut issues,
     );
     let ownership_findings = ownership_findings(&contracts, shared.as_ref())
         .into_iter()
-        .filter(|finding| {
-            design_spec.is_none_or(|spec| {
-                finding.left.owner.spec() == Some(spec) || finding.right.owner.spec() == Some(spec)
-            })
-        })
+        .filter(|finding| scope.includes_ownership_finding(finding))
         .collect::<Vec<_>>();
     for finding in &ownership_findings {
         let (code, relation) = match finding.kind {
@@ -277,7 +315,7 @@ fn evaluate_scope(
 
     for entry in unconsumed_exports(&contracts, &dependencies)
         .into_iter()
-        .filter(|_| design_spec.is_none())
+        .filter(|_| scope.is_whole_project())
     {
         issues.push(graph_issue(
             GraphIssueSeverity::Warning,
@@ -290,7 +328,7 @@ fn evaluate_scope(
         ));
     }
 
-    let dependency_cycles = if design_spec.is_none() {
+    let dependency_cycles = if scope.is_whole_project() {
         dependency_cycles(&contracts, &dependencies)
     } else {
         Vec::new()
@@ -458,13 +496,13 @@ fn resolve_dependencies(
     expected_specs: &BTreeSet<String>,
     contracts: &BTreeMap<String, ContractDocument>,
     shared: Option<&crate::domain::shared_contract::SharedContract>,
-    design_spec: Option<&str>,
+    scope: EvaluationScope<'_>,
     issues: &mut Vec<ContractGraphIssue>,
 ) -> Vec<ContractDependency> {
     let mut dependencies = Vec::new();
     for (consumer_spec, contract) in contracts
         .iter()
-        .filter(|(spec, _)| design_spec.is_none_or(|selected| spec.as_str() == selected))
+        .filter(|(spec, _)| scope.includes_consumer(spec))
     {
         for consume in &contract.consumes {
             let consumer = ContractEntryRef {

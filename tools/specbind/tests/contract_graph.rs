@@ -232,6 +232,100 @@ fn resolves_typed_consumes_edges() {
 }
 
 #[test]
+fn design_scope_limits_ownership_warnings_and_defers_global_graph_findings() {
+    let root = TempDir::new().unwrap();
+    let alpha = EMPTY
+        .replace("exports: []", "exports:\n  - { id: value, description: Stable value. }\n  - { id: unused, description: External value. }")
+        .replace("consumes: []", "consumes:\n  - { id: beta-value, target: { spec: beta, section: exports, id: value } }\n  - { id: gamma-value, target: { spec: gamma, section: exports, id: value } }")
+        .replace("file_ownership: []", "file_ownership:\n  - { id: source, paths: [src/shared/**] }");
+    let provider = EMPTY
+        .replace(
+            "exports: []",
+            "exports:\n  - { id: value, description: Stable value. }",
+        )
+        .replace(
+            "file_ownership: []",
+            "file_ownership:\n  - { id: file, paths: [src/shared/value.rs] }",
+        );
+    let beta = provider.replace(
+        "consumes: []",
+        "consumes:\n  - { id: alpha-value, target: { spec: alpha, section: exports, id: value } }",
+    );
+    let gamma = provider.replace(
+        "consumes: []",
+        "consumes:\n  - { id: beta-value, target: { spec: beta, section: exports, id: value } }",
+    );
+    for (spec, content) in [("alpha", alpha), ("beta", beta), ("gamma", gamma)] {
+        write(
+            root.path(),
+            &format!("specs/{spec}/contract.yaml"),
+            &content,
+        );
+    }
+
+    let scoped = contract_graph::resolve_for_design(root.path(), "alpha");
+    assert!(
+        scoped.project_issues.is_empty(),
+        "{:?}",
+        scoped.project_issues
+    );
+    assert_eq!(scoped.report.contracts.len(), 3);
+    assert_eq!(scoped.report.dependencies.len(), 2);
+    assert!(
+        scoped
+            .report
+            .dependencies
+            .iter()
+            .all(|edge| edge.consumer.owner.spec() == Some("alpha"))
+    );
+    assert_eq!(scoped.report.ownership_findings.len(), 2);
+    assert!(scoped.report.ownership_findings.iter().all(|finding| {
+        finding.left.owner.spec() == Some("alpha") || finding.right.owner.spec() == Some("alpha")
+    }));
+    assert!(
+        scoped.report.dependency_cycles.is_empty(),
+        "Design scope must defer global cycles"
+    );
+    assert_eq!(scoped.report.issues.len(), 2);
+    assert!(scoped.report.issues.iter().all(|issue| {
+        issue.severity == GraphIssueSeverity::Warning
+            && issue.code == "CONTRACT_GRAPH_OWNERSHIP_OVERLAP"
+    }));
+
+    let whole = contract_graph::resolve(root.path());
+    assert!(
+        whole.project_issues.is_empty(),
+        "{:?}",
+        whole.project_issues
+    );
+    assert_eq!(whole.report.dependencies.len(), 4);
+    assert_eq!(whole.report.ownership_findings.len(), 3);
+    assert!(whole.report.ownership_findings.iter().any(|finding| {
+        finding.left.owner.spec() == Some("beta") && finding.right.owner.spec() == Some("gamma")
+    }));
+    assert!(
+        !whole.report.dependency_cycles.is_empty(),
+        "whole-project scope must report the cycle"
+    );
+    for code in [
+        "CONTRACT_GRAPH_EXPORT_UNCONSUMED",
+        "CONTRACT_GRAPH_DEPENDENCY_CYCLE",
+    ] {
+        assert!(
+            whole.report.issues.iter().any(|issue| issue.code == code),
+            "missing {code}"
+        );
+    }
+    assert!(
+        whole
+            .report
+            .issues
+            .iter()
+            .all(|issue| issue.severity == GraphIssueSeverity::Warning)
+    );
+}
+
+#[test]
 fn distinguishes_unavailable_specs_contracts_entries_and_self_consumes() {
     let report = contract_graph::evaluate(
         &specs(&["consumer", "missing-contract"]),

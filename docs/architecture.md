@@ -69,6 +69,11 @@ status/list, Roadmap scope, task, and release-readiness projections. `read_model
 existing crate-root paths. They report current state and diagnostics; they do
 not authorize transitions.
 
+`read_model/contract_graph.rs` uses a private evaluation-scope type to distinguish
+whole-project checks from Design-local checks. The scope owns consumer selection,
+ownership-warning relevance, and eligibility for global cycle and unconsumed-export
+diagnostics; the existing public read APIs and discovery boundaries stay separate.
+
 `read_model/freshness.rs` evaluates gate-local freshness from resolved inputs and
 preserves the public freshness API. Its private `completion_revision` module
 assesses Git history and current project files, returning diagnostics through
