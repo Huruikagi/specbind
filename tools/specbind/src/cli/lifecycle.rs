@@ -8,8 +8,9 @@ mod review_commands;
 mod status_commands;
 
 pub use completion_commands::{
-    direct_completion_complete, direct_completion_preflight, spec_completion_accept,
-    spec_completion_invalidate, spec_completion_preflight,
+    completion_batch_evidence, completion_batch_preflight, direct_completion_complete,
+    direct_completion_preflight, spec_completion_accept, spec_completion_invalidate,
+    spec_completion_preflight,
 };
 pub use gate_commands::{spec_gate_approve, spec_gate_invalidate};
 pub use milestone_commands::{

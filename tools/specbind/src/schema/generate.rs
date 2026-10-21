@@ -3,6 +3,11 @@ use schemars::{JsonSchema, Schema, generate::SchemaSettings};
 use super::{contract, scope, spec, tasks};
 
 #[must_use]
+pub fn completion_batch_v1() -> Schema {
+    generate::<super::completion_batch::v1::CompletionBatch>()
+}
+
+#[must_use]
 pub fn task_revision_v1() -> Schema {
     generate::<super::task_revision::v1::TaskRevision>()
 }

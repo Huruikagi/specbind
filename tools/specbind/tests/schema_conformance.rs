@@ -104,6 +104,20 @@ fn task_revision_schema_and_wire_conform() {
 }
 
 #[test]
+fn completion_batch_schema_and_wire_conform() {
+    use specbind::schema::{
+        COMPLETION_BATCH_V1_SCHEMA_JSON, completion_batch::v1::CompletionBatch,
+    };
+    assert_eq!(
+        COMPLETION_BATCH_V1_SCHEMA_JSON,
+        generate::to_pretty_json(&generate::completion_batch_v1()).unwrap()
+    );
+    let schema = serde_json::from_str(COMPLETION_BATCH_V1_SCHEMA_JSON).unwrap();
+    jsonschema::draft202012::meta::validate(&schema).unwrap();
+    assert_fixture_set::<CompletionBatch>("completion-batch/v1", COMPLETION_BATCH_V1_SCHEMA_JSON);
+}
+
+#[test]
 fn parser_invalid_fixtures_are_rejected_before_schema_validation() {
     let fixture_root =
         Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/schemas/parser/invalid");
@@ -166,7 +180,7 @@ fn fixture_paths(directory: &Path) -> Vec<PathBuf> {
         })
         .filter(|path| {
             path.extension()
-                .is_some_and(|extension| extension == "yaml")
+                .is_some_and(|extension| extension == "yaml" || extension == "json")
         })
         .collect::<Vec<_>>();
     paths.sort();
@@ -179,9 +193,18 @@ fn fixture_paths(directory: &Path) -> Vec<PathBuf> {
 }
 
 fn parse_fixture(path: &Path) -> serde_json::Value {
-    let yaml = fs::read_to_string(path)
+    let source = fs::read_to_string(path)
         .unwrap_or_else(|error| panic!("failed to read {}: {error}", path.display()));
-    yaml::parse(&yaml).unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
+    if path
+        .extension()
+        .is_some_and(|extension| extension == "json")
+    {
+        serde_json::from_str(&source)
+            .unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
+    } else {
+        yaml::parse(&source)
+            .unwrap_or_else(|error| panic!("failed to parse {}: {error}", path.display()))
+    }
 }
 
 #[test]

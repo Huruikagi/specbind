@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CompletionBatch",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "const": 1
+    },
+    "implementationRevision": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Target"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "implementationRevision",
+    "targets"
+  ],
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "mechanicalChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "spec",
+        "mechanicalChecks"
+      ]
+    },
+    "Check": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/MechanicalCheckKind"
+        },
+        "command": {
+          "type": "string",
+          "pattern": "\\S"
+        },
+        "exitCode": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0,
+          "maximum": 255,
+          "const": 0
+        },
+        "workingDirectory": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "command",
+        "exitCode"
+      ]
+    },
+    "MechanicalCheckKind": {
+      "type": "string",
+      "enum": [
+        "test",
+        "build",
+        "smoke",
+        "lint",
+        "typecheck",
+        "custom"
+      ]
+    }
+  }
+}

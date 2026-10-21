@@ -16,6 +16,8 @@ Safe to run at any time. They never change project files.
 | `specbind milestone replan check --baseline <commit> --recovery-revision <commit>` | Remaining completion withdrawals and verified checkpoints after a fixed replan, as JSON |
 | `specbind spec list` | Every Spec in the project |
 | `specbind spec status <spec>` | One Spec's state, freshness, coverage, and Task progress |
+| `specbind spec completion batch preflight --spec <id> --spec <id>` | Explicit completion target set and one clean implementation revision, as JSON |
+| `specbind spec completion batch verify --evidence <file\|->` | Proof that the supplied completion set has one narrow, fresh checkpoint |
 | `specbind tasks list <spec>` / `tasks show <spec> <task>` | Task hierarchy and progress, or one Task's details |
 | `specbind tasks revision preflight <spec>` | Source fingerprint and current plan/execution for an existing-plan revision, as JSON |
 | `specbind artifact list <spec>` / `artifact read <spec> <selector>` | A Spec's artifacts, or one artifact's content |
@@ -82,6 +84,7 @@ the required reviews and checks, so you normally do not run them by hand.
 | `specbind tasks revision apply <spec> --input <file\|->` | Existing-plan replacement and explicit progress reconciliation (`sb-plan`; `--dry-run` checks without writing) |
 | `specbind milestone direct` | Direct item completion (`sb-implement`) |
 | `specbind spec completion` | Spec completion evidence (`sb-validate-implementation`) |
+| `specbind spec completion batch accept --evidence <file\|->` | Completion evidence for an explicitly supplied Spec set at one revision |
 | `specbind milestone bind-release <version>` | Target release binding (`sb-release`; you may also bind ahead of time) |
 | `specbind release finalize` | Milestone release finalization (`sb-release`) |
 | `specbind adoption preflight` / `milestone reverse` | Establishing Specs from an existing implementation (`sb-adopt`) |
@@ -120,6 +123,38 @@ worktree. `--dry-run` returns the mapping and resulting document without writing
 apply replaces only `tasks.yaml` atomically. Gate approval and the Git checkpoint
 remain separate. First authoring still creates a plan without execution;
 subsequent revisions use this CLI even when no progress has been recorded.
+
+## Accept completion for several Specs together
+
+After batch preflight, `sb-validate-implementation` performs the required checks
+and a separate semantic assessment for every named Spec. Only an all-`GO` set
+may be accepted. The CLI never executes those checks or grants authority.
+
+`schema read completion-batch/v1` describes the strict transient JSON input:
+`schemaVersion: 1`, one `implementationRevision`, and nonempty `targets`, each
+with a unique `spec` ID and nonempty `mechanicalChecks`. Checks contain `kind`,
+the exact executed `command`, `exitCode: 0`, and optional project-relative
+`workingDirectory`. Supply it on stdin or from a file outside the project.
+
+Batch acceptance validates all candidates and lifecycle conditions before the
+first write, then checks the fixed HEAD and exact pending changes before each
+write. Its JSON report includes `accepted`, `pending`, `paths` and `issues`.
+An ordinary precondition failure reports `COMPLETION_BATCH_REJECTED` without
+writes. `COMPLETION_BATCH_INTERRUPTED` preserves the confirmed accepted prefix;
+the operation is atomic per file, not across the set. Stop on failure: do not
+automatically roll back, retry or commit a subset. Invalid input and read-only
+preflight/verification failures use the usual CLI error diagnostics. An abrupt
+process failure may leave no report; inspect current state before any recovery.
+
+After `COMPLETION_BATCH_ACCEPTED`, the Git adapter governs one commit containing
+exactly the returned metadata paths. Reuse the same candidate for `batch verify`.
+`COMPLETION_BATCH_VERIFIED` proves a clean single-parent checkpoint immediately
+after the implementation revision, unchanged earlier gates and fresh completion
+for every target. Extra files, other metadata changes and split checkpoints
+fail verification. If the adapter forbids committing, report the uncommitted
+set and skip verification. A HEAD or worktree change requires resolving that
+work and starting a fresh validation run; changing only the candidate revision
+does not renew its evidence.
 
 ## Check completion recovery after replanning
 

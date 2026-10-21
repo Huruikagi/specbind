@@ -1,5 +1,6 @@
 use serde::{Deserialize, Deserializer};
 
+pub mod completion_batch;
 pub mod contract;
 pub mod drive;
 pub mod generate;
@@ -9,6 +10,9 @@ pub mod shared_contract;
 pub mod spec;
 pub mod task_revision;
 pub mod tasks;
+
+pub const COMPLETION_BATCH_V1_SCHEMA_JSON: &str =
+    include_str!("../../schemas/completion-batch/v1.schema.json");
 
 pub const TASK_REVISION_V1_SCHEMA_JSON: &str =
     include_str!("../../schemas/task-revision/v1.schema.json");
@@ -50,6 +54,12 @@ impl EmbeddedSchema {
 
 /// Every embedded schema. This is the whole accepted selector set.
 static SCHEMAS: &[EmbeddedSchema] = &[
+    EmbeddedSchema {
+        selector: "completion-batch/v1",
+        artifact: "Completion batch candidate (transient)",
+        written_by: "the validation owner",
+        content: COMPLETION_BATCH_V1_SCHEMA_JSON,
+    },
     EmbeddedSchema {
         selector: "task-revision/v1",
         artifact: "Task revision candidate (transient)",

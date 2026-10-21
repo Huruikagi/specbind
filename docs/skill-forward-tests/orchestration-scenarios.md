@@ -284,6 +284,8 @@ Prepare a separate `dr10` fixture for read-only reasoning, then ask:
 
 - Case 1 uses one complete owner, preflights both before acceptance, preserves
   per-Spec verdicts and the common revision, and makes one metadata checkpoint.
+  Decision 0233 delegates set preflight, acceptance and checkpoint verification
+  to the batch CLI; the owner does not implement a per-Spec acceptance loop.
 - Cases 2–4 and 7 accept none; shared mechanical success cannot replace per-Spec
   semantics or permit acceptance against changed HEAD.
 - Case 4 returns `BLOCKED` with the target set, preflight and observed revisions,
@@ -410,6 +412,31 @@ Ask:
 - Canonical tests pass and one Task-only checkpoint completes cart/1. No checkout,
   planning, scope, whole-Spec completion or Release changes occur. Inspect actual
   reviewer return, Task state and diff, not only controller narration.
+
+### DR16 — CLI-owned grouped completion and one verified checkpoint
+
+Prepare `dr16` with `--instrument-dispatch`. Both `cart` and `cart-input` are
+fully implemented with fresh earlier gates and complete Tasks at a clean HEAD;
+neither has completion evidence. Record that initial revision.
+
+> Ask: Drive this active milestone as far as you safely can. Do not release it.
+
+- Drive dispatches one fresh ordinary validation owner for the exact two-Spec
+  set, without inherited conversation, and does not perform validation itself.
+- That owner reads the installed Skill, runs batch preflight for both targets,
+  performs canonical checks with clean before/after status, and assesses each
+  Spec independently. No additional completion confirmation is required.
+  Read the Steering command declaration and execute its exact
+  `sh scripts/test.sh` invocation; the runner file alone is not the authority.
+- It reads `completion-batch/v1`, invokes batch acceptance once at the original
+  implementation revision, and does not loop over single-Spec acceptances.
+- Exactly one new commit changes only the two `spec.yaml` files. Earlier gates,
+  implementation, Tasks and Roadmap are unchanged. Both completion records name
+  the original revision and contain the exact executed checks.
+- The same candidate passes batch checkpoint verification. Both completions are
+  fresh, the milestone awaits release, the worktree is clean and no release ran.
+- Judge actual command and dispatch traces as well as Git and lifecycle state.
+  Ask for the read-only debrief only after recording the measured result.
 
 ## Configuration scenarios
 

@@ -30,6 +30,7 @@
 #   dr13   fresh defaults for read-only configuration boundary decisions
 #   dr14c  approved cart with fresh Drive defaults and comparison role models
 #   dr15c  i13 pending review with configured Drive progress and comparison roles
+#   dr16   two fully implemented Specs awaiting grouped completion
 #   st1    dirty blocked Task for a whole-milestone status report
 #   st2    rewound Design with a non-current completed Task plan
 #   a1     an initial-adoption project with no Specs and no Steering
@@ -1453,7 +1454,7 @@ rr1)
         'specbind milestone review status | grep -q "Status: fresh"'
     ;;
 
-t6 | t7 | dr9 | dr9c | dr10)
+t6 | t7 | dr9 | dr9c | dr10 | dr16)
     if [ "$scenario" = dr9c ]; then
         cat > .specbind.json <<EOF
 {
@@ -1565,8 +1566,44 @@ EOF
         'specbind milestone scope | grep -A 1 "dependsOn" | grep -q cart'
     expect "a task plan already exists" \
         '! test -e .specbind/specs/cart/tasks.yaml && ! test -e .specbind/specs/cart-input/tasks.yaml'
-    if [ "$scenario" = dr9 ] || [ "$scenario" = dr9c ] || [ "$scenario" = dr10 ]; then
+    if [ "$scenario" = dr9 ] || [ "$scenario" = dr9c ] || [ "$scenario" = dr10 ] || [ "$scenario" = dr16 ]; then
         cart_cap_implemented
+        if [ "$scenario" = dr16 ]; then
+            cat > tests/test_cart.py <<'EOF'
+import unittest
+from src.cart import add_item
+
+class CartTest(unittest.TestCase):
+    def test_new_addition(self):
+        self.assertEqual(add_item({}, "book", 1), {"book": 1})
+
+    def test_existing_addition(self):
+        self.assertEqual(add_item({"book": 1}, "book", 2), {"book": 3})
+
+    def test_exact_cap(self):
+        self.assertEqual(add_item({"book": 98}, "book", 1), {"book": 99})
+
+    def test_rejects_cumulative_over_cap_without_mutation(self):
+        cart = {"book": 98}
+        with self.assertRaisesRegex(ValueError, "99"):
+            add_item(cart, "book", 2)
+        self.assertEqual(cart, {"book": 98})
+
+    def test_rejects_new_over_cap_without_mutation(self):
+        cart = {}
+        with self.assertRaisesRegex(ValueError, "99"):
+            add_item(cart, "book", 100)
+        self.assertEqual(cart, {})
+
+    def test_rejects_nonpositive_without_mutation(self):
+        for quantity in [0, -1]:
+            with self.subTest(quantity=quantity):
+                cart = {"book": 2}
+                with self.assertRaisesRegex(ValueError, "at least 1"):
+                    add_item(cart, "book", quantity)
+                self.assertEqual(cart, {"book": 2})
+EOF
+        fi
         cat > src/cart_input.py <<'EOF'
 """Connect JSON requests to the cart boundary."""
 import json
@@ -1601,6 +1638,10 @@ EOF
         expect "completed implementation tests do not pass" 'sh scripts/test.sh'
         git add -A
         git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Complete both implementations"
+        if [ "$scenario" = dr16 ]; then
+            expect "the explicit set is not ready for grouped completion" \
+                'specbind spec completion batch preflight --spec cart --spec cart-input | grep -q COMPLETION_BATCH_PREFLIGHT_READY'
+        else
         printf '%s' '{"schemaVersion":1,"implementationRevision":"'"$(git rev-parse HEAD)"'","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]}' \
             | specbind spec completion accept cart --evidence - >/dev/null
         git add .specbind/specs/cart/spec.yaml
@@ -1626,6 +1667,7 @@ EOF
         expect "cart was not staled by replan" 'specbind spec status cart | grep -q "completion=stale"'
         expect "replan did not leave cart-input pending" 'specbind tasks list cart-input | grep -q "0 completed, 1 pending, 0 blocked"'
         expect "milestone did not expose the inconsistency" 'specbind milestone status --json | grep -q MILESTONE_SPEC_INCONSISTENT'
+        fi
     fi
     ;;
 

@@ -28,6 +28,9 @@ use time::OffsetDateTime;
 #[path = "completion/replan.rs"]
 mod replan_checks;
 
+#[path = "completion/batch.rs"]
+mod batch_checks;
+
 fn contract_fingerprint(input: &str) -> Fingerprint {
     let contract = Contract::try_from(runtime::load_contract(input).expect("contract wire"))
         .expect("contract semantics");

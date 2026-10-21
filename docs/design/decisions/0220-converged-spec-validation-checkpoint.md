@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+Decision [0233](./0233-cli-grouped-completion.md) moves the mechanical grouped
+acceptance and checkpoint checks into the CLI, preserving the independent
+per-Spec assessments, common revision and Git-adapter ownership below.
+
 ## Context
 
 The #81 recovery forward test exposed FT-0059: Drive dispatched separate Spec

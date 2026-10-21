@@ -22,6 +22,69 @@ fn render_completion_issue(issue: &CompletionIssue) -> String {
     format!("{}{path} {}", issue.code, escape(&issue.message))
 }
 
+fn render_batch(
+    result: Result<completion::batch::BatchReport, completion::CompletionIssues>,
+) -> CommandOutput {
+    let report = match result {
+        Ok(report) => report,
+        Err(error) => return render_completion_failure("Cannot process completion batch.", error),
+    };
+    let json = match serde_json::to_vec_pretty(&report) {
+        Ok(mut json) => {
+            json.push(b'\n');
+            json
+        }
+        Err(error) => {
+            return CommandOutput::failure(
+                "COMPLETION_BATCH_OUTPUT_FAILED",
+                error.to_string(),
+                vec![],
+            );
+        }
+    };
+    let mut output = if report.succeeded() {
+        CommandOutput::success(vec![])
+    } else {
+        CommandOutput::failure(
+            report.result,
+            "Completion batch stopped; inspect accepted and pending in the JSON report.",
+            report.issues.iter().map(render_completion_issue).collect(),
+        )
+    };
+    output.stdout = json;
+    output
+}
+
+#[must_use]
+pub fn completion_batch_preflight(start: &Path, specs: &[String]) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    render_batch(completion::batch::preflight(
+        &paths.project_root,
+        &paths.specbind_root,
+        specs,
+    ))
+}
+
+#[must_use]
+pub fn completion_batch_evidence(start: &Path, source: &str, verify: bool) -> CommandOutput {
+    let paths = match config::resolve_from(start) {
+        Ok(paths) => paths,
+        Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
+    };
+    let evidence = match read_external_json(start, &paths.project_root, source) {
+        Ok(evidence) => evidence,
+        Err(output) => return output,
+    };
+    render_batch(if verify {
+        completion::batch::verify(&paths.project_root, &paths.specbind_root, &evidence)
+    } else {
+        completion::batch::accept(&paths.project_root, &paths.specbind_root, &evidence)
+    })
+}
+
 #[must_use]
 pub fn spec_completion_preflight(start: &Path, canonical_spec: &str) -> CommandOutput {
     let paths = match config::resolve_from(start) {

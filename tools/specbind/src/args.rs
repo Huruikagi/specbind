@@ -405,6 +405,11 @@ pub enum GateCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum SpecCompletionCommand {
+    /// Validate, accept or verify one explicit set of Spec completions.
+    Batch {
+        #[command(subcommand)]
+        command: CompletionBatchCommand,
+    },
     /// Return the clean implementation revision ready for validation.
     Preflight { spec: String },
     /// Accept strict transient completion evidence.
@@ -415,6 +420,25 @@ pub enum SpecCompletionCommand {
     },
     /// Clear completion evidence and return to implementation.
     Invalidate { spec: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum CompletionBatchCommand {
+    /// Check all explicit targets at one clean implementation revision.
+    Preflight {
+        #[arg(long = "spec", required = true)]
+        specs: Vec<String>,
+    },
+    /// Validate all evidence before applying the explicit completion set.
+    Accept {
+        #[arg(long)]
+        evidence: String,
+    },
+    /// Verify the one metadata checkpoint against the same batch evidence.
+    Verify {
+        #[arg(long)]
+        evidence: String,
+    },
 }
 
 #[derive(Debug, Subcommand)]

@@ -232,6 +232,20 @@ fn run_spec(start: &Path, command: SpecCommand) -> CommandOutput {
 
 fn run_spec_completion(start: &Path, command: SpecCompletionCommand) -> CommandOutput {
     match command {
+        SpecCompletionCommand::Batch { command } => {
+            use specbind::args::CompletionBatchCommand;
+            match command {
+                CompletionBatchCommand::Preflight { specs } => {
+                    specbind::cli::completion_batch_preflight(start, &specs)
+                }
+                CompletionBatchCommand::Accept { evidence } => {
+                    specbind::cli::completion_batch_evidence(start, &evidence, false)
+                }
+                CompletionBatchCommand::Verify { evidence } => {
+                    specbind::cli::completion_batch_evidence(start, &evidence, true)
+                }
+            }
+        }
         SpecCompletionCommand::Preflight { spec } => {
             specbind::cli::spec_completion_preflight(start, &spec)
         }

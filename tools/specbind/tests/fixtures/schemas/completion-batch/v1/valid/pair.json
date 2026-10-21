@@ -1,0 +1,1 @@
+{"schemaVersion":1,"implementationRevision":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","targets":[{"spec":"cart","mechanicalChecks":[{"kind":"test","command":"sh scripts/test.sh","exitCode":0}]},{"spec":"cart-input","mechanicalChecks":[{"kind":"test","command":"python -m unittest","exitCode":0,"workingDirectory":"app"}]}]}

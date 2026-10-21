@@ -617,7 +617,15 @@ fn converged_validation_has_one_owner_and_common_revision_checkpoint() {
         "If any target is `NO-GO` or `MANUAL_VERIFY_REQUIRED`, accept none",
         "same implementation revision",
         "Commit that metadata set together",
-        "all accepted records must still be\nfresh",
+        "specbind spec completion batch preflight --spec <first> --spec <second>",
+        "specbind schema read completion-batch/v1",
+        "specbind spec completion batch accept --evidence <external-candidate-file>",
+        "specbind spec completion batch verify --evidence <external-candidate-file>",
+        "do not replace it with a per-Spec accept loop",
+        "`pending` is not a retry instruction",
+        "specbind steering list",
+        "specbind steering read <selector> --for consume",
+        "must retain that exact inner command",
         "Do not roll back valid evidence, retry at unchanged state",
     ] {
         assert!(validator.contains(required), "missing boundary: {required}");

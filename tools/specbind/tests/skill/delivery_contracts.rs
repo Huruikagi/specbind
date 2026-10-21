@@ -633,7 +633,10 @@ fn authorized_lifecycle_completion_routes_to_validation_not_status() {
     assert!(validation_body.contains("specbind check traceability <spec>"));
     assert!(validation_body.contains("Validate the **active Requirement IDs**"));
     assert!(validation_body.contains("do not report the Spec incomplete"));
-    assert!(validation_body.contains("Fix that required\nset **before** running anything"));
+    assert!(
+        validation_body
+            .contains("commands **before** running anything, then run\nthose exact commands")
+    );
     assert!(validation_body.contains("do not invoke its underlying test runner"));
     assert!(validation_body.contains("Enter this workflow only with explicit authority"));
 }

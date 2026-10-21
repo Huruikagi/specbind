@@ -92,7 +92,23 @@ pub fn spec_accept(
         ));
     }
 
-    let mut wire = current.wire;
+    let rendered = render_acceptance(current.wire, canonical_spec, &candidate)?;
+    persist_regular(
+        &specbind_root.join(spec_path(canonical_spec)),
+        rendered.as_bytes(),
+        "COMPLETION_SPEC_WRITE_FAILED",
+        &spec_path(canonical_spec),
+    )?;
+    Ok(SpecAcceptOutcome::Accepted {
+        implementation_revision: candidate.implementation_revision,
+    })
+}
+
+pub(super) fn render_acceptance(
+    mut wire: crate::schema::spec::v1::SpecDocument,
+    canonical_spec: &str,
+    candidate: &ValidatedCandidate,
+) -> Result<String, CompletionIssues> {
     let active = wire.active_change.0.as_mut().ok_or_else(|| {
         one_issue(
             "SPEC_COMPLETION_STATE_INVALID",
@@ -120,19 +136,10 @@ pub fn spec_accept(
     evidence.completion = Some(CompletionGateEvidence {
         passed_at: PassedAt(passed_at),
         implementation_revision: ImplementationRevision(candidate.implementation_revision.clone()),
-        mechanical_checks: candidate.mechanical_checks,
+        mechanical_checks: candidate.mechanical_checks.clone(),
     });
     validate_mutated_spec(&wire, canonical_spec)?;
-    let rendered = render_yaml(&wire, "COMPLETION_SPEC_SERIALIZE_FAILED")?;
-    persist_regular(
-        &specbind_root.join(spec_path(canonical_spec)),
-        rendered.as_bytes(),
-        "COMPLETION_SPEC_WRITE_FAILED",
-        &spec_path(canonical_spec),
-    )?;
-    Ok(SpecAcceptOutcome::Accepted {
-        implementation_revision: candidate.implementation_revision,
-    })
+    render_yaml(&wire, "COMPLETION_SPEC_SERIALIZE_FAILED")
 }
 
 /// Explicitly clears stale completion evidence and rewinds to implementation.

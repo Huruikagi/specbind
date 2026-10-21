@@ -4,6 +4,7 @@ use std::{fmt, fs, path::Path};
 
 use crate::{artifacts, domain::spec::Spec, guarded_fs, roadmap};
 
+pub mod batch;
 mod candidate;
 mod direct;
 mod guard;
@@ -12,7 +13,7 @@ mod spec;
 pub use direct::{direct_complete, direct_preflight};
 pub use spec::{spec_accept, spec_invalidate, spec_preflight};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
 pub struct CompletionIssue {
     pub code: &'static str,
     pub path: Option<String>,

@@ -53,9 +53,16 @@ the exact active set you assess.
 Normally validate one named Spec. An explicit set supplied by the user or by
 Drive's current actionable entries is one validation run with a separate
 assessment and verdict for each Spec. Do not expand that set yourself.
-For a set, run **every target's preflight before any acceptance**. All must
-return the same clean committed HEAD; retain that full revision for every
-candidate. A failed preflight stops the entire set without acceptance.
+For a set, the batch CLI runs **every target's preflight before any acceptance**.
+Supply the exact IDs using repeated `--spec` options:
+
+```sh
+specbind spec completion batch preflight --spec <first> --spec <second>
+```
+
+Retain its JSON `implementationRevision`, `targets` and `paths`. This is the
+same implementation revision for the entire set. A failed preflight stops the
+entire set without acceptance. For a single Spec, keep the existing preflight:
 
 ```sh
 specbind spec status <spec>
@@ -150,9 +157,21 @@ unavailable is `MANUAL_VERIFY_REQUIRED`; do not invent or substitute a weaker
 route. The validator may perform authorized setup and cleanup, but it must not
 edit source or repair a finding it will judge.
 
-Derive the required mechanical checks from this project's own automation and
-conventions — its test command, build, lint, typecheck, smoke. Fix that required
-set **before** running anything, then run those exact commands.
+Read the project's command declarations before choosing mechanical checks:
+
+```sh
+specbind steering list
+specbind steering read <selector> --for consume
+```
+
+Read the listed Steering documents that govern verification or conventions,
+then the relevant project automation and documentation. A runner file's presence
+or shebang does not establish the canonical invocation. Fix the declared test,
+build, lint, typecheck and smoke commands **before** running anything, then run
+those exact commands. Preserve the declared executable, arguments and working
+directory: for example, `sh scripts/test.sh` is not permission to substitute
+`./scripts/test.sh` or invoke its test framework directly. A host-shell wrapper
+may establish PATH and capture status, but must retain that exact inner command.
 
 - Record what they actually returned. Never report a command you did not
   execute, and never submit a check whose exit status you did not see.
@@ -233,11 +252,13 @@ attesting to its own work.
 
 ## 5. Accept, on GO only
 
+For a set, use "When several Specs converge" below. For one Spec:
+
 ```sh
 specbind spec completion accept <spec> --evidence -
 ```
 
-The candidate is strict JSON on stdin:
+The single-Spec candidate is strict JSON on stdin:
 
 ```json
 {
@@ -282,37 +303,58 @@ per-Spec assessments at one clean revision. For a Drive caller, the restart
 entry point is a new user invocation of Drive, which schedules a fresh ordinary
 validation owner from current status. This is not a `RETRYABLE` handoff.
 
-When both checks hold, submit each candidate sequentially with
-that **same implementation revision**, without another preflight, check run,
-or commit between acceptances. Never take a new revision from an intervening
-completion commit. The guarded CLI rechecks each acceptance's preconditions.
+When both checks hold, read the batch input schema and submit one candidate for
+the exact preflight target set. Reuse the actual checks from this run; the CLI
+does not execute them or decide semantic `GO`.
 
-The first acceptance at a revision needs a completely clean worktree. Each
-acceptance writes that Spec's `spec.yaml`, so later ones at the same revision
-tolerate exactly the other participants' `implementation` → `release_ready`
-transitions — **and nothing else**. Any other change fails closed.
+```sh
+specbind schema read completion-batch/v1
+specbind spec completion batch accept --evidence <external-candidate-file>
+```
 
-A pending release binding is not an acceptance exception. Checkpoint it before
-the group's preflights. Its freshness exception does not permit mixing
-implementation revisions within this acceptance set.
+The strict JSON contains one fixed revision and per-Spec check evidence:
 
-**Commit that metadata set together**, as one commit containing only those
-files. Do not interleave other work into it.
+```json
+{
+  "schemaVersion": 1,
+  "implementationRevision": "<the full batch preflight revision>",
+  "targets": [
+    { "spec": "<first>", "mechanicalChecks": [{ "kind": "test", "command": "npm test", "exitCode": 0 }] },
+    { "spec": "<second>", "mechanicalChecks": [{ "kind": "test", "command": "npm test", "exitCode": 0 }] }
+  ]
+}
+```
 
-Verify the actual delta contains exactly the accepted targets' state and
-completion transitions, with earlier gates unchanged. After the checkpoint,
-reread every target and milestone status: all accepted records must still be
-fresh. A missing checkpoint or stale record is not a completed validation run.
+Keep that candidate outside the project, or use `--evidence -` on stdin. Retain
+the same candidate for checkpoint verification. The CLI validates the whole
+set before writing, rechecks the fixed HEAD and exact pending changes at each
+write, and returns JSON with `accepted`, `pending`, `paths` and `issues`.
+It owns the sequential writes; do not replace it with a per-Spec accept loop.
 
-If acceptance or the checkpoint fails, stop immediately. Preserve the exact
-accepted subset, pending candidates, common revision, diagnostic and dirty
-paths in the handoff. Do not roll back valid evidence, retry at unchanged state,
-or commit a subset and start remaining targets at a new HEAD. Partial acceptance
-is unsafe for another mutating owner; report it without claiming completion.
+Only `COMPLETION_BATCH_ACCEPTED` with every target accepted proceeds to the Git
+adapter. **Commit that metadata set together**, as one commit containing only
+the returned paths. Then run:
 
-If the project's Git adapter says not to commit, stop after the acceptances and
-report that the metadata set is uncommitted, rather than leaving the milestone
-in a state only you understand.
+```sh
+specbind spec completion batch verify --evidence <external-candidate-file>
+```
+
+Require `COMPLETION_BATCH_VERIFIED`: the CLI proves one narrow checkpoint after
+the implementation revision, unchanged earlier gates and fresh evidence for
+every target. Reread milestone status for the next handoff. A failed or missing
+checkpoint is not a completed validation run.
+
+On any failed acceptance, checkpoint or verification, stop immediately and
+preserve the CLI report, common revision, observed HEAD and dirty paths in the
+handoff. `COMPLETION_BATCH_INTERRUPTED` can leave a confirmed accepted prefix;
+`pending` is not a retry instruction. An abrupt process failure may leave no
+report, so inspect current status without inferring that nothing was written.
+Do not roll back valid evidence, retry at unchanged state, or commit a subset
+and start remaining targets at a new HEAD. Report partial acceptance without
+claiming completion. A new run needs the full fresh validation described above.
+
+If the project's Git adapter says not to commit, stop after acceptance, report
+the exact uncommitted metadata set, and skip checkpoint verification.
 
 ```sh
 specbind adapter read git --for consume

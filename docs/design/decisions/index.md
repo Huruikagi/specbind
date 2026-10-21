@@ -239,3 +239,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0230](./0230-cli-owned-task-plan-revision.md) | Accepted | Guarded Task plan replacement with explicit CLI-owned progress reconciliation |
 | [0231](./0231-task-readiness-through-retained-completion.md) | Accepted | Sequential readiness through retained completion without resetting proven work |
 | [0232](./0232-cli-replan-completion-prechecks.md) | Accepted | Read-only Git-backed baseline and completion-withdrawal prechecks for replan recovery |
+| [0233](./0233-cli-grouped-completion.md) | Accepted | CLI preflight, guarded acceptance and checkpoint verification for explicit completion sets |
