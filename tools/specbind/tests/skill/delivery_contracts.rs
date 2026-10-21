@@ -269,7 +269,10 @@ fn implementation_workflow_carries_notes_and_all_failure_routes() {
         "Do not stop merely because the implementation commit succeeded.",
         "This is a separate metadata checkpoint",
         "Adapter guidance is closed-world authority.",
-        "`Revision` is unavailable until it is\nreconciled",
+        "current HEAD as `Revision`",
+        "that value does not establish release readiness",
+        "`RELEASE_TARGET_DIRTY` diagnostic separately",
+        "Do not claim that\nthe revision is absent",
         "default is `required` for Spec-backed work and\n`inline` for Direct work",
         "there is no\nseparate project setting to discover",
     ] {

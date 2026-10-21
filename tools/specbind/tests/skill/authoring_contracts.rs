@@ -185,6 +185,23 @@ fn design_materializes_spec_local_supplements_without_polluting_project_policy()
 
 #[test]
 fn adoption_skill_keeps_evidence_separate_and_owns_non_release_finalization() {
+    for agent in [Agent::Codex, Agent::ClaudeCode, Agent::Generic] {
+        let rendered = skill::find("sb-adopt")
+            .expect("adoption")
+            .render(agent)
+            .expect("render");
+        for required in [
+            "without inheriting the dispatcher's conversation or another\nreader's context",
+            "self-contained brief with the fixed source revision",
+            "host's no-history dispatch option",
+            "report the environment block before presenting a ready proposal",
+        ] {
+            assert!(
+                rendered.contains(required),
+                "missing reader isolation: {required}"
+            );
+        }
+    }
     let body = skill_package_text("sb-adopt");
     for required in [
         "specbind adoption preflight",

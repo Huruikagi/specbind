@@ -125,6 +125,8 @@ Prepare `dr6`, then ask:
   implementation validation in this same run without Release execution.
 - No owner ends its turn merely waiting for an internal role, and no maintainer
   continuation is needed to collect its result.
+- Inspect the Plan owner's terminal hand-back: it collects its internal planner
+  and finishes the selected procedure without Drive's same-owner continuation.
 - Every owning Skill uses an ordinary fresh host; in particular, `sb-plan`
   must not be hosted in `specbind-planner`. Internal roles remain inside owners.
 
@@ -620,6 +622,9 @@ Prepare `a2` with dispatch instrumentation, then ask:
   before the user confirms the boundary set.
 - The worktree remains clean. With instrumentation, the agent log records the
   driver plus at least two fresh readers.
+- Inspect actual dispatch arguments or equivalent session evidence: neither
+  reader inherits the proposal owner's conversation or the other reader's
+  context. Reader count or a self-contained prompt alone does not prove isolation.
 
 ### A3 — Confirmed reverse establishment records findings and advances Design waves
 

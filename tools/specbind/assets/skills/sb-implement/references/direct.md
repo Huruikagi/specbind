@@ -91,5 +91,8 @@ the clean implementation revision used by preflight.
 Adapter guidance is closed-world authority. An absent or scaffolded adapter, or
 active guidance limited to implementation paths, does not authorize the
 Roadmap checkpoint. In that case the Direct item is still completed, but report
-the modified Roadmap path, that `Revision` is unavailable until it is
-reconciled, and the exact adapter reason for leaving it uncommitted.
+the modified Roadmap path and the exact adapter reason for leaving it
+uncommitted. `milestone status` still reports the current HEAD as `Revision`;
+that value does not establish release readiness. Report the dirty release
+target and its `RELEASE_TARGET_DIRTY` diagnostic separately. Do not claim that
+the revision is absent or that the completed Direct item is release-ready.

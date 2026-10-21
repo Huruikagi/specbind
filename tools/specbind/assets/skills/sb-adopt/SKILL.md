@@ -86,6 +86,14 @@ and tests, and one for structure, dependencies, and seams. If delegation is not
 available, collect those evidence lines yourself and say so in the proposal.
 All claims are about the fixed revision.
 
+Each reader starts without inheriting the dispatcher's conversation or another
+reader's context. Give it a self-contained brief with the fixed source revision,
+selected area, evidence question, project instruction paths, and executable/PATH
+facts. It reads the governing project inputs itself. A new agent that inherits
+the proposal owner's conversation is not an independent reader; select the
+host's no-history dispatch option. If the host cannot provide that isolation,
+report the environment block before presenting a ready proposal.
+
 This requirement has no repository-size or complexity threshold: even one or
 two small modules require both independent readers when delegation is exposed.
 The driver's own inspection does not count as either reader. If a required

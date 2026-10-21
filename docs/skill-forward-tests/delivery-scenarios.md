@@ -138,6 +138,11 @@ Prepare `i3r`, the same starting state as I3, then ask:
   synthetic Spec, Task, Requirements, Design or Spec Contract for this guide.
 - The reviewer returns `APPROVED` only on those inputs; implementation records
   the completion. The review does not complete or checkpoint its own work.
+- With this implementation-only Git adapter, only the implementation is
+  checkpointed; Roadmap completion metadata remains dirty. The report identifies
+  the modified path and adapter limit, distinguishes the current HEAD shown as
+  `Revision` from release readiness, and reports `RELEASE_TARGET_DIRTY` without
+  claiming the revision is absent or the item is release-ready.
 
 ### I4 — A dirty worktree is never rescued
 

@@ -87,6 +87,23 @@ route](references/complete-route.md) completely. It owns scope selection,
 delegation, scheduling, phase dispatch, validation, the global Contract Review
 barrier, checkpoints, stopping conditions, and the final report.
 
+## Own internal dispatch through its stopping point
+
+Keep the owning turn active until every started internal role has returned and
+the selected planning workflow has reached its stopping point. This applies to
+complete planning, a single phase, shared preparation, and Drive recovery.
+Prefer foreground dispatch; if the host runs a role in the background, wait for
+its terminal result in this turn and resume the selected procedure. A progress
+message such as "the Tasks-phase receiver is still running" is not a final
+response. Do not ask the caller or user to send "continue" merely to collect a
+running role's result.
+
+A required confirmation or input, an exhausted retry bound, an explicit user
+stop, or a real host/capacity failure remains a stopping point. Report the
+reason, exact partial paths, and any receiver still running; preserve any
+required restart capsule. Waiting for internal work grants no additional gate,
+rewind, implementation, or checkpoint authority.
+
 ## Boundaries
 
 - The entrypoint selects one mode and loads only its applicable procedures.

@@ -57,6 +57,23 @@ fn owning_workflows_wait_without_replacing_live_receivers() {
         assert!(implementation.contains("Keep the owning turn active"));
         assert!(implementation.contains("wait for its terminal\nresult in this turn"));
         assert!(implementation.contains("any receiver still running"));
+        let planning = skill::find("sb-plan")
+            .expect("plan")
+            .render(agent)
+            .expect("render");
+        for required in [
+            "Keep the owning turn active until every started internal role has returned",
+            "complete planning, a single phase, shared preparation, and Drive recovery",
+            "its terminal result in this turn and resume the selected procedure",
+            "receiver is still running\" is not a final",
+            "required restart capsule",
+            "Waiting for internal work grants no additional gate",
+        ] {
+            assert!(
+                planning.contains(required),
+                "missing Plan ownership: {required}"
+            );
+        }
     }
     let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
     assert!(procedure.contains("relative to the configured `specDir`"));
