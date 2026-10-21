@@ -2,7 +2,7 @@
 
 use std::{
     fmt, fs,
-    path::{Component, Path, PathBuf},
+    path::{Path, PathBuf},
 };
 
 use serde::{Deserialize, Serialize};
@@ -188,49 +188,32 @@ fn git_project_root(start: &Path) -> Result<PathBuf, ConfigError> {
 }
 
 pub(crate) fn validate_spec_dir(value: &str) -> Result<(), ConfigError> {
-    let path = Path::new(value);
-    let invalid = value.is_empty()
-        || value.contains('\\')
-        || path.is_absolute()
-        || path.components().any(|component| {
-            matches!(
-                component,
-                Component::CurDir
-                    | Component::ParentDir
-                    | Component::RootDir
-                    | Component::Prefix(_)
-            )
-        })
-        || value.split('/').any(invalid_portable_segment);
-    if invalid {
+    if super::portable_path::is_project_relative(value) {
+        Ok(())
+    } else {
         Err(ConfigError {
             code: "SPEC_DIR_INVALID",
             message: "specDir must be a portable project-root-relative child directory".to_owned(),
         })
-    } else {
-        Ok(())
     }
 }
 
-fn invalid_portable_segment(segment: &str) -> bool {
-    if segment.is_empty()
-        || segment.ends_with([' ', '.'])
-        || segment
-            .chars()
-            .any(|value| value.is_control() || r#"<>:"\|?*"#.contains(value))
-    {
-        return true;
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn spec_dir_keeps_custom_locations_and_configuration_diagnostics() {
+        assert!(validate_spec_dir("docs/specs").is_ok());
+        for value in ["../specs", "docs/NUL.txt"] {
+            assert_eq!(
+                validate_spec_dir(value).unwrap_err(),
+                ConfigError {
+                    code: "SPEC_DIR_INVALID",
+                    message: "specDir must be a portable project-root-relative child directory"
+                        .to_owned(),
+                },
+            );
+        }
     }
-    let stem = segment
-        .split('.')
-        .next()
-        .unwrap_or(segment)
-        .to_ascii_uppercase();
-    matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
-        || stem
-            .strip_prefix("COM")
-            .or_else(|| stem.strip_prefix("LPT"))
-            .is_some_and(|suffix| {
-                matches!(suffix, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9")
-            })
 }

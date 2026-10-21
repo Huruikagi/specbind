@@ -3,7 +3,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
-    path::{Component, Path},
+    path::Path,
 };
 
 use serde::{Deserialize, Serialize};
@@ -846,20 +846,7 @@ fn hash_field(hasher: &mut Sha256, bytes: &[u8]) {
 }
 
 fn validate_project_relative(value: &str, target: bool) -> Result<(), MigrationIssues> {
-    let path = Path::new(value);
-    let invalid = value.is_empty()
-        || value.contains('\\')
-        || path.is_absolute()
-        || path.components().any(|component| {
-            matches!(
-                component,
-                Component::CurDir
-                    | Component::ParentDir
-                    | Component::RootDir
-                    | Component::Prefix(_)
-            )
-        })
-        || value.split('/').any(invalid_portable_segment);
+    let invalid = !crate::foundation::portable_path::is_project_relative(value);
     let target_outside = target
         && !(value == ".specbind.json"
             || value == "AGENTS.md"
@@ -873,29 +860,6 @@ fn validate_project_relative(value: &str, target: bool) -> Result<(), MigrationI
         ));
     }
     Ok(())
-}
-
-fn invalid_portable_segment(segment: &str) -> bool {
-    if segment.is_empty()
-        || segment.ends_with([' ', '.'])
-        || segment
-            .chars()
-            .any(|value| value.is_control() || r#"<>:"\|?*"#.contains(value))
-    {
-        return true;
-    }
-    let stem = segment
-        .split('.')
-        .next()
-        .unwrap_or(segment)
-        .to_ascii_uppercase();
-    matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
-        || stem
-            .strip_prefix("COM")
-            .or_else(|| stem.strip_prefix("LPT"))
-            .is_some_and(|suffix| {
-                matches!(suffix, "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9")
-            })
 }
 
 fn resolvable(code: &str) -> bool {
@@ -944,5 +908,39 @@ fn one_issue(
 ) -> MigrationIssues {
     MigrationIssues {
         issues: vec![finding(code, path, message)],
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn migration_keeps_target_surface_separate_from_source_paths() {
+        for value in [
+            ".specbind.json",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".specbind/specs/example/requirements.md",
+        ] {
+            assert!(validate_project_relative(value, true).is_ok());
+        }
+        for value in ["src/file.rs", ".specbind-other/file.md"] {
+            assert!(validate_project_relative(value, false).is_ok());
+            let error = validate_project_relative(value, true).unwrap_err();
+            assert_eq!(
+                error.issues,
+                vec![MigrationFinding {
+                    code: "MIGRATION_RESOLUTION_TARGET_INVALID",
+                    path: Some(value.to_owned()),
+                    message: "migration resolution paths must be portable project-relative paths in the allowed target surface".to_owned(),
+                }],
+            );
+        }
+        for value in [".specbind/../outside", ".specbind/NUL.txt"] {
+            for target in [false, true] {
+                assert!(validate_project_relative(value, target).is_err());
+            }
+        }
     }
 }

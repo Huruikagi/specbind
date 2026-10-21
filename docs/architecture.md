@@ -115,6 +115,10 @@ fingerprints, and the restricted YAML boundary. These are cross-cutting
 mechanisms without lifecycle authority. `foundation.rs` preserves the existing
 `crate::config`, `crate::fingerprint`, and `crate::yaml` paths.
 
+`foundation/portable_path.rs` shares the lexical project-relative path grammar
+used by configuration and migration resolution. It does not inspect the filesystem;
+callers retain their target restrictions, filesystem guards, and diagnostics.
+
 ### Adapters
 
 `infrastructure/repository.rs` owns Git process interaction.

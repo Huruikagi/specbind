@@ -24,6 +24,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/read_model.rs` and `read_model/` — facade and implementations for non-authoritative current-state projections
 - `tools/specbind/src/infrastructure.rs` and `infrastructure/` — crate-private Git and guarded-filesystem adapters
 - `tools/specbind/src/foundation/yaml.rs` — restricted YAML-to-neutral-JSON parser boundary
+- `tools/specbind/src/foundation/portable_path.rs` — crate-private portable project-relative path grammar shared by configuration and migration resolution
 - `tools/specbind/src/schema/` — authoritative versioned structured-artifact wire models and schema generator
 - `tools/specbind/src/schema/runtime.rs` — parser, schema selection, validation, and wire-deserialization load boundary
 - `tools/specbind/src/domain/` — artifact-local semantic validation and validated domain wrappers
