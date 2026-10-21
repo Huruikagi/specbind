@@ -61,6 +61,14 @@ Then start an agent session **with no prior context** in that directory. Context
 carried from developing the skill is the most common way a forward test passes
 for the wrong reason: the agent already knows what you meant.
 
+The fixture also puts a standalone-project and selected-language statement in
+its existing project instruction files. This environment boundary must reach
+nested readers and owners, not only the driver prompt. Inspect their actual
+responses too: an English driver does not establish isolation when its readers
+or workflow owners still follow the host repository's Japanese preference.
+Retain a contaminated attempt as environment-invalid and prepare a new fixture;
+do not repair the live run and relabel it a pass.
+
 ### The dispatch log
 
 For a run intended to prove fresh-context dispatch, add

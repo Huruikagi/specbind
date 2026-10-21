@@ -78,6 +78,27 @@ git commit --quiet -m "Add the bookshop service"
 "$specbind" install --agent claude-code --agent codex --language "$language" \
     --project-instructions >/dev/null
 
+# Isolation must reach nested contexts too; a driver-only preface is not
+# inherited by a no-history reader. This is environment setup, not a workflow
+# hint. Preserve the installer's Claude import rather than creating a new file.
+case "$language" in
+    en) fixture_language=English ;;
+    ja) fixture_language=Japanese ;;
+esac
+for instructions in CLAUDE.md AGENTS.md; do
+    [ -f "$instructions" ] || continue
+    cat >> "$instructions" <<EOF
+
+## Standalone project environment
+
+This directory is a standalone project. Repository instructions and personal
+preferences from other projects do not apply here. This applies to every context
+working in this directory, including delegated agents. Follow this project's
+instructions and installed workflows. Communicate and write artifacts in
+$fixture_language.
+EOF
+done
+
 # Make dispatch observable when the scenario measures dispatch.
 #
 # Decision 0109 gives subagent dispatch a main-context fallback, and a run that
