@@ -74,6 +74,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/infrastructure/repository/tree.rs` — regular committed blob reads without checkout or filters
 - `tools/specbind/src/read_model/milestone_status.rs` and `milestone_status/` — stable Milestone status facade with separate action derivation, diagnostics, and release-readiness projections
 - `tools/specbind/src/documents/roadmap.rs` — active Roadmap parsing, DAG validation, and normalized cross-spec scope projection
+- `tools/specbind/src/documents/roadmap/source.rs` — strict Front Matter slicing and shared scope-body preservation used by reads and lifecycle updates
 - `tools/specbind/src/lifecycle/cross_spec_review.rs` — strict review candidate and authoritative Contract-first input revision resolution
 - `tools/specbind/src/foundation/fingerprint.rs` — Markdown and normalized typed task-plan fingerprint producers
 - `tools/specbind/src/read_model/freshness.rs` — stable freshness facade and gate-local evaluation over resolved inputs

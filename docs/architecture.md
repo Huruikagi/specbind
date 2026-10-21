@@ -99,6 +99,10 @@ focused Requirements, Design, Roadmap, and traceability semantics behind the
 `documents.rs` crate-root compatibility facade. Third-party parser types stop
 at these boundaries and are not public CLI or persisted contracts.
 
+`documents/roadmap/source.rs` owns source slicing for both strict Roadmap parsing
+and scope-body preservation. Scope reads and lifecycle updates use the document
+layer directly; the legacy delimiter behavior of each projection is preserved.
+
 ### Foundation
 
 `foundation/` groups project configuration resolution, canonical

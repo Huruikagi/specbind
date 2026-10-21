@@ -135,7 +135,7 @@ pub fn update_scope(
     let body = scope
         .body
         .clone()
-        .unwrap_or_else(|| existing_body(&source).to_owned());
+        .unwrap_or_else(|| roadmap::scope_body(&source).to_owned());
     let direct_changes = preserve_direct_status(&current, scope.direct_changes.clone());
     let rendered = render(
         &current.milestone_id,
@@ -235,7 +235,7 @@ pub fn rebaseline(
         &current.spec_updates,
         &current.reverse_specs,
         &current.direct_changes,
-        existing_body(&source),
+        roadmap::scope_body(&source),
     )?;
     roadmap::parse(&rendered).map_err(roadmap_failure)?;
     let review_removed = remove_accepted_review(specbind_root)?;
@@ -359,35 +359,6 @@ fn spec_frontmatter(items: &[SpecItem]) -> Option<Vec<SpecItemFrontmatter<'_>>> 
             })
             .collect()
     })
-}
-
-/// Returns the Markdown body that follows the closing frontmatter delimiter.
-/// Returns the authored Markdown body that follows the Front Matter.
-///
-/// The Roadmap parser does not carry the body, so both scope replacement and the
-/// scope read recover it from the original source through this one function.
-pub(crate) fn existing_body(source: &str) -> &str {
-    let mut offset = 0;
-    let mut lines = source.split_inclusive('\n');
-    let Some(first) = lines.next() else {
-        return "";
-    };
-    if line_content(first) != "---" {
-        return "";
-    }
-    offset += first.len();
-    for line in lines {
-        offset += line.len();
-        if line_content(line) == "---" {
-            return &source[offset..];
-        }
-    }
-    ""
-}
-
-fn line_content(line: &str) -> &str {
-    let line = line.strip_suffix('\n').unwrap_or(line);
-    line.strip_suffix('\r').unwrap_or(line)
 }
 
 fn preserve_direct_status(

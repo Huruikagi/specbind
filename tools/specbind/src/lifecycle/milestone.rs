@@ -9,8 +9,6 @@ use crate::{
 mod candidate;
 mod scope;
 
-pub(crate) use scope::existing_body;
-
 pub use scope::{
     CreateOutcome, RebaselineOutcome, ScopeCounts, ScopeUpdateOutcome, create, rebaseline,
     update_scope,

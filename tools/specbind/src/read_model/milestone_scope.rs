@@ -7,9 +7,8 @@
 use std::path::Path;
 
 use crate::{
-    milestone,
     milestone_status::{self, MilestoneStatusFailure},
-    roadmap::{Dependency, DirectItem, RoadmapDocument, SpecItem},
+    roadmap::{self, Dependency, DirectItem, RoadmapDocument, SpecItem},
 };
 
 /// Renders the active milestone's scope as a version-1 candidate document.
@@ -33,7 +32,7 @@ pub fn resolve(
 ) -> Result<Option<String>, MilestoneStatusFailure> {
     Ok(
         milestone_status::read_roadmap_source(specbind_root)?.map(|(source, document)| {
-            let body = include_body.then(|| milestone::existing_body(&source));
+            let body = include_body.then(|| roadmap::scope_body(&source));
             render(&document, body)
         }),
     )

@@ -1,5 +1,9 @@
 //! Document semantics and review projection for `SpecBind Roadmap` artifacts.
 
+mod source;
+
+pub(crate) use source::{scope_body, split_frontmatter_parts};
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -634,23 +638,6 @@ fn valid_revision(value: &str) -> bool {
 
 fn split_frontmatter(content: &str) -> Result<&str, String> {
     split_frontmatter_parts(content).map(|(frontmatter, _)| frontmatter)
-}
-
-pub(crate) fn split_frontmatter_parts(content: &str) -> Result<(&str, &str), String> {
-    let normalized = content.strip_prefix('\u{feff}').unwrap_or(content);
-    let rest = normalized
-        .strip_prefix("---\n")
-        .or_else(|| normalized.strip_prefix("---\r\n"))
-        .ok_or_else(|| "ROADMAP_FRONTMATTER_MISSING: expected opening ---".to_owned())?;
-    let (end, marker_len) = rest
-        .find("\n---\n")
-        .map(|end| (end, "\n---\n".len()))
-        .or_else(|| {
-            rest.find("\r\n---\r\n")
-                .map(|end| (end, "\r\n---\r\n".len()))
-        })
-        .ok_or_else(|| "ROADMAP_FRONTMATTER_MISSING: expected closing ---".to_owned())?;
-    Ok((&rest[..end], &rest[end + marker_len..]))
 }
 
 fn single_issue(message: String) -> RoadmapIssues {
