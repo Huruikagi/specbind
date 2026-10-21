@@ -82,6 +82,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/read_model/release_readiness.rs` — stateless whole-milestone release readiness and target-only Git safety validation
 - `tools/specbind/src/lifecycle/release_log.rs` — strict release-summary JSON and localized canonical OKF `log.md` updates
 - `tools/specbind/src/lifecycle/release_finalize.rs` and `release_finalize/` — stable whole-milestone finalization facade with separate plan rendering, retry recovery, and ordered guarded persistence
+- `tools/specbind/src/lifecycle/adoption_finalize.rs` and `adoption_finalize/` — stable reverse-establishment finalization and abandonment facade with separate output planning and ordered guarded persistence
 - `tools/specbind/src/lifecycle/completion/` — Spec and Direct completion candidate validation, guarded transitions, and shared preflight checks
 - `tools/specbind/src/lifecycle/completion/batch.rs` and `batch/verify.rs` — explicit-set completion acceptance and one-checkpoint verification at a fixed implementation revision
 - `tools/specbind/src/infrastructure/repository.rs` — installed-Git process adapter shared by lifecycle and status read models

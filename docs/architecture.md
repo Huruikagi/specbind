@@ -48,6 +48,13 @@ and ordered guarded writes respectively. Both normal and resumed finalization
 use the same persistence path, with the Roadmap archive written last as the
 completion marker.
 
+`lifecycle/adoption_finalize.rs` retains reverse-establishment readiness and
+source-drift guards plus the public finalization and abandonment API. Its private
+`plan` module builds every Spec and log output before mutation; `persistence`
+applies logs, cleanup and Spec updates, Contract Review archival, Roadmap archival,
+and temporary adoption-record removal in that order. These modules preserve the
+existing failure boundaries and do not introduce release retry semantics.
+
 ### Current-state read models
 
 `artifacts.rs` is the stable facade for spec-local artifact reads:

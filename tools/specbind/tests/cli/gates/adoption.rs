@@ -73,56 +73,7 @@ fn reverse_design_approval_enters_adoption_ready_without_tasks() {
 
 #[test]
 fn reverse_finalize_archives_a_baseline_without_creating_a_release() {
-    let root = project_fixture();
-    commit_all(root.path());
-    specbind_command()
-        .current_dir(root.path())
-        .args(["install", "--with-adoption"])
-        .assert()
-        .success();
-    write_gate_fixture(root.path());
-    write_empty_shared_contract(root.path());
-    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
-    write(
-        root.path(),
-        ".specbind/steering/roadmap.md",
-        &format!(
-            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\nbaseline_version: v2.4.0\ntarget_release: null\nwork_items:\n  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n---\n# Roadmap\n"
-        ),
-    );
-    let active = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
-        .expect("active Spec");
-    write(
-        root.path(),
-        ".specbind/specs/checkout/spec.yaml",
-        &format!(
-            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: {baseline}\n  baseline_version: v2.4.0\n  milestone_id: {REVIEW_MILESTONE}\n{}",
-            active
-                .strip_prefix("schema_version: 1\n")
-                .expect("schema prefix")
-        ),
-    );
-    approve_requirements(root.path());
-    approve_design(root.path());
-    specbind_command()
-        .current_dir(root.path())
-        .args(["milestone", "review", "accept", "--candidate", "-"])
-        .write_stdin(review_candidate("Compatible."))
-        .assert()
-        .success();
-    write(
-        root.path(),
-        ".specbind/adoption/reverse-discovery.yaml",
-        &format!(
-            "schema_version: 1\nsource_revision: {baseline}\nsuspected_defects:\n  - locator: README.md:1\n    claim: Product name typo.\n    destination: .specbind/deferred.md\n"
-        ),
-    );
-    write(
-        root.path(),
-        ".specbind/deferred.md",
-        "---\ntype: Deferred Findings\n---\n\n# Deferred findings\n\n- Product name typo.\n",
-    );
-    commit_all(root.path());
+    let root = ready_reverse_project();
 
     let mut finalize = specbind_command();
     finalize
@@ -212,4 +163,98 @@ fn write_empty_shared_contract(root: &Path) {
         ".specbind/specs/shared-contract.yaml",
         "schema_version: 1\nresources: []\n",
     );
+}
+
+#[test]
+fn reverse_finalize_planning_failure_leaves_all_artifacts_unchanged() {
+    let root = ready_reverse_project();
+    write(
+        root.path(),
+        ".specbind/specs/checkout/log.md",
+        "invalid log\n",
+    );
+    commit_all(root.path());
+
+    specbind_command()
+        .current_dir(root.path())
+        .args(["milestone", "reverse", "finalize", "--log-entries", "-"])
+        .write_stdin(r#"{"log_entries":[{"spec":"checkout","summary":"Established checkout."}]}"#)
+        .assert()
+        .failure()
+        .stdout("")
+        .stderr(predicate::str::contains("LOG_PROFILE_INVALID"));
+
+    assert_eq!(git_stdout(root.path(), &["status", "--porcelain"]), "");
+    assert!(!root.path().join(".specbind/baselines").exists());
+    assert!(root.path().join(".specbind/steering/roadmap.md").is_file());
+    assert!(
+        root.path()
+            .join(".specbind/state/contract-review.md")
+            .is_file()
+    );
+    assert!(
+        root.path()
+            .join(".specbind/adoption/reverse-discovery.yaml")
+            .is_file()
+    );
+    assert!(
+        root.path()
+            .join(".agents/skills/sb-adopt/SKILL.md")
+            .is_file()
+    );
+}
+
+fn ready_reverse_project() -> tempfile::TempDir {
+    let root = project_fixture();
+    commit_all(root.path());
+    specbind_command()
+        .current_dir(root.path())
+        .args(["install", "--with-adoption"])
+        .assert()
+        .success();
+    write_gate_fixture(root.path());
+    write_empty_shared_contract(root.path());
+    let baseline = git_stdout(root.path(), &["rev-parse", "HEAD"]);
+    write(
+        root.path(),
+        ".specbind/steering/roadmap.md",
+        &format!(
+            "---\ntype: SpecBind Roadmap\nmilestone_id: {REVIEW_MILESTONE}\nbaseline_revision: {baseline}\nbaseline_version: v2.4.0\ntarget_release: null\nwork_items:\n  reverse_specs:\n    - spec: checkout\n      summary: Establish checkout\n---\n# Roadmap\n"
+        ),
+    );
+    let active = fs::read_to_string(root.path().join(".specbind/specs/checkout/spec.yaml"))
+        .expect("active Spec");
+    write(
+        root.path(),
+        ".specbind/specs/checkout/spec.yaml",
+        &format!(
+            "schema_version: 1\nestablishment:\n  kind: reverse\n  source_revision: {baseline}\n  baseline_version: v2.4.0\n  milestone_id: {REVIEW_MILESTONE}\n{}",
+            active
+                .strip_prefix("schema_version: 1\n")
+                .expect("schema prefix")
+        ),
+    );
+    approve_requirements(root.path());
+    approve_design(root.path());
+    specbind_command()
+        .current_dir(root.path())
+        .args(["milestone", "review", "accept", "--candidate", "-"])
+        .write_stdin(review_candidate("Compatible."))
+        .assert()
+        .success();
+    write(
+        root.path(),
+        ".specbind/adoption/reverse-discovery.yaml",
+        &format!(
+            "schema_version: 1\nsource_revision: {baseline}\nsuspected_defects:\n  - locator: README.md:1\n    claim: Product name typo.\n    destination: .specbind/deferred.md\n"
+        ),
+    );
+    write(
+        root.path(),
+        ".specbind/deferred.md",
+        "---\ntype: Deferred Findings\n---\n\n# Deferred findings\n\n- Product name typo.\n",
+    );
+    commit_all(root.path());
+
+    root
 }
