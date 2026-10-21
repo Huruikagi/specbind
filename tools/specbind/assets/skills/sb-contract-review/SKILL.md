@@ -72,7 +72,7 @@ specbind spec status <spec>
 ```sh
 specbind schema read contract/v1
 specbind protocol read contract-review
-specbind check contracts
+specbind contract diff --baseline <baseline> --json
 ```
 
 Also read `specbind contract shared read` and
@@ -96,18 +96,30 @@ specbind spec list
 specbind artifact read <spec> contract --for consume
 ```
 
-Then read the same fixed Contract paths independently at the baseline. This is
-ordinary Git. Resolve `specDir` from `.specbind.json`; each persistent Spec's
-Contract is exactly `<specDir>/specs/<spec>/contract.yaml`.
+Use the diff's `documents` (complete normalized before/after manifests and exact
+paths), changed `entries`, `baselineConsumers`, and `currentConsumers` as the
+comparison input. The CLI compares the complete persistent Spec set and optional
+shared Contract, including baseline-only Specs and empty-manifest creation or
+removal. It distinguishes a genuinely new Spec from a missing required Contract.
+Do not reconstruct this comparison with `git show` or infer artifact identity.
+
+The baseline must be the Milestone's reported baseline, not a convenient newer
+commit. `currentRevision` identifies HEAD; `currentSource: worktree` includes
+uncommitted proposals, and `currentFingerprint` identifies the compared inputs.
+An input error stops the review without a fallback comparison. Rerun and reassess
+if HEAD or Contract inputs change during review.
+
+The diff reports reference errors as `diagnostics` so removed targets still name
+their consumers. Those errors are findings, not permission to accept. Also run:
 
 ```sh
-git show <baseline>:<specDir>/specs/<spec>/contract.yaml
+specbind check contracts
 ```
 
-If that path does not exist at the baseline, establish whether the Spec itself
-was new or its required Contract was missing. Do not search for a renamed
-Markdown concept or infer identity from Front Matter; `contract.yaml` is the
-versioned structured singleton.
+Use its complete current-graph diagnostics with the diff to route findings below.
+An exit-zero diff is evidence that comparison succeeded, never a review verdict.
+Consumer lists contain declared direct managed references on each side only;
+external consumers and semantic impact still require your judgment.
 
 **The difference is the entry point.** A run that never established what changed
 has not performed the review, however carefully it read the current graph.

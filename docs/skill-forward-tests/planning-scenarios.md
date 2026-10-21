@@ -548,6 +548,8 @@ contract review.
 
 > Ask: review the contracts for this milestone.
 
+- Uses `contract diff --baseline <milestone-baseline> --json` to establish the
+  unchanged Contract; no manual historical comparison substitutes for it.
 - The review is not accepted. It identifies that the scoped persistent quantity
   guarantee is absent from the unchanged Contract rather than treating an empty
   Contract diff as evidence of no seam change.
@@ -600,6 +602,8 @@ review is for.
 
 > Ask: review the contracts for this milestone.
 
+- Uses `contract diff --baseline <milestone-baseline> --json`, including the
+  removed entry and its current declared consumer despite the dangling target.
 - **No review was accepted.** `milestone review status` still reports `absent`.
 - `checkout/contract.yaml` is unchanged. Editing a non-participant's contract to
   make the graph resolve is the failure this catches.

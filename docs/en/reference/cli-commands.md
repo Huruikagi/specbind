@@ -28,6 +28,7 @@ Safe to run at any time. They never change project files.
 | `specbind check contracts` | Project-wide Contract graph errors |
 | `specbind check contracts --for-design <spec>` | One Spec's Contract and its direct consumed targets; does not evaluate the whole graph |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contract relationships and file ownership |
+| `specbind contract diff --baseline <revision> [--json]` | Normalized baseline/worktree Contract changes and declared consumers on both sides |
 
 `milestone status` and `spec status` also accept `--json` for tools and scripts.
 See [Lifecycle states](./lifecycle-states.md) for the state names they report.
@@ -40,6 +41,32 @@ Individual Design checks can pass while unrelated Specs are still being designed
 Required provider Contracts must already exist and their consumed entries must
 resolve. The complete graph is still required at Contract Review; later Design
 work or that review may require revising a previously approved Design.
+
+## Compare Contracts with a baseline
+
+`contract diff` compares all persistent Spec Contracts and the optional shared
+Contract at the supplied Git revision with the current worktree, including
+uncommitted proposals. It uses the currently configured `specDir` at both ends.
+Contract Review supplies the Milestone's baseline; choosing a newer baseline
+would hide changes that still need review.
+If baseline configuration exists with a different `specDir`, comparison stops
+instead of inferring moved Spec identities.
+
+With `--json`, `documents` contains complete normalized before/after manifests
+and their exact paths, including unchanged documents and empty-manifest creation
+or removal. `entries` lists added, changed and removed entries with separate
+`baselineConsumers` and `currentConsumers`. These are declared direct references
+from managed Specs; they do not prove the absence of external or indirect impact.
+Ordering and formatting alone do not create entry changes.
+
+`currentRevision` identifies HEAD, while `currentSource: worktree` and
+`currentFingerprint` identify the actual compared inputs. Input errors stop the
+comparison; missing required Contracts are never treated as new Specs. Graph
+errors remain visible in `diagnostics`, so a removed target can still name its
+consumers. Exit zero means the comparison succeeded, not that review passed.
+Run `check contracts` for the complete current graph and assess compatibility,
+external consumers and scoped behavior even when the diff is empty. Recompare
+and reassess after inputs change. The command changes no files or approvals.
 
 ## Read project settings and embedded content (read-only)
 

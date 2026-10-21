@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `4fb2077` + Decision 0234 tree | X1/X2 pass: installed baseline diff, unchanged-Contract omission and outside-consumer finding preserved, no mutation | [CLI Contract diff](./runs/2026-10-21-codex-4fb2077-contract-diff.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `1875a0a` + final Decision 0233 tree | DR16 pass: declared eight-test command, batch acceptance, one verified checkpoint and fresh completions; FT-0075 resolved. One scenario-invalid and one environment-invalid attempt retained. | [Final CLI grouped completion](./runs/2026-10-21-codex-1875a0a-completion-batch-final.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `1875a0a` + initial Decision 0233 tree | DR11 seven cases pass; DR16 batch mechanics pass but canonical-command substitution makes the run a product failure, FT-0075 | [Initial CLI grouped completion](./runs/2026-10-21-codex-1875a0a-completion-batch.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture driver | `2036dec` + final FT-0073 tree | DR9w pass: no-history withdrawal owner, narrow checkpoint and bounded stop; FT-0073 resolved with prior DR6 evidence | [Final owner isolation](./runs/2026-10-21-codex-2036dec-owner-isolation-final.md) |

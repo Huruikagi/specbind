@@ -97,6 +97,9 @@ fn run_check(start: &Path, command: CheckCommand) -> CommandOutput {
 
 fn run_contract(start: &Path, command: ContractCommand) -> CommandOutput {
     match command {
+        ContractCommand::Diff { baseline, json } => {
+            specbind::cli::contract_diff(start, &baseline, json)
+        }
         ContractCommand::Shared { command } => match command {
             specbind::args::SharedContractCommand::Read => {
                 specbind::cli::contract_shared(start, false, None)

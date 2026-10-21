@@ -28,6 +28,7 @@
 | `specbind check contracts` | プロジェクト全体のContractのエラー |
 | `specbind check contracts --for-design <spec>` | 対象SpecのContractと直接の依存先の検証結果。全体の整合性は検証しない |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contractの関係とファイルの所有 |
+| `specbind contract diff --baseline <revision> [--json]` | baselineと作業ツリーのContract差分、および変更前後の参照元 |
 
 `milestone status`と`spec status`は、ツールやスクリプト向けに`--json`も受け付けます。
 表示される状態名は[状態の一覧](./lifecycle-states.md)を参照してください。
@@ -40,6 +41,28 @@ Taskに着手するには、グループをまたいだ先行Taskもすべて完
 相手のContractが存在し、参照する項目を確認できることが必要です。Contract Reviewでは
 引き続き全体を検証します。別のSpecの設計や全体レビューで矛盾が見つかれば、
 一度承認したDesignでも戻って修正することがあります。
+
+## baselineとContractを比較する
+
+`contract diff`は、指定したGitコミットと現在の作業ツリーについて、すべてのSpecの
+Contractと共有Contractを比較します。未コミットの提案も含み、両側で現在設定されている
+`specDir`を使います。Contract ReviewではMilestoneのbaselineを指定します。
+新しいコミットに差し替えると、レビューすべき変更を見落とすためです。
+baselineの設定にある`specDir`が現在と異なる場合も、移動前後のSpecを推測せず停止します。
+
+`--json`を付けると、`documents`に正規化した変更前後の文書全体と正確なパスを返します。
+変更のない文書や、空の共有Contractの作成・削除も含みます。`entries`には追加・変更・削除した
+項目と、変更前の参照元`baselineConsumers`、変更後の参照元`currentConsumers`を返します。
+これは管理対象Specに記載された直接の参照であり、外部や間接的な影響がないことを示すものでは
+ありません。項目の順序や書式だけの変更は、項目の差分には含めません。
+
+`currentRevision`はHEADを示し、`currentSource: worktree`と`currentFingerprint`は
+実際に比較した入力を示します。読み取りや形式のエラーがあれば比較を停止し、必須のContractが
+欠けた既存Specを新規Specとは扱いません。参照切れなどは`diagnostics`に残るため、
+削除された定義についても利用側を確認できます。終了コード0は比較の成功を意味し、レビューの
+合格ではありません。`check contracts`で現在の全体の整合性を確認し、差分が空でも互換性、
+外部の利用側、スコープに記載された振る舞いを評価します。入力が変わったら比較と評価をやり直します。
+コマンド自体はファイルや承認状態を変更しません。
 
 ## プロジェクトの設定と埋め込みの内容を読む（読み取り専用）
 

@@ -1,6 +1,7 @@
 //! Non-authoritative current-state projections.
 
 pub mod configuration;
+pub mod contract_diff;
 pub mod contract_graph;
 pub mod freshness;
 pub mod milestone_scope;

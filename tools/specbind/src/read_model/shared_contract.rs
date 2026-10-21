@@ -49,3 +49,21 @@ pub fn parse(text: &str) -> Result<SharedContract, String> {
     let wire = runtime::load_shared_contract(text).map_err(|error| format!("{error:?}"))?;
     SharedContract::try_from(wire).map_err(|error| format!("{error:?}"))
 }
+
+/// Reads either supported shared path at one already resolved commit.
+pub(crate) fn at_baseline(
+    tree: &crate::repository::tree::Tree<'_>,
+    relative_root: &str,
+) -> Result<Option<(String, SharedContract)>, String> {
+    let mut present = None;
+    for relative in [SHARED_CONTRACT_RELATIVE, LEGACY_SHARED_CONTRACT_RELATIVE] {
+        let path = format!("{relative_root}/{relative}");
+        if let Some(text) = tree.optional_file(&path)? {
+            if present.is_some() {
+                return Err("baseline shared Contract exists at both supported paths".into());
+            }
+            present = Some((path, parse(&text)?));
+        }
+    }
+    Ok(present)
+}

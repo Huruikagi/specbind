@@ -168,7 +168,7 @@ fn adoption_reads_one_steering_selector_per_invocation() {
 }
 
 #[test]
-fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
+fn contract_review_uses_scope_and_cli_owned_historical_comparison() {
     let body = skill::find("sb-contract-review")
         .expect("contract review skill")
         .body()
@@ -177,7 +177,9 @@ fn contract_review_uses_scope_and_the_fixed_historical_yaml_path() {
     assert!(body.contains("specbind milestone scope"));
     assert!(body.contains("`Status: not_applicable`"));
     assert!(body.contains("specbind schema read contract/v1"));
-    assert!(body.contains("git show <baseline>:<specDir>/specs/<spec>/contract.yaml"));
+    assert!(body.contains("specbind contract diff --baseline <baseline> --json"));
+    assert!(body.contains("baselineConsumers"));
+    assert!(body.contains("An input error stops the review without a fallback comparison"));
     assert!(body.contains("Do not ask the user to repeat a decision already explicit"));
     assert!(body.contains("scoped behavior introduces no\nmissing persistent seam or guarantee"));
     assert!(body.contains("Do\nnot accept merely because there is no Contract diff"));

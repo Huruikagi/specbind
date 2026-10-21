@@ -3,6 +3,7 @@
 use std::{fmt, path::Path, process::Command};
 
 pub(crate) mod snapshot;
+pub(crate) mod tree;
 
 #[derive(Debug)]
 pub enum RepositoryError {

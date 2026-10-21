@@ -6,6 +6,8 @@ use tempfile::TempDir;
 
 #[path = "cli/catalog.rs"]
 mod catalog;
+#[path = "cli/contract_diff.rs"]
+mod contract_diff;
 #[path = "cli/core.rs"]
 mod core;
 #[path = "cli/gates.rs"]

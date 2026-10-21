@@ -218,6 +218,13 @@ pub enum CheckCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ContractCommand {
+    /// Compare all Contracts with a Git baseline and report declared consumers.
+    Diff {
+        #[arg(long)]
+        baseline: String,
+        #[arg(long)]
+        json: bool,
+    },
     /// Read project shared resources or their consumers.
     Shared {
         #[command(subcommand)]

@@ -50,25 +50,7 @@ impl Fingerprint {
     ///
     /// Returns an error if the schema-owned contract cannot be serialized to JCS.
     pub fn contract(document: &Contract) -> Result<Self, serde_json::Error> {
-        let mut normalized = document.as_wire().clone();
-        normalized
-            .owns
-            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-        normalized
-            .exports
-            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-        normalized
-            .consumes
-            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-        normalized
-            .invariants
-            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-        normalized
-            .file_ownership
-            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-        for entry in &mut normalized.file_ownership {
-            sort_strings(&mut entry.paths);
-        }
+        let normalized = normalized_contract(document);
         serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
     }
 
@@ -104,16 +86,7 @@ impl Fingerprint {
     pub fn shared_contract(
         document: Option<&crate::domain::shared_contract::SharedContract>,
     ) -> Result<Self, serde_json::Error> {
-        let mut normalized = document.map(|value| value.as_wire().clone());
-        if let Some(value) = &mut normalized {
-            value
-                .resources
-                .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
-            for resource in &mut value.resources {
-                sort_strings(&mut resource.paths);
-                sort_strings(&mut resource.invariants);
-            }
-        }
+        let normalized = normalized_shared_contract(document);
         serde_json_canonicalizer::to_vec(&normalized).map(|bytes| Self::digest(&bytes))
     }
 
@@ -173,4 +146,45 @@ fn sort_task_references(references: Option<&mut tasks::v1::TaskReferenceList>) {
 
 fn compare_utf16(left: &str, right: &str) -> Ordering {
     left.encode_utf16().cmp(right.encode_utf16())
+}
+
+pub(crate) fn normalized_contract(
+    document: &Contract,
+) -> crate::schema::contract::v2::ContractDocument {
+    let mut normalized = document.as_wire().clone();
+    normalized
+        .owns
+        .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+    normalized
+        .exports
+        .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+    normalized
+        .consumes
+        .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+    normalized
+        .invariants
+        .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+    normalized
+        .file_ownership
+        .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+    for entry in &mut normalized.file_ownership {
+        sort_strings(&mut entry.paths);
+    }
+    normalized
+}
+
+pub(crate) fn normalized_shared_contract(
+    document: Option<&crate::domain::shared_contract::SharedContract>,
+) -> Option<crate::schema::shared_contract::v1::SharedContractDocument> {
+    let mut normalized = document.map(|value| value.as_wire().clone());
+    if let Some(value) = &mut normalized {
+        value
+            .resources
+            .sort_by(|a, b| compare_utf16(&a.id.0, &b.id.0));
+        for resource in &mut value.resources {
+            sort_strings(&mut resource.paths);
+            sort_strings(&mut resource.invariants);
+        }
+    }
+    normalized
 }
