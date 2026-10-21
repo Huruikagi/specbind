@@ -1,20 +1,13 @@
 //! Project-wide Spec and milestone scope reads.
 
-use std::{fmt::Write as _, fs};
-
-use serde::Deserialize;
+use std::fmt::Write as _;
 
 use super::super::{
     CommandOutput, Path, SpecHealth, config, escape, milestone_scope as milestone_scope_model,
-    render_issue, render_milestone_diagnostic, spec_list as spec_list_model, spec_status, steering,
+    render_issue, render_milestone_diagnostic, spec_list as spec_list_model, spec_status,
 };
 use super::present;
-use crate::{adoption_finalize, configuration, guarded_fs, milestone_status, repository};
-
-#[derive(Deserialize)]
-struct AdoptionResumeRecord {
-    source_revision: String,
-}
+use crate::{configuration, lifecycle::adoption, milestone_status};
 
 fn render_drive_defaults(output: &mut String, drive: crate::schema::drive::v1::DriveDefaults) {
     let _ = writeln!(
@@ -153,179 +146,48 @@ pub fn adoption_preflight(start: &Path) -> CommandOutput {
         Ok(paths) => paths,
         Err(error) => return CommandOutput::failure(error.code, error.message, vec![]),
     };
-    let steering_count = match adoption_steering_count(&paths.specbind_root) {
-        Ok(count) => count,
-        Err(output) => return output,
+    let preflight = match adoption::resolve(&paths.project_root, &paths.specbind_root) {
+        Ok(preflight) => preflight,
+        Err(error) => return render_adoption_failure(error),
     };
-    match reverse_resume_preflight(&paths.project_root, &paths.specbind_root, steering_count) {
-        Ok(None) => {}
-        Ok(Some(output)) | Err(output) => return output,
+    match preflight.readiness {
+        adoption::Readiness::Initial { revision } => CommandOutput::success(
+            format!(
+                "OK ADOPTION_PREFLIGHT_READY: Existing-project adoption can begin.\n  source_revision: {}\n  steering_documents: {}\n",
+                escape(&revision), preflight.steering_count,
+            ).into_bytes(),
+        ),
+        adoption::Readiness::Resume(status) => render_reverse_resume(&status, preflight.steering_count),
     }
-    if let Err(output) = ensure_initial_adoption_scope(&paths.specbind_root) {
-        return output;
-    }
-    let revision = match adoption_revision(&paths.project_root) {
-        Ok(revision) => revision,
-        Err(output) => return output,
-    };
-
-    CommandOutput::success(
-        format!(
-            "OK ADOPTION_PREFLIGHT_READY: Existing-project adoption can begin.\n  source_revision: {}\n  steering_documents: {steering_count}\n",
-            escape(&revision),
-        )
-        .into_bytes(),
-    )
 }
 
-fn reverse_resume_preflight(
-    project_root: &Path,
-    specbind_root: &Path,
-    steering_count: usize,
-) -> Result<Option<CommandOutput>, CommandOutput> {
-    let roadmap = milestone_status::read_roadmap(specbind_root).map_err(|error| {
-        CommandOutput::failure(
-            "ADOPTION_MILESTONE_INVALID",
-            "Cannot inspect the active milestone for reverse establishment.",
-            error
-                .diagnostics
+fn render_adoption_failure(error: adoption::PreflightFailure) -> CommandOutput {
+    let details = match error.details {
+        adoption::FailureDetails::Messages(messages) => messages,
+        adoption::FailureDetails::Artifacts(issues) => issues.iter().map(render_issue).collect(),
+        adoption::FailureDetails::Milestone {
+            diagnostics,
+            blockers,
+        } => {
+            let mut details = diagnostics
                 .iter()
                 .map(render_milestone_diagnostic)
-                .collect(),
-        )
-    })?;
-    let Some(roadmap) = roadmap else {
-        return Ok(None);
+                .collect::<Vec<_>>();
+            details.extend(blockers);
+            details
+        }
+        adoption::FailureDetails::Source(issues) => issues
+            .iter()
+            .map(|issue| {
+                let path = issue
+                    .path
+                    .as_ref()
+                    .map_or_else(String::new, |path| format!(" {path}:"));
+                format!("{}{path} {}", issue.code, issue.message)
+            })
+            .collect(),
     };
-    if roadmap.reverse_specs.is_empty()
-        || roadmap.baseline_version.is_none()
-        || roadmap.target_release.is_some()
-    {
-        return Err(CommandOutput::failure(
-            "ADOPTION_MILESTONE_ACTIVE",
-            "Existing-project adoption cannot start while a delivery milestone is active.",
-            vec![],
-        ));
-    }
-
-    let record = read_adoption_resume_record(specbind_root)?;
-    if record.source_revision != roadmap.baseline_revision {
-        return Err(CommandOutput::failure(
-            "ADOPTION_RESUME_RECORD_MISMATCH",
-            "Temporary adoption evidence does not match the active reverse milestone.",
-            vec!["adoption/reverse-discovery.yaml: source_revision does not match roadmap baseline_revision".to_owned()],
-        ));
-    }
-    let status = resolve_reverse_resume_status(project_root, specbind_root)?;
-    Ok(Some(render_reverse_resume(&status, steering_count)))
-}
-
-fn read_adoption_resume_record(
-    specbind_root: &Path,
-) -> Result<AdoptionResumeRecord, CommandOutput> {
-    let record_path = "adoption/reverse-discovery.yaml";
-    let path = specbind_root.join(record_path);
-    let metadata = fs::symlink_metadata(&path).map_err(|error| {
-        CommandOutput::failure(
-            "ADOPTION_RESUME_RECORD_REQUIRED",
-            "Active reverse establishment requires its temporary adoption record.",
-            vec![format!("{record_path}: {error}")],
-        )
-    })?;
-    if guarded_fs::is_link_like(&metadata) || !metadata.is_file() {
-        return Err(CommandOutput::failure(
-            "ADOPTION_RESUME_RECORD_INVALID",
-            "Cannot trust the temporary adoption record for reverse resumption.",
-            vec![format!(
-                "{record_path}: expected a regular non-symlink file"
-            )],
-        ));
-    }
-    let source = fs::read_to_string(&path).map_err(|error| {
-        CommandOutput::failure(
-            "ADOPTION_RESUME_RECORD_INVALID",
-            "Cannot read the temporary adoption record for reverse resumption.",
-            vec![format!("{record_path}: {error}")],
-        )
-    })?;
-    let record: AdoptionResumeRecord = serde_saphyr::from_str(&source).map_err(|error| {
-        CommandOutput::failure(
-            "ADOPTION_RESUME_RECORD_INVALID",
-            "Cannot parse the temporary adoption record for reverse resumption.",
-            vec![format!("{record_path}: {error}")],
-        )
-    })?;
-    Ok(record)
-}
-
-fn resolve_reverse_resume_status(
-    project_root: &Path,
-    specbind_root: &Path,
-) -> Result<milestone_status::MilestoneStatusModel, CommandOutput> {
-    let _current_revision = adoption_revision(project_root)?;
-    let status = milestone_status::resolve(project_root, specbind_root)
-        .map_err(|error| {
-            CommandOutput::failure(
-                "ADOPTION_RESUME_STATE_INVALID",
-                "Cannot derive a safe reverse-establishment resume point.",
-                error
-                    .diagnostics
-                    .iter()
-                    .map(render_milestone_diagnostic)
-                    .collect(),
-            )
-        })?
-        .ok_or_else(|| {
-            CommandOutput::failure(
-                "ADOPTION_RESUME_STATE_INVALID",
-                "The active reverse milestone disappeared during preflight.",
-                vec![],
-            )
-        })?;
-    if status.health != milestone_status::MilestoneHealth::Consistent
-        || !status.current_blockers.is_empty()
-    {
-        let mut details = status
-            .diagnostics
-            .iter()
-            .map(render_milestone_diagnostic)
-            .collect::<Vec<_>>();
-        details.extend(status.current_blockers.iter().cloned());
-        return Err(CommandOutput::failure(
-            "ADOPTION_RESUME_STATE_INVALID",
-            "Active reverse establishment is not safe to resume.",
-            details,
-        ));
-    }
-    adoption_finalize::ensure_source_unchanged(
-        project_root,
-        specbind_root,
-        &status.baseline_revision,
-        &status
-            .items
-            .iter()
-            .map(|item| item.id.clone())
-            .collect::<Vec<_>>(),
-    )
-    .map_err(|error| {
-        CommandOutput::failure(
-            "ADOPTION_RESUME_SOURCE_STALE",
-            "Implementation evidence changed after reverse establishment began.",
-            error
-                .issues
-                .iter()
-                .map(|issue| {
-                    let path = issue
-                        .path
-                        .as_ref()
-                        .map_or_else(String::new, |path| format!(" {path}:"));
-                    format!("{}{path} {}", issue.code, issue.message)
-                })
-                .collect(),
-        )
-    })?;
-
-    Ok(status)
+    CommandOutput::failure(error.code, error.message, details)
 }
 
 fn render_reverse_resume(
@@ -353,139 +215,6 @@ fn render_reverse_resume(
         )
         .into_bytes(),
     )
-}
-
-fn adoption_steering_count(specbind_root: &Path) -> Result<usize, CommandOutput> {
-    let inventory = match steering::discover(specbind_root) {
-        Ok(inventory) => inventory,
-        Err(message) => {
-            return Err(CommandOutput::failure(
-                "ADOPTION_STEERING_INVALID",
-                "Cannot establish the Steering baseline for adoption.",
-                vec![message],
-            ));
-        }
-    };
-    if !inventory.issues.is_empty() {
-        return Err(CommandOutput::failure(
-            "ADOPTION_STEERING_INVALID",
-            "Cannot establish the Steering baseline for adoption.",
-            inventory.issues.iter().map(render_issue).collect(),
-        ));
-    }
-    if inventory.documents.is_empty() {
-        return Err(CommandOutput::failure(
-            "ADOPTION_STEERING_REQUIRED",
-            "Existing-project adoption requires a non-empty Steering baseline.",
-            vec![
-                "Run sb-steering in bootstrap mode, review it, and commit it before retrying."
-                    .to_owned(),
-            ],
-        ));
-    }
-    Ok(inventory.documents.len())
-}
-
-fn ensure_initial_adoption_scope(specbind_root: &Path) -> Result<(), CommandOutput> {
-    let record = "adoption/reverse-discovery.yaml";
-    match fs::symlink_metadata(specbind_root.join(record)) {
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Ok(_) => {
-            return Err(CommandOutput::failure(
-                "ADOPTION_RECORD_PRESENT",
-                "Existing-project adoption cannot start from a pre-existing temporary record.",
-                vec![format!(
-                    "inspect and explicitly reconcile the unsupported record before retrying: {record}"
-                )],
-            ));
-        }
-        Err(error) => {
-            return Err(CommandOutput::failure(
-                "ADOPTION_RECORD_UNREADABLE",
-                "Cannot verify that no temporary adoption record exists.",
-                vec![format!("{record}: {error}")],
-            ));
-        }
-    }
-
-    let specs = match spec_list_model::resolve(specbind_root) {
-        Ok(specs) => specs,
-        Err(error) => {
-            return Err(CommandOutput::failure(
-                "ADOPTION_SPEC_LIST_FAILED",
-                "Cannot verify the initial adoption scope.",
-                vec![error.message],
-            ));
-        }
-    };
-    if !specs.is_empty() {
-        return Err(CommandOutput::failure(
-            "ADOPTION_SPECS_PRESENT",
-            "Initial existing-project adoption requires a project with no persistent Specs.",
-            specs
-                .iter()
-                .map(|spec| format!("existing spec: {}", spec.canonical_spec))
-                .collect(),
-        ));
-    }
-
-    match milestone_scope_model::resolve(specbind_root, false) {
-        Ok(None) => Ok(()),
-        Ok(Some(_)) => Err(CommandOutput::failure(
-            "ADOPTION_MILESTONE_ACTIVE",
-            "Existing-project adoption cannot start while a milestone is active.",
-            vec![],
-        )),
-        Err(error) => Err(CommandOutput::failure(
-            "ADOPTION_MILESTONE_INVALID",
-            "Cannot verify that no milestone is active.",
-            error
-                .diagnostics
-                .iter()
-                .map(render_milestone_diagnostic)
-                .collect(),
-        )),
-    }
-}
-
-fn adoption_revision(project_root: &Path) -> Result<String, CommandOutput> {
-    let status = match repository::output_bytes(
-        project_root,
-        &["status", "--porcelain=v1", "-z", "--untracked-files=all"],
-    ) {
-        Ok(status) => status,
-        Err(error) => {
-            return Err(CommandOutput::failure(
-                "ADOPTION_GIT_FAILED",
-                "Cannot inspect the repository for adoption.",
-                vec![error.to_string()],
-            ));
-        }
-    };
-    if !status.is_empty() {
-        return Err(CommandOutput::failure(
-            "ADOPTION_WORKTREE_DIRTY",
-            "Existing-project adoption requires a clean committed repository.",
-            vec![
-                "Commit or otherwise reconcile the current work without having SpecBind move it."
-                    .to_owned(),
-            ],
-        ));
-    }
-
-    match repository::output(project_root, &["rev-parse", "HEAD"]) {
-        Ok(revision) if !revision.trim().is_empty() => Ok(revision.trim().to_owned()),
-        Ok(_) => Err(CommandOutput::failure(
-            "ADOPTION_REVISION_INVALID",
-            "Git returned an empty adoption source revision.",
-            vec![],
-        )),
-        Err(error) => Err(CommandOutput::failure(
-            "ADOPTION_GIT_FAILED",
-            "Cannot resolve the adoption source revision.",
-            vec![error.to_string()],
-        )),
-    }
 }
 
 /// Lists every persistent Spec in the project.
@@ -558,5 +287,61 @@ pub fn milestone_scope(start: &Path, include_body: bool) -> CommandOutput {
                 .map(render_milestone_diagnostic)
                 .collect(),
         ),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use adoption::{FailureDetails, PreflightFailure};
+
+    #[test]
+    fn adoption_failures_preserve_detail_order_escaping_and_stderr_routing() {
+        let cases = [
+            (
+                FailureDetails::Messages(vec!["first\nsecond".to_owned()]),
+                "  first\\nsecond\n",
+            ),
+            (
+                FailureDetails::Artifacts(vec![crate::artifacts::DiscoveryIssue {
+                    code: "ARTIFACT",
+                    path: Some("steering/project.md".into()),
+                    message: "bad\tvalue".to_owned(),
+                }]),
+                "  ARTIFACT steering/project.md: bad\\tvalue\n",
+            ),
+            (
+                FailureDetails::Milestone {
+                    diagnostics: vec![milestone_status::MilestoneDiagnostic {
+                        code: "STATE",
+                        path: None,
+                        message: "bad\nstate".to_owned(),
+                    }],
+                    blockers: vec!["blocker\tvalue".to_owned()],
+                },
+                "  STATE bad\\nstate\n  blocker\\tvalue\n",
+            ),
+            (
+                FailureDetails::Source(vec![crate::adoption_finalize::FinalizeIssue {
+                    code: "SOURCE",
+                    path: Some("source\tfile".to_owned()),
+                    message: "changed\nvalue".to_owned(),
+                }]),
+                "  SOURCE source\\tfile: changed\\nvalue\n",
+            ),
+        ];
+        for (details, expected) in cases {
+            let output = render_adoption_failure(PreflightFailure {
+                code: "ADOPTION_FAILED",
+                message: "Cannot continue.",
+                details,
+            });
+            assert!(!output.success);
+            assert_eq!(output.stdout, b"");
+            assert_eq!(
+                String::from_utf8(output.stderr).unwrap(),
+                format!("ERROR ADOPTION_FAILED: Cannot continue.\n{expected}"),
+            );
+        }
     }
 }

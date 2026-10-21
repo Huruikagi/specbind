@@ -41,6 +41,11 @@ facade. A mutating use case must rediscover and revalidate its authoritative
 current inputs immediately before persistence. Earlier inventory, status, or
 agent-authored evidence is never mutation authority.
 
+`lifecycle/adoption.rs` owns the read-only prerequisites for initial and resumed
+reverse establishment. It returns typed readiness and diagnostic details; the CLI
+owns text rendering and stream routing. The service grants no later mutation
+authority, and retains the existing prerequisite evaluation order.
+
 `lifecycle/release_finalize.rs` retains the public finalization API and the
 normal readiness/revalidation sequence. Its private `plan`, `recovery`, and
 `persistence` modules own output planning, recognized partial/completed retries,

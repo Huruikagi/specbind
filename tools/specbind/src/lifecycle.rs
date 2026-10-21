@@ -1,5 +1,6 @@
 //! Guarded application lifecycle services.
 
+pub(crate) mod adoption;
 pub mod adoption_finalize;
 pub mod approval;
 pub mod completion;
