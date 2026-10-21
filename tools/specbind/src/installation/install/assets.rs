@@ -232,78 +232,40 @@ pub(super) fn template_entries(
             template::SPEC_TEMPLATE_ROOT,
             embedded.output_path
         );
-        let target = project_root.join(&relative);
-        let action = match fs::symlink_metadata(&target) {
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
-            Ok(_) => PlanAction::Keep,
-            Err(error) => {
-                return Err(one_issue(
-                    "INSTALL_TARGET_UNREADABLE",
-                    Some(relative),
-                    error.to_string(),
-                ));
-            }
-        };
-        let content = (action == PlanAction::Create)
-            .then(|| {
+        entries.push(project_owned_entry(
+            project_root,
+            relative,
+            "template",
+            |relative| {
                 template::read_embedded(resolved.language, &embedded.selector).ok_or_else(|| {
                     one_issue(
                         "INSTALL_ASSET_UNAVAILABLE",
-                        Some(relative.clone()),
+                        Some(relative.to_owned()),
                         "embedded template content is unavailable",
                     )
                 })
-            })
-            .transpose()?;
-        entries.push(PlanEntry {
-            action,
-            path: relative,
-            category: "template",
-            detail: (action == PlanAction::Keep)
-                .then(|| "project-owned settings are never overwritten".to_owned()),
-            content,
-            expected_current: None,
-            resume_content: None,
-        });
+            },
+        )?);
     }
     let roadmap_relative = format!(
         "{}/{}",
         resolved.spec_dir,
         template::MILESTONE_ROADMAP_TEMPLATE_PATH
     );
-    let roadmap_target = project_root.join(&roadmap_relative);
-    let roadmap_action = match fs::symlink_metadata(&roadmap_target) {
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
-        Ok(_) => PlanAction::Keep,
-        Err(error) => {
-            return Err(one_issue(
-                "INSTALL_TARGET_UNREADABLE",
-                Some(roadmap_relative),
-                error.to_string(),
-            ));
-        }
-    };
-    let roadmap_content = (roadmap_action == PlanAction::Create)
-        .then(|| {
+    entries.push(project_owned_entry(
+        project_root,
+        roadmap_relative,
+        "template",
+        |relative| {
             template::read_embedded_milestone(resolved.language).ok_or_else(|| {
                 one_issue(
                     "INSTALL_ASSET_UNAVAILABLE",
-                    Some(roadmap_relative.clone()),
+                    Some(relative.to_owned()),
                     "embedded milestone template content is unavailable",
                 )
             })
-        })
-        .transpose()?;
-    entries.push(PlanEntry {
-        action: roadmap_action,
-        path: roadmap_relative,
-        category: "template",
-        detail: (roadmap_action == PlanAction::Keep)
-            .then(|| "project-owned settings are never overwritten".to_owned()),
-        content: roadmap_content,
-        expected_current: None,
-        resume_content: None,
-    });
+        },
+    )?);
     Ok(entries)
 }
 
@@ -319,29 +281,12 @@ pub(super) fn adapter_entries(
     let mut entries = Vec::new();
     for entry in adapter::all() {
         let relative = format!("{}/{}", resolved.spec_dir, entry.path());
-        let target = project_root.join(&relative);
-        let action = match fs::symlink_metadata(&target) {
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
-            Ok(_) => PlanAction::Keep,
-            Err(error) => {
-                return Err(one_issue(
-                    "INSTALL_TARGET_UNREADABLE",
-                    Some(relative),
-                    error.to_string(),
-                ));
-            }
-        };
-        entries.push(PlanEntry {
-            action,
-            path: relative,
-            category: "adapter",
-            detail: (action == PlanAction::Keep)
-                .then(|| "project-owned settings are never overwritten".to_owned()),
-            content: (action == PlanAction::Create)
-                .then(|| entry.scaffold(resolved.language).to_owned()),
-            expected_current: None,
-            resume_content: None,
-        });
+        entries.push(project_owned_entry(
+            project_root,
+            relative,
+            "adapter",
+            |_| Ok(entry.scaffold(resolved.language).to_owned()),
+        )?);
     }
     Ok(entries)
 }
@@ -362,30 +307,44 @@ pub(super) fn rule_entries(
             rule::RULES_ROOT,
             default.file_name
         );
-        let target = project_root.join(&relative);
-        let action = match fs::symlink_metadata(&target) {
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
-            Ok(_) => PlanAction::Keep,
-            Err(error) => {
-                return Err(one_issue(
-                    "INSTALL_TARGET_UNREADABLE",
-                    Some(relative),
-                    error.to_string(),
-                ));
-            }
-        };
-        entries.push(PlanEntry {
-            action,
-            path: relative,
-            category: "rule",
-            detail: (action == PlanAction::Keep)
-                .then(|| "project-owned settings are never overwritten".to_owned()),
-            content: (action == PlanAction::Create).then(|| default.content().to_owned()),
-            expected_current: None,
-            resume_content: None,
-        });
+        entries.push(project_owned_entry(project_root, relative, "rule", |_| {
+            Ok(default.content().to_owned())
+        })?);
     }
     Ok(entries)
+}
+
+/// Plans a missing default without reading or rendering an existing project copy.
+fn project_owned_entry(
+    project_root: &Path,
+    relative: String,
+    category: &'static str,
+    render: impl FnOnce(&str) -> Result<String, InstallIssues>,
+) -> Result<PlanEntry, InstallIssues> {
+    let action = match fs::symlink_metadata(project_root.join(&relative)) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => PlanAction::Create,
+        Ok(_) => PlanAction::Keep,
+        Err(error) => {
+            return Err(one_issue(
+                "INSTALL_TARGET_UNREADABLE",
+                Some(relative),
+                error.to_string(),
+            ));
+        }
+    };
+    let content = (action == PlanAction::Create)
+        .then(|| render(&relative))
+        .transpose()?;
+    Ok(PlanEntry {
+        action,
+        path: relative,
+        category,
+        detail: (action == PlanAction::Keep)
+            .then(|| "project-owned settings are never overwritten".to_owned()),
+        content,
+        expected_current: None,
+        resume_content: None,
+    })
 }
 
 /// Plans the Decision 0099 marked block in root `AGENTS.md` and retires any
@@ -764,4 +723,54 @@ pub(super) fn agent_role_entries(
         });
     }
     Ok(entries)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn existing_project_targets_are_kept_without_reading_or_rendering() {
+        let root = tempfile::tempdir().unwrap();
+        fs::write(root.path().join("custom.md"), [0xff, 0xfe]).unwrap();
+        fs::create_dir(root.path().join("directory.md")).unwrap();
+        for relative in ["custom.md", "directory.md"] {
+            let entry = project_owned_entry(root.path(), relative.to_owned(), "template", |_| {
+                panic!("existing project targets must not require an embedded default")
+            })
+            .unwrap();
+            assert_eq!(entry.action, PlanAction::Keep);
+            assert_eq!(entry.path, relative);
+            assert_eq!(entry.category, "template");
+            assert_eq!(
+                entry.detail.as_deref(),
+                Some("project-owned settings are never overwritten")
+            );
+            assert!(entry.content.is_none());
+            assert!(entry.expected_current.is_none());
+            assert!(entry.resume_content.is_none());
+        }
+        assert_eq!(
+            fs::read(root.path().join("custom.md")).unwrap(),
+            [0xff, 0xfe]
+        );
+        assert!(root.path().join("directory.md").is_dir());
+    }
+
+    #[test]
+    fn missing_project_target_preserves_render_failure_without_writing() {
+        let root = tempfile::tempdir().unwrap();
+        let expected = one_issue(
+            "INSTALL_ASSET_UNAVAILABLE",
+            Some("missing.md".to_owned()),
+            "embedded template content is unavailable",
+        );
+        let error = project_owned_entry(root.path(), "missing.md".to_owned(), "template", |path| {
+            assert_eq!(path, "missing.md");
+            Err(expected.clone())
+        })
+        .unwrap_err();
+        assert_eq!(error, expected);
+        assert!(!root.path().join("missing.md").exists());
+    }
 }
