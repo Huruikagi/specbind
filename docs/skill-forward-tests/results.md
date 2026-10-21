@@ -14,6 +14,9 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`; isolated fixture instructions | `f6b3cbd`, product fixes `b3d2057` | A2/I3r pass; FT-0071/0072 confirmed. DR6 converges but fails fresh-owner isolation (FT-0073); FT-0065 waiting branch not exercised | [Isolated boundary measurements](./runs/2026-10-21-codex-f6b3cbd-isolated-boundaries.md) |
+| 2026-10-21 | Claude Code | CLI `claude-sonnet-5-5` / `medium` | `b3d2057` | DR6 environment-blocked before tools by provider credit balance; FT-0065 fixed, Claude confirmation pending | [Workflow boundary attempt](./runs/2026-10-21-claude-code-b3d2057-boundaries.md) |
+| 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`; default CLI attempt | `b3d2057` | A2/I3r/DR6 environment-invalid: nested contexts retained host-language instructions despite English driver output. Mechanical observations retained; canonical CLI A2 remains ENV-0007 | [Initial boundary measurements](./runs/2026-10-21-codex-b3d2057-boundaries.md) |
 | 2026-10-17 | Codex | App `gpt-6.1-sol` / `medium`; canonical CLI attempt | `de3df11` + Decision 0229 tree | I3r/I14 pass; A2 selector fix confirmed, context inheritance fails (FT-0071); VD7/VD8 expected inputs/stops observed but environment-invalid language contamination; CLI blocked by ENV-0007; FT-0072 report wording found | [Governing inputs](./runs/2026-10-17-codex-de3df11-skill-inputs.md) |
 | 2026-10-17 | Claude Code | `claude-opus-5-5`, real session | `de3df11` + Decision 0229 tree | A2 environment-blocked before tools by provider credit balance | [Governing inputs attempt](./runs/2026-10-17-claude-code-de3df11-skill-inputs.md) |
 | 2026-10-17 | Codex | CLI `gpt-5.6-terra` / `medium`, explicit comparison | `4c8bbd5` + final Decision 0228 tree | DR13 eleven decisions and validated reads pass; DR14 actual Task checkpoint; DR15 configured progress reaches actual fourth review with retained counts; FT-0069/0070 resolved | [Final project Drive defaults](./runs/2026-10-17-codex-4c8bbd5-drive-defaults-final.md) |
@@ -207,8 +210,8 @@ invalid runs, retries, and debrief dispositions, remains in
 
 ## Current finding state
 
-- Open reproduced product findings: 5
-- Fixed, behavioral confirmation pending: 3
+- Open reproduced product findings: 4
+- Fixed, behavioral confirmation pending: 4
 - Active environment limitations: 9
 
 The authoritative rows and stable identifiers are in
