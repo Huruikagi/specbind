@@ -1,0 +1,12 @@
+schemaVersion: 1
+repositoryRoot: /project
+gitDirectory: /project/.git
+headRevision: '0000000000000000000000000000000000000000'
+paths:
+  - path: source.txt
+    index: null
+    worktree:
+      kind: file
+      digest: not-a-digest
+      executable: false
+    dirty: true

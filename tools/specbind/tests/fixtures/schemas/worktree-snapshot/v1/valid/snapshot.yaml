@@ -1,0 +1,19 @@
+schemaVersion: 1
+repositoryRoot: /project
+gitDirectory: /project/.git
+headRevision: '0000000000000000000000000000000000000000'
+paths:
+  - path: source.txt
+    index:
+      mode: '100644'
+      oid: '0000000000000000000000000000000000000000'
+    worktree:
+      kind: file
+      digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+      executable: false
+    dirty: true
+  - path: removed.txt
+    index: null
+    worktree:
+      kind: missing
+    dirty: true

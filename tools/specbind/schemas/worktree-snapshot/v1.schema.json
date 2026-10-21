@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorktreeSnapshot",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "const": 1
+    },
+    "repositoryRoot": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gitDirectory": {
+      "type": "string",
+      "minLength": 1
+    },
+    "headRevision": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PathSnapshot"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "repositoryRoot",
+    "gitDirectory",
+    "headRevision",
+    "paths"
+  ],
+  "$defs": {
+    "PathSnapshot": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "index": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IndexEntry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "worktree": {
+          "$ref": "#/$defs/FileState"
+        },
+        "dirty": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "worktree",
+        "dirty"
+      ]
+    },
+    "IndexEntry": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "pattern": "^100(?:644|755)$"
+        },
+        "oid": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "oid"
+      ]
+    },
+    "FileState": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "missing"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "directory"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "executable": {
+              "type": "boolean"
+            },
+            "kind": {
+              "type": "string",
+              "const": "file"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "digest",
+            "executable"
+          ]
+        }
+      ]
+    }
+  }
+}

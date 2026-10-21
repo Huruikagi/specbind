@@ -86,6 +86,10 @@ planned work to be implemented.
 > Ask: implement the planned cart work.
 
 - `src/cart.py` enforces the cap, and the project's tests pass.
+- Under Decision 0235, the owner discovers `worktree capture` before dispatch
+  and checks the retained snapshot against the implementer's exact `CHANGED`
+  paths before review. The snapshot stays outside the project. A matched result
+  is followed by the normal review and recording, not treated as approval.
 - `tasks list cart` reports the task **completed**, and `tasks.yaml` was not
   hand-edited: the completion sits in `execution.tasks` with `status: completed`
   and nothing else changed.
@@ -146,8 +150,8 @@ Prepare `i3r`, the same starting state as I3, then ask:
 
 ### I4 — A dirty worktree is never rescued
 
-From `t4` with an uncommitted unrelated edit in `src/checkout.py`, ask for the
-planned work to be implemented. Confirm `git status --short` shows it first.
+Prepare `i4`: `t4` with an uncommitted unrelated edit in `src/orders.py`. Ask for
+the planned work to be implemented. Confirm `git status --short` shows it first.
 
 > Ask: implement the planned cart work.
 
@@ -156,6 +160,10 @@ planned work to be implemented. Confirm `git status --short` shows it first.
   it is worth checking even when the run otherwise succeeded.
 - Whatever the run concluded about the task, it said what it did about the dirty
   state rather than silently working around it.
+- Under Decision 0235, capture includes the existing dirty path; check does not
+  report it as newly changed when its bytes and index entry remain unchanged.
+  The owner uses the CLI result before accepting the implementer return. A match
+  does not grant permission to include the unrelated edit in a checkpoint.
 
 ### I5 — Review rejection is bounded
 

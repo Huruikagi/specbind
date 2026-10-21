@@ -115,6 +115,25 @@ fn drive_preserves_nested_and_pre_owner_capacity_handoffs() {
 }
 
 #[test]
+fn implementation_checks_cli_observations_without_granting_mutation_authority() {
+    let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
+    for required in [
+        "specbind worktree capture",
+        "specbind worktree check --snapshot <external-file|-> --changed <exact-path>",
+        "`WORKTREE_CHECK_MISMATCH` (exit 1)",
+        "`preexistingTouchedPaths`",
+        "Never recapture just to clear a mismatch",
+        "prior findings and partial paths remain",
+        "The orchestrator never deletes them itself",
+    ] {
+        assert!(
+            procedure.contains(required),
+            "missing worktree boundary: {required}"
+        );
+    }
+}
+
+#[test]
 fn implementation_re_reviews_only_a_diagnosed_review_scope_defect_within_budget() {
     let procedure = skill_resource_text("sb-implement", "references/spec-backed.md");
     for required in [

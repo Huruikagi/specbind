@@ -63,7 +63,8 @@ fn lists_and_reads_embedded_schemas_without_a_project() {
         .assert()
         .success()
         .stdout(concat!(
-            "OK SCHEMA_LISTED: Found 9 embedded schema(s).\n",
+            "OK SCHEMA_LISTED: Found 10 embedded schema(s).\n",
+            "  selector=worktree-snapshot/v1 artifact=Worktree snapshot (transient) written_by=\"read-only CLI capture\"\n",
             "  selector=completion-batch/v1 artifact=Completion batch candidate (transient) written_by=\"the validation owner\"\n",
             "  selector=task-revision/v1 artifact=Task revision candidate (transient) written_by=\"the authoring agent\"\n",
             "  selector=drive/v1 artifact=.specbind.json drive member written_by=\"project configuration\"\n",

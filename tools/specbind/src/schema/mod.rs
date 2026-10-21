@@ -10,6 +10,10 @@ pub mod shared_contract;
 pub mod spec;
 pub mod task_revision;
 pub mod tasks;
+pub mod worktree_snapshot;
+
+pub const WORKTREE_SNAPSHOT_V1_SCHEMA_JSON: &str =
+    include_str!("../../schemas/worktree-snapshot/v1.schema.json");
 
 pub const COMPLETION_BATCH_V1_SCHEMA_JSON: &str =
     include_str!("../../schemas/completion-batch/v1.schema.json");
@@ -54,6 +58,12 @@ impl EmbeddedSchema {
 
 /// Every embedded schema. This is the whole accepted selector set.
 static SCHEMAS: &[EmbeddedSchema] = &[
+    EmbeddedSchema {
+        selector: "worktree-snapshot/v1",
+        artifact: "Worktree snapshot (transient)",
+        written_by: "read-only CLI capture",
+        content: WORKTREE_SNAPSHOT_V1_SCHEMA_JSON,
+    },
     EmbeddedSchema {
         selector: "completion-batch/v1",
         artifact: "Completion batch candidate (transient)",

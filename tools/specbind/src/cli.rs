@@ -9,6 +9,7 @@ mod read;
 mod replan_completion;
 mod task_revision;
 mod tasks;
+mod worktree;
 
 use input::{
     ExternalInputError, LOG_ENTRIES_INPUT, MIGRATION_RESOLUTION_INPUT, REVIEW_CANDIDATE_INPUT,
@@ -21,6 +22,7 @@ pub use read::*;
 pub use replan_completion::*;
 pub use task_revision::*;
 pub use tasks::*;
+pub use worktree::*;
 
 use output::{escape, push_field, push_inline_list, push_list, yes_no};
 

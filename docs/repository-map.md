@@ -56,6 +56,8 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/lifecycle/task_revision.rs` — guarded existing-plan replacement and explicit execution reconciliation
 - `tools/specbind/src/lifecycle/replan_completion.rs` — read-only baseline, eligibility and checkpoint checks for delegated completion withdrawal
 - `tools/specbind/src/infrastructure/repository/snapshot.rs` — disposable committed checkouts for historical state evaluation
+- `tools/specbind/src/infrastructure/repository/worktree.rs` — read-only Git/index/content observations for transient worktree snapshots
+- `tools/specbind/src/read_model/worktree.rs` — strict snapshot input and exact declared-path comparison, without mutation authority
 - `tools/specbind/src/catalog/rule.rs` — embedded default shared-rule installation assets
 - `tools/specbind/src/catalog/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language

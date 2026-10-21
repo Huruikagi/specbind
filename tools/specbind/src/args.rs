@@ -19,6 +19,11 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Capture and compare observed working-tree changes without mutation.
+    Worktree {
+        #[command(subcommand)]
+        command: WorktreeCommand,
+    },
     /// Plan project work across executable versions without changing files.
     Migration {
         #[command(subcommand)]
@@ -146,6 +151,20 @@ pub enum Command {
     Migrate {
         #[command(subcommand)]
         command: MigrateCommand,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum WorktreeCommand {
+    /// Emit a transient JSON snapshot; retain it outside the worktree.
+    Capture,
+    /// Compare against an unchanged snapshot and exact declared paths.
+    Check {
+        #[arg(long)]
+        snapshot: String,
+        /// Exact project-relative path; repeat for each reported change, omit for none.
+        #[arg(long = "changed")]
+        changed: Vec<String>,
     },
 }
 

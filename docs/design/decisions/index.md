@@ -241,3 +241,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0232](./0232-cli-replan-completion-prechecks.md) | Accepted | Read-only Git-backed baseline and completion-withdrawal prechecks for replan recovery |
 | [0233](./0233-cli-grouped-completion.md) | Accepted | CLI preflight, guarded acceptance and checkpoint verification for explicit completion sets |
 | [0234](./0234-cli-contract-baseline-diff.md) | Accepted | Read-only normalized Contract baseline diffs and declared consumers on both sides |
+| [0235](./0235-cli-worktree-capture-check.md) | Accepted | Read-only worktree snapshots and exact declared-change checks at implementation returns |

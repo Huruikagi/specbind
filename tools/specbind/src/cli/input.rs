@@ -43,6 +43,15 @@ pub(super) const TASK_REVISION_INPUT: ExternalInputSpec = ExternalInputSpec {
     require_external: true,
 };
 
+pub(super) const WORKTREE_SNAPSHOT_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "WORKTREE_SNAPSHOT_READ_FAILED",
+    target_invalid: "WORKTREE_SNAPSHOT_TARGET_INVALID",
+    stdin_subject: "worktree snapshot",
+    subject: "worktree snapshot",
+    capitalized: "Worktree snapshot",
+    require_external: true,
+};
+
 pub(super) const LOG_ENTRIES_INPUT: ExternalInputSpec = ExternalInputSpec {
     read_failed: "LOG_INPUT_READ_FAILED",
     target_invalid: "LOG_INPUT_TARGET_INVALID",

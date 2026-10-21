@@ -104,6 +104,23 @@ fn task_revision_schema_and_wire_conform() {
 }
 
 #[test]
+fn worktree_snapshot_schema_and_wire_conform() {
+    use specbind::schema::{
+        WORKTREE_SNAPSHOT_V1_SCHEMA_JSON, worktree_snapshot::v1::WorktreeSnapshot,
+    };
+    assert_eq!(
+        WORKTREE_SNAPSHOT_V1_SCHEMA_JSON,
+        generate::to_pretty_json(&generate::worktree_snapshot_v1()).unwrap()
+    );
+    let schema = serde_json::from_str(WORKTREE_SNAPSHOT_V1_SCHEMA_JSON).unwrap();
+    jsonschema::draft202012::meta::validate(&schema).unwrap();
+    assert_fixture_set::<WorktreeSnapshot>(
+        "worktree-snapshot/v1",
+        WORKTREE_SNAPSHOT_V1_SCHEMA_JSON,
+    );
+}
+
+#[test]
 fn completion_batch_schema_and_wire_conform() {
     use specbind::schema::{
         COMPLETION_BATCH_V1_SCHEMA_JSON, completion_batch::v1::CompletionBatch,

@@ -11,3 +11,4 @@ pub mod shared_contract;
 pub mod spec_list;
 pub mod spec_status;
 pub mod task_read_model;
+pub mod worktree;

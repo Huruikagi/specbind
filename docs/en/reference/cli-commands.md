@@ -29,6 +29,8 @@ Safe to run at any time. They never change project files.
 | `specbind check contracts --for-design <spec>` | One Spec's Contract and its direct consumed targets; does not evaluate the whole graph |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contract relationships and file ownership |
 | `specbind contract diff --baseline <revision> [--json]` | Normalized baseline/worktree Contract changes and declared consumers on both sides |
+| `specbind worktree capture` | Transient JSON snapshot of HEAD, index and observed file contents |
+| `specbind worktree check --snapshot <file\|-> --changed <path>` | Actual changes compared with exact declared paths, as JSON |
 
 `milestone status` and `spec status` also accept `--json` for tools and scripts.
 See [Lifecycle states](./lifecycle-states.md) for the state names they report.
@@ -41,6 +43,33 @@ Individual Design checks can pass while unrelated Specs are still being designed
 Required provider Contracts must already exist and their consumed entries must
 resolve. The complete graph is still required at Contract Review; later Design
 work or that review may require revising a previously approved Design.
+
+## Compare changes before and after work
+
+`worktree capture` writes JSON to stdout. Preserve it unchanged in memory or a
+file outside the repository. After the work, pass it to `worktree check` using
+`--snapshot <file>` or `--snapshot -` for stdin. Repeat `--changed` for every
+exact project-relative changed file, with `/` separators; omit it when no change
+is expected. Directories and globs do not cover child paths. Declare both paths
+of a rename. The commands require a Git repository with a committed HEAD, but
+do not require SpecBind configuration.
+
+The comparison distinguishes file-content changes from index changes and detects
+additional edits to already dirty files. `unexpectedPaths` reports undeclared
+changes, `preexistingTouchedPaths` identifies earlier dirty files that changed
+again, and `declaredUnchangedPaths` reports declarations without observed edits.
+Exit zero returns `WORKTREE_CHECK_MATCHED`; HEAD movement or unexpected changes
+return `WORKTREE_CHECK_MISMATCH` with exit one. Input/read errors stop without a
+partial report. A match does not establish ownership, correctness or permission
+to include an earlier change in a commit.
+
+Coverage includes tracked and nonignored untracked files, plus original snapshot
+paths even if they later become ignored. Ordinary ignored files, Git metadata
+and empty directories are outside coverage. Links, submodules, conflicts,
+intent-to-add and hidden/sparse index entries are rejected. The CLI checks for
+stable repeated reads, but does not lock the tree. It never restores, removes,
+stages or commits files. Read the snapshot schema with
+`specbind schema read worktree-snapshot/v1`.
 
 ## Compare Contracts with a baseline
 

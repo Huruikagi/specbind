@@ -386,6 +386,12 @@ fn main() -> ExitCode {
         },
         Command::Check { command } => run_check(&start, command),
         Command::Contract { command } => run_contract(&start, command),
+        Command::Worktree { command } => match command {
+            specbind::args::WorktreeCommand::Capture => specbind::cli::worktree_capture(&start),
+            specbind::args::WorktreeCommand::Check { snapshot, changed } => {
+                specbind::cli::worktree_check(&start, &snapshot, &changed)
+            }
+        },
         Command::Template { command } => run_template(&start, command),
         Command::Tasks { command } => run_tasks(&start, command),
         Command::Schema { command } => run_schema(command),

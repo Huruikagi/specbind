@@ -86,6 +86,16 @@ checkpoint decision.
 
 ### Dispatch a fresh implementer
 
+Immediately before each implementation dispatch, run `specbind worktree capture`.
+Retain its exact JSON in memory or a persistent file outside the worktree. A
+per-command sandbox temporary directory may disappear between tool calls; choose
+a location accessible throughout the dispatch and check, or retain the JSON in
+memory for stdin. It records HEAD,
+index entries and content digests, including existing dirty files. Do not save
+it inside the project, reconstruct it from `git status`, or edit its contents.
+A capture failure stops this dispatch; partial or unsupported reads cannot prove
+the boundary. Keep this snapshot until the returned changes have been checked.
+
 Use the registered `specbind-implementer` role when the host provides it;
 otherwise dispatch an ordinary fresh subagent with the same brief and protocol.
 The role selects capability, not scope or authority.
@@ -134,13 +144,34 @@ infer success because nothing said otherwise.
   edit; if still unresolved, enter [Task recovery](recovery.md)
 - `BLOCKED` → enter [Task recovery](recovery.md)
 
-Before accepting `READY_FOR_REVIEW`, compare the worktree with the snapshot
-from before dispatch. New caches, reports, coverage data, or other verification
-leftovers outside the intended `CHANGED` paths make the result not ready. Route
-the exact generated paths through Task recovery so the corrective implementer
-can prevent their creation or remove only outputs created by this
-task. The orchestrator never deletes them itself. If generated ownership is not
-certain, diagnose and stop rather than cleaning a possibly unrelated path.
+Before accepting `READY_FOR_REVIEW`, run:
+
+```sh
+specbind worktree check --snapshot <external-file|-> --changed <exact-path>
+```
+
+Supply the retained JSON (`-` reads stdin), repeating `--changed` for each exact
+project-relative file path in the structured `CHANGED` return. Do not pass prose,
+directory shorthand or globs; for `none`, omit all `--changed` arguments.
+Renames require both old and new paths. Read the JSON as well as the exit code.
+`WORKTREE_CHECK_MISMATCH` (exit 1) means an undeclared observed change or moved
+HEAD: do not review or complete the Task. Errors also stop without a fallback
+comparison. Diagnose unexpected paths and HEAD movement without assuming their
+author. New caches, reports, coverage data or other verification leftovers
+outside the intended `CHANGED` paths make the result not ready. Route exact paths
+through Task recovery; only the corrective implementer may remove outputs proven
+to have been created by this Task. The orchestrator never deletes them itself.
+Uncertain ownership stops rather than cleaning a possibly unrelated path.
+
+`WORKTREE_CHECK_MATCHED` only matches declared paths. Inspect
+`preexistingTouchedPaths` and the actual additional diff to preserve earlier
+work, even if the same file was declared. Investigate `declaredUnchangedPaths`
+instead of treating the declaration as proof of an edit. Ordinary ignored files,
+Git metadata and empty directories are outside coverage; this result does not
+prove their contents or authorize cleanup, staging, approval or a commit.
+Never recapture just to clear a mismatch. A newly authorized recovery dispatch
+gets its own capture, but prior findings and partial paths remain in the recovery
+ledger and still require independent resolution under [Task recovery](recovery.md).
 
 ### Review
 

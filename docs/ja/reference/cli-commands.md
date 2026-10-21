@@ -29,6 +29,8 @@
 | `specbind check contracts --for-design <spec>` | 対象SpecのContractと直接の依存先の検証結果。全体の整合性は検証しない |
 | `specbind contract graph` / `dependencies` / `consumers` / `owners` / `shared` | Contractの関係とファイルの所有 |
 | `specbind contract diff --baseline <revision> [--json]` | baselineと作業ツリーのContract差分、および変更前後の参照元 |
+| `specbind worktree capture` | HEAD、index、確認対象ファイルの内容を一時的な比較元としてJSONで出力 |
+| `specbind worktree check --snapshot <file\|-> --changed <path>` | 作業前後の差分と、申告した変更パスとの照合結果をJSONで表示 |
 
 `milestone status`と`spec status`は、ツールやスクリプト向けに`--json`も受け付けます。
 表示される状態名は[状態の一覧](./lifecycle-states.md)を参照してください。
@@ -41,6 +43,31 @@ Taskに着手するには、グループをまたいだ先行Taskもすべて完
 相手のContractが存在し、参照する項目を確認できることが必要です。Contract Reviewでは
 引き続き全体を検証します。別のSpecの設計や全体レビューで矛盾が見つかれば、
 一度承認したDesignでも戻って修正することがあります。
+
+## 作業前後の変更を照合する
+
+`worktree capture`はJSONを標準出力に返します。内容を編集せず、メモリ上か
+リポジトリ外のファイルに保持してください。作業後、`worktree check`の
+`--snapshot <file>`に渡します。標準入力から渡す場合は`--snapshot -`を使います。
+変更したファイルごとに`--changed`を繰り返し、`/`区切りのプロジェクト相対パスを
+指定します。変更がなければ省略します。ディレクトリ名やglobで子ファイルをまとめることは
+できません。改名では変更前後の両方のパスを指定します。コミット済みのHEADがあるGit
+リポジトリが必要ですが、SpecBindの設定は不要です。
+
+ファイル内容の変更とindexの変更を別々に比較し、もともと変更済みだったファイルへの
+追加編集も検出します。`unexpectedPaths`は申告外の変更、`preexistingTouchedPaths`は
+既存変更への追加編集、`declaredUnchangedPaths`は申告されても差分のなかったパスです。
+一致すれば`WORKTREE_CHECK_MATCHED`と終了コード0を返します。HEADの移動や申告外の
+変更があれば`WORKTREE_CHECK_MISMATCH`と終了コード1を返します。入力や読み取りの
+エラーでは、不完全な結果を返さず停止します。一致しても、変更の所有者や正しさが確定したり、
+既存の変更をコミットに含める権限が得られたりするわけではありません。
+
+追跡中のファイルと、無視対象ではない未追跡ファイルを確認します。比較元に含まれていた
+パスは、後から無視対象になっても比較します。通常の無視対象、Git内部の情報、空の
+ディレクトリは対象外です。リンク、submodule、競合、intent-to-add、変更を隠すindexの
+設定やsparse indexは受け付けません。複数回の読み取りが一致することを確認しますが、
+作業ツリーはロックしません。ファイルの復元・削除・ステージ・コミットは行いません。
+比較元の形式は`specbind schema read worktree-snapshot/v1`で確認できます。
 
 ## baselineとContractを比較する
 

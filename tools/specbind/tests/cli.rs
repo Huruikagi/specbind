@@ -22,6 +22,8 @@ mod project_reads;
 mod review;
 #[path = "cli/task_revision.rs"]
 mod task_revision;
+#[path = "cli/worktree.rs"]
+mod worktree;
 
 fn specbind_command() -> Command {
     Command::cargo_bin("specbind").expect("specbind binary should build")

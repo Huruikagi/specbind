@@ -1,0 +1,5 @@
+schemaVersion: 2
+repositoryRoot: /project
+gitDirectory: /project/.git
+headRevision: '0000000000000000000000000000000000000000'
+paths: []
