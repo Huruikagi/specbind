@@ -1,0 +1,24 @@
+schemaVersion: 1
+sourceFingerprint: sha256:0000000000000000000000000000000000000000000000000000000000000000
+plan:
+  items:
+    - id: '1'
+      kind: task
+      title: Retained work
+      requirement_ids: ['1.1']
+    - id: '2'
+      kind: task
+      title: Changed work
+      requirement_ids: ['1.1']
+progress:
+  - action: preserve
+    from: '2'
+    to: '1'
+    reason: Same obligation and evidence
+  - action: reset
+    from: '1'
+    to: '2'
+    reason: Changed obligation
+  - action: remove
+    from: '3'
+    reason: No longer active

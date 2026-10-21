@@ -7,7 +7,11 @@ pub mod runtime;
 pub mod scope;
 pub mod shared_contract;
 pub mod spec;
+pub mod task_revision;
 pub mod tasks;
+
+pub const TASK_REVISION_V1_SCHEMA_JSON: &str =
+    include_str!("../../schemas/task-revision/v1.schema.json");
 
 pub const DRIVE_V1_SCHEMA_JSON: &str = include_str!("../../schemas/drive/v1.schema.json");
 
@@ -46,6 +50,12 @@ impl EmbeddedSchema {
 
 /// Every embedded schema. This is the whole accepted selector set.
 static SCHEMAS: &[EmbeddedSchema] = &[
+    EmbeddedSchema {
+        selector: "task-revision/v1",
+        artifact: "Task revision candidate (transient)",
+        written_by: "the authoring agent",
+        content: TASK_REVISION_V1_SCHEMA_JSON,
+    },
     EmbeddedSchema {
         selector: "drive/v1",
         artifact: ".specbind.json drive member",

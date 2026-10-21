@@ -257,6 +257,11 @@ pub enum TemplateCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum TasksCommand {
+    /// Inspect or apply an explicit revision of an existing task plan.
+    Revision {
+        #[command(subcommand)]
+        command: TaskRevisionCommand,
+    },
     /// List the ordered task hierarchy and derived progress.
     List { spec: String },
     /// Show one task's plan content and derived prerequisites.
@@ -272,6 +277,21 @@ pub enum TasksCommand {
     },
     /// Return one executable task to pending.
     Reopen { spec: String, task_id: String },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum TaskRevisionCommand {
+    /// Read the guarded source fingerprint and current plan/execution as JSON.
+    Preflight { spec: String },
+    /// Replace the plan and reconcile existing progress without approving it.
+    Apply {
+        spec: String,
+        /// Strict task-revision/v1 JSON from an external file or standard input.
+        #[arg(long)]
+        input: String,
+        #[arg(long)]
+        dry_run: bool,
+    },
 }
 
 #[derive(Debug, Subcommand)]

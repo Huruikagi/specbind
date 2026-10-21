@@ -22,7 +22,7 @@ pub(crate) use infrastructure::{guarded_fs, repository};
 pub use installation::{agent_role, bundle_index, install, project_instructions, removal};
 pub use lifecycle::{
     adoption_finalize, approval, completion, cross_spec_review, milestone, release,
-    release_finalize, release_log, task_progress,
+    release_finalize, release_log, task_progress, task_revision,
 };
 pub use read_model::{
     configuration, contract_graph, freshness, milestone_scope, milestone_status, release_readiness,

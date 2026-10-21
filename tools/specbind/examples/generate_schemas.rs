@@ -11,6 +11,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     write_or_check(
+        &root.join("schemas/task-revision/v1.schema.json"),
+        &generate::to_pretty_json(&generate::task_revision_v1())?,
+        check,
+    )?;
+    write_or_check(
         &root.join("schemas/drive/v1.schema.json"),
         &generate::to_pretty_json(&generate::drive_v1())?,
         check,

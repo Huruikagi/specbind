@@ -6,6 +6,7 @@ mod lifecycle;
 mod migration_cli;
 mod output;
 mod read;
+mod task_revision;
 mod tasks;
 
 use input::{
@@ -16,6 +17,7 @@ pub use lifecycle::*;
 pub use migration_cli::*;
 pub use output::CommandOutput;
 pub use read::*;
+pub use task_revision::*;
 pub use tasks::*;
 
 use output::{escape, push_field, push_inline_list, push_list, yes_no};

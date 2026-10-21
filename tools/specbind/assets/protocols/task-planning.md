@@ -118,6 +118,13 @@ the ones that follow, and execution state and completion evidence reference
 those numbers. Restructuring an approved plan is legitimate; doing it for
 cosmetic reasons is not.
 
+For an existing plan, author a replacement and explicit disposition for every
+recorded execution entry through the guarded Task revision CLI. Never hand-edit
+execution keys. Preserve only when the same obligation and evidence still apply;
+reset changed work to pending and remove work outside the active plan. The CLI
+checks the mapping and copies original records; it cannot judge that semantic
+continuity. New work must not inherit completion merely because an ID matches.
+
 ## Readiness
 
 A plan is ready when every active Requirement is genuinely delivered, each task

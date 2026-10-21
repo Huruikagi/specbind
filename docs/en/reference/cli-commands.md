@@ -15,6 +15,7 @@ Safe to run at any time. They never change files.
 | `specbind spec list` | Every Spec in the project |
 | `specbind spec status <spec>` | One Spec's state, freshness, coverage, and Task progress |
 | `specbind tasks list <spec>` / `tasks show <spec> <task>` | Task hierarchy and progress, or one Task's details |
+| `specbind tasks revision preflight <spec>` | Source fingerprint and current plan/execution for an existing-plan revision, as JSON |
 | `specbind artifact list <spec>` / `artifact read <spec> <selector>` | A Spec's artifacts, or one artifact's content |
 | `specbind steering list` / `steering read <selector>` | Steering documents |
 | `specbind configuration show` | Summary of every project configuration surface |
@@ -72,6 +73,7 @@ the required reviews and checks, so you normally do not run them by hand.
 | `specbind spec requirements` / `design` / `tasks` | Gate approval or invalidation (`sb-plan`) |
 | `specbind milestone review` | Milestone-wide Contract review (`sb-contract-review`) |
 | `specbind tasks complete` / `block` / `reopen` | Task progress (`sb-implement`) |
+| `specbind tasks revision apply <spec> --input <file\|->` | Existing-plan replacement and explicit progress reconciliation (`sb-plan`; `--dry-run` checks without writing) |
 | `specbind milestone direct` | Direct item completion (`sb-implement`) |
 | `specbind spec completion` | Spec completion evidence (`sb-validate-implementation`) |
 | `specbind milestone bind-release <version>` | Target release binding (`sb-release`; you may also bind ahead of time) |
@@ -84,3 +86,31 @@ the required reviews and checks, so you normally do not run them by hand.
     performs. Use them by hand only when a guide tells you to, such as
     `specbind milestone reverse abandon` in
     [Establish Specs from an existing implementation](../guide/adopt-existing.md).
+
+## Revise a Task plan with recorded progress
+
+After an authorized Tasks rewind, `sb-plan` uses `tasks revision preflight`
+and `schema read task-revision/v1` to prepare a replacement candidate. Both
+revision operations require `tasks` state, fresh Requirements/Design approval
+and fresh Contract Review. The existing plan remains available as repair input
+even when its old Requirement coverage no longer fits the active change.
+
+The strict JSON candidate contains `schemaVersion: 1`, the returned
+`sourceFingerprint`, a complete `plan` in Tasks v1 format and a `progress` array.
+Every recorded entry needs exactly one mapping: `preserve` or `reset` with
+`from`, `to`, and `reason`, or `remove` with `from` and `reason`. With no recorded
+execution, use `progress: []`. Targets must be unique executable Tasks.
+The candidate must not contain `execution` or replacement blocker reasons.
+
+The Skill judges whether obligations and evidence still apply and obtains
+confirmation of the mapping unless existing Drive replan authority covers it.
+The CLI copies preserved records unchanged, leaves reset/new work pending and
+removes discarded records. It rejects missing/duplicate mappings, invalid
+replacement coverage and source changes. A changed fingerprint requires a new
+read and reassessment, not simply substituting the latest fingerprint.
+
+Input is supplied on stdin (`--input -`) or from a temporary file outside the
+worktree. `--dry-run` returns the mapping and resulting document without writing;
+apply replaces only `tasks.yaml` atomically. Gate approval and the Git checkpoint
+remain separate. First authoring still creates a plan without execution;
+subsequent revisions use this CLI even when no progress has been recorded.

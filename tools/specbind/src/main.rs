@@ -9,8 +9,8 @@ use specbind::args::{
     AdapterCommand, AdoptionCommand, ArtifactCommand, CheckCommand, Cli, Command,
     ConfigurationCommand, ContractCommand, DirectCommand, GateCommand, MigrateCommand,
     MilestoneCommand, ProtocolCommand, ReleaseCommand, ReverseCommand, ReviewCommand, RuleCommand,
-    SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TasksCommand,
-    TemplateCommand,
+    SchemaCommand, SpecCommand, SpecCompletionCommand, SteeringCommand, TaskRevisionCommand,
+    TasksCommand, TemplateCommand,
 };
 use specbind::cli::CommandOutput;
 
@@ -143,6 +143,16 @@ fn run_template(start: &Path, command: TemplateCommand) -> CommandOutput {
 fn run_tasks(start: &Path, command: TasksCommand) -> CommandOutput {
     match command {
         TasksCommand::List { spec } => specbind::cli::tasks_list(start, &spec),
+        TasksCommand::Revision { command } => match command {
+            TaskRevisionCommand::Preflight { spec } => {
+                specbind::cli::task_revision_preflight(start, &spec)
+            }
+            TaskRevisionCommand::Apply {
+                spec,
+                input,
+                dry_run,
+            } => specbind::cli::task_revision_apply(start, &spec, &input, dry_run),
+        },
         TasksCommand::Show { spec, task_id } => specbind::cli::tasks_show(start, &spec, &task_id),
         TasksCommand::Complete { spec, task_id } => {
             specbind::cli::tasks_complete(start, &spec, &task_id)

@@ -696,6 +696,12 @@ new first task to be added ahead of the existing work.
   completed record is the failure this exists to catch, and it validates
   perfectly.
 - The tasks gate was invalidated before the edit, not after.
+- The driver read `tasks revision preflight` and `schema read task-revision/v1`,
+  checked the candidate with `tasks revision apply --dry-run`, and applied the
+  same explicit mapping through the CLI. It never edited the retained plan or
+  its execution keys directly. The mapping accounts for both completed records;
+  the candidate carries no caller-authored execution state. New Tasks approval
+  remains a separate authorized operation.
 
 ### T4 — An approved tasks gate stops, then rewinds
 

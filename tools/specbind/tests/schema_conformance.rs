@@ -92,6 +92,18 @@ fn tasks_v1_fixtures_conform() {
 }
 
 #[test]
+fn task_revision_schema_and_wire_conform() {
+    use specbind::schema::{TASK_REVISION_V1_SCHEMA_JSON, task_revision::v1::TaskRevision};
+    assert_eq!(
+        TASK_REVISION_V1_SCHEMA_JSON,
+        generate::to_pretty_json(&generate::task_revision_v1()).unwrap()
+    );
+    let schema = serde_json::from_str(TASK_REVISION_V1_SCHEMA_JSON).unwrap();
+    jsonschema::draft202012::meta::validate(&schema).unwrap();
+    assert_fixture_set::<TaskRevision>("task-revision/v1", TASK_REVISION_V1_SCHEMA_JSON);
+}
+
+#[test]
 fn parser_invalid_fixtures_are_rejected_before_schema_validation() {
     let fixture_root =
         Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/schemas/parser/invalid");

@@ -34,6 +34,15 @@ pub(super) const COMPLETION_EVIDENCE_INPUT: ExternalInputSpec = ExternalInputSpe
     require_external: true,
 };
 
+pub(super) const TASK_REVISION_INPUT: ExternalInputSpec = ExternalInputSpec {
+    read_failed: "TASK_REVISION_INPUT_READ_FAILED",
+    target_invalid: "TASK_REVISION_INPUT_TARGET_INVALID",
+    stdin_subject: "Task revision candidate",
+    subject: "Task revision candidate",
+    capitalized: "Task revision candidate",
+    require_external: true,
+};
+
 pub(super) const LOG_ENTRIES_INPUT: ExternalInputSpec = ExternalInputSpec {
     read_failed: "LOG_INPUT_READ_FAILED",
     target_invalid: "LOG_INPUT_TARGET_INVALID",

@@ -53,6 +53,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/catalog/skill.rs` — embedded product-managed skills and per-agent rendering
 - `tools/specbind/src/catalog/protocol.rs` — embedded product-protocol registry and raw reads
 - `tools/specbind/src/lifecycle/task_progress.rs` — guarded task execution progress records
+- `tools/specbind/src/lifecycle/task_revision.rs` — guarded existing-plan replacement and explicit execution reconciliation
 - `tools/specbind/src/catalog/rule.rs` — embedded default shared-rule installation assets
 - `tools/specbind/src/catalog/template.rs` — OKF artifact template discovery, profile validation, and raw reads over project-owned overrides and embedded defaults
 - `tools/specbind/assets/templates/` — official embedded OKF artifact templates for each supported language

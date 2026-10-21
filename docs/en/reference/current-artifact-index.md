@@ -119,6 +119,10 @@ you want to override it.
 | `research.md` | Skill | Active Milestone, optional | Gap-analysis result (`sb-gap-analysis`) |
 | `tasks.yaml` | Skill and CLI | Active Milestone | Task plan (`sb-plan`) and execution progress (CLI) |
 
+The Skill authors the first Task plan without execution records. Existing-plan
+revisions use `tasks revision` to apply the replacement and explicit progress
+mapping together; execution state is never edited by hand.
+
 Active-Milestone artifacts are removed when the release is finalized. Markdown
 artifacts are identified by their type and `artifact_id`, so the filenames above
 are defaults rather than required names.

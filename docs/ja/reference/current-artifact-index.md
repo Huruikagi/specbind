@@ -119,6 +119,9 @@ AGENTS.md（マーカー内）                   Product   プロジェクト指
 | `research.md` | Skill | 進行中のMilestone・任意 | ギャップ分析の結果（`sb-gap-analysis`） |
 | `tasks.yaml` | SkillとCLI | 進行中のMilestone | Taskの計画（`sb-plan`）と実行の進捗（CLI） |
 
+初回のTask計画はスキルが進捗記録なしで作成します。既存計画の改訂では、`tasks revision`で
+新しい計画と明示した進捗の対応表をまとめて適用します。実行の進捗は手編集しません。
+
 進行中のMilestoneだけの成果物は、リリースの確定処理で削除されます。Markdownの成果物は
 種類と`artifact_id`で識別されるので、上のファイル名は既定値であり、必須の名前では
 ありません。

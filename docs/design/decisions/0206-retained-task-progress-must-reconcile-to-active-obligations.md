@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0230](./0230-cli-owned-task-plan-revision.md) makes the CLI apply this
+explicit reconciliation; the agent no longer edits execution keys directly.
+
 ## Context
 
 Decision 0202 preserves a stale Task plan and execution records through Design

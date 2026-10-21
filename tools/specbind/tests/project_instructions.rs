@@ -152,14 +152,14 @@ fn creates_a_file_holding_only_the_block() {
     );
     assert!(applied.content.contains("use\n  `sb-debug` directly"));
     assert!(
-        applied.content.contains(
-            "sole exception is the Tasks owner's confirmed\n  retained-plan reconciliation"
-        )
+        applied
+            .content
+            .contains("existing plan through `specbind tasks revision`")
     );
     assert!(
         applied
             .content
-            .contains("never permits\n  creating a new completed or blocked judgment")
+            .contains("never permits creating a new completed or blocked")
     );
 }
 

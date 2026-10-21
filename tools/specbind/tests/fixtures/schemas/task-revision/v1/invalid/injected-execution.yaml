@@ -1,0 +1,12 @@
+schemaVersion: 1
+sourceFingerprint: sha256:0000000000000000000000000000000000000000000000000000000000000000
+plan:
+  items:
+    - id: '1'
+      kind: task
+      title: Work
+      requirement_ids: ['1.1']
+progress: []
+execution:
+  tasks:
+    '1': {status: completed}

@@ -236,3 +236,4 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0227](./0227-progress-gated-task-recovery.md) | Accepted | Opt-in Task recovery without a cycle cap while independent progress continues |
 | [0228](./0228-project-drive-defaults.md) | Accepted | Project Drive defaults, explicit overrides, and replan/progress for new installs |
 | [0229](./0229-direct-review-and-design-guidance-inputs.md) | Accepted | Direct recovery stays with Discovery and independent reviews read complete governing inputs |
+| [0230](./0230-cli-owned-task-plan-revision.md) | Accepted | Guarded Task plan replacement with explicit CLI-owned progress reconciliation |

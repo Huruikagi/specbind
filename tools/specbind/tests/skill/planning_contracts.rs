@@ -302,8 +302,11 @@ fn renewed_contract_review_preserves_retained_delivery_tasks_until_owned_repair(
         "renewed-review checkpoint",
         "Never\nrelabel an old completed entry as evidence for a new Requirement",
         "do not delete it before\nthis mapping",
-        "sole exception to the\nproject instruction against hand-editing execution state",
-        "permits only keeping,\nresetting, remapping, or removing entries that already existed",
+        "specbind tasks revision preflight <spec>",
+        "specbind schema read task-revision/v1",
+        "specbind tasks revision apply <spec> --input - --dry-run",
+        "Do not copy `current.execution` into the candidate",
+        "never replace the fingerprint alone",
         "Never create a\nnew completed or blocked judgment",
     ] {
         assert!(
@@ -596,6 +599,8 @@ fn spec_local_writers_name_the_configured_spec_directory() {
     assert!(!discovery.contains("`<specDir>/<spec>/"));
 
     let tasks = skill_resource_text("sb-plan", "references/tasks.md");
-    assert!(tasks.contains("Write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`"));
+    assert!(tasks.contains(
+        "For first authoring only, write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`"
+    ));
     assert!(tasks.contains("printed by `artifact list` are relative to `specDir`"));
 }

@@ -121,10 +121,12 @@ specbind protocol read task-planning
 The protocol owns the judgment: coverage is delivery rather than mapping, every
 task is work that will be done, and order carries the dependencies.
 
-Write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`, beside that Spec's
+For first authoring only, write `tasks.yaml` at `<specDir>/specs/<spec>/tasks.yaml`, beside that Spec's
 `spec.yaml`, where `specDir` is the value configured in `.specbind.json`. Paths
 printed by `artifact list` are relative to `specDir`, not the repository root. A
-few things the schema enforces and the protocol assumes:
+few things the schema enforces and the protocol assumes follow below. If a plan
+already exists, author a replacement candidate through section 5 instead of
+editing the live file, even when it has no execution records.
 
 - Task IDs are **positional** — `1`, `2`, `1.1`, `1.2` — and match array
   position. There are no gaps and no third level.
@@ -226,18 +228,13 @@ after that point, and `execution.tasks` is keyed by those same identifiers. Get
 this wrong and the document still validates: `tasks list` shows a plausible mix
 of completed and pending, while a completed record now sits on work nobody did.
 
-So:
-
-- Rewrite the `execution.tasks` keys in the **same edit** that renumbers the
-  plan. Never leave the two disagreeing.
-- **State the before-and-after mapping** for every renumbered task that has a
-  persisted entry, and get confirmation before writing unless explicit Drive
-  replan authority covers it. In that recovery, report the mapping and proceed.
-  Preserve a completed record only when its obligation and evidence still
-  apply; changed work must return to implementation for fresh proof.
-- Prefer a revision that leaves completed tasks where they are — appending, or
-  splitting a task that has not started — over one that renumbers finished work,
-  when both express the same intent.
+**State the before-and-after mapping** for every recorded entry and get
+confirmation before applying unless explicit Drive replan authority covers it.
+In that recovery, report the mapping and proceed. The confirmation may cover
+both the described rewind and exact mapping; do not request it again.
+Preserve a completed record only when its obligation and evidence still apply;
+changed work must return to implementation for fresh proof. Prefer revisions
+that leave completed tasks in place when both express the same intent.
 
 Preservation through renewed Contract Review ends at this explicit mapping. Give
 every retained Task with execution state exactly one disposition:
@@ -257,13 +254,51 @@ relabel an old completed entry as evidence for a new Requirement. An instruction
 to preserve the plan and progress through review means do not delete it before
 this mapping, not that every item must survive the approved replacement.
 
-This confirmed retained-plan reconciliation is the sole exception to the
-project instruction against hand-editing execution state. It is one Tasks-owned
-replacement of the plan and its existing keyed records, followed immediately by
-the checks in section 4 and the approval in section 7. It permits only keeping,
-resetting, remapping, or removing entries that already existed. Never create a
-new completed or blocked judgment, invent evidence, or change a blocker reason
-through this exception; implementation owns those judgments through the CLI.
+After the authorized rewind, with this Spec in `tasks` state and Contract Review
+fresh, read the guarded source and candidate schema:
+
+```sh
+specbind tasks revision preflight <spec>
+specbind schema read task-revision/v1
+```
+
+Preflight returns JSON containing `sourceFingerprint` and the complete `current`
+Tasks document. Author a strict JSON candidate with `schemaVersion: 1`, that
+exact `sourceFingerprint`, the complete replacement `plan` in Tasks v1 shape,
+and `progress`. Do not copy `current.execution` into the candidate.
+
+For every recorded entry, put exactly one disposition in `progress`:
+
+- `{"action":"preserve","from":"1","to":"2","reason":"Same obligation and evidence"}`
+  copies the original record unchanged, including a blocked reason.
+- `{"action":"reset","from":"2","to":"3","reason":"Changed obligation"}`
+  maps the work but leaves the target pending.
+- `{"action":"remove","from":"3","reason":"No active obligation"}`
+  drops the old record; there is no `to` field.
+
+Use real IDs and concrete reasons. Targets must be executable Tasks and unique;
+splitting or merging work cannot duplicate or combine execution. New work starts
+pending. With no recorded entries use `progress: []`. Never create a
+new completed or blocked judgment, invent evidence, or change a blocker reason.
+The CLI validates mapping and copies records; you still judge whether the old
+obligation and evidence apply. Matching IDs alone cannot establish that.
+
+Submit the candidate on stdin or from a temporary file outside the worktree:
+
+```sh
+specbind tasks revision apply <spec> --input - --dry-run
+specbind tasks revision apply <spec> --input -
+```
+
+Pass the same reviewed candidate to both calls. Dry-run verifies structure,
+mapping, current traceability and lifecycle prerequisites without writing.
+Apply atomically replaces only `tasks.yaml`; it grants no gate approval.
+On `TASK_REVISION_SOURCE_CHANGED`, reread and reassess the complete mapping;
+never replace the fingerprint alone. Other errors stop for diagnosis. Do not
+delete, hand-edit, or overwrite the retained file to bypass a failure. After
+apply, perform section 4's checks and review, then section 7's separately
+authorized approval. Any further existing-plan edit uses a fresh preflight and
+candidate through this same route.
 
 Restructuring an approved plan is legitimate. Doing it in a way that mislabels
 completed work is not.
@@ -380,10 +415,10 @@ authorizes accepting gates, not discarding accepted work.
 
 ## Boundaries
 
-- Author `tasks.yaml` only. Requirements, design, and the contract belong to
-  earlier phases; ordinary execution state and implementation notes belong to
-  implementation. The confirmed retained-plan reconciliation in section 5 is
-  the only exception, and it may transform only entries that already existed.
+- Author only the Task plan or its revision candidate. Requirements, design,
+  and the contract belong to earlier phases; execution and implementation notes
+  belong to implementation. Existing-plan revisions go through section 5's CLI;
+  never hand-edit execution state.
 - Write no machine state. Never edit `spec.yaml`.
 - Never run `tasks complete`, `tasks block`, or `tasks reopen`. Those record an
   implementer's judgment.
