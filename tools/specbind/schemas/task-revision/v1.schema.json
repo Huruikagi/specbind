@@ -174,32 +174,10 @@
         {
           "type": "object",
           "properties": {
-            "from": {
-              "$ref": "#/$defs/TaskReference"
-            },
-            "to": {
-              "$ref": "#/$defs/TaskReference"
-            },
-            "reason": {
-              "type": "string",
-              "pattern": "\\S"
-            },
             "action": {
               "type": "string",
               "const": "preserve"
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "action",
-            "from",
-            "to",
-            "reason"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
+            },
             "from": {
               "$ref": "#/$defs/TaskReference"
             },
@@ -209,10 +187,6 @@
             "reason": {
               "type": "string",
               "pattern": "\\S"
-            },
-            "action": {
-              "type": "string",
-              "const": "reset"
             }
           },
           "additionalProperties": false,
@@ -226,16 +200,42 @@
         {
           "type": "object",
           "properties": {
+            "action": {
+              "type": "string",
+              "const": "reset"
+            },
+            "from": {
+              "$ref": "#/$defs/TaskReference"
+            },
+            "to": {
+              "$ref": "#/$defs/TaskReference"
+            },
+            "reason": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "action",
+            "from",
+            "to",
+            "reason"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "const": "remove"
+            },
             "from": {
               "$ref": "#/$defs/TaskReference"
             },
             "reason": {
               "type": "string",
               "pattern": "\\S"
-            },
-            "action": {
-              "type": "string",
-              "const": "remove"
             }
           },
           "additionalProperties": false,

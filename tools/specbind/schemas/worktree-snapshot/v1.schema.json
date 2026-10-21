@@ -117,16 +117,16 @@
         {
           "type": "object",
           "properties": {
+            "kind": {
+              "type": "string",
+              "const": "file"
+            },
             "digest": {
               "type": "string",
               "pattern": "^sha256:[0-9a-f]{64}$"
             },
             "executable": {
               "type": "boolean"
-            },
-            "kind": {
-              "type": "string",
-              "const": "file"
             }
           },
           "additionalProperties": false,
