@@ -237,3 +237,5 @@ Decision filenames, headings, identifiers, and this index remain consistent.
 | [0228](./0228-project-drive-defaults.md) | Accepted | Project Drive defaults, explicit overrides, and replan/progress for new installs |
 | [0229](./0229-direct-review-and-design-guidance-inputs.md) | Accepted | Direct recovery stays with Discovery and independent reviews read complete governing inputs |
 | [0230](./0230-cli-owned-task-plan-revision.md) | Accepted | Guarded Task plan replacement with explicit CLI-owned progress reconciliation |
+| [0231](./0231-task-readiness-through-retained-completion.md) | Accepted | Sequential readiness through retained completion without resetting proven work |
+| [0232](./0232-cli-replan-completion-prechecks.md) | Accepted | Read-only Git-backed baseline and completion-withdrawal prechecks for replan recovery |

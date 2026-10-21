@@ -25,6 +25,9 @@ use specbind::{
 use tempfile::TempDir;
 use time::OffsetDateTime;
 
+#[path = "completion/replan.rs"]
+mod replan_checks;
+
 fn contract_fingerprint(input: &str) -> Fingerprint {
     let contract = Contract::try_from(runtime::load_contract(input).expect("contract wire"))
         .expect("contract semantics");
@@ -483,10 +486,24 @@ fn completion_cli_revalidation_requires_and_recovers_after_invalidation_checkpoi
 }
 
 #[test]
+#[allow(
+    clippy::too_many_lines,
+    reason = "one regression follows baseline, replan, withdrawal and fresh grouped acceptance"
+)]
 fn replan_withdrawal_unblocks_other_spec_before_milestone_convergence() {
     let root = spec_fixture_with_second(true);
     let specbind = root.path().join(".specbind");
     accept_spec_completion(&root);
+    let captured: serde_json::Value = serde_json::from_str(
+        &specbind::replan_completion::capture(root.path(), &specbind)
+            .expect("capture fresh baseline"),
+    )
+    .unwrap();
+    let baseline_revision = captured["baselineRevision"].as_str().unwrap();
+    assert_eq!(
+        captured["freshCompletions"],
+        serde_json::json!(["checkout"])
+    );
     let accepted = read_spec(&specbind);
     let target = specbind.join("specs/checkout/spec.yaml");
     let command = |args: &[&str]| {
@@ -513,6 +530,19 @@ fn replan_withdrawal_unblocks_other_spec_before_milestone_convergence() {
         "explicit",
     ]);
     commit_all(root.path(), "authorized catalog Tasks replan");
+    let recovery_revision = git(root.path(), &["rev-parse", "HEAD"]);
+    let recovery: serde_json::Value = serde_json::from_str(
+        &specbind::replan_completion::check(
+            root.path(),
+            &specbind,
+            baseline_revision,
+            &recovery_revision,
+        )
+        .expect("check whole affected set"),
+    )
+    .unwrap();
+    assert_eq!(recovery["remaining"], serde_json::json!(["checkout"]));
+    assert_eq!(recovery["requiresAuthorityAndDeltaReview"], true);
     let status = command(&["spec", "status", "checkout", "--json"]);
     let status = String::from_utf8_lossy(&status.stdout);
     assert!(status.contains("FRESHNESS_COMPLETION_PROJECT_CHANGED"));
@@ -523,6 +553,17 @@ fn replan_withdrawal_unblocks_other_spec_before_milestone_convergence() {
 
     let original = fs::read_to_string(&target).expect("accepted target");
     fs::write(&target, format!("{original}\n# unrelated local edit\n")).expect("dirty target");
+    assert_eq!(
+        specbind::replan_completion::check(
+            root.path(),
+            &specbind,
+            baseline_revision,
+            &recovery_revision
+        )
+        .unwrap_err()
+        .code,
+        "REPLAN_WORKTREE_DIRTY"
+    );
     let error = completion::spec_invalidate(root.path(), &specbind, "checkout")
         .expect_err("dirty target refuses withdrawal");
     assert!(
@@ -549,6 +590,22 @@ fn replan_withdrawal_unblocks_other_spec_before_milestone_convergence() {
         ".specbind/specs/checkout/spec.yaml"
     );
     commit_all(root.path(), "withdraw only stale completion");
+    let resumed: serde_json::Value = serde_json::from_str(
+        &specbind::replan_completion::check(
+            root.path(),
+            &specbind,
+            baseline_revision,
+            &recovery_revision,
+        )
+        .expect("prove exact withdrawal checkpoint"),
+    )
+    .unwrap();
+    assert_eq!(resumed["remaining"], serde_json::json!([]));
+    assert_eq!(resumed["withdrawn"][0]["spec"], "checkout");
+    assert_eq!(
+        resumed["withdrawn"][0]["checkpoint"],
+        git(root.path(), &["rev-parse", "HEAD"])
+    );
     let status = command(&["milestone", "status", "--json"]);
     let status = String::from_utf8_lossy(&status.stdout);
     assert!(!status.contains("MILESTONE_SPEC_INCONSISTENT"));

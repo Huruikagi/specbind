@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0231](./0231-task-readiness-through-retained-completion.md) makes
+readiness evaluate all preceding Tasks even across retained completed records.
+
 [Decision 0146](./0146-sequential-v1-tasks-and-per-task-checkpoints.md)
 supersedes the `parallel` exception. The v1 plan is now fully ordered;
 `depends_on` only adds prerequisites.

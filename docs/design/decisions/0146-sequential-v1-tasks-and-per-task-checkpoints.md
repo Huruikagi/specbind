@@ -2,6 +2,9 @@
 
 Status: Accepted
 
+[Decision 0231](./0231-task-readiness-through-retained-completion.md) clarifies
+the ordering closure used for readiness and completion guards after revisions.
+
 ## Context
 
 The inherited cc-sdd plan marked some Tasks `(P)`, but its hardened executor

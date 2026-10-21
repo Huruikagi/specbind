@@ -29,22 +29,31 @@ checkpointed separately as fresh completion metadata.
 
 ### Delegated withdrawal before convergence
 
-For a Drive **completion-withdrawal-only authority** handoff, independently
-check the baseline/current Git and status evidence before any mutation. Require
-the same active delivery milestone and scope, explicit replan authority, a
-clean baseline with this target's completion fresh, and an intervening delta
-attributable only to that authorized recovery (plus earlier verified withdrawal
-checkpoints in the supplied set). The target must now be `release_ready` with
-fresh earlier gates and completion stale solely because of
-`FRESHNESS_COMPLETION_PROJECT_CHANGED`. Every milestone inconsistency must be
-explained by the remaining prechecked targets. Missing facts, pre-existing
-staleness, other gate or Contract Review inconsistencies, a dirty or staged
-target `spec.yaml`, and unsafe partial work stop this route without mutation.
+For a Drive **completion-withdrawal-only authority** handoff, independently run:
+
+```sh
+specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>
+```
+
+Use the fixed revisions supplied by Drive. Require this target first in
+`remaining` and the reported `currentRevision` unchanged before mutation.
+The CLI checks historical freshness, scope, earlier gates/review, completion
+stale solely under `FRESHNESS_COMPLETION_PROJECT_CHANGED`, and exact prior
+withdrawal checkpoints. Missing history, pre-existing staleness, other
+inconsistencies or dirty state refuse the check. Never replace a refusal with
+your own eligibility verdict or change the revisions to make it pass.
+
+Independently verify the original replan authority, no live owner, and the
+actual baseline-to-recovery Git delta and history against the authorized repair.
+`recoveryChangedPaths` is an index, not semantic attribution. The output explicitly
+requires this authority and delta review; a successful mechanical check alone
+does not authorize withdrawal.
 
 Report the concrete withdrawal and use the guarded command and independent,
 narrow checkpoint above without a second user confirmation. Handle exactly one
 target; never batch-edit state or include another target in its checkpoint.
-Verify current state and the actual committed diff, then return `WAITING` for
+Rerun the same check after the checkpoint and require this exact entry in
+`withdrawn` with an advanced `remaining` set, then return `WAITING` for
 milestone convergence to Drive with target, checkpoint, earlier-gate freshness,
 remaining affected set, and next owner. Do not run completion preflight, final
 checks, or acceptance in this withdrawal-only dispatch, even if Tasks happen

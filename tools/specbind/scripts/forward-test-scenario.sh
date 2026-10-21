@@ -1607,6 +1607,7 @@ EOF
         git -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m "Accept cart completion"
         expect "cart completion is not fresh before replan" 'specbind spec status cart | grep -q "completion=fresh"'
         git tag before-replan
+        specbind milestone replan capture >/dev/null
         specbind spec tasks invalidate cart-input >/dev/null
         cat > .specbind/specs/cart-input/tasks.yaml <<'EOF'
 schema_version: 1

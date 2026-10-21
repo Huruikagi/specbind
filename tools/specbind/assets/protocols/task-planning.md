@@ -104,6 +104,10 @@ an obligation to make the plan executable.
 Execution order is the primary dependency mechanism: a task may rely on
 everything before it having been done.
 
+The CLI checks every preceding executable Task, including across groups.
+A retained completed Task does not make unfinished earlier work disappear:
+later work waits, while the retained completion stays recorded.
+
 - Declare an explicit dependency only when order does not already express it,
   typically when a task depends on specific earlier work in a different part of
   the plan, or when the relationship is not evident from position.

@@ -2,6 +2,8 @@
 
 use std::{fmt, path::Path, process::Command};
 
+pub(crate) mod snapshot;
+
 #[derive(Debug)]
 pub enum RepositoryError {
     Start(std::io::Error),

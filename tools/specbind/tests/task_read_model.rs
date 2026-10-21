@@ -27,7 +27,7 @@ fn derives_sparse_status_effective_dependencies_and_actionable_tasks() {
     );
     let document = model.task("3").expect("documentation task");
     assert_eq!(document.explicit_dependencies, ["1.1"]);
-    assert_eq!(document.effective_dependencies, ["1.1", "2"]);
+    assert_eq!(document.effective_dependencies, ["1.1", "1.2", "2"]);
     assert!(!document.actionable);
     let TaskPlanItemView::Group(group) = &model.items[0] else {
         panic!("first item should remain a group");
@@ -40,4 +40,39 @@ fn load_tasks(input: &str) -> Tasks {
         .expect("schema-valid tasks")
         .try_into()
         .expect("semantically valid tasks")
+}
+
+#[test]
+fn retained_completion_never_hides_pending_or_blocked_predecessors() {
+    let plan = serde_json::json!({"schema_version":1,"plan":{"items":[
+        {"id":"1","kind":"task","title":"New setup","requirement_ids":["1.1"]},
+        {"id":"2","kind":"group","title":"Retained work","tasks":[
+            {"id":"2.1","kind":"task","title":"Retained","requirement_ids":["1.1"]},
+            {"id":"2.2","kind":"task","title":"Next child","requirement_ids":["1.1"]}
+        ]},
+        {"id":"3","kind":"task","title":"Next top","requirement_ids":["1.1"]}
+    ]},"execution":{"tasks":{"2.1":{"status":"completed"},"2.2":{"status":"completed"}}}});
+    for blocked in [false, true] {
+        let mut document = plan.clone();
+        if blocked {
+            document["execution"]["tasks"]["1"] =
+                serde_json::json!({"status":"blocked","blocked_reason":"Waiting"});
+        }
+        let model = TaskReadModel::derive(&load_tasks(&document.to_string()));
+        assert!(!model.task("3").unwrap().actionable);
+        assert_eq!(
+            model.task("3").unwrap().effective_dependencies,
+            ["1", "2.1", "2.2"]
+        );
+        assert_eq!(model.completed, 2);
+        document["execution"]["tasks"]
+            .as_object_mut()
+            .unwrap()
+            .remove("2.2");
+        let model = TaskReadModel::derive(&load_tasks(&document.to_string()));
+        assert!(!model.task("2.2").unwrap().actionable);
+        document["execution"]["tasks"]["1"] = serde_json::json!({"status":"completed"});
+        let model = TaskReadModel::derive(&load_tasks(&document.to_string()));
+        assert_eq!(model.actionable_ids, ["2.2"]);
+    }
 }

@@ -262,7 +262,7 @@ fn shows_full_task_content_and_derived_prerequisites() {
         .assert()
         .success()
         .stdout(
-            "OK TASK_SHOWN: Found task 3 in spec checkout.\n  Status: pending waiting\n  Title: Document\n  Group: none\n  Details: none\n  Requirement IDs: 1.4\n  Boundaries: docs/\n  Contracts: none\n  Explicit prerequisites: 1.1\n  Effective prerequisites: 1.1, 2\n  Blocker: none\n  Completion criteria: none\n",
+            "OK TASK_SHOWN: Found task 3 in spec checkout.\n  Status: pending waiting\n  Title: Document\n  Group: none\n  Details: none\n  Requirement IDs: 1.4\n  Boundaries: docs/\n  Contracts: none\n  Explicit prerequisites: 1.1\n  Effective prerequisites: 1.1, 1.2, 2\n  Blocker: none\n  Completion criteria: none\n",
         )
         .stderr("");
 }
@@ -346,6 +346,64 @@ fn records_task_progress_in_plan_order() {
         .expect("recorded plan");
     assert!(tasks.contains("execution:"), "{tasks}");
     assert!(tasks.contains("status: completed"), "{tasks}");
+}
+
+#[test]
+fn reopened_predecessor_blocks_completion_past_retained_records() {
+    let root = project_fixture();
+    write_progress_fixture(root.path());
+    let path = ".specbind/specs/checkout/tasks.yaml";
+    let mut plan: serde_json::Value =
+        specbind::yaml::parse(&fs::read_to_string(root.path().join(path)).unwrap()).unwrap();
+    plan["plan"]["items"].as_array_mut().unwrap().push(
+        serde_json::json!({"id":"3","kind":"task","title":"Later","requirement_ids":["1.1"]}),
+    );
+    write(root.path(), path, &plan.to_string());
+    for id in ["1", "2"] {
+        specbind_command()
+            .current_dir(root.path())
+            .args(["tasks", "complete", "checkout", id])
+            .assert()
+            .success();
+    }
+    specbind_command()
+        .current_dir(root.path())
+        .args(["tasks", "reopen", "checkout", "1"])
+        .assert()
+        .success();
+    for blocked in [false, true] {
+        if blocked {
+            specbind_command()
+                .current_dir(root.path())
+                .args(["tasks", "block", "checkout", "1", "--reason", "Waiting"])
+                .assert()
+                .success();
+        }
+        let before = fs::read(root.path().join(path)).unwrap();
+        specbind_command()
+            .current_dir(root.path())
+            .args(["tasks", "list", "checkout"])
+            .assert()
+            .success()
+            .stdout(predicate::str::contains("[pending waiting] 3"));
+        specbind_command()
+            .current_dir(root.path())
+            .args(["tasks", "complete", "checkout", "3"])
+            .assert()
+            .failure()
+            .stderr(predicate::str::contains("TASK_PREREQUISITES_INCOMPLETE"));
+        assert_eq!(before, fs::read(root.path().join(path)).unwrap());
+    }
+    specbind_command()
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "1"])
+        .assert()
+        .success();
+    specbind_command()
+        .current_dir(root.path())
+        .args(["tasks", "complete", "checkout", "3"])
+        .assert()
+        .success();
 }
 
 #[test]

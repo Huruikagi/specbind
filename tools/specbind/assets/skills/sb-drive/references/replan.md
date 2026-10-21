@@ -28,12 +28,13 @@ diagnose a semantic defect in a fresh approved artifact. The planning owner
 validates the boundary before mutation. Do not revise artifacts in Drive or
 dispatch an internal planner role in place of that Skill.
 
-Before Plan starts, capture a clean committed baseline, milestone identity and
-scope, participant states, completion freshness and implementation revisions,
-and earlier gate freshness. Name the accepted completions the write will stale.
-Keep these as run-local handoff facts. If no clean baseline can be established
-without disturbing partial work, do not invent one: this automatic completion
-aftercare will need a separately authorized recovery.
+Before Plan starts, run `specbind milestone replan capture`. Retain its exact
+`baselineRevision` and report the `freshCompletions` the repair can stale.
+The CLI verifies the clean committed baseline and historical gate state.
+Keep the output with the original authority as run-local handoff evidence.
+If capture fails, do not invent baseline facts or clean up partial work to
+qualify: automatic completion aftercare is unavailable. Independently authorized
+Plan repair may proceed only within its own prerequisites.
 
 Carry the original approved Requirements and Milestone scope boundary through
 every recovery dispatch; a revised Design cannot expand the delegation. Report
@@ -77,48 +78,47 @@ Unrelated, unattributed, or conflicting partial changes still stop the run.
 
 ## Withdraw completion made stale by this replan
 
-Before stopping on inconsistent health, compare the retained baseline with
-current `milestone status --json`, each affected `spec status <spec> --json`,
-Git status, and the actual intervening commit diff. This is an explicit recovery
-exception to actionable-entry scheduling, not permission to run implementation
+Before stopping on inconsistent health, retain Plan's terminal checkpoint as
+the fixed `recoveryRevision`. Precheck the entire affected set:
+
+```sh
+specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>
+```
+
+The CLI reconstructs committed states and checks scope, Requirements authority,
+fresh earlier gates/review, completion staleness solely under
+`FRESHNESS_COMPLETION_PROJECT_CHANGED`, and all milestone inconsistencies. It
+rejects missing history, pre-existing staleness, dirty state and unexpected
+post-recovery commits. Errors stop this route; never fall back to manually
+assembling an eligibility verdict or advance either fixed revision to hide work.
+
+The result is mechanical evidence. Independently verify original replan
+authority, no live owner, and the actual baseline-to-recovery Git diff and
+commit history against the authorized repair, using `recoveryChangedPaths` as
+an index. Paths or the planning owner's narrative alone do not prove cause.
+`requiresAuthorityAndDeltaReview` must not be treated as an approval. Unattributed
+work stops automatic recovery. This exception does not permit implementation
 through inconsistent health.
 
-Precheck the entire affected set before dispatching any withdrawal:
-
-- Same active delivery milestone, original scope and supplied replan authority.
-- Each target had fresh accepted completion at the clean recorded baseline.
-- Intervening changes belong only to this authorized recovery, not an unrelated
-  write. The planning owner's narrative alone is insufficient evidence.
-- Each target is `release_ready`, with fresh Requirements/Design/Tasks and stale
-  completion whose only cause is `FRESHNESS_COMPLETION_PROJECT_CHANGED`.
-- Every `MILESTONE_SPEC_INCONSISTENT` is explained by those targets; no other
-  gate, Contract Review, scope, or integrity inconsistency exists.
-- All target `spec.yaml` files are clean and unstaged; no live owner or unsafe
-  partial work remains. Never clean up the worktree to qualify.
-
-Missing history, pre-existing staleness, another diagnostic, unattributed edits,
-or a dirty target stops automatic recovery. Report the ordinary owning workflow
-and needed evidence/authority; `--replan` alone cannot waive these conditions.
-
-For each eligible target in returned milestone order, dispatch the complete
+For each target in the returned `remaining` order, dispatch the complete
 `sb-validate-implementation` Skill with **completion-withdrawal-only authority**,
-the original replan authority, baseline/current revisions and status evidence,
+the original replan authority, fixed baseline/recovery revisions and check output,
 exact target path, authorized delta, and the remaining eligible set. Supply the
 ordinary cwd, PATH and instruction facts. The owner independently checks the
 boundary, invalidates only completion and closes its own narrow checkpoint.
 Do not ask for another confirmation, perform that work in Drive, or dispatch
 final validation while implementation remains pending.
 
-After each terminal handoff, reread Git and milestone/Spec status. Require the
-exact withdrawal checkpoint, target `implementation` with no completion, fresh
-earlier gates, and no new inconsistency. Other prechecked targets may still be
-stale until their turn. A failure, missing checkpoint or unchanged target stops
+After each terminal handoff, rerun the same check. Its `withdrawn` entries must
+prove the returned target and checkpoint; its `remaining` set must advance by
+exactly that target. The CLI validates the narrow committed transition and
+preserved earlier gates. A failure, missing checkpoint or unchanged target stops
 this route; do not retry unchanged evidence, roll back completed withdrawals,
 or switch to implementation while any inconsistency remains.
 
-Retain the completed checkpoints and remaining set across an interrupted
-handoff. Skip a completed target only when that handoff and the current Git
-delta prove its exact withdrawal; status alone cannot reconstruct the history.
+Retain both fixed revisions, authority, completed checkpoints and remaining set
+across an interrupted handoff. Resume by running the same check and matching
+its proven withdrawals with the handoff; status alone cannot reconstruct history.
 These withdrawals do not add or reset the Task recovery budget.
 
 When the set is cleared, resume the ordinary CLI schedule in this same turn:

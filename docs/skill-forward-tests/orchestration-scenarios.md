@@ -206,6 +206,26 @@ variant and the original blocked run; never substitute a role inside a run.
   completion transitions together. Both remain fresh after that commit.
 - This measures a retained post-Plan handoff, not Plan authorship itself.
 
+Decision 0232 additionally requires both Drive and the withdrawal owner to run
+the recovery check with the same resolved full baseline/recovery revisions,
+including after the withdrawal checkpoint. Neither substitutes hand-assembled
+status evidence or advances the fixed recovery revision.
+
+### DR9w — Completion withdrawal only, from a retained replan handoff
+
+Prepare a fresh `dr9` fixture. Use DR9's request and supplied authority/evidence,
+but replace its final sentence with:
+
+> Handle only the stale completion withdrawal and its checkpoint. Stop before
+> implementing the pending cart-input Task or running final validation.
+
+The first three DR9 withdrawal expectations apply, including independent owner
+dispatch and CLI checks. After the owner returns, the driver honors the requested
+stop: cart is in implementation without completion, cart-input remains pending,
+the worktree is clean and only cart's `spec.yaml` changed. This focused case
+does not claim implementation or final-validation coverage. Capture itself is
+covered by the pre-replan fixture check and CLI integration tests.
+
 ### DR10 — Replan authority is not arbitrary stale-evidence authority
 
 Prepare a separate `dr10` fixture, then ask:

@@ -272,31 +272,24 @@ fn effective_dependencies(
     document: &crate::schema::tasks::v1::TasksDocument,
 ) -> BTreeMap<String, BTreeSet<String>> {
     let mut dependencies = BTreeMap::<String, BTreeSet<String>>::new();
-    let mut preceding_top = Vec::<String>::new();
+    // A retained completed record cannot satisfy unfinished work before it.
+    // Include the full ordering closure, not only the immediate graph edge.
+    let mut preceding = Vec::<String>::new();
     for item in &document.plan.items {
         match item {
             PlanItem::Task(task) => {
                 let entry = dependencies.entry(task_id(task).to_owned()).or_default();
-                entry.extend(preceding_top.iter().cloned());
+                entry.extend(preceding.iter().cloned());
                 entry.extend(references(fields(task).depends_on));
-                preceding_top = vec![task_id(task).to_owned()];
+                preceding.push(task_id(task).to_owned());
             }
             PlanItem::Group(group) => {
-                let mut preceding_sibling = None::<String>;
                 for task in &group.tasks {
                     let entry = dependencies.entry(task_id(task).to_owned()).or_default();
-                    entry.extend(preceding_top.iter().cloned());
-                    if let Some(prerequisite) = &preceding_sibling {
-                        entry.insert(prerequisite.clone());
-                    }
+                    entry.extend(preceding.iter().cloned());
                     entry.extend(references(fields(task).depends_on));
-                    preceding_sibling = Some(task_id(task).to_owned());
+                    preceding.push(task_id(task).to_owned());
                 }
-                preceding_top = group
-                    .tasks
-                    .iter()
-                    .map(|task| task_id(task).to_owned())
-                    .collect();
             }
         }
     }

@@ -419,6 +419,11 @@ pub enum SpecCompletionCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum MilestoneCommand {
+    /// Capture or check mechanical evidence for replan completion recovery.
+    Replan {
+        #[command(subcommand)]
+        command: ReplanCommand,
+    },
     /// Report stage, progress, actions, dependencies, and release blockers.
     Status {
         /// Emit the command-specific machine-readable response.
@@ -480,6 +485,19 @@ pub enum ReverseCommand {
     Abandon {
         #[arg(long)]
         milestone_id: String,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum ReplanCommand {
+    /// Capture the clean pre-replan baseline and fresh completions as JSON.
+    Capture,
+    /// Check the complete withdrawal set and subsequent checkpoints as JSON.
+    Check {
+        #[arg(long)]
+        baseline: String,
+        #[arg(long)]
+        recovery_revision: String,
     },
 }
 

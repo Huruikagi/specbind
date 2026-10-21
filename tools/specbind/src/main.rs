@@ -246,6 +246,13 @@ fn run_spec_completion(start: &Path, command: SpecCompletionCommand) -> CommandO
 
 fn run_milestone(start: &Path, command: MilestoneCommand) -> CommandOutput {
     match command {
+        MilestoneCommand::Replan { command } => match command {
+            specbind::args::ReplanCommand::Capture => specbind::cli::replan_capture(start),
+            specbind::args::ReplanCommand::Check {
+                baseline,
+                recovery_revision,
+            } => specbind::cli::replan_check(start, &baseline, &recovery_revision),
+        },
         MilestoneCommand::Status { json } => specbind::cli::milestone_status(start, json),
         MilestoneCommand::Scope { include_body } => {
             specbind::cli::milestone_scope(start, include_body)

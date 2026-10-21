@@ -2,6 +2,10 @@
 
 Status: Accepted
 
+[Decision 0232](./0232-cli-replan-completion-prechecks.md) moves mechanical
+baseline, eligibility and checkpoint checks into CLI reads; authority and
+semantic attribution remain with the owning Skills.
+
 ## Context
 
 Issue #81 exposes a delivery deadlock: an authorized Task replan stales another

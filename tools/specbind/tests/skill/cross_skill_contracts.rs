@@ -318,6 +318,10 @@ fn replan_completion_withdrawal_keeps_causality_ownership_and_convergence() {
         }
     }
     assert!(drive.contains("Precheck the entire affected set"));
+    assert!(drive.contains("specbind milestone replan capture"));
+    assert!(drive.contains("specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>"));
+    assert!(validation.contains("specbind milestone replan check --baseline <baselineRevision> --recovery-revision <recoveryRevision>"));
+    assert!(validation.contains("successful mechanical check alone"));
     assert!(drive.contains("do not retry unchanged evidence"));
     assert!(drive.contains("do not add or reset the Task recovery budget"));
     assert!(validation.contains("does not require milestone Task convergence"));

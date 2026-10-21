@@ -7,11 +7,13 @@
 
 ## 状態を確認する（読み取り専用）
 
-いつ実行しても安全で、ファイルは変更しません。
+いつ実行しても安全で、プロジェクトのファイルは変更しません。
 
 | コマンド | 表示する内容 |
 | --- | --- |
 | `specbind milestone status` | 進行中のMilestoneの段階、進捗、次の操作、リリースを止めているもの |
+| `specbind milestone replan capture` | 再計画前のクリーンなコミットと、最新の完了承認があるSpecをJSONで表示 |
+| `specbind milestone replan check --baseline <commit> --recovery-revision <commit>` | 再計画後に完了承認の取り下げが必要なSpecと、確認済みの取り下げコミットをJSONで表示 |
 | `specbind spec list` | プロジェクトのすべてのSpec |
 | `specbind spec status <spec>` | 1つのSpecの状態、鮮度、網羅状況、Taskの進捗 |
 | `specbind tasks list <spec>` / `tasks show <spec> <task>` | Taskの一覧と進捗、または1つのTaskの詳細 |
@@ -27,6 +29,10 @@
 
 `milestone status`と`spec status`は、ツールやスクリプト向けに`--json`も受け付けます。
 表示される状態名は[状態の一覧](./lifecycle-states.md)を参照してください。
+
+Taskに着手するには、グループをまたいだ先行Taskもすべて完了している必要があります。
+引き継いだ完了記録が途中にあっても、それより前の未着手・ブロック中の作業は飛ばせません。
+`tasks complete`も同じ条件を確認し、証明済みの進捗は維持します。
 
 個別のDesignは、関係のないSpecが設計中でも検証を通せます。ただし、直接使う
 相手のContractが存在し、参照する項目を確認できることが必要です。Contract Reviewでは
@@ -110,3 +116,19 @@ Tasksの巻き戻しが許可されて実行された後、`sb-plan`は`tasks re
 `--dry-run`は書き込まずに対応表と改訂結果を返します。適用時は`tasks.yaml`だけを
 一括で置き換えます。Gate承認とGitのチェックポイントは別の操作です。
 初回は従来どおり進捗のない計画を作成し、以降の改訂は進捗の有無にかかわらずこのCLIを使います。
+
+## 再計画後の完了承認の回復を確認する
+
+Driveは許可された再計画の前に、`milestone replan capture`が返した完全な
+`baselineRevision`を保持します。Plan完了時のコミットを`recoveryRevision`として固定し、
+取り下げの前と取り下げコミットの後に`milestone replan check`を実行します。
+CLIは一時的なローカルリポジトリで過去の状態を再検証し、対象全件の条件と、
+順番どおりに完了承認だけを取り下げたコミットを確認します。
+作業ツリーがクリーンでない、履歴が不足している、前段Gateが古い、スコープや
+Requirementsの承認が変わった、無関係なコミットが挟まった場合は拒否します。
+
+結果には残りの対象`remaining`、確認済みの取り下げ`withdrawn`、再計画で変更した
+パス`recoveryChangedPaths`が含まれます。変更が許可された修正の範囲内かは、
+Driveと検証担当が元の権限と実際の差分から判断します。検査を通すために基準の
+コミットを進めてはいけません。取り下げとそのコミットは従来どおり検証担当が行い、
+新しいコマンド自体はプロジェクトのファイルや承認状態を変更しません。

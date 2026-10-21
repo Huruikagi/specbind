@@ -7,11 +7,13 @@ arguments and options.
 
 ## Inspect state (read-only)
 
-Safe to run at any time. They never change files.
+Safe to run at any time. They never change project files.
 
 | Command | Shows |
 | --- | --- |
 | `specbind milestone status` | Active Milestone stage, progress, next actions, and release blockers |
+| `specbind milestone replan capture` | Clean pre-replan revision and fresh accepted completions, as JSON |
+| `specbind milestone replan check --baseline <commit> --recovery-revision <commit>` | Remaining completion withdrawals and verified checkpoints after a fixed replan, as JSON |
 | `specbind spec list` | Every Spec in the project |
 | `specbind spec status <spec>` | One Spec's state, freshness, coverage, and Task progress |
 | `specbind tasks list <spec>` / `tasks show <spec> <task>` | Task hierarchy and progress, or one Task's details |
@@ -27,6 +29,10 @@ Safe to run at any time. They never change files.
 
 `milestone status` and `spec status` also accept `--json` for tools and scripts.
 See [Lifecycle states](./lifecycle-states.md) for the state names they report.
+
+Task readiness requires every earlier executable Task to be completed, including
+across groups. Retained completed records do not hide an earlier pending or
+blocked Task. The same rule guards `tasks complete`; proven progress is preserved.
 
 Individual Design checks can pass while unrelated Specs are still being designed.
 Required provider Contracts must already exist and their consumed entries must
@@ -114,3 +120,21 @@ worktree. `--dry-run` returns the mapping and resulting document without writing
 apply replaces only `tasks.yaml` atomically. Gate approval and the Git checkpoint
 remain separate. First authoring still creates a plan without execution;
 subsequent revisions use this CLI even when no progress has been recorded.
+
+## Check completion recovery after replanning
+
+Before an authorized replan, Drive retains the full `baselineRevision` returned
+by `milestone replan capture`. After Plan finishes, it fixes `recoveryRevision`
+to that checkpoint and uses `milestone replan check` before each withdrawal and
+after each withdrawal checkpoint. The CLI reconstructs committed state in
+temporary local repositories, checks the entire affected set and recognizes
+only exact, ordered completion-only checkpoints. It requires a clean worktree;
+missing history, stale earlier gates, changed scope or Requirements authority,
+and unrelated intervening commits stop the check.
+
+The result contains `remaining`, `withdrawn` and `recoveryChangedPaths`.
+It does not establish authorization or whether the recovery delta implements
+the authorized repair. Drive and the validation owner still review that delta
+and the original authority. Neither fixed revision may be advanced to hide work.
+The validation owner uses the existing completion invalidation and its separate
+checkpoint; the new commands never withdraw or accept completion themselves.

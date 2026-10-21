@@ -681,6 +681,9 @@ decision while failing the row.
 
 ### T3 — A revision that renumbers completed work
 
+Decision 0231 also requires the later pending Task to remain waiting while the
+new first Task is pending, even across the preserved completed Tasks.
+
 From `t3` — an approved three-task plan with tasks 1 and 2 completed — ask for a
 new first task to be added ahead of the existing work.
 

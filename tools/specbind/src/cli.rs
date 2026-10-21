@@ -6,6 +6,7 @@ mod lifecycle;
 mod migration_cli;
 mod output;
 mod read;
+mod replan_completion;
 mod task_revision;
 mod tasks;
 
@@ -17,6 +18,7 @@ pub use lifecycle::*;
 pub use migration_cli::*;
 pub use output::CommandOutput;
 pub use read::*;
+pub use replan_completion::*;
 pub use task_revision::*;
 pub use tasks::*;
 
