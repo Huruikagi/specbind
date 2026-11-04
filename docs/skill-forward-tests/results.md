@@ -14,6 +14,7 @@ Normalized run records start after the 2026-08-30 migration accepted by
 
 | Date | Driver | Model/profile | Tested build | Scenarios | Record |
 | --- | --- | --- | --- | --- | --- |
+| 2026-11-04 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers; CLI attempt | `d7973d7` | B0 scope/delegation boundary and I4 dirty-worktree preservation pass; CLI model unavailable (ENV-0007). Harness failure detection repaired with 18 offline tests. | [Harness and workflow checks](./runs/2026-11-04-codex-d7973d7-harness-checks.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `06bd198` + final Decision 0235 tree | I1/I4 pass: installed worktree capture/check, independent review, CLI Task completion, narrow checkpoints and byte-exact preservation of unrelated dirt | [Final worktree checks](./runs/2026-10-21-codex-06bd198-worktree-final.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`; canonical CLI attempt | `06bd198` + initial Decision 0235 tree | I1 environment-invalid: sandbox TEMP snapshot unavailable after dispatch; workflow stops with preserved partial work. CLI driver blocked by ENV-0007. | [Initial worktree checks](./runs/2026-10-21-codex-06bd198-worktree-initial.md) |
 | 2026-10-21 | Codex | App `gpt-6.1-sol` / `medium`, isolated fixture drivers | `4fb2077` + Decision 0234 tree | X1/X2 pass: installed baseline diff, unchanged-Contract omission and outside-consumer finding preserved, no mutation | [CLI Contract diff](./runs/2026-10-21-codex-4fb2077-contract-diff.md) |

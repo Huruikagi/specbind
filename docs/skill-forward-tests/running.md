@@ -166,8 +166,9 @@ For Claude Code, every turn also checks the session's own initialization
 record and exits 5, environment-invalid, when the session cwd is not the fixture,
 an installed Skill is missing from the registry, no subagent dispatch tool is
 available, or auto memory is on. Permission mode is `acceptEdits` with `Bash`
-and `Skill` allowed; a denied tool is printed after the reply and makes the turn
-environment-blocked rather than a product result.
+and `Skill` allowed; a reported permission denial is printed after the reply
+and exits 4. Record the turn as environment-blocked rather than a product result.
+Inspect raw tool-result errors too: a provider can omit denials from its summary.
 
 The Codex path uses `codex exec` and `codex exec resume` with the default
 driver profile above and a `workspace-write` sandbox. It disables memory use
@@ -188,7 +189,24 @@ was read and used, and the user-turn Requirements approval and local checkpoint
 both succeeded. Other lifecycle and host-safety boundaries remain unmeasured
 through this Codex path.
 
-Offline harness regression checks (no model calls) run with
+When judging Windows shell calls, inspect each required read's own result.
+PowerShell can report success for a multi-command invocation whose earlier
+native command failed if a later `Get-Content` succeeds. Keep dependent reads
+separate and check `$LASTEXITCODE` immediately after the native command; do not
+attribute the wrapper's final status to every command it ran.
+
+The shell owns process launch, isolation, boundary checks, and session resume;
+`tools/specbind/scripts/forward_test_report.py` owns saved-event interpretation.
+A nonzero agent exit, a Codex `turn.failed`, a Claude error result, or a reported
+Claude permission denial exits 4 even if a final reply exists. The provider's
+error is shown in the session summary. Missing completion evidence, malformed
+JSON events, and empty final replies exit 5. Recoverable command failures and
+Codex metadata warnings alone do not override a completed turn. Exit 0 means
+the session evidence can be judged; it never means the scenario passed.
+
+Offline harness regression checks cover successful start/resume, rejected
+confirmation boundaries, provider failures, incomplete streams, and Claude
+environment checks. They make no model calls and run with
 `python tools/specbind/scripts/test_forward_test_drive.py`.
 
 The debrief continues the same session with `send` after judgment. Compare

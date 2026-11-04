@@ -23,13 +23,15 @@
 # never appear in the fixture's own Git status.
 #
 # Exit status: 0 turn completed; 1 usage or harness error; 3 an `--expect`
-# precondition failed and nothing was sent; 4 the agent run failed; 5 the
-# session environment did not measure the installed product (environment
-# invalid).
+# precondition failed and nothing was sent; 4 the agent run failed or a tool was
+# denied; 5 the session environment did not measure the installed product
+# (environment invalid).
 #
 # See docs/skill-forward-tests/running.md for how to use the result.
 
 set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 
 usage() {
     sed -n '/^# Usage:/,/^# `-` reads/p' "$0" | sed '$d; s/^# \{0,1\}//' >&2
@@ -139,109 +141,7 @@ run_turn() {
 
     runner=$(python_runner)
     report_status=0
-    "$runner" - "$agent" "$(native_dir "$fixture")" "$(native_dir "$state")" "$turn" <<'PY' || report_status=$?
-import json, os, sys
-
-agent, fixture, state, turn = sys.argv[1:5]
-turns = os.path.join(state, "turns")
-events = []
-with open(os.path.join(turns, f"{turn}-events.jsonl"), encoding="utf-8") as stream:
-    for line in stream:
-        line = line.strip()
-        if line.startswith("{"):
-            try:
-                events.append(json.loads(line))
-            except ValueError:
-                pass
-
-def short(value, limit=160):
-    text = " ".join(str(value).split())
-    return text if len(text) <= limit else text[: limit - 1] + "…"
-
-actions, problems, facts = [], [], []
-reply_path = os.path.join(turns, f"{turn}-reply.txt")
-
-if agent == "claude-code":
-    init = next((e for e in events if e.get("type") == "system" and e.get("subtype") == "init"), None)
-    result = next((e for e in reversed(events) if e.get("type") == "result"), None)
-    if init is None:
-        problems.append("no session init event was recorded")
-    else:
-        facts.append(f"model: {init.get('model')}")
-        facts.append(f"permission mode: {init.get('permissionMode')}")
-        same = lambda path: os.path.normcase(os.path.realpath(path))
-        if same(init.get("cwd", "")) != same(fixture):
-            problems.append(f"session cwd is {init.get('cwd')}, not the fixture")
-        skills_dir = os.path.join(fixture, ".claude", "skills")
-        installed = sorted(os.listdir(skills_dir)) if os.path.isdir(skills_dir) else []
-        missing = [s for s in installed if s not in init.get("skills", [])]
-        if not installed:
-            problems.append("the fixture has no installed Claude Code Skills")
-        elif missing:
-            problems.append("installed Skills absent from the session registry: " + ", ".join(missing))
-        if not {"Task", "Agent"} & set(init.get("tools", [])):
-            problems.append("the session has no subagent dispatch tool")
-        if (init.get("memory_paths") or {}).get("auto"):
-            problems.append("auto memory is enabled for the session")
-    for event in events:
-        if event.get("type") != "assistant":
-            continue
-        for block in event.get("message", {}).get("content", []):
-            if block.get("type") != "tool_use":
-                continue
-            name, arguments = block.get("name"), block.get("input") or {}
-            detail = (arguments.get("command") or arguments.get("skill")
-                      or arguments.get("file_path") or arguments.get("description")
-                      or arguments.get("pattern") or "")
-            actions.append(f"{name}: {short(detail)}")
-    if result is None:
-        problems.append("the run recorded no result")
-        text = ""
-    else:
-        text = result.get("result") or ""
-        facts.append(f"agent turns: {result.get('num_turns')}")
-        if result.get("is_error"):
-            facts.append(f"result error: {result.get('subtype')}")
-        for denial in result.get("permission_denials") or []:
-            facts.append("permission denied: " + short(f"{denial.get('tool_name')} {json.dumps(denial.get('tool_input'))}"))
-    with open(reply_path, "w", encoding="utf-8") as stream:
-        stream.write(text + ("\n" if text and not text.endswith("\n") else ""))
-else:
-    # The Codex JSONL event shape is read defensively: only the thread ID and
-    # executed commands are extracted, and the reply comes from `-o`.
-    for event in events:
-        thread = event.get("thread_id") or event.get("session_id")
-        if thread:
-            facts.append(f"thread: {thread}")
-            break
-    for event in events:
-        item = event.get("item") or {}
-        if event.get("type") == "item.completed" and item.get("command"):
-            # Native Windows shell paths can consume the entire short() limit
-            # before the Skill path or lifecycle command becomes visible.
-            actions.append("command: " + " ".join(item["command"].split()))
-    if not os.path.exists(reply_path):
-        open(reply_path, "w", encoding="utf-8").close()
-        problems.append("the run wrote no final message")
-
-with open(os.path.join(turns, f"{turn}-actions.txt"), "w", encoding="utf-8") as stream:
-    stream.writelines(a + "\n" for a in actions)
-if agent == "codex" and turn == "01":
-    thread = next((f.split(": ", 1)[1] for f in facts if f.startswith("thread: ")), "")
-    with open(os.path.join(state, "session"), "w", encoding="utf-8") as stream:
-        stream.write(thread + "\n")
-
-print(f"== turn {turn} reply")
-with open(reply_path, encoding="utf-8") as stream:
-    sys.stdout.write(stream.read())
-print(f"== turn {turn} session")
-for fact in facts:
-    print(f"  {fact}")
-print(f"  actions: {len(actions)} (see {turn}-actions.txt)")
-for problem in problems:
-    print(f"  ENVIRONMENT INVALID: {problem}")
-sys.exit(5 if problems else 0)
-PY
+    "$runner" "$script_dir/forward_test_report.py" "$agent" "$(native_dir "$fixture")" "$(native_dir "$state")" "$turn" || report_status=$?
 
     if [ "$status" -ne 0 ]; then
         echo "forward-test-drive: the agent exited $status; see $stderr_file" >&2

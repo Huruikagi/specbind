@@ -94,6 +94,7 @@ in [Implementation architecture](./architecture.md).
 - `tools/specbind/src/lifecycle/release.rs` — portable release labels and case-insensitive archive-target collision resolution
 - `tools/specbind/schemas/` — generated, checked-in Draft 2020-12 distribution schemas
 - `tools/specbind/tests/` — Rust CLI integration tests
+- `tools/specbind/scripts/forward-test-drive.sh` and `forward_test_report.py` — manual real-session forward-test launch/resume and saved-event interpretation, with offline coverage in `test_forward_test_drive.py`
 - `tools/specbind/tests/cli/gates/` and `project_reads/` — command-area test modules for Gate lifecycle/status and project-bound reads
 - `scripts/check_decisions.py` — Decision filename, heading, identifier, and Decision-index consistency check
 - `.github/workflows/rust.yml` — ordinary Linux Rust verification
