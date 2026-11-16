@@ -157,7 +157,7 @@ sh tools/specbind/scripts/forward-test-fixture.sh /tmp/specbind-fixture en
 ```
 
 To build the documentation site locally, install `requirements-docs.txt` and run
-`python -m mkdocs build --strict` from the repository root.
+`python scripts/build_docs.py` from the repository root.
 
 The inherited TypeScript oracle is excluded from routine verification. Its
 checks remain available when changing `tools/cc-sdd/` or when executable

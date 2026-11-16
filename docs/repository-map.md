@@ -106,14 +106,13 @@ in [Implementation architecture](./architecture.md).
 Public documentation lives under `docs/en/` (published at the site root) and
 `docs/ja/` (published under `/ja/`). Both trees use identical relative paths
 for `index.md`, `guide/`, and `reference/`, and each page is maintained as a
-translation pair. The `nav` in `mkdocs.yml` is the authoritative page list and
-order. The [documentation authoring policy](./documentation-authoring.md)
-defines bilingual maintenance and verification.
+translation pair. The `nav` in `zensical.en.yml` and `zensical.ja.yml` defines
+each language's page list and order. See the [documentation authoring
+policy](./documentation-authoring.md) for bilingual maintenance and verification.
 
-The documentation site is configured by `mkdocs.yml`, built with the pinned
-dependency in `requirements-docs.txt`, and deployed by
-`.github/workflows/pages.yml`. Run `python -m mkdocs build --strict` from the
-repository root to verify it locally.
+The documentation site uses the Zensical version pinned in
+`requirements-docs.txt` and is deployed by `.github/workflows/pages.yml`.
+Run `python scripts/build_docs.py` from the repository root to build it locally.
 
 ## Design documents
 

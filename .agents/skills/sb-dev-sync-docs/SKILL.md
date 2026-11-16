@@ -46,15 +46,15 @@ language roots are not translation pairs.
    explicit decision to defer it; report the deferral and its tracking location.
    Do not call the bilingual change complete while drift is merely unmentioned.
 5. For a move or removal, apply the same relative-path change to both trees and
-   update `mkdocs.yml`, inbound links, contributor guidance, and any public URL
-   embedded in code or tests.
+   update both Zensical navigation lists, inbound links, contributor guidance, and
+   any public URL embedded in code or tests.
 
 ## Verification
 
 Run from the repository root:
 
 ```sh
-python -m mkdocs build --strict
+python scripts/build_docs.py
 git diff --check
 ```
 

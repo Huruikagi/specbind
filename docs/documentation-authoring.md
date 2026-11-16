@@ -1,7 +1,7 @@
 # Documentation authoring and publication
 
 This document defines the repository workflow for public documentation. It is
-an internal contributor document and is excluded from the published MkDocs
+an internal contributor document and is excluded from the published
 site.
 
 ## Current authoring source
@@ -60,12 +60,12 @@ Japanese URL: /ja/guide/getting-started/
 The new-project, existing-project, and existing-implementation routes follow
 the same relative-path rule when English counterparts are added.
 
-The bilingual build publishes English at the site root and Japanese under
-`/ja/`. `mkdocs-static-i18n` uses the folder structure to select corresponding
-pages and reconfigures navigation, Material UI strings, search behavior, and
-page-to-page language switching. The dependency is pinned in
-`requirements-docs.txt`; Markdown content remains ordinary files so the build
-mechanism stays replaceable.
+Zensical builds English at the site root and Japanese under `/ja/` from
+`zensical.en.yml` and `zensical.ja.yml`. The shared theme override links each
+page to its translation at the same relative path. Each language has its own
+search index. The build script combines both languages in the root sitemap and
+adds links between translated URLs. The dependencies are pinned in
+`requirements-docs.txt`.
 
 ## Verification
 
@@ -73,7 +73,8 @@ Run the strict bilingual build from the repository root after changing a
 public page, navigation, translation, or documentation path:
 
 ```sh
-python -m mkdocs build --strict
+python -m pip install -r requirements-docs.txt
+python scripts/build_docs.py
 ```
 
 When a published URL is embedded in the CLI or another product contract,

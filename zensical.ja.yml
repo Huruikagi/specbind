@@ -1,0 +1,48 @@
+INHERIT: zensical.en.yml
+site_url: https://huruikagi.github.io/specbind/ja/
+edit_uri: edit/main/docs/ja/
+docs_dir: docs/ja
+site_dir: site/ja
+
+theme:
+  language: ja
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切り替える
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切り替える
+
+nav:
+  - ホーム: index.md
+  - はじめに:
+      - ルートを選ぶ: guide/getting-started.md
+      - SpecBindをインストールする: guide/install.md
+      - 新規プロジェクトで始める: guide/start-new-project.md
+      - 既存プロジェクトで始める: guide/start-existing-project.md
+  - 開発を進める:
+      - 基本概念: guide/concepts.md
+      - 1件ずつ計画・実装する: guide/implement-step-by-step.md
+      - PlanとDriveでMilestoneを進める: guide/implement-with-plan-and-drive.md
+      - 既存実装からSpecを確立する: guide/adopt-existing.md
+      - リリースする: guide/release.md
+  - 設定と運用:
+      - カスタマイズ: guide/customization.md
+      - SpecBindをアップデートする: guide/update.md
+      - エージェントの削除とアンインストール: guide/uninstall.md
+      - cc-sddから移行: guide/migrate-from-cc-sdd.md
+      - バグ報告と改善提案: guide/feedback.md
+  - リファレンス:
+      - スキル一覧: reference/current-skill-index.md
+      - 成果物一覧: reference/current-artifact-index.md
+      - 状態の一覧: reference/lifecycle-states.md
+      - CLIコマンド一覧: reference/cli-commands.md

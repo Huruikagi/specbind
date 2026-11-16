@@ -41,7 +41,7 @@ jobs:
         run: python scripts/check_decisions.py
 
       - name: Build documentation
-        run: python -m mkdocs build --strict
+        run: python scripts/build_docs.py
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
